@@ -17,9 +17,6 @@ class OroCheckoutBundleStage2 implements Migration, OrderedMigrationInterface
         $this->updateCheckoutTable($schema);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function updateCheckoutTable(Schema $schema)
     {
         $table = $schema->getTable('oro_checkout');

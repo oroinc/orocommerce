@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Provider;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Gedmo\Tree\TreeListener;
@@ -26,38 +27,12 @@ class ContentNodeProvider
 
     private const SCOPE_TYPE = 'web_content';
 
-    /**
-     * @var DoctrineHelper
-     */
-    private $doctrineHelper;
+    private DoctrineHelper $doctrineHelper;
+    private ScopeManager $scopeManager;
+    private EventDispatcherInterface $eventDispatcher;
+    private WebCatalogProvider $webCatalogProvider;
+    private TreeListener $treeListener;
 
-    /**
-     * @var ScopeManager
-     */
-    private $scopeManager;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
-
-    /**
-     * @var WebCatalogProvider
-     */
-    private $webCatalogProvider;
-
-    /**
-     * @var TreeListener
-     */
-    private $treeListener;
-
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param ScopeManager $scopeManager
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param WebCatalogProvider $webCatalogProvider
-     * @param TreeListener $treeListener
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         ScopeManager $scopeManager,
@@ -134,8 +109,7 @@ class ContentNodeProvider
             return null;
         }
 
-        $node = $this->doctrineHelper->getEntityManagerForClass(ContentNode::class)
-            ->find(ContentNode::class, $id);
+        $node = $this->getEntityManager()->find(ContentNode::class, $id);
         if (null === $node) {
             return null;
         }
@@ -189,8 +163,8 @@ class ContentNodeProvider
      *
      * @param int[] $nodeIds
      * @param string[] $contentVariantFields [DQL expression => result field name, ...]
-     *                                                 use a value ENTITY_ALIAS_PLACEHOLDER constant as an alias
-     *                                                 of ContentVariant entity in DQL expressions
+     *                                       use a value ENTITY_ALIAS_PLACEHOLDER constant as an alias
+     *                                       of ContentVariant entity in DQL expressions
      * @param ScopeCriteria|null $criteria
      *
      * @return array [node id => ['id' => content variant id, other requested fields], ...]
@@ -239,11 +213,6 @@ class ContentNodeProvider
         return $result;
     }
 
-    /**
-     * @param object $entity
-     * @param WebsiteInterface|null $website
-     * @return ContentVariant|null
-     */
     public function getFirstMatchingVariantForEntity(
         object $entity,
         WebsiteInterface $website = null
@@ -253,9 +222,8 @@ class ContentNodeProvider
             return null;
         }
 
-        /** @var QueryBuilder $relationQueryBuilder */
-        $em = $this->doctrineHelper->getEntityManager(ContentNode::class);
-        $relationQueryBuilder = $em->getRepository(ContentNode::class)->getContentVariantQueryBuilder($webCatalog);
+        $em = $this->getEntityManager();
+        $relationQueryBuilder = $this->getContentVariantQueryBuilder($em, $webCatalog);
 
         $event = new RestrictContentVariantByEntityEvent($relationQueryBuilder, $entity, 'variant');
         $this->eventDispatcher->dispatch($event, RestrictContentVariantByEntityEvent::NAME);
@@ -272,6 +240,23 @@ class ContentNodeProvider
             ->setMaxResults(1);
 
         return $relationQueryBuilder->getQuery()->getOneOrNullResult();
+    }
+
+    /**
+     * Creates QueryBuilder to find content variants for the given web catalog.
+     * NOTE: do not use ContentNodeRepository::getContentVariantQueryBuilder() here
+     * to prevent instantiating of this repository and as result loading all entity listeners.
+     * @see \Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentNodeRepository::getContentVariantQueryBuilder
+     * @see \Gedmo\Tree\Entity\Repository\AbstractTreeRepository::__construct
+     */
+    private function getContentVariantQueryBuilder(EntityManagerInterface $em, WebCatalog $webCatalog): QueryBuilder
+    {
+        return $em->createQueryBuilder()
+            ->select('node.id as nodeId', 'variant.id as variantId')
+            ->from(ContentVariant::class, 'variant')
+            ->innerJoin(ContentNode::class, 'node', Join::WITH, 'variant.node = node')
+            ->andWhere('node.webCatalog = :webCatalog')
+            ->setParameter('webCatalog', $webCatalog);
     }
 
     /**
@@ -312,12 +297,6 @@ class ContentNodeProvider
         return $nodeIds;
     }
 
-    /**
-     * @param ContentNode $node
-     * @param ScopeCriteria $criteria
-     *
-     * @return bool
-     */
     private function isContentNodeMatchCriteria(ContentNode $node, ScopeCriteria $criteria): bool
     {
         $scopesToMatchQb = $this->doctrineHelper
@@ -382,15 +361,15 @@ class ContentNodeProvider
         );
     }
 
-    /**
-     * @param ScopeCriteria $criteria
-     *
-     * @return WebCatalog|null
-     */
     private function getWebCatalog(ScopeCriteria $criteria): ?WebCatalog
     {
         $parameters = $criteria->toArray();
 
         return $parameters[ScopeWebCatalogProvider::WEB_CATALOG] ?? null;
+    }
+
+    private function getEntityManager(): EntityManagerInterface
+    {
+        return $this->doctrineHelper->getEntityManagerForClass(ContentNode::class);
     }
 }

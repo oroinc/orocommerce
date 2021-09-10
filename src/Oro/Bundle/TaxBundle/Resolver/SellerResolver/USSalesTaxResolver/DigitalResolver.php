@@ -16,9 +16,6 @@ class DigitalResolver implements ResolverInterface
      */
     protected $itemResolver;
 
-    /**
-     * @param ResolverInterface $itemResolver
-     */
     public function __construct(ResolverInterface $itemResolver)
     {
         $this->itemResolver = $itemResolver;

@@ -2,31 +2,16 @@
 
 namespace Oro\Bundle\TaxBundle\Entity\Repository;
 
-use Doctrine\Inflector\Inflector;
-use Doctrine\Inflector\Rules\English\InflectorFactory;
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\TaxBundle\Entity\AbstractTaxCode;
-use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
-use Symfony\Component\PropertyAccess\PropertyAccess;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 /**
  * Repository for Tax Code entities
  */
-abstract class AbstractTaxCodeRepository extends EntityRepository
+abstract class AbstractTaxCodeRepository extends ServiceEntityRepository
 {
     const ALIAS_SUFFIX = 'TaxCode';
-
-    /**
-     * @var Inflector
-     */
-    private $inflector;
-
-    /**
-     * @var PropertyAccessor
-     */
-    private $propertyAccessor;
 
     /**
      * @param array $codes
@@ -50,53 +35,6 @@ abstract class AbstractTaxCodeRepository extends EntityRepository
         return $qb
             ->getQuery()
             ->getResult();
-    }
-
-    /**
-     * @return PropertyAccessor
-     * @throws \InvalidArgumentException
-     */
-    public function getPropertyAccessor()
-    {
-        if (!$this->propertyAccessor) {
-            $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
-        }
-
-        return $this->propertyAccessor;
-    }
-
-    /**
-     * @return Inflector
-     */
-    protected function getInflector()
-    {
-        if (!$this->inflector) {
-            $this->inflector = (new InflectorFactory())->build();
-        }
-
-        return $this->inflector;
-    }
-
-    /**
-     * @param string $type
-     * @param integer $id
-     * @return \Doctrine\ORM\Query
-     */
-    protected function getFindOneByEntityQuery($type, $id)
-    {
-        $type = (string)$type;
-        QueryBuilderUtil::checkIdentifier($type);
-
-        $alias = sprintf('%s%s', $type, self::ALIAS_SUFFIX);
-        $field = $this->getInflector()->camelize($this->getInflector()->pluralize($type));
-
-        $queryBuilder = $this->createQueryBuilder($alias);
-
-        return $queryBuilder
-            ->where($queryBuilder->expr()->isMemberOf(sprintf(':%s', $type), sprintf('%s.%s', $alias, $field)))
-            ->setParameter($type, $id)
-            ->setMaxResults(1)
-            ->getQuery();
     }
 
     /**

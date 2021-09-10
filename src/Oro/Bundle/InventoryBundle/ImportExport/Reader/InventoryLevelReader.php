@@ -26,9 +26,6 @@ class InventoryLevelReader extends EntityReader
         parent::setSourceEntityName($entityName, $organization, $ids);
     }
 
-    /**
-     * @param ContextInterface $context
-     */
     protected function initializeFromContext(ContextInterface $context)
     {
         parent::initializeFromContext($context);

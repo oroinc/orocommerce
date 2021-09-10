@@ -79,9 +79,6 @@ class RemoveFromConfigurationConsentEntityListenerTest extends \PHPUnit\Framewor
 
     /**
      * @dataProvider preRemoveProvider
-     *
-     * @param $websites
-     * @param $expectedCalls
      */
     public function testPreRemove($websites, $expectedCalls)
     {

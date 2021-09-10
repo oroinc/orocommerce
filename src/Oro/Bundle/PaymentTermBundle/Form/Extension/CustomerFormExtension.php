@@ -23,11 +23,6 @@ class CustomerFormExtension extends AbstractTypeExtension
     /** @var PaymentTermAssociationProvider */
     private $paymentTermAssociationProvider;
 
-    /**
-     * @param PaymentTermProviderInterface $paymentTermProvider
-     * @param PaymentTermAssociationProvider $paymentTermAssociationProvider
-     * @param TranslatorInterface $translator
-     */
     public function __construct(
         PaymentTermProviderInterface $paymentTermProvider,
         PaymentTermAssociationProvider $paymentTermAssociationProvider,

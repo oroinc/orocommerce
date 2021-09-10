@@ -14,7 +14,7 @@ class RelatedProductNormalizer extends ConfigurableEntityNormalizer
     /**
      * {@inheritdoc}
      */
-    public function supportsNormalization($data, $format = null, array $context = []): bool
+    public function supportsNormalization($data, string $format = null, array $context = []): bool
     {
         return false;
     }
@@ -22,7 +22,7 @@ class RelatedProductNormalizer extends ConfigurableEntityNormalizer
     /**
      * {@inheritdoc}
      */
-    public function supportsDenormalization($data, $type, $format = null, array $context = []): bool
+    public function supportsDenormalization($data, string $type, string $format = null, array $context = []): bool
     {
         return is_a($type, RelatedProduct::class, true);
     }
@@ -30,7 +30,7 @@ class RelatedProductNormalizer extends ConfigurableEntityNormalizer
     /**
      * {@inheritdoc}
      */
-    public function denormalize($data, $class, $format = null, array $context = [])
+    public function denormalize($data, string $type, string $format = null, array $context = [])
     {
         if (!isset($data['sku'], $data['relatedItem'])) {
             return null;
@@ -38,7 +38,7 @@ class RelatedProductNormalizer extends ConfigurableEntityNormalizer
 
         return parent::denormalize(
             ['product' => ['sku' => $data['sku']], 'relatedItem' => ['sku' => $data['relatedItem']]],
-            $class,
+            $type,
             $format,
             $context
         );

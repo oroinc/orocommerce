@@ -9,9 +9,5 @@ use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
  */
 interface CombinedPriceListRelationHelperInterface
 {
-    /**
-     * @param CombinedPriceList $cpl
-     * @return bool
-     */
     public function isFullChainCpl(CombinedPriceList $cpl): bool;
 }

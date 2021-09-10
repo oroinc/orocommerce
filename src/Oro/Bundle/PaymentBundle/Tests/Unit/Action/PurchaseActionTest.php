@@ -15,8 +15,6 @@ class PurchaseActionTest extends AbstractActionTest
 
     /**
      * @dataProvider executeDataProvider
-     * @param array $data
-     * @param array $expected
      */
     public function testExecute(array $data, array $expected)
     {
@@ -285,7 +283,6 @@ class PurchaseActionTest extends AbstractActionTest
 
                 return true;
             }));
-
 
         $this->action->initialize($options);
         $this->action->execute($context);

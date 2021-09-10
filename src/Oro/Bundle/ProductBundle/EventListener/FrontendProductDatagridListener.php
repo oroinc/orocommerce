@@ -32,10 +32,6 @@ class FrontendProductDatagridListener
      */
     protected $imagePlaceholderProvider;
 
-    /**
-     * @param DataGridThemeHelper $themeHelper
-     * @param ImagePlaceholderProviderInterface $imagePlaceholderProvider
-     */
     public function __construct(
         DataGridThemeHelper $themeHelper,
         ImagePlaceholderProviderInterface $imagePlaceholderProvider
@@ -44,9 +40,6 @@ class FrontendProductDatagridListener
         $this->imagePlaceholderProvider = $imagePlaceholderProvider;
     }
 
-    /**
-     * @param PreBuild $event
-     */
     public function onPreBuild(PreBuild $event)
     {
         $config = $event->getConfig();
@@ -85,9 +78,6 @@ class FrontendProductDatagridListener
         }
     }
 
-    /**
-     * @param DatagridConfiguration $config
-     */
     protected function addImageToConfig(DatagridConfiguration $config)
     {
         $updates = [
@@ -100,9 +90,6 @@ class FrontendProductDatagridListener
         $this->applyUpdatesToConfig($config, $updates);
     }
 
-    /**
-     * @param DatagridConfiguration $config
-     */
     protected function addShortDescriptionToConfig(DatagridConfiguration $config)
     {
         $updates = [
@@ -121,10 +108,6 @@ class FrontendProductDatagridListener
         $this->applyUpdatesToConfig($config, $updates);
     }
 
-    /**
-     * @param DatagridConfiguration $config
-     * @param array $updates
-     */
     protected function applyUpdatesToConfig(DatagridConfiguration $config, array $updates)
     {
         foreach ($updates as $path => $update) {
@@ -132,9 +115,6 @@ class FrontendProductDatagridListener
         }
     }
 
-    /**
-     * @param SearchResultAfter $event
-     */
     public function onResultAfter(SearchResultAfter $event)
     {
         /** @var ResultRecord[] $records */

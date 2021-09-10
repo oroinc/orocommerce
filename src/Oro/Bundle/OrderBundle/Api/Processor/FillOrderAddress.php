@@ -25,10 +25,6 @@ class FillOrderAddress implements ProcessorInterface
     /** @var TranslatorInterface */
     private $translator;
 
-    /**
-     * @param OrderAddressManager $orderAddressManager
-     * @param TranslatorInterface $translator
-     */
     public function __construct(OrderAddressManager $orderAddressManager, TranslatorInterface $translator)
     {
         $this->orderAddressManager = $orderAddressManager;
@@ -52,17 +48,11 @@ class FillOrderAddress implements ProcessorInterface
         }
     }
 
-    /**
-     * @param CustomizeFormDataContext $context
-     */
     private function processPreSubmit(CustomizeFormDataContext $context): void
     {
         $context->set(self::SUBMITTED_DATA, $context->getData());
     }
 
-    /**
-     * @param CustomizeFormDataContext $context
-     */
     private function processPreValidate(CustomizeFormDataContext $context): void
     {
         /** @var OrderAddress $address */
@@ -80,11 +70,6 @@ class FillOrderAddress implements ProcessorInterface
         }
     }
 
-    /**
-     * @param CustomizeFormDataContext $context
-     *
-     * @return bool
-     */
     private function isSubmittedDataValid(CustomizeFormDataContext $context): bool
     {
         $submittedData = $context->get(self::SUBMITTED_DATA);
@@ -112,12 +97,6 @@ class FillOrderAddress implements ProcessorInterface
         return true;
     }
 
-    /**
-     * @param array       $submittedData
-     * @param string|null $fieldName
-     *
-     * @return bool
-     */
     private function isSubmitted(array $submittedData, ?string $fieldName): bool
     {
         return
@@ -126,11 +105,6 @@ class FillOrderAddress implements ProcessorInterface
             && null !== $submittedData[$fieldName];
     }
 
-    /**
-     * @param array $data
-     *
-     * @return bool
-     */
     private function isArrayHasOnlyNullValues(array $data): bool
     {
         foreach ($data as $fieldValue) {

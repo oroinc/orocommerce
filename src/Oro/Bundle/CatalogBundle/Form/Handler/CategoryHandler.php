@@ -31,12 +31,6 @@ class CategoryHandler
     /** @var  EventDispatcherInterface */
     protected $eventDispatcher;
 
-    /**
-     * @param FormInterface $form
-     * @param Request $request
-     * @param ObjectManager $manager
-     * @param EventDispatcherInterface $eventDispatcher
-     */
     public function __construct(
         FormInterface $form,
         Request $request,

@@ -90,11 +90,6 @@ class LoadOrderTaxesData extends AbstractFixture implements DependentFixtureInte
         $manager->flush();
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param string        $entityClass
-     * @param int           $entityId
-     */
     private function ensureTaxValueNotExists(ObjectManager $manager, string $entityClass, int $entityId)
     {
         $taxValue = $manager->getRepository(TaxValue::class)
@@ -104,13 +99,6 @@ class LoadOrderTaxesData extends AbstractFixture implements DependentFixtureInte
         }
     }
 
-    /**
-     * @param Order $order
-     * @param float $taxRate
-     * @param float $taxAdjustment
-     *
-     * @return Result
-     */
     private function createOrderTaxValueResult(
         Order $order,
         float $taxRate,
@@ -149,13 +137,6 @@ class LoadOrderTaxesData extends AbstractFixture implements DependentFixtureInte
         ]);
     }
 
-    /**
-     * @param OrderLineItem $lineItem
-     * @param float         $taxRate
-     * @param float         $taxAdjustment
-     *
-     * @return Result
-     */
     private function createLineItemTaxValueResult(
         OrderLineItem $lineItem,
         float $taxRate,

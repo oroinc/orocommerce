@@ -13,9 +13,6 @@ class CategoryMessageFilter implements MessageFilterInterface
     /** @var string */
     private $topic;
 
-    /**
-     * @param string $topic
-     */
     public function __construct(string $topic)
     {
         $this->topic = $topic;

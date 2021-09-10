@@ -38,11 +38,6 @@ class MatrixGridOrderManager
      */
     private $collectionCache = [];
 
-    /**
-     * @param PropertyAccessor $propertyAccessor
-     * @param ProductVariantAvailabilityProvider $variantAvailability
-     * @param EmptyMatrixGridInterface $emptyMatrixGridManager
-     */
     public function __construct(
         PropertyAccessor $propertyAccessor,
         ProductVariantAvailabilityProvider $variantAvailability,
@@ -230,6 +225,10 @@ class MatrixGridOrderManager
             $values = [];
             foreach ($variantFields as $field) {
                 $value = $this->variantAvailability->getVariantFieldScalarValue($variant, $field['name']);
+                // Skip product from available variants if one of variant fields is null
+                if ($value === null) {
+                    continue 2;
+                }
                 if (is_bool($value)) {
                     $value = ($value) ? '1' : '0';
                 }

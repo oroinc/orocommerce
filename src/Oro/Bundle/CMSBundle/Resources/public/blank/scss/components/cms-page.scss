@@ -29,6 +29,11 @@
     iframe[src*=maps] {
         width: 100%;
     }
+
+    .cms-panel-end {
+        display: flex;
+        justify-content: flex-end;
+    }
 }
 
 @include breakpoint('tablet-small') {

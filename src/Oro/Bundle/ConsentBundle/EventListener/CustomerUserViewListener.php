@@ -30,12 +30,6 @@ class CustomerUserViewListener
     /** @var CustomerUserConsentProvider */
     protected $customerUserConsentProvider;
 
-    /**
-     * @param TranslatorInterface $translator
-     * @param DoctrineHelper $doctrineHelper
-     * @param RequestStack $requestStack
-     * @param CustomerUserConsentProvider $customerUserConsentProvider
-     */
     public function __construct(
         TranslatorInterface $translator,
         DoctrineHelper $doctrineHelper,

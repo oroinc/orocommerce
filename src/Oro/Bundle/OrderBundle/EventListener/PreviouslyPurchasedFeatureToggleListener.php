@@ -11,17 +11,11 @@ class PreviouslyPurchasedFeatureToggleListener
     /** @var ProductReindexManager */
     protected $productReindexManager;
 
-    /**
-     * @param ProductReindexManager $productReindexManager
-     */
     public function __construct(ProductReindexManager $productReindexManager)
     {
         $this->productReindexManager = $productReindexManager;
     }
 
-    /**
-     * @param ConfigUpdateEvent $event
-     */
     public function reindexProducts(ConfigUpdateEvent $event)
     {
         if ($event->isChanged(OrderConfig::getConfigKey(OrderConfig::CONFIG_KEY_ENABLE_PURCHASE_HISTORY))) {

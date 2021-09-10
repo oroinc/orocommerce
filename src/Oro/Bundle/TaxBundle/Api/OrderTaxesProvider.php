@@ -27,10 +27,6 @@ class OrderTaxesProvider
     /** @var TaxationSettingsProvider */
     private $taxationSettingsProvider;
 
-    /**
-     * @param DoctrineHelper           $doctrineHelper
-     * @param TaxationSettingsProvider $taxationSettingsProvider
-     */
     public function __construct(DoctrineHelper $doctrineHelper, TaxationSettingsProvider $taxationSettingsProvider)
     {
         $this->doctrineHelper = $doctrineHelper;

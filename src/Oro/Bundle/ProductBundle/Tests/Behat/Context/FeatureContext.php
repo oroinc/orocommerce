@@ -7,8 +7,6 @@ use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Element\NodeElement;
 use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\MinkExtension\Context\MinkAwareContext;
-use Behat\Symfony2Extension\Context\KernelAwareContext;
-use Behat\Symfony2Extension\Context\KernelDictionary;
 use Doctrine\Persistence\ObjectRepository;
 use Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext as ConfigContext;
 use Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext;
@@ -40,38 +38,23 @@ use Symfony\Component\DomCrawler\Crawler;
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  */
-class FeatureContext extends OroFeatureContext implements OroPageObjectAware, KernelAwareContext
+class FeatureContext extends OroFeatureContext implements OroPageObjectAware
 {
-    use PageObjectDictionary, KernelDictionary;
+    use PageObjectDictionary;
 
-    const PRODUCT_SKU = 'SKU123';
-    const PRODUCT_INVENTORY_QUANTITY = 100;
-    const IMAGES_ORDER_REMEMBER_KEY = 'images_order';
+    private const PRODUCT_SKU = 'SKU123';
+    private const PRODUCT_INVENTORY_QUANTITY = 100;
+    private const IMAGES_ORDER_REMEMBER_KEY = 'images_order';
 
-    /**
-     * @var OroMainContext
-     */
-    private $oroMainContext;
+    private ?OroMainContext $oroMainContext = null;
 
-    /**
-     * @var GridContext
-     */
-    private $gridContext;
+    private ?GridContext $gridContext = null;
 
-    /**
-     * @var ConfigContext
-     */
-    private $configContext;
+    private ?ConfigContext $configContext = null;
 
-    /**
-     * @var FormContext
-     */
-    private $formContext;
+    private ?FormContext $formContext = null;
 
-    /**
-     * @var []
-     */
-    private $rememberedData;
+    private array $rememberedData = [];
 
     /**
      * @BeforeScenario
@@ -91,7 +74,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     public function thereAreProductsAvailableForOrder()
     {
         /** @var DoctrineHelper $doctrineHelper */
-        $doctrineHelper = $this->getContainer()->get('oro_entity.doctrine_helper');
+        $doctrineHelper = $this->getAppContainer()->get('oro_entity.doctrine_helper');
 
         /** @var Product $product */
         $product = $doctrineHelper->getEntityRepositoryForClass(Product::class)
@@ -104,7 +87,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $inventoryLevel = $inventoryLevelRepository->findOneBy(['product' => $product]);
         if (!$inventoryLevel) {
             /** @var InventoryManager $inventoryManager */
-            $inventoryManager = $this->getContainer()->get('oro_inventory.manager.inventory_manager');
+            $inventoryManager = $this->getAppContainer()->get('oro_inventory.manager.inventory_manager');
             $inventoryLevel = $inventoryManager->createInventoryLevel($product->getPrimaryUnitPrecision());
         }
         $inventoryLevel->setQuantity(self::PRODUCT_INVENTORY_QUANTITY);
@@ -131,7 +114,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
             $inventoryLevelEntityManager->flush();
 
             $warehouseConfig = new WarehouseConfig($warehouse, 1);
-            $configManager = $this->getContainer()->get('oro_config.global');
+            $configManager = $this->getAppContainer()->get('oro_config.global');
             $configManager->set('oro_warehouse.enabled_warehouses', [$warehouseConfig]);
             $configManager->set('oro_inventory.manage_inventory', true);
             $configManager->flush();
@@ -195,7 +178,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      * Example: I click info tooltip for enum value "Red"
      *
      * @When /^I click info tooltip for enum value "(?P<name>[\w\s]+)"$/
-     *
      */
     public function iClickTooltipOnEnumValue($name)
     {
@@ -225,7 +207,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      * Example: I should see info tooltip for enum value "Red"
      *
      * @Then /^(?:|I should )see info tooltip for enum value "(?P<name>[^"]+)"$/
-     *
      */
     public function iSeeTooltipForEnumValue($name)
     {
@@ -252,7 +233,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      * Example: I delete enum value by name "Green"
      *
      * @When /^I delete enum value by name "(?P<name>[\w\s]+)"$/
-     *
      */
     public function iDeleteEnumValueByName($name)
     {
@@ -281,7 +261,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      * Example: I should not see enum value "Green"
      *
      * @Then /^I should not see enum value "(?P<name>[\w\s]+)"$/
-     *
      */
     public function iShouldNotSeeEnumValue($name)
     {
@@ -438,8 +417,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      *            | AdditionalUnit      | set       |
      *            | AdditionalPrecision | 0         |
      * @Then I save product with next data:
-     *
-     * @param TableNode $table
      */
     public function saveProductWithNextData(TableNode $table)
     {
@@ -617,7 +594,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      */
     protected function getUrl($route, $params = [])
     {
-        return $this->getContainer()->get('router')->generate($route, $params);
+        return $this->getAppContainer()->get('router')->generate($route, $params);
     }
 
     /**
@@ -626,7 +603,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      */
     protected function getRepository($className)
     {
-        return $this->getContainer()
+        return $this->getAppContainer()
             ->get('doctrine')
             ->getManagerForClass($className)
             ->getRepository($className);
@@ -673,7 +650,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
                 throw new \InvalidArgumentException(sprintf('There is no mapping to `%s` options', $option));
         }
 
-        $configManager = $this->getContainer()->get('oro_config.global');
+        $configManager = $this->getAppContainer()->get('oro_config.global');
         $configManager->set($option, 1);
         $configManager->flush();
     }
@@ -1757,8 +1734,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      *            | cat1.jpg | 1 | 1 | 1 |
      *            | cat2.jpg |   |   | 1 |
      *
-     * @param TableNode $table
-     *
      * @Then /^(?:|I )should see following product images:$/
      */
     public function iShouldSeeFollowingImages(TableNode $table)
@@ -1796,8 +1771,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      * Example: And I should see following product additional units:
      *            | item | 1 | 5  | Yes |
      *            | set  | 5 | 10 | No  |
-     *
-     * @param TableNode $table
      *
      * @Then /^(?:|I )should see following product additional units:$/
      */
@@ -1841,12 +1814,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         return $productItem;
     }
 
-    /**
-     * @param string $SKU
-     * @param Element|null $context
-     *
-     * @return Element
-     */
     private function findProductItemInShoppingList(string $SKU, Element $context = null): Element
     {
         $productItem = $this->findElementContains('Shopping list line item', $SKU, $context);
@@ -1857,7 +1824,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
 
     /**
      * @When /^(?:|I )attach "(?P<fileName>.*)" for Product Images/
-     * @param string $fileName
      */
     public function iAttachFileToField(string $fileName)
     {

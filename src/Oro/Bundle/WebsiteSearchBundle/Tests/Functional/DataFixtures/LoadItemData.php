@@ -205,12 +205,6 @@ class LoadItemData extends AbstractFixture implements ContainerAwareInterface, D
         return $referenceName . '_website_' . $websiteId;
     }
 
-    /**
-     * @param Item $item
-     * @param Collection $collection
-     * @param ItemFieldInterface $fieldObject
-     * @param array $fieldsData
-     */
     private function populateFields(
         Item $item,
         Collection $collection,

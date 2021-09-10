@@ -35,12 +35,6 @@ abstract class AbstractTempTableManipulator implements TempTableManipulatorInter
      */
     protected $shardManager;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param NativeQueryExecutorHelper $helper
-     * @param ShardQueryExecutorNativeSqlInterface $queryExecutor
-     * @param ShardManager $shardManager
-     */
     public function __construct(
         ManagerRegistry $registry,
         NativeQueryExecutorHelper $helper,

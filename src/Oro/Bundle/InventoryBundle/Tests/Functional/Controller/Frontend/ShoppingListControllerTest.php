@@ -55,10 +55,6 @@ class ShoppingListControllerTest extends WebTestCase
     }
 
     /**
-     * @param $quantity
-     * @param $minLimit
-     * @param $maxLimit
-     *
      * @dataProvider getShoppingListDataProvider
      */
     public function testQuantitysOnShoppingListView($quantity, $minLimit, $maxLimit)
@@ -106,12 +102,6 @@ class ShoppingListControllerTest extends WebTestCase
     }
 
     /**
-     * @param $quantity
-     * @param $minLimit
-     * @param $maxLimit
-     * @param $errorMessage
-     * @param $errorLimit
-     *
      * @dataProvider getShoppingListErrorsDataProvider
      */
     public function testQuantityErrorMessagesOnShoppingListView(

@@ -16,9 +16,6 @@ class OffersFormStorageTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider dataDataProvider
-     *
-     * @param array $storageData
-     * @param array $expectedData
      */
     public function testGetData(array $storageData, array $expectedData)
     {

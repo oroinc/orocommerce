@@ -23,9 +23,6 @@ class LineItemViolationsProvider
      */
     protected $violations;
 
-    /**
-     * @param ValidatorInterface $validator
-     */
     public function __construct(ValidatorInterface $validator)
     {
         $this->validator = $validator;

@@ -19,9 +19,6 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class CanonicalUrlGeneratorTest extends AbstractCanonicalUrlGeneratorTestCase
 {
-    /**
-     * @return CanonicalUrlGenerator
-     */
     protected function createGenerator(): CanonicalUrlGenerator
     {
         return new CanonicalUrlGenerator(
@@ -166,9 +163,6 @@ class CanonicalUrlGeneratorTest extends AbstractCanonicalUrlGeneratorTestCase
 
     /**
      * @dataProvider localizedUrlDataProvider
-     * @param string $expectedUrl
-     * @param Localization|null $localization
-     * @param Localization|null $currentLocalization
      */
     public function testGetDirectUrl(
         string $expectedUrl,
@@ -486,7 +480,7 @@ class CanonicalUrlGeneratorTest extends AbstractCanonicalUrlGeneratorTestCase
             ->method('getBaseUrl')
             ->willReturn('base');
         $this->requestStack->expects($this->atMost(1))
-            ->method('getMasterRequest')
+            ->method('getMainRequest')
             ->willReturn($request);
 
         $host = 'https://host.domain/';
@@ -501,7 +495,7 @@ class CanonicalUrlGeneratorTest extends AbstractCanonicalUrlGeneratorTestCase
     public function testCreateUrlWithoutMasterRequest()
     {
         $this->requestStack->expects($this->atMost(1))
-            ->method('getMasterRequest')
+            ->method('getMainRequest')
             ->willReturn(null);
 
         $host = 'https://host.domain/';

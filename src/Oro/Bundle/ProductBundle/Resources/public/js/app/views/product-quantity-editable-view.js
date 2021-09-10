@@ -52,7 +52,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function ProductQuantityEditableView(options) {
             ProductQuantityEditableView.__super__.constructor.call(this, options);
@@ -256,7 +256,9 @@ define(function(require) {
                 .done(this.onSaveSuccess.bind(this))
                 .fail(this.onSaveError.bind(this))
                 .always(() => {
-                    this._isSaving = false;
+                    if (!this.disposed) {
+                        this._isSaving = false;
+                    }
                 });
         },
 

@@ -7,12 +7,6 @@ use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingLineItemCollec
 
 interface ShippingLineItemCollectionBySettingsModifierInterface
 {
-    /**
-     * @param ShippingLineItemCollectionInterface $lineItems
-     * @param FedexIntegrationSettings            $settings
-     *
-     * @return ShippingLineItemCollectionInterface
-     */
     public function modify(
         ShippingLineItemCollectionInterface $lineItems,
         FedexIntegrationSettings $settings

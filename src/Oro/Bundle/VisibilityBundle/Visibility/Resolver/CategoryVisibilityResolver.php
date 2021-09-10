@@ -32,11 +32,6 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
     /** @var ScopeManager */
     private $scopeManager;
 
-    /**
-     * @param ManagerRegistry $doctrine
-     * @param ConfigManager   $configManager
-     * @param ScopeManager    $scopeManager
-     */
     public function __construct(ManagerRegistry $doctrine, ConfigManager $configManager, ScopeManager $scopeManager)
     {
         $this->doctrine = $doctrine;
@@ -210,12 +205,6 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
             : BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE;
     }
 
-    /**
-     * @param string $scopeType
-     * @param array  $context
-     *
-     * @return Scope|null
-     */
     private function findScope(string $scopeType, array $context): ?Scope
     {
         // by performance reasons, use findId() + getReference() instead of find()
@@ -227,12 +216,6 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
         return $this->doctrine->getManagerForClass(Scope::class)->getReference(Scope::class, $scopeId);
     }
 
-    /**
-     * @param string $scopeType
-     * @param array  $context
-     *
-     * @return Scope
-     */
     private function getScope(string $scopeType, array $context): Scope
     {
         // by performance reasons, use findId() + createScopeByCriteria() instead of findOrCreate()
@@ -263,9 +246,6 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
         );
     }
 
-    /**
-     * @return Repository\CategoryRepository
-     */
     private function getCategoryRepository(): Repository\CategoryRepository
     {
         return $this->doctrine
@@ -273,9 +253,6 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
             ->getRepository(VisibilityResolved\CategoryVisibilityResolved::class);
     }
 
-    /**
-     * @return Repository\CustomerGroupCategoryRepository
-     */
     private function getCustomerGroupCategoryRepository(): Repository\CustomerGroupCategoryRepository
     {
         return $this->doctrine
@@ -283,9 +260,6 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
             ->getRepository(VisibilityResolved\CustomerGroupCategoryVisibilityResolved::class);
     }
 
-    /**
-     * @return Repository\CustomerCategoryRepository
-     */
     private function getCustomerCategoryRepository(): Repository\CustomerCategoryRepository
     {
         return $this->doctrine

@@ -27,10 +27,6 @@ class PaymentMethodsConfigsRuleHandler
     /** @var EventDispatcherInterface */
     protected $eventDispatcher;
 
-    /**
-     * @param RequestStack $requestStack
-     * @param EntityManager $em
-     */
     public function __construct(RequestStack $requestStack, EntityManager $em)
     {
         $this->requestStack = $requestStack;

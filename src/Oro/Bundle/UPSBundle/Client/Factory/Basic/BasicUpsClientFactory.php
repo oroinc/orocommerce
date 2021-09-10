@@ -18,10 +18,6 @@ class BasicUpsClientFactory implements UpsClientFactoryInterface
      */
     private $upsClientUrlProvider;
 
-    /**
-     * @param RestClientFactoryInterface    $restClientFactory
-     * @param UpsClientUrlProviderInterface $upsClientUrlProvider
-     */
     public function __construct(
         RestClientFactoryInterface $restClientFactory,
         UpsClientUrlProviderInterface $upsClientUrlProvider

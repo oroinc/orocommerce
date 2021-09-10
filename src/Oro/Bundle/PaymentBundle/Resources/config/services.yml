@@ -32,9 +32,8 @@ services:
             - '@oro_payment.payment_method_view.composite_provider'
             - '@event_dispatcher'
 
-    oro_payment.twig.payment_method_extension:
-        class: 'Oro\Bundle\PaymentBundle\Twig\PaymentMethodExtension'
-        public: false
+    oro_payment.twig.payment_extension:
+        class: 'Oro\Bundle\PaymentBundle\Twig\PaymentExtension'
         arguments:
             - "@oro_platform.twig.service_locator"
         tags:
@@ -207,14 +206,6 @@ services:
         arguments:
             - "@translator"
 
-    oro_payment.twig.payment_status_extension:
-        class: 'Oro\Bundle\PaymentBundle\Twig\PaymentStatusExtension'
-        public: false
-        arguments:
-            - "@oro_platform.twig.service_locator"
-        tags:
-            - { name: twig.extension }
-
     oro_payment.condition.require_payment_redirect:
         class: 'Oro\Bundle\PaymentBundle\Condition\RequirePaymentRedirect'
         arguments:
@@ -252,24 +243,36 @@ services:
             - '@oro_payment.expression_language.decorated_product_line_item_factory'
 
     oro_payment.repository.payment_methods_configs_rule:
-        class: 'Oro\Bundle\PaymentBundle\Entity\Repository\PaymentMethodsConfigsRuleRepository'
+        alias: Oro\Bundle\PaymentBundle\Entity\Repository\PaymentMethodsConfigsRuleRepository
+
+    Oro\Bundle\PaymentBundle\Entity\Repository\PaymentMethodsConfigsRuleRepository:
         parent: oro_entity.abstract_repository
         arguments:
             - 'Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule'
         calls:
             - [setAclHelper, ['@oro_security.acl_helper']]
+        tags:
+            - { name: doctrine.repository_service }
 
     oro_payment.repository.payment_method_config:
-        class: 'Oro\Bundle\PaymentBundle\Entity\Repository\PaymentMethodConfigRepository'
+        alias: Oro\Bundle\PaymentBundle\Entity\Repository\PaymentMethodConfigRepository
+
+    Oro\Bundle\PaymentBundle\Entity\Repository\PaymentMethodConfigRepository:
         parent: oro_entity.abstract_repository
         arguments:
             - 'Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig'
+        tags:
+            - { name: doctrine.repository_service }
 
     oro_payment.repository.payment_transaction:
-        class: 'Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTransactionRepository'
+        alias: Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTransactionRepository
+
+    Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTransactionRepository:
         parent: oro_entity.abstract_repository
         arguments:
             - 'Oro\Bundle\PaymentBundle\Entity\PaymentTransaction'
+        tags:
+            - { name: doctrine.repository_service }
 
     oro_payment.expression_language.decorated_product_line_item_factory:
         class: 'Oro\Bundle\PaymentBundle\ExpressionLanguage\DecoratedProductLineItemFactory'

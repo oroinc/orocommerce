@@ -12,9 +12,6 @@ class ContextUrlProviderRegistry
     /** @var ContainerInterface */
     private $providers;
 
-    /**
-     * @param ContainerInterface $providers
-     */
     public function __construct(ContainerInterface $providers)
     {
         $this->providers = $providers;
@@ -25,7 +22,7 @@ class ContextUrlProviderRegistry
      * @param mixed $data
      * @return null|string
      */
-    public function getUrl($type, $data)
+    public function getUrl(string $type, $data)
     {
         if (!$this->providers->has($type)) {
             return null;

@@ -119,7 +119,6 @@ class ContentBlockTypeTest extends FormIntegrationTestCase
         return [new ContentBlockType($this->defaultVariantScopesResolver)];
     }
 
-
     public function testBuildForm()
     {
         $form = $this->factory->create(ContentBlockType::class);

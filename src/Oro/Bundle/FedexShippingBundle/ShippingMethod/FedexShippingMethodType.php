@@ -131,11 +131,6 @@ class FedexShippingMethodType implements ShippingMethodTypeInterface
         );
     }
 
-    /**
-     * @param array $option
-     *
-     * @return float
-     */
     private function getSurchargeFromOptions(array $option): float
     {
         return (float)$option[FedexShippingMethod::OPTION_SURCHARGE];

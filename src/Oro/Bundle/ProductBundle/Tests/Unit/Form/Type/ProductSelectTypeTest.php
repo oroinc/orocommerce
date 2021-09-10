@@ -195,7 +195,6 @@ class ProductSelectTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider finishViewDataProvider
-     * @param array $dataParameters
      */
     public function testFinishView(array $dataParameters)
     {

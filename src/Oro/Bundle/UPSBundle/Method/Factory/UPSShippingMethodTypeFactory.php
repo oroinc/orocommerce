@@ -39,13 +39,6 @@ class UPSShippingMethodTypeFactory implements UPSShippingMethodTypeFactoryInterf
      */
     private $shippingPriceCache;
 
-    /**
-     * @param UPSMethodTypeIdentifierGeneratorInterface $typeIdentifierGenerator
-     * @param IntegrationIdentifierGeneratorInterface   $integrationIdentifierGenerator
-     * @param UPSTransport                              $transport
-     * @param PriceRequestFactory                       $priceRequestFactory
-     * @param ShippingPriceCache                        $shippingPriceCache
-     */
     public function __construct(
         UPSMethodTypeIdentifierGeneratorInterface $typeIdentifierGenerator,
         IntegrationIdentifierGeneratorInterface $integrationIdentifierGenerator,

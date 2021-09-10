@@ -1032,6 +1032,9 @@ oro:
         frontend_products_data_export:
             label: Enable Product Grid Export
             description: If this option is enabled, customers will be able to export selected product data on the storefront. Please check individual field settings for Product entity in Entity Management, product attribute settings and price attribute settings to see what data will be included in the exported file.
+        simple_variations_view_restriction:
+            label: Restrict product variations visibility
+            description: When enabled excludes product variations from the generated sitemap and prevents the individual product variation pages access through direct links
 
     importexport:
         export:

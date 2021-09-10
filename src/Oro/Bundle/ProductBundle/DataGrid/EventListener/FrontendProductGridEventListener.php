@@ -63,17 +63,6 @@ class FrontendProductGridEventListener
     /** @var array */
     private $attributesToHide = [];
 
-    /**
-     * @param AttributeManager $attributeManager
-     * @param AttributeTypeRegistry $attributeTypeRegistry
-     * @param AttributeConfigurationProviderInterface $configurationProvider
-     * @param DoctrineHelper $doctrineHelper
-     * @param DatagridStateProviderInterface $filtersStateProvider
-     * @param DatagridStateProviderInterface $sortersStateProvider
-     * @param ConfigManager $configManager
-     * @param DatagridParametersHelper $datagridParametersHelper
-     * @param FamilyAttributeCountsProvider $familyAttributeCountsProvider
-     */
     public function __construct(
         AttributeManager $attributeManager,
         AttributeTypeRegistry $attributeTypeRegistry,
@@ -96,9 +85,6 @@ class FrontendProductGridEventListener
         $this->familyAttributeCountsProvider = $familyAttributeCountsProvider;
     }
 
-    /**
-     * @param PreBuild $event
-     */
     public function onPreBuild(PreBuild $event)
     {
         if ($this->inProgress) {
@@ -194,11 +180,6 @@ class FrontendProductGridEventListener
         return $alias;
     }
 
-    /**
-     * @param PreBuild $event
-     * @param array $addedFilterAttrs
-     * @param array $hideAttrs
-     */
     protected function checkFilters(PreBuild $event, array $addedFilterAttrs, array $hideAttrs): void
     {
         $config = $event->getConfig();
@@ -269,11 +250,6 @@ class FrontendProductGridEventListener
         return $alias;
     }
 
-    /**
-     * @param PreBuild $event
-     * @param array $addedSorterAttrs
-     * @param array $hideAttrs
-     */
     protected function checkSorters(PreBuild $event, array $addedSorterAttrs, array $hideAttrs): void
     {
         $config = $event->getConfig();
@@ -321,13 +297,6 @@ class FrontendProductGridEventListener
         return $mapping['targetEntity'] ?? null;
     }
 
-    /**
-     * @param DatagridConfiguration $config
-     * @param ParameterBag $parameterBag
-     * @param array $attributes
-     *
-     * @return array
-     */
     private function getAttributesToHide(
         DatagridConfiguration $config,
         ParameterBag $parameterBag,
@@ -358,12 +327,6 @@ class FrontendProductGridEventListener
         return $this->attributesToHide[$gridName] ?? [];
     }
 
-    /**
-     * @param array $attributes
-     * @param array $activeAttributeFamilyIds
-     *
-     * @return array
-     */
     private function getDisabledSortAndFilterAttributes(array $attributes, array $activeAttributeFamilyIds): array
     {
         /** @var AttributeFamilyRepository $attributeFamilyRepository */

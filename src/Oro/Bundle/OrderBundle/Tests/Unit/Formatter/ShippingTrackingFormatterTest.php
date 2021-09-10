@@ -24,7 +24,6 @@ class ShippingTrackingFormatterTest extends \PHPUnit\Framework\TestCase
             ->getMock();
     }
 
-
     /**
      * @param string|null $trackingLink
      * @param string|null $label

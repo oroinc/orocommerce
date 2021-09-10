@@ -11,7 +11,7 @@ define(function(require) {
 
     const BackendPageableCollection = PageableCollection.extend({
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function BackendPageableCollection(...args) {
             BackendPageableCollection.__super__.constructor.apply(this, args);

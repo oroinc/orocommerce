@@ -45,8 +45,6 @@ class OroOrderBundle implements Migration, RenameExtensionAwareInterface, Ordere
 
     /**
      * Sets the RenameExtension
-     *
-     * @param RenameExtension $renameExtension
      */
     public function setRenameExtension(RenameExtension $renameExtension)
     {

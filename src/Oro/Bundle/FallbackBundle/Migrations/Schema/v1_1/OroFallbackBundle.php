@@ -46,7 +46,7 @@ class OroFallbackBundle implements Migration, DatabasePlatformAwareInterface
         foreach ($this->getSchemaDiff($schema, $preSchema) as $query) {
             $queries->addQuery($query);
         }
-        
+
         $queries->addQuery(new InsertDefaultLocalizationTitleQuery());
     }
 

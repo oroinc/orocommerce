@@ -42,13 +42,6 @@ class LineItemOptionsProvider
      */
     private $lineItemOptionsFormatter;
 
-    /**
-     * @param PaymentOrderLineItemOptionsProvider $paymentOrderLineItemOptionsProvider
-     * @param TaxAmountProvider $taxAmountProvider
-     * @param TaxationSettingsProvider $taxationSettingsProvider
-     * @param TranslatorInterface $translator
-     * @param LineItemOptionsFormatter $lineItemOptionsFormatter
-     */
     public function __construct(
         PaymentOrderLineItemOptionsProvider $paymentOrderLineItemOptionsProvider,
         TaxAmountProvider $taxAmountProvider,

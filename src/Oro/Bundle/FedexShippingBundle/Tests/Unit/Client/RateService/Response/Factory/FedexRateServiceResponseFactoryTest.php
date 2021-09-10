@@ -22,7 +22,6 @@ class FedexRateServiceResponseFactoryTest extends TestCase
         $notification1 = $this->createNotification(23);
         $notification2 = $this->createNotification(34);
 
-
         $soapResponse = new \StdClass();
         $soapResponse->HighestSeverity = FedexRateServiceResponse::SEVERITY_ERROR;
         $soapResponse->Notifications = [$notification1, $notification2];
@@ -121,12 +120,6 @@ class FedexRateServiceResponseFactoryTest extends TestCase
         );
     }
 
-    /**
-     * @param string $serviceName
-     * @param Price  $price
-     *
-     * @return \StdClass
-     */
     private function createRateReplyDetail(string $serviceName, Price $price): \StdClass
     {
         $rateReplyDetails = new \StdClass();
@@ -141,11 +134,6 @@ class FedexRateServiceResponseFactoryTest extends TestCase
         return $rateReplyDetails;
     }
 
-    /**
-     * @param int $code
-     *
-     * @return \StdClass
-     */
     private function createNotification(int $code): \StdClass
     {
         $notification = new \StdClass();
@@ -154,9 +142,6 @@ class FedexRateServiceResponseFactoryTest extends TestCase
         return $notification;
     }
 
-    /**
-     * @return FedexRateServiceResponse
-     */
     private function createErrorResponse(): FedexRateServiceResponse
     {
         return new FedexRateServiceResponse(

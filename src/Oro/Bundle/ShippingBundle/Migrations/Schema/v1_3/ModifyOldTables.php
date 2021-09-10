@@ -25,9 +25,6 @@ class ModifyOldTables implements Migration, OrderedMigrationInterface
         $this->modifyOroShippingRuleDestinationTable($schema);
     }
 
-    /**
-     * @param Schema $schema
-     */
     private function modifyOroShippingRuleDestinationTable(Schema $schema)
     {
         $table = $schema->getTable('oro_shipping_rule_destination');

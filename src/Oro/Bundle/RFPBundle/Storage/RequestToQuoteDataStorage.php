@@ -15,17 +15,11 @@ class RequestToQuoteDataStorage
     /** @var ProductDataStorage */
     protected $storage;
 
-    /**
-     * @param ProductDataStorage    $storage
-     */
     public function __construct(ProductDataStorage $storage)
     {
         $this->storage = $storage;
     }
 
-    /**
-     * @param RFPRequest $rfpRequest
-     */
     public function saveToStorage(RFPRequest $rfpRequest)
     {
         $data = [

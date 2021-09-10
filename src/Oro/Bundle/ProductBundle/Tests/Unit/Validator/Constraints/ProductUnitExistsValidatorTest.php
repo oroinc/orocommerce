@@ -17,25 +17,17 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
  */
 class ProductUnitExistsValidatorTest extends ConstraintValidatorTestCase
 {
-    /**
-     * {@inheritDoc}
-     */
     protected function createValidator()
     {
         return new ProductUnitExistsValidator();
     }
 
-    public function testInvalidConstraint()
+    public function testInvalidConstraint(): void
     {
         $this->expectException(\Symfony\Component\Validator\Exception\UnexpectedTypeException::class);
         $this->validator->validate(null, $this->createMock(Constraint::class));
     }
 
-    /**
-     * @param string $unitCode
-     *
-     * @return ProductUnitPrecision
-     */
     private function getUnitPrecision(string $unitCode, bool $isSell = false): ProductUnitPrecision
     {
         $unit = new ProductUnit();
@@ -47,14 +39,14 @@ class ProductUnitExistsValidatorTest extends ConstraintValidatorTestCase
         return $unitPrecision;
     }
 
-    public function testNullValue()
+    public function testNullValue(): void
     {
         $this->validator->validate(null, new ProductUnitExists());
 
         $this->assertNoViolation();
     }
 
-    public function testNullProductUnit()
+    public function testNullProductUnit(): void
     {
         $value = $this->createMock(ProductLineItemInterface::class);
         $value->expects($this->once())
@@ -66,7 +58,7 @@ class ProductUnitExistsValidatorTest extends ConstraintValidatorTestCase
         $this->assertNoViolation();
     }
 
-    public function testNullProductUnitCode()
+    public function testNullProductUnitCode(): void
     {
         $productUnit = $this->createMock(ProductUnit::class);
         $productUnit->expects($this->once())
@@ -83,7 +75,7 @@ class ProductUnitExistsValidatorTest extends ConstraintValidatorTestCase
         $this->assertNoViolation();
     }
 
-    public function testNullProduct()
+    public function testNullProduct(): void
     {
         $productUnit = $this->createMock(ProductUnit::class);
         $productUnit->expects($this->once())
@@ -103,7 +95,7 @@ class ProductUnitExistsValidatorTest extends ConstraintValidatorTestCase
         $this->assertNoViolation();
     }
 
-    public function testUnitExistsForLineItem()
+    public function testUnitExistsForLineItem(): void
     {
         $unitCode = 'item';
 
@@ -129,7 +121,7 @@ class ProductUnitExistsValidatorTest extends ConstraintValidatorTestCase
         $this->assertNoViolation();
     }
 
-    public function testUnitDoesNotExistForLineItem()
+    public function testUnitDoesNotExistForLineItem(): void
     {
         $sku = 'SKU1';
         $unitCode = 'item';
@@ -162,7 +154,7 @@ class ProductUnitExistsValidatorTest extends ConstraintValidatorTestCase
             ->assertRaised();
     }
 
-    public function testSellUnitExistsForLineItem()
+    public function testSellUnitExistsForLineItem(): void
     {
         $unitCode = 'set';
 
@@ -188,7 +180,7 @@ class ProductUnitExistsValidatorTest extends ConstraintValidatorTestCase
         $this->assertNoViolation();
     }
 
-    public function testSellUnitDoesNotExistForLineItem()
+    public function testSellUnitDoesNotExistForLineItem(): void
     {
         $sku = 'SKU1';
         $unitCode = 'item';
@@ -221,7 +213,7 @@ class ProductUnitExistsValidatorTest extends ConstraintValidatorTestCase
             ->assertRaised();
     }
 
-    public function testUnitExistsForQuickAddRow()
+    public function testUnitExistsForQuickAddRow(): void
     {
         $product = $this->createMock(Product::class);
         $product->expects($this->once())
@@ -236,7 +228,7 @@ class ProductUnitExistsValidatorTest extends ConstraintValidatorTestCase
         $this->assertNoViolation();
     }
 
-    public function testUnitDoesNotExistForQuickAddRow()
+    public function testUnitDoesNotExistForQuickAddRow(): void
     {
         $sku = 'SKU1';
         $unitCode = 'item';

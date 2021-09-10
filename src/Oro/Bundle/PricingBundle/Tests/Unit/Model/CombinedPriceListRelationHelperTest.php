@@ -90,9 +90,6 @@ class CombinedPriceListRelationHelperTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($this->helper->isFullChainCpl($cpl));
     }
 
-    /**
-     * @param \PHPUnit\Framework\MockObject\MockObject $query
-     */
     private function assertQueryBuilderCalls(\PHPUnit\Framework\MockObject\MockObject $query): void
     {
         $qb = $this->createMock(QueryBuilder::class);

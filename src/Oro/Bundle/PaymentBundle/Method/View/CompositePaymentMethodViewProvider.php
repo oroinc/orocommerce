@@ -44,7 +44,7 @@ class CompositePaymentMethodViewProvider implements PaymentMethodViewProviderInt
                 return $provider->getPaymentMethodView($identifier);
             }
         }
-        
+
         throw new \InvalidArgumentException('There is no payment method view for "'.$identifier.'"');
     }
 
@@ -58,7 +58,7 @@ class CompositePaymentMethodViewProvider implements PaymentMethodViewProviderInt
                 return true;
             }
         }
-        
+
         return false;
     }
 }

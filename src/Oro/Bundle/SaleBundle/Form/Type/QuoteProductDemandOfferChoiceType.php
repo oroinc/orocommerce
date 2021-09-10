@@ -32,11 +32,6 @@ class QuoteProductDemandOfferChoiceType extends AbstractType
      */
     protected $unitVisibility;
 
-    /**
-     * @param UnitValueFormatterInterface $unitValueFormatter
-     * @param TranslatorInterface $translator
-     * @param UnitVisibilityInterface $unitVisibility
-     */
     public function __construct(
         UnitValueFormatterInterface $unitValueFormatter,
         TranslatorInterface $translator,

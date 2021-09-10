@@ -18,10 +18,6 @@ class SlugRedirectMatcher
     /** @var ScopeManager */
     private $scopeManager;
 
-    /**
-     * @param ManagerRegistry $doctrine
-     * @param ScopeManager    $scopeManager
-     */
     public function __construct(ManagerRegistry $doctrine, ScopeManager $scopeManager)
     {
         $this->doctrine = $doctrine;
@@ -60,7 +56,7 @@ class SlugRedirectMatcher
         $scopeCriteria = $this->scopeManager->getCriteria('web_content');
         $delimiter = sprintf('/%s/', SluggableUrlGenerator::CONTEXT_DELIMITER);
         $repository = $this->getRedirectRepository();
-        if (strpos($url, $delimiter) !== false) {
+        if (str_contains($url, $delimiter)) {
             [$contextUrl, $itemSlugPrototype] = explode($delimiter, $url);
             $contextRedirect = $repository->findByUrl($contextUrl, $scopeCriteria);
             $prototypeRedirect = $repository->findByPrototype($itemSlugPrototype, $scopeCriteria);
@@ -83,9 +79,6 @@ class SlugRedirectMatcher
         return $repository->findByUrl($url, $scopeCriteria);
     }
 
-    /**
-     * @return RedirectRepository
-     */
     private function getRedirectRepository(): RedirectRepository
     {
         return $this->doctrine

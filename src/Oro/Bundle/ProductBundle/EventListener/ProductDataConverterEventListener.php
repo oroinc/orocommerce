@@ -27,12 +27,6 @@ class ProductDataConverterEventListener
     /** @var ImportStrategyHelper */
     private $strategyHelper;
 
-    /**
-     * @param TranslatorInterface $translator
-     * @param AttributeFamilyManager $attributeFamilyManager
-     * @param AttributeManager $attributeManager
-     * @param ImportStrategyHelper $strategyHelper
-     */
     public function __construct(
         TranslatorInterface $translator,
         AttributeFamilyManager $attributeFamilyManager,
@@ -45,9 +39,6 @@ class ProductDataConverterEventListener
         $this->strategyHelper = $strategyHelper;
     }
 
-    /**
-     * @param ProductDataConverterEvent $event
-     */
     public function onConvertToImport(ProductDataConverterEvent $event): void
     {
         $data = $event->getData();
@@ -93,10 +84,6 @@ class ProductDataConverterEventListener
         return (is_array($value) && $value === []) || (is_string($value) && trim($value) === '');
     }
 
-    /**
-     * @param ContextInterface $context
-     * @param array $attributes
-     */
     private function addWarning(ContextInterface $context, array $attributes): void
     {
         if (!$attributes) {

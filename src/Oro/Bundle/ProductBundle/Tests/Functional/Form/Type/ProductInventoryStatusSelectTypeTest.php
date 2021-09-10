@@ -33,7 +33,7 @@ class ProductInventoryStatusSelectTypeTest extends WebTestCase
         $form = $this->formFactory->create(ProductInventoryStatusSelectType::class, []);
         $form->submit($submitData);
         $this->assertEquals($isValid, $form->isValid());
-        $this->assertEquals($isValid, $form->isSynchronized());
+        $this->assertTrue($form->isSynchronized());
         if ($isValid) {
             $this->assertEquals($submitData, $form->getData());
         }
@@ -51,15 +51,15 @@ class ProductInventoryStatusSelectTypeTest extends WebTestCase
             ],
             'invalid data' => [
                 'submitData' => ['test'],
-                'isValid' => false
+                'isValid' => false,
             ],
             'valid data' => [
                 'submitData' => [
                     'in_stock',
                     'out_of_stock',
-                    'discontinued'
+                    'discontinued',
                 ],
-                'isValid' => true
+                'isValid' => true,
             ],
         ];
     }

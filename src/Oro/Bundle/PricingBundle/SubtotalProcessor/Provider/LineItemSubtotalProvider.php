@@ -31,11 +31,6 @@ class LineItemSubtotalProvider extends AbstractSubtotalProvider implements
     /** @var RoundingServiceInterface */
     protected $rounding;
 
-    /**
-     * @param TranslatorInterface $translator
-     * @param RoundingServiceInterface $rounding
-     * @param SubtotalProviderConstructorArguments $arguments
-     */
     public function __construct(
         TranslatorInterface $translator,
         RoundingServiceInterface $rounding,

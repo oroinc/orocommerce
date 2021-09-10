@@ -49,10 +49,6 @@ class AddValidateUnitPrecisionsDuplicateFormListener implements ProcessorInterfa
         }
     }
 
-    /**
-     * @param FormEvent                $event
-     * @param IncludedEntityCollection $includedEntities
-     */
     private function onPreSubmit(FormEvent $event, IncludedEntityCollection $includedEntities)
     {
         /** @var array $unitPrecisionsData [['class' => unit precision class name, 'id' => unit precision id], ...] */

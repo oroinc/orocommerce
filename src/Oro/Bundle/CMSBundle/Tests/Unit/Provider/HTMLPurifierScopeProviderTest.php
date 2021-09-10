@@ -13,10 +13,6 @@ class HTMLPurifierScopeProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider testGetScopeDataProvider
-     *
-     * @param string $mode
-     * @param array $restrictions
-     * @param string|null $expected
      */
     public function testGetScope(string $mode, array $restrictions, ?string $expected): void
     {

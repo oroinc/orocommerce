@@ -43,9 +43,6 @@ class CreateNewTables implements Migration, OrderedMigrationInterface, ActivityE
         $queries->addPostQuery(new ExportDataQuery());
     }
 
-    /**
-     * @param Schema $schema
-     */
     private function createOroShipMethodConfigsRuleTable(Schema $schema)
     {
         $tableName = 'oro_ship_method_configs_rule';
@@ -68,9 +65,6 @@ class CreateNewTables implements Migration, OrderedMigrationInterface, ActivityE
         $this->activityExtension->addActivityAssociation($schema, 'oro_note', $tableName);
     }
 
-    /**
-     * @param Schema $schema
-     */
     private function createOroShipMethodPostalCodeTable(Schema $schema)
     {
         $table = $schema->createTable('oro_ship_method_postal_code');

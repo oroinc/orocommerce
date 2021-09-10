@@ -24,10 +24,8 @@ class DecimalValidator extends ConstraintValidator
             throw new UnexpectedTypeException($value, 'string');
         }
         // Remove trailing zeroes if value is numeric to validate value correctly. "49.0100000" will fail
-        if (is_numeric($value) && is_string($value)) {
-            if (strpos($value, '.') !== false) {
-                $value = rtrim(preg_replace('/0+$/', '', $value), '.');
-            }
+        if (is_numeric($value) && is_string($value) && str_contains($value, '.')) {
+            $value = rtrim(rtrim($value, '0'), '.');
         }
 
         $formatter = new \NumberFormatter(\Locale::getDefault(), \NumberFormatter::DECIMAL);

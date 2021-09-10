@@ -16,17 +16,11 @@ class WebsiteRelationUpdateEvent extends Event
      */
     protected $websiteIds;
 
-    /**
-     * @param array $websiteIds
-     */
     public function __construct(array $websiteIds)
     {
         $this->websiteIds = $websiteIds;
     }
 
-    /**
-     * @return array
-     */
     public function getWebsiteIds(): array
     {
         return $this->websiteIds;

@@ -31,19 +31,12 @@ class AttributeChangesListener
     /** @var array */
     protected $fieldNamesForIndexation = [];
 
-    /**
-     * @param RequestStack $requestStack
-     * @param MessageProducerInterface $producer
-     */
     public function __construct(RequestStack $requestStack, MessageProducerInterface $producer)
     {
         $this->requestStack = $requestStack;
         $this->producer = $producer;
     }
 
-    /**
-     * @param PreFlushConfigEvent $event
-     */
     public function preFlush(PreFlushConfigEvent $event): void
     {
         if (!$this->isPreFlushApplicable($event)) {
@@ -59,9 +52,6 @@ class AttributeChangesListener
         }
     }
 
-    /**
-     * @param PostFlushConfigEvent $event
-     */
     public function postFlush(PostFlushConfigEvent $event): void
     {
         if (!$this->isPostFlushApplicable()) {
@@ -142,10 +132,6 @@ class AttributeChangesListener
 
     /**
      * Change set should have changes of state and active state should be only in one field of state change set
-     *
-     * @param array $extendChangeSet
-     *
-     * @return bool
      */
     private function isStateChanged(array $extendChangeSet): bool
     {
@@ -165,13 +151,6 @@ class AttributeChangesListener
      *  - sortable:     no => yes
      *  - visible:      no => yes
      * or when state of attribute changed and some of required parameters already enabled
-     *
-     * @param ConfigManager $configManager
-     * @param string $className
-     * @param string $fieldName,
-     * @param bool $isStateChanged
-     *
-     * @return bool
      */
     private function isReindexRequiredInActiveState(
         ConfigManager $configManager,
@@ -217,15 +196,10 @@ class AttributeChangesListener
         $attributeIds = array_map(static function (FieldConfigModel $fieldConfigModel) {
             return $fieldConfigModel->getId();
         }, $modelsForIndexation);
-        
+
         $this->producer->send(Topics::REINDEX_PRODUCTS_BY_ATTRIBUTES, ['attributeIds' => $attributeIds]);
     }
 
-    /**
-     * @param array $attributeChangeSet
-     *
-     * @return bool
-     */
     protected function isSearchBoostEnabled(array $attributeChangeSet): bool
     {
         $isSearchBoostEnabled = false;
@@ -239,11 +213,6 @@ class AttributeChangesListener
         return $isSearchBoostEnabled;
     }
 
-    /**
-     * @param PreFlushConfigEvent $event
-     *
-     * @return bool
-     */
     private function isPreFlushApplicable(PreFlushConfigEvent $event): bool
     {
         if (!$event->isFieldConfig()) {
@@ -262,12 +231,9 @@ class AttributeChangesListener
         return (bool) $attributeConfig->get('request_search_indexation');
     }
 
-    /**
-     * @return bool
-     */
     private function isPostFlushApplicable(): bool
     {
-        if (!empty($this->fieldNamesForIndexation) || $this->requestStack->getMasterRequest()) {
+        if (!empty($this->fieldNamesForIndexation) || $this->requestStack->getMainRequest()) {
             return true;
         }
 

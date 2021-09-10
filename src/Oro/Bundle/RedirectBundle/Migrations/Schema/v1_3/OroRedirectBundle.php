@@ -31,8 +31,6 @@ class OroRedirectBundle implements Migration, OrderedMigrationInterface
 
     /**
      * Create oro_redirect_scope table
-     *
-     * @param Schema $schema
      */
     protected function createOroRedirectScopeTable(Schema $schema)
     {
@@ -44,8 +42,6 @@ class OroRedirectBundle implements Migration, OrderedMigrationInterface
 
     /**
      * Add oro_redirect_scope foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroRedirectScopeForeignKeys(Schema $schema)
     {

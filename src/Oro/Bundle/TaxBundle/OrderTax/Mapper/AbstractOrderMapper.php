@@ -20,10 +20,6 @@ abstract class AbstractOrderMapper implements TaxMapperInterface
     /** @var TaxationAddressProvider */
     protected $addressProvider;
 
-    /**
-     * @param ContextEventDispatcher $contextEventDispatcher
-     * @param TaxationAddressProvider $addressProvider
-     */
     public function __construct(
         ContextEventDispatcher $contextEventDispatcher,
         TaxationAddressProvider $addressProvider

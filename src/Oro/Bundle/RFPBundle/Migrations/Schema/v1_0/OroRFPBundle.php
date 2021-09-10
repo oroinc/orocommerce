@@ -49,8 +49,6 @@ class OroRFPBundle implements Migration, ActivityExtensionAwareInterface
 
     /**
      * Create orob2b_rfp_request table
-     *
-     * @param Schema $schema
      */
     protected function createOroRfpRequestTable(Schema $schema)
     {
@@ -74,8 +72,6 @@ class OroRFPBundle implements Migration, ActivityExtensionAwareInterface
 
     /**
      * Create orob2b_rfp_status table
-     *
-     * @param Schema $schema
      */
     protected function createOroRfpStatusTable(Schema $schema)
     {
@@ -91,8 +87,6 @@ class OroRFPBundle implements Migration, ActivityExtensionAwareInterface
 
     /**
      * Create orob2b_rfp_status_translation table
-     *
-     * @param Schema $schema
      */
     protected function createOroRfpStatusTranslationTable(Schema $schema)
     {
@@ -108,8 +102,6 @@ class OroRFPBundle implements Migration, ActivityExtensionAwareInterface
 
     /**
      * Create orob2b_rfp_request_product table
-     *
-     * @param Schema $schema
      */
     protected function createOrob2BRfpRequestProductTable(Schema $schema)
     {
@@ -124,8 +116,6 @@ class OroRFPBundle implements Migration, ActivityExtensionAwareInterface
 
     /**
      * Create orob2b_rfp_request_prod_item table
-     *
-     * @param Schema $schema
      */
     protected function createOrob2BRfpRequestProductItemTable(Schema $schema)
     {
@@ -151,8 +141,6 @@ class OroRFPBundle implements Migration, ActivityExtensionAwareInterface
 
     /**
      * Add orob2b_rfp_request foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroRfpRequestForeignKeys(Schema $schema)
     {
@@ -185,8 +173,6 @@ class OroRFPBundle implements Migration, ActivityExtensionAwareInterface
 
     /**
      * Add orob2b_rfp_status_translation foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroRfpStatusForeignKeys(Schema $schema)
     {
@@ -201,8 +187,6 @@ class OroRFPBundle implements Migration, ActivityExtensionAwareInterface
 
     /**
      * Add orob2b_rfp_request_product foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOrob2BRfpRequestProductForeignKeys(Schema $schema)
     {
@@ -223,8 +207,6 @@ class OroRFPBundle implements Migration, ActivityExtensionAwareInterface
 
     /**
      * Add orob2b_rfp_request_prod_item foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOrob2BRfpRequestProductItemForeignKeys(Schema $schema)
     {
@@ -245,8 +227,6 @@ class OroRFPBundle implements Migration, ActivityExtensionAwareInterface
 
     /**
      * Enables Email activity for RFP entity
-     *
-     * @param Schema $schema
      */
     protected function addActivityAssociations(Schema $schema)
     {

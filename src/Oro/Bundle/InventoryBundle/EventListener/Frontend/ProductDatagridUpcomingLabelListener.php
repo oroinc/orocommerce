@@ -25,10 +25,6 @@ class ProductDatagridUpcomingLabelListener
     /** DoctrineHelper */
     private $doctrineHelper;
 
-    /**
-     * @param UpcomingProductProvider $productUpcomingProvider
-     * @param DoctrineHelper $doctrineHelper
-     */
     public function __construct(
         UpcomingProductProvider $productUpcomingProvider,
         DoctrineHelper $doctrineHelper
@@ -37,9 +33,6 @@ class ProductDatagridUpcomingLabelListener
         $this->doctrineHelper = $doctrineHelper;
     }
 
-    /**
-     * @param PreBuild $event
-     */
     public function onPreBuild(PreBuild $event)
     {
         $config = $event->getConfig();
@@ -59,9 +52,6 @@ class ProductDatagridUpcomingLabelListener
         );
     }
 
-    /**
-     * @param SearchResultAfter $event
-     */
     public function onResultAfter(SearchResultAfter $event)
     {
         /** @var ResultRecord[] $records */

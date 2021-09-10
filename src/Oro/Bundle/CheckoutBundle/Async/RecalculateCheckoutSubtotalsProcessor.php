@@ -17,10 +17,6 @@ class RecalculateCheckoutSubtotalsProcessor implements MessageProcessorInterface
     /** @var LoggerInterface */
     protected $logger;
 
-    /**
-     * @param CheckoutSubtotalUpdater $checkoutSubtotalUpdater
-     * @param LoggerInterface $logger
-     */
     public function __construct(
         CheckoutSubtotalUpdater $checkoutSubtotalUpdater,
         LoggerInterface $logger

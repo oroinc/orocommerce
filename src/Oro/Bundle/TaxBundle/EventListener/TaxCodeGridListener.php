@@ -32,9 +32,6 @@ class TaxCodeGridListener
         $this->expressionBuilder = new Expr();
     }
 
-    /**
-     * @param BuildBefore $event
-     */
     public function onBuildBefore(BuildBefore $event)
     {
         $config = $event->getConfig();
@@ -90,9 +87,6 @@ class TaxCodeGridListener
         return self::JOIN_ALIAS;
     }
 
-    /**
-     * @param DatagridConfiguration $config
-     */
     protected function addSelect(DatagridConfiguration $config)
     {
         $config->getOrmQuery()->addSelect(
@@ -100,9 +94,6 @@ class TaxCodeGridListener
         );
     }
 
-    /**
-     * @param DatagridConfiguration $config
-     */
     protected function addJoin(DatagridConfiguration $config)
     {
         $config->getOrmQuery()->addLeftJoin(
@@ -111,17 +102,11 @@ class TaxCodeGridListener
         );
     }
 
-    /**
-     * @param DatagridConfiguration $config
-     */
     protected function addColumn(DatagridConfiguration $config)
     {
         $config->offsetSetByPath(sprintf('[columns][%s]', $this->getDataName()), ['label' => $this->getColumnLabel()]);
     }
 
-    /**
-     * @param DatagridConfiguration $config
-     */
     protected function addSorter(DatagridConfiguration $config)
     {
         $config->offsetSetByPath(
@@ -130,9 +115,6 @@ class TaxCodeGridListener
         );
     }
 
-    /**
-     * @param DatagridConfiguration $config
-     */
     protected function addFilter(DatagridConfiguration $config)
     {
         $config->offsetSetByPath(

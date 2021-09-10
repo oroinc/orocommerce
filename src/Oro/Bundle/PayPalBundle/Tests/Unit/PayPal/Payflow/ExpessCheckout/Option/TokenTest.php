@@ -25,7 +25,7 @@ class TokenTest extends AbstractOptionTest
                 [
                     'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
                     'The option "TOKEN" with value 12345 is expected to be of type "string", but is of ' .
-                    'type "integer".',
+                    'type "int".',
                 ],
             ],
             'not passed token with GET_EC_DETAILS (required)' => [

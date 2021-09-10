@@ -521,9 +521,6 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
         $this->assertEquals(null, $this->processor->process($data, $request));
     }
 
-    /**
-     * @param Request $request
-     */
     protected function assertFailedFlashMessage(Request $request)
     {
         $message = 'failed message';

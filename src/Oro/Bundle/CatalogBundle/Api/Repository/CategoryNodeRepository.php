@@ -32,12 +32,6 @@ class CategoryNodeRepository
     /** @var QueryAclHelper */
     private $queryAclHelper;
 
-    /**
-     * @param DoctrineHelper    $doctrineHelper
-     * @param ObjectNormalizer  $objectNormalizer
-     * @param CriteriaConnector $criteriaConnector
-     * @param QueryAclHelper    $queryAclHelper
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         ObjectNormalizer $objectNormalizer,
@@ -182,13 +176,6 @@ class CategoryNodeRepository
         return $nodes;
     }
 
-    /**
-     * @param int                    $id
-     * @param EntityDefinitionConfig $config
-     * @param RequestType            $requestType
-     *
-     * @return CategoryNode|null
-     */
     private function getAvailableCategoryNode(
         int $id,
         EntityDefinitionConfig $config,
@@ -205,11 +192,6 @@ class CategoryNodeRepository
         return new CategoryNode($id);
     }
 
-    /**
-     * @param int $id
-     *
-     * @return bool
-     */
     private function isCategoryNodeExist(int $id): bool
     {
         $rows = $this->createCategoryNodeQueryBuilder($id)
@@ -219,11 +201,6 @@ class CategoryNodeRepository
         return !empty($rows);
     }
 
-    /**
-     * @param int $id
-     *
-     * @return QueryBuilder
-     */
     private function createCategoryNodeQueryBuilder(int $id): QueryBuilder
     {
         return $this->doctrineHelper->createQueryBuilder(Category::class, 'e')

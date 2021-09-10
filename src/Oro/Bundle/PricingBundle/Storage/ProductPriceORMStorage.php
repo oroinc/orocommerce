@@ -19,11 +19,6 @@ class ProductPriceORMStorage extends AbstractProductPriceORMStorage
      */
     private $priceListTreeHandler;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param ShardManager $shardManager
-     * @param FlatPriceListTreeHandler $priceListTreeHandler
-     */
     public function __construct(
         ManagerRegistry $registry,
         ShardManager $shardManager,

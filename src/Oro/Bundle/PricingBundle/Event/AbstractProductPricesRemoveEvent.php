@@ -11,9 +11,6 @@ abstract class AbstractProductPricesRemoveEvent extends Event
      */
     protected $args = [];
 
-    /**
-     * @param array $args
-     */
     public function __construct(array $args = [])
     {
         $this->args = $args;

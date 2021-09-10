@@ -2,15 +2,13 @@
 
 namespace Oro\Bundle\RedirectBundle\Tests\Behat\Context;
 
-use Behat\Symfony2Extension\Context\KernelAwareContext;
-use Behat\Symfony2Extension\Context\KernelDictionary;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
 
-class SlugPrototypesContext extends OroFeatureContext implements OroPageObjectAware, KernelAwareContext
+class SlugPrototypesContext extends OroFeatureContext implements OroPageObjectAware
 {
-    use PageObjectDictionary, KernelDictionary;
+    use PageObjectDictionary;
 
     /**
      * @Then /^(?:|I )should see URL Slug field filled with "(?P<value>(?:[^"]|\\")*)"$/

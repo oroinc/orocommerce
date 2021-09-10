@@ -63,9 +63,6 @@ class RequestProductTypeTest extends AbstractTest
     }
 
     /**
-     * @param array $inputData
-     * @param array $expectedData
-     *
      * @dataProvider buildViewProvider
      */
     public function testBuildView(array $inputData, array $expectedData)
@@ -82,9 +79,6 @@ class RequestProductTypeTest extends AbstractTest
     }
 
     /**
-     * @param array $inputData
-     * @param array $expectedData
-     *
      * @dataProvider finishViewProvider
      */
     public function testFinishView(array $inputData, array $expectedData)

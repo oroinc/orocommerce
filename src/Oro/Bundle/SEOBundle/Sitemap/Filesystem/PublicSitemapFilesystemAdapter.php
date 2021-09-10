@@ -6,12 +6,16 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\GaufretteBundle\FileManager;
 use Oro\Bundle\SEOBundle\Manager\RobotsTxtFileManager;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 
 /**
  * Provides functionality to move sitemap related files from a temporary private storage to a public storage.
  */
-class PublicSitemapFilesystemAdapter
+class PublicSitemapFilesystemAdapter implements LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     /** @var FileManager */
     private $fileManager;
 
@@ -24,12 +28,6 @@ class PublicSitemapFilesystemAdapter
     /** @var ManagerRegistry */
     private $doctrine;
 
-    /**
-     * @param FileManager          $fileManager
-     * @param FileManager          $tmpDataFileManager
-     * @param RobotsTxtFileManager $robotsTxtFileManager
-     * @param ManagerRegistry      $doctrine
-     */
     public function __construct(
         FileManager $fileManager,
         FileManager $tmpDataFileManager,
@@ -65,24 +63,30 @@ class PublicSitemapFilesystemAdapter
      */
     public function clearTempStorage(): void
     {
-        $this->tmpDataFileManager->deleteAllFiles();
+        try {
+            $this->tmpDataFileManager->deleteAllFiles();
+        } catch (\Exception $e) {
+            // Tmp file removal should not interrupt move process.
+            if ($this->logger) {
+                $this->logger->warning(
+                    'Unexpected error occurred during temp storage clearing',
+                    [
+                        'exception' => $e
+                    ]
+                );
+            }
+        }
     }
 
-    /**
-     * @param int $websiteId
-     */
     private function moveSitemapFiles(int $websiteId): void
     {
         $fileNames = $this->tmpDataFileManager->findFiles($websiteId . DIRECTORY_SEPARATOR);
         foreach ($fileNames as $fileName) {
             $this->fileManager->writeToStorage($this->tmpDataFileManager->getFileContent($fileName), $fileName);
-            $this->tmpDataFileManager->deleteFile($fileName);
+            $this->removeTmpFile($fileName);
         }
     }
 
-    /**
-     * @param int $websiteId
-     */
     private function moveRobotsTxtFile(int $websiteId): void
     {
         $fileName = $this->robotsTxtFileManager->getFileNameByWebsite(
@@ -91,7 +95,28 @@ class PublicSitemapFilesystemAdapter
         $fileContent = $this->tmpDataFileManager->getFileContent($fileName, false);
         if (null !== $fileContent) {
             $this->fileManager->writeToStorage($fileContent, $fileName);
+            $this->removeTmpFile($fileName);
+        }
+    }
+
+    /**
+     * @param string $fileName
+     */
+    private function removeTmpFile(string $fileName): void
+    {
+        try {
             $this->tmpDataFileManager->deleteFile($fileName);
+        } catch (\Exception $e) {
+            // Tmp file removal should not interrupt move process.
+            if ($this->logger) {
+                $this->logger->warning(
+                    'Unexpected error occurred during temp file removal',
+                    [
+                        'fileName' => $fileName,
+                        'exception' => $e
+                    ]
+                );
+            }
         }
     }
 }

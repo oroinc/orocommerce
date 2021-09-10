@@ -7,7 +7,7 @@ define(function(require) {
 
     const ShippingTransitionButtonComponent = TransitionButtonComponent.extend(/** @lends ShippingTransitionButtonComponent.prototype */{
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function ShippingTransitionButtonComponent(options) {
             ShippingTransitionButtonComponent.__super__.constructor.call(this, options);
@@ -73,7 +73,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function() {
             if (this.disposed) {

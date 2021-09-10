@@ -59,9 +59,6 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
      */
     protected $qbSelectPart = [];
 
-    /**
-     * @param FieldsProviderInterface $fieldsProvider
-     */
     public function setFieldsProvider(FieldsProviderInterface $fieldsProvider)
     {
         $this->fieldsProvider = $fieldsProvider;
@@ -214,10 +211,6 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
         );
     }
 
-    /**
-     * @param QueryBuilder $qb
-     * @param PriceRule $rule
-     */
     protected function applyRuleConditions(QueryBuilder $qb, PriceRule $rule)
     {
         $additionalConditions = $this->getAdditionalConditions($rule);
@@ -333,9 +326,6 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
 
     /**
      * In query result set all joined relations should have currency allowed in price list
-     *
-     * @param QueryBuilder $qb
-     * @param PriceRule $rule
      */
     protected function restrictBySupportedCurrencies(QueryBuilder $qb, PriceRule $rule)
     {
@@ -354,10 +344,6 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
         }
     }
 
-    /**
-     * @param QueryBuilder $qb
-     * @param PriceRule $rule
-     */
     protected function restrictBySupportedQuantity(QueryBuilder $qb, PriceRule $rule)
     {
         if ($rule->getQuantityExpression()) {
@@ -366,9 +352,6 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
         }
     }
 
-    /**
-     * @param Node\NodeInterface $node
-     */
     protected function saveUsedPriceRelations(Node\NodeInterface $node)
     {
         foreach ($node->getNodes() as $subNode) {
@@ -409,10 +392,10 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
 
         $generatedConditions = [];
         foreach ($this->usedPriceRelations as $alias => $relationFields) {
-            list($root, $field) = explode('::', $alias);
+            [$root, $field] = explode('::', $alias);
             $containerId = null;
-            if (strpos($field, '|') !== false) {
-                list($field, $containerId) = explode('|', $field);
+            if (str_contains($field, '|')) {
+                [$field, $containerId] = explode('|', $field);
             }
             $root = $reverseNameMapping[$root];
 

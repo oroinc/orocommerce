@@ -19,9 +19,6 @@ class EntityPaymentMethodsProvider
      */
     private $paymentMethodToEntity = [];
 
-    /**
-     * @param PaymentTransactionProvider $paymentTransactionProvider
-     */
     public function __construct(PaymentTransactionProvider $paymentTransactionProvider)
     {
         $this->paymentTransactionProvider = $paymentTransactionProvider;

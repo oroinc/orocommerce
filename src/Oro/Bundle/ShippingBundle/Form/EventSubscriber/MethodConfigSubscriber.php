@@ -23,10 +23,6 @@ class MethodConfigSubscriber implements EventSubscriberInterface
      */
     protected $shippingMethodProvider;
 
-    /**
-     * @param FormFactoryInterface            $factory
-     * @param ShippingMethodProviderInterface $shippingMethodProvider
-     */
     public function __construct(FormFactoryInterface $factory, ShippingMethodProviderInterface $shippingMethodProvider)
     {
         $this->factory = $factory;
@@ -44,9 +40,6 @@ class MethodConfigSubscriber implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function preSet(FormEvent $event)
     {
         /** @var ShippingMethodConfig $data */
@@ -57,9 +50,6 @@ class MethodConfigSubscriber implements EventSubscriberInterface
         $this->recreateDynamicChildren($event->getForm(), $data->getMethod());
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function preSubmit(FormEvent $event)
     {
         $submittedData = $event->getData();

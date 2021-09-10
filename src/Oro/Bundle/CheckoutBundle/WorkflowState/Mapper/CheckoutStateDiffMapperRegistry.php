@@ -24,10 +24,6 @@ class CheckoutStateDiffMapperRegistry implements ResetInterface
     }
 
     /**
-     * @param string $name
-     *
-     * @return CheckoutStateDiffMapperInterface
-     *
      * @throws \InvalidArgumentException if a mapper with the given name does not exist
      */
     public function getMapper(string $name): CheckoutStateDiffMapperInterface

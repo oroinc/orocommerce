@@ -76,8 +76,6 @@ class AbstractCouponMassActionHandlerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider iterateDataProvider
-     * @param array $iterateData
-     * @param array $coupons
      */
     public function testHandle(array $iterateData, array $coupons)
     {

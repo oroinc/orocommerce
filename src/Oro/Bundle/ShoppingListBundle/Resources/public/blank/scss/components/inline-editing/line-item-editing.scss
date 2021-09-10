@@ -91,11 +91,12 @@
             z-index: z('base') + 1;
         }
 
+        // Mask to hide text overflow
         &::after {
             position: absolute;
-            top: 1px;
-            bottom: 1px;
-            right: 1px;
+            top: 0;
+            bottom: 0;
+            right: 0;
             width: $input-padding-y;
 
             background-color: $input-background-color;

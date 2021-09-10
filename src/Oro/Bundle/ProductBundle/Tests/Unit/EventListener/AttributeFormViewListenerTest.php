@@ -91,7 +91,6 @@ class AttributeFormViewListenerTest extends \PHPUnit\Framework\TestCase
                 ],
             ]));
 
-
         $this->translator = $this->createMock(TranslatorInterface::class);
         $this->translator->expects($this->any())
             ->method('trans')

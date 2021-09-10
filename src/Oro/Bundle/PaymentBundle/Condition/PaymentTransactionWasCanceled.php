@@ -25,9 +25,6 @@ class PaymentTransactionWasCanceled extends AbstractCondition implements Context
     /** @var PaymentTransactionRepository */
     protected $transactionRepository;
 
-    /**
-     * @param PaymentTransactionRepository $transactionRepository
-     */
     public function __construct(PaymentTransactionRepository $transactionRepository)
     {
         $this->transactionRepository = $transactionRepository;

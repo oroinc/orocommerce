@@ -19,10 +19,6 @@ class EnumProductVariantFieldValuesCacheWarmer extends CacheWarmer
     /** @var EnumVariantFieldValueHandler */
     private $enumVariantFieldValueHandler;
 
-    /**
-     * @param EntityWithFieldsProvider $entityWithFieldsProvider
-     * @param EnumVariantFieldValueHandler $enumVariantFieldValueHandler
-     */
     public function __construct(
         EntityWithFieldsProvider $entityWithFieldsProvider,
         EnumVariantFieldValueHandler $enumVariantFieldValueHandler

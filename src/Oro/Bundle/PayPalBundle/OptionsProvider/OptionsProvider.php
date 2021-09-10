@@ -23,10 +23,6 @@ class OptionsProvider implements OptionsProviderInterface
      */
     private $lineItemOptionsProvider;
 
-    /**
-     * @param PaymentOrderShippingAddressOptionsProvider $orderShippingAddressOptionsProvider
-     * @param LineItemOptionsProvider $lineItemOptionsProvider
-     */
     public function __construct(
         PaymentOrderShippingAddressOptionsProvider $orderShippingAddressOptionsProvider,
         LineItemOptionsProvider $lineItemOptionsProvider
@@ -35,10 +31,6 @@ class OptionsProvider implements OptionsProviderInterface
         $this->lineItemOptionsProvider = $lineItemOptionsProvider;
     }
 
-    /**
-     * @param AbstractAddress $address
-     * @return AddressOptionModel
-     */
     public function getShippingAddressOptions(AbstractAddress $address): AddressOptionModel
     {
         return $this->orderShippingAddressOptionsProvider->getShippingAddressOptions($address);

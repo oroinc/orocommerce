@@ -20,29 +20,21 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PriceAttributeProductPriceImportStrategyTest extends TestCase
 {
-    const PRICE = 10.26;
-    const CURRENCY = 'USD';
+    private const PRICE = 10.26;
+    private const CURRENCY = 'USD';
 
-    /**
-     * @var FieldHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $fieldHelper;
-
-    /**
-     * @var PriceAttributeProductPriceImportStrategy
-     */
-    private $strategy;
+    private PriceAttributeProductPriceImportStrategy $strategy;
 
     protected function setUp(): void
     {
-        $this->fieldHelper = $this->createMock(FieldHelper::class);
-        $this->fieldHelper
+        $fieldHelper = $this->createMock(FieldHelper::class);
+        $fieldHelper
             ->expects(static::any())
             ->method('getIdentityValues')
             ->willReturn(['value']);
-        $this->fieldHelper
+        $fieldHelper
             ->expects(static::any())
-            ->method('getFields')
+            ->method('getEntityFields')
             ->willReturn([]);
 
         $strategyHelper = $this->createMock(ImportStrategyHelper::class);
@@ -54,7 +46,7 @@ class PriceAttributeProductPriceImportStrategyTest extends TestCase
         $this->strategy = new PriceAttributeProductPriceImportStrategy(
             $this->createMock(EventDispatcherInterface::class),
             $strategyHelper,
-            $this->fieldHelper,
+            $fieldHelper,
             $this->createMock(DatabaseHelper::class),
             $this->createMock(EntityClassNameProviderInterface::class),
             $this->createMock(TranslatorInterface::class),
@@ -67,7 +59,7 @@ class PriceAttributeProductPriceImportStrategyTest extends TestCase
         $this->strategy->setOwnershipSetter($this->createMock(EntityOwnershipAssociationsSetter::class));
     }
 
-    public function testStrategySetsPriceAndQuantity()
+    public function testStrategySetsPriceAndQuantity(): void
     {
         $entity = $this->createAttributePrice(self::PRICE, self::CURRENCY);
 
@@ -81,7 +73,7 @@ class PriceAttributeProductPriceImportStrategyTest extends TestCase
         static::assertSame(1, $entity->getQuantity());
     }
 
-    public function testStrategySetsPriceToNullIfValueIsNull()
+    public function testStrategySetsPriceToNullIfValueIsNull(): void
     {
         $entity = $this->createAttributePrice(null, self::CURRENCY);
 
@@ -91,7 +83,7 @@ class PriceAttributeProductPriceImportStrategyTest extends TestCase
         static::assertNull($entity->getPrice());
     }
 
-    public function testStrategySetsPriceToNullIfCurrencyIsNull()
+    public function testStrategySetsPriceToNullIfCurrencyIsNull(): void
     {
         $entity = $this->createAttributePrice(self::PRICE, null);
 
@@ -101,7 +93,7 @@ class PriceAttributeProductPriceImportStrategyTest extends TestCase
         static::assertNull($entity->getPrice());
     }
 
-    public function testStrategyReSetsPriceToNull()
+    public function testStrategyReSetsPriceToNull(): void
     {
         $entity = $this->createAttributePrice(self::PRICE, self::CURRENCY);
 

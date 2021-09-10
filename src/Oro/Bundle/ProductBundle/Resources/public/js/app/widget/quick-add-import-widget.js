@@ -10,14 +10,14 @@ define(function(require) {
 
     const QuickAddImportWidget = DialogWidget.extend({
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function QuickAddImportWidget(options) {
             QuickAddImportWidget.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             options = _.defaults(options || {}, {

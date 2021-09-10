@@ -164,9 +164,6 @@ class WebCatalogCacheProcessorTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @param ContentNode $node
-     */
     private function assertProcessCalled(ContentNode $node)
     {
         $this->producer->expects($this->once())

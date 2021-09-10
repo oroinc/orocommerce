@@ -61,9 +61,6 @@ class RequestHandlerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getRecalculateTotalProvider
-     *
-     * @param $originalClassName
-     * @param $entityId
      */
     public function testRecalculateTotalsWithoutEntityID($originalClassName, $entityId)
     {

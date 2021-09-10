@@ -25,11 +25,6 @@ abstract class AbstractItemResolver implements ResolverInterface
      */
     protected $matcher;
 
-    /**
-     * @param UnitResolver $unitResolver
-     * @param RowTotalResolver $rowTotalResolver
-     * @param MatcherInterface $matcher
-     */
     public function __construct(
         UnitResolver $unitResolver,
         RowTotalResolver $rowTotalResolver,
@@ -39,7 +34,6 @@ abstract class AbstractItemResolver implements ResolverInterface
         $this->rowTotalResolver = $rowTotalResolver;
         $this->matcher = $matcher;
     }
-
 
     /**
      * @param Taxable $taxable

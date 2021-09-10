@@ -48,7 +48,6 @@ class ShippingContextToRuleValuesConverterTest extends \PHPUnit\Framework\TestCa
 
     /**
      * @dataProvider convertDataProvider
-     * @param ShippingContext $context
      */
     public function testConvert(ShippingContext $context): void
     {

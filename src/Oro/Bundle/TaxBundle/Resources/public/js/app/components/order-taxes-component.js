@@ -29,14 +29,14 @@ define(function(require) {
         totalsTemplate: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function OrderTaxesComponent(options) {
             OrderTaxesComponent.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);

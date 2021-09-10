@@ -32,12 +32,6 @@ abstract class AbstractLoadVisibility implements ProcessorInterface
     /** @var VisibilityIdHelper */
     private $visibilityIdHelper;
 
-    /**
-     * @param DoctrineHelper     $doctrineHelper
-     * @param AclHelper          $aclHelper
-     * @param WebsiteManager     $websiteManager
-     * @param VisibilityIdHelper $visibilityIdHelper
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         AclHelper $aclHelper,
@@ -130,30 +124,15 @@ abstract class AbstractLoadVisibility implements ProcessorInterface
         return $this->getReference(Website::class, $this->getId($visibilityId, self::WEBSITE_ID_PROPERTY_PATH));
     }
 
-    /**
-     * @param string $entityClass
-     * @param int    $entityId
-     *
-     * @return object
-     */
     protected function getReference(string $entityClass, int $entityId): object
     {
         return $this->doctrineHelper->getEntityReference($entityClass, $entityId);
     }
 
-    /**
-     * @return string
-     */
     abstract protected function getVisibilityEntityClass(): string;
 
-    /**
-     * @return string
-     */
     abstract protected function getVisibilityAssociationName(): string;
 
-    /**
-     * @return string
-     */
     protected function getVisibilityAssociationIdPropertyPath(): string
     {
         return $this->getVisibilityAssociationName() . '.id';

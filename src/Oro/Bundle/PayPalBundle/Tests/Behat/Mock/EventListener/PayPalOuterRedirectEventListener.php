@@ -35,11 +35,6 @@ class PayPalOuterRedirectEventListener
      */
     private $httpKernel;
 
-    /**
-     * @param RouterInterface $router
-     * @param DoctrineHelper $doctrineHelper
-     * @param HttpKernelInterface $httpKernel
-     */
     public function __construct(
         RouterInterface $router,
         DoctrineHelper $doctrineHelper,
@@ -50,9 +45,6 @@ class PayPalOuterRedirectEventListener
         $this->httpKernel = $httpKernel;
     }
 
-    /**
-     * @param RequestEvent $event
-     */
     public function onKernelRequest(RequestEvent $event): void
     {
         $request = $event->getRequest();
@@ -120,7 +112,7 @@ class PayPalOuterRedirectEventListener
      * @param bool $transactionResult
      * @return string
      */
-    protected function getRedirectRoute($transactionResult)
+    protected function getRedirectRoute(bool $transactionResult): string
     {
         return $transactionResult ? self::SUCCESS_REDIRECT_ROUTE : self::FAILURE_REDIRECT_ROUTE;
     }
@@ -130,7 +122,7 @@ class PayPalOuterRedirectEventListener
      * @param array $params
      * @return string
      */
-    protected function generateUrl($route, $params)
+    protected function generateUrl(string $route, array $params): string
     {
         return $this->router->generate(
             $route,

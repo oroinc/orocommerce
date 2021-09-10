@@ -21,7 +21,6 @@ use Oro\Bundle\RedirectBundle\Tests\Functional\DataFixtures\LoadSlugsData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Psr\Container\ContainerInterface;
-use Symfony\Component\Routing\Exception\RouteNotFoundException;
 
 class SluggableUrlGeneratorTest extends WebTestCase
 {
@@ -39,25 +38,12 @@ class SluggableUrlGeneratorTest extends WebTestCase
         );
     }
 
-    public function testGenerateForNullRouteName()
-    {
-        /** @var UserLocalizationManager|\PHPUnit\Framework\MockObject\MockObject $localizationManager */
-        $localizationManager = $this->createMock(UserLocalizationManager::class);
-        $localizationManager->expects($this->any())
-            ->method('getCurrentLocalization')
-            ->willReturn(null);
-        $urlGenerator = $this->getUrlGenerator('database', 'local', $localizationManager);
-
-        $this->expectException(RouteNotFoundException::class);
-        $urlGenerator->generate(null);
-    }
-
     /**
      * @dataProvider urlServicesDataProvider
      * @param string $urlProviderType
      * @param string $urlCacheService
      */
-    public function testGenerateUrlFirstDefaultLoadedThenLocalized($urlProviderType, $urlCacheService)
+    public function testGenerateUrlFirstDefaultLoadedThenLocalized($urlProviderType, $urlCacheService): void
     {
         /** @var Slug $defaultSlug */
         $defaultSlug = $this->getReference(LoadSlugsData::SLUG_URL_LOCALIZATION_1);
@@ -67,7 +53,7 @@ class SluggableUrlGeneratorTest extends WebTestCase
         $localization = $this->getEntity(Localization::class, ['id' => $localizedSlug->getLocalization()->getId()]);
         /** @var UserLocalizationManager|\PHPUnit\Framework\MockObject\MockObject $localizationManager */
         $localizationManager = $this->createMock(UserLocalizationManager::class);
-        $localizationManager->expects($this->exactly(2))
+        $localizationManager->expects(self::exactly(2))
             ->method('getCurrentLocalization')
             ->willReturnOnConsecutiveCalls(
                 null,
@@ -76,11 +62,11 @@ class SluggableUrlGeneratorTest extends WebTestCase
 
         $urlGenerator = $this->getUrlGenerator($urlProviderType, $urlCacheService, $localizationManager);
 
-        $this->assertEquals(
+        self::assertEquals(
             $defaultSlug->getUrl(),
             $urlGenerator->generate($defaultSlug->getRouteName(), $defaultSlug->getRouteParameters())
         );
-        $this->assertEquals(
+        self::assertEquals(
             $localizedSlug->getUrl(),
             $urlGenerator->generate($defaultSlug->getRouteName(), $defaultSlug->getRouteParameters())
         );
@@ -91,7 +77,7 @@ class SluggableUrlGeneratorTest extends WebTestCase
      * @param string $urlProviderType
      * @param string $urlCacheService
      */
-    public function testGenerateUrlWithFallbackToDefaultSlug($urlProviderType, $urlCacheService)
+    public function testGenerateUrlWithFallbackToDefaultSlug($urlProviderType, $urlCacheService): void
     {
         /** @var Slug $defaultSlug */
         $defaultSlug = $this->getReference(LoadSlugsData::SLUG_URL_PAGE_2);
@@ -99,13 +85,13 @@ class SluggableUrlGeneratorTest extends WebTestCase
         $localization = $this->getEntity(Localization::class, ['id' => 1]);
         /** @var UserLocalizationManager|\PHPUnit\Framework\MockObject\MockObject $localizationManager */
         $localizationManager = $this->createMock(UserLocalizationManager::class);
-        $localizationManager->expects($this->any())
+        $localizationManager->expects(self::any())
             ->method('getCurrentLocalization')
             ->willReturn($localization);
 
         $urlGenerator = $this->getUrlGenerator($urlProviderType, $urlCacheService, $localizationManager);
 
-        $this->assertEquals(
+        self::assertEquals(
             $defaultSlug->getUrl(),
             $urlGenerator->generate($defaultSlug->getRouteName(), $defaultSlug->getRouteParameters())
         );
@@ -116,7 +102,7 @@ class SluggableUrlGeneratorTest extends WebTestCase
      * @param string $urlProviderType
      * @param string $urlCacheService
      */
-    public function testGenerateUrlLocalizedVersionWithoutFallbacks($urlProviderType, $urlCacheService)
+    public function testGenerateUrlLocalizedVersionWithoutFallbacks($urlProviderType, $urlCacheService): void
     {
         /** @var Slug $slug */
         $slug = $this->getReference(LoadSlugsData::PAGE_3_LOCALIZED_EN_CA);
@@ -124,21 +110,18 @@ class SluggableUrlGeneratorTest extends WebTestCase
         $localization = $this->getEntity(Localization::class, ['id' => $slug->getLocalization()->getId()]);
         /** @var UserLocalizationManager|\PHPUnit\Framework\MockObject\MockObject $localizationManager */
         $localizationManager = $this->createMock(UserLocalizationManager::class);
-        $localizationManager->expects($this->any())
+        $localizationManager->expects(self::any())
             ->method('getCurrentLocalization')
             ->willReturn($localization);
 
         $urlGenerator = $this->getUrlGenerator($urlProviderType, $urlCacheService, $localizationManager);
 
-        $this->assertEquals(
+        self::assertEquals(
             $slug->getUrl(),
             $urlGenerator->generate($slug->getRouteName(), $slug->getRouteParameters())
         );
     }
 
-    /**
-     * @return array
-     */
     public function urlServicesDataProvider(): array
     {
         return [
@@ -176,7 +159,7 @@ class SluggableUrlGeneratorTest extends WebTestCase
         }
 
         $contextUrlProviders = $this->createMock(ContainerInterface::class);
-        $contextUrlProviders->expects($this->any())
+        $contextUrlProviders->expects(self::any())
             ->method('has')
             ->willReturn(false);
 
@@ -195,7 +178,7 @@ class SluggableUrlGeneratorTest extends WebTestCase
      * @param string $type
      * @return UrlCacheInterface
      */
-    private function createCache($type)
+    private function createCache($type): UrlCacheInterface
     {
         switch ($type) {
             case 'storage':

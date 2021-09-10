@@ -824,9 +824,6 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
             ->setQty(15);
     }
 
-    /**
-     * @return AddressOptionModel
-     */
     private function getAddressOptionModel(): AddressOptionModel
     {
         return (new AddressOptionModel())
@@ -839,7 +836,6 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
             ->setPostalCode('Zip Code')
             ->setCountryIso2('US');
     }
-
 
     private function getDelayedCaptureOptions(): array
     {

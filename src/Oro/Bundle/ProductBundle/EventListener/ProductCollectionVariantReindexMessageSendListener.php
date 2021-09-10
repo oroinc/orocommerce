@@ -42,11 +42,6 @@ class ProductCollectionVariantReindexMessageSendListener
      */
     private $segments = [];
 
-    /**
-     * @param MessageProducerInterface $messageProducer
-     * @param ProductCollectionSegmentHelper $productCollectionSegmentHelper
-     * @param SegmentMessageFactory $messageFactory
-     */
     public function __construct(
         MessageProducerInterface $messageProducer,
         ProductCollectionSegmentHelper $productCollectionSegmentHelper,
@@ -92,9 +87,6 @@ class ProductCollectionVariantReindexMessageSendListener
         }
     }
 
-    /**
-     * @param Segment $segment
-     */
     public function scheduleMessageBySegmentDefinition(Segment $segment)
     {
         $websiteIds = $this->productCollectionSegmentHelper->getWebsiteIdsBySegment($segment);
@@ -124,10 +116,6 @@ class ProductCollectionVariantReindexMessageSendListener
         }
     }
 
-    /**
-     * @param array $message
-     * @return string
-     */
     private function getMessageKey(array $message): string
     {
         return md5(json_encode($message));

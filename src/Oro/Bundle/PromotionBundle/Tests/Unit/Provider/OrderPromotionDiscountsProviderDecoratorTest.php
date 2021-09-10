@@ -112,12 +112,6 @@ class OrderPromotionDiscountsProviderDecoratorTest extends \PHPUnit\Framework\Te
             ->willReturn($discounts);
     }
 
-    /**
-     * @param PersistentCollection $lineItems
-     * @param PersistentCollection $appliedPromotions
-     *
-     * @return Order
-     */
     private function getOrder(PersistentCollection $lineItems, PersistentCollection $appliedPromotions): Order
     {
         /** @var Order $order */

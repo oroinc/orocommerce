@@ -19,10 +19,6 @@ class ProductIndexScheduler
     /** @var ProductReindexManager */
     private $productReindexManager;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param ProductReindexManager $productReindexManager
-     */
     public function __construct(DoctrineHelper $doctrineHelper, ProductReindexManager $productReindexManager)
     {
         $this->doctrineHelper = $doctrineHelper;

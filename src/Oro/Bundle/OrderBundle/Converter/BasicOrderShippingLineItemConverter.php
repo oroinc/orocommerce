@@ -19,10 +19,6 @@ class BasicOrderShippingLineItemConverter implements OrderShippingLineItemConver
      */
     private $shippingLineItemBuilderFactory = null;
 
-    /**
-     * @param null|ShippingLineItemCollectionFactoryInterface $shippingLineItemCollectionFactory
-     * @param null|ShippingLineItemBuilderFactoryInterface $shippingLineItemBuilderFactory
-     */
     public function __construct(
         ShippingLineItemCollectionFactoryInterface $shippingLineItemCollectionFactory = null,
         ShippingLineItemBuilderFactoryInterface $shippingLineItemBuilderFactory = null

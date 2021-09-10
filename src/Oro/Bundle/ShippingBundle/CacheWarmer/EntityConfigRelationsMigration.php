@@ -85,9 +85,6 @@ class EntityConfigRelationsMigration
         $this->removeEntityFromEntityConfig($configConnection, self::SHIPPING_RULE_DESTINATION_CLASS_NAME);
     }
 
-    /**
-     * @param Connection $configConnection
-     */
     private function removeNoteRelationBeforeUpdateAssociationKind(Connection $configConnection)
     {
         $associationName = ExtendHelper::buildAssociationName(static::SHIPPING_RULE_CLASS_NAME);
@@ -97,9 +94,6 @@ class EntityConfigRelationsMigration
         );
     }
 
-    /**
-     * @param Connection $configConnection
-     */
     private function removeNoteRelationAfterUpdateAssociationKind(Connection $configConnection)
     {
         $associationName = ExtendHelper::buildAssociationName(
@@ -112,9 +106,6 @@ class EntityConfigRelationsMigration
         );
     }
 
-    /**
-     * @param Connection $configConnection
-     */
     private function removeActivityListRelation(Connection $configConnection)
     {
         $associationName = ExtendHelper::buildAssociationName(
@@ -143,10 +134,6 @@ class EntityConfigRelationsMigration
         );
     }
 
-    /**
-     * @param ParametrizedMigrationQuery $query
-     * @param Connection $connection
-     */
     private function executeUpdateRelationsQuery(ParametrizedMigrationQuery $query, Connection $connection)
     {
         $query->setConnection($connection);

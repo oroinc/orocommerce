@@ -574,14 +574,24 @@ services:
             - ~ # service locator
 
     oro_tax.repository.product_tax_code:
-        class: 'Oro\Bundle\TaxBundle\Entity\Repository\ProductTaxCodeRepository'
+        alias: Oro\Bundle\TaxBundle\Entity\Repository\ProductTaxCodeRepository
+
+    Oro\Bundle\TaxBundle\Entity\Repository\ProductTaxCodeRepository:
         parent: oro_entity.abstract_repository
-        arguments: ['Oro\Bundle\TaxBundle\Entity\ProductTaxCode']
+        arguments:
+            - 'Oro\Bundle\TaxBundle\Entity\ProductTaxCode'
+        tags:
+            - { name: doctrine.repository_service }
 
     oro_tax.repository.customer_tax_code:
-        class: 'Oro\Bundle\TaxBundle\Entity\Repository\CustomerTaxCodeRepository'
+        alias: Oro\Bundle\TaxBundle\Entity\Repository\CustomerTaxCodeRepository
+
+    Oro\Bundle\TaxBundle\Entity\Repository\CustomerTaxCodeRepository:
         parent: oro_entity.abstract_repository
-        arguments: ['Oro\Bundle\TaxBundle\Entity\CustomerTaxCode']
+        arguments:
+            - 'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode'
+        tags:
+            - { name: doctrine.repository_service }
 
     oro_tax.provider.tax_code:
         class: 'Oro\Bundle\TaxBundle\Provider\TaxCodeProvider'

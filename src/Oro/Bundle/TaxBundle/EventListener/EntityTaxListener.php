@@ -8,38 +8,34 @@ use Oro\Bundle\TaxBundle\Provider\TaxProviderInterface;
 use Oro\Bundle\TaxBundle\Provider\TaxProviderRegistry;
 
 /**
- * Doctrine ORM entity listener for Order and OrderLineItem entities
- * This listener handle tax saving/removing/update by calling correspond methods of tax provider
+ * Doctrine ORM entity listener for Order and OrderLineItem entities.
+ * This listener handle tax saving/removing/update by calling correspond methods of tax provider.
  */
 class EntityTaxListener
 {
-    /** @var TaxProviderRegistry */
-    private $taxProviderRegistry;
+    private TaxProviderRegistry $taxProviderRegistry;
+    private string $entityClass;
 
-    /** @var string */
-    private $entityClass;
-
-    /**
-     * @param TaxProviderRegistry $taxProviderRegistry
-     * @param string $entityClass
-     */
     public function __construct(TaxProviderRegistry $taxProviderRegistry, string $entityClass)
     {
         $this->taxProviderRegistry = $taxProviderRegistry;
         $this->entityClass = $entityClass;
     }
 
-    /**
-     * @param OnFlushEventArgs $event
-     */
-    public function onFlush(OnFlushEventArgs $event)
+    public function onFlush(OnFlushEventArgs $event): void
     {
         $em = $event->getEntityManager();
         $uow = $em->getUnitOfWork();
+        $entities = $uow->getScheduledEntityUpdates();
+        if (!$entities) {
+            return;
+        }
+
+        $taxProvider = $this->getTaxProvider();
         try {
-            foreach ($uow->getScheduledEntityUpdates() as $entity) {
+            foreach ($entities as $entity) {
                 if (is_a($entity, $this->entityClass)) {
-                    $this->getProvider()->saveTax($entity);
+                    $taxProvider->saveTax($entity);
                 }
             }
         } catch (TaxationDisabledException $e) {
@@ -47,22 +43,16 @@ class EntityTaxListener
         }
     }
 
-    /**
-     * @param object $entity
-     */
-    public function preRemove($entity)
+    public function preRemove(object $entity): void
     {
         try {
-            $this->getProvider()->removeTax($entity);
+            $this->getTaxProvider()->removeTax($entity);
         } catch (TaxationDisabledException $e) {
             // Taxation disabled, skip tax removing
         }
     }
 
-    /**
-     * @return TaxProviderInterface
-     */
-    private function getProvider()
+    private function getTaxProvider(): TaxProviderInterface
     {
         return $this->taxProviderRegistry->getEnabledProvider();
     }

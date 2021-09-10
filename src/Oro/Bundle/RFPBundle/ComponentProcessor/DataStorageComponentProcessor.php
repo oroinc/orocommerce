@@ -24,14 +24,6 @@ class DataStorageComponentProcessor extends DataStorageAwareComponentProcessor
 
     /**
      * Processor constructor.
-     * @param UrlGeneratorInterface $router
-     * @param ProductDataStorage $storage
-     * @param AuthorizationCheckerInterface $authorizationChecker
-     * @param TokenAccessorInterface $tokenAccessor
-     * @param Session $session
-     * @param TranslatorInterface $translator
-     * @param RequestDataStorageExtension $requestDataStorageExtension
-     * @param FeatureChecker $featureChecker
      */
     public function __construct(
         UrlGeneratorInterface $router,

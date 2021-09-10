@@ -19,19 +19,12 @@ class CategoryVisibilityPostSubmitListener
      */
     protected $registry;
 
-    /**
-     * @param VisibilityFormPostSubmitDataHandler $dataHandler
-     * @param ManagerRegistry $registry
-     */
     public function __construct(VisibilityFormPostSubmitDataHandler $dataHandler, ManagerRegistry $registry)
     {
         $this->dataHandler = $dataHandler;
         $this->registry = $registry;
     }
 
-    /**
-     * @param AfterFormProcessEvent $event
-     */
     public function onPostSubmit(AfterFormProcessEvent $event)
     {
         $form = $event->getForm();

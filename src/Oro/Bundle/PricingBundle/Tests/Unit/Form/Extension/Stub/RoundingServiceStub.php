@@ -6,7 +6,6 @@ use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 
 class RoundingServiceStub implements RoundingServiceInterface
 {
-
     /**
      * {@inheritdoc}
      */

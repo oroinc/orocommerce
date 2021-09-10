@@ -11,14 +11,8 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  */
 interface ProductPriceScopeCriteriaInterface
 {
-    /**
-     * @param Customer|null $customer
-     */
     public function setCustomer(Customer $customer = null);
 
-    /**
-     * @return Customer|null
-     */
     public function getCustomer(): ?Customer;
 
     /**
@@ -31,14 +25,8 @@ interface ProductPriceScopeCriteriaInterface
      */
     public function getContext();
 
-    /**
-     * @param Website|null $website
-     */
     public function setWebsite(Website $website = null);
 
-    /**
-     * @return Website|null
-     */
     public function getWebsite(): ?Website;
 
     /**
@@ -53,8 +41,5 @@ interface ProductPriceScopeCriteriaInterface
      */
     public function setData(string $key, $value);
 
-    /**
-     * @param string $key
-     */
     public function unsetData(string $key);
 }

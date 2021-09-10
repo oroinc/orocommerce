@@ -82,13 +82,9 @@ class TempTableOutputResultModifier extends AbstractOutputResultModifier
             return preg_replace('/(\s*JOIN)\s+(\w+)\s+(\w+)/i', '$1 ' . $aliasToTable[$alias] .  ' $3', $result);
         }
 
-
         return $result;
     }
 
-    /**
-     * @return bool
-     */
     private function isApplicable(): bool
     {
         return $this->getQuery()->hasHint(self::ORO_TEMP_TABLE_ALIASES);

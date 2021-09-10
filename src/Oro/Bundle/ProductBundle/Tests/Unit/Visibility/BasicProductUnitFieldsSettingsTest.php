@@ -37,7 +37,6 @@ class BasicProductUnitFieldsSettingsTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider productsDataProvider
-     * @param Product|null $product
      */
     public function testIsProductPrimaryUnitVisible(Product $product = null)
     {
@@ -46,7 +45,6 @@ class BasicProductUnitFieldsSettingsTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider productsDataProvider
-     * @param Product|null $product
      */
     public function testIsAddingAdditionalUnitsToProductAvailable(Product $product = null)
     {

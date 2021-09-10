@@ -31,7 +31,7 @@ class ProductImageExtensionTest extends \PHPUnit\Framework\TestCase
         $this->imagePlaceholderProvider = $this->createMock(ImagePlaceholderProviderInterface::class);
 
         $container = self::getContainerBuilder()
-            ->add('oro_attachment.manager', $this->attachmentManager)
+            ->add(AttachmentManager::class, $this->attachmentManager)
             ->add('oro_product.provider.product_image_placeholder', $this->imagePlaceholderProvider)
             ->add('oro_product.helper.product_image_helper', new ProductImageHelper())
             ->getContainer($this);
@@ -39,16 +39,7 @@ class ProductImageExtensionTest extends \PHPUnit\Framework\TestCase
         $this->extension = new ProductImageExtension($container);
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(ProductImageExtension::NAME, $this->extension->getName());
-    }
-
     /**
-     * @param Product $product
-     * @param array $imageTypes
-     * @param array $expectedResult
-     *
      * @dataProvider collectProductImageByTypesProvider
      */
     public function testCollectProductImagesByTypes(Product $product, array $imageTypes, array $expectedResult)
@@ -62,9 +53,6 @@ class ProductImageExtensionTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedResult, array_values($actualResult));
     }
 
-    /**
-     * @return array
-     */
     public function collectProductImageByTypesProvider(): array
     {
         $product = new Product();
@@ -108,14 +96,12 @@ class ProductImageExtensionTest extends \PHPUnit\Framework\TestCase
         $file = new File();
         $filter = 'product_small';
 
-        $this->attachmentManager
-            ->expects($this->once())
+        $this->attachmentManager->expects($this->once())
             ->method('getFilteredImageUrl')
             ->with($file, $filter)
             ->willReturn('/path/to/filtered/image');
 
-        $this->imagePlaceholderProvider
-            ->expects($this->never())
+        $this->imagePlaceholderProvider->expects($this->never())
             ->method('getPath');
 
         $this->assertEquals(
@@ -129,12 +115,10 @@ class ProductImageExtensionTest extends \PHPUnit\Framework\TestCase
         $filter = 'product_small';
         $path = '/some/test/path.npg';
 
-        $this->attachmentManager
-            ->expects($this->never())
+        $this->attachmentManager->expects($this->never())
             ->method('getFilteredImageUrl');
 
-        $this->imagePlaceholderProvider
-            ->expects($this->once())
+        $this->imagePlaceholderProvider->expects($this->once())
             ->method('getPath')
             ->with($filter)
             ->willReturn($path);
@@ -161,12 +145,7 @@ class ProductImageExtensionTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @param int $id
-     * @param array $imageTypes
-     * @return StubProductImage
-     */
-    protected function createProductImage(int $id, array $imageTypes = []): StubProductImage
+    private function createProductImage(int $id, array $imageTypes = []): StubProductImage
     {
         $productImage = new StubProductImage();
         $productImage->setId($id);

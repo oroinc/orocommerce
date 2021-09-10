@@ -6,7 +6,7 @@ define(function(require) {
 
     const BackendActionsPanel = ActionsPanel.extend({
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function BackendActionsPanel(options) {
             BackendActionsPanel.__super__.constructor.call(this, options);

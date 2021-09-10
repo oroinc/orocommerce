@@ -45,14 +45,6 @@ class ContentNodeTreeHandler extends AbstractTreeHandler
      */
     private $createRedirect = false;
 
-    /**
-     * @param string $entityClass
-     * @param ManagerRegistry $managerRegistry
-     * @param LocalizationHelper $localizationHelper
-     * @param MessageProducerInterface $messageProducer
-     * @param ResolveNodeSlugsMessageFactory $messageFactory
-     * @param UniqueContentNodeSlugPrototypesResolver $uniqueSlugPrototypesResolver
-     */
     public function __construct(
         string $entityClass,
         ManagerRegistry $managerRegistry,

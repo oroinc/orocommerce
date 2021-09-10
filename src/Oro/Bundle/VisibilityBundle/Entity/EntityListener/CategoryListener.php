@@ -16,18 +16,11 @@ class CategoryListener
     /** @var MessageProducerInterface */
     private $messageProducer;
 
-    /**
-     * @param MessageProducerInterface $messageProducer
-     */
     public function __construct(MessageProducerInterface $messageProducer)
     {
         $this->messageProducer = $messageProducer;
     }
 
-    /**
-     * @param Category           $category
-     * @param PreUpdateEventArgs $event
-     */
     public function preUpdate(Category $category, PreUpdateEventArgs $event): void
     {
         if ($event->hasChangedField(Category::FIELD_PARENT_CATEGORY)) {
@@ -35,9 +28,6 @@ class CategoryListener
         }
     }
 
-    /**
-     * @param Category $category
-     */
     public function preRemove(Category $category): void
     {
         $this->messageProducer->send(Topics::CATEGORY_REMOVE, ['id' => $category->getId()]);

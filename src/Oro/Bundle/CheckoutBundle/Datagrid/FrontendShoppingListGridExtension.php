@@ -20,11 +20,6 @@ class FrontendShoppingListGridExtension extends AbstractExtension
     /** @var int */
     private $priority;
 
-    /**
-     * @param array $grids
-     * @param array $actions
-     * @param int $priority
-     */
     public function __construct(array $grids, array $actions, int $priority)
     {
         $this->grids = $grids;

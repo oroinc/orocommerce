@@ -23,10 +23,6 @@ class EnsureDefaultShoppingListExistsForRequestData implements ProcessorInterfac
     /** @var RequestDataAccessor */
     private $requestDataAccessor;
 
-    /**
-     * @param DefaultShoppingListFactory $defaultShoppingListFactory
-     * @param RequestDataAccessor        $requestDataAccessor
-     */
     public function __construct(
         DefaultShoppingListFactory $defaultShoppingListFactory,
         RequestDataAccessor $requestDataAccessor
@@ -48,7 +44,7 @@ class EnsureDefaultShoppingListExistsForRequestData implements ProcessorInterfac
         $notResolvedIdentifiers = $context->getNotResolvedIdentifiers();
         $requestDataPrefix = 'requestData' . ConfigUtil::PATH_DELIMITER;
         foreach ($notResolvedIdentifiers as $path => $identifier) {
-            if (0 !== strpos($path, $requestDataPrefix)) {
+            if (!str_starts_with($path, $requestDataPrefix)) {
                 continue;
             }
             if (is_a($identifier->getEntityClass(), ShoppingList::class, true)

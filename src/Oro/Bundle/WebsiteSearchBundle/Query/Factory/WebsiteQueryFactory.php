@@ -13,18 +13,11 @@ class WebsiteQueryFactory implements QueryFactoryInterface
     /** @var EngineInterface */
     protected $engine;
 
-    /**
-     * @param EngineInterface $engine
-     */
     public function __construct(EngineInterface $engine)
     {
         $this->engine = $engine;
     }
 
-    /**
-     * @param array $config
-     * @param       $query
-     */
     private function configureQuery(array $config, $query)
     {
         $builder = new YamlToSearchQueryConverter();

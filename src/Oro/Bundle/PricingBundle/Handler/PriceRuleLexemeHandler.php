@@ -32,11 +32,6 @@ class PriceRuleLexemeHandler
      */
     protected $priceRuleProvider;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param ExpressionParser $parser
-     * @param FieldsProviderInterface $priceRuleProvider
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         ExpressionParser $parser,
@@ -47,9 +42,6 @@ class PriceRuleLexemeHandler
         $this->priceRuleProvider = $priceRuleProvider;
     }
 
-    /**
-     * @param PriceList $priceList
-     */
     public function updateLexemesWithoutFlush(PriceList $priceList)
     {
         $assignmentRule = $priceList->getProductAssignmentRule();
@@ -87,16 +79,13 @@ class PriceRuleLexemeHandler
         }
     }
 
-    /**
-     * @param PriceList $priceList
-     */
     public function updateLexemes(PriceList $priceList)
     {
         $this->updateLexemesWithoutFlush($priceList);
         $em = $this->doctrineHelper->getEntityManager(PriceRuleLexeme::class);
         $em->flush();
     }
-    
+
     /**
      * @param array $lexemes
      *  [
@@ -115,12 +104,12 @@ class PriceRuleLexemeHandler
          */
         foreach ($lexemes as $class => $fieldNames) {
             $containerId = null;
-            if (strpos($class, '|') !== false) {
-                list($class, $containerId) = explode('|', $class);
+            if (str_contains($class, '|')) {
+                [$class, $containerId] = explode('|', $class);
             }
 
-            if (strpos($class, '::') !== false) {
-                list($containerClass, $fieldName) = explode('::', $class);
+            if (str_contains($class, '::')) {
+                [$containerClass, $fieldName] = explode('::', $class);
                 $lexeme = new PriceRuleLexeme();
                 $lexeme->setPriceRule($priceRule);
                 $lexeme->setPriceList($priceList);

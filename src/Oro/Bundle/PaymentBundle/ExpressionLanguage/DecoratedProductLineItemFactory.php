@@ -17,9 +17,6 @@ class DecoratedProductLineItemFactory
      */
     private $virtualFieldsProductDecoratorFactory;
 
-    /**
-     * @param VirtualFieldsProductDecoratorFactory $virtualFieldsProductDecoratorFactory
-     */
     public function __construct(VirtualFieldsProductDecoratorFactory $virtualFieldsProductDecoratorFactory)
     {
         $this->virtualFieldsProductDecoratorFactory = $virtualFieldsProductDecoratorFactory;

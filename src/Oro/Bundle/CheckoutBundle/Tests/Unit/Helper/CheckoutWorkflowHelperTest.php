@@ -60,10 +60,6 @@ class CheckoutWorkflowHelperTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider workflowItemProvider
-     *
-     * @param $items
-     * @param $expectException
-     * @param $expected
      */
     public function testGetWorkflowItem($items, $expectException, $expected)
     {

@@ -18,12 +18,8 @@ use Twig\TwigFunction;
  */
 class DigitalAssetExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    /** @var ContainerInterface */
-    private $container;
+    private ContainerInterface $container;
 
-    /**
-     * @param ContainerInterface $container
-     */
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
@@ -54,7 +50,7 @@ class DigitalAssetExtension extends AbstractExtension implements ServiceSubscrib
         int $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH
     ): string {
         try {
-            return $this->container->get(FileUrlByUuidProvider::class)->getFilteredImageUrl(
+            return $this->getFileUrlByUuidProvider()->getFilteredImageUrl(
                 $fileUuid,
                 $filterName,
                 $referenceType
@@ -64,13 +60,6 @@ class DigitalAssetExtension extends AbstractExtension implements ServiceSubscrib
         }
     }
 
-    /**
-     * @param int $digitalAssetId
-     * @param string $fileUuid
-     * @param string $action
-     * @param int $referenceType
-     * @return string
-     */
     public function getWysiwygFileUrl(
         int $digitalAssetId,
         string $fileUuid,
@@ -78,7 +67,7 @@ class DigitalAssetExtension extends AbstractExtension implements ServiceSubscrib
         int $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH
     ): string {
         try {
-            return $this->container->get(FileUrlByUuidProvider::class)->getFileUrl(
+            return $this->getFileUrlByUuidProvider()->getFileUrl(
                 $fileUuid,
                 $action,
                 $referenceType
@@ -91,10 +80,15 @@ class DigitalAssetExtension extends AbstractExtension implements ServiceSubscrib
     /**
      * {@inheritDoc}
      */
-    public static function getSubscribedServices(): array
+    public static function getSubscribedServices()
     {
         return [
             FileUrlByUuidProvider::class,
         ];
+    }
+
+    private function getFileUrlByUuidProvider(): FileUrlByUuidProvider
+    {
+        return $this->container->get(FileUrlByUuidProvider::class);
     }
 }

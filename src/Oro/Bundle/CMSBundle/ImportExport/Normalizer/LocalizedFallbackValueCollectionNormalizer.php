@@ -14,7 +14,7 @@ class LocalizedFallbackValueCollectionNormalizer extends BaseNormalizer
     /**
      * {@inheritdoc}
      */
-    public function normalize($object, $format = null, array $context = []): array
+    public function normalize($object, string $format = null, array $context = []): array
     {
         $result = parent::normalize($object, $format, $context);
 
@@ -30,9 +30,9 @@ class LocalizedFallbackValueCollectionNormalizer extends BaseNormalizer
     /**
      * {@inheritdoc}
      */
-    public function denormalize($data, $class, $format = null, array $context = []): object
+    public function denormalize($data, string $type, string $format = null, array $context = []): object
     {
-        $result = parent::denormalize($data, $class, $format, $context);
+        $result = parent::denormalize($data, $type, $format, $context);
         if ($result->isEmpty()) {
             return $result;
         }

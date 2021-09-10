@@ -193,10 +193,6 @@ class OrderLineItemAfterDiscountsMapperTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param float $lineItemSubtotal
-     * @param float $lineItemSubtotalAfterDiscounts
-     * @param float $expectedTaxablePrice
-     *
      * @dataProvider getMapProvider
      */
     public function testMap(

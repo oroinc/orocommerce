@@ -18,9 +18,6 @@ class OrderShippingTrackingTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider submitDataProvider
-     *
-     * @param array $submitted
-     * @param OrderShippingTracking $expected
      */
     public function testSubmit(array $submitted, OrderShippingTracking $expected)
     {

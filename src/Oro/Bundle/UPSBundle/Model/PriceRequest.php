@@ -223,17 +223,11 @@ class PriceRequest
         return $this;
     }
 
-    /**
-     * @param Package $package
-     */
     public function addPackage(Package $package)
     {
         $this->packages[] = $package;
     }
 
-    /**
-     * @param Package $package
-     */
     public function removePackage(Package $package)
     {
         $this->packages = array_diff($this->packages, [$package]);

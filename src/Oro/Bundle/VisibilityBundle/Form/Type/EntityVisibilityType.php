@@ -38,10 +38,6 @@ class EntityVisibilityType extends AbstractType
      */
     protected $visibilityChoicesProvider;
 
-    /**
-     * @param VisibilityPostSetDataListener $visibilityPostSetDataListener
-     * @param VisibilityChoicesProvider $visibilityChoicesProvider
-     */
     public function __construct(
         VisibilityPostSetDataListener $visibilityPostSetDataListener,
         VisibilityChoicesProvider $visibilityChoicesProvider

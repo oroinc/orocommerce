@@ -113,10 +113,6 @@ class UniqueEntityValidatorTest extends WebTestCase
         );
     }
 
-    /**
-     * @param Constraint $constraint
-     * @param ExecutionContextInterface $context
-     */
     protected function validate(Constraint $constraint, ExecutionContextInterface $context)
     {
         $entity1 = new Product();

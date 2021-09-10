@@ -26,11 +26,6 @@ class RobotsTxtIndexingRulesBySitemapManager
     /** @var UrlItemsProviderRegistryInterface */
     private $urlItemsProviderRegistry;
 
-    /**
-     * @param RobotsTxtFileManager              $robotsTxtFileManager
-     * @param ConfigManager                     $configManager
-     * @param UrlItemsProviderRegistryInterface $urlItemsProviderRegistry
-     */
     public function __construct(
         RobotsTxtFileManager $robotsTxtFileManager,
         ConfigManager $configManager,

@@ -199,7 +199,6 @@ class CategoryControllerTest extends WebTestCase
 
     /**
      * @return array
-     *
      */
     public function dataProviderForNotExistingCategories()
     {
@@ -289,7 +288,8 @@ class CategoryControllerTest extends WebTestCase
         $accessor = PropertyAccess::createPropertyAccessor();
         $parameters = [];
         foreach ($values as $key => $val) {
-            if (!$pos = strpos($key, '[')) {
+            $pos = strpos($key, '[');
+            if (!$pos) {
                 continue;
             }
             $key = '['.substr($key, 0, $pos).']'.substr($key, $pos);

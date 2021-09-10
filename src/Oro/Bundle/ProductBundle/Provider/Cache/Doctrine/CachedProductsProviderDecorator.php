@@ -26,11 +26,6 @@ class CachedProductsProviderDecorator implements ProductsProviderInterface
      */
     private $cacheKey;
 
-    /**
-     * @param ProductsProviderInterface $decoratedProvider
-     * @param Cache                     $cache
-     * @param string                    $cacheKey
-     */
     public function __construct(ProductsProviderInterface $decoratedProvider, Cache $cache, string $cacheKey)
     {
         $this->decoratedProvider = $decoratedProvider;

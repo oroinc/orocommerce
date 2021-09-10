@@ -55,7 +55,7 @@ class CustomerGroupCategoryResolvedCacheBuilderTest extends AbstractProductResol
         $this->category = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
         $this->customerGroup = $this->getReference('customer_group.group3');
 
-        $container = $this->client->getContainer();
+        $container = $this->getContainer();
 
         $productReindexManager = new ProductReindexManager(
             $container->get('event_dispatcher')
@@ -230,7 +230,6 @@ class CustomerGroupCategoryResolvedCacheBuilderTest extends AbstractProductResol
 
     /**
      * @dataProvider buildCacheDataProvider
-     * @param array $expectedVisibilities
      */
     public function testBuildCache(array $expectedVisibilities)
     {

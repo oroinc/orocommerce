@@ -56,15 +56,6 @@ class PayPalExpressCheckoutPaymentMethod implements PaymentMethodInterface
     /** @var SurchargeProvider */
     protected $surchargeProvider;
 
-    /**
-     * @param Gateway $gateway
-     * @param PayPalExpressCheckoutConfigInterface $config
-     * @param RouterInterface $router
-     * @param DoctrineHelper $doctrineHelper
-     * @param OptionsProviderInterface $optionsProvider
-     * @param SurchargeProvider $surchargeProvider
-     * @param PropertyAccessor $propertyAccessor
-     */
     public function __construct(
         Gateway $gateway,
         PayPalExpressCheckoutConfigInterface $config,
@@ -129,10 +120,6 @@ class PayPalExpressCheckoutPaymentMethod implements PaymentMethodInterface
         );
     }
 
-    /**
-     * @param PaymentTransaction $paymentTransaction
-     * @return array
-     */
     protected function purchase(PaymentTransaction $paymentTransaction): array
     {
         $options = array_merge(
@@ -155,9 +142,6 @@ class PayPalExpressCheckoutPaymentMethod implements PaymentMethodInterface
         ];
     }
 
-    /**
-     * @param PaymentTransaction $paymentTransaction
-     */
     protected function complete(PaymentTransaction $paymentTransaction): void
     {
         $options = array_merge(
@@ -191,9 +175,6 @@ class PayPalExpressCheckoutPaymentMethod implements PaymentMethodInterface
         }
     }
 
-    /**
-     * @param PaymentTransaction $paymentTransaction
-     */
     protected function authorize(PaymentTransaction $paymentTransaction): void
     {
         $options = array_merge(
@@ -206,9 +187,6 @@ class PayPalExpressCheckoutPaymentMethod implements PaymentMethodInterface
         $this->setExpressCheckoutRequest($paymentTransaction);
     }
 
-    /**
-     * @param PaymentTransaction $paymentTransaction
-     */
     protected function charge(PaymentTransaction $paymentTransaction): void
     {
         $options = array_merge(
@@ -221,10 +199,6 @@ class PayPalExpressCheckoutPaymentMethod implements PaymentMethodInterface
         $this->setExpressCheckoutRequest($paymentTransaction);
     }
 
-    /**
-     * @param PaymentTransaction $paymentTransaction
-     * @return array
-     */
     protected function capture(PaymentTransaction $paymentTransaction): array
     {
         $sourcePaymentTransaction = $paymentTransaction->getSourcePaymentTransaction();
@@ -283,10 +257,6 @@ class PayPalExpressCheckoutPaymentMethod implements PaymentMethodInterface
         $paymentTransaction->setReference($data[ECOption\Token::TOKEN]);
     }
 
-    /**
-     * @param string $token
-     * @return string
-     */
     protected function getRedirectUrl(string $token): string
     {
         $redirectUrl = $this->config->isTestMode() ? self::PILOT_REDIRECT_URL : self::PRODUCTION_REDIRECT_URL;

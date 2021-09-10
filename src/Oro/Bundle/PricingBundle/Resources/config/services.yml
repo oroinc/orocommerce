@@ -1,14 +1,14 @@
 services:
     oro_pricing.acl.voter.product_list:
         class: 'Oro\Bundle\PricingBundle\Acl\Voter\PriceListVoter'
-        public: false
         arguments:
             - '@oro_entity.doctrine_helper'
-            - '@oro_pricing.price_list_reference_checker'
+            - '@Psr\Container\ContainerInterface'
         calls:
             - [setClassName, ['Oro\Bundle\PricingBundle\Entity\PriceList']]
         tags:
             - { name: security.voter, priority: 10 }
+            - { name: container.service_subscriber, id: oro_pricing.price_list_reference_checker }
 
     oro_pricing.datagrid.price_list_permissions_provider:
         class: 'Oro\Bundle\PricingBundle\Datagrid\PriceListPermissionProvider'
@@ -35,15 +35,12 @@ services:
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision', event: postRemove }
             - { name: oro_featuretogle.feature, feature: oro_price_lists }
 
-    oro_pricing.listener.product_unit_precision_on_post_remove:
-        class: 'Oro\Bundle\PricingBundle\EventListener\ProductUnitPrecisionPostRemoveListener'
-        public: false
+    oro_pricing.listener.product_unit_precision.remove_product_price_attributes:
+        class: Oro\Bundle\PricingBundle\EventListener\ProductUnitPrecisionPostRemoveListener
         arguments:
             - '@oro_pricing.shard_manager'
-        calls:
-            - [setPriceAttributeClass, ['Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice']]
         tags:
-            - { name: doctrine.event_listener, event: postRemove }
+            - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision, event: postRemove }
             - { name: oro_featuretogle.feature, feature: oro_price_lists }
 
     oro_pricing.user_currency_manager:
@@ -141,7 +138,7 @@ services:
         arguments:
             - '@oro_entity.doctrine_helper'
         tags:
-            - { name: oro_entity.virtual_relation_provider, priority: 120 }
+            - { name: oro_entity.virtual_relation_provider, priority: -120 }
 
     oro_pricing.provider.frontend_product_prices:
         class: 'Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider'
@@ -1314,12 +1311,12 @@ services:
         alias: 'oro_pricing.shard_manager'
 
     oro_pricing.entity_listener.price_list_sharding:
-        class: 'Oro\Bundle\PricingBundle\Entity\EntityListener\PriceListShardingListener'
+        class: Oro\Bundle\PricingBundle\Entity\EntityListener\PriceListShardingListener
         arguments:
             - '@oro_pricing.shard_manager'
         tags:
-            - { name: doctrine.event_listener, event: postPersist }
-            - { name: doctrine.event_listener, event: preRemove }
+            - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\PricingBundle\Entity\PriceList, event: postPersist}
+            - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\PricingBundle\Entity\PriceList, event: preRemove}
             - { name: doctrine.event_listener, event: postFlush }
 
     oro_pricing.orm.abstract_shard_query_executor:

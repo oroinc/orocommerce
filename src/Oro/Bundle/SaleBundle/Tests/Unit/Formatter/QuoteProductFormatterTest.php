@@ -101,9 +101,6 @@ class QuoteProductFormatterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param array $inputData
-     * @param array $expectedData
-     *
      * @dataProvider formatTypeLabelsProvider
      */
     public function testFormatTypeLabels(array $inputData, array $expectedData)
@@ -119,9 +116,6 @@ class QuoteProductFormatterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param array $inputData
-     * @param array $expectedData
-     *
      * @dataProvider formatRequestProvider
      */
     public function testFormatRequest(array $inputData, array $expectedData)
@@ -170,9 +164,6 @@ class QuoteProductFormatterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param array $inputData
-     * @param array $expectedData
-     *
      * @dataProvider formatOfferProvider
      */
     public function testFormatOffer(array $inputData, array $expectedData)

@@ -12,9 +12,6 @@ use Oro\Bundle\SaleBundle\Entity\Quote;
  */
 class FrontendQuoteDatagridListener
 {
-    /**
-     * @param BuildAfter $event
-     */
     public function onBuildAfter(BuildAfter $event)
     {
         /** @var OrmDatasource $ormDataSource */
@@ -26,9 +23,6 @@ class FrontendQuoteDatagridListener
         }
     }
 
-    /**
-     * @param QueryBuilder $qb
-     */
     protected function applyFiltrationByInternalStatuses(QueryBuilder $qb)
     {
         $rootAliases = $qb->getRootAliases();

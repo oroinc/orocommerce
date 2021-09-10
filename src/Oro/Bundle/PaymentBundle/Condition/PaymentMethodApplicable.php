@@ -30,9 +30,6 @@ class PaymentMethodApplicable extends AbstractCondition implements ContextAccess
     /** @var ApplicablePaymentMethodsProvider */
     protected $paymentMethodProvider;
 
-    /**
-     * @param ApplicablePaymentMethodsProvider $methodProvider
-     */
     public function __construct(ApplicablePaymentMethodsProvider $methodProvider)
     {
         $this->paymentMethodProvider = $methodProvider;

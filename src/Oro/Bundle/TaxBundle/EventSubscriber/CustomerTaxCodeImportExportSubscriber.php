@@ -65,9 +65,6 @@ class CustomerTaxCodeImportExportSubscriber implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param AfterEntityPageLoadedEvent $event
-     */
     public function updateEntityResults(AfterEntityPageLoadedEvent $event)
     {
         $rows = $event->getRows();
@@ -78,9 +75,6 @@ class CustomerTaxCodeImportExportSubscriber implements EventSubscriberInterface
         $this->customerTaxCodes = $this->customerTaxCodeImportExportHelper->loadCustomerTaxCode($event->getRows());
     }
 
-    /**
-     * @param NormalizeEntityEvent $event
-     */
     public function normalizeEntity(NormalizeEntityEvent $event)
     {
         if (!$event->isFullData() || !is_a($event->getObject(), $this->customerClassName)) {
@@ -97,9 +91,6 @@ class CustomerTaxCodeImportExportSubscriber implements EventSubscriberInterface
         );
     }
 
-    /**
-     * @param LoadEntityRulesAndBackendHeadersEvent $event
-     */
     public function loadEntityRulesAndBackendHeaders(LoadEntityRulesAndBackendHeadersEvent $event)
     {
         if (!$event->isFullData() || $event->getEntityName() !== $this->customerClassName) {
@@ -117,9 +108,6 @@ class CustomerTaxCodeImportExportSubscriber implements EventSubscriberInterface
         ]);
     }
 
-    /**
-     * @param StrategyEvent $event
-     */
     public function afterImportStrategy(StrategyEvent $event)
     {
         /** @var Customer $entity */
@@ -148,9 +136,6 @@ class CustomerTaxCodeImportExportSubscriber implements EventSubscriberInterface
         }
     }
 
-    /**
-     * @param LoadTemplateFixturesEvent $event
-     */
     public function addTaxCodeToCustomers(LoadTemplateFixturesEvent $event)
     {
         foreach ($event->getEntities() as $customerData) {

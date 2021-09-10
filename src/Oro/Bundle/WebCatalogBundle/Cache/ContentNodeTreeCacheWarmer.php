@@ -29,11 +29,6 @@ class ContentNodeTreeCacheWarmer implements CacheWarmerInterface
      */
     private $configManager;
 
-    /**
-     * @param MessageProducerInterface $messageProducer
-     * @param DoctrineHelper $doctrineHelper
-     * @param ConfigManager $configManager
-     */
     public function __construct(
         MessageProducerInterface $messageProducer,
         DoctrineHelper $doctrineHelper,

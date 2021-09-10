@@ -39,7 +39,6 @@ class SinglePageTransitionProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider continueTransitionDataProvider
-     * @param bool $isAllowed
      */
     public function testGetContinueTransition(bool $isAllowed)
     {

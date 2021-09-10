@@ -30,10 +30,6 @@ class WorkflowRelatedTransitionProvider implements TransitionProviderInterface
      */
     private $actualProvider;
 
-    /**
-     * @param WorkflowManager $workflowManager
-     * @param TransitionProviderInterface $defaultProvider
-     */
     public function __construct(
         WorkflowManager $workflowManager,
         TransitionProviderInterface $defaultProvider
@@ -42,10 +38,6 @@ class WorkflowRelatedTransitionProvider implements TransitionProviderInterface
         $this->defaultProvider = $defaultProvider;
     }
 
-    /**
-     * @param string $workflowName
-     * @param TransitionProviderInterface $provider
-     */
     public function addWorkflowRelatedProvider(string $workflowName, TransitionProviderInterface $provider): void
     {
         $this->workflowRelatedProviders[$workflowName] = $provider;
@@ -83,9 +75,6 @@ class WorkflowRelatedTransitionProvider implements TransitionProviderInterface
         $this->getProvider()->clearCache();
     }
 
-    /**
-     * @return TransitionProviderInterface
-     */
     private function getProvider(): TransitionProviderInterface
     {
         if (!$this->actualProvider) {

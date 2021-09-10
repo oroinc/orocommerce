@@ -35,9 +35,6 @@ class DisplaySimpleVariationsListener
         $this->configParameter = $configParameter;
     }
 
-    /**
-     * @param ConfigUpdateEvent $event
-     */
     public function onUpdateAfter(ConfigUpdateEvent $event)
     {
         if ($event->isChanged($this->configParameter)) {

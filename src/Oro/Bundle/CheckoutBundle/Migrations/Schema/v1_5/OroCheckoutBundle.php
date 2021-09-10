@@ -16,9 +16,6 @@ class OroCheckoutBundle implements Migration
         $this->updateCheckoutTable($schema);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function updateCheckoutTable(Schema $schema)
     {
         $table = $schema->getTable('oro_checkout');

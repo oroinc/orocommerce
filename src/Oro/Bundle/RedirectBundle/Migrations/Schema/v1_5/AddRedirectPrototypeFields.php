@@ -21,9 +21,6 @@ class AddRedirectPrototypeFields implements Migration
         $queries->addPostQuery(new FillRedirectPrototypesQuery());
     }
 
-    /**
-     * @param Schema $schema
-     */
     private function updateRedirrectTable(Schema $schema)
     {
         $table = $schema->getTable('oro_redirect');

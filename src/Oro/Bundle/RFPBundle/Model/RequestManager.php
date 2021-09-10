@@ -28,12 +28,6 @@ class RequestManager
     /** @var WebsiteManager */
     protected $websiteManager;
 
-    /**
-     * @param TokenAccessorInterface   $tokenAccessor
-     * @param DoctrineHelper           $doctrineHelper
-     * @param GuestCustomerUserManager $guestCustomerUserManager
-     * @param WebsiteManager           $websiteManager
-     */
     public function __construct(
         TokenAccessorInterface $tokenAccessor,
         DoctrineHelper $doctrineHelper,
@@ -68,10 +62,6 @@ class RequestManager
         return $request;
     }
 
-    /**
-     * @param Request $request
-     * @param array $productLineItems
-     */
     public function addProductLineItemsToRequest(Request $request, array $productLineItems)
     {
         $units = [];

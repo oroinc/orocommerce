@@ -40,14 +40,6 @@ class LineItemHandler
     /** @var ValidatorInterface */
     private $validator;
 
-    /**
-     * @param FormInterface $form
-     * @param Request $request
-     * @param ManagerRegistry $doctrine
-     * @param ShoppingListManager $shoppingListManager
-     * @param CurrentShoppingListManager $currentShoppingListManager
-     * @param ValidatorInterface $validator
-     */
     public function __construct(
         FormInterface $form,
         Request $request,
@@ -105,11 +97,6 @@ class LineItemHandler
         return false;
     }
 
-    /**
-     * @param ShoppingList $shoppingList
-     *
-     * @return bool
-     */
     private function isShoppingListValid(ShoppingList $shoppingList): bool
     {
         $constraintViolationList = $this->validator->validate($shoppingList);
@@ -126,9 +113,6 @@ class LineItemHandler
         return true;
     }
 
-    /**
-     * @param ConstraintViolation $constraintViolation
-     */
     private function addFormError(ConstraintViolation $constraintViolation): void
     {
         $this->form->addError(new FormError(

@@ -72,7 +72,6 @@ class Category extends BaseCategory
             return;
         }
 
-
         if (property_exists($this, $name)) {
             $this->$name = $value;
 
@@ -98,9 +97,6 @@ class Category extends BaseCategory
         return false;
     }
 
-    /**
-     * @param Product $value
-     */
     public function addProduct(Product $value)
     {
         if (!$this->products->contains($value)) {
@@ -108,9 +104,6 @@ class Category extends BaseCategory
         }
     }
 
-    /**
-     * @param Product $value
-     */
     public function removeProduct(Product $value)
     {
         $this->products->removeElement($value);

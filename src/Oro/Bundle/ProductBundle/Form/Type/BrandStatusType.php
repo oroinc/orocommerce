@@ -17,9 +17,6 @@ class BrandStatusType extends AbstractType
      */
     protected $brandStatusProvider;
 
-    /**
-     * @param BrandStatusProvider $brandStatusProvider
-     */
     public function __construct(BrandStatusProvider $brandStatusProvider)
     {
         $this->brandStatusProvider = $brandStatusProvider;

@@ -32,12 +32,6 @@ class PaymentTermPaymentMethodFactory implements PaymentTermPaymentMethodFactory
      */
     protected $doctrineHelper;
 
-    /**
-     * @param PaymentTermProviderInterface $paymentTermProvider
-     * @param PaymentTermAssociationProvider $paymentTermAssociationProvider
-     * @param DoctrineHelper $doctrineHelper
-     * @param LoggerInterface $logger
-     */
     public function __construct(
         PaymentTermProviderInterface $paymentTermProvider,
         PaymentTermAssociationProvider $paymentTermAssociationProvider,

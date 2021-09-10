@@ -119,9 +119,6 @@ class LocalizedSlugTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider submitDataProvider
-     *
-     * @param array $submitData
-     * @param Collection $expectedSlugPrototypes
      */
     public function testSubmit(array $submitData, Collection $expectedSlugPrototypes): void
     {
@@ -139,9 +136,6 @@ class LocalizedSlugTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expectedSlugPrototypes, $entity->getSlugPrototypes());
     }
 
-    /**
-     * @return array
-     */
     public function submitDataProvider(): array
     {
         return [
@@ -192,10 +186,6 @@ class LocalizedSlugTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider onPostSubmitDataProvider
-     *
-     * @param Collection $localizedSources
-     * @param Collection $localizedSlugs
-     * @param Collection $expectedLocalizedSlugs
      */
     public function testOnPostSubmit(
         Collection $localizedSources,
@@ -244,9 +234,6 @@ class LocalizedSlugTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expectedLocalizedSlugs, $localizedSlugs);
     }
 
-    /**
-     * @return array
-     */
     public function onPostSubmitDataProvider(): array
     {
         $localization = $this->createMock(Localization::class);
@@ -301,13 +288,6 @@ class LocalizedSlugTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * @param string $string
-     * @param Localization|null $localization
-     * @param int|null $id
-     *
-     * @return LocalizedFallbackValue
-     */
     private function createLocalizedFallbackValue(
         string $string,
         ?Localization $localization = null,

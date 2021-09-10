@@ -15,9 +15,6 @@ class TimeInTransitRequestBuilderFactory implements TimeInTransitRequestBuilderF
      */
     private $crypter;
 
-    /**
-     * @param SymmetricCrypterInterface $crypter
-     */
     public function __construct(SymmetricCrypterInterface $crypter)
     {
         $this->crypter = $crypter;

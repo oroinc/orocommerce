@@ -42,10 +42,6 @@ class ProductUnitSelectionType extends AbstractProductAwareType
      */
     protected $entityClass;
 
-    /**
-     * @param UnitLabelFormatterInterface $productUnitFormatter
-     * @param TranslatorInterface $translator
-     */
     public function __construct(UnitLabelFormatterInterface $productUnitFormatter, TranslatorInterface $translator)
     {
         $this->productUnitFormatter = $productUnitFormatter;
@@ -61,9 +57,6 @@ class ProductUnitSelectionType extends AbstractProductAwareType
         $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'validateUnits']);
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function setAcceptableUnits(FormEvent $event)
     {
         $form = $event->getForm();
@@ -89,9 +82,6 @@ class ProductUnitSelectionType extends AbstractProductAwareType
         $formParent->add($form->getName(), static::class, $options);
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function validateUnits(FormEvent $event)
     {
         $form = $event->getForm();
@@ -269,10 +259,6 @@ class ProductUnitSelectionType extends AbstractProductAwareType
             || ($product && $productUnit && !in_array($productUnit, $choices, true));
     }
 
-    /**
-     * @param FormView $view
-     * @param array $options
-     */
     protected function formatChoiceViews(FormView $view, array $options)
     {
         /**
@@ -283,11 +269,6 @@ class ProductUnitSelectionType extends AbstractProductAwareType
         }
     }
 
-    /**
-     * @param FormView $view
-     * @param array $choices
-     * @param array $options
-     */
     protected function setChoicesViews(FormView $view, array $choices, array $options)
     {
         $choices = $this->productUnitFormatter->formatChoices($choices, $options['compact']);

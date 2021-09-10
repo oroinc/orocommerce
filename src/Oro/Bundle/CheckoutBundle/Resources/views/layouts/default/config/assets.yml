@@ -14,3 +14,7 @@ styles:
         - 'bundles/orocheckout/default/scss/components/order-checkout-widget.scss'
         - 'bundles/orocheckout/default/scss/components/order-loading-placeholder.scss'
         - 'bundles/orocheckout/default/scss/styles.scss'
+
+print_styles:
+    inputs:
+        - 'bundles/orocheckout/default/scss/components/order-checkout-widget-print.scss'

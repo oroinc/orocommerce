@@ -54,8 +54,6 @@ class ProductVariantProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getProductVariantOrProductDataProvider
-     * @param array $data
-     * @param Product|null $expectedProduct
      */
     public function testGetProductVariantOrProduct(array $data, ?Product $expectedProduct): void
     {
@@ -63,9 +61,6 @@ class ProductVariantProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedProduct, $this->productVariantProvider->getProductVariantOrProduct($dataAccessor));
     }
 
-    /**
-     * @return array
-     */
     public function getProductVariantOrProductDataProvider(): array
     {
         $product = (new ProductStub())->setSku('Product');

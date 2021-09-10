@@ -53,7 +53,7 @@ class InventoryStatusesStrategyHelper extends AbstractInventoryLevelStrategyHelp
         if ($importedEntity->getQuantity() === null) {
             return $existingProduct;
         }
-        
+
         $newEntities['product'] = $existingProduct;
 
         if ($this->successor) {

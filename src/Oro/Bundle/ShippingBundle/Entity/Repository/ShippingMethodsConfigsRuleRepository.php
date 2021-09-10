@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ShippingBundle\Entity\Repository;
 
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
@@ -13,16 +13,13 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 /**
  * Returns shipping method config rules by destination, currency and website
  */
-class ShippingMethodsConfigsRuleRepository extends EntityRepository
+class ShippingMethodsConfigsRuleRepository extends ServiceEntityRepository
 {
     /**
      * @var AclHelper
      */
     private $aclHelper;
 
-    /**
-     * @param AclHelper $aclHelper
-     */
     public function setAclHelper(AclHelper $aclHelper)
     {
         $this->aclHelper = $aclHelper;
@@ -164,12 +161,6 @@ class ShippingMethodsConfigsRuleRepository extends EntityRepository
             ->orderBy($queryBuilder->expr()->asc('methodsConfigsRule.id'));
     }
 
-    /**
-     * @param string       $currency
-     * @param Website|null $website
-     *
-     * @return QueryBuilder
-     */
     private function getByCurrencyAndWebsiteQueryBuilder(string $currency, Website $website = null): QueryBuilder
     {
         $queryBuilder = $this->getByCurrencyQueryBuilder($currency);

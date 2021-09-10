@@ -4,6 +4,9 @@ namespace Oro\Bundle\PaymentBundle\Event;
 
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Abstract Payment callback Event
+ */
 abstract class AbstractCallbackEvent extends AbstractTransactionEvent
 {
     /** @var array */
@@ -12,14 +15,11 @@ abstract class AbstractCallbackEvent extends AbstractTransactionEvent
     /** @var Response */
     protected $response;
 
-    /**
-     * @param array $data
-     */
     public function __construct(array $data = [])
     {
         $this->data = $data;
 
-        $this->response = Response::create(null, Response::HTTP_FORBIDDEN);
+        $this->response = new Response(null, Response::HTTP_FORBIDDEN);
     }
 
     /**
@@ -38,9 +38,6 @@ abstract class AbstractCallbackEvent extends AbstractTransactionEvent
         return $this->response;
     }
 
-    /**
-     * @param Response $response
-     */
     public function setResponse(Response $response)
     {
         $this->response = $response;

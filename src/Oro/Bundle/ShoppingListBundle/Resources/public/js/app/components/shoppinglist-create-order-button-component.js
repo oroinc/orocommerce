@@ -11,8 +11,6 @@ define(function(require) {
 
         shoppingListCollection: null,
 
-        lineItemsCount: null,
-
         /**
          * @type {Object}
          */
@@ -23,19 +21,15 @@ define(function(require) {
             cancelText: __('oro.shoppinglist.create_order_confirmation.cancel_button_title')
         },
 
-        listen: {
-            'line-items-init mediator': '_onLineItemsInit'
-        },
-
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function ShoppingListCreateOrderButtonComponent(options) {
             ShoppingListCreateOrderButtonComponent.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.hasEmptyMatrix = options.hasEmptyMatrix;
@@ -43,19 +37,7 @@ define(function(require) {
         },
 
         /**
-         * Listen line items init process
-         *
-         * @param {Array} lineItems
-         * @private
-         */
-        _onLineItemsInit: function(lineItems) {
-            this.lineItemsCount = lineItems.filter(function(lineItem) {
-                return lineItem.$el.attr('class').indexOf('--configurable') === -1;
-            }).length;
-        },
-
-        /**
-         * @inheritDoc
+         * @inheritdoc
          */
         _onClickButtonExecutor: function(clickedButton) {
             this.showConfirmation(ShoppingListCreateOrderButtonComponent.__super__
@@ -63,7 +45,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         _onClickButtonRedirect: function(clickedButton) {
             this.showConfirmation(ShoppingListCreateOrderButtonComponent.__super__
@@ -90,9 +72,7 @@ define(function(require) {
             try {
                 skipConfirm = !mediator.execute('shoppinglist:hasEmptyMatrix');
             } catch (e) {
-                // handler isn't defined in mediator, check empty matrix in old way
-                skipConfirm = (this.hasEmptyMatrix && this.lineItemsCount === 0) || // empty matrix only
-                    (!this.hasEmptyMatrix); // not empty matrix or it doesn't exist in SL
+                skipConfirm = !!this.hasEmptyMatrix;
             }
 
             return skipConfirm;

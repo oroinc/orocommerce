@@ -24,11 +24,6 @@ class ComputeProductAvailability implements ProcessorInterface
     /** @var ValueTransformer */
     private $valueTransformer;
 
-    /**
-     * @param DoctrineHelper          $doctrineHelper
-     * @param UpcomingProductProvider $upcomingProductProvider
-     * @param ValueTransformer        $valueTransformer
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         UpcomingProductProvider $upcomingProductProvider,

@@ -17,9 +17,6 @@ class AddPageTemplateToProductFields implements Migration, ExtendExtensionAwareI
     /** @var ExtendExtension */
     protected $extendExtension;
 
-    /**
-     * @param ExtendExtension $extendExtension
-     */
     public function setExtendExtension(ExtendExtension $extendExtension)
     {
         $this->extendExtension = $extendExtension;

@@ -12,9 +12,6 @@ class TaxValueToResultTransformer implements TaxTransformerInterface
     /** @var TaxValueManager */
     protected $taxValueManager;
 
-    /**
-     * @param TaxValueManager $taxValueManager
-     */
     public function __construct(TaxValueManager $taxValueManager)
     {
         $this->taxValueManager = $taxValueManager;

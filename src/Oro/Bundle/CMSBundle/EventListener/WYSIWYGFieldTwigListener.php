@@ -13,15 +13,13 @@ use Oro\Bundle\CMSBundle\Parser\TwigParser;
 use Oro\Bundle\CMSBundle\WYSIWYG\WYSIWYGProcessedDTO;
 use Oro\Bundle\CMSBundle\WYSIWYG\WYSIWYGProcessedEntityDTO;
 use Oro\Bundle\CMSBundle\WYSIWYG\WYSIWYGTwigFunctionProcessorInterface;
-use Oro\Bundle\EntityBundle\ORM\Event\PreClearEventArgs;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager as EntityConfigManager;
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\LocaleBundle\Entity\AbstractLocalizedFallbackValue;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerTrait;
 use Psr\Container\ContainerInterface;
-use Psr\Log\LoggerAwareTrait;
-use Psr\Log\NullLogger;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
 
@@ -35,42 +33,17 @@ use Symfony\Contracts\Service\ServiceSubscriberInterface;
 class WYSIWYGFieldTwigListener implements OptionalListenerInterface, ServiceSubscriberInterface
 {
     use OptionalListenerTrait;
-    use LoggerAwareTrait;
 
-    /** @var ContainerInterface */
-    private $container;
-
+    private ContainerInterface $container;
     /** @var string[][] */
-    private $fieldLists = [];
+    private array $fieldLists = [];
+    private array $scheduled = [];
 
-    /** @var array */
-    private $scheduled = [];
-
-    /**
-     * @param ContainerInterface $container
-     */
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
-        $this->logger = new NullLogger();
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public static function getSubscribedServices()
-    {
-        return [
-            'oro_cms.parser.twig' => TwigParser::class,
-            'oro_cms.wysiwyg.chain_twig_function_processor' => WYSIWYGTwigFunctionProcessorInterface::class,
-            EntityConfigManager::class,
-            PropertyAccessorInterface::class
-        ];
-    }
-
-    /**
-     * @param LifecycleEventArgs $args
-     */
     public function postPersist(LifecycleEventArgs $args): void
     {
         if ($this->isApplicable($args)) {
@@ -79,9 +52,6 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface, ServiceSubs
         }
     }
 
-    /**
-     * @param PreUpdateEventArgs $args
-     */
     public function preUpdate(PreUpdateEventArgs $args): void
     {
         if ($this->isApplicable($args)) {
@@ -90,9 +60,6 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface, ServiceSubs
         }
     }
 
-    /**
-     * @param LifecycleEventArgs $args
-     */
     public function preRemove(LifecycleEventArgs $args): void
     {
         if ($this->isApplicable($args)) {
@@ -100,10 +67,6 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface, ServiceSubs
         }
     }
 
-    /**
-     * @param LifecycleEventArgs $args
-     * @return bool
-     */
     private function isApplicable(LifecycleEventArgs $args): bool
     {
         if (!$this->enabled
@@ -123,10 +86,6 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface, ServiceSubs
         return !empty($this->getWysiwygFields($metadata));
     }
 
-    /**
-     * @param LifecycleEventArgs $args
-     * @param bool $isFlushNeeded
-     */
     private function postProcess(LifecycleEventArgs $args, bool $isFlushNeeded): void
     {
         if (!$isFlushNeeded) {
@@ -153,8 +112,6 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface, ServiceSubs
      *
      * @see https://github.com/doctrine/orm/issues/6292
      * @see https://github.com/doctrine/orm/issues/6024
-     *
-     * @param PostFlushEventArgs $args
      */
     public function postFlush(PostFlushEventArgs $args): void
     {
@@ -183,7 +140,7 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface, ServiceSubs
     public function onTerminate(): void
     {
         try {
-            foreach ($this->scheduled as $hash => $managerWithScheduledEntities) {
+            foreach ($this->scheduled as $managerWithScheduledEntities) {
                 /** @var EntityManager $entityManager */
                 $entityManager = $managerWithScheduledEntities['em'];
                 $unitOfWork = $entityManager->getUnitOfWork();
@@ -203,7 +160,7 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface, ServiceSubs
                 }
             }
         } catch (\Throwable $throwable) {
-            $this->logger->error(
+            $this->getLogger()->error(
                 sprintf(
                     'Failed to execute pending %s of %s - entity manager might has been untimely cleared',
                     strtolower(substr($operation, -6)),
@@ -216,18 +173,11 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface, ServiceSubs
         }
     }
 
-    /**
-     * @param PreClearEventArgs $preClearEventArgs
-     */
-    public function preClear(PreClearEventArgs $preClearEventArgs): void
+    public function preClear(): void
     {
         $this->onTerminate();
     }
 
-    /**
-     * @param LifecycleEventArgs $args
-     * @return WYSIWYGProcessedDTO
-     */
     private function createDTO(LifecycleEventArgs $args): WYSIWYGProcessedDTO
     {
         return new WYSIWYGProcessedDTO(
@@ -240,10 +190,6 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface, ServiceSubs
         );
     }
 
-    /**
-     * @param WYSIWYGProcessedDTO $processedDTO
-     * @return bool
-     */
     private function processEntity(WYSIWYGProcessedDTO $processedDTO): bool
     {
         $isFlushNeeded = false;
@@ -262,10 +208,6 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface, ServiceSubs
         return $isFlushNeeded;
     }
 
-    /**
-     * @param WYSIWYGProcessedDTO $processedDTO
-     * @return bool
-     */
     private function processField(WYSIWYGProcessedDTO $processedDTO): bool
     {
         $processedEntity = $processedDTO->getProcessedEntity();
@@ -287,10 +229,6 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface, ServiceSubs
         return $twigFunctionProcessor->processTwigFunctions($processedDTO, $foundTwigFunctionCalls);
     }
 
-    /**
-     * @param WYSIWYGProcessedDTO $processedDTO
-     * @return bool
-     */
     private function processRelation(WYSIWYGProcessedDTO $processedDTO): bool
     {
         $processedEntity = $processedDTO->getProcessedEntity();
@@ -363,10 +301,6 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface, ServiceSubs
         return false;
     }
 
-    /**
-     * @param ClassMetadata $metadata
-     * @return array
-     */
     private function getWysiwygFields(ClassMetadata $metadata): array
     {
         $entityName = $metadata->getName();
@@ -381,10 +315,6 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface, ServiceSubs
         return $this->fieldLists[$entityName];
     }
 
-    /**
-     * @param ClassMetadata $metadata
-     * @param array $applicableFieldTypes
-     */
     private function collectRegularWysiwygFields(ClassMetadata $metadata, array $applicableFieldTypes): void
     {
         $entityName = $metadata->getName();
@@ -405,10 +335,6 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface, ServiceSubs
         }
     }
 
-    /**
-     * @param string $entityName
-     * @param array $applicableFieldTypes
-     */
     private function collectSerializedWysiwygFields(string $entityName, array $applicableFieldTypes): void
     {
         /** @var FieldConfigId $fieldConfigId */
@@ -422,34 +348,41 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface, ServiceSubs
     }
 
     /**
-     * @return TwigParser
+     * {@inheritDoc}
      */
+    public static function getSubscribedServices()
+    {
+        return [
+            'oro_cms.parser.twig' => TwigParser::class,
+            'oro_cms.wysiwyg.chain_twig_function_processor' => WYSIWYGTwigFunctionProcessorInterface::class,
+            EntityConfigManager::class,
+            PropertyAccessorInterface::class,
+            LoggerInterface::class
+        ];
+    }
+
     private function getTwigParser(): TwigParser
     {
         return $this->container->get('oro_cms.parser.twig');
     }
 
-    /**
-     * @return WYSIWYGTwigFunctionProcessorInterface
-     */
     private function getTwigFunctionProcessor(): WYSIWYGTwigFunctionProcessorInterface
     {
         return $this->container->get('oro_cms.wysiwyg.chain_twig_function_processor');
     }
 
-    /**
-     * @return EntityConfigManager
-     */
     private function getEntityConfigManager(): EntityConfigManager
     {
         return $this->container->get(EntityConfigManager::class);
     }
 
-    /**
-     * @return PropertyAccessorInterface
-     */
     private function getPropertyAccessor(): PropertyAccessorInterface
     {
         return $this->container->get(PropertyAccessorInterface::class);
+    }
+
+    private function getLogger(): LoggerInterface
+    {
+        return $this->container->get(LoggerInterface::class);
     }
 }

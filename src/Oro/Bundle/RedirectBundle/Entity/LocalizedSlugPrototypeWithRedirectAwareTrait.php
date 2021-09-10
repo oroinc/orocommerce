@@ -26,7 +26,7 @@ trait LocalizedSlugPrototypeWithRedirectAwareTrait
 
         return $this->slugPrototypesWithRedirect;
     }
-    
+
     /**
      * @param SlugPrototypesWithRedirect $slugPrototypesWithRedirect
      * @return $this

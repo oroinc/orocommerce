@@ -56,11 +56,6 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
     }
 
     /**
-     * @param TempTableManipulatorInterface $tempTableManipulator
-     * @param CombinedPriceList $combinedPriceList
-     * @param PriceList $priceList
-     * @param bool $mergeAllowed
-     * @param array $products
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function insertPricesByPriceListWithTempTable(
@@ -165,11 +160,6 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         );
     }
 
-    /**
-     * @param ShardQueryExecutorInterface $insertFromSelectQueryExecutor
-     * @param CombinedPriceList $combinedPriceList
-     * @param CombinedPriceList $sourceCpl
-     */
     public function insertPricesByCombinedPriceList(
         ShardQueryExecutorInterface $insertFromSelectQueryExecutor,
         CombinedPriceList $combinedPriceList,
@@ -268,9 +258,6 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
     /**
      * Filter out product prices by unit, quantity and currency that are already in the CPL.
      * ProductPrice table alias should be pp.
-     *
-     * @param QueryBuilder $qb
-     * @param CombinedPriceList $combinedPriceList
      */
     private function addPresentPricesRestriction(
         QueryBuilder $qb,
@@ -296,9 +283,6 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
     /**
      * Filter out products that already have prices added with mergeAllowed = false.
      * ProductPrice table alias should be pp.
-     *
-     * @param QueryBuilder $qb
-     * @param CombinedPriceList $combinedPriceList
      */
     private function addProductsBlockedByMergeFlagRestriction(
         QueryBuilder $qb,
@@ -323,9 +307,6 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
     /**
      * Filter out prices for products that are already present in the CPL.
      * ProductPrice table alias should be pp.
-     *
-     * @param QueryBuilder $qb
-     * @param CombinedPriceList $combinedPriceList
      */
     private function addPresentProductsRestriction(
         QueryBuilder $qb,
@@ -446,11 +427,6 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         );
     }
 
-    /**
-     * @param ShardQueryExecutorInterface $insertFromSelectQueryExecutor
-     * @param CombinedPriceList $combinedPriceList
-     * @param CombinedPriceList $tailCpl
-     */
     public function insertMinimalPricesByCombinedPriceList(
         ShardQueryExecutorInterface $insertFromSelectQueryExecutor,
         CombinedPriceList $combinedPriceList,
@@ -579,10 +555,6 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         }
     }
 
-    /**
-     * @param CombinedPriceList $combinedPriceList
-     * @param CombinedPriceList $priceList
-     */
     protected function deleteInvalidPricesForMinimalStrategyByCpl(
         CombinedPriceList $combinedPriceList,
         CombinedPriceList $priceList
@@ -609,9 +581,6 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         $this->deleteInvalidByRangeByCpl($invalidPricesQb, $priceList);
     }
 
-    /**
-     * @param array $prices
-     */
     protected function deletePricesByIds(array $prices)
     {
         if (empty($prices)) {
@@ -641,11 +610,6 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         return array_map('current', $result);
     }
 
-    /**
-     * @param ShardManager $shardManager
-     * @param PriceList $priceList
-     * @param QueryBuilder $invalidPricesQb
-     */
     private function deleteInvalidByRange(
         ShardManager $shardManager,
         QueryBuilder $invalidPricesQb,
@@ -682,10 +646,6 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         }
     }
 
-    /**
-     * @param QueryBuilder $invalidPricesQb
-     * @param CombinedPriceList $priceList
-     */
     private function deleteInvalidByRangeByCpl(
         QueryBuilder $invalidPricesQb,
         CombinedPriceList $priceList
@@ -740,11 +700,6 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         $this->deletePricesByIds($ids);
     }
 
-    /**
-     * @param ShardQueryExecutorInterface $insertFromSelectQueryExecutor
-     * @param PriceList $priceList
-     * @param QueryBuilder $qb
-     */
     private function insertByProductsRange(
         ShardQueryExecutorInterface $insertFromSelectQueryExecutor,
         PriceList $priceList,
@@ -758,11 +713,6 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         );
     }
 
-    /**
-     * @param ShardQueryExecutorInterface $insertFromSelectQueryExecutor
-     * @param CombinedPriceList $sourceCpl
-     * @param QueryBuilder $qb
-     */
     private function insertByProductsRangeByCpl(
         ShardQueryExecutorInterface $insertFromSelectQueryExecutor,
         CombinedPriceList $sourceCpl,
@@ -776,12 +726,6 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         );
     }
 
-    /**
-     * @param ShardQueryExecutorInterface $insertFromSelectQueryExecutor
-     * @param string $priceToProductRelationClass
-     * @param BasePriceList $priceList
-     * @param QueryBuilder $qb
-     */
     private function insertByProductsRangeForBaseProductPrice(
         ShardQueryExecutorInterface $insertFromSelectQueryExecutor,
         string $priceToProductRelationClass,
@@ -832,11 +776,6 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         }
     }
 
-    /**
-     * @param ShardQueryExecutorInterface $insertFromSelectQueryExecutor
-     * @param QueryBuilder $qb
-     * @param array $products
-     */
     private function insertByProducts(
         ShardQueryExecutorInterface $insertFromSelectQueryExecutor,
         QueryBuilder $qb,
@@ -848,12 +787,6 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         $this->insertToCombinedPricesFromQb($insertFromSelectQueryExecutor, $qb);
     }
 
-    /**
-     * @param CombinedPriceList $combinedPriceList
-     * @param bool $mergeAllowed
-     * @param PriceList $priceList
-     * @return QueryBuilder
-     */
     private function getPricesQb(
         CombinedPriceList $combinedPriceList,
         bool $mergeAllowed,
@@ -882,10 +815,6 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         return $qb;
     }
 
-    /**
-     * @param ShardQueryExecutorInterface $insertFromSelectQueryExecutor
-     * @param QueryBuilder $qb
-     */
     private function insertToCombinedPricesFromQb(
         ShardQueryExecutorInterface $insertFromSelectQueryExecutor,
         QueryBuilder $qb
@@ -908,12 +837,6 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         );
     }
 
-    /**
-     * @param ShardQueryExecutorInterface $insertFromSelectQueryExecutor
-     * @param PriceList $priceList
-     * @param array $products
-     * @param QueryBuilder $qb
-     */
     private function doInsertByProducts(
         ShardQueryExecutorInterface $insertFromSelectQueryExecutor,
         PriceList $priceList,
@@ -928,14 +851,6 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
     }
 
     /**
-     * @param TempTableManipulatorInterface $tempTableManipulator
-     * @param CombinedPriceList $combinedPriceList
-     * @param PriceList $priceList
-     * @param array $products
-     * @param QueryBuilder $qb
-     * @param string $insertToTableName
-     * @param bool $applyOnDuplicateKeyUpdate
-     * @param array|null $tempTableAliases
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
     private function doInsertByProductsUsingTempTable(
@@ -975,14 +890,6 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
     }
 
     /**
-     * @param TempTableManipulatorInterface $tempTableManipulator
-     * @param CombinedPriceList $combinedPriceList
-     * @param string $priceToProductRelationClass
-     * @param BasePriceList $priceList
-     * @param QueryBuilder $qb
-     * @param string $insertToTableName
-     * @param bool $applyOnDuplicateKeyUpdate
-     * @param array|null $tempTableAliases
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
     private function insertByProductsRangeForBaseProductPriceToTempTable(
@@ -1031,14 +938,6 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         }
     }
 
-    /**
-     * @param TempTableManipulatorInterface $tempTableManipulator
-     * @param CombinedPriceList $combinedPriceList
-     * @param QueryBuilder $qb
-     * @param string $insertToTableName
-     * @param bool $applyOnDuplicateKeyUpdate
-     * @param array|null $tempTableAliases
-     */
     private function insertFromQbUsingCombinedPricesTempTable(
         TempTableManipulatorInterface $tempTableManipulator,
         CombinedPriceList $combinedPriceList,

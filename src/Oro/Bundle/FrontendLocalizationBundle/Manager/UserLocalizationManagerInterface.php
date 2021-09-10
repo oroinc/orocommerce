@@ -16,30 +16,14 @@ interface UserLocalizationManagerInterface
      */
     public function getEnabledLocalizations(): array;
 
-    /**
-     * @return Localization|null
-     */
     public function getDefaultLocalization(): ?Localization;
 
-    /**
-     * @param Website|null $website
-     * @return Localization|null
-     */
     public function getCurrentLocalization(Website $website = null): ?Localization;
 
-    /**
-     * @param CustomerUser $customerUser
-     * @param Website|null $website
-     * @return null|Localization
-     */
     public function getCurrentLocalizationByCustomerUser(
         CustomerUser $customerUser,
         Website $website = null
     ): ?Localization;
 
-    /**
-     * @param Localization $localization
-     * @param Website|null $website
-     */
     public function setCurrentLocalization(Localization $localization, Website $website = null): void;
 }

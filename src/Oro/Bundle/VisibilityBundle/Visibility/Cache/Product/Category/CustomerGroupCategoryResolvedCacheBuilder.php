@@ -24,9 +24,6 @@ class CustomerGroupCategoryResolvedCacheBuilder extends AbstractResolvedCacheBui
      */
     protected $customerGroupCategoryVisibilityRepository;
 
-    /**
-     * @param VisibilityChangeGroupSubtreeCacheBuilder $visibilityChangeCustomerGroupSubtreeCacheBuilder
-     */
     public function setVisibilityChangeCustomerSubtreeCacheBuilder(
         VisibilityChangeGroupSubtreeCacheBuilder $visibilityChangeCustomerGroupSubtreeCacheBuilder
     ) {
@@ -200,9 +197,6 @@ class CustomerGroupCategoryResolvedCacheBuilder extends AbstractResolvedCacheBui
         return $resolvedVisibility;
     }
 
-    /**
-     * @param EntityRepository $repository
-     */
     public function setCustomerGroupCategoryVisibilityRepository(EntityRepository $repository)
     {
         $this->customerGroupCategoryVisibilityRepository = $repository;

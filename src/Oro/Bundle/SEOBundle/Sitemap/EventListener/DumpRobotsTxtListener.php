@@ -27,12 +27,6 @@ class DumpRobotsTxtListener
     /** @var string */
     private $sitemapDir;
 
-    /**
-     * @param RobotsTxtSitemapManager  $robotsTxtSitemapManager
-     * @param CanonicalUrlGenerator    $canonicalUrlGenerator
-     * @param SitemapFilesystemAdapter $sitemapFilesystemAdapter
-     * @param string                   $sitemapDir
-     */
     public function __construct(
         RobotsTxtSitemapManager $robotsTxtSitemapManager,
         CanonicalUrlGenerator $canonicalUrlGenerator,
@@ -45,9 +39,6 @@ class DumpRobotsTxtListener
         $this->sitemapDir = $sitemapDir;
     }
 
-    /**
-     * @param OnSitemapDumpFinishEvent $event
-     */
     public function onSitemapDumpStorage(OnSitemapDumpFinishEvent $event): void
     {
         $website = $event->getWebsite();

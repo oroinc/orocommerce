@@ -53,7 +53,6 @@ class QuoteFormSubscriberTest extends FormIntegrationTestCase
     /** @var ProductRepository|\PHPUnit\Framework\MockObject\MockObject */
     private ProductRepository $productRepository;
 
-    /** @var QuoteFormSubscriber */
     private QuoteFormSubscriber $subscriber;
 
     private array $tierPrices = [];
@@ -107,7 +106,6 @@ class QuoteFormSubscriberTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider noWebsiteDataProvider
-     * @param array|null $data
      */
     public function testOnPreSubmitWithNoWebsite(?array $data): void
     {
@@ -161,7 +159,6 @@ class QuoteFormSubscriberTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider noCustomerDataProvider
-     * @param array|null $data
      */
     public function testOnPreSubmitWithNoCustomer(?array $data): void
     {

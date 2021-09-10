@@ -16,9 +16,6 @@ class ShippingRuleEnableValidator extends ConstraintValidator
      */
     private $ruleEnabledChecker;
 
-    /**
-     * @param ShippingRuleEnabledCheckerInterface $ruleEnabledChecker
-     */
     public function __construct(ShippingRuleEnabledCheckerInterface $ruleEnabledChecker)
     {
         $this->ruleEnabledChecker = $ruleEnabledChecker;

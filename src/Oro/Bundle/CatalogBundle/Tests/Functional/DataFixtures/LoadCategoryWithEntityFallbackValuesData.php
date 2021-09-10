@@ -80,11 +80,6 @@ class LoadCategoryWithEntityFallbackValuesData extends AbstractCategoryFixture i
         $manager->flush();
     }
 
-    /**
-     * @param array $data
-     *
-     * @return EntityFieldFallbackValue
-     */
     private function createEntityFieldFallbackValue(array $data): EntityFieldFallbackValue
     {
         $value = new EntityFieldFallbackValue();
@@ -106,10 +101,6 @@ class LoadCategoryWithEntityFallbackValuesData extends AbstractCategoryFixture i
         return $value;
     }
 
-    /**
-     * @param array $data
-     * @param Category $category
-     */
     private function addEntityFieldFallbackValue(array $data, Category $category): void
     {
         if (!empty($data['manageInventory'])) {

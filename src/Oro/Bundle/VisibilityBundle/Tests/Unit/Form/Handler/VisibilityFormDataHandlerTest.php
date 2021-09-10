@@ -3,6 +3,7 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Form\Handler;
 
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\VisibilityBundle\Form\Handler\VisibilityFormDataHandler;
 use Oro\Component\Testing\Unit\FormHandlerTestCase;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -21,13 +22,9 @@ class VisibilityFormDataHandlerTest extends FormHandlerTestCase
     {
         parent::setUp();
 
-        $this->entity = $this->getMockBuilder('Oro\Bundle\ProductBundle\Entity\Product')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->entity = $this->createMock(Product::class);
 
-        $this->eventDispatcher = $this->getMockBuilder('Symfony\Component\EventDispatcher\EventDispatcherInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
 
         $this->handler = new VisibilityFormDataHandler(
             $this->form,
@@ -40,14 +37,14 @@ class VisibilityFormDataHandlerTest extends FormHandlerTestCase
      * {@inheritdoc}
      * @dataProvider supportedMethods
      */
-    public function testProcessSupportedRequest($method, $isValid, $isProcessed)
+    public function testProcessSupportedRequest(string $method, bool $isValid, bool $isProcessed): void
     {
         $this->form->expects($this->any())
             ->method('isSubmitted')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
         $this->form->expects($this->any())
             ->method('isValid')
-            ->will($this->returnValue($isValid));
+            ->willReturn($isValid);
 
         $this->request->setMethod($method);
 
@@ -58,10 +55,7 @@ class VisibilityFormDataHandlerTest extends FormHandlerTestCase
         $this->assertEquals($isProcessed, $this->handler->process($this->entity));
     }
 
-    /**
-     * @return array
-     */
-    public function supportedMethods()
+    public function supportedMethods(): array
     {
         return [
             'post valid' => [
@@ -77,7 +71,7 @@ class VisibilityFormDataHandlerTest extends FormHandlerTestCase
         ];
     }
 
-    public function testProcessValidData()
+    public function testProcessValidData(): void
     {
         $this->form->expects($this->once())
             ->method('setData')
@@ -90,10 +84,10 @@ class VisibilityFormDataHandlerTest extends FormHandlerTestCase
             ->with($this->request);
         $this->form->expects($this->any())
             ->method('isSubmitted')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
         $this->form->expects($this->once())
             ->method('isValid')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')

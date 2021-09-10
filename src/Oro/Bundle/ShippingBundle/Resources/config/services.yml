@@ -74,25 +74,8 @@ services:
         calls:
             - [setTranslationPrefix, ['oro.length_unit']]
 
-    # twig extensions
-    oro_shipping.twig.shipping_option_label:
-        class: Oro\Bundle\ShippingBundle\Twig\ShippingOptionLabelExtension
-        public: false
-        arguments:
-            - '@oro_platform.twig.service_locator'
-        tags:
-            - { name: twig.extension }
-
-    oro_shipping.twig.weight_unit_value:
-        class: Oro\Bundle\ShippingBundle\Twig\WeightUnitValueExtension
-        public: false
-        arguments:
-            - '@oro_platform.twig.service_locator'
-        tags:
-            - { name: twig.extension }
-
-    oro_shipping.twig.dimensions_unit_value:
-        class: Oro\Bundle\ShippingBundle\Twig\DimensionsUnitValueExtension
+    oro_shipping.twig.shipping_extension:
+        class: Oro\Bundle\ShippingBundle\Twig\ShippingExtension
         public: false
         arguments:
             - '@oro_platform.twig.service_locator'
@@ -100,39 +83,57 @@ services:
             - { name: twig.extension }
 
     oro_shipping.repository.shipping_methods_configs_rule:
-        class: 'Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodsConfigsRuleRepository'
+        alias: Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodsConfigsRuleRepository
+
+    Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodsConfigsRuleRepository:
         parent: oro_entity.abstract_repository
         arguments:
             - 'Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule'
         calls:
             - [setAclHelper, ['@oro_security.acl_helper']]
+        tags:
+            - { name: doctrine.repository_service }
 
     oro_shipping.repository.shipping_method_type_config:
-        class: 'Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodTypeConfigRepository'
+        alias: Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodTypeConfigRepository
+
+    Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodTypeConfigRepository:
         parent: oro_entity.abstract_repository
         arguments:
             - 'Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig'
+        tags:
+            - { name: doctrine.repository_service }
 
     oro_shipping.repository.product_shipping_options:
-        class: 'Oro\Bundle\ShippingBundle\Entity\Repository\ProductShippingOptionsRepository'
+        alias: Oro\Bundle\ShippingBundle\Entity\Repository\ProductShippingOptionsRepository
+
+    Oro\Bundle\ShippingBundle\Entity\Repository\ProductShippingOptionsRepository:
         parent: oro_entity.abstract_repository
         arguments:
             - 'Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions'
+        tags:
+            - { name: doctrine.repository_service }
 
     oro_shipping.repository.length_unit:
         parent: oro_entity.abstract_repository
         arguments:
             - 'Oro\Bundle\ShippingBundle\Entity\LengthUnit'
+        tags:
+            - { name: doctrine.repository_service }
 
     oro_shipping.repository.weight_unit:
         parent: oro_entity.abstract_repository
         arguments:
             - 'Oro\Bundle\ShippingBundle\Entity\WeightUnit'
+        tags:
+            - { name: doctrine.repository_service }
 
     oro_shipping.repository.freight_class:
         parent: oro_entity.abstract_repository
         arguments:
             - 'Oro\Bundle\ShippingBundle\Entity\FreightClass'
+        tags:
+            - { name: doctrine.repository_service }
 
     oro_shipping.provider.measure_units.weight:
         class: 'Oro\Bundle\ShippingBundle\Provider\MeasureUnitProvider'
@@ -443,10 +444,14 @@ services:
             - '@oro_shipping.shipping_method_provider'
 
     oro_shipping.repository.shipping_method_config:
-        class: 'Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodConfigRepository'
+        alias: Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodConfigRepository
+
+    Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodConfigRepository:
         parent: oro_entity.abstract_repository
         arguments:
             - 'Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig'
+        tags:
+            - { name: doctrine.repository_service }
 
     oro_shipping.method.event.dispatcher.method_renaming:
         class: 'Oro\Bundle\ShippingBundle\Method\Event\BasicMethodRenamingEventDispatcher'

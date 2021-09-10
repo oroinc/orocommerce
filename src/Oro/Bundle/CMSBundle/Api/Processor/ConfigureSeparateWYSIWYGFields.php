@@ -26,12 +26,6 @@ class ConfigureSeparateWYSIWYGFields extends ConfigureWYSIWYGFields
     /** @var ResourcesProvider */
     private $resourcesProvider;
 
-    /**
-     * @param WYSIWYGFieldsProvider      $wysiwygFieldsProvider
-     * @param EntityFieldFilteringHelper $entityFieldFilteringHelper
-     * @param DoctrineHelper             $doctrineHelper
-     * @param ResourcesProvider          $resourcesProvider
-     */
     public function __construct(
         WYSIWYGFieldsProvider $wysiwygFieldsProvider,
         EntityFieldFilteringHelper $entityFieldFilteringHelper,
@@ -96,12 +90,6 @@ class ConfigureSeparateWYSIWYGFields extends ConfigureWYSIWYGFields
         }
     }
 
-    /**
-     * @param ConfigContext $context
-     * @param string        $entityClass
-     *
-     * @return bool
-     */
     private function isReadOnlyResource(ConfigContext $context, string $entityClass): bool
     {
         return $this->resourcesProvider->isReadOnlyResource(
@@ -111,12 +99,6 @@ class ConfigureSeparateWYSIWYGFields extends ConfigureWYSIWYGFields
         );
     }
 
-    /**
-     * @param string $entityClass
-     * @param string $fieldName
-     *
-     * @return bool
-     */
     private function isEntityField(string $entityClass, string $fieldName): bool
     {
         $metadata = $this->doctrineHelper->getEntityMetadataForClass($entityClass);

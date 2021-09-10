@@ -13,17 +13,11 @@ class RobotsGuestAccessOnSitemapDumpListener
     /** @var RobotsTxtIndexingRulesBySitemapManager */
     private $robotsTxtIndexingRulesBySitemapManager;
 
-    /**
-     * @param RobotsTxtIndexingRulesBySitemapManager $robotsTxtIndexingRulesBySitemapManager
-     */
     public function __construct(RobotsTxtIndexingRulesBySitemapManager $robotsTxtIndexingRulesBySitemapManager)
     {
         $this->robotsTxtIndexingRulesBySitemapManager = $robotsTxtIndexingRulesBySitemapManager;
     }
 
-    /**
-     * @param OnSitemapDumpFinishEvent $event
-     */
     public function onSitemapDumpStorage(OnSitemapDumpFinishEvent $event): void
     {
         if ($event->getWebsite()->isDefault()) {

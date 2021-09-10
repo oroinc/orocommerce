@@ -17,9 +17,6 @@ class ShippingMethodHasEnabledShippingRules extends AbstractShippingMethodHasShi
      */
     private $repository;
 
-    /**
-     * @param EntityRepository $repository
-     */
     public function __construct(EntityRepository $repository)
     {
         $this->repository = $repository;

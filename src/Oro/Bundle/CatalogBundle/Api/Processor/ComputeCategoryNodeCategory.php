@@ -31,11 +31,6 @@ class ComputeCategoryNodeCategory implements ProcessorInterface
     /** @var DataAccessorInterface */
     private $dataAccessor;
 
-    /**
-     * @param EntitySerializer      $entitySerializer
-     * @param DoctrineHelper        $doctrineHelper
-     * @param DataAccessorInterface $dataAccessor
-     */
     public function __construct(
         EntitySerializer $entitySerializer,
         DoctrineHelper $doctrineHelper,
@@ -71,10 +66,10 @@ class ComputeCategoryNodeCategory implements ProcessorInterface
             $category = $categoryAssociationData[$item[self::ID_FIELD]] ?? null;
             $data[$key][self::CATEGORY_FIELD] = $category;
             if ($category) {
-                $categoryPrefixLength = strlen($categoryPrefix);
+                $categoryPrefixLength = \strlen($categoryPrefix);
                 foreach ($fields as $fieldName => $field) {
                     $propertyPath = $field->getPropertyPath();
-                    if ($propertyPath && 0 === strpos($propertyPath, $categoryPrefix)) {
+                    if ($propertyPath && str_starts_with($propertyPath, $categoryPrefix)) {
                         $categoryPropertyPath = substr($propertyPath, $categoryPrefixLength);
                         $value = null;
                         if ($this->dataAccessor->tryGetValue($category, $categoryPropertyPath, $value)) {
@@ -87,14 +82,6 @@ class ComputeCategoryNodeCategory implements ProcessorInterface
         $context->setData($data);
     }
 
-    /**
-     * @param array                      $data
-     * @param CustomizeLoadedDataContext $context
-     * @param EntityDefinitionConfig     $config
-     * @param string                     $categoryPrefix
-     *
-     * @return bool
-     */
     private function isCategoryFieldRequested(
         array $data,
         CustomizeLoadedDataContext $context,
@@ -136,13 +123,13 @@ class ComputeCategoryNodeCategory implements ProcessorInterface
                 continue;
             }
             $propertyPath = $field->getPropertyPath();
-            if ($propertyPath && 0 === strpos($propertyPath, $categoryPrefix)) {
+            if ($propertyPath && str_starts_with($propertyPath, $categoryPrefix)) {
                 $dependedFieldNames[] = $fieldName;
             }
             $dependsOn = $field->getDependsOn();
             if ($dependsOn) {
                 foreach ($dependsOn as $propertyPath) {
-                    if (0 === strpos($propertyPath, $categoryPrefix)) {
+                    if (str_starts_with($propertyPath, $categoryPrefix)) {
                         $dependedFieldNames[] = $fieldName;
                         break;
                     }
@@ -156,12 +143,6 @@ class ComputeCategoryNodeCategory implements ProcessorInterface
         return $dependedFieldNames;
     }
 
-    /**
-     * @param EntityDefinitionConfig $config
-     * @param string                 $categoryPrefix
-     *
-     * @return EntityDefinitionConfig
-     */
     private function getCategoryConfig(EntityDefinitionConfig $config, string $categoryPrefix): EntityDefinitionConfig
     {
         $categoryConfig = $config->getField(self::CATEGORY_FIELD)->getTargetEntity();
@@ -209,13 +190,13 @@ class ComputeCategoryNodeCategory implements ProcessorInterface
                 continue;
             }
             $propertyPath = $field->getPropertyPath();
-            if ($propertyPath && 0 === strpos($propertyPath, $categoryPrefix)) {
+            if ($propertyPath && str_starts_with($propertyPath, $categoryPrefix)) {
                 $categoryDependsOn[] = substr($propertyPath, $categoryPrefixLength);
             }
             $dependsOn = $field->getDependsOn();
             if ($dependsOn) {
                 foreach ($dependsOn as $propertyPath) {
-                    if (0 === strpos($propertyPath, $categoryPrefix)) {
+                    if (str_starts_with($propertyPath, $categoryPrefix)) {
                         $categoryDependsOn[] = substr($propertyPath, $categoryPrefixLength);
                     }
                 }
@@ -256,11 +237,6 @@ class ComputeCategoryNodeCategory implements ProcessorInterface
         return $result;
     }
 
-    /**
-     * @param EntityDefinitionConfig $config
-     *
-     * @return string
-     */
     private function getIdentifierFieldName(EntityDefinitionConfig $config): string
     {
         $idFieldNames = $config->getIdentifierFieldNames();

@@ -24,10 +24,6 @@ class ValidateProductCollectionId implements ProcessorInterface
     /** @var ContentNodeProvider */
     private $contentNodeProvider;
 
-    /**
-     * @param DoctrineHelper      $doctrineHelper
-     * @param ContentNodeProvider $contentNodeProvider
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         ContentNodeProvider $contentNodeProvider

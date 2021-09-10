@@ -21,9 +21,6 @@ class ReindexMessageGranularizer
      */
     private $identifierRepository;
 
-    /**
-     * @param EntityIdentifierRepository $identifierRepository
-     */
     public function __construct(EntityIdentifierRepository $identifierRepository)
     {
         $this->identifierRepository = $identifierRepository;

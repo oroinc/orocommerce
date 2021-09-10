@@ -5,76 +5,85 @@ namespace Oro\Bundle\ValidationBundle\Tests\Unit\Validator\Constraints;
 use Oro\Bundle\ValidationBundle\Validator\Constraints\UrlSafe;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints\RegexValidator;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
-use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
+use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
-class UrlSafeTest extends \PHPUnit\Framework\TestCase
+class UrlSafeTest extends ConstraintValidatorTestCase
 {
-    /** @var UrlSafe */
-    protected $constraint;
+    protected function createValidator()
+    {
+        return new RegexValidator();
+    }
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|ExecutionContextInterface */
-    protected $context;
-
-    /** @var RegexValidator */
-    protected $validator;
-
-    protected function setUp(): void
+    protected function createContext()
     {
         $this->constraint = new UrlSafe();
-        $this->context = $this->createMock(ExecutionContextInterface::class);
-        $this->validator = new RegexValidator();
-        $this->validator->initialize($this->context);
+
+        return parent::createContext();
     }
 
-    public function testConfiguration()
+    public function testConfiguration(): void
     {
-        $this->assertEquals(
-            'Symfony\Component\Validator\Constraints\RegexValidator',
-            $this->constraint->validatedBy()
-        );
-        $this->assertEquals(Constraint::PROPERTY_CONSTRAINT, $this->constraint->getTargets());
+        self::assertEquals(RegexValidator::class, $this->constraint->validatedBy());
+        self::assertEquals(Constraint::PROPERTY_CONSTRAINT, $this->constraint->getTargets());
     }
 
-    public function testGetAlias()
+    public function testGetAlias(): void
     {
-        $this->assertEquals('url_safe', $this->constraint->getAlias());
+        self::assertEquals(UrlSafe::ALIAS, $this->constraint->getAlias());
     }
 
     /**
-     * @dataProvider validateDataProvider
+     * @dataProvider validateWrongValueDataProvider
      *
      * @param bool $allowSlashes
      * @param mixed $data
-     * @param boolean $correct
      */
-    public function testValidate(bool $allowSlashes, $data, bool $correct): void
+    public function testValidateWrongValue(bool $allowSlashes, $data): void
     {
         $constraint = new UrlSafe(['allowSlashes' => $allowSlashes]);
 
-        if ($correct) {
-            $this->context->expects($this->never())
-                ->method('buildViolation');
-        } else {
-            $violationBuilder = $this->createMock(ConstraintViolationBuilderInterface::class);
-
-            $this->context->expects($this->once())->method('buildViolation')
-                ->with($constraint->message)->willReturn($violationBuilder);
-            $violationBuilder->expects($this->once())->method('setParameter')
-                ->willReturnSelf();
-            $violationBuilder->expects($this->once())->method('setCode')
-                ->willReturnSelf();
-            $violationBuilder->expects($this->once())
-                ->method('addViolation');
-        }
-
         $this->validator->validate($data, $constraint);
+
+        $this->buildViolation($constraint->message)
+            ->setParameter('{{ value }}', '"' . $data . '"')
+            ->setCode(UrlSafe::REGEX_FAILED_ERROR)
+            ->assertRaised();
+    }
+
+    public function validateWrongValueDataProvider(): array
+    {
+        return [
+            'Url not safe' => [
+                'allowSlashes' => false,
+                'data' => 'Abc/test',
+            ],
+            'Url not safe with slash on start' => [
+                'allowSlashes' => true,
+                'data' => '/Abc/test',
+            ],
+            'Url not safe with slash on end' => [
+                'allowSlashes' => true,
+                'data' => 'Abc/test/',
+            ],
+        ];
     }
 
     /**
-     * @return array
+     * @dataProvider validateCorrectValueDataProvider
+     *
+     * @param bool $allowSlashes
+     * @param mixed $data
      */
-    public function validateDataProvider(): array
+    public function testValidateCorrectValue(bool $allowSlashes, $data): void
+    {
+        $constraint = new UrlSafe(['allowSlashes' => $allowSlashes]);
+
+        $this->validator->validate($data, $constraint);
+
+        $this->assertNoViolation();
+    }
+
+    public function validateCorrectValueDataProvider(): array
     {
         return [
             'Url safe' => [
@@ -82,31 +91,16 @@ class UrlSafeTest extends \PHPUnit\Framework\TestCase
                 'data' => 'ABC-abs_123~45.test',
                 'correct' => true
             ],
-            'Url not safe' => [
-                'allowSlashes' => false,
-                'data' => 'Abc/test',
-                'correct' => false
-            ],
             'Url safe with slash' => [
                 'allowSlashes' => true,
                 'data' => 'ABC-abs_123~45.test/ABC-abs_123~45.test',
                 'correct' => true
             ],
-            'Url not safe with slash on start' => [
-                'allowSlashes' => true,
-                'data' => '/Abc/test',
-                'correct' => false
-            ],
-            'Url not safe with slash on end' => [
-                'allowSlashes' => true,
-                'data' => 'Abc/test/',
-                'correct' => false
-            ],
         ];
     }
 
-    public function testGetDefaultOption()
+    public function testGetDefaultOption(): void
     {
-        $this->assertEquals(null, $this->constraint->getDefaultOption());
+        self::assertNull($this->constraint->getDefaultOption());
     }
 }

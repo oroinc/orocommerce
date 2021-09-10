@@ -31,12 +31,6 @@ class UpsConnectionValidator implements UpsConnectionValidatorInterface
      */
     private $logger;
 
-    /**
-     * @param UpsConnectionValidatorRequestFactoryInterface $requestFactory
-     * @param UpsClientFactoryInterface                     $clientFactory
-     * @param UpsConnectionValidatorResultFactoryInterface  $resultFactory
-     * @param LoggerInterface                               $logger
-     */
     public function __construct(
         UpsConnectionValidatorRequestFactoryInterface $requestFactory,
         UpsClientFactoryInterface $clientFactory,

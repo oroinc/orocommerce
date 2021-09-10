@@ -21,10 +21,6 @@ class CheckoutListener
     /** @var TokenAccessorInterface */
     private $tokenAccessor;
 
-    /**
-     * @param DefaultUserProvider $defaultUserProvider
-     * @param TokenAccessorInterface $tokenAccessor
-     */
     public function __construct(
         DefaultUserProvider $defaultUserProvider,
         TokenAccessorInterface $tokenAccessor
@@ -33,9 +29,6 @@ class CheckoutListener
         $this->tokenAccessor = $tokenAccessor;
     }
 
-    /**
-     * @param Checkout $checkout
-     */
     public function prePersist(Checkout $checkout)
     {
         if ($this->tokenAccessor->getToken() instanceof AnonymousCustomerUserToken

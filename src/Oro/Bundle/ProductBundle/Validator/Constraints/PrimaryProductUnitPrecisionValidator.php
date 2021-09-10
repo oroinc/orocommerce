@@ -45,12 +45,6 @@ class PrimaryProductUnitPrecisionValidator extends ConstraintValidator
         }
     }
 
-    /**
-     * @param ProductUnitPrecision $precision
-     * @param Collection           $precisions
-     *
-     * @return bool
-     */
     private function isPrecisionExistInCollection(ProductUnitPrecision $precision, Collection $precisions): bool
     {
         $exist = false;

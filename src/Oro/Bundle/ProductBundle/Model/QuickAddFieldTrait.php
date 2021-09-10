@@ -38,9 +38,6 @@ trait QuickAddFieldTrait
         return array_key_exists($name, $this->additionalFields) ? $this->additionalFields[$name] : null;
     }
 
-    /**
-     * @param QuickAddField $field
-     */
     public function addAdditionalField(QuickAddField $field)
     {
         $this->additionalFields[$field->getName()] = $field;

@@ -25,9 +25,6 @@ class ProductHandlerListener
         $this->logger = $logger;
     }
 
-    /**
-     * @param AfterFormProcessEvent $event
-     */
     public function onBeforeFlush(AfterFormProcessEvent $event)
     {
         $data = $event->getData();
@@ -43,9 +40,6 @@ class ProductHandlerListener
         }
     }
 
-    /**
-     * @param Product $product
-     */
     protected function clearCustomExtendVariantFields(Product $product)
     {
         foreach ($product->getVariantFields() as $variantField) {

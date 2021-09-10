@@ -7,6 +7,7 @@ use Oro\Bundle\CheckoutBundle\Mapper\OrderMapper;
 use Oro\Bundle\CheckoutBundle\Tests\Unit\Model\Action\CheckoutSourceStub;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityBundle\Helper\FieldHelper;
+use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
@@ -21,20 +22,11 @@ class OrderMapperTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var OrderMapper
-     */
-    protected $mapper;
+    private OrderMapper $mapper;
 
-    /**
-     * @var FieldHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $fieldHelper;
+    private FieldHelper|\PHPUnit\Framework\MockObject\MockObject $fieldHelper;
 
-    /**
-     * @var PaymentTermAssociationProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $paymentTermAssociationProvider;
+    private PaymentTermAssociationProvider|\PHPUnit\Framework\MockObject\MockObject $paymentTermAssociationProvider;
 
     protected function setUp(): void
     {
@@ -50,11 +42,15 @@ class OrderMapperTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testMap()
+    public function testMap(): void
     {
-        $this->fieldHelper->expects($this->once())
-            ->method('getFields')
-            ->with(Order::class, true, false, false, true, true, false)
+        $this->fieldHelper->expects(self::once())
+            ->method('getEntityFields')
+            ->with(
+                Order::class,
+                EntityFieldProvider::OPTION_WITH_RELATIONS | EntityFieldProvider::OPTION_WITH_UNIDIRECTIONAL
+                | EntityFieldProvider::OPTION_APPLY_EXCLUSIONS
+            )
             ->willReturn(
                 [
                     ['name' => 'id', 'identifier' => true],
@@ -83,9 +79,9 @@ class OrderMapperTest extends \PHPUnit\Framework\TestCase
         $newAddress->setLabel('address2');
 
         $paymentTerm = new PaymentTerm();
-        $this->paymentTermAssociationProvider->expects($this->once())
+        $this->paymentTermAssociationProvider->expects(self::once())
             ->method('setPaymentTerm')
-            ->with($this->isInstanceOf(Order::class), $paymentTerm);
+            ->with(self::isInstanceOf(Order::class), $paymentTerm);
 
         $data = [
             'shippingAddress' => $newAddress,
@@ -95,18 +91,22 @@ class OrderMapperTest extends \PHPUnit\Framework\TestCase
 
         $order = $this->mapper->map($checkout, $data, ['skipMe' => true]);
 
-        $this->assertInstanceOf(Order::class, $order);
-        $this->assertEquals($address, $order->getBillingAddress());
-        $this->assertEquals($newAddress, $order->getShippingAddress());
-        $this->assertEquals($website, $order->getWebsite());
-        $this->assertEquals($shippingCost, $order->getShippingCost());
+        self::assertInstanceOf(Order::class, $order);
+        self::assertEquals($address, $order->getBillingAddress());
+        self::assertEquals($newAddress, $order->getShippingAddress());
+        self::assertEquals($website, $order->getWebsite());
+        self::assertEquals($shippingCost, $order->getShippingCost());
     }
 
-    public function testMapWithSourceEntity()
+    public function testMapWithSourceEntity(): void
     {
-        $this->fieldHelper->expects($this->once())
-            ->method('getFields')
-            ->with(Order::class, true, false, false, true, true, false)
+        $this->fieldHelper->expects(self::once())
+            ->method('getEntityFields')
+            ->with(
+                Order::class,
+                EntityFieldProvider::OPTION_WITH_RELATIONS | EntityFieldProvider::OPTION_WITH_UNIDIRECTIONAL
+                | EntityFieldProvider::OPTION_APPLY_EXCLUSIONS
+            )
             ->willReturn([]);
 
         $source = new CheckoutSourceStub();
@@ -116,17 +116,21 @@ class OrderMapperTest extends \PHPUnit\Framework\TestCase
 
         $order = $this->mapper->map($checkout, []);
 
-        $this->assertInstanceOf(Order::class, $order);
-        $this->assertEquals(ShoppingList::class, $order->getSourceEntityClass());
-        $this->assertEquals(5, $order->getSourceEntityId());
-        $this->assertEquals('SL#1', $order->getSourceEntityIdentifier());
+        self::assertInstanceOf(Order::class, $order);
+        self::assertEquals(ShoppingList::class, $order->getSourceEntityClass());
+        self::assertEquals(5, $order->getSourceEntityId());
+        self::assertEquals('SL#1', $order->getSourceEntityIdentifier());
     }
 
-    public function testMapIdsIgnored()
+    public function testMapIdsIgnored(): void
     {
-        $this->fieldHelper->expects($this->once())
-            ->method('getFields')
-            ->with(Order::class, true, false, false, true, true, false)
+        $this->fieldHelper->expects(self::once())
+            ->method('getEntityFields')
+            ->with(
+                Order::class,
+                EntityFieldProvider::OPTION_WITH_RELATIONS | EntityFieldProvider::OPTION_WITH_UNIDIRECTIONAL
+                | EntityFieldProvider::OPTION_APPLY_EXCLUSIONS
+            )
             ->willReturn(
                 [['name' => 'id', 'identifier' => true]]
             );
@@ -135,7 +139,7 @@ class OrderMapperTest extends \PHPUnit\Framework\TestCase
 
         $order = $this->mapper->map($checkout, []);
 
-        $this->assertInstanceOf(Order::class, $order);
-        $this->assertNull($order->getId());
+        self::assertInstanceOf(Order::class, $order);
+        self::assertNull($order->getId());
     }
 }

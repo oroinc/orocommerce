@@ -22,7 +22,7 @@ define(function(require) {
             focusFieldsSelector: 'input:text[name]',
             previewFieldsSelector: 'input:text[name],select[name]',
             enabledFieldSelector: '[data-name="field__enabled"]',
-            additionalOptionSelector: '.control-group-oro_shipping_method_type_config',
+            additionalOptionSelector: '.control-group-collection_entry',
             focus: false,
             updateFlag: null
         },
@@ -54,14 +54,14 @@ define(function(require) {
         $addAll: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function ShippingRuleMethodsView(options) {
             ShippingRuleMethodsView.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);

@@ -22,10 +22,6 @@ class ProductImageFileNameProvider implements FileNameProviderInterface
     /** @var ConfigManager */
     private $configManager;
 
-    /**
-     * @param FileNameProviderInterface $innerProvider
-     * @param ConfigManager             $configManager
-     */
     public function __construct(
         FileNameProviderInterface $innerProvider,
         ConfigManager $configManager
@@ -50,11 +46,6 @@ class ProductImageFileNameProvider implements FileNameProviderInterface
         );
     }
 
-    /**
-     * @param File $file
-     *
-     * @return bool
-     */
     private function isApplicable(File $file): bool
     {
         return

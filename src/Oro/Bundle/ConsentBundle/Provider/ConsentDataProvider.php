@@ -22,10 +22,6 @@ class ConsentDataProvider
      */
     private $consentDataBuilder;
 
-    /**
-     * @param EnabledConsentProvider $provider
-     * @param ConsentDataBuilder $consentDataBuilder
-     */
     public function __construct(
         EnabledConsentProvider $provider,
         ConsentDataBuilder $consentDataBuilder

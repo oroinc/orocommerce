@@ -8,6 +8,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\ImportExportBundle\Context\ContextInterface;
 use Oro\Bundle\ImportExportBundle\Converter\DataConverterInterface;
+use Oro\Bundle\ImportExportBundle\Serializer\SerializerInterface;
 use Oro\Bundle\ImportExportBundle\Strategy\Import\ImportStrategyHelper;
 use Oro\Bundle\ImportExportBundle\Strategy\StrategyInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -18,7 +19,6 @@ use Oro\Bundle\ProductBundle\ImportExport\Processor\RelatedProductImportProcesso
 use Oro\Bundle\ProductBundle\RelatedItem\AbstractRelatedItemConfigProvider;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class RelatedProductImportProcessorTest extends \PHPUnit\Framework\TestCase
@@ -161,11 +161,6 @@ class RelatedProductImportProcessorTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider processWhenSkuColumnMissingDataProvider
-     *
-     * @param array $item
-     * @param string $expectedError
-     *
-     * @throws \Akeneo\Bundle\BatchBundle\Item\InvalidItemException
      */
     public function testProcessWhenColumnMissing(array $item, string $expectedError): void
     {
@@ -186,9 +181,6 @@ class RelatedProductImportProcessorTest extends \PHPUnit\Framework\TestCase
         $this->assertNull($this->processor->process($item));
     }
 
-    /**
-     * @return array
-     */
     public function processWhenSkuColumnMissingDataProvider(): array
     {
         return [
@@ -273,10 +265,10 @@ class RelatedProductImportProcessorTest extends \PHPUnit\Framework\TestCase
             );
 
         $this->serializer->expects($this->exactly(2))
-            ->method('deserialize')
+            ->method('denormalize')
             ->withConsecutive(
-                [['SKU' => 'sku-1', 'Related SKUs' => 'sku-2'], RelatedProduct::class, null],
-                [['SKU' => 'sku-1', 'Related SKUs' => 'sku-3'], RelatedProduct::class, null]
+                [['SKU' => 'sku-1', 'Related SKUs' => 'sku-2'], RelatedProduct::class, ''],
+                [['SKU' => 'sku-1', 'Related SKUs' => 'sku-3'], RelatedProduct::class, '']
             )
             ->willReturn($this->object);
 
@@ -316,10 +308,10 @@ class RelatedProductImportProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('incrementErrorEntriesCount');
 
         $this->serializer->expects($this->exactly(2))
-            ->method('deserialize')
+            ->method('denormalize')
             ->withConsecutive(
-                [['SKU' => 'sku-1', 'Related SKUs' => 'sku-2'], RelatedProduct::class, null],
-                [['SKU' => 'sku-1', 'Related SKUs' => 'sku-3'], RelatedProduct::class, null]
+                [['SKU' => 'sku-1', 'Related SKUs' => 'sku-2'], RelatedProduct::class, ''],
+                [['SKU' => 'sku-1', 'Related SKUs' => 'sku-3'], RelatedProduct::class, '']
             )
             ->willReturn($this->object);
 
@@ -342,9 +334,6 @@ class RelatedProductImportProcessorTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals([], $this->processor->process($this->item));
     }
 
-    /**
-     * @param array|null $result
-     */
     private function setUpQueryMock(?array $result): void
     {
         $queryBuilder = $this->createMock(QueryBuilder::class);

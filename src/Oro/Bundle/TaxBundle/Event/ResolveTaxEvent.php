@@ -14,9 +14,6 @@ class ResolveTaxEvent extends Event
     /** @var Taxable */
     protected $taxable;
 
-    /**
-     * @param Taxable $taxable
-     */
     public function __construct(Taxable $taxable)
     {
         $this->taxable = $taxable;

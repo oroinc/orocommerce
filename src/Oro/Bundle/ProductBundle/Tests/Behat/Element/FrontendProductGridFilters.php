@@ -9,8 +9,6 @@ class FrontendProductGridFilters extends GridFilters
 {
     /**
      * Resets the given filter.
-     *
-     * @param string $filterName
      */
     public function resetFilter(string $filterName): void
     {
@@ -23,9 +21,6 @@ class FrontendProductGridFilters extends GridFilters
 
     /**
      * Returns hint for applied filter.
-     *
-     * @param string $filterName
-     * @return string
      */
     public function getAppliedFilterHint(string $filterName): string
     {
@@ -38,20 +33,12 @@ class FrontendProductGridFilters extends GridFilters
 
     /**
      * Checks if filter has hint.
-     *
-     * @param string $filterName
-     * @return bool
      */
     public function hasFilterHint(string $filterName): bool
     {
         return $this->getFilterHint($filterName, false) ? true : false;
     }
 
-    /**
-     * @param string $filterName
-     * @param bool $assertFound
-     * @return NodeElement|null
-     */
     private function getFilterHint(string $filterName, bool $assertFound = true): ?NodeElement
     {
         $hintPrefix = sprintf('%s:', $filterName);

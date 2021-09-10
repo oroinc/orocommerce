@@ -54,15 +54,6 @@ abstract class AbstractIndexer implements IndexerInterface
     /** @var int */
     private $batchSize = 100;
 
-    /**
-     * @param DoctrineHelper                      $doctrineHelper
-     * @param SearchMappingProvider               $mappingProvider
-     * @param EntityDependenciesResolverInterface $entityDependenciesResolver
-     * @param IndexDataProvider                   $indexDataProvider
-     * @param PlaceholderInterface                $placeholder
-     * @param IndexerInputValidator               $indexerInputValidator
-     * @param EventDispatcherInterface            $eventDispatcher
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         SearchMappingProvider $mappingProvider,

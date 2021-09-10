@@ -148,7 +148,6 @@ class Slug implements OrganizationAwareInterface
      */
     protected $localization;
 
-
     /**
      * @var string
      *
@@ -242,7 +241,6 @@ class Slug implements OrganizationAwareInterface
     /**
      * @param Scope $scope
      * @return $this
-     *
      */
     public function addScope(Scope $scope)
     {

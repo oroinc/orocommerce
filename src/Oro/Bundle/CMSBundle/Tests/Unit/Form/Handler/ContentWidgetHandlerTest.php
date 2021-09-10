@@ -83,8 +83,6 @@ class ContentWidgetHandlerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider handleDataProvider
-     *
-     * @param string $method
      */
     public function testProcessInvalidForm(string $method): void
     {
@@ -104,8 +102,6 @@ class ContentWidgetHandlerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider handleDataProvider
-     *
-     * @param string $method
      */
     public function testProcessWithUpdateMarker(string $method): void
     {
@@ -129,8 +125,6 @@ class ContentWidgetHandlerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider handleDataProvider
-     *
-     * @param string $method
      */
     public function testProcess(string $method): void
     {
@@ -163,9 +157,6 @@ class ContentWidgetHandlerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider handleDataProvider
-     *
-     * @param string $method
-     *
      */
     public function testProcessException(string $method): void
     {
@@ -177,9 +168,6 @@ class ContentWidgetHandlerTest extends \PHPUnit\Framework\TestCase
         $this->handler->process(new \stdClass(), $this->form, $this->request);
     }
 
-    /**
-     * @return array
-     */
     public function handleDataProvider(): array
     {
         return [

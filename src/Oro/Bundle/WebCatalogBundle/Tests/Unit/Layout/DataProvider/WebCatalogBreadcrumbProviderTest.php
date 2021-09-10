@@ -74,9 +74,6 @@ class WebCatalogBreadcrumbProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getItemsDataProvider
-     *
-     * @param ContentNode $rootNode
-     * @param array       $expectedData
      */
     public function testGetItems(ContentNode $rootNode, array $expectedData)
     {

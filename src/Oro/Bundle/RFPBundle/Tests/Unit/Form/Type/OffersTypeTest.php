@@ -34,7 +34,7 @@ class OffersTypeTest extends FormIntegrationTestCase
     {
         $this->expectException(\Symfony\Component\OptionsResolver\Exception\InvalidOptionsException::class);
         $this->expectExceptionMessage(
-            '"offers" with value 1 is expected to be of type "array", but is of type "integer".'
+            '"offers" with value 1 is expected to be of type "array", but is of type "int".'
         );
 
         $form = $this->factory->create(OffersType::class, null, ['offers' => 1]);

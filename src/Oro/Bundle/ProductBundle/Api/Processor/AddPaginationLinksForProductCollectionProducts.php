@@ -33,11 +33,6 @@ class AddPaginationLinksForProductCollectionProducts implements ProcessorInterfa
     /** @var UrlGeneratorInterface */
     private $urlGenerator;
 
-    /**
-     * @param RestRoutesRegistry    $routesRegistry
-     * @param FilterNamesRegistry   $filterNamesRegistry
-     * @param UrlGeneratorInterface $urlGenerator
-     */
     public function __construct(
         RestRoutesRegistry $routesRegistry,
         FilterNamesRegistry $filterNamesRegistry,

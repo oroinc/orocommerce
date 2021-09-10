@@ -16,9 +16,6 @@ class DisabledDiscountLineItemDecorator implements DiscountLineItemInterface
      */
     private $lineItem;
 
-    /**
-     * @param DiscountLineItem $lineItem
-     */
     public function __construct(DiscountLineItem $lineItem)
     {
         $this->lineItem = $lineItem;

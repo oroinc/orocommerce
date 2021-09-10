@@ -281,9 +281,6 @@ class ContentVariant extends ExtendContentVariant implements
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isExpanded(): bool
     {
         return $this->expanded;

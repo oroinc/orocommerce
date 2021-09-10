@@ -31,9 +31,6 @@ class ImageRemovalManagerTest extends WebTestCase
         $this->setOriginalFileNames($this->initialOriginalFileNames);
     }
 
-    /**
-     * @param bool $enabled
-     */
     private function setOriginalFileNames(bool $enabled): void
     {
         $configManager = self::getConfigManager(null);
@@ -80,7 +77,7 @@ class ImageRemovalManagerTest extends WebTestCase
         $fileNames = $this->getImageFileNames($file);
         self::assertCount(2, $fileNames);
         foreach ($fileNames as $fileName) {
-            if (strpos($fileName, 'attachment/filter/') === 0) {
+            if (str_starts_with($fileName, 'attachment/filter/')) {
                 self::assertStringEndsWith('-original_attachment.jpg', $fileName);
             }
         }

@@ -27,9 +27,6 @@ class CustomerGroupCombinedPriceListsBuilder extends AbstractCombinedPriceListBu
      */
     protected $customerCombinedPriceListsBuilder;
 
-    /**
-     * @param CustomerCombinedPriceListsBuilder $builder
-     */
     public function setCustomerCombinedPriceListsBuilder(CustomerCombinedPriceListsBuilder $builder)
     {
         $this->customerCombinedPriceListsBuilder = $builder;
@@ -128,10 +125,6 @@ class CustomerGroupCombinedPriceListsBuilder extends AbstractCombinedPriceListBu
         return !empty($this->builtList[$website->getId()][$customerGroupId]);
     }
 
-    /**
-     * @param Website $website
-     * @param CustomerGroup|null $customerGroup
-     */
     protected function setBuiltForCustomerGroup(Website $website, CustomerGroup $customerGroup = null)
     {
         $customerGroupId = 0;
@@ -171,11 +164,6 @@ class CustomerGroupCombinedPriceListsBuilder extends AbstractCombinedPriceListBu
         return $this->getPriceListToEntityRepository()->getCustomerGroupIteratorWithDefaultFallback($website);
     }
 
-    /**
-     * @param Website $website
-     * @param CustomerGroup $customerGroup
-     * @return bool
-     */
     protected function hasAssignedPriceLists(Website $website, CustomerGroup $customerGroup): bool
     {
         /** @var PriceListToCustomerGroupRepository $repo */

@@ -24,10 +24,6 @@ class AttachmentEntityConfigProvider implements AttachmentEntityConfigProviderIn
     /** @var AttachmentEntityConfigProviderInterface */
     private $innerAttachmentEntityConfigProvider;
 
-    /**
-     * @param ManagerRegistry $doctrine
-     * @param AttachmentEntityConfigProviderInterface $innerAttachmentEntityConfigProvider
-     */
     public function __construct(
         ManagerRegistry $doctrine,
         AttachmentEntityConfigProviderInterface $innerAttachmentEntityConfigProvider

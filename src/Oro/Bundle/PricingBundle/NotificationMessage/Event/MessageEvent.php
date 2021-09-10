@@ -12,9 +12,6 @@ class MessageEvent extends Event
      */
     private $message;
 
-    /**
-     * @param Message $message
-     */
     public function __construct(Message $message)
     {
         $this->message = $message;
@@ -28,9 +25,6 @@ class MessageEvent extends Event
         return $this->message;
     }
 
-    /**
-     * @param Message $message
-     */
     public function setMessage(Message $message)
     {
         $this->message = $message;

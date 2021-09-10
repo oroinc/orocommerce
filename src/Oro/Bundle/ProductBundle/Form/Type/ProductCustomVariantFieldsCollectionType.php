@@ -19,9 +19,6 @@ class ProductCustomVariantFieldsCollectionType extends AbstractType
     /** @var VariantFieldProvider */
     private $variantFieldProvider;
 
-    /**
-     * @param VariantFieldProvider $variantFieldProvider
-     */
     public function __construct(VariantFieldProvider $variantFieldProvider)
     {
         $this->variantFieldProvider = $variantFieldProvider;
@@ -43,19 +40,12 @@ class ProductCustomVariantFieldsCollectionType extends AbstractType
         ]);
     }
 
-    /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'onPreSetData']);
         $builder->addModelTransformer(new ProductVariantFieldsTransformer());
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function onPreSetData(FormEvent $event)
     {
         $form = $event->getForm();

@@ -31,7 +31,7 @@ class CategoryHandlerTest extends FormHandlerTestCase
     /**
      * @dataProvider supportedMethods
      */
-    public function testProcessSupportedRequest($method, $isValid, $isProcessed)
+    public function testProcessSupportedRequest(string $method, bool $isValid, bool $isProcessed): void
     {
         $this->form->expects($this->once())
             ->method('setData')
@@ -58,7 +58,7 @@ class CategoryHandlerTest extends FormHandlerTestCase
         $this->assertEquals($isProcessed, $this->handler->process($this->entity));
     }
 
-    public function testProcessValidData()
+    public function testProcessValidData(): void
     {
         $event = new AfterFormProcessEvent($this->form, $this->entity);
         $this->eventDispatcher
@@ -95,7 +95,7 @@ class CategoryHandlerTest extends FormHandlerTestCase
         $this->assertTrue($this->handler->process($this->entity));
     }
 
-    private function assertAppendRemoveProducts()
+    private function assertAppendRemoveProducts(): void
     {
         $this->eventDispatcher->expects($this->once())->method('dispatch')->with(
             new AfterFormProcessEvent($this->form, $this->entity),
@@ -120,7 +120,7 @@ class CategoryHandlerTest extends FormHandlerTestCase
             ]);
     }
 
-    private function mockProductCategory()
+    private function mockProductCategory(): void
     {
         $category = new Category();
         $categoryRepository = $this->createMock(CategoryRepository::class);
@@ -133,7 +133,7 @@ class CategoryHandlerTest extends FormHandlerTestCase
             ->willReturn($categoryRepository);
     }
 
-    private function assertCategoryUnitPrecisionUpdate()
+    private function assertCategoryUnitPrecisionUpdate(): void
     {
         $defaultProductOptions = $this->createMock(CategoryDefaultProductOptions::class);
         $defaultProductOptions->expects($this->once())

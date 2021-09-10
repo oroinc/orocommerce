@@ -62,10 +62,6 @@ class OrderDiscountCollectionTableTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider orderOptionRequiredDataProvider
-     *
-     * @param $exception
-     * @param $exceptionMessage
-     * @param $formOptions
      */
     public function testOrderOptionRequired($exception, $exceptionMessage, $formOptions)
     {

@@ -19,10 +19,6 @@ class BasicMethodsConfigsRulesFiltrationService implements MethodsConfigsRulesFi
      */
     private $shippingContextToRulesValuesConverter;
 
-    /**
-     * @param RuleFiltrationServiceInterface                 $filtrationService
-     * @param ShippingContextToRulesValuesConverterInterface $converter
-     */
     public function __construct(
         RuleFiltrationServiceInterface $filtrationService,
         ShippingContextToRulesValuesConverterInterface $converter

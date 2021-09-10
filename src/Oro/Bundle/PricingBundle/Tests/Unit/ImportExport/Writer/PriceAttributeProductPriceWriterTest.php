@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\ImportExport\Writer;
 
-use Akeneo\Bundle\BatchBundle\Entity\StepExecution;
 use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\BatchBundle\Entity\StepExecution;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ImportExportBundle\Context\ContextInterface;
 use Oro\Bundle\ImportExportBundle\Context\ContextRegistry;
@@ -82,12 +82,6 @@ class PriceAttributeProductPriceWriterTest extends TestCase
         $this->writer->write($items);
     }
 
-    /**
-     * @param int   $id
-     * @param Price $price
-     *
-     * @return PriceAttributeProductPrice
-     */
     private function createAttributePriceWithIdPrice(int $id, Price $price): PriceAttributeProductPrice
     {
         $entity = $this->createAttributePriceWithId($id);
@@ -96,11 +90,6 @@ class PriceAttributeProductPriceWriterTest extends TestCase
         return $entity;
     }
 
-    /**
-     * @param int $id
-     *
-     * @return PriceAttributeProductPrice
-     */
     private function createAttributePriceWithId(int $id): PriceAttributeProductPrice
     {
         $entity = new PriceAttributeProductPrice();
@@ -110,11 +99,6 @@ class PriceAttributeProductPriceWriterTest extends TestCase
         return $entity;
     }
 
-    /**
-     * @param Price $price
-     *
-     * @return PriceAttributeProductPrice
-     */
     private function createAttributePriceWithPrice(Price $price): PriceAttributeProductPrice
     {
         $entity = new PriceAttributeProductPrice();

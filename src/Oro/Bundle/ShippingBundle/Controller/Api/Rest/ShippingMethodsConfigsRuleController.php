@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\ShippingBundle\Controller\Api\Rest;
 
-use FOS\RestBundle\Controller\Annotations as Rest;
-use FOS\RestBundle\Routing\ClassResourceInterface;
 use FOS\RestBundle\View\View;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
@@ -13,10 +11,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 /**
  * REST API Shipping Methods Configs Rule Controller
- * @Rest\RouteResource("shippingrules")
- * @Rest\NamePrefix("oro_api_")
  */
-class ShippingMethodsConfigsRuleController extends RestController implements ClassResourceInterface
+class ShippingMethodsConfigsRuleController extends RestController
 {
     /**
      * Enable shipping rule
@@ -24,11 +20,6 @@ class ShippingMethodsConfigsRuleController extends RestController implements Cla
      * Returns
      * - HTTP_OK (200)
      *
-     * @Rest\Post(
-     *      "/shippingrules/{id}/enable",
-     *      requirements={"version"="latest|v1", "id"="\d+"},
-     *      defaults={"version"="latest", "_format"="json"}
-     * )
      * @ApiDoc(description="Enable Shipping Rule", resource=true)
      * @AclAncestor("oro_shipping_methods_configs_rule_update")
      *
@@ -73,11 +64,6 @@ class ShippingMethodsConfigsRuleController extends RestController implements Cla
      * Returns
      * - HTTP_OK (200)
      *
-     * @Rest\Post(
-     *      "/shippingrules/{id}/disable",
-     *      requirements={"version"="latest|v1", "id"="\d+"},
-     *      defaults={"version"="latest", "_format"="json"}
-     * )
      * @ApiDoc(description="Disable Shipping Rule", resource=true)
      * @AclAncestor("oro_shipping_methods_configs_rule_update")
      *

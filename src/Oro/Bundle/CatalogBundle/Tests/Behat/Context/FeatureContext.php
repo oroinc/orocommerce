@@ -4,8 +4,6 @@ namespace Oro\Bundle\CatalogBundle\Tests\Behat\Context;
 
 use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Element\NodeElement;
-use Behat\Symfony2Extension\Context\KernelAwareContext;
-use Behat\Symfony2Extension\Context\KernelDictionary;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CatalogBundle\Entity\Category;
@@ -15,9 +13,9 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
 
-class FeatureContext extends OroFeatureContext implements OroPageObjectAware, KernelAwareContext
+class FeatureContext extends OroFeatureContext implements OroPageObjectAware
 {
-    use PageObjectDictionary, KernelDictionary;
+    use PageObjectDictionary;
 
     /**
      * Checks, that category elements displayed on the page in the same order
@@ -95,13 +93,10 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
 
     /**
      * @Then /^tree level of category "(?P<title>[^"]*)" is (?P<level>[0-9]+)$/
-     *
-     * @param string $title
-     * @param int $level
      */
     public function treeLevelOfCategoryIs(string $title, int $level): void
     {
-        $doctrine = $this->getContainer()->get('doctrine');
+        $doctrine = $this->getAppContainer()->get('doctrine');
         $manager = $doctrine->getManagerForClass(Category::class);
 
         /** @var Organization $organization */
@@ -115,12 +110,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
-     * @param ObjectManager $manager
-     * @param string $title
-     * @param OrganizationInterface $organization
-     *
      * @throws \Doctrine\ORM\NonUniqueResultException
-     * @return Category
      */
     private function getCategory(ObjectManager $manager, string $title, OrganizationInterface $organization): Category
     {
@@ -157,14 +147,10 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $this->assertCanonicalUrlForCategory($categoryName, 0);
     }
 
-    /**
-     * @param string $categoryName
-     * @param int $includingSubcategories
-     */
     private function assertCanonicalUrlForCategory(string $categoryName, int $includingSubcategories)
     {
         /** @var ObjectManager $manager */
-        $manager = $this->getContainer()->get('doctrine')->getManagerForClass(Category::class);
+        $manager = $this->getAppContainer()->get('doctrine')->getManagerForClass(Category::class);
         /** @var Category $category */
         $category = $manager->getRepository(Category::class)->findOneBy(['denormalizedDefaultTitle' => $categoryName]);
 

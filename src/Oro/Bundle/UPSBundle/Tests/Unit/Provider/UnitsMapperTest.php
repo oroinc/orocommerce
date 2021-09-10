@@ -50,7 +50,6 @@ class UnitsMapperTest extends \PHPUnit\Framework\TestCase
         $this->mapper->getUPSUnitByCode(UnitsMapper::UNIT_OF_LENGTH_FOOT);
     }
 
-
     public function testGetUPSUnit()
     {
         static::assertEquals(

@@ -22,10 +22,6 @@ class CustomerDatagridListener
      */
     private $selectedFieldsProvider;
 
-    /**
-     * @param PaymentTermAssociationProvider $paymentTermAssociationProvider
-     * @param SelectedFieldsProviderInterface $selectedFieldsProvider
-     */
     public function __construct(
         PaymentTermAssociationProvider $paymentTermAssociationProvider,
         SelectedFieldsProviderInterface $selectedFieldsProvider
@@ -34,9 +30,6 @@ class CustomerDatagridListener
         $this->selectedFieldsProvider = $selectedFieldsProvider;
     }
 
-    /**
-     * @param BuildBefore $event
-     */
     public function onBuildBefore(BuildBefore $event)
     {
         $associationNames = $this->getSelectedCustomerAssociations($event);
@@ -143,10 +136,6 @@ class CustomerDatagridListener
         );
     }
 
-    /**
-     * @param BuildBefore $event
-     * @return array
-     */
     private function getSelectedCustomerAssociations(BuildBefore $event): array
     {
         $config = $event->getConfig();
@@ -163,12 +152,6 @@ class CustomerDatagridListener
         return \array_intersect($associationNames, $selectedFields);
     }
 
-    /**
-     * @param OrmQueryConfiguration $query
-     * @param string $alias
-     *
-     * @return bool
-     */
     private function joinExists(OrmQueryConfiguration $query, string $alias): bool
     {
         $joins = array_merge($query->getLeftJoins(), $query->getInnerJoins());

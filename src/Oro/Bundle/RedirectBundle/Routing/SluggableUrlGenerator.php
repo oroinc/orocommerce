@@ -51,12 +51,6 @@ class SluggableUrlGenerator implements UrlGeneratorInterface
      */
     private $sluggableUrlsEnabled;
 
-    /**
-     * @param SluggableUrlProviderInterface $sluggableUrlProvider
-     * @param ContextUrlProviderRegistry $contextUrlProvider
-     * @param UserLocalizationManagerInterface $userLocalizationManager
-     * @param ConfigManager $configManager
-     */
     public function __construct(
         SluggableUrlProviderInterface $sluggableUrlProvider,
         ContextUrlProviderRegistry $contextUrlProvider,
@@ -72,11 +66,11 @@ class SluggableUrlGenerator implements UrlGeneratorInterface
     /**
      * {@inheritdoc}
      */
-    public function generate($name, $parameters = [], $referenceType = self::ABSOLUTE_PATH)
+    public function generate(string $name, array $parameters = [], int $referenceType = self::ABSOLUTE_PATH)
     {
         UrlParameterHelper::normalizeNumericTypes($parameters);
 
-        if ($referenceType === self::ABSOLUTE_PATH || $referenceType === false) {
+        if ($referenceType === self::ABSOLUTE_PATH) {
             return $this->generateSluggableUrl($name, $parameters);
         }
 
@@ -128,9 +122,6 @@ class SluggableUrlGenerator implements UrlGeneratorInterface
         return $this->generator->getContext();
     }
 
-    /**
-     * @param UrlGeneratorInterface $generator
-     */
     public function setBaseGenerator(UrlGeneratorInterface $generator)
     {
         $this->generator = $generator;
@@ -170,9 +161,6 @@ class SluggableUrlGenerator implements UrlGeneratorInterface
         return UrlUtil::getAbsolutePath($url, $baseUrl);
     }
 
-    /**
-     * @return null|int
-     */
     private function getLocalizationId(): ?int
     {
         $localization = $this->userLocalizationManager->getCurrentLocalization();
@@ -180,9 +168,6 @@ class SluggableUrlGenerator implements UrlGeneratorInterface
         return $localization ? $localization->getId() : null;
     }
 
-    /**
-     * @return bool
-     */
     private function isSluggableUrlsEnabled(): bool
     {
         if ($this->sluggableUrlsEnabled === null) {

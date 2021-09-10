@@ -24,9 +24,6 @@ class DiscountConfigurationType extends AbstractType
      */
     private $discountFormTypeProvider;
 
-    /**
-     * @param DiscountFormTypeProvider $discountFormTypeProvider
-     */
     public function __construct(DiscountFormTypeProvider $discountFormTypeProvider)
     {
         $this->discountFormTypeProvider = $discountFormTypeProvider;
@@ -85,9 +82,6 @@ class DiscountConfigurationType extends AbstractType
         $view->vars['prototypes'] = $prototypes;
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function preSetData(FormEvent $event)
     {
         /** @var DiscountConfiguration $discountConfiguration */
@@ -103,9 +97,6 @@ class DiscountConfigurationType extends AbstractType
         $form->add(self::OPTIONS, $discountOptionsFormType);
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function preSubmit(FormEvent $event)
     {
         $form = $event->getForm();
@@ -148,10 +139,6 @@ class DiscountConfigurationType extends AbstractType
         return $choices;
     }
 
-    /**
-     * @param FormBuilderInterface $builder
-     * @return array
-     */
     private function getOptionFormPrototypes(FormBuilderInterface $builder): array
     {
         $prototypes = [];

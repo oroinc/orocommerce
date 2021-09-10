@@ -33,10 +33,6 @@ class CustomFieldProvider
      */
     private $cacheLifeTime = 0;
 
-    /**
-     * @param ConfigProvider $extendConfigProvider
-     * @param ConfigProvider $entityConfigProvider
-     */
     public function __construct(ConfigProvider $extendConfigProvider, ConfigProvider $entityConfigProvider)
     {
         $this->extendConfigProvider = $extendConfigProvider;
@@ -44,10 +40,6 @@ class CustomFieldProvider
         $this->cache = new ArrayCache();
     }
 
-    /**
-     * @param CacheProvider $cache
-     * @param int $lifeTime
-     */
     public function setCache(CacheProvider $cache, int $lifeTime = 0): void
     {
         $this->cache = $cache;
@@ -70,10 +62,6 @@ class CustomFieldProvider
         return $data;
     }
 
-    /**
-     * @param string $entityName
-     * @return array
-     */
     private function getActualEntityCustomFields(string $entityName): array
     {
         $customFields = [];

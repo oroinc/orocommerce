@@ -314,7 +314,7 @@ class PriceRule
     public function setCurrencyExpression($currencyExpression)
     {
         $this->currencyExpression = $currencyExpression;
-        
+
         return $this;
     }
 
@@ -333,7 +333,7 @@ class PriceRule
     public function setQuantityExpression($quantityExpression)
     {
         $this->quantityExpression = $quantityExpression;
-        
+
         return $this;
     }
 
@@ -352,7 +352,7 @@ class PriceRule
     public function setProductUnitExpression($productUnitExpression)
     {
         $this->productUnitExpression = $productUnitExpression;
-        
+
         return $this;
     }
 }

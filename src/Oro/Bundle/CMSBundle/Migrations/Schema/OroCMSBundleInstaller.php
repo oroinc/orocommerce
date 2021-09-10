@@ -111,8 +111,6 @@ class OroCMSBundleInstaller implements
 
     /**
      * Create oro_cms_page table
-     *
-     * @param Schema $schema
      */
     protected function createOroCmsPageTable(Schema $schema)
     {
@@ -158,8 +156,6 @@ class OroCMSBundleInstaller implements
 
     /**
      * Add oro_cms_page foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroCmsPageForeignKeys(Schema $schema)
     {
@@ -192,8 +188,6 @@ class OroCMSBundleInstaller implements
 
     /**
      * Create oro_cms_login_page table
-     *
-     * @param Schema $schema
      */
     protected function createOroCmsLoginPageTable(Schema $schema)
     {
@@ -205,9 +199,6 @@ class OroCMSBundleInstaller implements
         $table->setPrimaryKey(['id']);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addOroCmsLoginPageImageAssociations(Schema $schema)
     {
         $options['attachment']['acl_protected'] = false;
@@ -231,8 +222,6 @@ class OroCMSBundleInstaller implements
 
     /**
      * Create oro_cms_page_slug table
-     *
-     * @param Schema $schema
      */
     protected function createOroCmsPageSlugTable(Schema $schema)
     {
@@ -246,8 +235,6 @@ class OroCMSBundleInstaller implements
 
     /**
      * Create oro_cms_page_slug_prototype table
-     *
-     * @param Schema $schema
      */
     protected function createOroCmsPageSlugPrototypeTable(Schema $schema)
     {
@@ -261,8 +248,6 @@ class OroCMSBundleInstaller implements
 
     /**
      * Create oro_cms_page_title table
-     *
-     * @param Schema $schema
      */
     protected function createOroCmsPageTitleTable(Schema $schema)
     {
@@ -275,8 +260,6 @@ class OroCMSBundleInstaller implements
 
     /**
      * Add oro_cms_page_title foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroCmsPageTitleForeignKeys(Schema $schema)
     {
@@ -295,9 +278,6 @@ class OroCMSBundleInstaller implements
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     public function addContentVariantTypes(Schema $schema)
     {
         if ($schema->hasTable('oro_web_catalog_variant')) {
@@ -334,8 +314,6 @@ class OroCMSBundleInstaller implements
 
     /**
      * Create `oro_cms_content_block` table
-     *
-     * @param Schema $schema
      */
     public function createOroCmsContentBlockTable(Schema $schema)
     {
@@ -353,8 +331,6 @@ class OroCMSBundleInstaller implements
 
     /**
      * Create `oro_cms_content_block_title` table
-     *
-     * @param Schema $schema
      */
     protected function createOroCmsContentBlockTitleTable(Schema $schema)
     {
@@ -367,8 +343,6 @@ class OroCMSBundleInstaller implements
 
     /**
      * Create `oro_cms_content_block_scope` table
-     *
-     * @param Schema $schema
      */
     protected function createOroCmsContentBlockScopeTable(Schema $schema)
     {
@@ -380,8 +354,6 @@ class OroCMSBundleInstaller implements
 
     /**
      * Create oro_cms_content_widget table
-     *
-     * @param Schema $schema
      */
     private function createOroCmsContentWidgetTable(Schema $schema): void
     {
@@ -401,8 +373,6 @@ class OroCMSBundleInstaller implements
 
     /**
      * Create oro_cms_content_widget_usage table
-     *
-     * @param Schema $schema
      */
     private function createOroCmsContentWidgetUsageTable(Schema $schema): void
     {
@@ -421,8 +391,6 @@ class OroCMSBundleInstaller implements
 
     /**
      * Create oro_cms_image_slide table
-     *
-     * @param Schema $schema
      */
     private function createOroCmsImageSlideTable(Schema $schema): void
     {
@@ -464,8 +432,6 @@ class OroCMSBundleInstaller implements
 
     /**
      * Add oro_cms_content_widget foreign keys.
-     *
-     * @param Schema $schema
      */
     private function addOroCmsContentWidgetForeignKeys(Schema $schema): void
     {
@@ -480,8 +446,6 @@ class OroCMSBundleInstaller implements
 
     /**
      * Add oro_cms_content_widget_usage foreign keys.
-     *
-     * @param Schema $schema
      */
     private function addOroCmsContentWidgetUsageForeignKeys(Schema $schema): void
     {
@@ -496,8 +460,6 @@ class OroCMSBundleInstaller implements
 
     /**
      * Add oro_cms_image_slide foreign keys.
-     *
-     * @param Schema $schema
      */
     private function addOroCmsImageSlideForeignKeys(Schema $schema): void
     {
@@ -518,8 +480,6 @@ class OroCMSBundleInstaller implements
 
     /**
      * Add `oro_cms_content_block_title` foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroCmsContentBlockTitleForeignKeys(Schema $schema)
     {
@@ -540,8 +500,6 @@ class OroCMSBundleInstaller implements
 
     /**
      * Add `oro_cms_content_block_scope` foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroCmsContentBlockScopeForeignKeys(Schema $schema)
     {
@@ -562,8 +520,6 @@ class OroCMSBundleInstaller implements
 
     /**
      * Add oro_cms_content_block foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOrganizationForeignKeys(Schema $schema)
     {
@@ -584,8 +540,6 @@ class OroCMSBundleInstaller implements
 
     /**
      * Create oro_cms_text_content_variant table
-     *
-     * @param Schema $schema
      */
     protected function createOroCmsTextContentVariantTable(Schema $schema)
     {
@@ -601,8 +555,6 @@ class OroCMSBundleInstaller implements
 
     /**
      * Create oro_cms_txt_cont_variant_scope table
-     *
-     * @param Schema $schema
      */
     protected function createOroCmsTextContentVariantScopeTable(Schema $schema)
     {
@@ -614,8 +566,6 @@ class OroCMSBundleInstaller implements
 
     /**
      * Add oro_cms_text_content_variant foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroCmsTextContentVariantForeignKeys(Schema $schema)
     {
@@ -630,8 +580,6 @@ class OroCMSBundleInstaller implements
 
     /**
      * Add oro_cms_txt_cont_variant_scope foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroCmsTextContentVariantScopeForeignKeys(Schema $schema)
     {
@@ -650,9 +598,6 @@ class OroCMSBundleInstaller implements
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     private function addLocalizedFallbackValueFields(Schema $schema): void
     {
         $table = $schema->getTable('oro_fallback_localization_val');

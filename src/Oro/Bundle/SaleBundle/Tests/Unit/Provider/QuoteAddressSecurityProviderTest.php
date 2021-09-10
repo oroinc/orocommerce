@@ -163,7 +163,7 @@ class QuoteAddressSecurityProviderTest extends \PHPUnit\Framework\TestCase
                     $permissionsMap = [];
                     $fixtureData['permissions']['oro_quote_address_shipping_allow_manual'] = false;
                     foreach ($fixtureData['permissions'] as $permission => $isGranted) {
-                        if (strpos($permission, ';') === false) {
+                        if (!str_contains($permission, ';')) {
                             $permission .= $userFixture[1];
                         }
                         $permissionsMap[] = [$permission, null, $isGranted];
@@ -183,9 +183,6 @@ class QuoteAddressSecurityProviderTest extends \PHPUnit\Framework\TestCase
         return $data;
     }
 
-    /**
-     * @return array
-     */
     public function userDataProvider(): array
     {
         return [

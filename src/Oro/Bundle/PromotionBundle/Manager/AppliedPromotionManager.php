@@ -46,11 +46,6 @@ class AppliedPromotionManager
      */
     protected $promotionExecutor;
 
-    /**
-     * @param ServiceLink $promotionExecutorServiceLink
-     * @param DoctrineHelper $doctrineHelper
-     * @param AppliedPromotionMapper $promotionMapper
-     */
     public function __construct(
         ServiceLink $promotionExecutorServiceLink,
         DoctrineHelper $doctrineHelper,
@@ -212,11 +207,6 @@ class AppliedPromotionManager
         }
     }
 
-    /**
-     * @param DiscountInformation $discountInformation
-     * @param Order $order
-     * @return AppliedDiscount
-     */
     private function createAppliedDiscount(DiscountInformation $discountInformation, Order $order): AppliedDiscount
     {
         $appliedDiscount = new AppliedDiscount();
@@ -226,9 +216,6 @@ class AppliedPromotionManager
         return $appliedDiscount;
     }
 
-    /**
-     * @return PromotionExecutor
-     */
     protected function getPromotionExecutor(): PromotionExecutor
     {
         if (!$this->promotionExecutor) {

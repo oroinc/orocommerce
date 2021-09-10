@@ -38,8 +38,6 @@ class OroTaxBundle implements Migration
 
     /**
      * Create orob2b_tax table
-     *
-     * @param Schema $schema
      */
     protected function createOroTaxTable(Schema $schema)
     {
@@ -56,8 +54,6 @@ class OroTaxBundle implements Migration
 
     /**
      * Create orob2b_tax_acc_grp_tc_acc_grp table
-     *
-     * @param Schema $schema
      */
     protected function createOroTaxAccGrpTcAccGrpTable(Schema $schema)
     {
@@ -70,8 +66,6 @@ class OroTaxBundle implements Migration
 
     /**
      * Create orob2b_tax_acc_tax_code_acc table
-     *
-     * @param Schema $schema
      */
     protected function createOroTaxAccTaxCodeAccTable(Schema $schema)
     {
@@ -84,8 +78,6 @@ class OroTaxBundle implements Migration
 
     /**
      * Create orob2b_tax_account_tax_code table
-     *
-     * @param Schema $schema
      */
     protected function createOroTaxAccountTaxCodeTable(Schema $schema)
     {
@@ -101,8 +93,6 @@ class OroTaxBundle implements Migration
 
     /**
      * Create orob2b_tax_jurisdiction table
-     *
-     * @param Schema $schema
      */
     protected function createOroTaxJurisdictionTable(Schema $schema)
     {
@@ -121,8 +111,6 @@ class OroTaxBundle implements Migration
 
     /**
      * Create orob2b_tax_prod_tax_code_prod table
-     *
-     * @param Schema $schema
      */
     protected function createOroTaxProdTaxCodeProdTable(Schema $schema)
     {
@@ -135,8 +123,6 @@ class OroTaxBundle implements Migration
 
     /**
      * Create orob2b_tax_product_tax_code table
-     *
-     * @param Schema $schema
      */
     protected function createOroTaxProductTaxCodeTable(Schema $schema)
     {
@@ -152,8 +138,6 @@ class OroTaxBundle implements Migration
 
     /**
      * Create orob2b_tax_rule table
-     *
-     * @param Schema $schema
      */
     protected function createOroTaxRuleTable(Schema $schema)
     {
@@ -171,8 +155,6 @@ class OroTaxBundle implements Migration
 
     /**
      * Create orob2b_tax_zip_code table
-     *
-     * @param Schema $schema
      */
     protected function createOroTaxZipCodeTable(Schema $schema)
     {
@@ -189,8 +171,6 @@ class OroTaxBundle implements Migration
 
     /**
      * Add orob2b_tax_acc_grp_tc_acc_grp foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroTaxAccGrpTcAccGrpForeignKeys(Schema $schema)
     {
@@ -211,8 +191,6 @@ class OroTaxBundle implements Migration
 
     /**
      * Add orob2b_tax_acc_tax_code_acc foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroTaxAccTaxCodeAccForeignKeys(Schema $schema)
     {
@@ -233,8 +211,6 @@ class OroTaxBundle implements Migration
 
     /**
      * Add orob2b_tax_jurisdiction foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroTaxJurisdictionForeignKeys(Schema $schema)
     {
@@ -255,8 +231,6 @@ class OroTaxBundle implements Migration
 
     /**
      * Add orob2b_tax_prod_tax_code_prod foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroTaxProdTaxCodeProdForeignKeys(Schema $schema)
     {
@@ -277,8 +251,6 @@ class OroTaxBundle implements Migration
 
     /**
      * Add orob2b_tax_rule foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroTaxRuleForeignKeys(Schema $schema)
     {
@@ -311,8 +283,6 @@ class OroTaxBundle implements Migration
 
     /**
      * Add orob2b_tax_zip_code foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroTaxZipCodeForeignKeys(Schema $schema)
     {

@@ -46,7 +46,6 @@ class OroPricingBundle implements Migration
     }
 
     /**
-     * @param Schema $schema
      * @throws \Doctrine\DBAL\Schema\SchemaException
      */
     protected function addMergeAllowedTable(Schema $schema)
@@ -63,8 +62,6 @@ class OroPricingBundle implements Migration
 
     /**
      * Create orob2b_prod_price_ch_trigger table
-     *
-     * @param Schema $schema
      */
     protected function createOroProductPriceChangeTriggerTable(Schema $schema)
     {
@@ -78,8 +75,6 @@ class OroPricingBundle implements Migration
 
     /**
      * Create orob2b_price_list_acc_fb table
-     *
-     * @param Schema $schema
      */
     protected function createOrob2BPriceListAccountFallbackTable(Schema $schema)
     {
@@ -94,8 +89,6 @@ class OroPricingBundle implements Migration
 
     /**
      * Create orob2b_price_list_acc_gr_fb table
-     *
-     * @param Schema $schema
      */
     protected function createOrob2BPriceListAccGroupFallbackTable(Schema $schema)
     {
@@ -110,8 +103,6 @@ class OroPricingBundle implements Migration
 
     /**
      * Create orob2b_price_list_website_fb table
-     *
-     * @param Schema $schema
      */
     protected function createOrob2BPriceListWebsiteFallbackTable(Schema $schema)
     {
@@ -125,8 +116,6 @@ class OroPricingBundle implements Migration
 
     /**
      * Create orob2b_price_list_change_trigger table
-     *
-     * @param Schema $schema
      */
     protected function createOroPriceListChangeTriggerTable(Schema $schema)
     {
@@ -140,8 +129,6 @@ class OroPricingBundle implements Migration
 
     /**
      * Create orob2b_price_list_combined table
-     *
-     * @param Schema $schema
      */
     protected function createOroPriceListCombinedTable(Schema $schema)
     {
@@ -156,8 +143,6 @@ class OroPricingBundle implements Migration
 
     /**
      * Create orob2b_price_product_combined table
-     *
-     * @param Schema $schema
      */
     protected function createOroPriceProductCombinedTable(Schema $schema)
     {
@@ -186,8 +171,6 @@ class OroPricingBundle implements Migration
 
     /**
      * Create orob2b_plist_curr_combined table
-     *
-     * @param Schema $schema
      */
     protected function createOrob2BPlistCurrCombinedTable(Schema $schema)
     {
@@ -200,8 +183,6 @@ class OroPricingBundle implements Migration
 
     /**
      * Create orob2b_cmb_price_list_to_acc table
-     *
-     * @param Schema $schema
      */
     protected function createOrob2BCmbPriceListToAccTable(Schema $schema)
     {
@@ -215,8 +196,6 @@ class OroPricingBundle implements Migration
 
     /**
      * Create orob2b_cmb_plist_to_acc_gr table
-     *
-     * @param Schema $schema
      */
     protected function createOrob2BCmbPriceListToAccGrTable(Schema $schema)
     {
@@ -230,8 +209,6 @@ class OroPricingBundle implements Migration
 
     /**
      * Create orob2b_cmb_price_list_to_ws table
-     *
-     * @param Schema $schema
      */
     protected function createOrob2BCmbPriceListToWsTable(Schema $schema)
     {
@@ -243,8 +220,6 @@ class OroPricingBundle implements Migration
 
     /**
      * Create orob2b_cmb_pl_to_pl table
-     *
-     * @param Schema $schema
      */
     protected function createOrob2BCmbPlToPlTable(Schema $schema)
     {
@@ -260,8 +235,6 @@ class OroPricingBundle implements Migration
 
     /**
      * Add orob2b_prod_price_ch_trigger foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroProductPriceChangeTriggerForeignKeys(Schema $schema)
     {
@@ -282,8 +255,6 @@ class OroPricingBundle implements Migration
 
     /**
      * Add orob2b_price_list_account_fallback foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOrob2BPriceListAccountFallbackForeignKeys(Schema $schema)
     {
@@ -304,8 +275,6 @@ class OroPricingBundle implements Migration
 
     /**
      * Add orob2b_price_list_acc_gr_fb foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOrob2BPriceListAccGroupFallbackForeignKeys(Schema $schema)
     {
@@ -326,8 +295,6 @@ class OroPricingBundle implements Migration
 
     /**
      * Add orob2b_price_list_website_fb foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOrob2BPriceListWebsiteFallbackForeignKeys(Schema $schema)
     {
@@ -342,8 +309,6 @@ class OroPricingBundle implements Migration
 
     /**
      * Add orob2b_price_list_change_trigger foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroPriceListChangeTriggerForeignKeys(Schema $schema)
     {
@@ -370,8 +335,6 @@ class OroPricingBundle implements Migration
 
     /**
      * Add orob2b_price_product_combined foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroPriceProductCombinedForeignKeys(Schema $schema)
     {
@@ -398,8 +361,6 @@ class OroPricingBundle implements Migration
 
     /**
      * Add orob2b_plist_curr_combined foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOrob2BPlistCurrCombinedForeignKeys(Schema $schema)
     {
@@ -414,8 +375,6 @@ class OroPricingBundle implements Migration
 
     /**
      * Add orob2b_cmb_plist_to_acc_gr foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOrob2BCmbPriceListToAccGrForeignKeys(Schema $schema)
     {
@@ -442,8 +401,6 @@ class OroPricingBundle implements Migration
 
     /**
      * Add orob2b_cmb_price_list_to_ws foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOrob2BCmbPriceListToWsForeignKeys(Schema $schema)
     {
@@ -464,8 +421,6 @@ class OroPricingBundle implements Migration
 
     /**
      * Add orob2b_cmb_price_list_to_acc foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOrob2BCmbPriceListToAccForeignKeys(Schema $schema)
     {
@@ -492,8 +447,6 @@ class OroPricingBundle implements Migration
 
     /**
      * Add orob2b_cmb_pl_to_pl foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOrob2BCmbPlToPlForeignKeys(Schema $schema)
     {

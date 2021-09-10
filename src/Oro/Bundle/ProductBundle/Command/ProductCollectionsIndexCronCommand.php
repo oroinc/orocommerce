@@ -102,6 +102,8 @@ HELP
         } else {
             $output->writeln('<info>There are no suitable segments for indexation</info>');
         }
+
+        return 0;
     }
 
     public function getDefaultDefinition()

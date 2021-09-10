@@ -44,7 +44,7 @@ class CustomerCategoryResolvedCacheBuilderTest extends AbstractProductResolvedCa
         $this->category = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
         $this->customer = $this->getReference('customer.level_1');
 
-        $container = $this->client->getContainer();
+        $container = $this->getContainer();
         $this->scopeManager = $container->get('oro_scope.scope_manager');
         $this->scope = $this->scopeManager->findOrCreate(
             CustomerCategoryVisibility::VISIBILITY_TYPE,
@@ -119,7 +119,6 @@ class CustomerCategoryResolvedCacheBuilderTest extends AbstractProductResolvedCa
         $visibility = $this->getVisibility();
         $visibility->setVisibility(CustomerCategoryVisibility::CATEGORY);
 
-
         $customerCategoryVisibility = $this->getVisibility();
         $customerCategoryVisibility->setVisibility(CustomerCategoryVisibility::CATEGORY);
         $em = $this->registry->getManagerForClass(CustomerCategoryVisibility::class);
@@ -182,7 +181,6 @@ class CustomerCategoryResolvedCacheBuilderTest extends AbstractProductResolvedCa
 
     /**
      * @dataProvider buildCacheDataProvider
-     * @param array $expectedVisibilities
      */
     public function testBuildCache(array $expectedVisibilities)
     {

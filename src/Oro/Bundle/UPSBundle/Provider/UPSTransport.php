@@ -27,10 +27,6 @@ class UPSTransport extends AbstractRestTransport
      */
     private $logger;
 
-    /**
-     * @param UpsClientUrlProviderInterface $upsClientUrlProvider
-     * @param LoggerInterface               $logger
-     */
     public function __construct(UpsClientUrlProviderInterface $upsClientUrlProvider, LoggerInterface $logger)
     {
         $this->upsClientUrlProvider = $upsClientUrlProvider;

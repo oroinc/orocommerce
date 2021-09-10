@@ -348,7 +348,6 @@ class CombinedPriceListRelationTriggerHandlerTest extends WebTestCase
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     * @return array
      */
     public function duplicateMessagesDataProvider(): array
     {
@@ -562,19 +561,11 @@ class CombinedPriceListRelationTriggerHandlerTest extends WebTestCase
         ];
     }
 
-    /**
-     * @param string $entityClass
-     *
-     * @return EntityManagerInterface
-     */
     private function getEntityManager(string $entityClass): EntityManagerInterface
     {
         return self::getContainer()->get('doctrine')->getManagerForClass($entityClass);
     }
 
-    /**
-     * @param array $data
-     */
     private function resolveReferences(array &$data): void
     {
         foreach ($data as &$item) {
@@ -586,9 +577,6 @@ class CombinedPriceListRelationTriggerHandlerTest extends WebTestCase
         }
     }
 
-    /**
-     * @param array $expectedMessages
-     */
     private function resolveIds(array &$expectedMessages): void
     {
         $this->resolveReferences($expectedMessages);
@@ -601,9 +589,6 @@ class CombinedPriceListRelationTriggerHandlerTest extends WebTestCase
         }
     }
 
-    /**
-     * @param array $fallbackSettings
-     */
     private function createFallbacks(array $fallbackSettings): void
     {
         $this->resolveReferences($fallbackSettings);

@@ -70,7 +70,7 @@ class ProductVariantIndexDataProviderDecorator implements ProductIndexDataProvid
         foreach ($variantData as $variantModel) {
             $variantFieldName = $variantModel->getFieldName();
             // if field value model (not all_text model)
-            if (strpos($variantFieldName, $attribute->getFieldName() . '_') === 0) {
+            if (str_starts_with($variantFieldName, $attribute->getFieldName() . '_')) {
                 // collect searchable enum values
                 if ($variantFieldName === $searchableName && $variantModel->getValue()) {
                     $data->append($variantModel);
@@ -95,9 +95,6 @@ class ProductVariantIndexDataProviderDecorator implements ProductIndexDataProvid
 
     /**
      * Merge searchable data into one field.
-     *
-     * @param \ArrayIterator $data
-     * @param string $searchableName
      */
     private function mergeSearchable(\ArrayIterator $data, string $searchableName): void
     {

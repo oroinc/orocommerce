@@ -20,10 +20,6 @@ class QuickAddCollectionProvider
      */
     protected $copyPasteCollection;
 
-    /**
-     * @param QuickAddHandler $quickAddHandler
-     * @param RequestStack $requestStack
-     */
     public function __construct(QuickAddHandler $quickAddHandler, RequestStack $requestStack)
     {
         $this->quickAddHandler = $quickAddHandler;

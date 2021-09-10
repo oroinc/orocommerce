@@ -38,9 +38,6 @@ class IntegrationRemovalListener
         $this->dispatcher = $dispatcher;
     }
 
-    /**
-     * @param ChannelDeleteEvent $event
-     */
     public function onRemove(ChannelDeleteEvent $event)
     {
         $channel = $event->getChannel();

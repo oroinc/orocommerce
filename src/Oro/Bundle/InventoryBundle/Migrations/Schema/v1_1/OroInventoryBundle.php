@@ -42,9 +42,6 @@ class OroInventoryBundle implements Installation, ExtendExtensionAwareInterface
         $this->addBackOrderFieldToCategory($schema);
     }
 
-    /**
-     * @param Schema $schema
-     */
     public function addInventoryThresholdFieldToProduct(Schema $schema)
     {
         $this->addFallbackRelation(
@@ -62,9 +59,6 @@ class OroInventoryBundle implements Installation, ExtendExtensionAwareInterface
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     public function addInventoryThresholdFieldToCategory(Schema $schema)
     {
         $this->addFallbackRelation(
@@ -82,9 +76,6 @@ class OroInventoryBundle implements Installation, ExtendExtensionAwareInterface
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addDecrementQuantityFieldToProduct(Schema $schema)
     {
         if ($schema->getTable('oro_product')->hasColumn('decrementQuantity_id')) {
@@ -104,9 +95,6 @@ class OroInventoryBundle implements Installation, ExtendExtensionAwareInterface
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     public function addDecrementQuantityFieldToCategory(Schema $schema)
     {
         if ($schema->getTable('oro_catalog_category')->hasColumn('decrementQuantity_id')) {
@@ -126,9 +114,6 @@ class OroInventoryBundle implements Installation, ExtendExtensionAwareInterface
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addBackOrderFieldToProduct(Schema $schema)
     {
         if ($schema->getTable('oro_product')->hasColumn('backOrder_id')) {
@@ -148,9 +133,6 @@ class OroInventoryBundle implements Installation, ExtendExtensionAwareInterface
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     public function addBackOrderFieldToCategory(Schema $schema)
     {
         if ($schema->getTable('oro_catalog_category')->hasColumn('backOrder_id')) {

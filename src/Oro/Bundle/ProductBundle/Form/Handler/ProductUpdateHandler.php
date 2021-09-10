@@ -7,9 +7,9 @@ use Oro\Bundle\ActionBundle\Model\ActionGroupRegistry;
 use Oro\Bundle\FormBundle\Model\UpdateHandler;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\UIBundle\Route\Router;
-use Symfony\Bundle\FrameworkBundle\Routing\Router as SymfonyRouter;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -25,39 +25,27 @@ class ProductUpdateHandler extends UpdateHandler
     /** @var TranslatorInterface */
     private $translator;
 
-    /** @var SymfonyRouter */
-    private $symfonyRouter;
+    /** @var UrlGeneratorInterface */
+    private $urlGenerator;
 
     /** @var RelatedItemsHandler */
     private $relatedItemsHandler;
 
-    /**
-     * @param ActionGroupRegistry $actionGroupRegistry
-     */
     public function setActionGroupRegistry(ActionGroupRegistry $actionGroupRegistry)
     {
         $this->actionGroupRegistry = $actionGroupRegistry;
     }
 
-    /**
-     * @param TranslatorInterface $translator
-     */
     public function setTranslator(TranslatorInterface $translator)
     {
         $this->translator = $translator;
     }
 
-    /**
-     * @param SymfonyRouter $symfonyRouter
-     */
-    public function setRouter(SymfonyRouter $symfonyRouter)
+    public function setUrlGenerator(UrlGeneratorInterface $urlGenerator)
     {
-        $this->symfonyRouter = $symfonyRouter;
+        $this->urlGenerator = $urlGenerator;
     }
 
-    /**
-     * @param RelatedItemsHandler $relatedItemsHandler
-     */
     public function setRelatedItemsHandler(RelatedItemsHandler $relatedItemsHandler)
     {
         $this->relatedItemsHandler = $relatedItemsHandler;
@@ -105,7 +93,7 @@ class ProductUpdateHandler extends UpdateHandler
                 /** @var Product $productCopy */
                 if ($productCopy = $actionData->offsetGet('productCopy')) {
                     return new RedirectResponse(
-                        $this->symfonyRouter->generate('oro_product_view', ['id' => $productCopy->getId()])
+                        $this->urlGenerator->generate('oro_product_view', ['id' => $productCopy->getId()])
                     );
                 }
             }

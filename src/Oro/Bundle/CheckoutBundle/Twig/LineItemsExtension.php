@@ -21,14 +21,9 @@ use Twig\TwigFunction;
  */
 class LineItemsExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    const NAME = 'oro_checkout_order_line_items';
-
     /** @var ContainerInterface */
     protected $container;
 
-    /**
-     * @param ContainerInterface $container
-     */
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
@@ -109,14 +104,6 @@ class LineItemsExtension extends AbstractExtension implements ServiceSubscriberI
         $result['total'] = $this->getTotal($order);
 
         return $result;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return static::NAME;
     }
 
     /**

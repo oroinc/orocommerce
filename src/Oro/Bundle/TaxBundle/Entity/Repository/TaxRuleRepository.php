@@ -57,10 +57,6 @@ class TaxRuleRepository extends EntityRepository
         return $qb;
     }
 
-    /**
-     * @param QueryBuilder $queryBuilder
-     * @param TaxCodes $taxCodes
-     */
     protected function joinTaxCodes(QueryBuilder $queryBuilder, TaxCodes $taxCodes)
     {
         $plainTaxCodes = $taxCodes->getPlainTypedCodes();

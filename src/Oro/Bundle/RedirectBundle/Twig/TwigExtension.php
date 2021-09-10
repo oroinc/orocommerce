@@ -17,12 +17,8 @@ use Twig\TwigFilter;
  */
 class TwigExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    /** @var ContainerInterface */
-    private $container;
+    private ContainerInterface $container;
 
-    /**
-     * @param ContainerInterface $container
-     */
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
@@ -44,9 +40,7 @@ class TwigExtension extends AbstractExtension implements ServiceSubscriberInterf
      */
     public function getSlugsByEntitySlugPrototypes(SluggableInterface $entity)
     {
-        $generator = $this->container->get(SlugEntityGenerator::class);
-
-        return $generator->getSlugsByEntitySlugPrototypes($entity);
+        return $this->getSlugEntityGenerator()->getSlugsByEntitySlugPrototypes($entity);
     }
 
     /**
@@ -57,5 +51,10 @@ class TwigExtension extends AbstractExtension implements ServiceSubscriberInterf
         return [
             SlugEntityGenerator::class
         ];
+    }
+
+    private function getSlugEntityGenerator(): SlugEntityGenerator
+    {
+        return $this->container->get(SlugEntityGenerator::class);
     }
 }

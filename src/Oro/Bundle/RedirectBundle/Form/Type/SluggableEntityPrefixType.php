@@ -36,10 +36,6 @@ class SluggableEntityPrefixType extends AbstractType
      */
     protected $configManager;
 
-    /**
-     * @param RedirectStorage $storage
-     * @param ConfigManager $configManager
-     */
     public function __construct(RedirectStorage $storage, ConfigManager $configManager)
     {
         $this->storage = $storage;
@@ -101,9 +97,6 @@ class SluggableEntityPrefixType extends AbstractType
         $builder->addEventListener(FormEvents::SUBMIT, [$this, 'onSubmit']);
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function onPreSubmit(FormEvent $event)
     {
         // Value from model should be converted from string to appropriate array for `Use Default` case
@@ -124,9 +117,6 @@ class SluggableEntityPrefixType extends AbstractType
         $view->vars['askStrategyName'] = Configuration::STRATEGY_ASK;
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function onSubmit(FormEvent $event)
     {
         $data = $event->getForm()->getViewData();

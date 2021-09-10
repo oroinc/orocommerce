@@ -88,8 +88,6 @@ class LineItemsDiscountTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     *
-     * @return array
      */
     public function calculateDataProvider(): array
     {

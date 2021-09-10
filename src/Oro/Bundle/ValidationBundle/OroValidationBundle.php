@@ -13,7 +13,7 @@ class OroValidationBundle extends Bundle
         if (!$this->extension) {
             $this->extension = new OroValidationExtension();
         }
-        
+
         return $this->extension;
     }
 }

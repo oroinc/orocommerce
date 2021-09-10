@@ -21,10 +21,6 @@ class CouponFiltrationService extends AbstractSkippableFiltrationService
      */
     private $registry;
 
-    /**
-     * @param RuleFiltrationServiceInterface $filtrationService
-     * @param ManagerRegistry $registry
-     */
     public function __construct(
         RuleFiltrationServiceInterface $filtrationService,
         ManagerRegistry $registry

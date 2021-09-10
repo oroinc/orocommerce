@@ -677,9 +677,6 @@ class Product extends ExtendProduct implements
         return [self::STATUS_ENABLED, self::STATUS_DISABLED];
     }
 
-    /**
-     * @return bool
-     */
     public function isEnabled(): bool
     {
         return $this->getStatus() === self::STATUS_ENABLED;
@@ -1198,9 +1195,6 @@ class Product extends ExtendProduct implements
         return $this->parentVariantLinks;
     }
 
-    /**
-     * @return bool
-     */
     public function isVariant(): bool
     {
         return $this->isSimple() && count($this->parentVariantLinks) > 0;

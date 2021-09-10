@@ -221,8 +221,6 @@ class EnumValueCollectionExtensionTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider buildViewProvider
-     * @param array $skus
-     * @param $expectedTooltip
      */
     public function testFinishView(array $skus, $expectedTooltip)
     {

@@ -49,7 +49,6 @@ class ZipCodeTypeTest extends FormIntegrationTestCase
         $this->assertCount(1, $transformers);
         $this->assertInstanceOf(ZipCodeTransformer::class, $transformers[0]);
 
-
         $form->submit($submittedData);
         $this->assertEquals($valid, $form->isValid());
         $this->assertTrue($form->isSynchronized());

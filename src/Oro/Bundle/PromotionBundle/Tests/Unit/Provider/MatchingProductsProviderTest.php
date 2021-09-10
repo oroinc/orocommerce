@@ -130,9 +130,6 @@ class MatchingProductsProviderTest extends \PHPUnit\Framework\TestCase
         static::assertEmpty($this->provider->getMatchingProducts(new Segment(), []));
     }
 
-    /**
-     * @param Segment $segment
-     */
     private function expectsQueryBuilderWithNoRootAlias(Segment $segment)
     {
         $queryBuilder = $this->createMock(QueryBuilder::class);
@@ -149,9 +146,6 @@ class MatchingProductsProviderTest extends \PHPUnit\Framework\TestCase
             ->willReturn($queryBuilder);
     }
 
-    /**
-     * @param Segment $segment
-     */
     private function expectsNoQueryBuilder(Segment $segment)
     {
         $this->segmentManager

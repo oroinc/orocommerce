@@ -39,11 +39,6 @@ class UpcomingProductProvider
      */
     private $configManager;
 
-    /**
-     * @param EntityFallbackResolver $entityFallbackResolver
-     * @param DoctrineHelper $doctrineHelper
-     * @param ConfigManager $configManager
-     */
     public function __construct(
         EntityFallbackResolver $entityFallbackResolver,
         DoctrineHelper $doctrineHelper,
@@ -54,10 +49,6 @@ class UpcomingProductProvider
         $this->configManager = $configManager;
     }
 
-    /**
-     * @param Product $product
-     * @return bool
-     */
     public function isUpcoming(Product $product): bool
     {
         $isUpcoming = $this->getIsUpcomingValue($product);
@@ -79,9 +70,7 @@ class UpcomingProductProvider
     }
 
     /**
-     * @param Product $product
      * @throws \LogicException
-     * @return \DateTime|null
      */
     public function getAvailabilityDate(Product $product): ?\DateTime
     {
@@ -147,10 +136,6 @@ class UpcomingProductProvider
         return null;
     }
 
-    /**
-     * @param Product $product
-     * @return bool
-     */
     private function getIsUpcomingValue(Product $product): bool
     {
         try {
@@ -162,9 +147,6 @@ class UpcomingProductProvider
         }
     }
 
-    /**
-     * @return bool
-     */
     private function isUpcomingStatusOffPastAvailabilityDate(): bool
     {
         return $this->configManager->get(

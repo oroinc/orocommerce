@@ -46,21 +46,11 @@ class RouteTest extends WebCatalogTreeTestCase
         $this->getEntityManager()->flush();
     }
 
-    /**
-     * @param string $reference
-     *
-     * @return string
-     */
     private function getId(string $reference): string
     {
         return (string)$this->getReference($reference)->getId();
     }
 
-    /**
-     * @param string $pathIfo
-     *
-     * @return string
-     */
     private function getRouteId(string $pathIfo): string
     {
         return str_replace('/', ':', $pathIfo);

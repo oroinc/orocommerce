@@ -25,10 +25,6 @@ class ConfigurationListener
      */
     private $messageFactory;
 
-    /**
-     * @param MessageProducerInterface $producer
-     * @param MessageFactory $messageFactory
-     */
     public function __construct(
         MessageProducerInterface $producer,
         MessageFactory $messageFactory
@@ -37,9 +33,6 @@ class ConfigurationListener
         $this->messageFactory = $messageFactory;
     }
 
-    /**
-     * @param ConfigUpdateEvent $event
-     */
     public function onUpdateAfter(ConfigUpdateEvent $event)
     {
         if ($event->isChanged(self::CONFIG_PATH)) {

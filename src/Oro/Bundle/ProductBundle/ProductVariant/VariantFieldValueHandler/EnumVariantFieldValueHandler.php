@@ -6,6 +6,7 @@ use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
+use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Provider\EnumValueProvider;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
@@ -44,14 +45,6 @@ class EnumVariantFieldValueHandler implements ProductVariantFieldValueHandlerInt
     /** @var LocaleSettings */
     private $localeSettings;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param EnumValueProvider $enumValueProvider
-     * @param LoggerInterface $logger
-     * @param ConfigManager $configManager
-     * @param LocalizationHelper $localizationHelper
-     * @param LocaleSettings $localeSettings
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         EnumValueProvider $enumValueProvider,
@@ -69,10 +62,6 @@ class EnumVariantFieldValueHandler implements ProductVariantFieldValueHandlerInt
         $this->cache = new ArrayCache();
     }
 
-    /**
-     * @param CacheProvider $cache
-     * @param int $lifeTime
-     */
     public function setCache(CacheProvider $cache, int $lifeTime = 0): void
     {
         $this->cache = $cache;
@@ -103,6 +92,10 @@ class EnumVariantFieldValueHandler implements ProductVariantFieldValueHandlerInt
      */
     public function getScalarValue($value)
     {
+        if (!$value instanceof AbstractEnumValue) {
+            return null;
+        }
+
         return $this->doctrineHelper->getSingleEntityIdentifier($value);
     }
 
@@ -111,28 +104,27 @@ class EnumVariantFieldValueHandler implements ProductVariantFieldValueHandlerInt
      */
     public function getHumanReadableValue($fieldName, $value)
     {
-        $possibleValue = $this->getPossibleValues($fieldName);
         $fieldIdentifier = $this->getScalarValue($value);
 
-        $value = array_key_exists($fieldIdentifier, $possibleValue) ? $possibleValue[$fieldIdentifier] : null;
-        if (!$value) {
-            $value = 'N/A';
+        if ($fieldIdentifier !== null) {
+            $possibleValues = $this->getPossibleValues($fieldName);
+            if (isset($possibleValues[$fieldIdentifier])) {
+                return $possibleValues[$fieldIdentifier];
+            }
+
             $this->logger->error(
                 'Can not find configurable attribute "{attributeValue}" in list of available attributes.' .
                 'Available: "{availableAttributes}"',
                 [
                     'attribute' => (string)$fieldIdentifier,
-                    'availableAttributes' => implode(', ', array_keys($possibleValue)),
+                    'availableAttributes' => implode(', ', array_keys($possibleValues)),
                 ]
             );
         }
 
-        return $value;
+        return 'N/A';
     }
 
-    /**
-     * @return string
-     */
     private function getLocaleKey(): string
     {
         return $this->localizationHelper->getCurrentLocalization()

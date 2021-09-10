@@ -66,9 +66,6 @@ class AttachmentEntityConfigProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider fieldConfigDataProvider
-     *
-     * @param string $fieldName
-     * @param string $fieldType
      */
     public function getFieldConfig(string $fieldName, string $fieldType): void
     {
@@ -98,9 +95,6 @@ class AttachmentEntityConfigProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($config, $this->provider->getFieldConfig($entityClass, $fieldName));
     }
 
-    /**
-     * @return array
-     */
     public function fieldConfigDataProvider(): array
     {
         return [

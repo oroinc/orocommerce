@@ -44,7 +44,7 @@ class CategoryResolvedCacheBuilderTest extends AbstractProductResolvedCacheBuild
 
         $this->category = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
 
-        $container = $this->client->getContainer();
+        $container = $this->getContainer();
         $productReindexManager = new ProductReindexManager(
             $container->get('event_dispatcher')
         );

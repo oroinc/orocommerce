@@ -56,7 +56,7 @@ class CombinedPriceListToCustomerGroupRepositoryTest extends AbstractCombinedPri
         $fallback->setFallback(PriceListCustomerGroupFallback::WEBSITE);
         $em->flush();
         $repo->deleteInvalidRelations();
-        
+
         $this->assertCount(0, $repo->findAll());
     }
 }

@@ -18,10 +18,6 @@ abstract class AbstractPaymentTermAclExtension extends AbstractTypeExtension
     /** @var PaymentTermAssociationProvider */
     private $paymentTermAssociationProvider;
 
-    /**
-     * @param PaymentTermAssociationProvider $paymentTermAssociationProvider
-     * @param AuthorizationCheckerInterface $authorizationChecker
-     */
     public function __construct(
         PaymentTermAssociationProvider $paymentTermAssociationProvider,
         AuthorizationCheckerInterface $authorizationChecker

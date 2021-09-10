@@ -112,11 +112,6 @@ class PriceListToProductRepository extends EntityRepository
         $qb->getQuery()->execute();
     }
 
-    /**
-     * @param PriceList $sourcePriceList
-     * @param PriceList $targetPriceList
-     * @param InsertFromSelectQueryExecutor $insertQueryExecutor
-     */
     public function copyRelations(
         PriceList $sourcePriceList,
         PriceList $targetPriceList,
@@ -125,6 +120,7 @@ class PriceListToProductRepository extends EntityRepository
         $qb = $this->createQueryBuilder('priceListToProduct');
         $qb
             ->select(
+                'UUID()',
                 'IDENTITY(priceListToProduct.product)',
                 (string)$qb->expr()->literal($targetPriceList->getId()),
                 'priceListToProduct.manual'
@@ -134,6 +130,7 @@ class PriceListToProductRepository extends EntityRepository
             ->setParameter('sourcePriceList', $sourcePriceList)
             ->setParameter('isManual', true);
         $fields = [
+            'id',
             'product',
             'priceList',
             'manual',
@@ -154,7 +151,10 @@ class PriceListToProductRepository extends EntityRepository
 
         $platform = $this->getEntityManager()->getConnection()->getDatabasePlatform();
         if ($platform instanceof MySqlPlatform) {
-            $sql = sprintf('INSERT IGNORE INTO %s (price_list_id, product_id, is_manual) VALUES (?, ?, ?)', $table);
+            $sql = sprintf(
+                'INSERT IGNORE INTO %s (price_list_id, product_id, is_manual, id) VALUES (?, ?, ?, uuid())',
+                $table
+            );
             $params = [
                 $priceList->getId(),
                 $product->getId(),
@@ -167,7 +167,7 @@ class PriceListToProductRepository extends EntityRepository
             ];
         } else {
             $sql = sprintf(
-                'INSERT INTO %s (price_list_id, product_id, is_manual) values (?, ?, ?)'
+                'INSERT INTO %s (price_list_id, product_id, is_manual, id) values (?, ?, ?, uuid_generate_v4())'
                 . ' ON CONFLICT (product_id, price_list_id) DO NOTHING',
                 $table
             );

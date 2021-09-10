@@ -21,11 +21,6 @@ class VisibilityFormDataHandler
     /** @var EventDispatcherInterface */
     protected $eventDispatcher;
 
-    /**
-     * @param FormInterface $form
-     * @param Request $request
-     * @param EventDispatcherInterface $eventDispatcher
-     */
     public function __construct(
         FormInterface $form,
         Request $request,

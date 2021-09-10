@@ -14,19 +14,15 @@ use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
  */
 class ContentWidgetVoter implements VoterInterface
 {
-    /** @var DoctrineHelper */
-    private $doctrineHelper;
+    private DoctrineHelper $doctrineHelper;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     */
     public function __construct(DoctrineHelper $doctrineHelper)
     {
         $this->doctrineHelper = $doctrineHelper;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function vote(TokenInterface $token, $subject, array $attributes): int
     {

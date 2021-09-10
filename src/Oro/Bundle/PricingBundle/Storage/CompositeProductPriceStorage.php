@@ -25,11 +25,6 @@ class CompositeProductPriceStorage implements ProductPriceStorageInterface
      */
     private $featureChecker;
 
-    /**
-     * @param ProductPriceStorageInterface $flatPricingStorage
-     * @param ProductPriceStorageInterface $combinedPricingStorage
-     * @param FeatureChecker $featureChecker
-     */
     public function __construct(
         ProductPriceStorageInterface $flatPricingStorage,
         ProductPriceStorageInterface $combinedPricingStorage,
@@ -70,9 +65,6 @@ class CompositeProductPriceStorage implements ProductPriceStorageInterface
         return [];
     }
 
-    /**
-     * @return ProductPriceStorageInterface|null
-     */
     private function getStorage(): ?ProductPriceStorageInterface
     {
         if ($this->featureChecker->isFeatureEnabled('oro_price_lists_combined')) {

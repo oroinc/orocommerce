@@ -14,10 +14,6 @@ class ProductCollectionSegmentHelperStub extends ProductCollectionSegmentHelper
     /** @var bool */
     private $isWebCatalogUsageProviderEnabled = true;
 
-    /**
-     * @param ContentVariantSegmentProvider $contentVariantSegmentProvider
-     * @param ProductCollectionSegmentHelper $helper
-     */
     public function __construct(
         ContentVariantSegmentProvider $contentVariantSegmentProvider,
         ProductCollectionSegmentHelper $helper
@@ -27,9 +23,6 @@ class ProductCollectionSegmentHelperStub extends ProductCollectionSegmentHelper
         $this->helper = $helper;
     }
 
-    /**
-     * @param bool $isWebCatalogUsageProviderEnabled
-     */
     public function setIsWebCatalogUsageProviderEnabled(bool $isWebCatalogUsageProviderEnabled): void
     {
         $this->isWebCatalogUsageProviderEnabled = $isWebCatalogUsageProviderEnabled;

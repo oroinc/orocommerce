@@ -64,7 +64,6 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
     /** @var AbstractIndexer */
     protected $indexer;
 
-
     /** @var array */
     private $mappingConfig = [
         TestProduct::class => [

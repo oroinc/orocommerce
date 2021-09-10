@@ -111,7 +111,6 @@ class FlatPriceListRelationTriggerHandlerTest extends \PHPUnit\Framework\TestCas
         $this->handler->handleWebsiteChange($website);
     }
 
-
     public function testHandleCustomerGroupChange()
     {
         $website = $this->getEntity(Website::class, ['id' => 2]);

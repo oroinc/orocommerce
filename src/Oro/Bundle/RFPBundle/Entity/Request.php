@@ -582,8 +582,6 @@ class Request extends ExtendRequest implements
 
     /**
      * Get shipUntil
-     *
-     * @return \DateTime|null
      */
     public function getShipUntil(): ?\DateTime
     {

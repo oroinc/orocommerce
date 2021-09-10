@@ -24,11 +24,6 @@ class ProductCollectionRestResourceApiUrlResolver implements ResourceApiUrlResol
     /** @var ValueNormalizer */
     private $valueNormalizer;
 
-    /**
-     * @param UrlGeneratorInterface $urlGenerator
-     * @param RestRoutesRegistry    $routesRegistry
-     * @param ValueNormalizer       $valueNormalizer
-     */
     public function __construct(
         UrlGeneratorInterface $urlGenerator,
         RestRoutesRegistry $routesRegistry,

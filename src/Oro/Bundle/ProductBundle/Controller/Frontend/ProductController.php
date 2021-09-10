@@ -72,10 +72,6 @@ class ProductController extends AbstractController
      *
      * @Route("/search/autocomplete", name="oro_product_frontend_product_search_autocomplete")
      * @AclAncestor("oro_product_frontend_view")
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
      */
     public function autocompleteAction(Request $request): JsonResponse
     {
@@ -171,12 +167,6 @@ class ProductController extends AbstractController
         ]);
     }
 
-
-    /**
-     * @param Request $request
-     * @param Product $product
-     * @return Product|null
-     */
     private function getChosenProductVariantFromRequest(Request $request, Product $product): ?Product
     {
         $variantProductId = $request->get('variantProductId');

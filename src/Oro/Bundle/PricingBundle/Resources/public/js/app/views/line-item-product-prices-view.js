@@ -25,14 +25,14 @@ define(function(require) {
         storedValues: {},
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function LineItemProductPricesView(options) {
             LineItemProductPricesView.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         deferredInitialize: function(options) {
             LineItemProductPricesView.__super__.deferredInitialize.call(this, options);
@@ -189,7 +189,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function() {
             if (this.disposed) {

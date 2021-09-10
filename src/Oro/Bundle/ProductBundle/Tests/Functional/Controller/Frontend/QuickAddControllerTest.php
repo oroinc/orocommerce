@@ -12,8 +12,8 @@ use Symfony\Component\DomCrawler\Form;
 
 class QuickAddControllerTest extends WebTestCase
 {
-    const VALIDATION_RESULT_SELECTOR        = 'div.validation-info table tbody tr';
-    const VALIDATION_ERRORS_SELECTOR        = 'div.import-errors ol li';
+    private const VALIDATION_RESULT_SELECTOR = 'div.validation-info table tbody tr';
+    private const VALIDATION_ERRORS_SELECTOR = 'div.import-errors ol li';
 
     protected function setUp(): void
     {
@@ -139,9 +139,6 @@ class QuickAddControllerTest extends WebTestCase
         return $result;
     }
 
-    /**
-     * @param Form $form
-     */
     protected function updateFormActionToDialog(Form $form)
     {
         $form->getFormNode()->setAttribute(

@@ -28,11 +28,6 @@ class ShoppingListDiscountContextConverter implements DiscountContextConverterIn
      */
     private $shoppingListTotalManager;
 
-    /**
-     * @param LineItemsToDiscountLineItemsConverter $lineItemsConverter
-     * @param UserCurrencyManager $currencyManager
-     * @param ShoppingListTotalManager $shoppingListTotalManager
-     */
     public function __construct(
         LineItemsToDiscountLineItemsConverter $lineItemsConverter,
         UserCurrencyManager $currencyManager,
@@ -72,11 +67,6 @@ class ShoppingListDiscountContextConverter implements DiscountContextConverterIn
         return $sourceEntity instanceof ShoppingList;
     }
 
-    /**
-     * @param ShoppingList $sourceEntity
-     *
-     * @return float
-     */
     private function getSubtotalAmount(ShoppingList $sourceEntity): float
     {
         $currency = $this->currencyManager->getUserCurrency();

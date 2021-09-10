@@ -58,13 +58,6 @@ class ContentNodeTreeCacheProcessor implements MessageProcessorInterface, TopicS
      */
     private $layoutCacheProvider;
 
-    /**
-     * @param JobRunner $jobRunner
-     * @param ContentNodeTreeCacheDumper $dumper
-     * @param ManagerRegistry $registry
-     * @param LoggerInterface $logger
-     * @param CacheProvider $layoutCacheProvider
-     */
     public function __construct(
         JobRunner $jobRunner,
         ContentNodeTreeCacheDumper $dumper,

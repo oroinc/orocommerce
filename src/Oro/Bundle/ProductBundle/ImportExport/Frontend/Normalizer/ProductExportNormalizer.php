@@ -46,7 +46,7 @@ class ProductExportNormalizer extends ConfigurableEntityNormalizer
     /**
      * {@inheritdoc}
      */
-    public function normalize($object, $format = null, array $context = [])
+    public function normalize($object, string $format = null, array $context = [])
     {
         $result = parent::normalize($object, $format, $context);
 
@@ -67,7 +67,7 @@ class ProductExportNormalizer extends ConfigurableEntityNormalizer
     /**
      * {@inheritdoc}
      */
-    public function supportsNormalization($data, $format = null, array $context = [])
+    public function supportsNormalization($data, string $format = null, array $context = []): bool
     {
         return is_a($data, Product::class)
             && isset($context['processorAlias'])
@@ -77,7 +77,7 @@ class ProductExportNormalizer extends ConfigurableEntityNormalizer
     /**
      * {@inheritdoc}
      */
-    public function supportsDenormalization($data, $type, $format = null, array $context = [])
+    public function supportsDenormalization($data, string $type, string $format = null, array $context = []): bool
     {
         return false;
     }
@@ -94,10 +94,6 @@ class ProductExportNormalizer extends ConfigurableEntityNormalizer
         return $config->has('use_in_export') ? !$config->get('use_in_export', false, false) : true;
     }
 
-    /**
-     * @param array $context
-     * @return Localization|null
-     */
     private function getCurrentLocalization(array $context): ?Localization
     {
         if (null === $this->currentLocalization) {

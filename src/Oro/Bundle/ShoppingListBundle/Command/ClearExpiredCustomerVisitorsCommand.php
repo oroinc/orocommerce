@@ -94,6 +94,8 @@ HELP
         } while ($deletedCount > 0);
 
         $output->writeln('<info>Clear expired customer visitors completed</info>');
+
+        return 0;
     }
 
     protected function getExpiredLastVisitDate(): \DateTime

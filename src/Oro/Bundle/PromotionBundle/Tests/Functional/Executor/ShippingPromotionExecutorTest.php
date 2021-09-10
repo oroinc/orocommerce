@@ -48,8 +48,6 @@ class ShippingPromotionExecutorTest extends FrontendWebTestCase
 
     /**
      * @dataProvider executeDataProvider
-     * @param array $enabledPromotions
-     * @param array $expected
      */
     public function testExecute(array $enabledPromotions, array $expected): void
     {
@@ -62,9 +60,6 @@ class ShippingPromotionExecutorTest extends FrontendWebTestCase
         $this->assertDiscountContextTotals($actualDiscountContext, $expected);
     }
 
-    /**
-     * @return array
-     */
     public function executeDataProvider(): array
     {
         return [
@@ -89,19 +84,12 @@ class ShippingPromotionExecutorTest extends FrontendWebTestCase
         ];
     }
 
-    /**
-     * @param DiscountContextInterface $discountContext
-     * @param array $expected
-     */
     private function assertDiscountContextTotals(DiscountContextInterface $discountContext, array $expected): void
     {
         // Check totals
         $this->assertSame($expected['shippingDiscountTotal'], $discountContext->getShippingDiscountTotal());
     }
 
-    /**
-     * @param array $enabledPromotions
-     */
     private function enablePromotions(array $enabledPromotions): void
     {
         // Enable only necessary promotions

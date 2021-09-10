@@ -12,36 +12,21 @@ use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
  */
 class PriceRuleLexemeEntityListener
 {
-    /**
-     * @param PriceRuleLexeme $priceRuleLexeme
-     * @param LifecycleEventArgs $event
-     */
     public function postPersist(PriceRuleLexeme $priceRuleLexeme, LifecycleEventArgs $event)
     {
         $this->invalidateRepositoryCache($event->getEntityManager());
     }
 
-    /**
-     * @param PriceRuleLexeme $priceRuleLexeme
-     * @param LifecycleEventArgs $event
-     */
     public function postUpdate(PriceRuleLexeme $priceRuleLexeme, LifecycleEventArgs $event)
     {
         $this->invalidateRepositoryCache($event->getEntityManager());
     }
 
-    /**
-     * @param PriceRuleLexeme $priceRuleLexeme
-     * @param LifecycleEventArgs $event
-     */
     public function postRemove(PriceRuleLexeme $priceRuleLexeme, LifecycleEventArgs $event)
     {
         $this->invalidateRepositoryCache($event->getEntityManager());
     }
 
-    /**
-     * @param EntityManager $entityManager
-     */
     protected function invalidateRepositoryCache(EntityManager $entityManager)
     {
         $entityManager->getRepository(PriceRuleLexeme::class)->invalidateCache();

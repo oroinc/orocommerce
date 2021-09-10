@@ -10,10 +10,6 @@ use Oro\Bundle\PaymentBundle\Model\AddressOptionModel;
  */
 class PaymentOrderShippingAddressOptionsProvider
 {
-    /**
-     * @param AbstractAddress $entity
-     * @return AddressOptionModel
-     */
     public function getShippingAddressOptions(AbstractAddress $entity): AddressOptionModel
     {
         return (new AddressOptionModel())

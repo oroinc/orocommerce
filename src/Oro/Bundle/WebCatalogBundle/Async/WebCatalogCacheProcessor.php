@@ -50,13 +50,6 @@ class WebCatalogCacheProcessor implements MessageProcessorInterface, TopicSubscr
      */
     private $logger;
 
-    /**
-     * @param JobRunner $jobRunner
-     * @param MessageProducerInterface $producer
-     * @param ManagerRegistry $registry
-     * @param ConfigManager $configManager
-     * @param LoggerInterface $logger
-     */
     public function __construct(
         JobRunner $jobRunner,
         MessageProducerInterface $producer,
@@ -134,11 +127,6 @@ class WebCatalogCacheProcessor implements MessageProcessorInterface, TopicSubscr
         return $contentNodeRepo->findBy(['id' => array_unique($navigationRootValues)]);
     }
 
-    /**
-     * @param WebCatalog $webCatalog
-     *
-     * @return array
-     */
     private function getWebsites(WebCatalog $webCatalog): array
     {
         $repository = $this->registry
@@ -182,11 +170,6 @@ class WebCatalogCacheProcessor implements MessageProcessorInterface, TopicSubscr
         return $repository->findOneBy(['id' => $webCatalogId]);
     }
 
-    /**
-     * @param MessageInterface $message
-     *
-     * @return array
-     */
     private function getMessageData(MessageInterface $message): array
     {
         $body = JSON::decode($message->getBody());
@@ -203,9 +186,6 @@ class WebCatalogCacheProcessor implements MessageProcessorInterface, TopicSubscr
         }
     }
 
-    /**
-     * @return OptionsResolver
-     */
     private function getOptionsResolver(): OptionsResolver
     {
         $resolver = new OptionsResolver();

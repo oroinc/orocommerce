@@ -91,9 +91,6 @@ abstract class AbstractSegmentProductsProviderTest extends \PHPUnit\Framework\Te
         $this->segmentProductsProvider->setCache($this->cache, 3600);
     }
 
-    /**
-     * @param ManagerRegistry $registry
-     */
     abstract protected function createSegmentProvider(ManagerRegistry $registry);
 
     /**
@@ -514,12 +511,6 @@ abstract class AbstractSegmentProductsProviderTest extends \PHPUnit\Framework\Te
         return $queryBuilder;
     }
 
-    /**
-     * @param $dql
-     * @param $parameters
-     *
-     * @return string
-     */
     private function getHashData($dql, $parameters, $queryHints): string
     {
         return md5(serialize([

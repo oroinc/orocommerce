@@ -13,9 +13,6 @@ class FlatRateTransport implements TransportInterface
     /** @var ParameterBag */
     protected $settings;
 
-    /**
-     * @param Transport $transportEntity
-     */
     public function init(Transport $transportEntity)
     {
         $this->settings = $transportEntity->getSettingsBag();

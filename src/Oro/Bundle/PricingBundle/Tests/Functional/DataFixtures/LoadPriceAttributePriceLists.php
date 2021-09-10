@@ -70,7 +70,6 @@ class LoadPriceAttributePriceLists extends AbstractFixture implements DependentF
         return [LoadOrganization::class];
     }
 
-
     /**
      * {@inheritdoc}
      */

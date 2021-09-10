@@ -17,10 +17,6 @@ class OroCatalogBundle implements Migration
         $queries->addPostQuery(new RenameMasterCatalog());
     }
 
-    /**
-     * @param Schema $schema
-     * @param QueryBag $queries
-     */
     protected function addMaterializedPathField(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('oro_catalog_category');

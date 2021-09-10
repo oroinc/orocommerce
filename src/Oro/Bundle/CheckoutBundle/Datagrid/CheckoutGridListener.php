@@ -82,9 +82,6 @@ class CheckoutGridListener
               ->set(self::USER_CURRENCY_PARAMETER, $this->currencyManager->getUserCurrency());
     }
 
-    /**
-     * @param OrmResultAfter $event
-     */
     public function onResultAfter(OrmResultAfter $event)
     {
         /** @var ResultRecord[] $records */
@@ -139,9 +136,6 @@ class CheckoutGridListener
         }
     }
 
-    /**
-     * @param ResultRecord $record
-     */
     private function fillCompletedCheckoutData(ResultRecord $record): void
     {
         /** @var Checkout $checkout */
@@ -187,11 +181,6 @@ class CheckoutGridListener
         ];
     }
 
-    /**
-     * @param ResultRecord $record
-     * @param CompletedCheckoutData $data
-     * @param array $keys
-     */
     protected function addCompletedCheckoutData(ResultRecord $record, CompletedCheckoutData $data, array $keys)
     {
         foreach ($keys as $key) {

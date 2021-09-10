@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\CheckoutBundle\Entity\Repository;
 
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Types\Types;
-use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
@@ -18,7 +18,7 @@ use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 /**
  * Handles logic for fetching checkout and checkout items by ids and different criteria
  */
-class CheckoutRepository extends EntityRepository implements ResettableCustomerUserRepositoryInterface
+class CheckoutRepository extends ServiceEntityRepository implements ResettableCustomerUserRepositoryInterface
 {
     use WorkflowQueryTrait;
     use ResetCustomerUserTrait;
@@ -26,10 +26,6 @@ class CheckoutRepository extends EntityRepository implements ResettableCustomerU
     /**
      * Used in CheckoutController::checkoutAction().
      * Loads related entities to eliminate extra queries on checkout.
-     *
-     * @param int $checkoutId
-     *
-     * @return Checkout|null
      */
     public function findForCheckoutAction(int $checkoutId): ?Checkout
     {
@@ -86,9 +82,6 @@ class CheckoutRepository extends EntityRepository implements ResettableCustomerU
         return $checkout;
     }
 
-    /**
-     * @param array $productIds
-     */
     private function loadRelatedProductNames(array $productIds): void
     {
         $qb = $this->getEntityManager()->createQueryBuilder();

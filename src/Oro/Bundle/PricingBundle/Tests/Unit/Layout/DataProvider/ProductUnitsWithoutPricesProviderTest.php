@@ -34,9 +34,6 @@ class ProductUnitsWithoutPricesProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getDataDataProvider
-     * @param array $product
-     * @param array $unitPrecisionsWithPrices
-     * @param array $expectedData
      */
     public function testGetByProduct(array $product, array $unitPrecisionsWithPrices, array $expectedData)
     {

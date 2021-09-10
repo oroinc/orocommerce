@@ -18,10 +18,6 @@ class ProtectRelatedProductDeleteQueryByAcl extends ProtectRelatedProductQueryBy
     /** @var AclHelper */
     private $aclHelper;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param AclHelper      $aclHelper
-     */
     public function __construct(DoctrineHelper $doctrineHelper, AclHelper $aclHelper)
     {
         parent::__construct($doctrineHelper);

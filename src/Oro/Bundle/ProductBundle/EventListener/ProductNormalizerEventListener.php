@@ -9,9 +9,6 @@ class ProductNormalizerEventListener
     const DELIMITER = ',';
     const VARIANT_FIELDS_KEY = 'variantFields';
 
-    /**
-     * @param ProductNormalizerEvent $event
-     */
     public function onNormalize(ProductNormalizerEvent $event)
     {
         $context = $event->getContext();
@@ -26,9 +23,6 @@ class ProductNormalizerEventListener
         }
     }
 
-    /**
-     * @param ProductNormalizerEvent $event
-     */
     public function onDenormalize(ProductNormalizerEvent $event)
     {
         $context = $event->getContext();

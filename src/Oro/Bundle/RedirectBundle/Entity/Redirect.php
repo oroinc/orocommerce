@@ -159,7 +159,7 @@ class Redirect
     {
         $this->from = $from;
         $this->fromHash = md5($this->from);
-        
+
         return $this;
     }
 
@@ -197,7 +197,7 @@ class Redirect
     public function setTo($to)
     {
         $this->to = $to;
-        
+
         return $this;
     }
 
@@ -216,7 +216,7 @@ class Redirect
     public function setType($type)
     {
         $this->type = $type;
-        
+
         return $this;
     }
 
@@ -242,7 +242,6 @@ class Redirect
     /**
      * @param Scope $scope
      * @return $this
-     *
      */
     public function addScope(Scope $scope)
     {

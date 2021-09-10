@@ -23,10 +23,6 @@ class FrontendRfqExtension extends AbstractTypeExtension implements FeatureToggl
 {
     use FeatureCheckerHolderTrait;
 
-    /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         if (!$this->isFeaturesEnabled()) {
@@ -38,7 +34,6 @@ class FrontendRfqExtension extends AbstractTypeExtension implements FeatureToggl
 
     /**
      * PreSet event handler
-     * @param FormEvent $event
      */
     public function preSetData(FormEvent $event)
     {

@@ -36,20 +36,12 @@ abstract class AbstractShardQueryExecutor implements ShardQueryExecutorInterface
      */
     protected $version = [];
 
-    /**
-     * @param NativeQueryExecutorHelper $helper
-     * @param ShardManager $shardManager
-     */
     public function __construct(NativeQueryExecutorHelper $helper, ShardManager $shardManager)
     {
         $this->shardManager = $shardManager;
         $this->helper = $helper;
     }
 
-    /**
-     * @param string $className
-     * @param array $fields
-     */
     public function registerUniqueFields(string $className, array $fields)
     {
         $this->uniqueFields[$className] = $fields;

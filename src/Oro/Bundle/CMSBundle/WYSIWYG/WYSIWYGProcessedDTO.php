@@ -13,10 +13,6 @@ class WYSIWYGProcessedDTO
     /** @var WYSIWYGProcessedEntityDTO */
     private $ownerEntity;
 
-    /**
-     * @param WYSIWYGProcessedEntityDTO $processedEntity
-     * @param WYSIWYGProcessedEntityDTO|null $ownerEntity
-     */
     public function __construct(
         WYSIWYGProcessedEntityDTO $processedEntity,
         ?WYSIWYGProcessedEntityDTO $ownerEntity = null
@@ -25,33 +21,21 @@ class WYSIWYGProcessedDTO
         $this->ownerEntity = $ownerEntity ?? $processedEntity;
     }
 
-    /**
-     * @return WYSIWYGProcessedEntityDTO
-     */
     public function getProcessedEntity(): WYSIWYGProcessedEntityDTO
     {
         return $this->processedEntity;
     }
 
-    /**
-     * @return WYSIWYGProcessedEntityDTO
-     */
     public function getOwnerEntity(): WYSIWYGProcessedEntityDTO
     {
         return $this->ownerEntity;
     }
 
-    /**
-     * @return bool
-     */
     public function isSelfOwner(): bool
     {
         return $this->ownerEntity === $this->processedEntity;
     }
 
-    /**
-     * @return string
-     */
     public function requireOwnerEntityClass(): string
     {
         $ownerEntityClass = $this->getOwnerEntity()->getMetadata()->getName();
@@ -75,9 +59,6 @@ class WYSIWYGProcessedDTO
         return $ownerEntityId;
     }
 
-    /**
-     * @return string
-     */
     public function requireOwnerEntityFieldName(): string
     {
         $ownerFieldName = $this->getOwnerEntity()->getFieldName();
@@ -88,11 +69,6 @@ class WYSIWYGProcessedDTO
         return $ownerFieldName;
     }
 
-    /**
-     * @param string $fieldName
-     * @param string|null $fieldType
-     * @return WYSIWYGProcessedDTO
-     */
     public function withProcessedEntityField(string $fieldName, ?string $fieldType = null): WYSIWYGProcessedDTO
     {
         $dto = clone $this;

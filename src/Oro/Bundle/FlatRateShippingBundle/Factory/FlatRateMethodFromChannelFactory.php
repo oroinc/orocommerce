@@ -27,11 +27,6 @@ class FlatRateMethodFromChannelFactory implements IntegrationShippingMethodFacto
      */
     private $integrationIconProvider;
 
-    /**
-     * @param IntegrationIdentifierGeneratorInterface $identifierGenerator
-     * @param LocalizationHelper                      $localizationHelper
-     * @param IntegrationIconProviderInterface        $integrationIconProvider
-     */
     public function __construct(
         IntegrationIdentifierGeneratorInterface $identifierGenerator,
         LocalizationHelper $localizationHelper,

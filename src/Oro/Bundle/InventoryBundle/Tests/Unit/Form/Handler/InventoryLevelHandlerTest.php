@@ -324,12 +324,6 @@ class InventoryLevelHandlerTest extends \PHPUnit\Framework\TestCase
         return $repository;
     }
 
-    /**
-     * @param array $expectedLevels
-     * @param array $persistedEntities
-     * @param array $removedEntities
-     * @param array $existingLevels
-     */
     private function assertExpectedLevels(
         array $expectedLevels,
         array $persistedEntities,

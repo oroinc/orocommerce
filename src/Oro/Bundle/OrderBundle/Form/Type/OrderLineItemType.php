@@ -24,9 +24,6 @@ class OrderLineItemType extends AbstractOrderLineItemType
      */
     protected $productUnitsProvider;
 
-    /**
-     * @param ProductUnitsProvider $productUnitsProvider
-     */
     public function __construct(ProductUnitsProvider $productUnitsProvider)
     {
         $this->productUnitsProvider = $productUnitsProvider;

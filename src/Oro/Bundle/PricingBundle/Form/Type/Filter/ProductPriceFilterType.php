@@ -34,11 +34,6 @@ class ProductPriceFilterType extends AbstractType
      */
     protected $formatter;
 
-    /**
-     * @param TranslatorInterface $translator
-     * @param ManagerRegistry     $registry
-     * @param UnitLabelFormatterInterface  $formatter
-     */
     public function __construct(
         TranslatorInterface $translator,
         ManagerRegistry $registry,

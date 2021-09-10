@@ -37,9 +37,6 @@ class QuoteProductListenerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param string$route
-     * @param  boolean$restoreValue
-     *
      * @dataProvider preUpdateProvider
      */
     public function testPreUpdate($route, $restoreValue)

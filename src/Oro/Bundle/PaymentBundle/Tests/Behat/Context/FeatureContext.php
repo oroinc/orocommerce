@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\PaymentBundle\Tests\Behat\Context;
 
-use Behat\Symfony2Extension\Context\KernelAwareContext;
-use Behat\Symfony2Extension\Context\KernelDictionary;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
 use Oro\Bundle\RuleBundle\Entity\Rule;
@@ -11,21 +9,18 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 use Oro\Bundle\UserBundle\Entity\User;
 
-class FeatureContext extends OroFeatureContext implements KernelAwareContext
+class FeatureContext extends OroFeatureContext
 {
-    use KernelDictionary;
     use UserUtilityTrait;
 
     /**
      * @Given /^(?:I )?create payment rule with "(?P<paymentMethodName>(?:[^"]+))" payment method$/
-     *
-     * @param string $paymentMethodName
      */
     public function iCreatePaymentMethodsConfigsRule(string $paymentMethodName)
     {
         $paymentMethodIdentifier = $this->getPaymentMethodIdentifier($paymentMethodName);
 
-        $currency = $this->getContainer()->get('oro_currency.config.currency')->getDefaultCurrency();
+        $currency = $this->getAppContainer()->get('oro_currency.config.currency')->getDefaultCurrency();
 
         $rule = (new Rule())
             ->setSortOrder(1)
@@ -34,7 +29,7 @@ class FeatureContext extends OroFeatureContext implements KernelAwareContext
 
         $paymentMethodConfig = (new PaymentMethodConfig())->setType($paymentMethodIdentifier);
 
-        $doctrineHelper = $this->getContainer()->get('oro_entity.doctrine_helper');
+        $doctrineHelper = $this->getAppContainer()->get('oro_entity.doctrine_helper');
 
         $organization = $this->getFirstUser($doctrineHelper->getEntityManagerForClass(User::class))
             ->getOrganization();
@@ -50,15 +45,11 @@ class FeatureContext extends OroFeatureContext implements KernelAwareContext
         $entityManager->flush();
     }
 
-    /**
-     * @param string $paymentMethodName
-     *
-     * @return string
-     */
     private function getPaymentMethodIdentifier(string $paymentMethodName): string
     {
-        $paymentMethodProvider = $this->getContainer()->get('oro_payment.payment_method.composite_provider');
-        $paymentMethodViewProvider = $this->getContainer()->get('oro_payment.payment_method_view.composite_provider');
+        $paymentMethodProvider = $this->getAppContainer()->get('oro_payment.payment_method.composite_provider');
+        $paymentMethodViewProvider = $this->getAppContainer()
+            ->get('oro_payment.payment_method_view.composite_provider');
         foreach ($paymentMethodProvider->getPaymentMethods() as $identifier => $paymentMethod) {
             $paymentMethodView = $paymentMethodViewProvider->getPaymentMethodView($identifier);
             if (!$paymentMethodView) {

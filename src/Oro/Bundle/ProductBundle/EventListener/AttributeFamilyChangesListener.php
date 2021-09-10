@@ -28,11 +28,6 @@ class AttributeFamilyChangesListener
     /** @var array */
     protected $changedAttributeFamilies = [];
 
-    /**
-     * @param RequestStack $requestStack
-     * @param ManagerRegistry $registry
-     * @param EventDispatcherInterface $dispatcher
-     */
     public function __construct(
         RequestStack $requestStack,
         ManagerRegistry $registry,
@@ -43,12 +38,9 @@ class AttributeFamilyChangesListener
         $this->dispatcher = $dispatcher;
     }
 
-    /**
-     * @param OnFlushEventArgs $eventArgs
-     */
     public function onFlush(OnFlushEventArgs $eventArgs)
     {
-        if (!$this->requestStack->getMasterRequest()) {
+        if (!$this->requestStack->getMainRequest()) {
             return;
         }
 

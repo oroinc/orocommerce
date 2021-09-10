@@ -12,8 +12,6 @@ use Twig\TwigFunction;
  */
 class RequestProductsExtension extends AbstractExtension
 {
-    const NAME = 'oro_rfp_request_products';
-
     /**
      * {@inheritdoc}
      */
@@ -51,13 +49,5 @@ class RequestProductsExtension extends AbstractExtension
         }
 
         return $result;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return self::NAME;
     }
 }

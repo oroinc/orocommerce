@@ -41,12 +41,6 @@ class ComputeProductSearchImages implements ProcessorInterface
         $context->setData($data);
     }
 
-    /**
-     * @param string $imageUrl
-     * @param string $imageType
-     *
-     * @return array
-     */
     private function getImageInfo(string $imageUrl, string $imageType): array
     {
         return [

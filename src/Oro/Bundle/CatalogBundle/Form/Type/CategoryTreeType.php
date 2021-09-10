@@ -20,9 +20,6 @@ class CategoryTreeType extends AbstractType
      */
     private $treeHandler;
 
-    /**
-     * @param AbstractTreeHandler $treeHandler
-     */
     public function __construct(AbstractTreeHandler $treeHandler)
     {
         $this->treeHandler = $treeHandler;

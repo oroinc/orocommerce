@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Behat\Context;
 
-use Behat\Symfony2Extension\Context\KernelAwareContext;
-use Behat\Symfony2Extension\Context\KernelDictionary;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Tests\Behat\Element\RequestForQuote;
 use Oro\Bundle\RFPBundle\Tests\Behat\Page\RequestViewPage;
@@ -11,9 +9,9 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
 
-class FeatureContext extends OroFeatureContext implements OroPageObjectAware, KernelAwareContext
+class FeatureContext extends OroFeatureContext implements OroPageObjectAware
 {
-    use PageObjectDictionary, KernelDictionary;
+    use PageObjectDictionary;
 
     /**
      * Mapping of RFQ view pages by application name
@@ -58,7 +56,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     {
         $urlPath = parse_url($this->getSession()->getCurrentUrl(), PHP_URL_PATH);
         $urlPath = preg_replace('/^.*\.php/', '', $urlPath);
-        $route = $this->getContainer()->get('router')->match($urlPath);
+        $route = $this->getAppContainer()->get('router')->match($urlPath);
 
         $page = $this->getRequestViewPageByRoute($route['_route']);
         self::assertInstanceOf(RequestViewPage::class, $page, 'Can not get ID. Not on a Request page.');
@@ -101,7 +99,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     {
         $value = isset($this->variablesMapping[$value]) ? $this->variablesMapping[$value] : $value;
         /** @var Request $request */
-        $request = $this->getContainer()->get('oro_entity.doctrine_helper')
+        $request = $this->getAppContainer()->get('oro_entity.doctrine_helper')
             ->getEntityRepository(Request::class)->findOneBy(['id' => $value]);
 
         self::assertInstanceOf(
@@ -112,7 +110,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
 
         $page = $this->getPage($this->RFQViewPages[$application]);
 
-        $path = $this->getContainer()->get('router')->generate($page->getRoute(), ['id' => $request->getId()]);
+        $path = $this->getAppContainer()->get('router')->generate($page->getRoute(), ['id' => $request->getId()]);
 
         $this->visitPath($path);
 

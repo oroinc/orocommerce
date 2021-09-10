@@ -19,9 +19,6 @@ class RequestProductHandler
     /** @var RequestStack */
     protected $requestStack;
 
-    /**
-     * @param RequestStack $requestStack
-     */
     public function __construct(RequestStack $requestStack)
     {
         $this->requestStack = $requestStack;
@@ -74,23 +71,16 @@ class RequestProductHandler
         );
     }
 
-    /**
-     * @param bool|null $defaultValue
-     * @return bool
-     */
-    public function getIncludeSubcategoriesChoice($defaultValue = null): bool
+    public function getIncludeSubcategoriesChoice(bool $defaultValue = null): bool
     {
         if ($defaultValue === null) {
             $defaultValue = self::INCLUDE_SUBCATEGORIES_DEFAULT_VALUE;
         }
 
-        return (bool) $this->getChoice(self::INCLUDE_SUBCATEGORIES_KEY, $defaultValue);
+        return $this->getChoice(self::INCLUDE_SUBCATEGORIES_KEY, $defaultValue);
     }
 
-    /**
-     * @return bool
-     */
-    public function getIncludeNotCategorizedProductsChoice()
+    public function getIncludeNotCategorizedProductsChoice(): bool
     {
         return $this->getChoice(
             self::INCLUDE_NOT_CATEGORIZED_PRODUCTS_KEY,
@@ -98,12 +88,7 @@ class RequestProductHandler
         );
     }
 
-    /**
-     * @param string $key
-     * @param bool $defaultValue
-     * @return bool
-     */
-    protected function getChoice($key, $defaultValue)
+    protected function getChoice(string $key, bool $defaultValue): bool
     {
         $request = $this->requestStack->getCurrentRequest();
         if (!$request) {
@@ -116,10 +101,6 @@ class RequestProductHandler
             FILTER_NULL_ON_FAILURE
         );
 
-        if (null === $value) {
-            return $defaultValue;
-        }
-
-        return $value;
+        return $value ?? $defaultValue;
     }
 }

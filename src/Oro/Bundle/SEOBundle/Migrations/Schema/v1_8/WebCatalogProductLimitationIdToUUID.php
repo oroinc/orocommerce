@@ -67,8 +67,6 @@ class WebCatalogProductLimitationIdToUUID implements Migration, ConnectionAwareI
 
     /**
      * Sets the database connection
-     *
-     * @param Connection $connection
      */
     public function setConnection(Connection $connection)
     {

@@ -35,8 +35,6 @@ abstract class AbstractProductSelectTypeTest extends WebTestCase
 
     /**
      * @dataProvider restrictionSelectDataProvider
-     * @param array $restrictionParams
-     * @param array $expectedProducts
      */
     public function testSearchRestriction(array $restrictionParams, array $expectedProducts)
     {
@@ -62,8 +60,6 @@ abstract class AbstractProductSelectTypeTest extends WebTestCase
 
     /**
      * @dataProvider restrictionGridDataProvider
-     * @param array $restrictionParams
-     * @param array $expectedProducts
      */
     public function testDatagridRestriction(array $restrictionParams, array $expectedProducts)
     {

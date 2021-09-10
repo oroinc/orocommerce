@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\VirtualFields;
 use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\EntityBundle\Helper\FieldHelper;
+use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\VirtualFields\QueryDesigner\VirtualFieldsSelectQueryConverter;
 use Oro\Bundle\QueryDesignerBundle\Model\QueryDesigner;
@@ -60,14 +61,6 @@ class VirtualFieldsProductDecorator
      */
     private $cacheProvider;
 
-    /**
-     * @param VirtualFieldsSelectQueryConverter $converter
-     * @param ManagerRegistry $doctrine
-     * @param FieldHelper $fieldHelper
-     * @param CacheProvider $cacheProvider
-     * @param array $products
-     * @param Product $product
-     */
     public function __construct(
         VirtualFieldsSelectQueryConverter $converter,
         ManagerRegistry $doctrine,
@@ -119,7 +112,10 @@ class VirtualFieldsProductDecorator
      */
     protected function getRelationField($name)
     {
-        $fields = $this->fieldHelper->getFields(Product::class, true, true, false, false, true, false);
+        $fields = $this->fieldHelper->getEntityFields(
+            Product::class,
+            EntityFieldProvider::OPTION_WITH_RELATIONS | EntityFieldProvider::OPTION_WITH_VIRTUAL_FIELDS
+        );
         foreach ($fields as $field) {
             if ($field['name'] === $name) {
                 return $field;

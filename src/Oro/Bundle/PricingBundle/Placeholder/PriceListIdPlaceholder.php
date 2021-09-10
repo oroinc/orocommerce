@@ -40,11 +40,6 @@ class PriceListIdPlaceholder extends AbstractPlaceholder implements FeatureToggl
      */
     private $value;
 
-    /**
-     * @param AbstractPriceListTreeHandler $priceListTreeHandler
-     * @param TokenStorageInterface $tokenStorage
-     * @param ConfigManager $configManager
-     */
     public function __construct(
         AbstractPriceListTreeHandler $priceListTreeHandler,
         TokenStorageInterface $tokenStorage,

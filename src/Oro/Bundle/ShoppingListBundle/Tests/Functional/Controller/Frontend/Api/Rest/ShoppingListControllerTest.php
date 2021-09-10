@@ -35,7 +35,7 @@ class ShoppingListControllerTest extends WebTestCase
         $this->loginUser($user);
         $shoppingList = $this->getReference($resource);
 
-        $this->client->request(
+        $this->client->jsonRequest(
             'PUT',
             $this->getUrl('oro_api_set_shopping_list_current', ['id' => $shoppingList->getId()])
         );
@@ -52,7 +52,7 @@ class ShoppingListControllerTest extends WebTestCase
     public function testSetCurrentFailsOnNonExistingList(): void
     {
         $url = str_replace($id = 999999, 'invalid', $this->getUrl('oro_api_set_shopping_list_current', ['id' => $id]));
-        $this->client->request('PUT', $url);
+        $this->client->jsonRequest('PUT', $url);
         $result = $this->client->getResponse();
         $this->assertJsonResponseStatusCodeEquals($result, 404);
     }
@@ -71,7 +71,7 @@ class ShoppingListControllerTest extends WebTestCase
         $operationName = 'oro_shoppinglist_delete';
         $entityId = $shoppingList->getId();
         $entityClass = ShoppingList::class;
-        $this->client->request(
+        $this->client->jsonRequest(
             'POST',
             $this->getUrl(
                 'oro_frontend_action_operation_execute',
@@ -82,7 +82,6 @@ class ShoppingListControllerTest extends WebTestCase
                 ]
             ),
             $this->getOperationExecuteParams($operationName, $entityId, $entityClass),
-            [],
             ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest']
         );
         static::assertJsonResponseStatusCodeEquals($this->client->getResponse(), $status);
@@ -165,7 +164,7 @@ class ShoppingListControllerTest extends WebTestCase
         $shoppingList = $this->getReference($resource);
         $assignedUser = $this->getReference($assignedUserEmail);
 
-        $this->client->request(
+        $this->client->jsonRequest(
             'PUT',
             $this->getUrl('oro_api_set_shopping_list_owner', ['id' => $shoppingList->getId()]),
             ["ownerId" => $assignedUser->getId()]
@@ -228,7 +227,7 @@ class ShoppingListControllerTest extends WebTestCase
     public function testSetOwnerWhenInvalidShoppingListId()
     {
         $url = str_replace($id = 999999, 'invalid', $this->getUrl('oro_api_set_shopping_list_owner', ['id' => $id]));
-        $this->client->request('PUT', $url);
+        $this->client->jsonRequest('PUT', $url);
         $result = $this->client->getResponse();
         $this->assertJsonResponseStatusCodeEquals($result, 404);
     }

@@ -75,23 +75,11 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         $configManager->flush();
     }
 
-    /**
-     * @return CurrentShoppingListStorage
-     */
     private function getCurrentShoppingListStorage(): CurrentShoppingListStorage
     {
         return self::getContainer()->get('oro_shopping_list.current_shopping_list_storage');
     }
 
-    /**
-     * @param ShoppingList $shoppingList
-     * @param int          $organizationId
-     * @param int          $userId
-     * @param int          $customerId
-     * @param int          $customerUserId
-     * @param int          $websiteId
-     * @param string|null  $notes
-     */
     private static function assertShoppingList(
         ShoppingList $shoppingList,
         int $organizationId,
@@ -114,16 +102,6 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
     }
 
     /**
-     * @param LineItem    $lineItem
-     * @param int         $organizationId
-     * @param int         $userId
-     * @param int         $customerUserId
-     * @param int         $shoppingListId
-     * @param float       $quantity
-     * @param string      $productUnitCode
-     * @param int         $productId
-     * @param string|null $notes
-     * @param int|null    $parentProductId
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     private static function assertLineItem(
@@ -157,11 +135,6 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         }
     }
 
-    /**
-     * @param ShoppingList $shoppingList
-     * @param float        $total
-     * @param string       $currency
-     */
     private function assertShoppingListTotal(
         ShoppingList $shoppingList,
         float $total,
@@ -172,9 +145,6 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         self::assertEquals($currency, $totalEntity->getCurrency());
     }
 
-    /**
-     * @param int $shoppingListId
-     */
     private function getShoppingListTotal(int $shoppingListId): ShoppingListTotal
     {
         /** @var ShoppingListTotal[] $totals */
@@ -186,12 +156,6 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         return $totals[0];
     }
 
-    /**
-     * @param ShoppingList $shoppingList
-     * @param int          $lineItemId
-     *
-     * @return LineItem
-     */
     private function getLineItemById(ShoppingList $shoppingList, int $lineItemId): LineItem
     {
         /** @var LineItem $lineItem */

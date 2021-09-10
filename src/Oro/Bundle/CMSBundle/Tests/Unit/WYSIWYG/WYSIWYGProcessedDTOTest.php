@@ -11,9 +11,6 @@ use Oro\Bundle\CMSBundle\WYSIWYG\WYSIWYGProcessedEntityDTO;
  */
 class WYSIWYGProcessedDTOTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @return WYSIWYGProcessedDTO
-     */
     public function testGetProcessedEntity(): WYSIWYGProcessedDTO
     {
         /** @var WYSIWYGProcessedEntityDTO $entityDTO */
@@ -29,7 +26,6 @@ class WYSIWYGProcessedDTOTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @depends testGetProcessedEntity
-     * @param WYSIWYGProcessedDTO $dto
      */
     public function testWithProcessedEntityField(WYSIWYGProcessedDTO $dto): void
     {
@@ -53,9 +49,6 @@ class WYSIWYGProcessedDTOTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($newDto->isSelfOwner());
     }
 
-    /**
-     * @return WYSIWYGProcessedDTO
-     */
     public function testOwnerEntity(): WYSIWYGProcessedDTO
     {
         /** @var WYSIWYGProcessedEntityDTO $entityDTO */

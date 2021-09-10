@@ -27,12 +27,6 @@ class WYSIWYGValidator extends ConstraintValidator
     /** @var LoggerInterface */
     private $logger;
 
-    /**
-     * @param HtmlTagHelper $htmlTagHelper
-     * @param HTMLPurifierScopeProvider $purifierScopeProvider
-     * @param TranslatorInterface $translator
-     * @param LoggerInterface $logger
-     */
     public function __construct(
         HtmlTagHelper $htmlTagHelper,
         HTMLPurifierScopeProvider $purifierScopeProvider,
@@ -62,7 +56,6 @@ class WYSIWYGValidator extends ConstraintValidator
             ['', '$1$2'],
             $value
         );
-        $scope = null;
 
         $contextObject = $this->context->getObject();
         $className = $contextObject ? get_class($contextObject) : $this->context->getClassName();
@@ -113,16 +106,13 @@ class WYSIWYGValidator extends ConstraintValidator
 
     /**
      * Get field name by property path
-     *
-     * @param string $propertyPath
-     * @return string
      */
     private function resolvePropertyPath(string $propertyPath): string
     {
         $fieldName = $propertyPath;
         // here we will have data.fieldName in case we validate the data against its own constraints
-        if (\strpos($propertyPath, 'data.') === 0) {
-            list(, $fieldName) = \explode('data.', $propertyPath, 2);
+        if (str_starts_with($propertyPath, 'data.')) {
+            [, $fieldName] = \explode('data.', $propertyPath, 2);
         }
 
         return $fieldName;

@@ -144,7 +144,7 @@ class IndexDataProvider
                         $this->setIndexValue($preparedIndexData, $entityId, $allTextFieldName, $value, $type);
                     }
 
-                    if (strpos($fieldName, self::ALL_TEXT_FIELD) !== 0) {
+                    if (!str_starts_with($fieldName, $self::ALL_TEXT_FIELD)) {
                         $singleValueFieldName = $this->placeholder->replace($singleValueFieldName, $placeholders);
                         $this->setIndexValue($preparedIndexData, $entityId, $singleValueFieldName, $value, $type);
                     }
@@ -196,7 +196,7 @@ class IndexDataProvider
     {
         if (!empty($fieldsValues[Query::TYPE_TEXT])) {
             foreach ($fieldsValues[Query::TYPE_TEXT] as $fieldName => $fieldValue) {
-                if (strpos($fieldName, self::ALL_TEXT_FIELD) === 0) {
+                if (str_starts_with($fieldName, self::ALL_TEXT_FIELD)) {
                     $fieldsValues[Query::TYPE_TEXT][$fieldName] = $this->updateAllTextFieldValue($fieldValue);
                 }
             }
@@ -340,7 +340,7 @@ class IndexDataProvider
             return $value;
         }
 
-        if ($type === Query::TYPE_TEXT && strpos($fieldName, self::ALL_TEXT_FIELD) === 0) {
+        if ($type === Query::TYPE_TEXT && str_starts_with($fieldName, self::ALL_TEXT_FIELD)) {
             $value = $this->htmlTagHelper->stripTags((string)$value);
             $value = $this->htmlTagHelper->stripLongWords($value);
         }

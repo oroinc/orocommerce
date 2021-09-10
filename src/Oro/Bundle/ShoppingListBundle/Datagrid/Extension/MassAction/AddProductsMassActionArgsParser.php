@@ -12,9 +12,6 @@ class AddProductsMassActionArgsParser
      */
     protected $args;
 
-    /**
-     * @param MassActionHandlerArgs $args
-     */
     public function __construct(MassActionHandlerArgs $args)
     {
         $this->args = $args->getData();

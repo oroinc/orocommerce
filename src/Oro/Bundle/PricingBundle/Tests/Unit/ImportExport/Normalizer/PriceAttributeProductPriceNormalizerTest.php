@@ -9,15 +9,9 @@ use PHPUnit\Framework\TestCase;
 
 class PriceAttributeProductPriceNormalizerTest extends TestCase
 {
-    /**
-     * @var FieldHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $fieldHelper;
+    private FieldHelper|\PHPUnit\Framework\MockObject\MockObject $fieldHelper;
 
-    /**
-     * @var PriceAttributeProductPriceNormalizer
-     */
-    private $normalizer;
+    private PriceAttributeProductPriceNormalizer $normalizer;
 
     protected function setUp(): void
     {
@@ -26,17 +20,17 @@ class PriceAttributeProductPriceNormalizerTest extends TestCase
         $this->normalizer = new PriceAttributeProductPriceNormalizer($this->fieldHelper);
     }
 
-    public function testSupportsNormalization()
+    public function testSupportsNormalization(): void
     {
         static::assertTrue($this->normalizer->supportsNormalization(new PriceAttributeProductPrice()));
         static::assertFalse($this->normalizer->supportsNormalization(null));
     }
 
-    public function testNormalize()
+    public function testNormalize(): void
     {
         $this->fieldHelper
             ->expects(static::any())
-            ->method('getFields')
+            ->method('getEntityFields')
             ->willReturn([
                 ['name' => 'column1'],
                 ['name' => 'column2'],

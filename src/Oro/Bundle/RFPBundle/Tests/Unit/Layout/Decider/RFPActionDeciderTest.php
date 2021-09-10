@@ -10,25 +10,13 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class RFPActionDeciderTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var RequestStack|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $requestStack;
+    private RequestStack|\PHPUnit\Framework\MockObject\MockObject $requestStack;
 
-    /**
-     * @var Request|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $request;
+    private Request|\PHPUnit\Framework\MockObject\MockObject $request;
 
-    /**
-     * @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $eventDispatcher;
+    private EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject $eventDispatcher;
 
-    /**
-     * @var RFPActionDecider
-     */
-    protected $decider;
+    private RFPActionDecider $decider;
 
     protected function setUp(): void
     {
@@ -37,34 +25,34 @@ class RFPActionDeciderTest extends \PHPUnit\Framework\TestCase
             ->getMock();
         $this->requestStack = $this->getMockBuilder(RequestStack::class)->disableOriginalConstructor()->getMock();
         $this->request = $this->getMockBuilder(Request::class)->disableOriginalConstructor()->getMock();
-        $this->requestStack->expects($this->any())->method('getMasterRequest')->willReturn($this->request);
+        $this->requestStack->expects(self::any())->method('getMainRequest')->willReturn($this->request);
         $this->decider = new RFPActionDecider($this->eventDispatcher, $this->requestStack);
     }
 
-    public function testShouldFormSubmitWithErrorsReturnFalseIfNoListeners()
+    public function testShouldFormSubmitWithErrorsReturnFalseIfNoListeners(): void
     {
-        $this->eventDispatcher->expects($this->once())
+        $this->eventDispatcher->expects(self::once())
             ->method('hasListeners')
             ->willReturn(false);
-        $this->assertFalse($this->decider->shouldFormSubmitWithErrors());
+        self::assertFalse($this->decider->shouldFormSubmitWithErrors());
     }
 
-    public function testShouldFormSubmitWithErrorsReturnsEventValue()
+    public function testShouldFormSubmitWithErrorsReturnsEventValue(): void
     {
-        $this->eventDispatcher->expects($this->once())
+        $this->eventDispatcher->expects(self::once())
             ->method('hasListeners')
             ->willReturn(true);
-        $this->request->expects($this->once())
+        $this->request->expects(self::once())
             ->method('get')
             ->willReturn('testName');
-        $this->eventDispatcher->expects($this->once())
+        $this->eventDispatcher->expects(self::once())
             ->method('dispatch')
             ->willReturnCallback(
                 function (FormSubmitCheckEvent $event, string $eventName) {
-                    $this->assertEquals('rfp.form_submit_check.testName', $eventName);
+                    self::assertEquals('rfp.form_submit_check.testName', $eventName);
                     $event->setShouldSubmitOnError(true);
                 }
             );
-        $this->assertTrue($this->decider->shouldFormSubmitWithErrors());
+        self::assertTrue($this->decider->shouldFormSubmitWithErrors());
     }
 }

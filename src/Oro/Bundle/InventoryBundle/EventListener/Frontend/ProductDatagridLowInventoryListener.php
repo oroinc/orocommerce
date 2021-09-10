@@ -24,10 +24,6 @@ class ProductDatagridLowInventoryListener
     /** DoctrineHelper */
     private $doctrineHelper;
 
-    /**
-     * @param LowInventoryProvider $lowInventoryProvider
-     * @param DoctrineHelper       $doctrineHelper
-     */
     public function __construct(
         LowInventoryProvider $lowInventoryProvider,
         DoctrineHelper $doctrineHelper
@@ -36,9 +32,6 @@ class ProductDatagridLowInventoryListener
         $this->doctrineHelper = $doctrineHelper;
     }
 
-    /**
-     * @param PreBuild $event
-     */
     public function onPreBuild(PreBuild $event)
     {
         $config = $event->getConfig();
@@ -54,9 +47,6 @@ class ProductDatagridLowInventoryListener
         );
     }
 
-    /**
-     * @param SearchResultAfter $event
-     */
     public function onResultAfter(SearchResultAfter $event)
     {
         /** @var ResultRecord[] $records */

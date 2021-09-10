@@ -38,13 +38,6 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
     /** @var CombinedPriceListActivationStatusHelperInterface */
     private $activationStatusHelper;
 
-    /**
-     * @param ManagerRegistry                                  $doctrine
-     * @param LoggerInterface                                  $logger
-     * @param CombinedPriceListsBuilderFacade                  $combinedPriceListsBuilderFacade
-     * @param CombinedPriceListTriggerHandler                  $triggerHandler
-     * @param CombinedPriceListActivationStatusHelperInterface $activationStatusHelper
-     */
     public function __construct(
         ManagerRegistry $doctrine,
         LoggerInterface $logger,
@@ -118,12 +111,6 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
         return self::ACK;
     }
 
-    /**
-     * @param CombinedPriceListToPriceListRepository $cpl2plRepository
-     * @param array                                  $allProducts
-     *
-     * @return iterable
-     */
     private function getActiveCPlsByPls(
         CombinedPriceListToPriceListRepository $cpl2plRepository,
         array $allProducts

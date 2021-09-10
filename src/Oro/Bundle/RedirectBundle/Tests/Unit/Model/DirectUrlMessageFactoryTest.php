@@ -137,7 +137,6 @@ class DirectUrlMessageFactoryTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider invalidMessagesDataProvider
-     * @param array $message
      */
     public function testGetEntitiesFromMessageInvalidMessage(array $message)
     {
@@ -202,7 +201,6 @@ class DirectUrlMessageFactoryTest extends \PHPUnit\Framework\TestCase
             ->method('getManagerForClass')
             ->with(SluggableEntityStub::class)
             ->willReturn($em);
-
 
         $this->assertEquals([$entity], $this->factory->getEntitiesFromMessage($message));
     }

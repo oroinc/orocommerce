@@ -23,8 +23,6 @@ class LatestOrderedProductsInfoProvider
 
     /**
      * LatestOrderedProductsInfoProvider constructor.
-     * @param ManagerRegistry $registry
-     * @param OrderStatusesProviderInterface $availableOrderStatusesProvider
      */
     public function __construct(
         ManagerRegistry $registry,

@@ -20,15 +20,9 @@ use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\ProductResolvedCacheBui
 
 class ProductResolvedCacheBuilderBuildCacheTest extends WebTestCase
 {
-    /**
-     * @var ProductResolvedCacheBuilder
-     */
-    protected $cacheBuilder;
+    private ProductResolvedCacheBuilder $cacheBuilder;
 
-    /**
-     * @var ScopeManager
-     */
-    protected $scopeManager;
+    private ScopeManager $scopeManager;
 
     protected function setUp(): void
     {
@@ -39,7 +33,7 @@ class ProductResolvedCacheBuilderBuildCacheTest extends WebTestCase
             LoadProductVisibilityData::class,
         ]);
 
-        $container = $this->client->getContainer();
+        $container = $this->getContainer();
 
         $productReindexManager = new ProductReindexManager(
             $container->get('event_dispatcher')
@@ -64,7 +58,7 @@ class ProductResolvedCacheBuilderBuildCacheTest extends WebTestCase
         $this->getContainer()->get('oro_visibility.visibility.cache.cache_builder')->buildCache();
     }
 
-    public function testBuildCache()
+    public function testBuildCache(): void
     {
         $repository = $this->getRepository();
         $manager = $this->getManager();
@@ -88,7 +82,7 @@ class ProductResolvedCacheBuilderBuildCacheTest extends WebTestCase
         /** @var Product $firstProduct */
         $firstProduct = $this->getReference(LoadProductData::PRODUCT_1);
 
-        $this->assertNull($repository->findOneBy(['scope' => $scope, 'product' => $firstProduct]));
+        self::assertNull($repository->findOneBy(['scope' => $scope, 'product' => $firstProduct]));
 
         // category fallback
         /** @var ProductVisibilityResolved $productVisibility */
@@ -96,12 +90,12 @@ class ProductResolvedCacheBuilderBuildCacheTest extends WebTestCase
             'scope' => $scope,
             'product' => $this->getReference(LoadProductData::PRODUCT_8)
         ]);
-        $this->assertNotNull($productVisibility);
-        $this->assertEquals(
+        self::assertNotNull($productVisibility);
+        self::assertEquals(
             BaseProductVisibilityResolved::VISIBILITY_HIDDEN,
             $productVisibility->getVisibility()
         );
-        $this->assertEquals(
+        self::assertEquals(
             $this->getReference(LoadCategoryData::FOURTH_LEVEL2),
             $productVisibility->getCategory()
         );
@@ -109,12 +103,12 @@ class ProductResolvedCacheBuilderBuildCacheTest extends WebTestCase
         // static fallback
         $productVisibility = $repository
             ->findOneBy(['scope' => $scope, 'product' => $this->getReference(LoadProductData::PRODUCT_4)]);
-        $this->assertNotNull($productVisibility);
-        $this->assertEquals(
+        self::assertNotNull($productVisibility);
+        self::assertEquals(
             BaseProductVisibilityResolved::VISIBILITY_HIDDEN,
             $productVisibility->getVisibility()
         );
-        $this->assertNull($productVisibility->getCategory());
+        self::assertNull($productVisibility->getCategory());
 
         // invalid entity for first product in default scope
         $resolvedVisibility = new ProductVisibilityResolved($scope, $firstProduct);
@@ -124,36 +118,27 @@ class ProductResolvedCacheBuilderBuildCacheTest extends WebTestCase
         $manager->flush();
 
         // invalid entities were removed
-        $this->assertNotNull($repository->findOneBy(['scope' => $scope, 'product' => $firstProduct]));
+        self::assertNotNull($repository->findOneBy(['scope' => $scope, 'product' => $firstProduct]));
         $this->cacheBuilder->buildCache();
-        $this->assertNull($repository->findOneBy(['scope' => $scope, 'product' => $firstProduct]));
+        self::assertNull($repository->findOneBy(['scope' => $scope, 'product' => $firstProduct]));
     }
 
-    /**
-     * @param int $expected
-     */
-    protected function assertResolvedEntitiesCount($expected)
+    protected function assertResolvedEntitiesCount(int $expected): void
     {
         $count = $this->getRepository()->createQueryBuilder('entity')
             ->select('COUNT(entity.visibility)')
             ->getQuery()
             ->getSingleScalarResult();
-        $this->assertEquals($expected, $count);
+        self::assertEquals($expected, $count);
     }
 
-    /**
-     * @return EntityManager
-     */
-    protected function getManager()
+    protected function getManager(): EntityManager
     {
         return $this->getContainer()->get('doctrine')
             ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\ProductVisibilityResolved');
     }
 
-    /**
-     * @return ProductRepository
-     */
-    protected function getRepository()
+    protected function getRepository(): ProductRepository
     {
         return $this->getManager()->getRepository('OroVisibilityBundle:VisibilityResolved\ProductVisibilityResolved');
     }

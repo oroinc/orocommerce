@@ -13,9 +13,6 @@ class VisibilityMessageFilter implements MessageFilterInterface
     /** @var string */
     private $topic;
 
-    /**
-     * @param string $topic
-     */
     public function __construct(string $topic)
     {
         $this->topic = $topic;
@@ -42,11 +39,6 @@ class VisibilityMessageFilter implements MessageFilterInterface
         }
     }
 
-    /**
-     * @param array $message
-     *
-     * @return string
-     */
     private function getMessageKey(array $message): string
     {
         if (isset($message['id'])) {

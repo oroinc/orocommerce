@@ -48,13 +48,6 @@ class ShippingPriceProvider implements ShippingPriceProviderInterface
      */
     private $eventDispatcher;
 
-    /**
-     * @param MethodsConfigsRulesByContextProviderInterface $shippingRulesProvider
-     * @param ShippingMethodProviderInterface $shippingMethodProvider
-     * @param ShippingPriceCache $priceCache
-     * @param ShippingMethodViewFactory $shippingMethodViewFactory
-     * @param EventDispatcherInterface $eventDispatcher
-     */
     public function __construct(
         MethodsConfigsRulesByContextProviderInterface $shippingRulesProvider,
         ShippingMethodProviderInterface $shippingMethodProvider,

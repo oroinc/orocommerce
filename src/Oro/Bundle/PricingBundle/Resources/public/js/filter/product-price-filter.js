@@ -35,14 +35,14 @@ define([
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function ProductPriceFilter(options) {
             ProductPriceFilter.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             ProductPriceFilter.__super__.initialize.call(this, options);
@@ -60,7 +60,7 @@ define([
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         _renderCriteria: function() {
             this._checkAppendFilter();
@@ -68,7 +68,7 @@ define([
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function() {
             if (this.disposed) {
@@ -79,7 +79,7 @@ define([
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         _writeDOMValue: function(value) {
             this._setInputValue(this.criteriaValueSelectors.unit, value.unit);
@@ -87,7 +87,7 @@ define([
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         _readDOMValue: function() {
             const dataValue = ProductPriceFilter.__super__._readDOMValue.call(this);
@@ -96,7 +96,7 @@ define([
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         _getCriteriaHint: function(...args) {
             const value = (args.length > 0) ? this._getDisplayValue(args[0]) : this._getDisplayValue();
@@ -118,7 +118,7 @@ define([
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         _updateValueField: function() {
             ProductPriceFilter.__super__._updateValueField.call(this);
@@ -132,7 +132,7 @@ define([
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         _onClickChoiceValue: function(e) {
             const target = $(e.currentTarget);
@@ -162,7 +162,7 @@ define([
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         _beforeApply: function() {
             this._updateNegativeValue(this._readDOMValue());

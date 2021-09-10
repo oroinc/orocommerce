@@ -71,7 +71,8 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
                     ]
                 ],
                 'attr' => [
-                    'class' => 'grapesjs-textarea hide'
+                    'class' => 'grapesjs-textarea hide',
+                    'data-validation-force' => 'true'
                 ],
                 'auto_render' => true,
                 'error_bubbling' => true,
@@ -89,10 +90,6 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider submitDataProvider
-     *
-     * @param string $htmlValue
-     * @param array $allowedElements
-     * @param bool $isValid
      */
     public function testSubmit(string $htmlValue, array $allowedElements, bool $isValid): void
     {
@@ -240,9 +237,6 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
         );
     }
 
-    /**
-     * @return array
-     */
     public function submitDataProvider(): array
     {
         return [

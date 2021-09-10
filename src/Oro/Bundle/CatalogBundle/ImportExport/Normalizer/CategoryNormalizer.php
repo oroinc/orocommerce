@@ -16,9 +16,6 @@ class CategoryNormalizer extends ConfigurableEntityNormalizer
     /** @var CategoryImportExportHelper */
     private $categoryImportExportHelper;
 
-    /**
-     * @param CategoryImportExportHelper $categoryImportExportHelper
-     */
     public function setCategoryImportExportHelper(CategoryImportExportHelper $categoryImportExportHelper): void
     {
         $this->categoryImportExportHelper = $categoryImportExportHelper;
@@ -27,7 +24,7 @@ class CategoryNormalizer extends ConfigurableEntityNormalizer
     /**
      * {@inheritdoc}
      */
-    public function supportsNormalization($data, $format = null, array $context = [])
+    public function supportsNormalization($data, string $format = null, array $context = []): bool
     {
         return is_a($data, Category::class);
     }
@@ -35,7 +32,7 @@ class CategoryNormalizer extends ConfigurableEntityNormalizer
     /**
      * {@inheritdoc}
      */
-    public function supportsDenormalization($data, $type, $format = null, array $context = [])
+    public function supportsDenormalization($data, string $type, string $format = null, array $context = []): bool
     {
         return is_a($type, Category::class, true);
     }
@@ -45,7 +42,7 @@ class CategoryNormalizer extends ConfigurableEntityNormalizer
      *
      * @param Category $object
      */
-    public function normalize($object, $format = null, array $context = [])
+    public function normalize($object, string $format = null, array $context = [])
     {
         $normalizedCategory = parent::normalize($object, $format, $context);
 
@@ -67,13 +64,6 @@ class CategoryNormalizer extends ConfigurableEntityNormalizer
             || $this->isOrganizationSkippedForNormalization($entityName, $fieldName, $context);
     }
 
-    /**
-     * @param string $entityName
-     * @param string $fieldName
-     * @param array $context
-     *
-     * @return bool
-     */
     protected function isOrganizationSkippedForNormalization(
         string $entityName,
         string $fieldName,

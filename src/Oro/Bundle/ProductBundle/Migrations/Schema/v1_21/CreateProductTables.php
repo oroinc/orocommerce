@@ -34,8 +34,6 @@ class CreateProductTables implements Migration, OrderedMigrationInterface
 
     /**
      * Create oro_product_prod_name table
-     *
-     * @param Schema $schema
      */
     private function createOroProductNameTable(Schema $schema): void
     {
@@ -52,8 +50,6 @@ class CreateProductTables implements Migration, OrderedMigrationInterface
 
     /**
      * Add oro_product_prod_name foreign keys.
-     *
-     * @param Schema $schema
      */
     private function addOroProductNameForeignKeys(Schema $schema): void
     {
@@ -74,8 +70,6 @@ class CreateProductTables implements Migration, OrderedMigrationInterface
 
     /**
      * Create oro_product_prod_s_descr table
-     *
-     * @param Schema $schema
      */
     private function createOroProductShortDescriptionTable(Schema $schema): void
     {
@@ -91,8 +85,6 @@ class CreateProductTables implements Migration, OrderedMigrationInterface
 
     /**
      * Add oro_product_prod_s_descr foreign keys.
-     *
-     * @param Schema $schema
      */
     private function addOroProductShortDescriptionForeignKeys(Schema $schema): void
     {
@@ -113,8 +105,6 @@ class CreateProductTables implements Migration, OrderedMigrationInterface
 
     /**
      * Create oro_product_prod_descr table
-     *
-     * @param Schema $schema
      */
     private function createOroProductDescriptionTable(Schema $schema): void
     {
@@ -132,8 +122,6 @@ class CreateProductTables implements Migration, OrderedMigrationInterface
 
     /**
      * Add oro_product_prod_descr foreign keys.
-     *
-     * @param Schema $schema
      */
     private function addOroProductDescriptionForeignKeys(Schema $schema): void
     {

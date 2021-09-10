@@ -6,9 +6,6 @@ use Oro\Bundle\PricingBundle\NotificationMessage\Message;
 
 interface TransportInterface
 {
-    /**
-     * @param Message $message
-     */
     public function send(Message $message);
 
     /**

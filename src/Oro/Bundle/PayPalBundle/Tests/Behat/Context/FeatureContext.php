@@ -3,8 +3,6 @@
 namespace Oro\Bundle\PayPalBundle\Tests\Behat\Context;
 
 use Behat\Gherkin\Node\TableNode;
-use Behat\Symfony2Extension\Context\KernelAwareContext;
-use Behat\Symfony2Extension\Context\KernelDictionary;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
@@ -17,18 +15,15 @@ use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 use Oro\Bundle\UserBundle\Entity\User;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
-class FeatureContext extends OroFeatureContext implements OroPageObjectAware, KernelAwareContext
+class FeatureContext extends OroFeatureContext implements OroPageObjectAware
 {
-    use PageObjectDictionary, KernelDictionary, UserUtilityTrait;
+    use PageObjectDictionary, UserUtilityTrait;
 
     /**
      * @Given /^(?:I )?create "(?P<name>(?:[^"]+))" PayPal Payflow integration$/
      * @Given /^(?:I )?create PayPal Payflow integration$/
      * @Given /^(?:I )?create "(?P<name>(?:[^"]+))" PayPal Payflow integration with following settings:$/
      * @Given /^(?:I )?create PayPal Payflow integration with following settings:$/
-     *
-     * @param string $name
-     * @param TableNode|null $settingsTable
      */
     public function iCreatePayPalPayflowIntegration(string $name = 'PayPalFlow', ?TableNode $settingsTable = null)
     {
@@ -40,20 +35,12 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      * @Given /^(?:I )?create PayPal PaymentsPro integration$/
      * @Given /^(?:I )?create "(?P<name>(?:[^"]+))" PayPal PaymentsPro integration with following settings:$/
      * @Given /^(?:I )?create PayPal PaymentsPro integration with following settings:$/
-     *
-     * @param string $name
-     * @param TableNode|null $settingsTable
      */
     public function iCreatePayPalPaymentsProIntegration(string $name = 'PayPalPro', ?TableNode $settingsTable = null)
     {
         $this->createPayPalIntegration('paypal_payments_pro', $name, $settingsTable);
     }
 
-    /**
-     * @param string $type
-     * @param string $name
-     * @param TableNode|null $settingsTable
-     */
     private function createPayPalIntegration(string $type, string $name, ?TableNode $settingsTable = null)
     {
         $settings = $this->getIntegrationSettings($type);
@@ -65,17 +52,12 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $channel = $this->createChannel($name, $type, $transport);
         $transport->setChannel($channel);
 
-        $entityManager = $this->getContainer()->get('oro_entity.doctrine_helper')
+        $entityManager = $this->getAppContainer()->get('oro_entity.doctrine_helper')
             ->getEntityManagerForClass(Channel::class);
         $entityManager->persist($channel);
         $entityManager->flush();
     }
 
-    /**
-     * @param string $type
-     *
-     * @return array
-     */
     private function getIntegrationSettings(string $type): array
     {
         $baseSettings = [
@@ -94,14 +76,14 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         ];
 
         $settings = [
-            $this->getContainer()->getParameter('oro_paypal.method.paypal_payflow_gateway') => array_merge(
+            $this->getAppContainer()->getParameter('oro_paypal.method.paypal_payflow_gateway') => array_merge(
                 $baseSettings,
                 [
                     'creditCardLabels' => 'PayPalFlow',
                     'creditCardShortLabels' => 'PPlFlow',
                 ]
             ),
-            $this->getContainer()->getParameter('oro_paypal.method.paypal_payments_pro') => array_merge(
+            $this->getAppContainer()->getParameter('oro_paypal.method.paypal_payments_pro') => array_merge(
                 $baseSettings,
                 [
                     'creditCardLabels' => 'PayPalPro',
@@ -119,11 +101,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         return $settings[$type];
     }
 
-    /**
-     * @param array $settings
-     *
-     * @return PayPalSettings
-     */
     private function createTransport(array $settings): PayPalSettings
     {
         $propertyAccessor = new PropertyAccessor();
@@ -139,16 +116,9 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         return $transport;
     }
 
-    /**
-     * @param string $name
-     * @param string $type
-     * @param $transport
-     *
-     * @return Channel
-     */
     protected function createChannel(string $name, string $type, $transport): Channel
     {
-        $doctrineHelper = $this->getContainer()->get('oro_entity.doctrine_helper');
+        $doctrineHelper = $this->getAppContainer()->get('oro_entity.doctrine_helper');
         $owner = $this->getFirstUser($doctrineHelper->getEntityManagerForClass(User::class));
 
         $channel = new Channel();
@@ -229,12 +199,10 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      * | NAME        | DESCRIPTION        |
      * | Item Name 1 | Item Description 1 |
      * @Then /^(?:|I )should see the following products before pay:$/
-     *
-     * @param TableNode $table
      */
     public function assertExistsProductDataBeforePay(TableNode $table)
     {
-        $lineItems = $this->getContainer()
+        $lineItems = $this->getAppContainer()
             ->get('oro_paypal.test.express_payment.cache')
             ->fetch(NVPClientMock::LINE_ITEM_CACHE_KEY);
         foreach ($table as $row) {
@@ -249,12 +217,10 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      * | NAME        | DESCRIPTION        |
      * | Item Name 1 | Item Description 1 |
      * @Then /^(?:|I )should not see the following products before pay:$/
-     *
-     * @param TableNode $table
      */
     public function assertNotExistsProductDataBeforePay(TableNode $table)
     {
-        $lineItems = $this->getContainer()
+        $lineItems = $this->getAppContainer()
             ->get('oro_paypal.test.express_payment.cache')
             ->fetch(NVPClientMock::LINE_ITEM_CACHE_KEY);
         foreach ($table as $row) {

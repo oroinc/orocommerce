@@ -254,7 +254,6 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
 
     /**
      * @depends testPaymentToOrderReviewTransition
-     * @param Crawler $crawler
      */
     public function testSubmitOrder(Crawler $crawler)
     {
@@ -315,10 +314,6 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         );
     }
 
-    /**
-     * @param array $formFields
-     * @param Crawler $crawler
-     */
     protected function checkValidationErrors(array $formFields, Crawler $crawler)
     {
         foreach ($formFields as $formField) {
@@ -332,9 +327,6 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         }
     }
 
-    /**
-     * @param Crawler $crawler
-     */
     protected function checkDataPreSet(Crawler $crawler)
     {
         $html = $crawler->html();
@@ -346,9 +338,6 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         static::assertStringContainsString(self::REGION, $html);
     }
 
-    /**
-     * @param Customer $customer
-     */
     protected function setCurrentCustomerOnAddresses(Customer $customer)
     {
         $addresses = $this->registry->getRepository('OroCustomerBundle:CustomerAddress')->findAll();
@@ -381,7 +370,7 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
      */
     protected function setCustomerAddress($addressId, Form $form, $addressType)
     {
-        $addressId = $addressId == 0 ?: 'a_' . $addressId;
+        $addressId = $addressId === 0 ? '0' : 'a_' . $addressId;
 
         $addressTypePath = sprintf('%s[%s][customerAddress]', self::ORO_WORKFLOW_TRANSITION, $addressType);
         $form->setValues([$addressTypePath => $addressId]);

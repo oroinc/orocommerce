@@ -200,10 +200,3 @@
         text-align: left;
     }
 }
-
-@include breakpoint('print') {
-    .order-builder-clear-btn {
-        // stylelint-disable-next-line declaration-no-important
-        display: none !important;
-    }
-}

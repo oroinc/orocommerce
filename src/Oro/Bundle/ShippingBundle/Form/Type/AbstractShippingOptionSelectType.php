@@ -29,10 +29,6 @@ abstract class AbstractShippingOptionSelectType extends AbstractType
     /** @var string */
     protected $entityClass;
 
-    /**
-     * @param MeasureUnitProvider $unitProvider
-     * @param UnitLabelFormatterInterface $formatter
-     */
     public function __construct(MeasureUnitProvider $unitProvider, UnitLabelFormatterInterface $formatter)
     {
         $this->unitProvider = $unitProvider;

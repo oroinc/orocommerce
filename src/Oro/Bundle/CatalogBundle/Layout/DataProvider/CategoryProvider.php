@@ -49,14 +49,6 @@ class CategoryProvider
     /** @var MasterCatalogRootProviderInterface */
     private $masterCatalogRootProvider;
 
-    /**
-     * @param RequestProductHandler  $requestProductHandler
-     * @param ManagerRegistry        $registry
-     * @param CategoryTreeProvider   $categoryTreeProvider
-     * @param TokenAccessorInterface $tokenAccessor
-     * @param LocalizationHelper     $localizationHelper
-     * @param MasterCatalogRootProviderInterface $masterCatalogRootProvider
-     */
     public function __construct(
         RequestProductHandler $requestProductHandler,
         ManagerRegistry $registry,
@@ -88,7 +80,7 @@ class CategoryProvider
      */
     public function getCurrentCategory()
     {
-        return $this->loadCategory((int)$this->requestProductHandler->getCategoryId());
+        return $this->loadCategory($this->requestProductHandler->getCategoryId());
     }
 
     /**
@@ -153,11 +145,7 @@ class CategoryProvider
         return $this->tree[$userId];
     }
 
-    /**
-     * @param null|bool $defaultValue
-     * @return bool
-     */
-    public function getIncludeSubcategoriesChoice($defaultValue = null)
+    public function getIncludeSubcategoriesChoice(bool $defaultValue = null): bool
     {
         return $this->requestProductHandler->getIncludeSubcategoriesChoice($defaultValue);
     }
@@ -232,11 +220,6 @@ class CategoryProvider
         return $localization ? $localization->getId() : 0;
     }
 
-    /**
-     * @param CustomerUser|null $user
-     *
-     * @return string
-     */
     protected function getCacheKey(?CustomerUser $user): string
     {
         $customer = $user ? $user->getCustomer() : null;
@@ -253,9 +236,6 @@ class CategoryProvider
         );
     }
 
-    /**
-     * @return CategoryRepository
-     */
     private function getCategoryRepository(): CategoryRepository
     {
         return $this->registry->getManagerForClass(Category::class)->getRepository(Category::class);

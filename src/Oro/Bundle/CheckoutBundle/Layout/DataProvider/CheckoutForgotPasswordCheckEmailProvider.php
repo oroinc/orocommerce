@@ -20,10 +20,6 @@ class CheckoutForgotPasswordCheckEmailProvider
      */
     private $session;
 
-    /**
-     * @param RequestStack $requestStack
-     * @param Session $session
-     */
     public function __construct(
         RequestStack $requestStack,
         Session $session
@@ -39,7 +35,7 @@ class CheckoutForgotPasswordCheckEmailProvider
     {
         $email = $this->session->get('oro_customer_user_reset_email');
         $this->session->remove('oro_customer_user_reset_email');
-        $request = $this->requestStack->getMasterRequest();
+        $request = $this->requestStack->getMainRequest();
         if ($request->get('isCheckEmail') !== null && empty($email)) {
             // the user does not come from the forgot password page
             $request->query->remove('isCheckEmail');

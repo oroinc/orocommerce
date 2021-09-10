@@ -41,21 +41,21 @@ define(function(require, exports, module) {
         template: template,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         actionsPanel: ActionsPanel,
 
         shoppingListCollection: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function BackendSelectHeaderCell(options) {
             BackendSelectHeaderCell.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             BackendActionHeaderCell.__super__.initialize.call(this, options);
@@ -72,7 +72,7 @@ define(function(require, exports, module) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function() {
             delete this.shoppingListCollection;

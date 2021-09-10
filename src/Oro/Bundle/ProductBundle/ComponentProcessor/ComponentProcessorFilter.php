@@ -14,9 +14,6 @@ class ComponentProcessorFilter implements ComponentProcessorFilterInterface
     /** @var ProductRepository */
     protected $repository;
 
-    /**
-     * @param ProductRepository $repository
-     */
     public function __construct(ProductRepository $repository)
     {
         $this->repository = $repository;

@@ -2,13 +2,9 @@
 
 namespace Oro\Bundle\RedirectBundle\Routing;
 
-use Doctrine\Persistence\ManagerRegistry;
-use Oro\Bundle\PlatformBundle\Maintenance\Mode as MaintenanceMode;
-use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
+use Oro\Bundle\MaintenanceBundle\Maintenance\Mode as MaintenanceMode;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
-use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
-use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
-use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
+use Oro\Bundle\RedirectBundle\Provider\SlugEntityFinder;
 use Oro\Component\Routing\UrlUtil;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
@@ -29,107 +25,68 @@ class SlugUrlMatcher implements RequestMatcherInterface, UrlMatcherInterface
     private const MATCH_MAINTENANCE = 'maintenance';
     private const MATCH_SLUG = 'slug';
 
-    /**
-     * @var RouterInterface
-     */
-    protected $router;
+    private RouterInterface $router;
+    private MatchedUrlDecisionMaker $matchedUrlDecisionMaker;
+    private SlugEntityFinder $slugEntityFinder;
+    private MaintenanceMode $maintenanceMode;
 
-    /**
-     * @var ManagerRegistry
-     */
-    protected $registry;
+    private RequestMatcherInterface|UrlMatcherInterface $baseMatcher;
+    private array $matchSlugsFirst = [];
+    private ?RequestContext $context = null;
+    private array $slugByUrl = [];
+    private array $slugBySlugPrototype = [];
 
-    /**
-     * @var ScopeManager
-     */
-    protected $scopeManager;
-
-    /**
-     * @var RequestMatcherInterface|UrlMatcherInterface
-     */
-    protected $baseMatcher;
-
-    /**
-     * @var MatchedUrlDecisionMaker
-     */
-    protected $matchedUrlDecisionMaker;
-
-    /**
-     * @var array
-     */
-    protected $matchSlugsFirst = [];
-
-    /**
-     * @var RequestContext
-     */
-    protected $context;
-
-    /**
-     * @var ScopeCriteria
-     */
-    protected $scopeCriteria;
-
-    /**
-     * @var AclHelper
-     */
-    private $aclHelper;
-
-    /**
-     * @var MaintenanceMode
-     */
-    private $maintenanceMode;
-
-    /**
-     * @param RouterInterface $router
-     * @param ManagerRegistry $registry
-     * @param ScopeManager $scopeManager
-     * @param MatchedUrlDecisionMaker $matchedUrlDecisionMaker
-     * @param AclHelper $aclHelper
-     * @param MaintenanceMode $maintenanceMode
-     */
     public function __construct(
         RouterInterface $router,
-        ManagerRegistry $registry,
-        ScopeManager $scopeManager,
         MatchedUrlDecisionMaker $matchedUrlDecisionMaker,
-        AclHelper $aclHelper,
+        SlugEntityFinder $slugEntityFinder,
         MaintenanceMode $maintenanceMode
     ) {
         $this->router = $router;
-        $this->registry = $registry;
-        $this->scopeManager = $scopeManager;
         $this->matchedUrlDecisionMaker = $matchedUrlDecisionMaker;
-        $this->aclHelper = $aclHelper;
+        $this->slugEntityFinder = $slugEntityFinder;
         $this->maintenanceMode = $maintenanceMode;
     }
 
-    /**
-     * @param RequestMatcherInterface|UrlMatcherInterface $baseMatcher
-     */
-    public function setBaseMatcher($baseMatcher)
+    public function setBaseMatcher(RequestMatcherInterface|UrlMatcherInterface $baseMatcher): void
     {
         $this->baseMatcher = $baseMatcher;
     }
 
-    /**
-     * @param $url
-     */
-    public function addUrlToMatchSlugFirst($url)
+    public function addUrlToMatchSlugFirst(string $pathinfo): void
     {
-        $this->matchSlugsFirst[$url] = true;
+        $this->matchSlugsFirst[$pathinfo] = true;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
+     */
+    public function getContext()
+    {
+        return $this->context ?? $this->baseMatcher->getContext();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setContext(RequestContext $context)
+    {
+        $this->context = $context;
+        if ($this->baseMatcher instanceof RequestContextAwareInterface) {
+            $this->baseMatcher->setContext($context);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public function matchRequest(Request $request)
     {
-        $matchersOrder = $this->getMatchersOrder($request->getPathInfo());
-
         $requestContext = new RequestContext();
         $requestContext->fromRequest($request);
         $this->setContext($requestContext);
 
+        $pathinfo = $request->getPathInfo();
         $matchers = [
             self::MATCH_SYSTEM => function () use ($request) {
                 try {
@@ -138,31 +95,18 @@ class SlugUrlMatcher implements RequestMatcherInterface, UrlMatcherInterface
                     return [];
                 }
             },
-            self::MATCH_MAINTENANCE => function () {
-                // prevents http not found exception for slugged urls when maintenance mode is enabled
-                return $this->maintenanceMode->isOn()
-                    ? ['_route' => 'oro_frontend_root', '_route_params' => [], '_controller' => 'Frontend::index']
-                    : [];
-            },
-            self::MATCH_SLUG => function () use ($request) {
-                $url = $request->getPathInfo();
-                if ($this->matchedUrlDecisionMaker->matches($url)) {
-                    return $this->getAttributesWithContext($url);
-                }
-
-                return [];
-            }
+            self::MATCH_MAINTENANCE => $this->getMaintenanceMatcher(),
+            self::MATCH_SLUG => $this->getSlugMatcher($pathinfo)
         ];
 
-        return $this->resolveAttributes($matchers, $matchersOrder, $request->getPathInfo());
+        return $this->resolveAttributes($matchers, $pathinfo);
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function match($pathinfo)
     {
-        $matchersOrder = $this->getMatchersOrder($pathinfo);
         $matchers = [
             self::MATCH_SYSTEM => function () use ($pathinfo) {
                 try {
@@ -171,76 +115,54 @@ class SlugUrlMatcher implements RequestMatcherInterface, UrlMatcherInterface
                     return [];
                 }
             },
-            self::MATCH_MAINTENANCE => function () {
-                // prevents http not found exception for slugged urls when maintenance mode is enabled
-                return $this->maintenanceMode->isOn()
-                    ? ['_route' => 'oro_frontend_root', '_route_params' => [], '_controller' => 'Frontend::index']
-                    : [];
-            },
-            self::MATCH_SLUG => function () use ($pathinfo) {
-                if ($this->matchedUrlDecisionMaker->matches($pathinfo)) {
-                    return $this->getAttributesWithContext($pathinfo);
-                }
-
-                return [];
-            }
+            self::MATCH_MAINTENANCE => $this->getMaintenanceMatcher(),
+            self::MATCH_SLUG => $this->getSlugMatcher($pathinfo)
         ];
 
-        return $this->resolveAttributes($matchers, $matchersOrder, $pathinfo);
+        return $this->resolveAttributes($matchers, $pathinfo);
     }
 
-    /**
-     * @param array $matchers
-     * @param array $matchersOrder
-     * @param string $url
-     * @return array
-     */
-    protected function resolveAttributes(array $matchers, array $matchersOrder, $url)
+    private function getMaintenanceMatcher(): callable
     {
-        foreach ($matchersOrder as $matcher) {
-            if ($attributes = call_user_func($matchers[$matcher])) {
-                return $attributes;
+        return function () {
+            // prevents http not found exception for slugged urls when maintenance mode is enabled
+            return $this->maintenanceMode->isOn()
+                ? ['_route' => 'oro_frontend_root', '_route_params' => [], '_controller' => 'Frontend::index']
+                : [];
+        };
+    }
+
+    private function getSlugMatcher(string $pathinfo): callable
+    {
+        return function () use ($pathinfo) {
+            if ($this->matchedUrlDecisionMaker->matches($pathinfo)) {
+                return $this->getAttributesWithContext($pathinfo);
             }
-        }
 
-        throw new ResourceNotFoundException(sprintf('No routes found for "%s".', $url));
+            return [];
+        };
     }
 
-    /**
-     * @param string $url
-     * @return array
-     */
-    protected function getMatchersOrder($url)
+    private function getMatchersOrder(string $pathinfo): array
     {
-        if (!empty($this->matchSlugsFirst[$url])) {
+        if (!empty($this->matchSlugsFirst[$pathinfo])) {
             return [self::MATCH_MAINTENANCE, self::MATCH_SLUG, self::MATCH_SYSTEM];
         }
 
         return [self::MATCH_SYSTEM, self::MATCH_MAINTENANCE, self::MATCH_SLUG];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setContext(RequestContext $context)
+    private function resolveAttributes(array $matchers, string $pathinfo): array
     {
-        $this->context = $context;
-
-        if ($this->baseMatcher instanceof RequestContextAwareInterface) {
-            $this->baseMatcher->setContext($context);
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getContext()
-    {
-        if (null === $this->context) {
-            return $this->baseMatcher->getContext();
+        $matchersOrder = $this->getMatchersOrder($pathinfo);
+        foreach ($matchersOrder as $matcher) {
+            $attributes = \call_user_func($matchers[$matcher]);
+            if ($attributes) {
+                return $attributes;
+            }
         }
 
-        return $this->context;
+        throw new ResourceNotFoundException(sprintf('No routes found for "%s".', $pathinfo));
     }
 
     /**
@@ -248,36 +170,27 @@ class SlugUrlMatcher implements RequestMatcherInterface, UrlMatcherInterface
      *
      * Both may be sluggable URLs or system URLs, so rematching is required to cover both cases.
      * "_context_url_attributes" key stores an array attributes of all contexts starting from latest.
-     *
-     * @param string $url
-     * @return array
      */
-    protected function getAttributesWithContext($url)
+    private function getAttributesWithContext(string $pathinfo): array
     {
         $delimiter = '/' . SluggableUrlGenerator::CONTEXT_DELIMITER . '/';
-        if (strpos($url, $delimiter) !== false) {
-            [$contextUrl, $url] = explode($delimiter, $url, 2);
-
-            $contextAttributes = $this->match($contextUrl);
-            $urlAttributes = $this->matchContextAwareUrl($url);
-            if ($urlAttributes) {
-                $urlAttributes['_context_url_attributes'][] = $contextAttributes;
-            }
-
-            return $urlAttributes;
-        } else {
-            return $this->getAttributes($url);
+        if (!str_contains($pathinfo, $delimiter)) {
+            return $this->getAttributes($pathinfo);
         }
+
+        [$contextUrl, $url] = explode($delimiter, $pathinfo, 2);
+        $contextAttributes = $this->match($contextUrl);
+        $urlAttributes = $this->matchContextAwareUrl($url);
+        if ($urlAttributes) {
+            $urlAttributes['_context_url_attributes'][] = $contextAttributes;
+        }
+
+        return $urlAttributes;
     }
 
-    /**
-     * @param string $url
-     * @return array
-     */
-    protected function matchContextAwareUrl($url)
+    private function matchContextAwareUrl(string $url): array
     {
-        $slug = $this->getSlugEntityBySlug($url);
-        $attributes = $this->getAttributesBySlug($slug);
+        $attributes = $this->getAttributesBySlug($this->findSlugEntityBySlugPrototype($url));
         if (!$attributes) {
             $attributes = $this->match('/' . $url);
         }
@@ -285,104 +198,28 @@ class SlugUrlMatcher implements RequestMatcherInterface, UrlMatcherInterface
         return $attributes;
     }
 
-    /**
-     * @param string $url
-     * @return array
-     */
-    protected function getAttributes($url)
+    private function getAttributes(string $pathinfo): array
     {
-        return $this->getAttributesBySlug($this->getSlugEntityByUrl($url));
+        return $this->getAttributesBySlug($this->findSlugEntityByUrl($pathinfo));
     }
 
-    /**
-     * @param string $url
-     * @return string
-     */
-    protected function getCleanUrl($url)
+    private function getAttributesBySlug(?Slug $slug): array
     {
-        if ($url !== '/') {
-            $url = rtrim($url, '/');
-        }
-
-        return $url;
-    }
-
-    /**
-     * @param string $url
-     * @return Slug|null
-     */
-    protected function getSlugEntityByUrl($url)
-    {
-        $url = $this->getCleanUrl($url);
-
-        return $this->getSlugRepository()
-            ->getSlugByUrlAndScopeCriteria($url, $this->getScopeCriteria(), $this->aclHelper);
-    }
-
-    /**
-     * @param string $url
-     * @return Slug|null
-     */
-    protected function getSlugEntityBySlug($url)
-    {
-        $url = $this->getCleanUrl($url);
-
-        return $this->getSlugRepository()
-            ->getSlugBySlugPrototypeAndScopeCriteria($url, $this->getScopeCriteria(), $this->aclHelper);
-    }
-
-    /**
-     * @return SlugRepository
-     */
-    private function getSlugRepository(): SlugRepository
-    {
-        return $this->registry->getManagerForClass(Slug::class)
-            ->getRepository(Slug::class);
-    }
-
-    /**
-     * @param string $routeName
-     * @param array $routeParameters
-     * @return string
-     */
-    protected function getResolvedUrl($routeName, array $routeParameters = [])
-    {
-        return UrlUtil::getPathInfo(
-            $this->router->generate($routeName, $routeParameters),
-            $this->getContext()->getBaseUrl()
-        );
-    }
-
-    /**
-     * @return ScopeCriteria
-     */
-    protected function getScopeCriteria()
-    {
-        if (!$this->scopeCriteria) {
-            $this->scopeCriteria = $this->scopeManager->getCriteria('web_content');
-        }
-
-        return $this->scopeCriteria;
-    }
-
-    /**
-     * @param Slug $slug
-     * @return array
-     */
-    protected function getAttributesBySlug(Slug $slug = null)
-    {
-        $attributes = [];
-        if (!$slug) {
-            return $attributes;
+        if (null === $slug) {
+            return [];
         }
 
         $routeName = $slug->getRouteName();
         $routeParameters = $slug->getRouteParameters();
 
-        $resolvedUrl = $this->getResolvedUrl($routeName, $routeParameters);
+        $resolvedUrl = UrlUtil::getPathInfo(
+            $this->router->generate($routeName, $routeParameters),
+            $this->getContext()->getBaseUrl()
+        );
         $routeData = $this->router->match(parse_url($resolvedUrl, PHP_URL_PATH));
 
-        if (array_key_exists('_controller', $routeData)) {
+        $attributes = [];
+        if (\array_key_exists('_controller', $routeData)) {
             $attributes['_route'] = $routeName;
             $attributes['_controller'] = $routeData['_controller'];
             $attributes = array_merge($attributes, $routeParameters);
@@ -392,5 +229,40 @@ class SlugUrlMatcher implements RequestMatcherInterface, UrlMatcherInterface
         }
 
         return $attributes;
+    }
+
+    private function findSlugEntityByUrl(string $url): ?Slug
+    {
+        $url = $this->getCleanUrl($url);
+        if (\array_key_exists($url, $this->slugByUrl)) {
+            return $this->slugByUrl[$url];
+        }
+
+        $slug = $this->slugEntityFinder->findSlugEntityByUrl($url);
+        $this->slugByUrl[$url] = $slug;
+
+        return $slug;
+    }
+
+    private function findSlugEntityBySlugPrototype(string $slugPrototype): ?Slug
+    {
+        $slugPrototype = $this->getCleanUrl($slugPrototype);
+        if (\array_key_exists($slugPrototype, $this->slugBySlugPrototype)) {
+            return $this->slugBySlugPrototype[$slugPrototype];
+        }
+
+        $slug = $this->slugEntityFinder->findSlugEntityBySlugPrototype($slugPrototype);
+        $this->slugBySlugPrototype[$slugPrototype] = $slug;
+
+        return $slug;
+    }
+
+    private function getCleanUrl(string $url): string
+    {
+        if ('/' !== $url) {
+            $url = rtrim($url, '/');
+        }
+
+        return $url;
     }
 }

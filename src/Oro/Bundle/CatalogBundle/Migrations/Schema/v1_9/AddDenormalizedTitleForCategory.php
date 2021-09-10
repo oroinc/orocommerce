@@ -17,9 +17,6 @@ class AddDenormalizedTitleForCategory implements Migration
         $this->addDenormalizedDefaultTitleColumn($schema);
     }
 
-    /**
-     * @param $schema
-     */
     protected function addDenormalizedDefaultTitleColumn(Schema $schema)
     {
         $table = $schema->getTable(OroCatalogBundleInstaller::ORO_CATALOG_CATEGORY_TABLE_NAME);

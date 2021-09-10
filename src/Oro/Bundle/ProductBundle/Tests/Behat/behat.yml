@@ -71,7 +71,7 @@ oro_behat_extension:
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridToolbarActions
 
     RelatedProductsViewGridFiltersState:
-      selector: 'div[data-page-component-name="products-related-products-view"] div.filters-state'
+      selector: 'div[data-page-component-name="products-related-products-view"] .filters-state'
 
     RelatedProductsViewGridFilterItem:
       selector: 'div[data-page-component-name="products-related-products-view"] div.filter-item'
@@ -93,7 +93,7 @@ oro_behat_extension:
         class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridToolbarActions
 
     SelectRelatedProductsGridFiltersState:
-        selector: 'div[data-page-component-name="products-related-products-select"] div.filters-state'
+        selector: 'div[data-page-component-name="products-related-products-select"] .filters-state'
 
     SelectRelatedProductsGridFilterItem:
       selector: 'div[data-page-component-name="products-related-products-select"] div.filter-item'
@@ -112,7 +112,7 @@ oro_behat_extension:
         class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridToolbarActions
 
     RelatedProductsEditGridFiltersState:
-        selector: 'div[data-page-component-name="products-related-products-edit"] div.filters-state'
+        selector: 'div[data-page-component-name="products-related-products-edit"] .filters-state'
 
     RelatedProductsEditGridFilterItem:
       selector: 'div[data-page-component-name="products-related-products-edit"] div.filter-item'
@@ -149,7 +149,7 @@ oro_behat_extension:
         class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridToolbarActions
 
     SelectUpsellProductsGridFiltersState:
-        selector: 'div[data-page-component-name="products-upsell-products-select"] div.filters-state'
+        selector: 'div[data-page-component-name="products-upsell-products-select"] .filters-state'
 
     SelectUpsellProductsGridFilterItem:
       selector: 'div[data-page-component-name="products-upsell-products-select"] div.filter-item'
@@ -168,7 +168,7 @@ oro_behat_extension:
         class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridToolbarActions
 
     UpsellProductsEditGridFiltersState:
-        selector: 'div[data-page-component-name="products-upsell-products-edit"] div.filters-state'
+        selector: 'div[data-page-component-name="products-upsell-products-edit"] .filters-state'
 
     UpsellProductsEditGridFilterItem:
       selector: 'div[data-page-component-name="products-upsell-products-edit"] div.filter-item'
@@ -505,6 +505,12 @@ oro_behat_extension:
             type: 'css'
             locator: 'select[name="oro_product_quick_add[products][1][productUnit]"]'
             element: Select
+          SUBTOTAL1:
+            type: 'css'
+            locator: 'div[data-ftid="oro_product_quick_add_products_0"] input[data-name="field__product-subtotal"]'
+          SUBTOTAL2:
+            type: 'css'
+            locator: 'div[data-ftid="oro_product_quick_add_products_1"] input[data-name="field__product-subtotal"]'
 
     Quick Order Form > QTY1:
       selector:
@@ -755,7 +761,7 @@ oro_behat_extension:
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilters
 
     ProductFrontendGridFiltersState:
-      selector: 'div[data-page-component-name="frontend-product-search-grid"] div.filters-state'
+      selector: 'div[data-page-component-name="frontend-product-search-grid"] .filters-state'
 
     ProductFrontendGridToolbarActions:
       selector: 'div[data-page-component-name="frontend-product-search-grid"] div.toolbar div.actions-panel'
@@ -1074,12 +1080,12 @@ oro_behat_extension:
     Brand Filter:
       selector:
         type: xpath
-        locator: '//div[contains(@class,"filter-item")]/div[contains(@class,"filter-select")]/span[contains(text(),"Filter By Brand")]/..'
+        locator: '//div[contains(@class,"filter-item")]/*[contains(@class,"filter-select")]/span[contains(text(),"Filter By Brand")]/..'
 
     Brand Filter Toggle Icon:
       selector:
         type: xpath
-        locator: '//div[contains(@class,"filter-item")]/div[contains(@class,"filter-select")]/span[contains(text(),"Filter By Brand")]/../div[contains(@class,"filter-criteria-selector-icon-wrap")]'
+        locator: '//div[contains(@class,"filter-item")]/*[contains(@class,"filter-select")]/span[contains(text(),"Filter By Brand")]/../*[contains(@class,"filter-criteria-selector-icon-wrap")]'
 
     Product Item Preview:
       selector: '.product-item .product-item__preview'
@@ -1115,6 +1121,10 @@ oro_behat_extension:
           Default Value: 'oro_web_catalog_content_node[titles][values][default]'
           Use Default: 'oro_web_catalog_content_node[titles][values][localizations][1][use_fallback]'
           English (United States): 'oro_web_catalog_content_node[titles][values][localizations][1][value]'
+
+    NodeEnglishSlug:
+      selector: 'input[name="oro_web_catalog_content_node[slugPrototypesWithRedirect][slugPrototypes][values][localizations][1][value]"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     Create Product Plus Button:
       selector: '.content-variant-item-default .entity-create-btn'
@@ -1381,38 +1391,36 @@ oro_behat_extension:
     # Revert by OPI-52
     OroProductBundle:
       contexts:
-        - OroApplicationBundle::CommerceMainContext
-        - OroDataGridBundle::GridContext
-        - OroCheckoutBundle::FeatureContext
-        - OroCustomerBundle::FrontendGridContext
-        - OroEmailBundle::EmailContext
-        - OroFormBundle::FormContext
-        - OroProductBundle::FeatureContext
-        - OroProductBundle::ProductImportExportContext
-        - OroProductBundle::QuickOrderFormContext
-        - OroRedirectBundle::SlugPrototypesContext
-        - OroSecurityBundle::ACLContext
-        - OroSEOBundle::FeatureContext
+        - Oro\Bundle\ApplicationBundle\Tests\Behat\Context\CommerceMainContext
+        - Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext
+        - Oro\Bundle\CheckoutBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\CustomerBundle\Tests\Behat\Context\FrontendGridContext
+        - Oro\Bundle\EmailBundle\Tests\Behat\Context\EmailContext
+        - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
+        - Oro\Bundle\ProductBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\ProductBundle\Tests\Behat\Context\ProductImportExportContext
+        - Oro\Bundle\ProductBundle\Tests\Behat\Context\QuickOrderFormContext
+        - Oro\Bundle\RedirectBundle\Tests\Behat\Context\SlugPrototypesContext
+        - Oro\Bundle\SecurityBundle\Tests\Behat\Context\ACLContext
+        - Oro\Bundle\SEOBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
-        - OroWebCatalogBundle::FeatureContext
-        - OroConfigBundle::FeatureContext
-        - OroUserBundle::FeatureContext
-        - OroImportExportBundle::ImportExportContext:
-            - '@oro_entity.entity_alias_resolver'
-            - '@oro_importexport.processor.registry'
-        - OroNavigationBundle::FeatureContext
-        - OroNavigationBundle::PinbarContext
-        - OroQueryDesignerBundle::QueryDesignerContext
-        - OroLocaleBundle::LocalizationContext
-        - OroWorkflowBundle::FeatureContext
-        - OroFrontendLocalizationBundle::LocalizationSwitcherContext
-        - OroShoppingListBundle::ShoppingListContext
-        - OroShoppingListBundle::FeatureContext
-        - OroShippingBundle::SingleCurrencyContext
-        - OroOrderBundle::OrderContext
-        - OroProductBundle::FrontendProductGridContext
-        - OroCMSBundle::FeatureContext
-        - OroAttachmentBundle::AttachmentImageContext
+        - Oro\Bundle\WebCatalogBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\UserBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\ImportExportBundle\Tests\Behat\Context\ImportExportContext
+        - Oro\Bundle\NavigationBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\NavigationBundle\Tests\Behat\Context\PinbarContext
+        - Oro\Bundle\QueryDesignerBundle\Tests\Behat\Context\QueryDesignerContext
+        - Oro\Bundle\LocaleBundle\Tests\Behat\Context\LocalizationContext
+        - Oro\Bundle\WorkflowBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\FrontendLocalizationBundle\Tests\Behat\Context\LocalizationSwitcherContext
+        - Oro\Bundle\ShoppingListBundle\Tests\Behat\Context\ShoppingListContext
+        - Oro\Bundle\ShoppingListBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\ShippingBundle\Tests\Behat\Context\SingleCurrencyContext
+        - Oro\Bundle\OrderBundle\Tests\Behat\Context\OrderContext
+        - Oro\Bundle\ProductBundle\Tests\Behat\Context\FrontendProductGridContext
+        - Oro\Bundle\CMSBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\AttachmentBundle\Tests\Behat\Context\AttachmentImageContext
       paths:
         - '@OroProductBundle/Tests/Behat/Features/product-collection'
         - '@OroProductBundle/Tests/Behat/Features/product'
@@ -1421,56 +1429,52 @@ oro_behat_extension:
         - '@OroProductBundle/Tests/Behat/Features/frontend-product-export'
     OroProductBundleRelatedItems:
       contexts:
-        - OroApplicationBundle::CommerceMainContext
-        - OroDataGridBundle::GridContext
-        - OroFormBundle::FormContext
-        - OroProductBundle::FeatureContext
-        - OroSecurityBundle::ACLContext
+        - Oro\Bundle\ApplicationBundle\Tests\Behat\Context\CommerceMainContext
+        - Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext
+        - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
+        - Oro\Bundle\ProductBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\SecurityBundle\Tests\Behat\Context\ACLContext
         - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
-        - OroConfigBundle::FeatureContext
-        - OroUserBundle::FeatureContext
-        - OroNavigationBundle::FeatureContext
-        - OroNavigationBundle::PinbarContext
-        - OroLocaleBundle::LocalizationContext
-        - OroFrontendLocalizationBundle::LocalizationSwitcherContext
-        - OroEmailBundle::EmailContext
-        - OroImportExportBundle::ImportExportContext:
-            - '@oro_entity.entity_alias_resolver'
-            - '@oro_importexport.processor.registry'
+        - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\UserBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\NavigationBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\NavigationBundle\Tests\Behat\Context\PinbarContext
+        - Oro\Bundle\LocaleBundle\Tests\Behat\Context\LocalizationContext
+        - Oro\Bundle\FrontendLocalizationBundle\Tests\Behat\Context\LocalizationSwitcherContext
+        - Oro\Bundle\EmailBundle\Tests\Behat\Context\EmailContext
+        - Oro\Bundle\ImportExportBundle\Tests\Behat\Context\ImportExportContext
       paths:
         - '@OroProductBundle/Tests/Behat/Features/related-items'
     OroProductBundleOther:
       contexts:
-        - OroApplicationBundle::CommerceMainContext
-        - OroDataGridBundle::GridContext
-        - OroFormBundle::FormContext
-        - OroProductBundle::FeatureContext
-        - OroProductBundle::QuickOrderFormContext
-        - OroRedirectBundle::SlugPrototypesContext
-        - OroRedirectBundle::FeatureContext
-        - OroSecurityBundle::ACLContext
-        - OroSEOBundle::FeatureContext
+        - Oro\Bundle\ApplicationBundle\Tests\Behat\Context\CommerceMainContext
+        - Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext
+        - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
+        - Oro\Bundle\ProductBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\ProductBundle\Tests\Behat\Context\QuickOrderFormContext
+        - Oro\Bundle\RedirectBundle\Tests\Behat\Context\SlugPrototypesContext
+        - Oro\Bundle\RedirectBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\SecurityBundle\Tests\Behat\Context\ACLContext
+        - Oro\Bundle\SEOBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
-        - OroWebCatalogBundle::FeatureContext
-        - OroConfigBundle::FeatureContext
-        - OroUserBundle::FeatureContext
-        - OroUIBundle::DragAndDropContext
-        - OroCheckoutBundle::FeatureContext
-        - OroShoppingListBundle::ShoppingListContext
-        - OroShoppingListBundle::FeatureContext
-        - OroShippingBundle::FeatureContext
-        - OroLocaleBundle::LocalizationContext
-        - OroFrontendLocalizationBundle::LocalizationSwitcherContext
-        - OroEntityExtendBundle::FeatureContext
-        - OroPromotionBundle::PromotionContext
-        - OroWebsiteSearchBundle::SearchIndexContext
-        - OroQueryDesignerBundle::QueryDesignerContext
-        - OroEmailBundle::EmailContext
-        - OroImportExportBundle::ImportExportContext:
-            - '@oro_entity.entity_alias_resolver'
-            - '@oro_importexport.processor.registry'
-        - OroNavigationBundle::FeatureContext
-        - OroCMSBundle::FeatureContext
-        - OroProductBundle::FrontendProductGridContext
+        - Oro\Bundle\WebCatalogBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\UserBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\UIBundle\Tests\Behat\Context\DragAndDropContext
+        - Oro\Bundle\CheckoutBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\ShoppingListBundle\Tests\Behat\Context\ShoppingListContext
+        - Oro\Bundle\ShoppingListBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\ShippingBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\LocaleBundle\Tests\Behat\Context\LocalizationContext
+        - Oro\Bundle\FrontendLocalizationBundle\Tests\Behat\Context\LocalizationSwitcherContext
+        - Oro\Bundle\EntityExtendBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\PromotionBundle\Tests\Behat\Context\PromotionContext
+        - Oro\Bundle\WebsiteSearchBundle\Tests\Behat\Context\SearchIndexContext
+        - Oro\Bundle\QueryDesignerBundle\Tests\Behat\Context\QueryDesignerContext
+        - Oro\Bundle\EmailBundle\Tests\Behat\Context\EmailContext
+        - Oro\Bundle\ImportExportBundle\Tests\Behat\Context\ImportExportContext
+        - Oro\Bundle\NavigationBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\CMSBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\ProductBundle\Tests\Behat\Context\FrontendProductGridContext
       paths:
         - '@OroProductBundle/Tests/Behat/Features/other'

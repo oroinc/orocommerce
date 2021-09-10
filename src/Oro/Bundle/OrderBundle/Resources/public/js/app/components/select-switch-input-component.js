@@ -25,7 +25,7 @@ define(function(require) {
         $input_to_select_btn: '.input-to-select-btn',
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function SelectSwitchInputComponent(options) {
             SelectSwitchInputComponent.__super__.constructor.call(this, options);

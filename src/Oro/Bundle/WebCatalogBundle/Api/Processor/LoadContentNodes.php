@@ -17,9 +17,6 @@ class LoadContentNodes implements ProcessorInterface
     /** @var ContentNodeRepository */
     private $contentNodeRepository;
 
-    /**
-     * @param ContentNodeRepository $contentNodeRepository
-     */
     public function __construct(ContentNodeRepository $contentNodeRepository)
     {
         $this->contentNodeRepository = $contentNodeRepository;

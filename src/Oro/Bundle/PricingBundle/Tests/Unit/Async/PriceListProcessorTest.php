@@ -75,9 +75,6 @@ class PriceListProcessorTest extends \PHPUnit\Framework\TestCase
         return $message;
     }
 
-    /**
-     * @return SessionInterface
-     */
     private function getSession(): SessionInterface
     {
         return $this->createMock(SessionInterface::class);

@@ -69,10 +69,6 @@ class ExportController extends AbstractController
         return new JsonResponse(['success' => true]);
     }
 
-    /**
-     * @param Request $request
-     * @return array
-     */
     private function getOptionsFromRequest(Request $request): array
     {
         $options = $request->get('options', []);
@@ -84,11 +80,6 @@ class ExportController extends AbstractController
         return $options;
     }
 
-    /**
-     * @param Request $request
-     * @param Website $website
-     * @return string
-     */
     private function getRefererUrl(Request $request, Website $website): string
     {
         $referer = $request->headers->get('referer');
@@ -97,10 +88,6 @@ class ExportController extends AbstractController
         return str_replace($baseUrl, '', $referer);
     }
 
-    /**
-     * @param array $requestOptions
-     * @return string|null
-     */
     private function getGridRequestParams(array $requestOptions): ?string
     {
         if (array_key_exists('filteredResultsGridParams', $requestOptions)) {

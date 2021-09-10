@@ -51,9 +51,6 @@ class WYSIWYGProcessedEntityDTO
         $this->changeSet = $changeSet;
     }
 
-    /**
-     * @return EntityManager
-     */
     public function getEntityManager(): EntityManager
     {
         return $this->entityManager;
@@ -75,9 +72,6 @@ class WYSIWYGProcessedEntityDTO
         return \current($this->getMetadata()->getIdentifierValues($this->getEntity()));
     }
 
-    /**
-     * @return ClassMetadata
-     */
     public function getMetadata(): ClassMetadata
     {
         if (!$this->metadata) {
@@ -92,17 +86,11 @@ class WYSIWYGProcessedEntityDTO
         return $this->metadata;
     }
 
-    /**
-     * @return string|null
-     */
     public function getFieldName(): ?string
     {
         return $this->fieldName;
     }
 
-    /**
-     * @return string|null
-     */
     public function getFieldType(): ?string
     {
         return $this->fieldType;
@@ -135,9 +123,6 @@ class WYSIWYGProcessedEntityDTO
         return $value;
     }
 
-    /**
-     * @return bool
-     */
     public function isFieldChanged(): bool
     {
         if ($this->changeSet === null) {
@@ -156,9 +141,6 @@ class WYSIWYGProcessedEntityDTO
         return false;
     }
 
-    /**
-     * @return bool
-     */
     public function isRelation(): bool
     {
         return $this->getMetadata()->hasAssociation($this->getFieldName());

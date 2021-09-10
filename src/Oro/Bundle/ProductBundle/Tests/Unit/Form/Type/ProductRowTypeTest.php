@@ -26,7 +26,6 @@ class ProductRowTypeTest extends FormIntegrationTestCase
      */
     protected $validator;
 
-
     /**
      * @var \PHPUnit\Framework\MockObject\MockObject|ProductUnitsProvider
      */

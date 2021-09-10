@@ -13,10 +13,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class CommonUnitValueType extends AbstractType
 {
-    /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
-     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $separator = $this->getDecimalSeparator($options['html5']);
@@ -28,9 +24,6 @@ class CommonUnitValueType extends AbstractType
         $builder->addViewTransformer($transformer);
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     */
     public function configureOptions(OptionsResolver $resolver): void
     {
         // Since it is not possible to know the value before configuration, we assume that the accuracy will be any.
@@ -39,15 +32,9 @@ class CommonUnitValueType extends AbstractType
         $resolver->setAllowedValues('scale', fn ($value) => $value >= PHP_FLOAT_DIG);
     }
 
-    /**
-     * @param string $value
-     * @param string $separator
-     *
-     * @return string
-     */
     public function format(string $value, string $separator): string
     {
-        if (false !== strpos($value, $separator)) {
+        if (str_contains($value, $separator)) {
             [$whole, $fraction] = explode($separator, $value);
             $fraction = rtrim($fraction, 0);
 
@@ -59,11 +46,6 @@ class CommonUnitValueType extends AbstractType
         return $value;
     }
 
-    /**
-     * @param string $lang
-     *
-     * @return string
-     */
     private function getDecimalSeparator(string $lang): string
     {
         // NumberFormatter::DECIMAL - In this case, do not use integer formatted, only float.
@@ -72,9 +54,6 @@ class CommonUnitValueType extends AbstractType
         return $formatter->getSymbol(\NumberFormatter::DECIMAL_SEPARATOR_SYMBOL);
     }
 
-    /**
-     * @return string
-     */
     public function getParent(): string
     {
         return NumberType::class;

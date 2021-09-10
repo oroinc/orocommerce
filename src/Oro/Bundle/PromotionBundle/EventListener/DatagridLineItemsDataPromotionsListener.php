@@ -32,12 +32,6 @@ class DatagridLineItemsDataPromotionsListener
     /** @var array */
     private $cache = [];
 
-    /**
-     * @param PricingLineItemDataListener $pricingLineItemDataListener
-     * @param PromotionExecutor $promotionExecutor
-     * @param UserCurrencyManager $currencyManager
-     * @param NumberFormatter $numberFormatter
-     */
     public function __construct(
         PricingLineItemDataListener $pricingLineItemDataListener,
         PromotionExecutor $promotionExecutor,
@@ -50,9 +44,6 @@ class DatagridLineItemsDataPromotionsListener
         $this->numberFormatter = $numberFormatter;
     }
 
-    /**
-     * @param DatagridLineItemsDataEvent $event
-     */
     public function onLineItemData(DatagridLineItemsDataEvent $event): void
     {
         $this->pricingLineItemDataListener->onLineItemData($event);
@@ -96,10 +87,6 @@ class DatagridLineItemsDataPromotionsListener
         }
     }
 
-    /**
-     * @param ProductLineItemsHolderInterface $lineItemsHolder
-     * @return array
-     */
     private function getDiscountTotals(ProductLineItemsHolderInterface $lineItemsHolder): array
     {
         $id = $lineItemsHolder->getId();
@@ -125,10 +112,6 @@ class DatagridLineItemsDataPromotionsListener
         return $this->cache[$id] ?? [];
     }
 
-    /**
-     * @param array $lineItems
-     * @return object|null
-     */
     private function getMainEntity(array $lineItems): ?object
     {
         $entity = null;
@@ -148,10 +131,6 @@ class DatagridLineItemsDataPromotionsListener
         return $entity;
     }
 
-    /**
-     * @param ProductLineItemInterface $item
-     * @return string
-     */
     private function getDataKey(ProductLineItemInterface $item): string
     {
         return implode(':', [$item->getProductSku(), $item->getProductUnitCode(), $item->getQuantity()]);

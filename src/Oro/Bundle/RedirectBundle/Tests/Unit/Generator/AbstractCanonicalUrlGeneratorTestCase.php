@@ -67,15 +67,8 @@ abstract class AbstractCanonicalUrlGeneratorTestCase extends \PHPUnit\Framework\
         $this->canonicalUrlGenerator = $this->createGenerator();
     }
 
-    /**
-     * @return CanonicalUrlGenerator
-     */
     abstract protected function createGenerator(): CanonicalUrlGenerator;
 
-    /**
-     * @param string $urlSecurityType
-     * @param WebsiteInterface|null $website
-     */
     protected function assertUrlTypeCalls(string $urlSecurityType, WebsiteInterface $website = null): void
     {
         $urlTypeKey = 'oro_redirect.canonical_url_type';
@@ -100,10 +93,6 @@ abstract class AbstractCanonicalUrlGeneratorTestCase extends \PHPUnit\Framework\
             ]);
     }
 
-    /**
-     * @param SluggableInterface $data
-     * @param string|null $expectedBaseUrl
-     */
     protected function assertRequestCalls(
         SluggableInterface $data,
         ?string $expectedBaseUrl = null
@@ -114,7 +103,7 @@ abstract class AbstractCanonicalUrlGeneratorTestCase extends \PHPUnit\Framework\
             ->method('getBaseUrl')
             ->willReturn($expectedBaseUrl);
         $this->requestStack->expects($this->atMost(1))
-            ->method('getMasterRequest')
+            ->method('getMainRequest')
             ->willReturn($request);
 
         $this->routingInformationProvider->expects($this->never())

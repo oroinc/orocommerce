@@ -42,9 +42,6 @@ class ConsentRepositoryTest extends WebTestCase
 
     /**
      * @dataProvider getNonExistentConsentIdsProvider
-     *
-     * @param callable $checkedConsentIdsCallback
-     * @param array $expectedNonExistentConsentIds
      */
     public function testGetNonExistentConsentIds(
         callable $checkedConsentIdsCallback,

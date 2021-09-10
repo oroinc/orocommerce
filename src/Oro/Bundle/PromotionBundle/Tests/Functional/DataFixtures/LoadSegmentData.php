@@ -107,9 +107,6 @@ class LoadSegmentData extends AbstractLoadSegmentData
         ]
     ];
 
-    /**
-     * @return array
-     */
     protected function getSegmentsData(): array
     {
         return self::$segments;

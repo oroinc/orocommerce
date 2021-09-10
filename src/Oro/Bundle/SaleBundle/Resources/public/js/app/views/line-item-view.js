@@ -145,14 +145,14 @@ define(function(require) {
         loadingMask: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function LineItemView(options) {
             LineItemView.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             if (!this.model) {
@@ -262,8 +262,8 @@ define(function(require) {
 
         checkAddButton: function() {
             const enabled = Boolean(this.getProductId()) || (this.isFreeForm && this.options.allowEditFreeForm);
-            this.$addItemButton.toggleClass('d-none', !enabled);
-            this.$itemCollection.toggleClass('d-none', !enabled);
+            this.$addItemButton.toggleClass('hide', !enabled);
+            this.$itemCollection.toggleClass('hide', !enabled);
         },
 
         removeOfferRow: function() {

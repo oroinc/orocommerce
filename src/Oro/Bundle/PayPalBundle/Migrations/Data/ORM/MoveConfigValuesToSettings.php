@@ -86,10 +86,6 @@ class MoveConfigValuesToSettings extends AbstractMoveConfigValuesToSettings
         $manager->flush();
     }
 
-    /**
-     * @param Channel $paymentsProChannel
-     * @param Channel $payflowGatewayChannel
-     */
     protected function getDispatchPaymentMethodRenamingEvent(
         Channel $paymentsProChannel,
         Channel $payflowGatewayChannel

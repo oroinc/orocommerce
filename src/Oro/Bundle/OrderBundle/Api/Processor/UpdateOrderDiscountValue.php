@@ -17,9 +17,6 @@ class UpdateOrderDiscountValue implements ProcessorInterface
     /** @var RoundingServiceInterface */
     private $rounding;
 
-    /**
-     * @param RoundingServiceInterface $rounding
-     */
     public function __construct(RoundingServiceInterface $rounding)
     {
         $this->rounding = $rounding;
@@ -57,12 +54,6 @@ class UpdateOrderDiscountValue implements ProcessorInterface
         }
     }
 
-    /**
-     * @param float      $amount
-     * @param float|null $total
-     *
-     * @return float
-     */
     private function calculatePercent(float $amount, ?float $total): float
     {
         return $total > 0
@@ -70,12 +61,6 @@ class UpdateOrderDiscountValue implements ProcessorInterface
             : 0.0;
     }
 
-    /**
-     * @param float      $percent
-     * @param float|null $total
-     *
-     * @return float
-     */
     private function calculateAmount(float $percent, ?float $total): float
     {
         return $total > 0

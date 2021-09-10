@@ -3,24 +3,24 @@ oro_behat_extension:
         OroRFPBundle:
             contexts:
                 - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
-                - OroDataGridBundle::GridContext
-                - OroFormBundle::FormContext
-                - OroWorkflowBundle::FeatureContext
-                - OroApplicationBundle::CommerceMainContext
-                - OroShoppingListBundle::FeatureContext
-                - OroShoppingListBundle::ShoppingListContext
-                - OroRFPBundle::FeatureContext
-                - OroConfigBundle::FeatureContext
-                - OroNavigationBundle::FeatureContext
-                - OroUIBundle::TypeaheadContext
-                - OroProductBundle::FeatureContext
-                - OroLocaleBundle::LocalizationContext
-                - OroFrontendLocalizationBundle::LocalizationSwitcherContext
-                - OroProductBundle::QuickOrderFormContext
-                - OroEmailBundle::EmailContext
-                - OroShippingBundle::SingleCurrencyContext
-                - OroCustomerBundle::FrontendGridContext
-                - OroQueryDesignerBundle::QueryDesignerContext
+                - Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext
+                - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
+                - Oro\Bundle\WorkflowBundle\Tests\Behat\Context\FeatureContext
+                - Oro\Bundle\ApplicationBundle\Tests\Behat\Context\CommerceMainContext
+                - Oro\Bundle\ShoppingListBundle\Tests\Behat\Context\FeatureContext
+                - Oro\Bundle\ShoppingListBundle\Tests\Behat\Context\ShoppingListContext
+                - Oro\Bundle\RFPBundle\Tests\Behat\Context\FeatureContext
+                - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
+                - Oro\Bundle\NavigationBundle\Tests\Behat\Context\FeatureContext
+                - Oro\Bundle\UIBundle\Tests\Behat\Context\TypeaheadContext
+                - Oro\Bundle\ProductBundle\Tests\Behat\Context\FeatureContext
+                - Oro\Bundle\LocaleBundle\Tests\Behat\Context\LocalizationContext
+                - Oro\Bundle\FrontendLocalizationBundle\Tests\Behat\Context\LocalizationSwitcherContext
+                - Oro\Bundle\ProductBundle\Tests\Behat\Context\QuickOrderFormContext
+                - Oro\Bundle\EmailBundle\Tests\Behat\Context\EmailContext
+                - Oro\Bundle\ShippingBundle\Tests\Behat\Context\SingleCurrencyContext
+                - Oro\Bundle\CustomerBundle\Tests\Behat\Context\FrontendGridContext
+                - Oro\Bundle\QueryDesignerBundle\Tests\Behat\Context\QueryDesignerContext
             paths:
                 - '@OroRFPBundle/Tests/Behat/Features'
 

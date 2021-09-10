@@ -16,17 +16,11 @@ class ProductAvailabilityCacheListener
      */
     private $cache;
 
-    /**
-     * @param CacheProvider $cache
-     */
     public function __construct(CacheProvider $cache)
     {
         $this->cache = $cache;
     }
 
-    /**
-     * @param OnFlushEventArgs $args
-     */
     public function onFlush(OnFlushEventArgs $args)
     {
         $unitOfWork = $args->getEntityManager()->getUnitOfWork();

@@ -23,9 +23,6 @@ class PaymentContext extends ParameterBag implements PaymentContextInterface
     const FIELD_WEBSITE = 'website';
     const FIELD_TOTAL = 'total';
 
-    /**
-     * @param array $params
-     */
     public function __construct(array $params)
     {
         parent::__construct($params);
@@ -102,7 +99,7 @@ class PaymentContext extends ParameterBag implements PaymentContextInterface
     {
         return $this->get(self::FIELD_SUBTOTAL);
     }
-    
+
     /**
      * {@inheritDoc}
      */

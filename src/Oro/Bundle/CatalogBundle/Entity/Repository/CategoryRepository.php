@@ -8,7 +8,6 @@ use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Component\Tree\Entity\Repository\NestedTreeRepository;
 
 /**
@@ -18,9 +17,6 @@ use Oro\Component\Tree\Entity\Repository\NestedTreeRepository;
  */
 class CategoryRepository extends NestedTreeRepository
 {
-    /**
-     * @return QueryBuilder
-     */
     public function getMasterCatalogRootQueryBuilder(): QueryBuilder
     {
         return $this->createQueryBuilder('category')
@@ -83,11 +79,6 @@ class CategoryRepository extends NestedTreeRepository
         return array_map('current', $result);
     }
 
-    /**
-     * @param string $title
-     *
-     * @return QueryBuilder
-     */
     public function findOneByDefaultTitleQueryBuilder(string $title): QueryBuilder
     {
         return $this->createQueryBuilder('category')
@@ -97,13 +88,6 @@ class CategoryRepository extends NestedTreeRepository
             ->setMaxResults(1);
     }
 
-    /**
-     * @param string $title
-     * @param Organization $organization
-     * @param Category|null $parentCategory
-     *
-     * @return Category|null
-     */
     public function findOneOrNullByDefaultTitleAndParent(
         string $title,
         Organization $organization,
@@ -267,9 +251,6 @@ class CategoryRepository extends NestedTreeRepository
         return $productCategoryMap;
     }
 
-    /**
-     * @param Category $category
-     */
     public function updateMaterializedPath(Category $category)
     {
         $this->_em->createQueryBuilder()
@@ -284,8 +265,6 @@ class CategoryRepository extends NestedTreeRepository
 
     /**
      * Gets max value of Gedmo tree "left" field.
-     *
-     * @return int
      */
     public function getMaxLeft(): int
     {
@@ -295,19 +274,5 @@ class CategoryRepository extends NestedTreeRepository
             ->select($qb->expr()->max('category.left'))
             ->getQuery()
             ->getSingleScalarResult();
-    }
-
-    /**
-     * @param Slug $slug
-     * @return Category|null
-     */
-    public function findOneBySlug(Slug $slug): ?Category
-    {
-        $qb = $this->createQueryBuilder('c');
-        $qb
-            ->where($qb->expr()->isMemberOf(':slug', 'c.slugs'))
-            ->setParameter('slug', $slug);
-
-        return $qb->getQuery()->getOneOrNullResult();
     }
 }

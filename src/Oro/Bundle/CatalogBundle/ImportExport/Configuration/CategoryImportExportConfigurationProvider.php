@@ -16,9 +16,6 @@ class CategoryImportExportConfigurationProvider implements ImportExportConfigura
     /** @var TranslatorInterface */
     private $translator;
 
-    /**
-     * @param TranslatorInterface $translator
-     */
     public function __construct(TranslatorInterface $translator)
     {
         $this->translator = $translator;

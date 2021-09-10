@@ -84,7 +84,6 @@ class CheckCallbackRelevanceListenerTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($event->isPropagationStopped());
     }
 
-
     public function testOnErrorWithoutExistingOrder()
     {
         $paymentTransaction = new PaymentTransaction();
@@ -200,7 +199,6 @@ class CheckCallbackRelevanceListenerTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($event->isPropagationStopped());
     }
 
-
     public function testOnErrorWithPaidOrderWithoutFailureUrl()
     {
         $paymentTransaction = new PaymentTransaction();
@@ -272,7 +270,6 @@ class CheckCallbackRelevanceListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->onReturn($event);
         $this->assertFalse($event->isPropagationStopped());
     }
-
 
     public function testOnReturnWithoutExistingOrder()
     {
@@ -388,7 +385,6 @@ class CheckCallbackRelevanceListenerTest extends \PHPUnit\Framework\TestCase
         $this->assertSame('https://example.com/failure-url', $response->getTargetUrl());
         $this->assertTrue($event->isPropagationStopped());
     }
-
 
     public function testOnReturnWithPaidOrderWithoutFailureUrl()
     {

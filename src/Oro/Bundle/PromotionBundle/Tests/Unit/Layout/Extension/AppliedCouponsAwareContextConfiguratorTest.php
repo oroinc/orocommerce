@@ -30,9 +30,6 @@ class AppliedCouponsAwareContextConfiguratorTest extends \PHPUnit\Framework\Test
         $this->assertSame($isAware, $context->get('isAppliedCouponsAware'));
     }
 
-    /**
-     * @return array
-     */
     public function contextDataProvider(): array
     {
         $sourceEntity = $this->createMock(QuoteDemand::class);

@@ -49,13 +49,6 @@ class ProductUnitExistsValidator extends ConstraintValidator
         }
     }
 
-    /**
-     * @param string  $unitCode
-     * @param Product $product
-     * @param bool    $isSell
-     *
-     * @return bool
-     */
     private function isValid(string $unitCode, Product $product, bool $isSell): bool
     {
         $unitPrecisions = $product->getUnitPrecisions();

@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ShippingBundle\Entity\Repository;
 
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query;
 use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
@@ -10,13 +10,8 @@ use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 /**
  * Repository class of ProductShippingOptions entity.
  */
-class ProductShippingOptionsRepository extends EntityRepository
+class ProductShippingOptionsRepository extends ServiceEntityRepository
 {
-    /**
-     * @param array $unitsByProductIds
-     *
-     * @return array
-     */
     public function findIndexedByProductsAndUnits(array $unitsByProductIds): array
     {
         if (!$unitsByProductIds) {

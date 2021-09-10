@@ -27,7 +27,7 @@ class CategoryImageExtensionTest extends \PHPUnit\Framework\TestCase
         $this->imagePlaceholderProvider = $this->createMock(ImagePlaceholderProviderInterface::class);
 
         $container = self::getContainerBuilder()
-            ->add('oro_attachment.manager', $this->attachmentManager)
+            ->add(AttachmentManager::class, $this->attachmentManager)
             ->add('oro_catalog.provider.category_image_placeholder', $this->imagePlaceholderProvider)
             ->getContainer($this);
 
@@ -39,14 +39,12 @@ class CategoryImageExtensionTest extends \PHPUnit\Framework\TestCase
         $file = new File();
         $filter = 'category_medium';
 
-        $this->attachmentManager
-            ->expects($this->once())
+        $this->attachmentManager->expects($this->once())
             ->method('getFilteredImageUrl')
             ->with($file, $filter)
             ->willReturn('/path/to/filtered/image');
 
-        $this->imagePlaceholderProvider
-            ->expects($this->never())
+        $this->imagePlaceholderProvider->expects($this->never())
             ->method('getPath');
 
         $this->assertEquals(
@@ -60,12 +58,10 @@ class CategoryImageExtensionTest extends \PHPUnit\Framework\TestCase
         $filter = 'category_medium';
         $path = '/some/test/path.npg';
 
-        $this->attachmentManager
-            ->expects($this->never())
+        $this->attachmentManager->expects($this->never())
             ->method('getFilteredImageUrl');
 
-        $this->imagePlaceholderProvider
-            ->expects($this->once())
+        $this->imagePlaceholderProvider->expects($this->once())
             ->method('getPath')
             ->with($filter)
             ->willReturn($path);
@@ -81,8 +77,7 @@ class CategoryImageExtensionTest extends \PHPUnit\Framework\TestCase
         $filter = 'category_medium';
         $path = '/some/test/path.npg';
 
-        $this->imagePlaceholderProvider
-            ->expects($this->once())
+        $this->imagePlaceholderProvider->expects($this->once())
             ->method('getPath')
             ->with($filter)
             ->willReturn($path);
@@ -91,10 +86,5 @@ class CategoryImageExtensionTest extends \PHPUnit\Framework\TestCase
             $path,
             self::callTwigFunction($this->extension, 'category_image_placeholder', [$filter])
         );
-    }
-
-    public function testGetName(): void
-    {
-        $this->assertEquals('oro_catalog_category_image_extension', $this->extension->getName());
     }
 }

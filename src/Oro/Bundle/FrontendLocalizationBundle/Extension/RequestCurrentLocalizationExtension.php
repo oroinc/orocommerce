@@ -20,10 +20,6 @@ class RequestCurrentLocalizationExtension implements CurrentLocalizationExtensio
     /** @var LocalizationManager */
     private $localizationManager;
 
-    /**
-     * @param RequestStack        $requestStack
-     * @param LocalizationManager $localizationManager
-     */
     public function __construct(RequestStack $requestStack, LocalizationManager $localizationManager)
     {
         $this->requestStack = $requestStack;
@@ -35,7 +31,7 @@ class RequestCurrentLocalizationExtension implements CurrentLocalizationExtensio
      */
     public function getCurrentLocalization()
     {
-        $request = $this->requestStack->getMasterRequest();
+        $request = $this->requestStack->getMainRequest();
         if (null === $request) {
             return null;
         }

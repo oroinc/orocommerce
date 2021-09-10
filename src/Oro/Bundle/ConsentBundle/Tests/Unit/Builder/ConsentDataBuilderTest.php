@@ -74,11 +74,6 @@ class ConsentDataBuilderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider buildProvider
-     *
-     * @param Consent                $consent
-     * @param ConsentAcceptance|null $consentAcceptance
-     * @param CmsPageData|null       $cmsPageData
-     * @param array                  $expectedConsentJsonData
      */
     public function testBuild(
         Consent $consent,

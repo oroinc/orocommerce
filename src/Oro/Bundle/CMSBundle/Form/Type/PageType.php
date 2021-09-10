@@ -25,18 +25,11 @@ class PageType extends AbstractType
      */
     private $urlGenerator;
 
-    /**
-     * @param UrlGeneratorInterface $urlGenerator
-     */
     public function __construct(UrlGeneratorInterface $urlGenerator)
     {
         $this->urlGenerator = $urlGenerator;
     }
 
-    /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -69,9 +62,6 @@ class PageType extends AbstractType
             ->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetDataListener']);
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function preSetDataListener(FormEvent $event)
     {
         $page = $event->getData();

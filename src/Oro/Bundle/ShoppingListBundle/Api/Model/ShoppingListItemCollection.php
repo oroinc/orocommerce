@@ -79,10 +79,6 @@ class ShoppingListItemCollection extends ArrayCollection
 
     /**
      * Returns a shopping list item that should be linked to the given form.
-     *
-     * @param FormInterface $form
-     *
-     * @return LineItem
      */
     public function getItem(FormInterface $form): LineItem
     {
@@ -111,10 +107,6 @@ class ShoppingListItemCollection extends ArrayCollection
         $this->submittedItems[] = $value;
     }
 
-    /**
-     * @param FormInterface $form
-     * @param LineItem      $item
-     */
     protected function updateExistingItemForm(FormInterface $form, LineItem $item): void
     {
         // update the model data of the quantity form field
@@ -141,12 +133,6 @@ class ShoppingListItemCollection extends ArrayCollection
         }
     }
 
-    /**
-     * @param FormInterface $quantityForm
-     * @param LineItem      $item
-     *
-     * @return bool
-     */
     protected function isValidQuantity(FormInterface $quantityForm, LineItem $item): bool
     {
         $isValid = true;
@@ -173,9 +159,6 @@ class ShoppingListItemCollection extends ArrayCollection
         return $isValid;
     }
 
-    /**
-     * @return LineItem
-     */
     protected function createNewItem(): LineItem
     {
         /** @var LineItem $item */
@@ -189,9 +172,6 @@ class ShoppingListItemCollection extends ArrayCollection
         return $item;
     }
 
-    /**
-     * @param LineItem $item
-     */
     protected function completeNewItem(LineItem $item): void
     {
         $item->setShoppingList($this->shoppingList);
@@ -209,11 +189,6 @@ class ShoppingListItemCollection extends ArrayCollection
         }
     }
 
-    /**
-     * @param FormInterface $form
-     *
-     * @return LineItem|null
-     */
     protected function findItem(FormInterface $form): ?LineItem
     {
         $existingItem = null;
@@ -227,12 +202,6 @@ class ShoppingListItemCollection extends ArrayCollection
         return $existingItem;
     }
 
-    /**
-     * @param LineItem      $existingItem
-     * @param FormInterface $form
-     *
-     * @return bool
-     */
     protected function areItemsEqual(LineItem $existingItem, FormInterface $form): bool
     {
         return
@@ -241,12 +210,6 @@ class ShoppingListItemCollection extends ArrayCollection
             && $this->areUnitsEqual($existingItem, $form);
     }
 
-    /**
-     * @param LineItem      $existingItem
-     * @param FormInterface $form
-     *
-     * @return bool
-     */
     protected function areProductsEqual(LineItem $existingItem, FormInterface $form): bool
     {
         /** @var Product|null $unit */
@@ -259,12 +222,6 @@ class ShoppingListItemCollection extends ArrayCollection
             && $product->getId() === $existingProduct->getId();
     }
 
-    /**
-     * @param LineItem      $existingItem
-     * @param FormInterface $form
-     *
-     * @return bool
-     */
     protected function areParentProductsEqual(LineItem $existingItem, FormInterface $form): bool
     {
         /** @var Product|null $unit */
@@ -280,12 +237,6 @@ class ShoppingListItemCollection extends ArrayCollection
             );
     }
 
-    /**
-     * @param LineItem      $existingItem
-     * @param FormInterface $form
-     *
-     * @return bool
-     */
     protected function areUnitsEqual(LineItem $existingItem, FormInterface $form): bool
     {
         /** @var ProductUnit|null $unit */
@@ -298,12 +249,6 @@ class ShoppingListItemCollection extends ArrayCollection
             && $unit->getCode() === $existingUnit->getCode();
     }
 
-    /**
-     * @param FormInterface $form
-     * @param string        $fieldName
-     *
-     * @return FormInterface|null
-     */
     protected function getForm(FormInterface $form, string $fieldName): ?FormInterface
     {
         $name = $this->entityConfig->findFieldNameByPropertyPath($fieldName);

@@ -24,11 +24,6 @@ class WYSIWYGBlockListener
     /** @var TranslatorInterface */
     private $translator;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param ConfigProvider $configProvider
-     * @param TranslatorInterface $translator
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         ConfigProvider $configProvider,
@@ -39,9 +34,6 @@ class WYSIWYGBlockListener
         $this->translator = $translator;
     }
 
-    /**
-     * @param BeforeFormRenderEvent $event
-     */
     public function onBeforeFormRender(BeforeFormRenderEvent $event): void
     {
         if (!$event->getEntity()) {

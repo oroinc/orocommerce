@@ -2,9 +2,11 @@
 
 namespace Oro\Bundle\CMSBundle\DependencyInjection\Compiler;
 
+use Oro\Bundle\CMSBundle\DBAL\Types\WYSIWYGStyleType;
 use Oro\Bundle\CMSBundle\DBAL\Types\WYSIWYGType;
 use Oro\Bundle\CMSBundle\Validator\Constraints\TwigContent;
 use Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYG;
+use Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYGStyle;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
@@ -27,9 +29,6 @@ class ExtendFieldValidationLoaderPass implements CompilerPassInterface
         $this->addSerializedFieldConstraints($container);
     }
 
-    /**
-     * @param ContainerBuilder $container
-     */
     private function addTableFieldConstraints(ContainerBuilder $container): void
     {
         if ($container->hasDefinition(self::ENTITY_EXTEND_FIELD_VALIDATION_LOADER_SERVICE_ID)) {
@@ -38,12 +37,13 @@ class ExtendFieldValidationLoaderPass implements CompilerPassInterface
                 'addConstraints',
                 [WYSIWYGType::TYPE, [[TwigContent::class => null], [WYSIWYG::class => null]]]
             );
+            $definition->addMethodCall(
+                'addConstraints',
+                [WYSIWYGStyleType::TYPE, [[TwigContent::class => null], [WYSIWYGStyle::class => null]]]
+            );
         }
     }
 
-    /**
-     * @param ContainerBuilder $container
-     */
     private function addSerializedFieldConstraints(ContainerBuilder $container): void
     {
         if ($container->hasDefinition(self::SERIALIZED_FIELDS_EXTEND_FIELD_VALIDATOR_SERVICE_ID)) {
@@ -51,6 +51,10 @@ class ExtendFieldValidationLoaderPass implements CompilerPassInterface
             $definition->addMethodCall(
                 'addConstraints',
                 [WYSIWYGType::TYPE, [[TwigContent::class => null], [WYSIWYG::class => null]]]
+            );
+            $definition->addMethodCall(
+                'addConstraints',
+                [WYSIWYGStyleType::TYPE, [[TwigContent::class => null], [WYSIWYGStyle::class => null]]]
             );
         }
     }

@@ -17,18 +17,11 @@ class CopyCustomerConsentsHelper
     /** @var DoctrineHelper */
     private $doctrineHelper;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     */
     public function __construct(DoctrineHelper $doctrineHelper)
     {
         $this->doctrineHelper = $doctrineHelper;
     }
 
-    /**
-     * @param CustomerUser $sourceCustomerUser
-     * @param CustomerUser $targetCustomerUser
-     */
     public function copyConsentsIfTargetHasNoAcceptedConsents(
         CustomerUser $sourceCustomerUser,
         CustomerUser $targetCustomerUser

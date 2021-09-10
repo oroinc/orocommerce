@@ -26,7 +26,7 @@ class SecureTokenTest extends AbstractOptionTest
                 [
                     'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
                     'The option "SECURETOKEN" with value 12345 is expected to be of type "string", but is of ' .
-                    'type "integer".',
+                    'type "int".',
                 ],
             ],
             'valid' => [['SECURETOKEN' => $token], ['SECURETOKEN' => $token]],

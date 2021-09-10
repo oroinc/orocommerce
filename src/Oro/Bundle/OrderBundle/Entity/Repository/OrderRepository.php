@@ -102,11 +102,6 @@ class OrderRepository extends EntityRepository implements ResettableCustomerUser
         return $queryBuilder;
     }
 
-    /**
-     * @param $websiteId
-     * @param $orderStatuses
-     * @return QueryBuilder
-     */
     private function getBaseLatestOrderedProductsQueryBuilder(int $websiteId, array $orderStatuses): QueryBuilder
     {
         $qb = $this->createQueryBuilder('orders');

@@ -75,10 +75,6 @@ class ProductCollectionContentVariantFilteringEventListenerTest extends \PHPUnit
 
     /**
      * @dataProvider onPreBuildWhenContentVariantIdInParametersDataProvider
-     *
-     * @param array $parameters
-     * @param array $expectedParameters
-     * @param array $expectedConfig
      */
     public function testOnPreBuildWhenContentVariantIdInParameters(
         array $parameters,
@@ -146,10 +142,6 @@ class ProductCollectionContentVariantFilteringEventListenerTest extends \PHPUnit
 
     /**
      * @dataProvider onPreBuildWhenContentVariantIdInRequestDataProvider
-     *
-     * @param array $parameters
-     * @param array $expectedParameters
-     * @param array $expectedConfig
      */
     public function testOnPreBuildWhenContentVariantIdInRequest(
         array $parameters,

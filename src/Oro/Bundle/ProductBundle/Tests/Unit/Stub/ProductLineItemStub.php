@@ -10,18 +10,11 @@ class ProductLineItemStub extends ProductLineItem
     /** @var Product|null */
     protected $parentProduct;
 
-    /**
-     * @return Product|null
-     */
     public function getParentProduct(): ?Product
     {
         return $this->parentProduct;
     }
 
-    /**
-     * @param Product|null $parentProduct
-     * @return self
-     */
     public function setParentProduct(?Product $parentProduct): self
     {
         $this->parentProduct = $parentProduct;

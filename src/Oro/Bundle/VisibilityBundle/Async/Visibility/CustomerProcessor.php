@@ -31,11 +31,6 @@ class CustomerProcessor implements MessageProcessorInterface, TopicSubscriberInt
     /** @var CustomerPartialUpdateDriverInterface */
     private $partialUpdateDriver;
 
-    /**
-     * @param ManagerRegistry $doctrine
-     * @param LoggerInterface $logger
-     * @param CustomerPartialUpdateDriverInterface $partialUpdateDriver
-     */
     public function __construct(
         ManagerRegistry $doctrine,
         LoggerInterface $logger,
@@ -99,10 +94,6 @@ class CustomerProcessor implements MessageProcessorInterface, TopicSubscriberInt
     }
 
     /**
-     * @param int $customerId
-     *
-     * @return Customer
-     *
      * @throws EntityNotFoundException if a customer does not exist
      */
     public function getCustomer(int $customerId): Customer

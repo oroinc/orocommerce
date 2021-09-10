@@ -1,6 +1,6 @@
 services:
     oro_frontend_localization.manager.user_localization:
-        class: 'Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager'
+        class: Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager
         public: true
         arguments:
             - '@session'
@@ -14,8 +14,7 @@ services:
         alias: oro_frontend_localization.manager.user_localization
 
     oro_frontend_localization.extension.current_localization.request:
-        class: 'Oro\Bundle\FrontendLocalizationBundle\Extension\RequestCurrentLocalizationExtension'
-        public: false
+        class: Oro\Bundle\FrontendLocalizationBundle\Extension\RequestCurrentLocalizationExtension
         arguments:
             - '@request_stack'
             - '@oro_locale.manager.localization'
@@ -23,8 +22,7 @@ services:
             - { name: oro_locale.extension.current_localization }
 
     oro_frontend_localization.extension.current_localization:
-        class: 'Oro\Bundle\FrontendLocalizationBundle\Extension\CurrentLocalizationExtension'
-        public: false
+        class: Oro\Bundle\FrontendLocalizationBundle\Extension\CurrentLocalizationExtension
         arguments:
             - '@security.token_storage'
             - '@oro_frontend_localization.manager.user_localization'
@@ -32,7 +30,7 @@ services:
             - { name: oro_locale.extension.current_localization, priority: -10 }
 
     oro_frontend_localization.acl.voter.localization:
-        class: 'Oro\Bundle\FrontendLocalizationBundle\Acl\Voter\LocalizationVoter'
+        class: Oro\Bundle\FrontendLocalizationBundle\Acl\Voter\LocalizationVoter
         arguments:
             - '@oro_entity.doctrine_helper'
         calls:

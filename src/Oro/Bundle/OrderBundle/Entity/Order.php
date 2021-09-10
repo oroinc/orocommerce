@@ -212,7 +212,6 @@ class Order extends ExtendOrder implements
      */
     protected $currency;
 
-
     /**
      * Changes to this value object wont affect entity change set
      * To change persisted price value you should create and set new Multicurrency
@@ -286,7 +285,6 @@ class Order extends ExtendOrder implements
      * @var Multicurrency
      */
     protected $total;
-
 
     /**
      * @var string
@@ -688,8 +686,6 @@ class Order extends ExtendOrder implements
 
     /**
      * Get shipUntil
-     *
-     * @return \DateTime|null
      */
     public function getShipUntil(): ?\DateTime
     {

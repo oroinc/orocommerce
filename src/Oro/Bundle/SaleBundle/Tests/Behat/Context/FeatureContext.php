@@ -4,8 +4,6 @@ namespace Oro\Bundle\SaleBundle\Tests\Behat\Context;
 
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
-use Behat\Symfony2Extension\Context\KernelAwareContext;
-use Behat\Symfony2Extension\Context\KernelDictionary;
 use Doctrine\Persistence\ObjectRepository;
 use Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStep;
 use Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid;
@@ -25,10 +23,9 @@ use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
  */
 class FeatureContext extends OroFeatureContext implements
     OroPageObjectAware,
-    KernelAwareContext,
     FixtureLoaderAwareInterface
 {
-    use PageObjectDictionary, KernelDictionary, FixtureLoaderDictionary;
+    use PageObjectDictionary, FixtureLoaderDictionary;
 
     /**
      * @var OroMainContext
@@ -109,7 +106,7 @@ class FeatureContext extends OroFeatureContext implements
      */
     public function openQuote($qid)
     {
-        $url = $this->getContainer()
+        $url = $this->getAppContainer()
             ->get('router')
             ->generate('oro_sale_quote_view', ['id' => $qid]);
 
@@ -152,7 +149,6 @@ class FeatureContext extends OroFeatureContext implements
      * Example: I visit guest quote link for quote 123
      *
      * @When /^I visit guest quote link for quote (?P<qid>[\w\s]+)$/
-     * @param string $qid
      */
     public function iVisitGuestQuoteLinkForQuote(string $qid): void
     {
@@ -163,8 +159,6 @@ class FeatureContext extends OroFeatureContext implements
      * Example: Then Guest Quote "123" email has been sent to "somebody@examle.com"
      *
      * @Then /^Guest Quote "(?P<qid>[\w\s]+)" email has been sent to "(?P<email>\S+)"/
-     * @param string $qid
-     * @param string $email
      */
     public function guestQuoteEmailHasBeenSend(string $qid, string $email): void
     {
@@ -208,12 +202,10 @@ class FeatureContext extends OroFeatureContext implements
      * Example: When Quote "9" is marked as accepted by customer
      *
      * @When /^Quote "(?P<quoteId>(?:\d+))" is marked as accepted by customer/
-     *
-     * @param int $quoteId
      */
     public function markQuoteAsAcceptedByCustomer(int $quoteId)
     {
-        $managerRegistry = $this->getContainer()->get('doctrine');
+        $managerRegistry = $this->getAppContainer()->get('doctrine');
         $manager = $managerRegistry->getManagerForClass(Quote::class);
 
         $className = ExtendHelper::buildEnumValueClassName(Quote::CUSTOMER_STATUS_CODE);
@@ -242,12 +234,11 @@ class FeatureContext extends OroFeatureContext implements
      */
     protected function getRepository($className)
     {
-        return $this->getContainer()
+        return $this->getAppContainer()
             ->get('doctrine')
             ->getManagerForClass($className)
             ->getRepository($className);
     }
-
 
     /**
      * @param string $qid
@@ -261,15 +252,11 @@ class FeatureContext extends OroFeatureContext implements
         return substr($guestLink, 0, $truncateTo);
     }
 
-    /**
-     * @param string $qid
-     * @return string
-     */
     private function getGuestLink(string $qid): string
     {
         $quote = $this->getQuote($qid);
 
-        return $this->getContainer()
+        return $this->getAppContainer()
             ->get('oro_website.resolver.website_url_resolver')
             ->getWebsitePath(
                 'oro_sale_quote_frontend_view_guest',

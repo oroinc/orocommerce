@@ -14,9 +14,6 @@ class ProductVariantProvider
     /** @var ProductVariantAvailabilityProvider */
     protected $availabilityProvider;
 
-    /**
-     * @param ProductVariantAvailabilityProvider $availabilityProvider
-     */
     public function __construct(ProductVariantAvailabilityProvider $availabilityProvider)
     {
         $this->availabilityProvider = $availabilityProvider;

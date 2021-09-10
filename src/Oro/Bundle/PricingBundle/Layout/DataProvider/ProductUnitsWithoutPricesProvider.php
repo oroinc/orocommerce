@@ -21,9 +21,6 @@ class ProductUnitsWithoutPricesProvider
      */
     protected $pricesProvider;
 
-    /**
-     * @param FrontendProductPricesProvider $pricesProvider
-     */
     public function __construct(FrontendProductPricesProvider $pricesProvider)
     {
         $this->pricesProvider = $pricesProvider;

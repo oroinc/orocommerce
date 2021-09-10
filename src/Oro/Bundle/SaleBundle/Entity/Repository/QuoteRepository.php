@@ -19,9 +19,6 @@ class QuoteRepository extends EntityRepository implements ResettableCustomerUser
 {
     use ResetCustomerUserTrait;
 
-    /**
-     * @return QueryBuilder
-     */
     private function getQueryBuildertoFetchQuote(): QueryBuilder
     {
         return $this->createQueryBuilder('q')
@@ -50,10 +47,6 @@ class QuoteRepository extends EntityRepository implements ResettableCustomerUser
         return null;
     }
 
-    /**
-     * @param string $guestAccessId
-     * @return Quote|null
-     */
     public function getQuoteByGuestAccessId(string $guestAccessId): ?Quote
     {
         $qb = $this->getQueryBuildertoFetchQuote();
@@ -70,12 +63,6 @@ class QuoteRepository extends EntityRepository implements ResettableCustomerUser
         return null;
     }
 
-    /**
-     * @param array             $removingCurrencies
-     * @param Organization|null $organization
-     *
-     * @return bool
-     */
     public function hasRecordsWithRemovingCurrencies(
         array $removingCurrencies,
         Organization $organization = null

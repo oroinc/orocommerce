@@ -21,9 +21,6 @@ class OroUPSBundle implements Migration
         $this->addOroUPSShippingServiceForeignKeys($schema);
     }
 
-    /**
-     * @param Schema $schema
-     */
     public function updateOroIntegrationTransportTable(Schema $schema)
     {
         $table = $schema->getTable('oro_integration_transport');
@@ -38,9 +35,6 @@ class OroUPSBundle implements Migration
         $table->addColumn('ups_country_code', 'string', ['notnull' => false, 'length' => 2]);
     }
 
-    /**
-     * @param Schema $schema
-     */
     public function createOroUPSShippingServiceTable(Schema $schema)
     {
         $table = $schema->createTable('oro_ups_shipping_service');
@@ -52,9 +46,6 @@ class OroUPSBundle implements Migration
         $table->addIndex(['country_code'], 'IDX_C6DD8778F026BB7C', []);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function createOroUPSTransportShipServiceTable(Schema $schema)
     {
         $table = $schema->createTable('oro_ups_transport_ship_service');
@@ -65,9 +56,6 @@ class OroUPSBundle implements Migration
         $table->addIndex(['ship_service_id'], 'IDX_1554DDE37CA9B1D', []);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addOroIntegrationTransportForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('oro_integration_transport');
@@ -79,9 +67,6 @@ class OroUPSBundle implements Migration
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addOroUPSShippingServiceForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('oro_ups_shipping_service');
@@ -94,7 +79,6 @@ class OroUPSBundle implements Migration
     }
 
     /**
-     * @param Schema $schema
      * @throws \Doctrine\DBAL\Schema\SchemaException
      */
     protected function addOroUpsTransportShipServiceForeignKeys(Schema $schema)

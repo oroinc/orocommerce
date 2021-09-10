@@ -51,9 +51,6 @@ trait MakeProductAttributesTrait
         $entityManager->flush();
     }
 
-    /**
-     * @param array $fields
-     */
     private function updateProductAttributes(array $fields)
     {
         $configManager = $this->getConfigManager();
@@ -81,10 +78,6 @@ trait MakeProductAttributesTrait
     /**
      * Iterates over passed groups array assigning corresponding attributes
      * Assigns groups to passed family
-     *
-     * @param array $groupsWithAttributes
-     * @param AttributeFamily $attributeFamily
-     * @param ObjectManager $manager
      */
     protected function addGroupsWithAttributesToFamily(
         array $groupsWithAttributes,

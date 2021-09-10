@@ -6,33 +6,29 @@ use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
 use Oro\Bundle\SEOBundle\Model\DTO\UrlItem;
 use Oro\Component\SEO\Provider\UrlItemsProviderInterface;
 use Oro\Component\Website\WebsiteInterface;
-use Symfony\Component\Routing\Router;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
+/**
+ * Sitemap URL Items Provider for specific routes.
+ */
 class RouterSitemapUrlsProvider implements UrlItemsProviderInterface
 {
-    /**
-     * @var Router
-     */
-    private $router;
+    private UrlGeneratorInterface $urlGenerator;
+    private CanonicalUrlGenerator $canonicalUrlGenerator;
+    /** @var string[] */
+    private array $routes;
 
     /**
-     * @var CanonicalUrlGenerator
-     */
-    private $canonicalUrlGenerator;
-
-    /**
-     * @var array
-     */
-    private $routes;
-
-    /**
-     * @param Router                $router
+     * @param UrlGeneratorInterface $urlGenerator
      * @param CanonicalUrlGenerator $canonicalUrlGenerator
-     * @param array $routes
+     * @param string[]              $routes
      */
-    public function __construct(Router $router, CanonicalUrlGenerator $canonicalUrlGenerator, array $routes)
-    {
-        $this->router = $router;
+    public function __construct(
+        UrlGeneratorInterface $urlGenerator,
+        CanonicalUrlGenerator $canonicalUrlGenerator,
+        array $routes
+    ) {
+        $this->urlGenerator = $urlGenerator;
         $this->canonicalUrlGenerator = $canonicalUrlGenerator;
         $this->routes = $routes;
     }
@@ -43,21 +39,20 @@ class RouterSitemapUrlsProvider implements UrlItemsProviderInterface
     public function getUrlItems(WebsiteInterface $website, $version)
     {
         foreach ($this->getAllowUrls() as $url) {
-            $absoluteUrl = $this->canonicalUrlGenerator->getAbsoluteUrl($url, $website);
-
-            yield new UrlItem($absoluteUrl);
+            yield new UrlItem($this->canonicalUrlGenerator->getAbsoluteUrl($url, $website));
         }
     }
 
     /**
-     * @return array
+     * @return string[]
      */
-    private function getAllowUrls()
+    private function getAllowUrls(): array
     {
         $urls = [];
         foreach ($this->routes as $url) {
-            $urls[] = $this->router->generate($url);
+            $urls[] = $this->urlGenerator->generate($url);
         }
+
         return $urls;
     }
 }

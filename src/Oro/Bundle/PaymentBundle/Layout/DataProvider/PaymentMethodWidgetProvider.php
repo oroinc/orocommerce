@@ -14,10 +14,6 @@ class PaymentMethodWidgetProvider
      */
     protected $paymentMethodViewProvider;
 
-
-    /**
-     * @param PaymentMethodViewProviderInterface $paymentMethodViewProvider
-     */
     public function __construct(PaymentMethodViewProviderInterface $paymentMethodViewProvider)
     {
         $this->paymentMethodViewProvider = $paymentMethodViewProvider;

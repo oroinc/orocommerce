@@ -17,9 +17,6 @@ class PaymentCallbackStubListener
      */
     private $callbackCalled;
 
-    /**
-     * @param $callbackCalled
-     */
     public function __construct(bool &$callbackCalled)
     {
         $this->callbackCalled = &$callbackCalled;

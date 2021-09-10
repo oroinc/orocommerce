@@ -28,11 +28,6 @@ class TimeInTransitCacheProvider implements TimeInTransitCacheProviderInterface
      */
     private $lifetimeProvider;
 
-    /**
-     * @param UPSSettings               $settings
-     * @param CacheProvider             $cacheProvider
-     * @param LifetimeProviderInterface $lifetimeProvider
-     */
     public function __construct(
         UPSSettings $settings,
         CacheProvider $cacheProvider,

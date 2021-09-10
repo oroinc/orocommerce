@@ -21,19 +21,12 @@ class ActualizeCouponsStateListener
      */
     private $entityCouponsProvider;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param EntityCouponsProvider $entityCouponsProvider
-     */
     public function __construct(ManagerRegistry $registry, EntityCouponsProvider $entityCouponsProvider)
     {
         $this->registry = $registry;
         $this->entityCouponsProvider = $entityCouponsProvider;
     }
 
-    /**
-     * @param TotalCalculateBeforeEvent $event
-     */
     public function onBeforeTotalCalculate(TotalCalculateBeforeEvent $event)
     {
         $entity = $event->getEntity();

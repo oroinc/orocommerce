@@ -17,14 +17,14 @@ define(function(require) {
         shoppingListCollection: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function ShoppingListWidgetView(options) {
             ShoppingListWidgetView.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             ShoppingListWidgetView.__super__.initialize.call(this, options);

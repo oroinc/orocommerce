@@ -33,24 +33,17 @@ class ProductImagesConfigurationListener
      */
     private $spaceWarningAdded = false;
 
-    /**
-     * @param Session $session
-     * @param TranslatorInterface $translator
-     */
     public function __construct(Session $session, TranslatorInterface $translator)
     {
         $this->session = $session;
         $this->translator = $translator;
     }
 
-    /**
-     * @param ConfigUpdateEvent $event
-     */
     public function afterUpdate(ConfigUpdateEvent $event)
     {
         $changeSet = $event->getChangeSet();
         foreach ($changeSet as $configKey => $change) {
-            if (false !== strpos($configKey, self::PRODUCT_IMAGE_WATERMARK_SECTION_PREFIX)) {
+            if (str_contains($configKey, self::PRODUCT_IMAGE_WATERMARK_SECTION_PREFIX)) {
                 $this->session->getFlashBag()->add(self::MESSAGE_TYPE, $this->getNotice($event));
                 $this->addSpaceWarning();
                 break;

@@ -49,9 +49,6 @@ class OroProductBundle implements Migration, ExtendExtensionAwareInterface, Orde
         $this->addOroProductVariantLinkForeignKeys($schema);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function createOroProductVariantLinkTable(Schema $schema)
     {
         $table = $schema->createTable(self::PRODUCT_VARIANT_LINK_TABLE_NAME);
@@ -62,9 +59,6 @@ class OroProductBundle implements Migration, ExtendExtensionAwareInterface, Orde
         $table->setPrimaryKey(['id']);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addOroProductVariantLinkForeignKeys(Schema $schema)
     {
         $table = $schema->getTable(self::PRODUCT_VARIANT_LINK_TABLE_NAME);
@@ -82,10 +76,6 @@ class OroProductBundle implements Migration, ExtendExtensionAwareInterface, Orde
         );
     }
 
-    /**
-     * @param Schema $schema
-     * @param QueryBag $queries
-     */
     protected function updateOroProductTable(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable(self::PRODUCT_TABLE_NAME);
@@ -114,10 +104,6 @@ class OroProductBundle implements Migration, ExtendExtensionAwareInterface, Orde
         );
     }
 
-    /**
-     * @param Schema $schema
-     * @param QueryBag $queries
-     */
     protected function renameStatusEnumToStatusString(Schema $schema, QueryBag $queries)
     {
         // create new status column
@@ -134,10 +120,6 @@ class OroProductBundle implements Migration, ExtendExtensionAwareInterface, Orde
         }
     }
 
-    /**
-     * @param Schema $schema
-     * @param QueryBag $queries
-     */
     protected function removeVisibilityEnum(Schema $schema, QueryBag $queries)
     {
         // drop visibility enum field
@@ -145,7 +127,7 @@ class OroProductBundle implements Migration, ExtendExtensionAwareInterface, Orde
         if ($productTable->hasColumn('visibility_id')) {
             $productTable->dropColumn('visibility_id');
         }
-        
+
         // drop visibility enum table
         $enumVisibilityTable = $this->extendExtension->getNameGenerator()->generateEnumTableName('prod_visibility');
         if ($schema->hasTable($enumVisibilityTable)) {

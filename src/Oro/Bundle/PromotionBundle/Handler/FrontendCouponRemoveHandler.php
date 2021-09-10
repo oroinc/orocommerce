@@ -22,10 +22,6 @@ class FrontendCouponRemoveHandler
     /** @var ManagerRegistry */
     private $doctrine;
 
-    /**
-     * @param AuthorizationCheckerInterface $authorizationChecker
-     * @param ManagerRegistry               $doctrine
-     */
     public function __construct(
         AuthorizationCheckerInterface $authorizationChecker,
         ManagerRegistry $doctrine
@@ -34,10 +30,6 @@ class FrontendCouponRemoveHandler
         $this->doctrine = $doctrine;
     }
 
-    /**
-     * @param AppliedCouponsAwareInterface $entity
-     * @param AppliedCoupon                $appliedCoupon
-     */
     public function handleRemove(AppliedCouponsAwareInterface $entity, AppliedCoupon $appliedCoupon)
     {
         if ($entity instanceof AppliedPromotionsAwareInterface

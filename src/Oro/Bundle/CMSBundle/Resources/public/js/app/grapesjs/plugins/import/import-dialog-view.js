@@ -1,13 +1,12 @@
 import BaseView from 'oroui/js/app/views/base/view';
 import template from 'tpl-loader!orocms/templates/grapesjs-import-dialog-template.html';
 import DialogWidget from 'oro/dialog-widget';
-import {stripRestrictedAttrs, escapeWrapper} from 'orocms/js/app/grapesjs/plugins/grapesjs-style-isolation';
+import {stripRestrictedAttrs, escapeWrapper} from 'orocms/js/app/grapesjs/plugins/components/content-isolation';
 import _ from 'underscore';
 import __ from 'orotranslation/js/translator';
 import $ from 'jquery';
 import ApiAccessor from 'oroui/js/tools/api-accessor';
 import LoadingMaskView from 'oroui/js/app/views/loading-mask-view';
-import HTMLValidator from 'orocms/js/app/grapesjs/validation';
 
 const REGEXP_TWIG_TAGS = /\{\{([\w\s\"\'\_\-\,\&\#\;\(\)]+)\}\}/gi;
 const REGEXP_TWIG_TAGS_ESC = /([\{|\%|\#]{2})([\w\W]+)([\%|\}|\#]{2})/gi;
@@ -36,18 +35,18 @@ function messageCheck(str) {
 
 const ImportDialogView = BaseView.extend({
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     optionNames: BaseView.prototype.optionNames.concat([
         'editor', 'importViewerOptions',
         'modalImportLabel', 'modalImportTitle', 'modalImportButton',
-        'validateApiProps', 'entityClass', 'fieldName'
+        'validateApiProps', 'entityClass', 'fieldName', 'commandId'
     ]),
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
-    autoRender: true,
+    autoRender: false,
 
     /**
      * @property {GrapesJS.Instance}
@@ -154,7 +153,7 @@ const ImportDialogView = BaseView.extend({
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      * @param options
      */
     initialize(options) {
@@ -162,21 +161,14 @@ const ImportDialogView = BaseView.extend({
 
         this.codeViewer.set(this.importViewerOptions);
 
-        this.content = this.getImportContent()
-            .replace(REGEXP_TWIG_TAGS_ESC, match => {
-                return _.unescape(match).replace(/&#039;/gi, `'`);
-            });
-
         this.validateApiAccessor = new ApiAccessor(this.validateApiProps);
         this.twigResolverAccessor = new ApiAccessor(this.twigApiResolverProps);
-
-        this.validator = new HTMLValidator();
 
         ImportDialogView.__super__.initialize.call(this, options);
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      * @returns {{modalImportButton: ImportDialogView.modalImportButton}}
      */
     getTemplateData() {
@@ -186,10 +178,15 @@ const ImportDialogView = BaseView.extend({
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
-    render() {
+    render({content} = {}) {
         ImportDialogView.__super__.render.call(this);
+
+        this.content = (content ? content : this.getImportContent())
+            .replace(REGEXP_TWIG_TAGS_ESC, match => {
+                return _.unescape(match).replace(/&#039;/gi, `'`);
+            });
 
         this.codeViewer.init(this.$el.find('[data-role="code"]')[0]);
         this.viewerEditor = this.codeViewer.editor;
@@ -214,7 +211,7 @@ const ImportDialogView = BaseView.extend({
                 appendTo: this.editor.getEl(),
                 dialogClass: 'ui-dialog--import-template',
                 close: () => {
-                    this.dispose();
+                    this.editor.Commands.stop(this.commandId);
                 }
             }
         });
@@ -249,11 +246,12 @@ const ImportDialogView = BaseView.extend({
      * Unbinding event listeners
      */
     unbindEvents: function() {
-        this.viewerEditor.off('change');
+        this.viewerEditor.off();
+        this.importButton.off();
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     dispose: function() {
         if (this.disposed) {
@@ -261,13 +259,25 @@ const ImportDialogView = BaseView.extend({
         }
 
         if (this.commandId) {
-            this.editor.stopCommand(this.commandId);
+            this.editor.Commands.stop(this.commandId);
         }
 
-        delete this.validator;
         this.unbindEvents();
 
         ImportDialogView.__super__.dispose.call(this);
+    },
+
+    closeDialog() {
+        this.dialog.remove();
+        delete this.dialog;
+
+        if (this.editor.Commands.isActive(this.commandId)) {
+            this.editor.Commands.stop(this.commandId);
+        }
+
+        this.prevContent = '';
+
+        this.trigger('import:close');
     },
 
     /**
@@ -302,8 +312,8 @@ const ImportDialogView = BaseView.extend({
             return;
         }
 
-        this.importButton.attr('disabled', !success);
         this.disabled = !success;
+        this.importButton.attr('disabled', this.disabled);
 
         this.markers.forEach(marker => marker.clear());
         errors.forEach(({line, message}) => {
@@ -360,8 +370,10 @@ const ImportDialogView = BaseView.extend({
 
         this.disabled = true;
         this.prevContent = content;
-        this.importButton.attr('disabled', true);
-        const errors = this.validator.validate(content);
+        this.importButton.attr('disabled', this.disabled);
+        const errors = this.editor.CodeValidator.validate(content, {
+            allowLock: false
+        });
 
         if (errors.length) {
             return {
@@ -408,6 +420,7 @@ const ImportDialogView = BaseView.extend({
                 vMessage = $('<span />', {
                     'class': 'validation-failed'
                 });
+
                 vMessage.appendTo(this.$el);
                 this.$el.addClass('has-message');
             }
@@ -435,8 +448,10 @@ const ImportDialogView = BaseView.extend({
 
         if (!this.disabled) {
             this.editor.CssComposer.clear();
+            this.editor.selectRemove(this.editor.getSelectedAll());
             this.editor.setComponents(escapeWrapper(content));
-            this.dialog.remove();
+            this.closeDialog();
+            this.trigger('import:after');
         }
     },
 
@@ -444,6 +459,9 @@ const ImportDialogView = BaseView.extend({
      * Adjust height code editor
      */
     adjustHeight() {
+        if (!this.dialog) {
+            return;
+        }
         const height = this.$el.find('.validation-failed').height() || 0;
         this.viewerEditor.setSize(this.dialog.widget.width(), this.dialog.widget.height() - height);
         this.dialog.resetDialogPosition();

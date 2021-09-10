@@ -24,11 +24,6 @@ class ComputeImageFilePath implements ProcessorInterface
     /** @var ImageTypeProvider */
     private $typeProvider;
 
-    /**
-     * @param AttachmentManager $attachmentManager
-     * @param DoctrineHelper    $doctrineHelper
-     * @param ImageTypeProvider $typeProvider
-     */
     public function __construct(
         AttachmentManager $attachmentManager,
         DoctrineHelper $doctrineHelper,

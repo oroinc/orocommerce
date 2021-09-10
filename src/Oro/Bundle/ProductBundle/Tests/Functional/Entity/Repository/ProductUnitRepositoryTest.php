@@ -49,8 +49,6 @@ class ProductUnitRepositoryTest extends WebTestCase
 
     /**
      * @dataProvider getProductsUnitsDataProvider
-     * @param array $products
-     * @param array $expectedData
      */
     public function testGetProductsUnits(array $products, array $expectedData)
     {
@@ -66,8 +64,6 @@ class ProductUnitRepositoryTest extends WebTestCase
 
     /**
      * @dataProvider getPrimaryProductsUnits
-     * @param array $products
-     * @param array $expected
      */
     public function testGetPrimaryProductsUnits(array $products, array $expected)
     {
@@ -153,9 +149,6 @@ class ProductUnitRepositoryTest extends WebTestCase
 
     /**
      * @dataProvider getProductsUnitsByCodesDataProvider
-     * @param array $products
-     * @param array $codes
-     * @param array $expectedData
      */
     public function testGetProductsUnitsByCodes(array $products, array $codes, array $expectedData)
     {
@@ -230,8 +223,6 @@ class ProductUnitRepositoryTest extends WebTestCase
     }
 
     /**
-     * @param array $expectedData
-     *
      * @dataProvider getAllUnitsProvider
      */
     public function testGetAllUnits(array $expectedData)
@@ -249,8 +240,6 @@ class ProductUnitRepositoryTest extends WebTestCase
     }
 
     /**
-     * @param array $expectedData
-     *
      * @dataProvider getAllUnitsProvider
      */
     public function testGetAllUnitCodes(array $expectedData)

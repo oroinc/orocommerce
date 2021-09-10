@@ -9,41 +9,39 @@ use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowDefinition;
 use Oro\Bundle\WorkflowBundle\Model\Workflow;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
+use Oro\Component\Testing\Unit\TestContainerBuilder;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 
 class FrontendRequestVoterTest extends \PHPUnit\Framework\TestCase
 {
     /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
-    protected $doctrineHelper;
+    private $doctrineHelper;
 
     /** @var FrontendHelper|\PHPUnit\Framework\MockObject\MockObject */
-    protected $frontendHelper;
+    private $frontendHelper;
 
     /** @var WorkflowManager|\PHPUnit\Framework\MockObject\MockObject */
-    protected $workflowManager;
+    private $workflowManager;
 
     /** @var TokenInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $token;
+    private $token;
 
     /** @var FrontendRequestVoter */
-    protected $voter;
+    private $voter;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
-
         $this->frontendHelper = $this->createMock(FrontendHelper::class);
         $this->workflowManager = $this->createMock(WorkflowManager::class);
         $this->token = $this->createMock(TokenInterface::class);
 
-        $this->voter = new FrontendRequestVoter(
-            $this->doctrineHelper,
-            $this->frontendHelper,
-            $this->workflowManager
-        );
+        $container = TestContainerBuilder::create()
+            ->add('oro_workflow.manager', $this->workflowManager)
+            ->getContainer($this);
+
+        $this->voter = new FrontendRequestVoter($this->doctrineHelper, $this->frontendHelper, $container);
         $this->voter->setClassName(Request::class);
     }
 
@@ -67,7 +65,7 @@ class FrontendRequestVoterTest extends \PHPUnit\Framework\TestCase
             ->willReturn([$workflow]);
 
         $this->assertEquals(
-            FrontendRequestVoter::ACCESS_DENIED,
+            VoterInterface::ACCESS_DENIED,
             $this->voter->vote($this->token, new Request(), ['EDIT'])
         );
     }
@@ -84,7 +82,7 @@ class FrontendRequestVoterTest extends \PHPUnit\Framework\TestCase
             ->willReturn([]);
 
         $this->assertEquals(
-            FrontendRequestVoter::ACCESS_ABSTAIN,
+            VoterInterface::ACCESS_ABSTAIN,
             $this->voter->vote($this->token, new Request(), ['EDIT'])
         );
     }
@@ -99,7 +97,7 @@ class FrontendRequestVoterTest extends \PHPUnit\Framework\TestCase
             ->method('getApplicableWorkflows');
 
         $this->assertEquals(
-            FrontendRequestVoter::ACCESS_ABSTAIN,
+            VoterInterface::ACCESS_ABSTAIN,
             $this->voter->vote($this->token, new Request(), ['EDIT'])
         );
     }
@@ -113,7 +111,7 @@ class FrontendRequestVoterTest extends \PHPUnit\Framework\TestCase
             ->method('getApplicableWorkflows');
 
         $this->assertEquals(
-            FrontendRequestVoter::ACCESS_ABSTAIN,
+            VoterInterface::ACCESS_ABSTAIN,
             $this->voter->vote($this->token, new Request(), ['VIEW'])
         );
     }
@@ -127,7 +125,7 @@ class FrontendRequestVoterTest extends \PHPUnit\Framework\TestCase
             ->method('getApplicableWorkflows');
 
         $this->assertEquals(
-            FrontendRequestVoter::ACCESS_ABSTAIN,
+            VoterInterface::ACCESS_ABSTAIN,
             $this->voter->vote($this->token, new \stdClass(), ['EDIT'])
         );
     }

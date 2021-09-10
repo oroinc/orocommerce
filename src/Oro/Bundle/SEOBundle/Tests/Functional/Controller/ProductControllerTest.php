@@ -70,9 +70,6 @@ class ProductControllerTest extends WebTestCase
         static::assertStringContainsString(LoadProductMetaData::META_KEYWORDS, $html);
     }
 
-    /**
-     * @param Crawler $crawler
-     */
     public function checkSeoSectionExistence(Crawler $crawler)
     {
         $result = $this->client->getResponse();

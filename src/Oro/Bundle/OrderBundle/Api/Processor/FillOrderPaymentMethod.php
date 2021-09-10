@@ -23,11 +23,6 @@ class FillOrderPaymentMethod implements ProcessorInterface
     /** @var string */
     private $paymentMethodClass;
 
-    /**
-     * @param OrderPaymentContextFactory $paymentContextFactory
-     * @param ApplicablePaymentMethodsProvider $paymentMethodProvider
-     * @param string $paymentMethodClass
-     */
     public function __construct(
         OrderPaymentContextFactory $paymentContextFactory,
         ApplicablePaymentMethodsProvider $paymentMethodProvider,
@@ -68,11 +63,6 @@ class FillOrderPaymentMethod implements ProcessorInterface
         }
     }
 
-    /**
-     * @param Order $order
-     *
-     * @return string|null
-     */
     private function getPaymentMethod(Order $order): ?string
     {
         $paymentMethods = $this->paymentMethodProvider->getApplicablePaymentMethods(

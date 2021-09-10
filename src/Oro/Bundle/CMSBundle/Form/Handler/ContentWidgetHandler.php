@@ -29,10 +29,6 @@ class ContentWidgetHandler implements FormHandlerInterface
     /** @var EventDispatcherInterface */
     private $eventDispatcher;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param EventDispatcherInterface $eventDispatcher
-     */
     public function __construct(ManagerRegistry $registry, EventDispatcherInterface $eventDispatcher)
     {
         $this->registry = $registry;
@@ -78,10 +74,6 @@ class ContentWidgetHandler implements FormHandlerInterface
         return false;
     }
 
-    /**
-     * @param ContentWidget $contentWidget
-     * @param FormInterface $form
-     */
     private function onSuccess(ContentWidget $contentWidget, FormInterface $form): void
     {
         $manager = $this->registry->getManagerForClass(ContentWidget::class);

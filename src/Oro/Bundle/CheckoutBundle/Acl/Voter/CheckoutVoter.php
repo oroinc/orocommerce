@@ -18,12 +18,8 @@ class CheckoutVoter implements VoterInterface
 {
     const ATTRIBUTE_CREATE = 'CHECKOUT_CREATE';
 
-    /** @var AuthorizationCheckerInterface */
-    private $authorizationChecker;
+    private AuthorizationCheckerInterface $authorizationChecker;
 
-    /**
-     * @param AuthorizationCheckerInterface $authorizationChecker
-     */
     public function __construct(AuthorizationCheckerInterface $authorizationChecker)
     {
         $this->authorizationChecker = $authorizationChecker;
@@ -34,11 +30,11 @@ class CheckoutVoter implements VoterInterface
      */
     public function vote(TokenInterface $token, $object, array $attributes)
     {
-        if (!is_object($object)) {
+        if (!\is_object($object)) {
             return self::ACCESS_ABSTAIN;
         }
 
-        if (!in_array(self::ATTRIBUTE_CREATE, $attributes, true)) {
+        if (!\in_array(self::ATTRIBUTE_CREATE, $attributes, true)) {
             return self::ACCESS_ABSTAIN;
         }
 

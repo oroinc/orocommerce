@@ -4,8 +4,6 @@ namespace Oro\Bundle\ShippingBundle\Tests\Behat\Context;
 
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
-use Behat\Symfony2Extension\Context\KernelAwareContext;
-use Behat\Symfony2Extension\Context\KernelDictionary;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStep;
 use Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid;
@@ -22,14 +20,11 @@ use Symfony\Component\DomCrawler\Crawler;
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class FeatureContext extends OroFeatureContext implements OroPageObjectAware, KernelAwareContext
+class FeatureContext extends OroFeatureContext implements OroPageObjectAware
 {
-    use PageObjectDictionary, KernelDictionary;
+    use PageObjectDictionary;
 
-    /**
-     * @var OroMainContext
-     */
-    private $oroMainContext;
+    private ?OroMainContext $oroMainContext = null;
 
     /**
      * @BeforeScenario
@@ -71,7 +66,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     {
         $elements = $this->findAllElements('CheckoutFormRow');
         foreach ($elements as $element) {
-            if (strpos($element->getText(), $shippingType) !== false) {
+            if (str_contains($element->getText(), $shippingType)) {
                 return;
             }
         }
@@ -183,7 +178,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $form->fillField('Name', $shoppingRuleName);
 
         foreach ($table->getColumn(0) as $columnItem) {
-            if (false !== strpos($columnItem, 'Country')) {
+            if (str_contains($columnItem, 'Country')) {
                 $destinationAdd = $form->find('css', '.add-list-item');
                 $destinationAdd->click();
             }
@@ -233,7 +228,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     protected function createOrderFromShoppingList($shoppingListName)
     {
         /** @var ObjectManager $manager */
-        $manager = $this->getContainer()->get('doctrine')->getManagerForClass(ShoppingList::class);
+        $manager = $this->getAppContainer()->get('doctrine')->getManagerForClass(ShoppingList::class);
         /** @var ShoppingList $shoppingList */
         $shoppingList = $manager->getRepository(ShoppingList::class)->findOneBy(['label' => $shoppingListName]);
         $this->visitPath('customer/shoppinglist/'.$shoppingList->getId());
@@ -324,8 +319,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      * Example: And I should see following product shipping options:
      *            | item | 9 lbs | 9 x 8 x 6 cm | parcel |
      *            | set  | 3 lbs | 2 x 5 x 3 cm | parcel |
-     *
-     * @param TableNode $table
      *
      * @Then /^(?:|I )should see following product shipping options:$/
      */

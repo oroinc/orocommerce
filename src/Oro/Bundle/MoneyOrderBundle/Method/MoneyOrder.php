@@ -17,9 +17,6 @@ class MoneyOrder implements PaymentMethodWithPostponedCaptureInterface
      */
     protected $config;
 
-    /**
-     * @param MoneyOrderConfigInterface $config
-     */
     public function __construct(MoneyOrderConfigInterface $config)
     {
         $this->config = $config;

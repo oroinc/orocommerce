@@ -29,10 +29,6 @@ class ComputeOrderTaxes implements ProcessorInterface
     /** @var ValueTransformer */
     private $valueTransformer;
 
-    /**
-     * @param OrderTaxesProvider $orderTaxesProvider
-     * @param ValueTransformer   $valueTransformer
-     */
     public function __construct(
         OrderTaxesProvider $orderTaxesProvider,
         ValueTransformer $valueTransformer
@@ -60,13 +56,6 @@ class ComputeOrderTaxes implements ProcessorInterface
         }
     }
 
-    /**
-     * @param CustomizeLoadedDataContext $context
-     * @param array                      $data
-     * @param string                     $orderIdFieldName
-     *
-     * @return array
-     */
     private function applyTaxes(
         CustomizeLoadedDataContext $context,
         array $data,

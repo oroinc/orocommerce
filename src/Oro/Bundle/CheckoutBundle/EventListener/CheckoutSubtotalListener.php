@@ -34,19 +34,12 @@ class CheckoutSubtotalListener
     /** @var MessageProducerInterface */
     protected $messageProducer;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param MessageProducerInterface $messageProducer
-     */
     public function __construct(ManagerRegistry $registry, MessageProducerInterface $messageProducer)
     {
         $this->registry = $registry;
         $this->messageProducer = $messageProducer;
     }
 
-    /**
-     * @param CombinedPriceListsUpdateEvent $event
-     */
     public function onPriceListUpdate(CombinedPriceListsUpdateEvent $event)
     {
         /** @var CheckoutSubtotalRepository $repository */
@@ -56,9 +49,6 @@ class CheckoutSubtotalListener
         $this->recalculateSubtotals();
     }
 
-    /**
-     * @param CustomerCPLUpdateEvent $event
-     */
     public function onCustomerPriceListUpdate(CustomerCPLUpdateEvent $event)
     {
         $customersData = $event->getCustomersData();
@@ -71,9 +61,6 @@ class CheckoutSubtotalListener
         $this->recalculateSubtotals();
     }
 
-    /**
-     * @param CustomerGroupCPLUpdateEvent $event
-     */
     public function onCustomerGroupPriceListUpdate(CustomerGroupCPLUpdateEvent $event)
     {
         $customersData = $event->getCustomerGroupsData();
@@ -87,9 +74,6 @@ class CheckoutSubtotalListener
         $this->recalculateSubtotals();
     }
 
-    /**
-     * @param WebsiteCPLUpdateEvent $event
-     */
     public function onWebsitePriceListUpdate(WebsiteCPLUpdateEvent $event)
     {
         $websiteIds = $event->getWebsiteIds();
@@ -103,9 +87,6 @@ class CheckoutSubtotalListener
         $this->recalculateSubtotals();
     }
 
-    /**
-     * @param ConfigCPLUpdateEvent $event
-     */
     public function onConfigPriceListUpdate(ConfigCPLUpdateEvent $event)
     {
         /** @var PriceListWebsiteFallbackRepository $fallbackWebsiteRepository */

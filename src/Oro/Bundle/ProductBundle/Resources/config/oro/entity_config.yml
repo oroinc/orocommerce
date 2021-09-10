@@ -15,3 +15,9 @@ entity_config:
                     form:
                         options:
                             tooltip: oro.product.entity_config.field.items.attribute.sortable.tooltip
+    enum:
+        field:
+            items:
+                enum_options:
+                    constraints:
+                        - Oro\Bundle\ProductBundle\Validator\Constraints\AttributeValueUsageInVariant: ~

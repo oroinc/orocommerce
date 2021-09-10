@@ -11,9 +11,6 @@ class UnitVisibilityProvider
      */
     private $unitVisibility;
 
-    /**
-     * @param UnitVisibilityInterface $unitVisibility
-     */
     public function __construct(UnitVisibilityInterface $unitVisibility)
     {
         $this->unitVisibility = $unitVisibility;

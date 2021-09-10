@@ -27,10 +27,6 @@ class WebsiteSearchSegmentListener
      */
     private $staticSegmentManager;
 
-    /**
-     * @param ContentVariantSegmentProvider $contentVariantSegmentProvider
-     * @param StaticSegmentManager $staticSegmentManager
-     */
     public function __construct(
         ContentVariantSegmentProvider $contentVariantSegmentProvider,
         StaticSegmentManager $staticSegmentManager
@@ -39,9 +35,6 @@ class WebsiteSearchSegmentListener
         $this->staticSegmentManager = $staticSegmentManager;
     }
 
-    /**
-     * @param BeforeReindexEvent $event
-     */
     public function process(BeforeReindexEvent $event)
     {
         $classes = \is_array($event->getClassOrClasses())
@@ -68,10 +61,6 @@ class WebsiteSearchSegmentListener
         }
     }
 
-    /**
-     * @param iterable $segments
-     * @param array $ids
-     */
     private function runSegmentActualization(iterable $segments, array $ids)
     {
         foreach ($segments as $segment) {

@@ -9,9 +9,6 @@ use Oro\Bundle\PaymentTermBundle\Form\Type\PaymentTermSettingsType;
 
 class PaymentTermTransport implements TransportInterface
 {
-    /**
-     * @param Transport $transportEntity
-     */
     public function init(Transport $transportEntity)
     {
     }

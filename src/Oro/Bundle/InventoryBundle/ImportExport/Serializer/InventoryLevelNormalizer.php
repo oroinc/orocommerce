@@ -27,11 +27,6 @@ class InventoryLevelNormalizer extends ConfigurableEntityNormalizer
      */
     private $roundingService;
 
-    /**
-     * @param FieldHelper $fieldHelper
-     * @param UnitLabelFormatterInterface $formatter
-     * @param QuantityRoundingService $roundingService
-     */
     public function __construct(
         FieldHelper $fieldHelper,
         UnitLabelFormatterInterface $formatter,
@@ -46,7 +41,7 @@ class InventoryLevelNormalizer extends ConfigurableEntityNormalizer
     /**
      * {@inheritdoc}
      */
-    public function supportsNormalization($data, $format = null, array $context = array())
+    public function supportsNormalization($data, string $format = null, array $context = []): bool
     {
         return $data instanceof InventoryLevel;
     }
@@ -54,7 +49,7 @@ class InventoryLevelNormalizer extends ConfigurableEntityNormalizer
     /**
      * {@inheritdoc}
      */
-    public function normalize($object, $format = null, array $context = array())
+    public function normalize($object, string $format = null, array $context = [])
     {
         $result = $this->dispatchNormalize($object, [], $context, Events::BEFORE_NORMALIZE_ENTITY);
 
@@ -124,7 +119,7 @@ class InventoryLevelNormalizer extends ConfigurableEntityNormalizer
     /**
      * {@inheritdoc}
      */
-    public function denormalize($data, $class, $format = null, array $context = array())
+    public function denormalize($data, string $type, string $format = null, array $context = [])
     {
         if (!is_array($data) || !isset($data['product'])) {
             return null;
@@ -133,7 +128,7 @@ class InventoryLevelNormalizer extends ConfigurableEntityNormalizer
         /** @var InventoryLevel $inventoryLevel */
         $inventoryLevel = $this->dispatchDenormalizeEvent(
             $data,
-            $this->createObject($class),
+            $this->createObject($type),
             Events::BEFORE_DENORMALIZE_ENTITY
         );
 
@@ -167,10 +162,6 @@ class InventoryLevelNormalizer extends ConfigurableEntityNormalizer
         return $this->dispatchDenormalizeEvent($data, $inventoryLevel, Events::AFTER_DENORMALIZE_ENTITY);
     }
 
-    /**
-     * @param InventoryLevel $inventoryLevel
-     * @param array $data
-     */
     protected function determineQuantity(InventoryLevel $inventoryLevel, array $data)
     {
         if (array_key_exists('quantity', $data)) {
@@ -183,7 +174,7 @@ class InventoryLevelNormalizer extends ConfigurableEntityNormalizer
     /**
      * {@inheritdoc}
      */
-    public function supportsDenormalization($data, $type, $format = null, array $context = array())
+    public function supportsDenormalization($data, string $type, string $format = null, array $context = array()): bool
     {
         return !empty($data) && isset($data['product']) && $type === InventoryLevel::class;
     }

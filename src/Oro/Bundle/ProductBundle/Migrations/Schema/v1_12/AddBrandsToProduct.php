@@ -67,8 +67,6 @@ class AddBrandsToProduct implements Migration, SlugExtensionAwareInterface, Exte
 
     /**
      * Create oro_brand table
-     *
-     * @param Schema $schema
      */
     protected function createBrandTable(Schema $schema)
     {
@@ -86,8 +84,6 @@ class AddBrandsToProduct implements Migration, SlugExtensionAwareInterface, Exte
 
     /**
      * Create oro_brand_description table
-     *
-     * @param Schema $schema
      */
     protected function createBrandDescriptionTable(Schema $schema)
     {
@@ -100,8 +96,6 @@ class AddBrandsToProduct implements Migration, SlugExtensionAwareInterface, Exte
 
     /**
      * Add oro_brand foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addBrandForeignKeys(Schema $schema)
     {
@@ -122,8 +116,6 @@ class AddBrandsToProduct implements Migration, SlugExtensionAwareInterface, Exte
 
     /**
      * Create oro_brand_name table
-     *
-     * @param Schema $schema
      */
     protected function createBrandNameTable(Schema $schema)
     {
@@ -136,8 +128,6 @@ class AddBrandsToProduct implements Migration, SlugExtensionAwareInterface, Exte
 
     /**
      * Create oro_brand_short_desc table
-     *
-     * @param Schema $schema
      */
     protected function createBrandShortDescTable(Schema $schema)
     {
@@ -150,8 +140,6 @@ class AddBrandsToProduct implements Migration, SlugExtensionAwareInterface, Exte
 
     /**
      * Create oro_brand_slug table
-     *
-     * @param Schema $schema
      */
     protected function createBrandSlugTable(Schema $schema)
     {
@@ -165,8 +153,6 @@ class AddBrandsToProduct implements Migration, SlugExtensionAwareInterface, Exte
 
     /**
      * Create oro_brand_slug_prototype table
-     *
-     * @param Schema $schema
      */
     protected function createBrandSlugPrototypeTable(Schema $schema)
     {
@@ -180,8 +166,6 @@ class AddBrandsToProduct implements Migration, SlugExtensionAwareInterface, Exte
 
     /**
      * Add oro_brand_description foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addBrandDescriptionForeignKeys(Schema $schema)
     {
@@ -202,8 +186,6 @@ class AddBrandsToProduct implements Migration, SlugExtensionAwareInterface, Exte
 
     /**
      * Add oro_brand_name foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addBrandNameForeignKeys(Schema $schema)
     {
@@ -224,8 +206,6 @@ class AddBrandsToProduct implements Migration, SlugExtensionAwareInterface, Exte
 
     /**
      * Add oro_brand_short_desc foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addBrandShortDescForeignKeys(Schema $schema)
     {
@@ -244,9 +224,6 @@ class AddBrandsToProduct implements Migration, SlugExtensionAwareInterface, Exte
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     public function addProductToBrand(Schema $schema)
     {
         $table = $schema->getTable(self::PRODUCT_TABLE_NAME);

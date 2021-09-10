@@ -25,7 +25,6 @@ class OpenOrdersSeparatePageConfigProviderTest extends \PHPUnit\Framework\TestCa
 
     /**
      * @dataProvider getOpenOrdersSeparatePageConfigProvider
-     * @param bool $value
      */
     public function testGetOpenOrdersSeparatePageConfig(bool $value)
     {
@@ -50,7 +49,6 @@ class OpenOrdersSeparatePageConfigProviderTest extends \PHPUnit\Framework\TestCa
 
     /**
      * @dataProvider getShowOpenOrdersConfigProvider
-     * @param bool $value
      */
     public function testGetShowOpenOrdersConfig(bool $value)
     {

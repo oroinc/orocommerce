@@ -81,17 +81,11 @@ class FrontendVariantFiledType extends AbstractType
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function preSetData(FormEvent $event)
     {
         $this->addVariantFields($event);
     }
 
-    /**
-     * @param FormEvent $event
-     */
     private function addVariantFields(FormEvent $event)
     {
         /** @var Product|null $data */
@@ -213,7 +207,7 @@ class FrontendVariantFiledType extends AbstractType
                 'attributes' => [],
             ];
 
-            foreach ($variantFields as $key => $fieldName) {
+            foreach ($variantFields as $fieldName) {
                 $data['attributes'][$fieldName] = $this->productVariantAvailabilityProvider
                     ->getVariantFieldScalarValue($simpleProduct, $fieldName);
             }

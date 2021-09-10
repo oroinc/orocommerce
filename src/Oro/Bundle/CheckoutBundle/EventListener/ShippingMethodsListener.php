@@ -36,13 +36,6 @@ class ShippingMethodsListener extends AbstractMethodsListener
      */
     private $orderAddressSecurityProvider;
 
-    /**
-     * @param OrderAddressProvider $addressProvider
-     * @param OrderAddressSecurityProvider $orderAddressSecurityProvider
-     * @param OrderAddressManager $orderAddressManager
-     * @param MethodsConfigsRulesByContextProviderInterface $shippingProvider
-     * @param CheckoutShippingContextProvider $checkoutShippingContextProvider
-     */
     public function __construct(
         OrderAddressProvider $addressProvider,
         OrderAddressSecurityProvider $orderAddressSecurityProvider,

@@ -16,18 +16,11 @@ class UniqueContentNodeSlugPrototypesResolver
      */
     private $registry;
 
-    /**
-     * @param ManagerRegistry $registry
-     */
     public function __construct(ManagerRegistry $registry)
     {
         $this->registry = $registry;
     }
 
-    /**
-     * @param ContentNode|null $parentNode
-     * @param ContentNode $contentNode
-     */
     public function resolveSlugPrototypeUniqueness(?ContentNode $parentNode, ContentNode $contentNode)
     {
         foreach ($this->getUniqueSlugPrototypes($parentNode, $contentNode) as [$removed, $new]) {
@@ -66,11 +59,6 @@ class UniqueContentNodeSlugPrototypesResolver
         }
     }
 
-    /**
-     * @param ContentNode|null $parentNode
-     * @param ContentNode $currentNode
-     * @return array
-     */
     private function getPersistedSlugPrototypeStrings(?ContentNode $parentNode, ContentNode $currentNode): array
     {
         $repository = $this->registry

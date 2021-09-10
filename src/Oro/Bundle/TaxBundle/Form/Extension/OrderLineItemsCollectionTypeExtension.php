@@ -22,10 +22,6 @@ class OrderLineItemsCollectionTypeExtension extends AbstractTypeExtension
      */
     private $taxValueManager;
 
-    /**
-     * @param TaxationSettingsProvider $taxationSettingsProvider
-     * @param TaxValueManager $taxValueManager
-     */
     public function __construct(
         TaxationSettingsProvider $taxationSettingsProvider,
         TaxValueManager $taxValueManager

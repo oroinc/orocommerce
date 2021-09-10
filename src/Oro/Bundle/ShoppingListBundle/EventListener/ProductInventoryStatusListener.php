@@ -36,12 +36,6 @@ class ProductInventoryStatusListener
      */
     private $websiteProvider;
 
-    /**
-     * @param ConfigManager $configManager
-     * @param MessageFactory $messageFactory
-     * @param MessageProducerInterface $producer
-     * @param WebsiteProviderInterface $websiteProvider
-     */
     public function __construct(
         ConfigManager $configManager,
         MessageFactory $messageFactory,
@@ -54,10 +48,6 @@ class ProductInventoryStatusListener
         $this->websiteProvider = $websiteProvider;
     }
 
-    /**
-     * @param Product $product
-     * @param PreUpdateEventArgs $args
-     */
     public function preUpdate(Product $product, PreUpdateEventArgs $args)
     {
         if ($args->hasChangedField('inventory_status')) {

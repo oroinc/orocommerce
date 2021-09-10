@@ -39,10 +39,6 @@ class WYSIWYGFieldsNameValidator extends ConstraintValidator
         $this->checkIfWYSIWYGAdditionalFieldsExists($value, $constraint);
     }
 
-    /**
-     * @param FieldConfigModel $fieldConfigModel
-     * @param Constraint $constraint
-     */
     private function checkIfAdditionalFieldsCanBeCreated(
         FieldConfigModel $fieldConfigModel,
         Constraint $constraint
@@ -63,9 +59,6 @@ class WYSIWYGFieldsNameValidator extends ConstraintValidator
      *
      * WYSIWYG field do not have schema properties, `field_properties`, `field_style` field config model and don't have.
      * Need to generate additional property dynamically and check it.
-     *
-     * @param FieldConfigModel $fieldConfigModel
-     * @param Constraint $constraint
      */
     private function checkIfWYSIWYGAdditionalFieldsExists(
         FieldConfigModel $fieldConfigModel,
@@ -87,9 +80,6 @@ class WYSIWYGFieldsNameValidator extends ConstraintValidator
         }
     }
 
-    /**
-     * @param Constraint $constraint
-     */
     private function addViolation(Constraint $constraint): void
     {
         $this->context
@@ -98,11 +88,6 @@ class WYSIWYGFieldsNameValidator extends ConstraintValidator
             ->addViolation();
     }
 
-    /**
-     * @param FieldConfigModel $fieldConfigModel
-     *
-     * @return array
-     */
     private function generateAdditionalProperty(FieldConfigModel $fieldConfigModel): array
     {
         return [

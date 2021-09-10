@@ -5,15 +5,14 @@ namespace Oro\Bundle\PromotionBundle\DependencyInjection\Compiler;
 use Oro\Bundle\EmailBundle\DependencyInjection\Compiler\AbstractTwigSandboxConfigurationPass;
 
 /**
- * Compiler pass that collects extensions for service `oro_promotion.twig.extension.discounts_information`
- * by `oro_email.email_renderer` tag
+ * Registers the "line_items_discounts" Twig function for the email templates rendering sandbox:
  */
 class TwigSandboxConfigurationPass extends AbstractTwigSandboxConfigurationPass
 {
     /**
      * {@inheritDoc}
      */
-    protected function getFunctions()
+    protected function getFunctions(): array
     {
         return [
             'line_items_discounts'
@@ -23,7 +22,15 @@ class TwigSandboxConfigurationPass extends AbstractTwigSandboxConfigurationPass
     /**
      * {@inheritDoc}
      */
-    protected function getFilters()
+    protected function getFilters(): array
+    {
+        return [];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getTags(): array
     {
         return [];
     }
@@ -31,10 +38,10 @@ class TwigSandboxConfigurationPass extends AbstractTwigSandboxConfigurationPass
     /**
      * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         return [
-            'oro_promotion.twig.extension.discounts_information'
+            'oro_promotion.twig.promotion_extension'
         ];
     }
 }

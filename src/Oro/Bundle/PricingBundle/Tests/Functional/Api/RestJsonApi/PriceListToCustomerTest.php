@@ -32,9 +32,6 @@ class PriceListToCustomerTest extends AbstractApiPriceListRelationTest
         );
     }
 
-    /**
-     * @return string
-     */
     protected function getAliceFilesFolderName(): string
     {
         return 'price_list_to_customer';
@@ -48,17 +45,11 @@ class PriceListToCustomerTest extends AbstractApiPriceListRelationTest
         return 'pricelisttocustomers';
     }
 
-    /**
-     * @return EntityRepository
-     */
     protected function getEntityRepository(): EntityRepository
     {
         return $this->getEntityManager()->getRepository(PriceListToCustomer::class);
     }
 
-    /**
-     * @return PriceListToCustomer
-     */
     protected function getFirstRelation(): PriceListToCustomer
     {
         return $this->getReference(LoadPriceListRelations::PRICE_LIST_TO_CUSTOMER_US_1);

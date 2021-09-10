@@ -82,7 +82,6 @@ abstract class AbstractFallbackFieldsFormViewTest extends \PHPUnit\Framework\Tes
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->em = $this->createMock(EntityManager::class);
 
-
         $this->request = $this->createMock(Request::class);
         $this->requestStack = new RequestStack();
         $this->requestStack->push($this->request);

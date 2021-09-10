@@ -33,8 +33,6 @@ class OroCatalogBundle implements Migration, ActivityExtensionAwareInterface
 
     /**
      * Create orob2b_catalog_category table
-     *
-     * @param Schema $schema
      */
     protected function createOroCatalogCategoryTable(Schema $schema)
     {
@@ -49,14 +47,11 @@ class OroCatalogBundle implements Migration, ActivityExtensionAwareInterface
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->setPrimaryKey(['id']);
 
-
         $this->activityExtension->addActivityAssociation($schema, 'oro_note', 'orob2b_catalog_category');
     }
 
     /**
      * Create orob2b_catalog_category_title table
-     *
-     * @param Schema $schema
      */
     protected function createOroCatalogCategoryTitleTable(Schema $schema)
     {
@@ -69,8 +64,6 @@ class OroCatalogBundle implements Migration, ActivityExtensionAwareInterface
 
     /**
      * Create orob2b_category_to_product table
-     *
-     * @param Schema $schema
      */
     protected function createOrob2BCategoryToProductTable(Schema $schema)
     {
@@ -83,8 +76,6 @@ class OroCatalogBundle implements Migration, ActivityExtensionAwareInterface
 
     /**
      * Add orob2b_catalog_category foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroCatalogCategoryForeignKeys(Schema $schema)
     {
@@ -99,8 +90,6 @@ class OroCatalogBundle implements Migration, ActivityExtensionAwareInterface
 
     /**
      * Add orob2b_catalog_category_title foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroCatalogCategoryTitleForeignKeys(Schema $schema)
     {
@@ -121,8 +110,6 @@ class OroCatalogBundle implements Migration, ActivityExtensionAwareInterface
 
     /**
      * Add orob2b_category_to_product foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOrob2BCategoryToProductForeignKeys(Schema $schema)
     {
@@ -143,8 +130,6 @@ class OroCatalogBundle implements Migration, ActivityExtensionAwareInterface
 
     /**
      * Sets the ActivityExtension
-     *
-     * @param ActivityExtension $activityExtension
      */
     public function setActivityExtension(ActivityExtension $activityExtension)
     {

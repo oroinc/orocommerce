@@ -20,17 +20,11 @@ class OrderHandler
      */
     protected $taxCodes = [];
 
-    /**
-     * @param TaxCodeProvider $taxCodeProvider
-     */
     public function __construct(TaxCodeProvider $taxCodeProvider)
     {
         $this->taxCodeProvider = $taxCodeProvider;
     }
 
-    /**
-     * @param ContextEvent $contextEvent
-     */
     public function onContextEvent(ContextEvent $contextEvent)
     {
         $order = $contextEvent->getMappingObject();

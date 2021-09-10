@@ -97,9 +97,6 @@ class TypedOrderAddressCollectionTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getDefaultAddressDataProvider
-     *
-     * @param array $addresses
-     * @param AbstractDefaultTypedAddress|null $expected
      */
     public function testGetDefaultAddress(array $addresses, AbstractDefaultTypedAddress $expected = null)
     {

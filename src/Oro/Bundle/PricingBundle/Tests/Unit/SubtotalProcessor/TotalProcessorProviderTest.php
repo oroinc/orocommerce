@@ -562,9 +562,6 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
         );
     }
 
-    /**
-     * @param SubtotalProviderInterface $subtotalProvider
-     */
     protected function setProviderToRegistry(SubtotalProviderInterface $subtotalProvider)
     {
         $this->subtotalProviderRegistry

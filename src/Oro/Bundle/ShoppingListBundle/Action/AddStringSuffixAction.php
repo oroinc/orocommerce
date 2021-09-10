@@ -19,9 +19,6 @@ class AddStringSuffixAction extends AbstractAction
      */
     protected $options;
 
-    /**
-     * @param ContextAccessor $contextAccessor
-     */
     public function __construct(ContextAccessor $contextAccessor)
     {
         parent::__construct($contextAccessor);
@@ -120,8 +117,6 @@ class AddStringSuffixAction extends AbstractAction
     }
 
     /**
-     * @param array $options
-     *
      * @throws InvalidParameterException
      */
     private function checkMaxLengthOption(array $options)

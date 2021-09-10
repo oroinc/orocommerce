@@ -3,8 +3,6 @@
 namespace Oro\Bundle\ProductBundle\Tests\Behat\Context;
 
 use Behat\Gherkin\Node\TableNode;
-use Behat\Symfony2Extension\Context\KernelAwareContext;
-use Behat\Symfony2Extension\Context\KernelDictionary;
 use Oro\Bundle\ProductBundle\Tests\Behat\Element\FrontendProductGrid;
 use Oro\Bundle\ProductBundle\Tests\Behat\Element\FrontendProductGridFilters;
 use Oro\Bundle\ProductBundle\Tests\Behat\Element\FrontendProductGridRow;
@@ -13,9 +11,9 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Element\Form;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
 
-class FrontendProductGridContext extends OroFeatureContext implements OroPageObjectAware, KernelAwareContext
+class FrontendProductGridContext extends OroFeatureContext implements OroPageObjectAware
 {
-    use PageObjectDictionary, KernelDictionary;
+    use PageObjectDictionary;
 
     /**
      * Updates line item form for a given row in frontend product grid.
@@ -24,9 +22,6 @@ class FrontendProductGridContext extends OroFeatureContext implements OroPageObj
      *            | Quanity | 3    |
      *
      * @When /^(?:I |)fill line item with "(?P<content>\S+)" in frontend product grid:$/
-     *
-     * @param string $content
-     * @param TableNode $values
      */
     public function fillLineItemFormForProductRow(string $content, TableNode $values)
     {
@@ -127,7 +122,7 @@ class FrontendProductGridContext extends OroFeatureContext implements OroPageObj
      */
     public function generateUrlForFrontendProductSearchGrid($pageNumber)
     {
-        $path = $this->getContainer()
+        $path = $this->getAppContainer()
             ->get('oro_datagrid.helper.route')
             ->generate(
                 'oro_product_frontend_product_index',

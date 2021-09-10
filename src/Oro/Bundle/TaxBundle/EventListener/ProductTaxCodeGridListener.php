@@ -9,9 +9,6 @@ use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
  */
 class ProductTaxCodeGridListener extends TaxCodeGridListener
 {
-    /**
-     * @param DatagridConfiguration $config
-     */
     protected function addColumn(DatagridConfiguration $config)
     {
         $config->offsetSetByPath(
@@ -41,9 +38,6 @@ class ProductTaxCodeGridListener extends TaxCodeGridListener
         );
     }
 
-    /**
-     * @param DatagridConfiguration $config
-     */
     protected function addFilter(DatagridConfiguration $config)
     {
         parent::addFilter($config);

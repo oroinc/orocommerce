@@ -18,18 +18,11 @@ class ConfirmSlugChangeFormHelper
      */
     private $configManager;
 
-    /**
-     * @param ConfigManager $configManager
-     */
     public function __construct(ConfigManager $configManager)
     {
         $this->configManager = $configManager;
     }
-    /**
-     * @param FormView $view
-     * @param FormInterface $form
-     * @param array $options
-     */
+
     public function addConfirmSlugChangeOptionsLocalized(FormView $view, FormInterface $form, array $options)
     {
         $valuesField = sprintf(
@@ -49,11 +42,6 @@ class ConfirmSlugChangeFormHelper
         }
     }
 
-    /**
-     * @param FormView $view
-     * @param FormInterface $form
-     * @param array $options
-     */
     public function addConfirmSlugChangeOptions(FormView $view, FormInterface $form, array $options)
     {
         $valuesField = sprintf(

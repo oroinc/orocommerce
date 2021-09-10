@@ -10,8 +10,6 @@ class ContextFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider dataProviderCreateForReindexation
-     * @param ReindexationRequestEvent $event
-     * @param array                    $contextExpected
      */
     public function testCreateForReindexation(ReindexationRequestEvent $event, array $contextExpected)
     {

@@ -46,11 +46,11 @@ class TaxBaseExclusionFactoryTest extends \PHPUnit\Framework\TestCase
             ->expects($this->any())
             ->method('getEntityReference')
             ->willReturnCallback(function ($entityClass, $id) {
-                if (strpos($entityClass, 'Country') !== false) {
+                if (str_contains($entityClass, 'Country')) {
                     return new Country($id);
                 }
 
-                if (strpos($entityClass, 'Region') !== false) {
+                if (str_contains($entityClass, 'Region')) {
                     return new Region($id);
                 }
 

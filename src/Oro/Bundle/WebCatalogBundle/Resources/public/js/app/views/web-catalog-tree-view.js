@@ -37,14 +37,14 @@ define(function(require) {
         contentNodeFormSelector: '',
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function WebCatalogTreeView(options) {
             WebCatalogTreeView.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             WebCatalogTreeView.__super__.initialize.call(this, options);
@@ -69,7 +69,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         onMove: function(e, data) {
             if (this.moveTriggered) {
@@ -224,7 +224,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function() {
             if (this.disposed) {

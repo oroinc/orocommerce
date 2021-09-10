@@ -24,10 +24,6 @@ class CategoriesProductsProvider
     /** @var int */
     private $cacheLifeTime;
 
-    /**
-     * @param ManagerRegistry   $doctrine
-     * @param ProductRepository $searchRepository
-     */
     public function __construct(ManagerRegistry $doctrine, ProductRepository $searchRepository)
     {
         $this->doctrine = $doctrine;

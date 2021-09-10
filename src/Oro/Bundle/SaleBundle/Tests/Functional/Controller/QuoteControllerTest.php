@@ -203,10 +203,6 @@ class QuoteControllerTest extends WebTestCase
         return $id;
     }
 
-    /**
-     * @param array $expectedUsers
-     * @param Collection $actualUsers
-     */
     protected function assertUsersExists(array $expectedUsers, Collection $actualUsers)
     {
         $callable = function (AbstractUser $user) {
@@ -321,9 +317,6 @@ class QuoteControllerTest extends WebTestCase
     }
 
     /**
-     * @param array $submittedData
-     * @param array $expectedData
-     *
      * @dataProvider submitProvider
      */
     public function testSubmit(array $submittedData, array $expectedData)
@@ -380,9 +373,6 @@ class QuoteControllerTest extends WebTestCase
         ];
     }
 
-    /**
-     * @param array $data
-     */
     protected function prepareProviderData(array &$data)
     {
         foreach ($data as $key => $value) {

@@ -26,10 +26,6 @@ class ProductVisibilitySearchQueryModifier implements QueryModifierInterface
      */
     private $placeholderProvider;
 
-    /**
-     * @param TokenStorageInterface $tokenStorage
-     * @param PlaceholderProvider $placeholderProvider
-     */
     public function __construct(
         TokenStorageInterface $tokenStorage,
         PlaceholderProvider $placeholderProvider

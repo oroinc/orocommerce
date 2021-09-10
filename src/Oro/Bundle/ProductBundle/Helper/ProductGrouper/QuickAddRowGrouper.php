@@ -65,11 +65,6 @@ class QuickAddRowGrouper implements ProductsGrouperInterface
         return $mergedProductRow;
     }
 
-    /**
-     * @param QuickAddRow $productRowTo
-     * @param QuickAddRow $productRowFrom
-     * @param QuickAddRow $mergedProductRow
-     */
     private function mergeErrors(
         QuickAddRow $productRowTo,
         QuickAddRow $productRowFrom,
@@ -84,11 +79,6 @@ class QuickAddRowGrouper implements ProductsGrouperInterface
         }
     }
 
-    /**
-     * @param QuickAddRow $productRowTo
-     * @param QuickAddRow $productRowFrom
-     * @param QuickAddRow $mergedProductRow
-     */
     private function mergeAdditionalFields(
         QuickAddRow $productRowTo,
         QuickAddRow $productRowFrom,

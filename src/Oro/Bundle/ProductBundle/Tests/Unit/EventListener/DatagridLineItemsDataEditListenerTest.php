@@ -43,9 +43,6 @@ class DatagridLineItemsDataEditListenerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getProductUnitsListDataProvider
-     *
-     * @param array $unitPrecisions
-     * @param array $unitsList
      */
     public function testOnLineItemData(array $unitPrecisions, array $unitsList): void
     {
@@ -71,9 +68,6 @@ class DatagridLineItemsDataEditListenerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(['units' => $unitsList], $event->getDataForLineItem($lineItemId));
     }
 
-    /**
-     * @return array
-     */
     public function getProductUnitsListDataProvider(): array
     {
         $itemUnit = (new ProductUnit())->setCode('item');

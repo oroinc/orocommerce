@@ -23,7 +23,7 @@ class CancelUrlTest extends AbstractOptionTest
                 [
                     'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
                     'The option "CANCELURL" with value 123 is expected to be of type "string", but is of ' .
-                    'type "integer".',
+                    'type "int".',
                 ],
             ],
             'valid' => [['CANCELURL' => 'http://127.0.0.1'], ['CANCELURL' => 'http://127.0.0.1']],

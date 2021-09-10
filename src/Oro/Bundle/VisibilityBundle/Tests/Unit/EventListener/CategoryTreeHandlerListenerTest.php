@@ -52,11 +52,6 @@ class CategoryTreeHandlerListenerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider onCreateAfterDataProvider
-     *
-     * @param array $categories
-     * @param array $expected
-     * @param array $hiddenCategoryIds
-     * @param UserInterface|null $user
      */
     public function testOnCreateAfter(
         array $categories,

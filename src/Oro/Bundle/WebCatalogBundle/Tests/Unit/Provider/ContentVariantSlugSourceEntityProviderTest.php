@@ -2,20 +2,18 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Provider;
 
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
+use Oro\Bundle\RedirectBundle\Provider\SluggableEntityFinder;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
-use Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentVariantRepository;
 use Oro\Bundle\WebCatalogBundle\Provider\ContentVariantSlugSourceEntityProvider;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
 class ContentVariantSlugSourceEntityProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    private $registry;
+    /** @var SluggableEntityFinder|\PHPUnit\Framework\MockObject\MockObject */
+    private $sluggableEntityFinder;
 
     /** @var WebsiteManager|\PHPUnit\Framework\MockObject\MockObject */
     private $websiteManager;
@@ -28,10 +26,14 @@ class ContentVariantSlugSourceEntityProviderTest extends \PHPUnit\Framework\Test
 
     protected function setUp(): void
     {
-        $this->registry = $this->createMock(ManagerRegistry::class);
+        $this->sluggableEntityFinder = $this->createMock(SluggableEntityFinder::class);
         $this->websiteManager = $this->createMock(WebsiteManager::class);
         $this->featureChecker = $this->createMock(FeatureChecker::class);
-        $this->provider = new ContentVariantSlugSourceEntityProvider($this->registry, $this->websiteManager);
+
+        $this->provider = new ContentVariantSlugSourceEntityProvider(
+            $this->sluggableEntityFinder,
+            $this->websiteManager
+        );
         $this->provider->setFeatureChecker($this->featureChecker);
         $this->provider->addFeature('frontend_master_catalog');
     }
@@ -44,8 +46,8 @@ class ContentVariantSlugSourceEntityProviderTest extends \PHPUnit\Framework\Test
             ->willReturn(null);
         $this->featureChecker->expects($this->never())
             ->method('isFeatureEnabled');
-        $this->registry->expects($this->never())
-            ->method('getManagerForClass');
+        $this->sluggableEntityFinder->expects($this->never())
+            ->method('findEntityBySlug');
         $this->assertNull($this->provider->getSourceEntityBySlug($slug));
     }
 
@@ -60,8 +62,8 @@ class ContentVariantSlugSourceEntityProviderTest extends \PHPUnit\Framework\Test
             ->method('isFeatureEnabled')
             ->with('frontend_master_catalog', $website)
             ->willReturn(true);
-        $this->registry->expects($this->never())
-            ->method('getManagerForClass');
+        $this->sluggableEntityFinder->expects($this->never())
+            ->method('findEntityBySlug');
         $this->assertNull($this->provider->getSourceEntityBySlug($slug));
     }
 
@@ -77,20 +79,10 @@ class ContentVariantSlugSourceEntityProviderTest extends \PHPUnit\Framework\Test
             ->with('frontend_master_catalog', $website)
             ->willReturn(false);
         $sourceEntity = new ContentVariant();
-        $repository = $this->createMock(ContentVariantRepository::class);
-        $repository->expects($this->once())
-            ->method('findOneBySlug')
-            ->with($slug)
+        $this->sluggableEntityFinder->expects($this->once())
+            ->method('findEntityBySlug')
+            ->with(ContentVariant::class, $this->identicalTo($slug))
             ->willReturn($sourceEntity);
-        $manager = $this->createMock(EntityManagerInterface::class);
-        $manager->expects($this->once())
-            ->method('getRepository')
-            ->with(ContentVariant::class)
-            ->willReturn($repository);
-        $this->registry->expects($this->once())
-            ->method('getManagerForClass')
-            ->with(ContentVariant::class)
-            ->willReturn($manager);
         $this->assertSame($sourceEntity, $this->provider->getSourceEntityBySlug($slug));
     }
 }

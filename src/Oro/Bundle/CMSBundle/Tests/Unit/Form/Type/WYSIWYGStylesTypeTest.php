@@ -11,8 +11,7 @@ use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 class WYSIWYGStylesTypeTest extends FormIntegrationTestCase
 {
-    /** @var DigitalAssetTwigTagsConverter|\PHPUnit\Framework\MockObject\MockObject */
-    private $digitalAssetTwigTagsConverter;
+    private DigitalAssetTwigTagsConverter|\PHPUnit\Framework\MockObject\MockObject $digitalAssetTwigTagsConverter;
 
     /**
      * {@inheritdoc}

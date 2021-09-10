@@ -73,17 +73,11 @@ class CombinedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
         return $message;
     }
 
-    /**
-     * @return SessionInterface
-     */
     private function getSession(): SessionInterface
     {
         return $this->createMock(SessionInterface::class);
     }
 
-    /**
-     * @return Website
-     */
     private function getWebsite(int $id): Website
     {
         $website = $this->createMock(Website::class);
@@ -94,9 +88,6 @@ class CombinedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
         return $website;
     }
 
-    /**
-     * @return CustomerGroup
-     */
     private function getCustomerGroup(int $id): CustomerGroup
     {
         $customerGroup = $this->createMock(CustomerGroup::class);
@@ -107,9 +98,6 @@ class CombinedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
         return $customerGroup;
     }
 
-    /**
-     * @return Customer
-     */
     private function getCustomer(int $id): Customer
     {
         $customer = $this->createMock(Customer::class);

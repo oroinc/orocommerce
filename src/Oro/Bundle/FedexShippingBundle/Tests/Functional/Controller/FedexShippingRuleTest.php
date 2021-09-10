@@ -119,12 +119,6 @@ class FedexShippingRuleTest extends WebTestCase
         static::assertStringContainsString('fedex', $crawler->html());
     }
 
-    /**
-     * @param Form  $form
-     * @param array $configData
-     *
-     * @return array
-     */
     private function createFormValues(Form $form, array $configData): array
     {
         $formValues = $form->getPhpValues();
@@ -135,10 +129,6 @@ class FedexShippingRuleTest extends WebTestCase
         return $formValues;
     }
 
-    /**
-     * @param ShippingMethodConfig $config
-     * @param array                $configData
-     */
     private function assertMethodConfigCorrect(ShippingMethodConfig $config, array $configData)
     {
         static::assertSame($configData['methodConfigs'][0]['method'], $config->getMethod());
@@ -165,11 +155,6 @@ class FedexShippingRuleTest extends WebTestCase
         }
     }
 
-    /**
-     * @param string $type
-     * @param array  $options
-     * @param bool   $enabled
-     */
     private function assertMethodTypeConfigCreated(string $type, array $options, bool $enabled)
     {
         static::assertNotNull(
@@ -240,9 +225,6 @@ class FedexShippingRuleTest extends WebTestCase
         return $config[0];
     }
 
-    /**
-     * @return string
-     */
     private function getMethodIdentifier(): string
     {
         /** @var IntegrationIdentifierGeneratorInterface $methodIdGenerator */

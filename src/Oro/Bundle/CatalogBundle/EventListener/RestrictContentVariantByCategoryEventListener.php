@@ -18,17 +18,11 @@ class RestrictContentVariantByCategoryEventListener
      */
     private $requestStack;
 
-    /**
-     * @param RequestStack $requestStack
-     */
     public function __construct(RequestStack $requestStack)
     {
         $this->requestStack = $requestStack;
     }
 
-    /**
-     * @param RestrictContentVariantByEntityEvent $event
-     */
     public function applyRestriction(RestrictContentVariantByEntityEvent $event): void
     {
         $entity = $event->getEntity();

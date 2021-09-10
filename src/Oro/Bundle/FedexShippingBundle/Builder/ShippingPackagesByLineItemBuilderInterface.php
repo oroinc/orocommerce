@@ -8,16 +8,8 @@ use Oro\Bundle\ShippingBundle\Model\ShippingPackageOptionsInterface;
 
 interface ShippingPackagesByLineItemBuilderInterface
 {
-    /**
-     * @param FedexPackageSettingsInterface $settings
-     */
     public function init(FedexPackageSettingsInterface $settings);
 
-    /**
-     * @param ShippingLineItemInterface $lineItem
-     *
-     * @return bool
-     */
     public function addLineItem(ShippingLineItemInterface $lineItem): bool;
 
     /**

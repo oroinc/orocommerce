@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Behat\Context;
 
-use Behat\Symfony2Extension\Context\KernelAwareContext;
-use Behat\Symfony2Extension\Context\KernelDictionary;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
@@ -15,9 +13,8 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 use Oro\Bundle\TestFrameworkBundle\Behat\Fixtures\FixtureLoaderAwareInterface;
 use Oro\Bundle\TestFrameworkBundle\Behat\Fixtures\FixtureLoaderDictionary;
 
-class FeatureContext extends OroFeatureContext implements KernelAwareContext, FixtureLoaderAwareInterface
+class FeatureContext extends OroFeatureContext implements FixtureLoaderAwareInterface
 {
-    use KernelDictionary;
     use FixtureLoaderDictionary;
 
     /**
@@ -45,7 +42,7 @@ class FeatureContext extends OroFeatureContext implements KernelAwareContext, Fi
      */
     private function getMetadata()
     {
-        $manager = $this->getContainer()->get('doctrine')->getManagerForClass(Order::class);
+        $manager = $this->getAppContainer()->get('doctrine')->getManagerForClass(Order::class);
 
         return $manager->getClassMetadata(Order::class);
     }
@@ -60,7 +57,7 @@ class FeatureContext extends OroFeatureContext implements KernelAwareContext, Fi
     public function thereAnOrderCreatedAt($orderIdentifier, $createdAt)
     {
         /** @var EntityManager $em */
-        $em = $this->getContainer()
+        $em = $this->getAppContainer()
             ->get('oro_entity.doctrine_helper')->getEntityManager(Order::class);
 
         $order = $em->getRepository(Order::class)
@@ -89,11 +86,11 @@ class FeatureContext extends OroFeatureContext implements KernelAwareContext, Fi
     public function thereEnabledFeature($feature)
     {
         /** @var FeatureConfigurationManager $featureConfigManager */
-        $featureConfigManager = $this->getContainer()->get('oro_featuretoggle.configuration.manager');
+        $featureConfigManager = $this->getAppContainer()->get('oro_featuretoggle.configuration.manager');
         $toggleConfigOption = $featureConfigManager->get($feature, ConfigVoter::TOGGLE_KEY);
 
         /* @var ConfigManager $configManager */
-        $configManager = $this->getContainer()->get('oro_config.global');
+        $configManager = $this->getAppContainer()->get('oro_config.global');
         $configManager->set($toggleConfigOption, true);
         $configManager->flush();
     }

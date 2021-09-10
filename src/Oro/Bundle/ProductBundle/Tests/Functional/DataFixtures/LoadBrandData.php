@@ -86,10 +86,6 @@ class LoadBrandData extends LoadProductData implements DependentFixtureInterface
         $this->getConfigManager()->flush();
     }
 
-    /**
-     * @param array $item
-     * @param Brand $brand
-     */
     private function addAdvancedValue(array $item, Brand $brand)
     {
         if (!empty($item['names'])) {

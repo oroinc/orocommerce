@@ -31,14 +31,14 @@ define(function(require) {
         $dependedEl: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function ConfigHideFieldsComponent(options) {
             ConfigHideFieldsComponent.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
@@ -56,7 +56,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function() {
             if (this.disposed) {

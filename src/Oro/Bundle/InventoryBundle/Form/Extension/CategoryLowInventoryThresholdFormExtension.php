@@ -45,9 +45,6 @@ class CategoryLowInventoryThresholdFormExtension extends AbstractFallbackCategor
         );
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function onPreSubmitData(FormEvent $event)
     {
         $data = $event->getData();

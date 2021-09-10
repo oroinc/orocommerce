@@ -20,10 +20,6 @@ class ProductImageImportExportConfigurationProvider implements ImportExportConfi
     /** @var FileManager */
     private $fileManager;
 
-    /**
-     * @param TranslatorInterface $translator
-     * @param FileManager         $fileManager
-     */
     public function __construct(TranslatorInterface $translator, FileManager $fileManager)
     {
         $this->translator = $translator;

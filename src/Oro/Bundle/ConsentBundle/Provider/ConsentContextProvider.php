@@ -27,10 +27,6 @@ class ConsentContextProvider implements ConsentContextProviderInterface
      */
     private $websiteManager;
 
-    /**
-     * @param ScopeManager $scopeManager
-     * @param WebsiteManager $websiteManager
-     */
     public function __construct(
         ScopeManager $scopeManager,
         WebsiteManager $websiteManager

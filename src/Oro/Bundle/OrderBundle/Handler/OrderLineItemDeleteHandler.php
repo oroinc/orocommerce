@@ -14,9 +14,6 @@ class OrderLineItemDeleteHandler extends AbstractEntityDeleteHandler
     /** @var TotalHelper */
     private $totalHelper;
 
-    /**
-     * @param TotalHelper $totalHelper
-     */
     public function __construct(TotalHelper $totalHelper)
     {
         $this->totalHelper = $totalHelper;

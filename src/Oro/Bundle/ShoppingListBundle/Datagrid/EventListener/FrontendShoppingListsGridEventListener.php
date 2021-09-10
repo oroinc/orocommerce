@@ -23,11 +23,6 @@ class FrontendShoppingListsGridEventListener
     /** @var UserCurrencyManager */
     private $userCurrencyManager;
 
-    /**
-     * @param CurrentShoppingListManager $currentShoppingListManager
-     * @param ShoppingListTotalManager $shoppingListTotalManager
-     * @param UserCurrencyManager $userCurrencyManager
-     */
     public function __construct(
         CurrentShoppingListManager $currentShoppingListManager,
         ShoppingListTotalManager $shoppingListTotalManager,
@@ -38,9 +33,6 @@ class FrontendShoppingListsGridEventListener
         $this->userCurrencyManager = $userCurrencyManager;
     }
 
-    /**
-     * @param BuildBefore $event
-     */
     public function onBuildBefore(BuildBefore $event): void
     {
         $params = $event->getDatagrid()->getParameters();

@@ -42,8 +42,6 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
 
     /**
      * @dataProvider checkCalculatedCategoriesDataProvider
-     * @param array $visibleCategories
-     * @param array $invisibleCategories
      */
     public function testCheckCalculatedCategories(array $visibleCategories, array $invisibleCategories)
     {
@@ -368,10 +366,6 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
         return $categoryTitles;
     }
 
-    /**
-     * @param array $visibleCategories
-     * @param array $invisibleCategories
-     */
     protected function assertTreeCategories(array $visibleCategories, array $invisibleCategories)
     {
         $treeCategories = $this->getActualCategories();

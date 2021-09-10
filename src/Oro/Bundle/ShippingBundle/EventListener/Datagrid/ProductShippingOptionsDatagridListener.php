@@ -23,9 +23,6 @@ class ProductShippingOptionsDatagridListener
     /** @var string */
     protected $productShippingOptionsClass;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     */
     public function __construct(DoctrineHelper $doctrineHelper)
     {
         $this->doctrineHelper = $doctrineHelper;
@@ -39,9 +36,6 @@ class ProductShippingOptionsDatagridListener
         $this->productShippingOptionsClass = $productShippingOptionsClass;
     }
 
-    /**
-     * @param BuildBefore $event
-     */
     public function onBuildBefore(BuildBefore $event)
     {
         $config = $event->getConfig();
@@ -56,9 +50,6 @@ class ProductShippingOptionsDatagridListener
         $this->addConfigElement($config, '[columns]', $column, static::SHIPPING_OPTIONS_COLUMN);
     }
 
-    /**
-     * @param OrmResultAfter $event
-     */
     public function onResultAfter(OrmResultAfter $event)
     {
         /** @var ResultRecord[] $records */

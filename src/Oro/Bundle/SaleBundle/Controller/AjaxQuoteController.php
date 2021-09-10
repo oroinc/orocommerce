@@ -126,9 +126,6 @@ class AjaxQuoteController extends AbstractController
     }
 
     /**
-     * @param CustomerUser $customerUser
-     * @param Customer $customer
-     *
      * @throws BadRequestHttpException
      */
     protected function validateRelation(CustomerUser $customerUser, Customer $customer)
@@ -157,9 +154,6 @@ class AjaxQuoteController extends AbstractController
         return QuoteType::class;
     }
 
-    /**
-     * @return QuoteRequestHandler
-     */
     protected function getQuoteRequestHandler(): QuoteRequestHandler
     {
         return $this->get(QuoteRequestHandler::class);

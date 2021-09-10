@@ -18,9 +18,6 @@ class CheckoutErrorHandler
     /** @var FlashBagInterface */
     protected $flashBag;
 
-    /**
-     * @param FlashBagInterface $flashBag
-     */
     public function __construct(FlashBagInterface $flashBag)
     {
         $this->flashBag = $flashBag;
@@ -54,8 +51,6 @@ class CheckoutErrorHandler
 
     /**
      * Add flash warning based on passed errors
-     *
-     * @param FormErrorIterator $errorIterator
      */
     public function addFlashWorkflowStateWarning(FormErrorIterator $errorIterator)
     {
@@ -75,9 +70,6 @@ class CheckoutErrorHandler
 
     /**
      * Returns workflow-related errors from FromErrorIterator.
-     *
-     * @param FormErrorIterator $errorIterator
-     * @return array
      */
     public function getWorkflowErrors(FormErrorIterator $errorIterator): array
     {

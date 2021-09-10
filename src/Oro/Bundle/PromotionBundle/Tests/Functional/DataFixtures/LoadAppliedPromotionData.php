@@ -60,9 +60,6 @@ class LoadAppliedPromotionData extends AbstractFixture implements DependentFixtu
         ];
     }
 
-    /**
-     * @param ObjectManager $manager
-     */
     public function load(ObjectManager $manager)
     {
         foreach (static::$appliedDiscounts as $reference => $appliedDiscountData) {
@@ -97,10 +94,6 @@ class LoadAppliedPromotionData extends AbstractFixture implements DependentFixtu
         $manager->flush();
     }
 
-    /**
-     * @param AppliedPromotion $appliedPromotion
-     * @param array $data
-     */
     private function addAppliedCoupon(AppliedPromotion $appliedPromotion, array $data)
     {
         if (!empty($data['coupon_code'])) {

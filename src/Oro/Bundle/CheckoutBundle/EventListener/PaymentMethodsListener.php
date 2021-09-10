@@ -36,13 +36,6 @@ class PaymentMethodsListener extends AbstractMethodsListener
      */
     private $orderAddressSecurityProvider;
 
-    /**
-     * @param OrderAddressProvider $addressProvider
-     * @param OrderAddressSecurityProvider $orderAddressSecurityProvider
-     * @param OrderAddressManager $orderAddressManager
-     * @param MethodsConfigsRulesByContextProviderInterface $paymentProvider
-     * @param CheckoutPaymentContextProvider $checkoutPaymentContextProvider
-     */
     public function __construct(
         OrderAddressProvider $addressProvider,
         OrderAddressSecurityProvider $orderAddressSecurityProvider,

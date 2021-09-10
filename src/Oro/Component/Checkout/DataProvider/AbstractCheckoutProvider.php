@@ -22,7 +22,6 @@ abstract class AbstractCheckoutProvider implements CheckoutDataProviderInterface
         return $this->data[$cacheKey];
     }
 
-
     /**
      * @param object|array $entity
      * @return string

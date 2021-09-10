@@ -26,11 +26,6 @@ class PaymentTermProvider implements PaymentTermProviderInterface
     /** @var PaymentTermAssociationProvider */
     private $paymentTermAssociationProvider;
 
-    /**
-     * @param TokenStorageInterface $tokenStorage
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param PaymentTermAssociationProvider $paymentTermAssociationProvider
-     */
     public function __construct(
         TokenStorageInterface $tokenStorage,
         EventDispatcherInterface $eventDispatcher,

@@ -40,17 +40,11 @@ class ProductPriceEntityListenerTest extends WebTestCase
         $this->enableMessageBuffering();
     }
 
-    /**
-     * @return PriceManager
-     */
     private function getPriceManager(): PriceManager
     {
         return $this->getContainer()->get('oro_pricing.manager.price_manager');
     }
 
-    /**
-     * @return ShardManager
-     */
     private function getShardManager(): ShardManager
     {
         return $this->getContainer()->get('oro_pricing.shard_manager');

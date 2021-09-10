@@ -102,10 +102,6 @@ class RelatedProductRepository extends EntityRepository implements AbstractAssig
         return $products;
     }
 
-    /**
-     * @param bool $bidirectional
-     * @return QueryBuilder
-     */
     public function getUniqueProductDataQueryBuilder(bool $bidirectional): QueryBuilder
     {
         $qb = $this->getEntityManager()

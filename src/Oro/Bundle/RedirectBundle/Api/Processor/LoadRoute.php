@@ -16,9 +16,6 @@ class LoadRoute implements ProcessorInterface
     /** @var RouteRepository */
     private $routeRepository;
 
-    /**
-     * @param RouteRepository $slugRepository
-     */
     public function __construct(RouteRepository $slugRepository)
     {
         $this->routeRepository = $slugRepository;

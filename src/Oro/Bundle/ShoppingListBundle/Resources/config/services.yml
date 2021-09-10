@@ -50,6 +50,7 @@ services:
             - "@doctrine"
             - "@oro_security.acl_helper"
             - "@oro_security.token_accessor"
+            - "@oro_config.manager"
 
     Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager:
         alias: 'oro_shopping_list.manager.current_shopping_list'
@@ -284,16 +285,24 @@ services:
             - { name: layout.data_provider, alias: shopping_list_limit_provider }
 
     oro_shopping_list.repository.shopping_list:
-        class: 'Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository'
+        alias: Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository
+
+    Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository:
         parent: oro_entity.abstract_repository
         arguments:
             - 'Oro\Bundle\ShoppingListBundle\Entity\ShoppingList'
+        tags:
+            - { name: doctrine.repository_service }
 
     oro_shopping_list.repository.line_item:
-        class: 'Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository'
+        alias: Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository
+
+    Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository:
         parent: oro_entity.abstract_repository
         arguments:
             - 'Oro\Bundle\ShoppingListBundle\Entity\LineItem'
+        tags:
+            - { name: doctrine.repository_service }
 
     oro_shopping_list.data_provider.shopping_list_line_items:
         class: 'Oro\Bundle\ShoppingListBundle\DataProvider\ShoppingListLineItemsDataProvider'
@@ -425,42 +434,28 @@ services:
     oro_shopping_list.voter.shopping_list_voter:
         class: Oro\Bundle\ShoppingListBundle\Voter\ShoppingListVoter
         arguments:
-            - "@oro_entity.doctrine_helper"
-        public: false
+            - '@oro_entity.doctrine_helper'
+            - '@Psr\Container\ContainerInterface'
         calls:
-            - [setWebsiteManager, ['@oro_website.manager']]
             - [setClassName, ['Oro\Bundle\ShoppingListBundle\Entity\ShoppingList']]
         tags:
             - { name: security.voter }
+            - { name: container.service_subscriber, id: oro_website.manager }
 
     oro_shopping_list.manager.shopping_list_limit:
         class: 'Oro\Bundle\ShoppingListBundle\Manager\ShoppingListLimitManager'
         public: true
         arguments:
             - '@oro_config.manager'
-            - '@oro_security.token_accessor'
+            - '@security.token_storage'
             - '@oro_entity.doctrine_helper'
             - '@oro_website.manager'
 
     Oro\Bundle\ShoppingListBundle\Manager\ShoppingListLimitManager:
         alias: 'oro_shopping_list.manager.shopping_list_limit'
 
-    oro_shopping_list.twig.shopping_list_limit_extension:
-        class: 'Oro\Bundle\ShoppingListBundle\Twig\ShoppingListLimitExtension'
-        arguments:
-            - "@oro_platform.twig.service_locator"
-        tags:
-            - { name: twig.extension }
-
-    oro_shopping_list.twig.shopping_list_widget_extension:
-        class: Oro\Bundle\ShoppingListBundle\Twig\ShoppingListWidgetExtension
-        arguments:
-            - "@oro_platform.twig.service_locator"
-        tags:
-            - { name: twig.extension }
-
-    oro_shopping_list.twig.shopping_list_url_extension:
-        class: Oro\Bundle\ShoppingListBundle\Twig\ShoppingListUrlExtension
+    oro_shopping_list.twig.shopping_list_extension:
+        class: Oro\Bundle\ShoppingListBundle\Twig\ShoppingListExtension
         arguments:
             - "@oro_platform.twig.service_locator"
         tags:

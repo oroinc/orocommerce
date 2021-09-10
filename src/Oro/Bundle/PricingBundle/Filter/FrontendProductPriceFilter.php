@@ -17,11 +17,6 @@ class FrontendProductPriceFilter extends SearchNumberRangeFilter
     /** @var UnitLabelFormatterInterface */
     private $formatter;
 
-    /**
-     * @param FormFactoryInterface        $factory
-     * @param FilterUtility               $util
-     * @param UnitLabelFormatterInterface $formatter
-     */
     public function __construct(
         FormFactoryInterface $factory,
         FilterUtility $util,
@@ -30,7 +25,6 @@ class FrontendProductPriceFilter extends SearchNumberRangeFilter
         parent::__construct($factory, $util);
         $this->formatter = $formatter;
     }
-
 
     /**
      * {@inheritdoc}

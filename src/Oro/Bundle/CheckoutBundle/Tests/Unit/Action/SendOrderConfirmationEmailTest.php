@@ -64,9 +64,6 @@ class SendOrderConfirmationEmailTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider executeIgnoresExceptionsDataProvider
-     *
-     * @param \Throwable $exception
-     * @param string $logMessage
      */
     public function testExecuteIgnoresExceptions(\Throwable $exception, string $logMessage): void
     {
@@ -92,9 +89,6 @@ class SendOrderConfirmationEmailTest extends \PHPUnit\Framework\TestCase
         $this->action->execute([]);
     }
 
-    /**
-     * @return array
-     */
     public function executeIgnoresExceptionsDataProvider(): array
     {
         return [

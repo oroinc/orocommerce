@@ -4,6 +4,7 @@ namespace Oro\Bundle\CheckoutBundle\Mapper;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\EntityBundle\Helper\FieldHelper;
+use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
@@ -25,11 +26,6 @@ class OrderMapper implements MapperInterface
     /** @var PaymentTermAssociationProvider */
     private $paymentTermAssociationProvider;
 
-    /**
-     * @param FieldHelper $entityFieldHelper
-     * @param PropertyAccessorInterface $propertyAccessor
-     * @param PaymentTermAssociationProvider $paymentTermAssociationProvider
-     */
     public function __construct(
         FieldHelper $entityFieldHelper,
         PropertyAccessorInterface $propertyAccessor,
@@ -79,7 +75,7 @@ class OrderMapper implements MapperInterface
         $result = [];
         $mapFields = $this->getMapFields();
         foreach ($mapFields as $field) {
-            if (false !== strpos($field, ':')) {// Bypass relations in form ClassName::fieldName.
+            if (str_contains($field, ':')) {// Bypass relations in form ClassName::fieldName.
                 continue;
             }
 
@@ -93,11 +89,6 @@ class OrderMapper implements MapperInterface
         return $result;
     }
 
-    /**
-     * @param Order $entity
-     * @param array $data
-     * @param array $skipped
-     */
     protected function assignData(Order $entity, array $data, array $skipped)
     {
         foreach ($data as $name => $value) {
@@ -116,7 +107,11 @@ class OrderMapper implements MapperInterface
      */
     protected function getMapFields()
     {
-        $fields = $this->entityFieldHelper->getFields(Order::class, true, false, false, true, true, false);
+        $fields = $this->entityFieldHelper->getEntityFields(
+            Order::class,
+            EntityFieldProvider::OPTION_WITH_RELATIONS | EntityFieldProvider::OPTION_WITH_UNIDIRECTIONAL
+            | EntityFieldProvider::OPTION_APPLY_EXCLUSIONS
+        );
 
         $withoutIds = array_filter(
             $fields,
@@ -131,10 +126,6 @@ class OrderMapper implements MapperInterface
         return array_merge($fieldsNames, $staticFields);
     }
 
-    /**
-     * @param Order $order
-     * @param PaymentTerm $paymentTerm
-     */
     protected function assignPaymentTerm(Order $order, PaymentTerm $paymentTerm)
     {
         $this->paymentTermAssociationProvider->setPaymentTerm($order, $paymentTerm);

@@ -11,9 +11,6 @@ class CurrencyProvider
      */
     protected $userCurrencyManager;
 
-    /**
-     * @param UserCurrencyManager $userCurrencyManager
-     */
     public function __construct(UserCurrencyManager $userCurrencyManager)
     {
         $this->userCurrencyManager = $userCurrencyManager;

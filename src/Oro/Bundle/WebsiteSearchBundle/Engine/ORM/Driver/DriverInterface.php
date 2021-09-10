@@ -40,9 +40,6 @@ interface DriverInterface extends DatabaseDriverInterface, DBALPersisterInterfac
      */
     public function getAggregatedData(Query $query);
 
-    /**
-     * @param EntityManagerInterface $entityManager
-     */
     public function initialize(EntityManagerInterface $entityManager);
 
     /**

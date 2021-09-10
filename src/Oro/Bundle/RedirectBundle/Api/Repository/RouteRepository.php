@@ -35,11 +35,6 @@ class RouteRepository
     /** @var SlugRedirectMatcher */
     private $redirectMatcher;
 
-    /**
-     * @param FrontendHelper      $frontendHelper
-     * @param UrlMatcherInterface $urlMatcher
-     * @param SlugRedirectMatcher $redirectMatcher
-     */
     public function __construct(
         FrontendHelper $frontendHelper,
         UrlMatcherInterface $urlMatcher,
@@ -52,15 +47,11 @@ class RouteRepository
 
     /**
      * Gets a route by its relative path.
-     *
-     * @param string $id
-     *
-     * @return Route|null
      */
     public function findRoute(string $id): ?Route
     {
         $url = str_replace(':', '/', $id);
-        if (strpos($url, '/') !== 0) {
+        if (!str_starts_with($url, '/')) {
             return null;
         }
 
@@ -90,11 +81,6 @@ class RouteRepository
     }
 
     /**
-     * @param string $pathInfo
-     * @param string $baseUrl
-     *
-     * @return array
-     *
      * @throws RoutingException if the given path cannot be matched
      */
     private function matchUrl(string $pathInfo, string $baseUrl): array
@@ -109,7 +95,7 @@ class RouteRepository
                 unset($params[$name]);
             }
             foreach (array_keys($attributes) as $name) {
-                if (strpos($name, '_') === 0) {
+                if (str_starts_with($name, '_')) {
                     unset($params[$name]);
                 }
             }
@@ -119,12 +105,6 @@ class RouteRepository
         return $attributes;
     }
 
-    /**
-     * @param string $pathInfo
-     * @param string $baseUrl
-     *
-     * @return array|null
-     */
     private function matchRedirect(string $pathInfo, string $baseUrl): ?array
     {
         $attributes = null;
@@ -145,13 +125,6 @@ class RouteRepository
         return $attributes;
     }
 
-    /**
-     * @param string $id
-     * @param string $url
-     * @param array  $attributes
-     *
-     * @return Route
-     */
     private function createRoute(string $id, string $url, array $attributes): Route
     {
         $route = new Route(

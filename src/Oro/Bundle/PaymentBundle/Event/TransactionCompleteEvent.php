@@ -12,9 +12,6 @@ class TransactionCompleteEvent extends Event
     /** @var PaymentTransaction */
     protected $transaction;
 
-    /**
-     * @param PaymentTransaction $transaction
-     */
     public function __construct(PaymentTransaction $transaction)
     {
         $this->transaction = $transaction;

@@ -20,7 +20,7 @@ class UPSTransport extends Transport
     const PICKUP_TYPE_ONE_TIME = '06';
     const PICKUP_TYPE_ON_CALL_AIR = '07';
     const PICKUP_TYPE_LETTER_CENTER = '19';
-    
+
     const UNIT_OF_WEIGHT_KGS = 'KGS';
     const UNIT_OF_WEIGHT_LBS = 'LBS';
 

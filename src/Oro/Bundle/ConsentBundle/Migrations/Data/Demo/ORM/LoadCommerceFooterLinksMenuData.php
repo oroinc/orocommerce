@@ -51,11 +51,6 @@ class LoadCommerceFooterLinksMenuData extends AbstractFixture implements Contain
         $manager->flush();
     }
 
-    /**
-     * @param array $data
-     *
-     * @return MenuUpdate
-     */
     private function createMenuUpdate(array $data): MenuUpdate
     {
         $menuUpdate = new MenuUpdate();
@@ -72,9 +67,6 @@ class LoadCommerceFooterLinksMenuData extends AbstractFixture implements Contain
         return $menuUpdate;
     }
 
-    /**
-     * @return Scope
-     */
     private function getScope(): Scope
     {
         /** @var ScopeManager $scopeManager */

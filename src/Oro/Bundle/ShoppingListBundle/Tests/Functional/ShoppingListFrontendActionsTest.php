@@ -52,7 +52,6 @@ class ShoppingListFrontendActionsTest extends FrontendActionTestCase
         }
     }
 
-
     public function testCreateRequestForCustomerUserThatHaveNoAccessToShoppingList()
     {
         /** @var ShoppingList $shoppingList */

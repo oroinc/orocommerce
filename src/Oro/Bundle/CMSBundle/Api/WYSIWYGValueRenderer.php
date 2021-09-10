@@ -15,20 +15,11 @@ class WYSIWYGValueRenderer
     /** @var Environment */
     private $twig;
 
-    /**
-     * @param Environment $twig
-     */
     public function __construct(Environment $twig)
     {
         $this->twig = $twig;
     }
 
-    /**
-     * @param string|null $value
-     * @param string|null $style
-     *
-     * @return string|null
-     */
     public function render(?string $value, ?string $style): ?string
     {
         if ($value) {
@@ -49,11 +40,6 @@ class WYSIWYGValueRenderer
         return $result;
     }
 
-    /**
-     * @param string $value
-     *
-     * @return string
-     */
     private function renderTwigValue(string $value): string
     {
         return $this->twig->render(self::TWIG_TEMPLATE, ['value' => $value]);

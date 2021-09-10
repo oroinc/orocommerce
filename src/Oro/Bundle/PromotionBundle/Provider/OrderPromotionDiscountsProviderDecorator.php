@@ -20,9 +20,6 @@ class OrderPromotionDiscountsProviderDecorator implements PromotionDiscountsProv
      */
     private $baseDiscountsProvider;
 
-    /**
-     * @param PromotionDiscountsProviderInterface $baseDiscountsProvider
-     */
     public function __construct(PromotionDiscountsProviderInterface $baseDiscountsProvider)
     {
         $this->baseDiscountsProvider = $baseDiscountsProvider;

@@ -7,6 +7,9 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+/**
+ * Decides is form should be submitted on errors.
+ */
 class RFPActionDecider
 {
     /**
@@ -19,14 +22,10 @@ class RFPActionDecider
      */
     protected $request;
 
-    /**
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param RequestStack $requestStack
-     */
     public function __construct(EventDispatcherInterface $eventDispatcher, RequestStack $requestStack)
     {
         $this->eventDispatcher = $eventDispatcher;
-        $this->request = $requestStack->getMasterRequest();
+        $this->request = $requestStack->getMainRequest();
     }
 
     /**

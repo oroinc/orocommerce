@@ -21,11 +21,6 @@ abstract class AbstractRuleEntityListener
     /** @var ManagerRegistry */
     protected $registry;
 
-    /**
-     * @param PriceRuleLexemeTriggerHandler $priceRuleLexemeTriggerHandler
-     * @param FieldsProviderInterface $fieldsProvider
-     * @param ManagerRegistry $registry
-     */
     public function __construct(
         PriceRuleLexemeTriggerHandler $priceRuleLexemeTriggerHandler,
         FieldsProviderInterface $fieldsProvider,

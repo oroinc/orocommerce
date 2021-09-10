@@ -3,31 +3,31 @@ oro_behat_extension:
     OroCheckoutBundle:
       contexts:
         - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
-        - OroFormBundle::FeatureContext
-        - OroConfigBundle::FeatureContext
-        - OroFormBundle::FormContext
-        - OroDataGridBundle::GridContext
-        - OroApplicationBundle::CommerceMainContext
-        - OroShippingBundle::SingleCurrencyContext
-        - OroShippingBundle::FeatureContext
-        - OroShoppingListBundle::ShoppingListContext
-        - OroShoppingListBundle::FeatureContext
-        - OroCustomerBundle::CustomerUserContext
-        - OroCustomerBundle::FrontendGridContext
-        - OroCheckoutBundle::FeatureContext
-        - OroProductBundle::QuickOrderFormContext
-        - OroOrderBundle::OrderContext
-        - OroCustomerBundle::ACLContext
-        - OroProductBundle::FeatureContext
-        - OroPricingBundle::FeatureContext
-        - OroLocaleBundle::LocalizationContext
-        - OroFrontendLocalizationBundle::LocalizationSwitcherContext
-        - OroUIBundle::DatepickerContext
-        - OroEmailBundle::EmailContext
-        - OroPromotionBundle::PromotionContext
-        - OroWorkflowBundle::FeatureContext
-        - OroNavigationBundle::TabContext
-        - OroSaleBundle::FeatureContext
+        - Oro\Bundle\FormBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
+        - Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext
+        - Oro\Bundle\ApplicationBundle\Tests\Behat\Context\CommerceMainContext
+        - Oro\Bundle\ShippingBundle\Tests\Behat\Context\SingleCurrencyContext
+        - Oro\Bundle\ShippingBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\ShoppingListBundle\Tests\Behat\Context\ShoppingListContext
+        - Oro\Bundle\ShoppingListBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\CustomerBundle\Tests\Behat\Context\CustomerUserContext
+        - Oro\Bundle\CustomerBundle\Tests\Behat\Context\FrontendGridContext
+        - Oro\Bundle\CheckoutBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\ProductBundle\Tests\Behat\Context\QuickOrderFormContext
+        - Oro\Bundle\OrderBundle\Tests\Behat\Context\OrderContext
+        - Oro\Bundle\CustomerBundle\Tests\Behat\Context\ACLContext
+        - Oro\Bundle\ProductBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\PricingBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\LocaleBundle\Tests\Behat\Context\LocalizationContext
+        - Oro\Bundle\FrontendLocalizationBundle\Tests\Behat\Context\LocalizationSwitcherContext
+        - Oro\Bundle\UIBundle\Tests\Behat\Context\DatepickerContext
+        - Oro\Bundle\EmailBundle\Tests\Behat\Context\EmailContext
+        - Oro\Bundle\PromotionBundle\Tests\Behat\Context\PromotionContext
+        - Oro\Bundle\WorkflowBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\NavigationBundle\Tests\Behat\Context\TabContext
+        - Oro\Bundle\SaleBundle\Tests\Behat\Context\FeatureContext
       paths:
         - '@OroCheckoutBundle/Tests/Behat/Features'
 
@@ -117,7 +117,7 @@ oro_behat_extension:
         class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridToolbarActions
 
     OpenOrdersGridFiltersState:
-        selector: 'div[data-page-component-name="frontend-checkouts-grid"] div.filters-state'
+        selector: 'div[data-page-component-name="frontend-checkouts-grid"] .filters-state'
 
     OpenOrdersGridFilterItem:
       selector: 'div.filter-items-hint span'
@@ -140,7 +140,7 @@ oro_behat_extension:
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridToolbarActions
 
     PastOrdersGridFiltersState:
-      selector: 'div[data-page-component-name="frontend-orders-grid"] div.filters-state'
+      selector: 'div[data-page-component-name="frontend-orders-grid"] .filters-state'
 
     BackendOrderLineItemsGrid:
       selector: 'div[data-page-component-name="order-line-items-grid"]'
@@ -302,7 +302,7 @@ oro_behat_extension:
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilters
 
     Customers Address Book GridFiltersState:
-      selector: 'div[data-page-component-name="frontend-customer-customer-address-grid"] div.filters-state'
+      selector: 'div[data-page-component-name="frontend-customer-customer-address-grid"] .filters-state'
 
     Customers Address Book GridToolbarActions:
       selector: 'div[data-page-component-name="frontend-customer-customer-address-grid"] div.toolbar div.actions-panel'
@@ -328,7 +328,7 @@ oro_behat_extension:
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilters
 
     Customer Users Address Book GridFiltersState:
-      selector: 'div[data-page-component-name="frontend-customer-customer-user-address-grid"] div.filters-state'
+      selector: 'div[data-page-component-name="frontend-customer-customer-user-address-grid"] .filters-state'
 
     Customer Users Address Book GridToolbarActions:
       selector: 'div[data-page-component-name="frontend-customer-customer-user-address-grid"] div.toolbar div.actions-panel'

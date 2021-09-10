@@ -12,7 +12,7 @@ use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 class LoadProductUnitWithTranslations extends AbstractFixture implements ContainerAwareInterface
 {
     use ContainerAwareTrait;
-    
+
     /**
      * {@inheritDoc}
      */

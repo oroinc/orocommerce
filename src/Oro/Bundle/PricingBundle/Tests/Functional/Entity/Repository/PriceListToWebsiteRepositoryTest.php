@@ -163,9 +163,6 @@ class PriceListToWebsiteRepositoryTest extends WebTestCase
         $this->assertEquals($expected, $this->getRepository()->hasAssignedPriceLists($website));
     }
 
-    /**
-     * @return array
-     */
     public function assignedPriceListsDataProvider(): array
     {
         return [

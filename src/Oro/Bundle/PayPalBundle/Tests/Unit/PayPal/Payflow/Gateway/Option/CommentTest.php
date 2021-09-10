@@ -24,7 +24,7 @@ class CommentTest extends AbstractOptionTest
                 [
                     'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
                     'The option "COMMENT1" with value 123 is expected to be of type "string", but is of ' .
-                    'type "integer".',
+                    'type "int".',
                 ],
             ],
             'invalid comment2' => [
@@ -33,7 +33,7 @@ class CommentTest extends AbstractOptionTest
                 [
                     'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
                     'The option "COMMENT2" with value 321 is expected to be of type "string", but is of ' .
-                    'type "integer".',
+                    'type "int".',
                 ],
             ],
             'valid' => [['COMMENT1' => '123', 'COMMENT2' => '321'], ['COMMENT1' => '123', 'COMMENT2' => '321']],

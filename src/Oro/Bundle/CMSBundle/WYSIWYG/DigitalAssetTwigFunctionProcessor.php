@@ -22,9 +22,6 @@ class DigitalAssetTwigFunctionProcessor implements WYSIWYGTwigFunctionProcessorI
     /** @var Uuid */
     private $constraint;
 
-    /**
-     * @param AclHelper $aclHelper
-     */
     public function __construct(AclHelper $aclHelper, ValidatorInterface $validator)
     {
         $this->aclHelper = $aclHelper;

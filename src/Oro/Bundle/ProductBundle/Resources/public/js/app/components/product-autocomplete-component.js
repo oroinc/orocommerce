@@ -26,14 +26,14 @@ define(function(require) {
         autocompleteErrorTemplate: autocompleteErrorTemplate,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function ProductAutocompleteComponent(options) {
             ProductAutocompleteComponent.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             const thisOptions = {
@@ -160,6 +160,10 @@ define(function(require) {
                     this.$el.trigger({type: 'productNotFound.autocomplete', item: {sku: val}});
                 }
                 this.updateProduct();
+            } else if (this.hasChanged(val)) {
+                // Clear state when value changed and empty
+                this.previousValue = val;
+                this.resetProduct();
             }
         },
 

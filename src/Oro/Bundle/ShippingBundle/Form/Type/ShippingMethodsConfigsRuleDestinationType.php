@@ -27,9 +27,6 @@ class ShippingMethodsConfigsRuleDestinationType extends AbstractType
      */
     protected $subscriber;
 
-    /**
-     * @param AddressCountryAndRegionSubscriber $subscriber
-     */
     public function __construct(AddressCountryAndRegionSubscriber $subscriber)
     {
         $this->subscriber = $subscriber;
@@ -63,7 +60,6 @@ class ShippingMethodsConfigsRuleDestinationType extends AbstractType
     }
 
     /**
-     * @param OptionsResolver $resolver
      * @throws AccessException
      */
     public function configureOptions(OptionsResolver $resolver)

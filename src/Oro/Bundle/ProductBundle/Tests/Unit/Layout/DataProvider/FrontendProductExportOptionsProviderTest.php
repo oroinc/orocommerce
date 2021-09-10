@@ -126,10 +126,6 @@ class FrontendProductExportOptionsProviderTest extends \PHPUnit\Framework\TestCa
 
     /**
      * @dataProvider getDefaultGridExportRequestOptionsWithoutCategoryIdDataProvider
-     * @param string|null $searchString
-     * @param int|null $contentVariantId
-     * @param bool $overrideVariantConfiguration
-     * @param string|null $expected
      */
     public function testGetDefaultGridExportRequestOptionsWithoutCategoryId(
         ?string $searchString,
@@ -193,8 +189,6 @@ class FrontendProductExportOptionsProviderTest extends \PHPUnit\Framework\TestCa
 
     /**
      * @dataProvider testGetDefaultGridExportRequestOptionsWithSearchOnlyDataProvider
-     * @param string|null $searchString
-     * @param string|null $expected
      */
     public function testGetDefaultGridExportRequestOptionsWithSearchOnly(
         ?string $searchString,

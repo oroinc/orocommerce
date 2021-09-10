@@ -164,7 +164,6 @@ class CategoryControllerTest extends WebTestCase
      * @depends testCreateCategory
      *
      * @param int $id
-     *
      */
     public function testLocalizedValuesCategory($id)
     {
@@ -175,7 +174,6 @@ class CategoryControllerTest extends WebTestCase
      * @depends testCreateSubCategory
      *
      * @param int $id
-     *
      */
     public function testLocalizedValuesSubCategory($id)
     {
@@ -265,8 +263,6 @@ class CategoryControllerTest extends WebTestCase
             $newUnitPrecision
         );
     }
-
-
 
     public function testGetChangedUrlsWhenNoSlugChanged()
     {

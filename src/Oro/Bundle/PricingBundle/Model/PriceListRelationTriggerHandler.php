@@ -28,10 +28,6 @@ class PriceListRelationTriggerHandler implements PriceListRelationTriggerHandler
      */
     private $flatHandler;
 
-    /**
-     * @param PriceListRelationTriggerHandlerInterface $cplHandler
-     * @param PriceListRelationTriggerHandlerInterface $flatHandler
-     */
     public function __construct(
         PriceListRelationTriggerHandlerInterface $cplHandler,
         PriceListRelationTriggerHandlerInterface $flatHandler
@@ -96,9 +92,6 @@ class PriceListRelationTriggerHandler implements PriceListRelationTriggerHandler
         $this->getHandler()->handlePriceListStatusChange($priceList);
     }
 
-    /**
-     * @return PriceListRelationTriggerHandlerInterface
-     */
     private function getHandler(): PriceListRelationTriggerHandlerInterface
     {
         if ($this->isFeaturesEnabled()) {

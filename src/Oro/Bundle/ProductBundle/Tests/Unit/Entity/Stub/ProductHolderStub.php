@@ -10,9 +10,6 @@ class ProductHolderStub implements ProductHolderInterface
     /** @var ProductEntity */
     private $product;
 
-    /**
-     * @param ProductEntity $product
-     */
     public function __construct(ProductEntity $product)
     {
         $this->product = $product;

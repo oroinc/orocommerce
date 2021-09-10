@@ -29,10 +29,6 @@ class ProductVisibilityProvider
      */
     private $doctrineHelper;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param ConfigManager $configManager
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         ConfigManager $configManager
@@ -112,10 +108,6 @@ class ProductVisibilityProvider
         }
     }
 
-    /**
-     * @param array $dataRow
-     * @return string
-     */
     private function getDataRowHash(array $dataRow): string
     {
         return $dataRow['productId'] . ':' . $dataRow['customerId'];

@@ -151,10 +151,6 @@ class PriceListToWebsiteRepository extends EntityRepository
             ->execute();
     }
 
-    /**
-     * @param Website $website
-     * @return bool
-     */
     public function hasAssignedPriceLists(Website $website): bool
     {
         $qb = $this->createQueryBuilder('p');

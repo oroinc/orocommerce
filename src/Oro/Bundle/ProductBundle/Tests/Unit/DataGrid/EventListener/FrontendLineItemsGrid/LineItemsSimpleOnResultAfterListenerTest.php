@@ -166,8 +166,6 @@ class LineItemsSimpleOnResultAfterListenerTest extends \PHPUnit\Framework\TestCa
 
     /**
      * @dataProvider onResultDataProvider
-     *
-     * @param bool $isConfigurable
      */
     public function testOnResultAfter(bool $isConfigurable): void
     {
@@ -212,9 +210,6 @@ class LineItemsSimpleOnResultAfterListenerTest extends \PHPUnit\Framework\TestCa
         $this->listener->onResultAfter($event);
     }
 
-    /**
-     * @return array
-     */
     public function onResultDataProvider(): array
     {
         return [
@@ -223,10 +218,6 @@ class LineItemsSimpleOnResultAfterListenerTest extends \PHPUnit\Framework\TestCa
         ];
     }
 
-    /**
-     * @param array $parameters
-     * @return Datagrid
-     */
     private function getDatagrid(array $parameters = []): Datagrid
     {
         return new Datagrid(

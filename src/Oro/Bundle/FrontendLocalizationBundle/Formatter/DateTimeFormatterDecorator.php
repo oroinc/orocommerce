@@ -22,10 +22,6 @@ class DateTimeFormatterDecorator implements DateTimeFormatterInterface
      */
     private $frontendHelper;
 
-    /**
-     * @param DateTimeFormatterInterface $dateTimeFormatter
-     * @param FrontendHelper $frontendHelper
-     */
     public function __construct(
         DateTimeFormatterInterface $dateTimeFormatter,
         FrontendHelper $frontendHelper
@@ -44,7 +40,7 @@ class DateTimeFormatterDecorator implements DateTimeFormatterInterface
         // For store front replace 2 digit year with 4 digit to correctly support dates before 1970
         if ($dateType === self::DEFAULT_FRONTEND_DATE_TYPE
             && $this->frontendHelper->isFrontendRequest()
-            && strpos($pattern, 'yyyy') === false
+            && !str_contains($pattern, 'yyyy')
         ) {
             $pattern = str_replace('yy', 'yyyy', $pattern);
             $this->dateTimeFormatter->updatePattern($dateType, $timeType, $locale, $pattern);

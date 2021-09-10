@@ -30,10 +30,6 @@ abstract class AbstractCouponMassActionHandler implements MassActionHandlerInter
      */
     protected $aclHelper;
 
-    /**
-     * @param DoctrineHelper $helper
-     * @param AclHelper $aclHelper
-     */
     public function __construct(
         DoctrineHelper $helper,
         AclHelper $aclHelper
@@ -84,10 +80,6 @@ abstract class AbstractCouponMassActionHandler implements MassActionHandlerInter
         return $this->getResponse($iteration);
     }
 
-    /**
-     * @param Coupon $coupon
-     * @param MassActionHandlerArgs $args
-     */
     abstract protected function execute(Coupon $coupon, MassActionHandlerArgs $args);
 
     /**

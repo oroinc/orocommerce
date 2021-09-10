@@ -19,10 +19,6 @@ class FirstOffersQuoteToShippingLineItemConverter implements QuoteToShippingLine
      */
     private $shippingLineItemBuilderFactory;
 
-    /**
-     * @param ShippingLineItemCollectionFactoryInterface $shippingLineItemCollectionFactory
-     * @param ShippingLineItemBuilderFactoryInterface $shippingLineItemBuilderFactory
-     */
     public function __construct(
         ShippingLineItemCollectionFactoryInterface $shippingLineItemCollectionFactory,
         ShippingLineItemBuilderFactoryInterface $shippingLineItemBuilderFactory

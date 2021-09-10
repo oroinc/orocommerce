@@ -15,9 +15,6 @@ class ScopeWebCatalogProvider implements ScopeCriteriaProviderInterface
     /** @var WebCatalogProvider */
     private $webCatalogProvider;
 
-    /**
-     * @param WebCatalogProvider $webCatalogProvider
-     */
     public function __construct(WebCatalogProvider $webCatalogProvider)
     {
         $this->webCatalogProvider = $webCatalogProvider;

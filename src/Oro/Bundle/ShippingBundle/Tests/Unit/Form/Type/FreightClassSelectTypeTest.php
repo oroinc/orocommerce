@@ -36,9 +36,6 @@ class FreightClassSelectTypeTest extends AbstractShippingOptionSelectTypeTest
     }
 
     /**
-     * @param array $inputData
-     * @param array $expectedData
-     *
      * @dataProvider finishViewProvider
      */
     public function testFinishView(array $inputData, array $expectedData)

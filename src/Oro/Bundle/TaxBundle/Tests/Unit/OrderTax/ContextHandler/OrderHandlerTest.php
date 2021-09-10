@@ -73,7 +73,6 @@ class OrderHandlerTest extends \PHPUnit\Framework\TestCase
             ->with(TaxCodeInterface::TYPE_ACCOUNT, $customer)
             ->willReturn($customerTaxCode);
 
-
         $this->taxCodeProvider
             ->expects($this->once())
             ->method('preloadTaxCodes')

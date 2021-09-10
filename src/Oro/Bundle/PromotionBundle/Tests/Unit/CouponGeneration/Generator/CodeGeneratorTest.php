@@ -19,9 +19,6 @@ class CodeGeneratorTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider generateOneDataProvider
-     *
-     * @param CodeGenerationOptions $options
-     * @param string $expectedPattern
      */
     public function testGenerateOne(CodeGenerationOptions $options, string $expectedPattern)
     {

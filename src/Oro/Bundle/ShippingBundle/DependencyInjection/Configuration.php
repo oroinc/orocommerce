@@ -26,7 +26,7 @@ class Configuration implements ConfigurationInterface
                 'freight_classes' => ['type' => 'array', 'value' => ['parcel']]
             ]
         );
-        
+
         return $treeBuilder;
     }
 }

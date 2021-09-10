@@ -24,10 +24,6 @@ class OrderDiscountContextConverter implements DiscountContextConverterInterface
      */
     protected $lineItemsSubtotalProvider;
 
-    /**
-     * @param OrderLineItemsToDiscountLineItemsConverter $lineItemsConverter
-     * @param SubtotalProviderInterface $lineItemsSubtotalProvider
-     */
     public function __construct(
         OrderLineItemsToDiscountLineItemsConverter $lineItemsConverter,
         SubtotalProviderInterface $lineItemsSubtotalProvider

@@ -55,12 +55,6 @@ class FrontendProductPriceDatagridListener implements FeatureToggleableInterface
      */
     private $priceColumnNameSorter;
 
-    /**
-     * @param ProductPriceScopeCriteriaRequestHandler $scopeCriteriaRequestHandler
-     * @param UserCurrencyManager $currencyManager
-     * @param ProductPriceProvider $productPriceProvider
-     * @param TranslatorInterface $translator
-     */
     public function __construct(
         ProductPriceScopeCriteriaRequestHandler $scopeCriteriaRequestHandler,
         UserCurrencyManager $currencyManager,
@@ -89,9 +83,6 @@ class FrontendProductPriceDatagridListener implements FeatureToggleableInterface
         $this->priceColumnNameSorter = $columnName;
     }
 
-    /**
-     * @param SearchResultAfter $event
-     */
     public function onResultAfter(SearchResultAfter $event)
     {
         if (!$this->isFeaturesEnabled()) {

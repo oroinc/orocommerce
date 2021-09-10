@@ -14,9 +14,6 @@ class TotalAmountDiffMapper implements CheckoutStateDiffMapperInterface
      */
     protected $totalProcessorProvider;
 
-    /**
-     * @param TotalProcessorProvider $totalProcessorProvider
-     */
     public function __construct(TotalProcessorProvider $totalProcessorProvider)
     {
         $this->totalProcessorProvider = $totalProcessorProvider;

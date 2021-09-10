@@ -17,12 +17,10 @@ use Twig\TwigFunction;
  */
 class CategoryImageExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    /** @var ContainerInterface */
-    private $container;
+    private ContainerInterface $container;
+    private ?AttachmentManager $attachmentManager = null;
+    private ?ImagePlaceholderProviderInterface $imagePlaceholderProvider = null;
 
-    /**
-     * @param ContainerInterface $container
-     */
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
@@ -39,39 +37,18 @@ class CategoryImageExtension extends AbstractExtension implements ServiceSubscri
         ];
     }
 
-    /**
-     * @param File|null $file
-     * @param string $filter
-     * @return string
-     */
     public function getCategoryFilteredImage(?File $file, string $filter): string
     {
         if ($file) {
-            $attachmentManager = $this->container->get('oro_attachment.manager');
-
-            return $attachmentManager->getFilteredImageUrl($file, $filter);
+            return $this->getAttachmentManager()->getFilteredImageUrl($file, $filter);
         }
 
         return $this->getCategoryImagePlaceholder($filter);
     }
 
-    /**
-     * @param string $filter
-     * @return string
-     */
     public function getCategoryImagePlaceholder(string $filter): string
     {
-        $imagePlaceholderProvider = $this->container->get('oro_catalog.provider.category_image_placeholder');
-
-        return $imagePlaceholderProvider->getPath($filter);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return 'oro_catalog_category_image_extension';
+        return $this->getImagePlaceholderProvider()->getPath($filter);
     }
 
     /**
@@ -80,8 +57,26 @@ class CategoryImageExtension extends AbstractExtension implements ServiceSubscri
     public static function getSubscribedServices()
     {
         return [
-            'oro_attachment.manager' => AttachmentManager::class,
+            AttachmentManager::class,
             'oro_catalog.provider.category_image_placeholder' => ImagePlaceholderProviderInterface::class,
         ];
+    }
+
+    private function getAttachmentManager(): AttachmentManager
+    {
+        if (null === $this->attachmentManager) {
+            $this->attachmentManager = $this->container->get(AttachmentManager::class);
+        }
+
+        return $this->attachmentManager;
+    }
+
+    private function getImagePlaceholderProvider(): ImagePlaceholderProviderInterface
+    {
+        if (null === $this->imagePlaceholderProvider) {
+            $this->imagePlaceholderProvider = $this->container->get('oro_catalog.provider.category_image_placeholder');
+        }
+
+        return $this->imagePlaceholderProvider;
     }
 }

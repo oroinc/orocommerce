@@ -30,10 +30,6 @@ class CombinedPriceListRelationHelper implements CombinedPriceListRelationHelper
      */
     private $configManager;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param ConfigManager $configManager
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         ConfigManager $configManager
@@ -42,10 +38,6 @@ class CombinedPriceListRelationHelper implements CombinedPriceListRelationHelper
         $this->configManager = $configManager;
     }
 
-    /**
-     * @param CombinedPriceList $cpl
-     * @return bool
-     */
     public function isFullChainCpl(CombinedPriceList $cpl): bool
     {
         if ($this->isConfigFullChainCpl($cpl)) {
@@ -67,10 +59,6 @@ class CombinedPriceListRelationHelper implements CombinedPriceListRelationHelper
         return false;
     }
 
-    /**
-     * @param CombinedPriceList $cpl
-     * @return bool
-     */
     private function isConfigFullChainCpl(CombinedPriceList $cpl): bool
     {
         $configCplId = $this->configManager->get('oro_pricing.full_combined_price_list');

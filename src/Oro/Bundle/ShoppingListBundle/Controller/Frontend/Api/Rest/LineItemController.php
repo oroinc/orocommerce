@@ -2,10 +2,6 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend\Api\Rest;
 
-use FOS\RestBundle\Controller\Annotations\Delete;
-use FOS\RestBundle\Controller\Annotations\NamePrefix;
-use FOS\RestBundle\Controller\Annotations\Put;
-use FOS\RestBundle\Routing\ClassResourceInterface;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
@@ -17,13 +13,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Controller for shopping list line item REST API requests.
- * @NamePrefix("oro_api_shopping_list_frontend_")
  */
-class LineItemController extends RestController implements ClassResourceInterface
+class LineItemController extends RestController
 {
     /**
-     * @Delete(requirements={"id"="\d+", "onlyCurrent"="[0|1]"}, defaults={"onlyCurrent"=0})
-     *
      * @ApiDoc(
      *      description="Delete Line Item",
      *      resource=true
@@ -64,19 +57,11 @@ class LineItemController extends RestController implements ClassResourceInterfac
     }
 
     /**
-     * @Delete(requirements={"productId"="\d+"})
-     *
      * @ApiDoc(
      *      description="Delete Line Item",
      *      resource=true
      * )
      * @AclAncestor("oro_shopping_list_frontend_update")
-     *
-     * @param int $shoppingListId
-     * @param int $productId
-     * @param string $unitCode
-     *
-     * @return Response
      */
     public function deleteConfigurableAction(int $shoppingListId, int $productId, string $unitCode): Response
     {
@@ -128,8 +113,6 @@ class LineItemController extends RestController implements ClassResourceInterfac
     }
 
     /**
-     * @Put(requirements={"id"="\d+"})
-     *
      * @ApiDoc(
      *      description="Update Line Item",
      *      resource=true

@@ -255,9 +255,6 @@ TERM;
         $this->categoryConfigPath = $path;
     }
 
-    /**
-     * @param VisibilityScopeProvider $visibilityScopeProvider
-     */
     public function setVisibilityScopeProvider(VisibilityScopeProvider $visibilityScopeProvider)
     {
         $this->visibilityScopeProvider = $visibilityScopeProvider;

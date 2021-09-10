@@ -2,25 +2,17 @@
 
 namespace Oro\Bundle\RedirectBundle\Controller\Api\Rest;
 
-use FOS\RestBundle\Controller\Annotations\Get;
-use FOS\RestBundle\Controller\Annotations\NamePrefix;
-use FOS\RestBundle\Controller\Annotations\RouteResource;
-use FOS\RestBundle\Controller\FOSRestController;
+use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * @RouteResource("slug")
- * @NamePrefix("oro_api_")
+ * REST API controller to get a slug.
  */
-class RedirectController extends FOSRestController
+class RedirectController extends AbstractFOSRestController
 {
     /**
      * Get slug for string
-     *
-     * @Get("/redirect/slugify/{string}", requirements={
-     *     "string": ".+"
-     * }))
      *
      * @ApiDoc(
      *      description="Get slug for string",

@@ -4,8 +4,6 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Behat\Context;
 
 use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Element\NodeElement;
-use Behat\Symfony2Extension\Context\KernelAwareContext;
-use Behat\Symfony2Extension\Context\KernelDictionary;
 use Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStep;
 use Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutSuccessStep;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
@@ -18,9 +16,9 @@ use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
-class FeatureContext extends OroFeatureContext implements OroPageObjectAware, KernelAwareContext
+class FeatureContext extends OroFeatureContext implements OroPageObjectAware
 {
-    use PageObjectDictionary, KernelDictionary;
+    use PageObjectDictionary;
 
     /** @var array */
     protected static $formMapping = [
@@ -60,9 +58,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $this->pressNextButton($button);
     }
 
-    /**
-     * @param string $button
-     */
     private function pressNextButton(string $button): void
     {
         $page = $this->getSession()->getPage();
@@ -175,7 +170,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $this->pressNextButton($button);
     }
 
-
     /**
      * @When /^on the "(?P<step>[\w\s]+)" checkout step I press (?P<button>[\w\s]+)$/
      *
@@ -222,9 +216,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         }
     }
 
-    /**
-     * @param string $oldTitle
-     */
     protected function assertNotTitle(string $oldTitle): void
     {
         $spinExecutionResult = $this->spin(function () use ($oldTitle) {

@@ -270,7 +270,6 @@ class QuoteCheckoutShippingMethodsProviderChainElementTest extends \PHPUnit\Fram
         $this->assertEquals($price, $actualPrice);
     }
 
-
     public function testGetPriceWithSuccessor()
     {
         $price = Price::create(12, 'USD');

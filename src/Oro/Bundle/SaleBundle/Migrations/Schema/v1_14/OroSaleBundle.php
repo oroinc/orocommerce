@@ -38,9 +38,6 @@ class OroSaleBundle implements Migration, ExtendExtensionAwareInterface
         $this->addQuoteInternalStatusField($schema);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addQuoteCustomerStatusField(Schema $schema)
     {
         $customerStatusOptions = new OroOptions();
@@ -58,9 +55,6 @@ class OroSaleBundle implements Migration, ExtendExtensionAwareInterface
         $customerStatusEnumTable->addOption(OroOptions::KEY, $customerStatusOptions);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addQuoteInternalStatusField(Schema $schema)
     {
         $internalStatusOptions = new OroOptions();
@@ -78,10 +72,6 @@ class OroSaleBundle implements Migration, ExtendExtensionAwareInterface
         $internalStatusEnumTable->addOption(OroOptions::KEY, $internalStatusOptions);
     }
 
-    /**
-     * @param Schema $schema
-     * @param QueryBag $queries
-     */
     protected function dropLockedColumn(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('oro_sale_quote');

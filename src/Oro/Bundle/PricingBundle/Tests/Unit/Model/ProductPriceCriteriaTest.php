@@ -73,7 +73,6 @@ class ProductPriceCriteriaTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider constructorExceptionDataProvider
      *
-     *
      * @param mixed $quantity
      * @param string $currency
      */

@@ -89,9 +89,6 @@ class WebsiteCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
         return !empty($this->builtList[$websiteId]);
     }
 
-    /**
-     * @param Website|null $website
-     */
     protected function setBuiltForWebsite(Website $website = null)
     {
         $websiteId = 0;
@@ -127,10 +124,6 @@ class WebsiteCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
         return $this->getPriceListToEntityRepository()->getWebsiteIteratorWithDefaultFallback();
     }
 
-    /**
-     * @param Website $website
-     * @return bool
-     */
     protected function hasAssignedPriceLists(Website $website): bool
     {
         /** @var PriceListToWebsiteRepository $repo */

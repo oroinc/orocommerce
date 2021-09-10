@@ -140,7 +140,6 @@ class TaxRule implements DatesAwareInterface
     protected $createdAt;
 
     /**
-     *
      * @ORM\Column(name="updated_at", type="datetime")
      * @ConfigField(
      *      defaultValues={
@@ -268,7 +267,6 @@ class TaxRule implements DatesAwareInterface
     {
         return $this->taxJurisdiction;
     }
-
 
     /**
      * @return \DateTime

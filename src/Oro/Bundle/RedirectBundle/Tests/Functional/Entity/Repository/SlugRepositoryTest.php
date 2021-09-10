@@ -395,9 +395,6 @@ class SlugRepositoryTest extends WebTestCase
 
     /**
      * @dataProvider isSlugForRouteExistsDataProvider
-     *
-     * @param string $routeName
-     * @param bool   $expectedResult
      */
     public function testIsSlugForRouteExists(string $routeName, bool $expectedResult): void
     {
@@ -406,9 +403,6 @@ class SlugRepositoryTest extends WebTestCase
         static::assertEquals($expectedResult, $actualResult);
     }
 
-    /**
-     * @return array
-     */
     public function isSlugForRouteExistsDataProvider(): array
     {
         return [

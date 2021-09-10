@@ -35,10 +35,6 @@ class LoadProductVariants extends AbstractFixture implements DependentFixtureInt
         $manager->flush();
     }
 
-    /**
-     * @param Product       $configurableProducts
-     * @param array         $linkedProducts
-     */
     private function attachProductVariantsToConfigurableProduct(Product $configurableProducts, array $linkedProducts)
     {
         foreach ($linkedProducts as $linkedProduct) {

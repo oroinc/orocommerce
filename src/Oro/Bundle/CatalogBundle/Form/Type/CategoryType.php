@@ -42,9 +42,6 @@ class CategoryType extends AbstractType
      */
     protected $urlGenerator;
 
-    /**
-     * @param UrlGeneratorInterface $urlGenerator
-     */
     public function __construct(UrlGeneratorInterface $urlGenerator)
     {
         $this->urlGenerator = $urlGenerator;
@@ -116,7 +113,8 @@ class CategoryType extends AbstractType
                     'field' => ['wysiwyg', 'wysiwyg_style', 'wysiwyg_properties'],
                     'entry_type' => WYSIWYGValueType::class,
                     'entry_options' => [
-                        'entity_class' => CategoryLongDescription::class
+                        'entity_class' => CategoryLongDescription::class,
+                        'error_mapping' => ['wysiwygStyle' => 'wysiwyg_style'],
                     ],
                     'use_tabs' => true,
                 ]
@@ -177,9 +175,6 @@ class CategoryType extends AbstractType
             ->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetDataListener']);
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function preSetDataListener(FormEvent $event)
     {
         $category = $event->getData();

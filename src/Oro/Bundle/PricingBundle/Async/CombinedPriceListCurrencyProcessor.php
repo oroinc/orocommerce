@@ -30,11 +30,6 @@ class CombinedPriceListCurrencyProcessor implements MessageProcessorInterface, T
     /** @var CombinedPriceListProvider */
     private $combinedPriceListProvider;
 
-    /**
-     * @param ManagerRegistry           $doctrine
-     * @param LoggerInterface           $logger
-     * @param CombinedPriceListProvider $combinedPriceListProvider
-     */
     public function __construct(
         ManagerRegistry $doctrine,
         LoggerInterface $logger,

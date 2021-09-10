@@ -25,9 +25,6 @@ class ProductVariantLinksValidator extends ConstraintValidator
      */
     private $propertyAccessor;
 
-    /**
-     * @param PropertyAccessor $propertyAccessor
-     */
     public function __construct(PropertyAccessor $propertyAccessor)
     {
         $this->propertyAccessor = $propertyAccessor;
@@ -56,9 +53,6 @@ class ProductVariantLinksValidator extends ConstraintValidator
 
     /**
      * Add violation if variant fields are empty but variant links are present
-     *
-     * @param Product $value
-     * @param ProductVariantLinks $constraint
      */
     private function validateLinksWithoutFields(Product $value, ProductVariantLinks $constraint): void
     {

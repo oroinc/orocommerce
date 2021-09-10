@@ -22,14 +22,9 @@ use Twig\TwigFunction;
  */
 class OrderExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    const NAME = 'oro_order_order';
-
     /** @var ContainerInterface */
     protected $container;
 
-    /**
-     * @param ContainerInterface $container
-     */
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
@@ -84,14 +79,6 @@ class OrderExtension extends AbstractExtension implements ServiceSubscriberInter
                 ['needs_environment' => true, 'is_safe' => ['html']]
             ),
         ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return static::NAME;
     }
 
     /**

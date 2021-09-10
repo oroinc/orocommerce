@@ -17,9 +17,6 @@ class ComputeShoppingListDefault implements ProcessorInterface
     /** @var EntityIdResolverInterface */
     private $defaultShoppingListEntityIdResolver;
 
-    /**
-     * @param EntityIdResolverInterface $defaultShoppingListEntityIdResolver
-     */
     public function __construct(EntityIdResolverInterface $defaultShoppingListEntityIdResolver)
     {
         $this->defaultShoppingListEntityIdResolver = $defaultShoppingListEntityIdResolver;

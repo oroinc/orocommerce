@@ -23,11 +23,6 @@ class DefaultShoppingListFactory
     /** @var GuestShoppingListManager */
     private $guestShoppingListManager;
 
-    /**
-     * @param TokenStorageInterface    $tokenStorage
-     * @param ShoppingListManager      $shoppingListManager
-     * @param GuestShoppingListManager $guestShoppingListManager
-     */
     public function __construct(
         TokenStorageInterface $tokenStorage,
         ShoppingListManager $shoppingListManager,
@@ -38,9 +33,6 @@ class DefaultShoppingListFactory
         $this->guestShoppingListManager = $guestShoppingListManager;
     }
 
-    /**
-     * @return ShoppingList|null
-     */
     public function create(): ?ShoppingList
     {
         $token = $this->tokenStorage->getToken();

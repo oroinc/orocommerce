@@ -44,12 +44,6 @@ abstract class AbstractCustomerFormViewListener implements FeatureToggleableInte
      */
     protected $updateTemplate = '@OroPricing/Customer/price_list_update.html.twig';
 
-    /**
-     * @param RequestStack $requestStack
-     * @param TranslatorInterface $translator
-     * @param DoctrineHelper $doctrineHelper
-     * @param WebsiteProviderInterface $websiteProvider
-     */
     public function __construct(
         RequestStack $requestStack,
         TranslatorInterface $translator,
@@ -62,9 +56,6 @@ abstract class AbstractCustomerFormViewListener implements FeatureToggleableInte
         $this->websiteProvider = $websiteProvider;
     }
 
-    /**
-     * @param BeforeListRenderEvent $event
-     */
     public function onEntityEdit(BeforeListRenderEvent $event)
     {
         if (!$this->isFeaturesEnabled()) {

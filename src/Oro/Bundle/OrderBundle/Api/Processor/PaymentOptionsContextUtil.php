@@ -17,11 +17,6 @@ class PaymentOptionsContextUtil
 
     /**
      * Gets all payment options.
-     *
-     * @param ParameterBagInterface $sharedData
-     * @param Order                 $order
-     *
-     * @return ActionData|null
      */
     public static function all(ParameterBagInterface $sharedData, Order $order): ?ActionData
     {
@@ -36,12 +31,6 @@ class PaymentOptionsContextUtil
 
     /**
      * Checks if the given payment option is set.
-     *
-     * @param ParameterBagInterface $sharedData
-     * @param Order                 $order
-     * @param string                $name
-     *
-     * @return bool
      */
     public static function has(ParameterBagInterface $sharedData, Order $order, string $name): bool
     {

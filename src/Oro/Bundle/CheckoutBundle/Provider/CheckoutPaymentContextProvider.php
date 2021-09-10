@@ -17,19 +17,11 @@ class CheckoutPaymentContextProvider
     /** @var CheckoutPaymentContextFactory */
     private $paymentContextFactory;
 
-    /**
-     * @param CheckoutPaymentContextFactory $paymentContextFactory
-     */
     public function __construct(CheckoutPaymentContextFactory $paymentContextFactory)
     {
         $this->paymentContextFactory = $paymentContextFactory;
     }
 
-    /**
-     * @param Checkout $entity
-     *
-     * @return PaymentContextInterface|null
-     */
     public function getContext(Checkout $entity): ?PaymentContextInterface
     {
         return $this->getMemoryCacheProvider()->get(

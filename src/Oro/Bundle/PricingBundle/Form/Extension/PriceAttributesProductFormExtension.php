@@ -34,10 +34,6 @@ class PriceAttributesProductFormExtension extends AbstractTypeExtension
      */
     private $aclHelper;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param AclHelper $aclHelper
-     */
     public function __construct(ManagerRegistry $registry, AclHelper $aclHelper)
     {
         $this->registry = $registry;
@@ -68,9 +64,6 @@ class PriceAttributesProductFormExtension extends AbstractTypeExtension
         $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'onPostSubmit']);
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function onPreSetData(FormEvent $event)
     {
         /** @var Product $product */
@@ -105,9 +98,6 @@ class PriceAttributesProductFormExtension extends AbstractTypeExtension
         $event->getForm()->get(self::PRODUCT_PRICE_ATTRIBUTES_PRICES)->setData($formData);
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function onPostSubmit(FormEvent $event)
     {
         $data = $event->getForm()->get(self::PRODUCT_PRICE_ATTRIBUTES_PRICES)->getData();

@@ -30,10 +30,6 @@ class PriceAttributePriceListType extends AbstractType
         $this->dataClass = $dataClass;
     }
 
-    /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         /** @var PriceAttributePriceList $priceAttributePriceList */
@@ -71,9 +67,6 @@ class PriceAttributePriceListType extends AbstractType
             );
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(

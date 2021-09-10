@@ -38,11 +38,6 @@ class StrategyRegistry
         return $strategies;
     }
 
-    /**
-     * @param string $alias
-     *
-     * @return StrategyInterface|null
-     */
     public function getStrategyByAlias(string $alias): ?StrategyInterface
     {
         if (!$this->strategyContainer->has($alias)) {

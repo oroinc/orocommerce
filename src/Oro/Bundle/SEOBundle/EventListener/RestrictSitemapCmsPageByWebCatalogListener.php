@@ -32,10 +32,6 @@ class RestrictSitemapCmsPageByWebCatalogListener
      */
     private $scopeCriteriaProvider;
 
-    /**
-     * @param ConfigManager $configManager
-     * @param WebCatalogScopeCriteriaProvider $scopeCriteriaProvider
-     */
     public function __construct(
         ConfigManager $configManager,
         WebCatalogScopeCriteriaProvider $scopeCriteriaProvider
@@ -44,9 +40,6 @@ class RestrictSitemapCmsPageByWebCatalogListener
         $this->scopeCriteriaProvider = $scopeCriteriaProvider;
     }
 
-    /**
-     * @param RestrictSitemapEntitiesEvent $event
-     */
     public function restrictQueryBuilder(RestrictSitemapEntitiesEvent $event)
     {
         if ($this->isEnabled($event->getWebsite())) {
@@ -54,9 +47,6 @@ class RestrictSitemapCmsPageByWebCatalogListener
         }
     }
 
-    /**
-     * @param RestrictSitemapEntitiesEvent $event
-     */
     private function restrict(RestrictSitemapEntitiesEvent $event)
     {
         $em = $event->getQueryBuilder()->getEntityManager();

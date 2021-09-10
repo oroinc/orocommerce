@@ -35,7 +35,7 @@ class PriceShardOutputResultModifier extends AbstractOutputResultModifier
     {
         $shardManager = $this->getShardManager();
         foreach ($shardManager->getShardMap() as $entityClass => $baseTableName) {
-            if (strpos($sql, ' ' . $baseTableName . ' ') === false) {
+            if (!str_contains($sql, ' ' . $baseTableName . ' ')) {
                 continue;
             }
             //find aliases

@@ -23,11 +23,6 @@ class QuoteEvent extends Event implements EntityDataAwareEventInterface
     /** @var array */
     protected $submittedData = [];
 
-    /**
-     * @param FormInterface $form
-     * @param Quote         $quote
-     * @param array|null    $submittedData
-     */
     public function __construct(FormInterface $form, Quote $quote, array $submittedData = null)
     {
         $this->form = $form;

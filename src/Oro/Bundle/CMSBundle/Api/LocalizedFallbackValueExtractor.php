@@ -23,11 +23,6 @@ class LocalizedFallbackValueExtractor implements LocalizedFallbackValueExtractor
     /** @var PropertyAccessorInterface */
     private $propertyAccessor;
 
-    /**
-     * @param LocalizedFallbackValueExtractorInterface $innerValueExtractor
-     * @param WYSIWYGValueRenderer                     $wysiwygValueRenderer
-     * @param PropertyAccessorInterface                $propertyAccessor
-     */
     public function __construct(
         LocalizedFallbackValueExtractorInterface $innerValueExtractor,
         WYSIWYGValueRenderer $wysiwygValueRenderer,

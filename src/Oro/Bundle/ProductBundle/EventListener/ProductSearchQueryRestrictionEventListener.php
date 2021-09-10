@@ -47,9 +47,6 @@ class ProductSearchQueryRestrictionEventListener
         $this->frontendSystemConfigurationPath = $frontendSystemConfigurationPath;
     }
 
-    /**
-     * @param ProductSearchQueryRestrictionEvent $event
-     */
     public function onSearchQuery(ProductSearchQueryRestrictionEvent $event)
     {
         if (!$this->isConditionsAcceptable()) {
@@ -67,10 +64,10 @@ class ProductSearchQueryRestrictionEventListener
     public function setFrontendSystemConfigurationPath($frontendSystemConfigurationPath)
     {
         $this->frontendSystemConfigurationPath = $frontendSystemConfigurationPath;
-        
+
         return $this;
     }
-    
+
     /**
      * @return bool
      */

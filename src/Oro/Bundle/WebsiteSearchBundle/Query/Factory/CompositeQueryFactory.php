@@ -12,10 +12,6 @@ class CompositeQueryFactory implements QueryFactoryInterface
     /** @var QueryFactoryInterface */
     protected $websiteQueryFactory;
 
-    /**
-     * @param QueryFactoryInterface $backendQueryFactory
-     * @param QueryFactoryInterface $websiteQueryFactory
-     */
     public function __construct(
         QueryFactoryInterface $backendQueryFactory,
         QueryFactoryInterface $websiteQueryFactory

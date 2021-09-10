@@ -58,9 +58,6 @@ class SearchEventListenerTest extends \PHPUnit\Framework\TestCase
         self::assertEquals($parameterBag->get(SearchProductHandler::SEARCH_KEY), $expected);
     }
 
-    /**
-     * @return array
-     */
     public function preBuildProvider(): array
     {
         return [
@@ -123,10 +120,6 @@ class SearchEventListenerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param array $searchText
-     * @param array $searchCriteria
-     * @param string $searchOperator
-     *
      * @dataProvider onBuildAfterProvider
      */
     public function testOnBuildAfter(array $searchText, array $searchCriteria, string $searchOperator): void
@@ -161,9 +154,6 @@ class SearchEventListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->onBuildAfter($event);
     }
 
-    /**
-     * @return array
-     */
     public function onBuildAfterProvider(): array
     {
         return [
@@ -224,9 +214,6 @@ class SearchEventListenerTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @return string
-     */
     private function getConfigPath(): string
     {
         return sprintf('[options][urlParams][%s]', self::KEY);

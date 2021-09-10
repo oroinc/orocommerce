@@ -12,10 +12,6 @@ class WebsiteSearchQuery extends AbstractSearchQuery
     /** @var EngineInterface */
     protected $engine;
 
-    /**
-     * @param EngineInterface $engine
-     * @param Query $query
-     */
     public function __construct(EngineInterface $engine, Query $query)
     {
         $this->engine = $engine;

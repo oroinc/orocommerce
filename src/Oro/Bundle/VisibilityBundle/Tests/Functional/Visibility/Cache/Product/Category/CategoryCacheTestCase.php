@@ -23,9 +23,6 @@ abstract class CategoryCacheTestCase extends WebTestCase
         $this->getContainer()->get('oro_visibility.visibility.cache.cache_builder')->buildCache();
     }
 
-    /**
-     * @param array $expectedData
-     */
     protected function assertProductVisibilityResolvedCorrect(array $expectedData)
     {
         $this->assertEquals($expectedData, $this->fetchVisibility());

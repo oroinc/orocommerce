@@ -118,7 +118,6 @@ class DiscountFactoryTest extends \PHPUnit\Framework\TestCase
             ->method('setPromotion')
             ->with($promotion);
 
-
         $this->discountFactory->create($configuration, $promotion);
     }
 

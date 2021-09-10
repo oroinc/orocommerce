@@ -29,11 +29,6 @@ class QuoteFormTemplateDataProvider implements FormTemplateDataProviderInterface
      */
     private $quoteAddressSecurityProvider;
 
-    /**
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param QuoteProductPriceProvider $quoteProductPriceProvider
-     * @param QuoteAddressSecurityProvider $quoteAddressSecurityProvider
-     */
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
         QuoteProductPriceProvider $quoteProductPriceProvider,

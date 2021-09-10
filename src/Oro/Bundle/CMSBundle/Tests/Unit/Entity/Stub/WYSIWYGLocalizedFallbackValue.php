@@ -34,9 +34,6 @@ class WYSIWYGLocalizedFallbackValue extends AbstractLocalizedFallbackValue
      */
     private $wysiwygProperties;
 
-    /**
-     * @return string|null
-     */
     public function getWysiwyg(): ?string
     {
         return $this->wysiwyg;
@@ -50,9 +47,6 @@ class WYSIWYGLocalizedFallbackValue extends AbstractLocalizedFallbackValue
         $this->wysiwyg = $wysiwyg;
     }
 
-    /**
-     * @return string|null
-     */
     public function getWysiwygStyle(): ?string
     {
         return $this->wysiwygStyle;
@@ -66,9 +60,6 @@ class WYSIWYGLocalizedFallbackValue extends AbstractLocalizedFallbackValue
         $this->wysiwygStyle = $wysiwygStyle;
     }
 
-    /**
-     * @return array|null
-     */
     public function getWysiwygProperties(): ?array
     {
         return $this->wysiwygProperties;

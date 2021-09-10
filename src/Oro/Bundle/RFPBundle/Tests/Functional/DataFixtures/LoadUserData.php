@@ -190,9 +190,6 @@ class LoadUserData extends AbstractLoadCustomerUserFixture
         parent::load($manager);
     }
 
-    /**
-     * @param ObjectManager $manager
-     */
     protected function loadUsers(ObjectManager $manager)
     {
         /* @var UserManager $userManager */

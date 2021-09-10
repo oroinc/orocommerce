@@ -24,20 +24,20 @@ services:
 
     oro_web_catalog.acl.voter.web_catalog:
         class: Oro\Bundle\WebCatalogBundle\Acl\Voter\WebCatalogVoter
-        public: false
         arguments:
             - '@oro_entity.doctrine_helper'
-            - '@oro_web_catalog.provider.web_catalog_usage_provider'
+            - '@Psr\Container\ContainerInterface'
         calls:
             - [setClassName, ['Oro\Bundle\WebCatalogBundle\Entity\WebCatalog']]
         tags:
             - { name: security.voter, priority: 10 }
+            - { name: container.service_subscriber, id: oro_web_catalog.provider.web_catalog_usage_provider }
 
     oro_web_catalog.content_variant_type.registry:
         class: 'Oro\Bundle\WebCatalogBundle\ContentVariantType\ContentVariantTypeRegistry'
         public: true
         arguments:
-            - [] # content variant types
+            - !tagged_iterator oro_web_catalog.content_variant_type
 
     Oro\Bundle\WebCatalogBundle\ContentVariantType\ContentVariantTypeRegistry:
         alias: 'oro_web_catalog.content_variant_type.registry'
@@ -51,7 +51,7 @@ services:
     oro_web_catalog.content_variant_provider:
         class: Oro\Bundle\WebCatalogBundle\Provider\ContentVariantProvider
         arguments:
-            - [] # content variant providers
+            - !tagged_iterator oro_web_catalog.content_variant_provider
         public: false
 
     oro_web_catalog.content_node_tree_handler:
@@ -246,6 +246,15 @@ services:
         class: Oro\Bundle\WebCatalogBundle\Form\Extension\PageVariantTypeExtension
         tags:
             - { name: form.type_extension, extended_type: Oro\Component\WebCatalog\Form\PageVariantType }
+
+    oro_web_catalog.form.extension.content_node_type:
+        class: Oro\Bundle\WebCatalogBundle\Form\Extension\ContentNodeTypeExtension
+        arguments:
+            - '@oro_web_catalog.content_variant_type.registry'
+            - '@oro_security.owner.metadata_provider.chain'
+            - '@oro_entity.doctrine_helper'
+        tags:
+            - { name: form.type_extension, extended_type: Oro\Bundle\WebCatalogBundle\Form\Type\ContentNodeType }
 
     oro_web_catalog.event_listener.website_search_index:
         class: 'Oro\Bundle\WebCatalogBundle\EventListener\WebCatalogEntityIndexerListener'
@@ -492,9 +501,8 @@ services:
 
     oro_web_catalog.provider.content_variant_slug_source_entity:
         class: Oro\Bundle\WebCatalogBundle\Provider\ContentVariantSlugSourceEntityProvider
-        public: false
         arguments:
-            - '@doctrine'
+            - '@oro_redirect.sluggable_entity_finder'
             - '@oro_website.manager'
         tags:
             - { name: oro_redirect.slug_source_entity_provider, priority: 100 }

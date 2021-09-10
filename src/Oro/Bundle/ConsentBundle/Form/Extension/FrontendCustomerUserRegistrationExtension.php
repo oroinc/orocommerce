@@ -19,10 +19,6 @@ class FrontendCustomerUserRegistrationExtension extends AbstractTypeExtension im
 {
     use FeatureCheckerHolderTrait;
 
-    /**
-     * @param FormBuilderInterface $builder
-     * @param array                $options
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         if (!$this->isFeaturesEnabled()) {

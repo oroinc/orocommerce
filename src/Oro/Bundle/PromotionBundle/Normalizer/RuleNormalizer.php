@@ -66,7 +66,7 @@ class RuleNormalizer implements NormalizerInterface
         ]);
 
         $resolver->setAllowedTypes('name', ['string']);
-        $resolver->setAllowedTypes('expression', ['string', 'NULL']);
+        $resolver->setAllowedTypes('expression', ['string', 'null']);
         $resolver->setAllowedTypes('sortOrder', ['integer']);
         $resolver->setAllowedTypes('isStopProcessing', ['boolean']);
 

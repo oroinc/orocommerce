@@ -24,8 +24,6 @@ class OroShoppingListBundle implements Migration
 
     /**
      * Create orob2b_shopping_list table
-     *
-     * @param Schema $schema
      */
     protected function createOrob2BShoppingListTable(Schema $schema)
     {
@@ -45,8 +43,6 @@ class OroShoppingListBundle implements Migration
 
     /**
      * Create orob2b_shopping_list_line_item table
-     *
-     * @param Schema $schema
      */
     protected function createOrob2BShoppingListLineItemTable(Schema $schema)
     {
@@ -68,8 +64,6 @@ class OroShoppingListBundle implements Migration
 
     /**
      * Add orob2b_shopping_list foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOrob2BShoppingListForeignKeys(Schema $schema)
     {
@@ -96,8 +90,6 @@ class OroShoppingListBundle implements Migration
 
     /**
      * Add orob2b_shopping_list_line_item foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOrob2BShoppingListLineItemForeignKeys(Schema $schema)
     {

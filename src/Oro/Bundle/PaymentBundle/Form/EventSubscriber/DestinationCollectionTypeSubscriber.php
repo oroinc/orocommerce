@@ -18,9 +18,6 @@ class DestinationCollectionTypeSubscriber implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function preSubmit(FormEvent $event)
     {
         $data = $event->getData();

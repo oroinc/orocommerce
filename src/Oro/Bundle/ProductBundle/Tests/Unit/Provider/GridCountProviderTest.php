@@ -79,7 +79,6 @@ class GridCountProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(0, $this->provider->getGridCount($gridName));
     }
 
-
     public function testGetCountWithCustomCountQuery()
     {
         $gridName = 'test';
@@ -153,9 +152,6 @@ class GridCountProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(42, $this->provider->getGridCount($gridName));
     }
 
-    /**
-     * @param \PHPUnit\Framework\MockObject\MockObject $dataSource
-     */
     private function assertDatasourceCalls(\PHPUnit\Framework\MockObject\MockObject $dataSource)
     {
         $parameters = $this->createMock(ParameterBag::class);

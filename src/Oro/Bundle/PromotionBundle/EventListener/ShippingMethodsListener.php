@@ -18,17 +18,11 @@ class ShippingMethodsListener
      */
     private $promotionExecutor;
 
-    /**
-     * @param PromotionExecutor $promotionExecutor
-     */
     public function __construct(PromotionExecutor $promotionExecutor)
     {
         $this->promotionExecutor = $promotionExecutor;
     }
 
-    /**
-     * @param ApplicableMethodsEvent $event
-     */
     public function modifyPrices(ApplicableMethodsEvent $event)
     {
         $methodCollection = $event->getMethodCollection();

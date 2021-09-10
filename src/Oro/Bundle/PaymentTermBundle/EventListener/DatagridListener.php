@@ -20,10 +20,6 @@ class DatagridListener
     /** @var PaymentTermProviderInterface */
     private $paymentTermProvider;
 
-    /**
-     * @param PaymentTermAssociationProvider $paymentTermAssociationProvider
-     * @param PaymentTermProviderInterface $paymentTermProvider
-     */
     public function __construct(
         PaymentTermAssociationProvider $paymentTermAssociationProvider,
         PaymentTermProviderInterface $paymentTermProvider
@@ -32,9 +28,6 @@ class DatagridListener
         $this->paymentTermProvider = $paymentTermProvider;
     }
 
-    /**
-     * @param BuildBefore $event
-     */
     public function onBuildBefore(BuildBefore $event)
     {
         $config = $event->getConfig();
@@ -58,9 +51,6 @@ class DatagridListener
         }
     }
 
-    /**
-     * @param OrmResultAfter $event
-     */
     public function onResultAfter(OrmResultAfter $event)
     {
         $config = $event->getDatagrid()->getConfig();

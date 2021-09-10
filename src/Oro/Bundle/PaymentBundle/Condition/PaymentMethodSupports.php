@@ -35,9 +35,6 @@ class PaymentMethodSupports extends AbstractCondition implements ContextAccessor
      */
     protected $actionName;
 
-    /**
-     * @param PaymentMethodProviderInterface $paymentMethodProvider
-     */
     public function __construct(PaymentMethodProviderInterface $paymentMethodProvider)
     {
         $this->paymentMethodProvider = $paymentMethodProvider;

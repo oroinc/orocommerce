@@ -60,11 +60,6 @@ class ShoppingListUrlProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getFrontendUrlDataProvider
-     *
-     * @param ShoppingList|null $shoppingList
-     * @param bool $isOnlyOneEnabled
-     * @param bool $isGranted
-     * @param string $expected
      */
     public function testGetFrontendUrl(
         ?ShoppingList $shoppingList,

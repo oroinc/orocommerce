@@ -29,10 +29,6 @@ class AttributeConfigExtension extends AbstractTypeExtension
     /** @var TranslatorInterface */
     protected $translator;
 
-    /**
-     * @param ConfigProvider $attributeConfigProvider
-     * @param TranslatorInterface $translator
-     */
     public function __construct(ConfigProvider $attributeConfigProvider, TranslatorInterface $translator)
     {
         $this->attributeConfigProvider = $attributeConfigProvider;
@@ -68,9 +64,6 @@ class AttributeConfigExtension extends AbstractTypeExtension
         }
     }
 
-    /**
-     * @param FormView $view
-     */
     protected function updateBlockConfig(FormView $view)
     {
         if (!$view->children) {
@@ -93,9 +86,6 @@ class AttributeConfigExtension extends AbstractTypeExtension
         }
     }
 
-    /**
-     * @param FormView $view
-     */
     private function separateBlockConfig(FormView $view)
     {
         if (!empty($view->vars['block_config'])) {
@@ -128,9 +118,6 @@ class AttributeConfigExtension extends AbstractTypeExtension
         }
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function onPreSetData(FormEvent $event)
     {
         $options = $event->getForm()->getConfig()->getOptions();

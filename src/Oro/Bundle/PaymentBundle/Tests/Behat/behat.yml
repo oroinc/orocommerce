@@ -3,15 +3,15 @@ oro_behat_extension:
     OroPaymentBundle:
       contexts:
         - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
-        - OroDataGridBundle::GridContext
-        - OroFormBundle::FormContext
-        - OroUIBundle::BreadcrumbContext
-        - OroConfigBundle::FeatureContext
-        - OroNavigationBundle::FeatureContext
-        - OroSecurityBundle::ACLContext
-        - OroUIBundle::ContextSelectorContext
-        - OroLocaleBundle::LocalizationContext
-        - OroQueryDesignerBundle::QueryDesignerContext
+        - Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext
+        - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
+        - Oro\Bundle\UIBundle\Tests\Behat\Context\BreadcrumbContext
+        - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\NavigationBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\SecurityBundle\Tests\Behat\Context\ACLContext
+        - Oro\Bundle\UIBundle\Tests\Behat\Context\ContextSelectorContext
+        - Oro\Bundle\LocaleBundle\Tests\Behat\Context\LocalizationContext
+        - Oro\Bundle\QueryDesignerBundle\Tests\Behat\Context\QueryDesignerContext
       paths:
         - '@OroPaymentBundle/Tests/Behat/Features'
 

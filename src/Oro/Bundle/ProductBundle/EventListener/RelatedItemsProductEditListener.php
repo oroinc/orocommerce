@@ -30,11 +30,7 @@ class RelatedItemsProductEditListener
 
     /** @var AuthorizationCheckerInterface */
     private $authorizationChecker;
-    /**
-     * @param TranslatorInterface               $translator
-     * @param RelatedItemConfigHelper           $relatedItemConfigHelper
-     * @param AuthorizationCheckerInterface     $authorizationChecker
-     */
+
     public function __construct(
         TranslatorInterface $translator,
         RelatedItemConfigHelper $relatedItemConfigHelper,
@@ -54,9 +50,6 @@ class RelatedItemsProductEditListener
         return $this->relatedItemConfigHelper->getConfigProvider($name);
     }
 
-    /**
-     * @param BeforeListRenderEvent $event
-     */
     public function onProductEdit(BeforeListRenderEvent $event)
     {
         $twigEnv = $event->getEnvironment();
@@ -92,9 +85,6 @@ class RelatedItemsProductEditListener
         }
     }
 
-    /**
-     * @param FormProcessEvent $event
-     */
     public function onFormDataSet(FormProcessEvent $event)
     {
         if ($this->authorizationChecker->isGranted('oro_related_products_edit')) {

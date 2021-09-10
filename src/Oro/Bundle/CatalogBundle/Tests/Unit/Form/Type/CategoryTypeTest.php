@@ -35,11 +35,9 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 class CategoryTypeTest extends FormIntegrationTestCase
 {
-    /** @var UrlGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $urlGenerator;
+    private UrlGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject $urlGenerator;
 
-    /** @var CategoryType */
-    private $type;
+    private CategoryType $type;
 
     protected function setUp(): void
     {
@@ -50,10 +48,10 @@ class CategoryTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
-    public function testBuildForm()
+    public function testBuildForm(): void
     {
         $builder = $this->createMock(FormBuilder::class);
-        $builder->expects($this->exactly(9))
+        $builder->expects(self::exactly(9))
             ->method('add')
             ->withConsecutive(
                 [
@@ -87,6 +85,7 @@ class CategoryTypeTest extends FormIntegrationTestCase
                         'entry_type' => WYSIWYGValueType::class,
                         'entry_options' => [
                             'entity_class' => CategoryLongDescription::class,
+                            'error_mapping' => ['wysiwygStyle' => 'wysiwyg_style'],
                         ],
                         'use_tabs' => true
                     ]
@@ -132,10 +131,10 @@ class CategoryTypeTest extends FormIntegrationTestCase
         $this->type->buildForm($builder, []);
     }
 
-    public function testConfigureOptions()
+    public function testConfigureOptions(): void
     {
         $resolver = $this->createMock(OptionsResolver::class);
-        $resolver->expects($this->once())
+        $resolver->expects(self::once())
             ->method('setDefaults')
             ->with(
                 [
@@ -147,11 +146,11 @@ class CategoryTypeTest extends FormIntegrationTestCase
         $this->type->configureOptions($resolver);
     }
 
-    public function testGenerateChangedSlugsUrlOnPresetData()
+    public function testGenerateChangedSlugsUrlOnPresetData(): void
     {
         $generatedUrl = '/some/url';
         $this->urlGenerator
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('generate')
             ->with('oro_catalog_category_get_changed_slugs', ['id' => 1])
             ->willReturn($generatedUrl);
@@ -163,8 +162,8 @@ class CategoryTypeTest extends FormIntegrationTestCase
         $form = $this->factory->create(CategoryType::class, $existingData);
         $formView = $form->createView();
 
-        $this->assertArrayHasKey('slugPrototypesWithRedirect', $formView->children);
-        $this->assertEquals(
+        self::assertArrayHasKey('slugPrototypesWithRedirect', $formView->children);
+        self::assertEquals(
             $generatedUrl,
             $formView->children['slugPrototypesWithRedirect']
                 ->vars['confirm_slug_change_component_options']['changedSlugsUrl']

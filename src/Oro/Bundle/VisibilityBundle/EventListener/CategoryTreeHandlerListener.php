@@ -15,17 +15,11 @@ class CategoryTreeHandlerListener
     /** @var CategoryVisibilityProvider */
     private $categoryVisibilityProvider;
 
-    /**
-     * @param CategoryVisibilityProvider $categoryVisibilityProvider
-     */
     public function __construct(CategoryVisibilityProvider $categoryVisibilityProvider)
     {
         $this->categoryVisibilityProvider = $categoryVisibilityProvider;
     }
 
-    /**
-     * @param CategoryTreeCreateAfterEvent $event
-     */
     public function onCreateAfter(CategoryTreeCreateAfterEvent $event)
     {
         $user = $event->getUser();

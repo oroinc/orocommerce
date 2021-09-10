@@ -13,18 +13,11 @@ abstract class BaseProductPriceEntityListener extends AbstractRuleEntityListener
     const FIELD_PRODUCT = 'product';
     const FIELD_VALUE = 'value';
 
-    /**
-     * @param BaseProductPrice $price
-     */
     public function postPersist(BaseProductPrice $price)
     {
         $this->recalculateByEntity($price->getProduct(), $price->getPriceList()->getId());
     }
 
-    /**
-     * @param BaseProductPrice $price
-     * @param PreUpdateEventArgs $event
-     */
     public function preUpdate(BaseProductPrice $price, PreUpdateEventArgs $event)
     {
         if (!$this->isPriceValueChanged($event)) {
@@ -35,10 +28,6 @@ abstract class BaseProductPriceEntityListener extends AbstractRuleEntityListener
         $this->recalculateForNewValues($price, $event);
     }
 
-    /**
-     * @param BaseProductPrice $price
-     * @param PreUpdateEventArgs $event
-     */
     protected function recalculateForOldValues(BaseProductPrice $price, PreUpdateEventArgs $event)
     {
         $oldProduct = $price->getProduct();
@@ -61,10 +50,6 @@ abstract class BaseProductPriceEntityListener extends AbstractRuleEntityListener
         }
     }
 
-    /**
-     * @param BaseProductPrice $price
-     * @param PreUpdateEventArgs $event
-     */
     protected function recalculateForNewValues(BaseProductPrice $price, PreUpdateEventArgs $event)
     {
         $this->recalculateByEntityFieldsUpdate(
@@ -94,9 +79,6 @@ abstract class BaseProductPriceEntityListener extends AbstractRuleEntityListener
         return true;
     }
 
-    /**
-     * @param BaseProductPrice $price
-     */
     public function preRemove(BaseProductPrice $price)
     {
         $this->recalculateByEntity($price->getProduct(), $price->getPriceList()->getId());

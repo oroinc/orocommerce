@@ -1,5 +1,7 @@
 @fixture-OroVisibilityBundle:configurable_product_visibility.yml
 @fixture-OroCustomerBundle:BuyerCustomerFixture.yml
+@ticket-BB-16482
+@ticket-BB-20790
 Feature: Visibility of product variants
   In order to ...
   As an ...

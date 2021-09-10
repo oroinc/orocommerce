@@ -2,12 +2,15 @@
 
 namespace Oro\Bundle\PromotionBundle\Entity\Repository;
 
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 
-class PromotionRepository extends EntityRepository
+/**
+ * Doctrine repository for Promotion entity
+ */
+class PromotionRepository extends ServiceEntityRepository
 {
     /**
      * @param Segment $segment

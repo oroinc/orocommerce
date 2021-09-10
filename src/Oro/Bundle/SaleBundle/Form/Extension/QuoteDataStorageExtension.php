@@ -35,11 +35,6 @@ class QuoteDataStorageExtension extends AbstractProductDataStorageExtension
         $entity->addQuoteProduct($quoteProduct);
     }
 
-    /**
-     * @param Product $product
-     * @param QuoteProduct $quoteProduct
-     * @param array $itemsData
-     */
     protected function addItems(Product $product, QuoteProduct $quoteProduct, array $itemsData)
     {
         $defaultUnit = $this->getDefaultUnit($product);

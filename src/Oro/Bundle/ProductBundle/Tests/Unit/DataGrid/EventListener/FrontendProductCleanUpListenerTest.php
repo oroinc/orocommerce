@@ -75,9 +75,6 @@ class FrontendProductCleanUpListenerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals([$record, $thirdRecord], $this->event->getRecords());
     }
 
-    /**
-     * @param array $expectedResult
-     */
     private function configureQueryBuilder(array $expectedResult): void
     {
         $repository = $this->createMock(ProductRepository::class);

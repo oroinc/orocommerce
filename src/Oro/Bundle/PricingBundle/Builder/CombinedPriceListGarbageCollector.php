@@ -35,11 +35,6 @@ class CombinedPriceListGarbageCollector
      */
     protected $configManager;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param ConfigManager $configManager
-     * @param CombinedPriceListTriggerHandler $triggerHandler
-     */
     public function __construct(
         ManagerRegistry $registry,
         ConfigManager $configManager,
@@ -93,9 +88,6 @@ class CombinedPriceListGarbageCollector
         $this->triggerHandler->commit();
     }
 
-    /**
-     * @return array
-     */
     private function getConfigFullChainPriceLists(): array
     {
         $exceptPriceLists = [];
@@ -107,9 +99,6 @@ class CombinedPriceListGarbageCollector
         return $exceptPriceLists;
     }
 
-    /**
-     * @return array
-     */
     private function getConfigPriceLists(): array
     {
         $configCombinedPriceList = $this->configManager->get(Configuration::getConfigKeyToPriceList());
@@ -121,9 +110,6 @@ class CombinedPriceListGarbageCollector
         return $exceptPriceLists;
     }
 
-    /**
-     * @return array
-     */
     private function getAllConfigPriceLists(): array
     {
         return array_merge(

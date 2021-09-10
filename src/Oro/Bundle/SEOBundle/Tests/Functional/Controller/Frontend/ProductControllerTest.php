@@ -82,8 +82,6 @@ class ProductControllerTest extends WebTestCase
 
     /**
      * @dataProvider indexDataProvider
-     * @param $category
-     * @param array $metaTags
      */
     public function testIndex($category, array $metaTags)
     {
@@ -148,7 +146,7 @@ class ProductControllerTest extends WebTestCase
      */
     protected function getMetadataArray($entity)
     {
-        if (strpos($entity, 'product') !== false) {
+        if (str_contains($entity, 'product')) {
             return LoadProductMetaData::$metadata;
         }
 

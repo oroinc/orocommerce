@@ -31,10 +31,6 @@ class AppliedPromotionMapper
      */
     private $registry;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param NormalizerInterface $normalizer
-     */
     public function __construct(ManagerRegistry $registry, NormalizerInterface $normalizer)
     {
         $this->registry = $registry;
@@ -60,10 +56,6 @@ class AppliedPromotionMapper
         $appliedPromotion->setAppliedCoupon($this->getAppliedCoupon($order->getAppliedCoupons(), $promotion));
     }
 
-    /**
-     * @param AppliedPromotion $appliedPromotion
-     * @return PromotionDataInterface
-     */
     public function mapAppliedPromotionToPromotionData(AppliedPromotion $appliedPromotion): PromotionDataInterface
     {
         /** @var AppliedPromotionData $appliedPromotionData */

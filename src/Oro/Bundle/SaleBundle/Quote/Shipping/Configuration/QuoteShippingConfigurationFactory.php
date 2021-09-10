@@ -13,9 +13,6 @@ class QuoteShippingConfigurationFactory
      */
     private $shippingMethodConfigurationBuilderFactory;
 
-    /**
-     * @param ComposedShippingMethodConfigurationBuilderFactoryInterface $shippingMethodConfigurationBuilderFactory
-     */
     public function __construct(
         ComposedShippingMethodConfigurationBuilderFactoryInterface $shippingMethodConfigurationBuilderFactory
     ) {

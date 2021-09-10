@@ -22,19 +22,12 @@ class LineItemsGroupedOnResultAfterListener
     /** @var NumberFormatter */
     private $numberFormatter;
 
-    /**
-     * @param AttachmentManager $attachmentManager
-     * @param NumberFormatter $numberFormatter
-     */
     public function __construct(AttachmentManager $attachmentManager, NumberFormatter $numberFormatter)
     {
         $this->attachmentManager = $attachmentManager;
         $this->numberFormatter = $numberFormatter;
     }
 
-    /**
-     * @param OrmResultAfter $event
-     */
     public function onResultAfter(OrmResultAfter $event): void
     {
         $isGrouped = $this->isGrouped($event->getDatagrid());
@@ -101,10 +94,6 @@ class LineItemsGroupedOnResultAfterListener
         }
     }
 
-    /**
-     * @param array $recordData
-     * @param array $lineItemsData
-     */
     private function processSubtotal(array &$recordData, array $lineItemsData): void
     {
         foreach ($lineItemsData as $lineItemData) {
@@ -148,20 +137,11 @@ class LineItemsGroupedOnResultAfterListener
         }
     }
 
-    /**
-     * @param string $key
-     * @param array $lineItemData
-     * @return string
-     */
     private function formatCurrency(string $key, array $lineItemData): string
     {
         return $this->numberFormatter->formatCurrency($lineItemData[$key], $lineItemData['currency']);
     }
 
-    /**
-     * @param Product $product
-     * @return string
-     */
     private function getImageUrl(Product $product): string
     {
         $image = $product->getImagesByType('listing')->first();
@@ -169,10 +149,6 @@ class LineItemsGroupedOnResultAfterListener
         return $image ? $this->attachmentManager->getFilteredImageUrl($image->getImage(), 'product_small') : '';
     }
 
-    /**
-     * @param DatagridInterface $datagrid
-     * @return bool
-     */
     private function isGrouped(DatagridInterface $datagrid): bool
     {
         $parameters = $datagrid->getParameters()->get('_parameters', []);

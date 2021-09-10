@@ -131,9 +131,6 @@ class CouponRepositoryTest extends WebTestCase
         return $this->getEntityManager()->getRepository(Coupon::class);
     }
 
-    /**
-     * @return bool
-     */
     private function isPostgreSql(): bool
     {
         return $this->getEntityManager()->getConnection()->getDatabasePlatform() instanceof PostgreSqlPlatform;
@@ -147,10 +144,6 @@ class CouponRepositoryTest extends WebTestCase
         return self::getContainer()->get('doctrine')->getManagerForClass(Coupon::class);
     }
 
-    /**
-     * @param string $code
-     * @return Coupon
-     */
     private function createCoupon(string $code): Coupon
     {
         $manager = $this->getEntityManager();

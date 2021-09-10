@@ -139,9 +139,6 @@ class QuoteTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $quote->hasOfferVariants());
     }
 
-    /**
-     * @return array
-     */
     public function hasOfferVariantsDataProvider(): array
     {
         return [
@@ -178,9 +175,6 @@ class QuoteTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $quote->isAcceptable());
     }
 
-    /**
-     * @return \Generator
-     */
     public function isAcceptableDataProvider(): \Generator
     {
         yield [
@@ -236,9 +230,6 @@ class QuoteTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider isAvailableOnFrontendProvider
-     *
-     * @param string $internalStatus
-     * @param bool $expected
      */
     public function testIsAvailableOnFrontend(string $internalStatus, bool $expected): void
     {
@@ -248,9 +239,6 @@ class QuoteTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $quote->isAvailableOnFrontend());
     }
 
-    /**
-     * @return array
-     */
     public function isAvailableOnFrontendProvider(): array
     {
         return [
@@ -301,9 +289,6 @@ class QuoteTest extends \PHPUnit\Framework\TestCase
         return $quote;
     }
 
-    /**
-     * @param string $actual
-     */
     private static function assertIsUUID(string $actual): void
     {
         static::assertMatchesRegularExpression(
@@ -312,12 +297,8 @@ class QuoteTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-
     /**
      * @dataProvider shippingCostDataProvider
-     * @param $estimated
-     * @param $overridden
-     * @param $expected
      */
     public function testGetShippingCost($estimated, $overridden, $expected)
     {

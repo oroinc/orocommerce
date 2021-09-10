@@ -29,9 +29,6 @@ class LifetimeByInvalidateCacheAtFieldProviderTest extends \PHPUnit\Framework\Te
 
     /**
      * @dataProvider savePriceDataProvider
-     *
-     * @param string $invalidateCacheAtModifier
-     * @param int    $expectedLifetime
      */
     public function testGetLifetime(string $invalidateCacheAtModifier, int $expectedLifetime)
     {

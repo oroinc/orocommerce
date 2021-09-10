@@ -56,11 +56,6 @@ class LoadCustomerVisibilityProductsToIndex extends AbstractFixture implements C
         return array_map(fn (TestProduct $product) => $product->getId(), $products);
     }
 
-    /**
-     * @param int $productId
-     *
-     * @return string
-     */
     private static function getReferenceName(int $productId): string
     {
         return sprintf('%s_%s', self::REFERENCE_PRODUCT_PREFIX, $productId);

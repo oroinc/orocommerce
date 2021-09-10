@@ -18,8 +18,7 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
  */
 class QuantityUnitPrecisionValidatorTest extends ConstraintValidatorTestCase
 {
-    /** @var RoundingServiceInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $roundingService;
+    private RoundingServiceInterface|\PHPUnit\Framework\MockObject\MockObject $roundingService;
 
     protected function setUp(): void
     {
@@ -33,28 +32,25 @@ class QuantityUnitPrecisionValidatorTest extends ConstraintValidatorTestCase
         parent::setUp();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     protected function createValidator()
     {
         return new QuantityUnitPrecisionValidator($this->roundingService);
     }
 
-    public function testInvalidConstraint()
+    public function testInvalidConstraint(): void
     {
         $this->expectException(\Symfony\Component\Validator\Exception\UnexpectedTypeException::class);
         $this->validator->validate(null, $this->createMock(Constraint::class));
     }
 
-    public function testNullValue()
+    public function testNullValue(): void
     {
         $this->validator->validate(null, new QuantityUnitPrecision());
 
         $this->assertNoViolation();
     }
 
-    public function testNullQuantity()
+    public function testNullQuantity(): void
     {
         $quantity = null;
 
@@ -68,7 +64,7 @@ class QuantityUnitPrecisionValidatorTest extends ConstraintValidatorTestCase
         $this->assertNoViolation();
     }
 
-    public function testNotNumberQuantity()
+    public function testNotNumberQuantity(): void
     {
         $quantity = 'test';
 
@@ -82,7 +78,7 @@ class QuantityUnitPrecisionValidatorTest extends ConstraintValidatorTestCase
         $this->assertNoViolation();
     }
 
-    public function testNullProductUnit()
+    public function testNullProductUnit(): void
     {
         $quantity = 2.345;
 
@@ -99,7 +95,7 @@ class QuantityUnitPrecisionValidatorTest extends ConstraintValidatorTestCase
         $this->assertNoViolation();
     }
 
-    public function testNullProductUnitCode()
+    public function testNullProductUnitCode(): void
     {
         $quantity = 2.345;
 
@@ -121,7 +117,7 @@ class QuantityUnitPrecisionValidatorTest extends ConstraintValidatorTestCase
         $this->assertNoViolation();
     }
 
-    public function testNullProduct()
+    public function testNullProduct(): void
     {
         $quantity = 2.345;
 
@@ -146,7 +142,7 @@ class QuantityUnitPrecisionValidatorTest extends ConstraintValidatorTestCase
         $this->assertNoViolation();
     }
 
-    public function testNullUnitPrecisionAndNullDefaultPrecision()
+    public function testNullUnitPrecisionAndNullDefaultPrecision(): void
     {
         $unitCode = 'item';
         $quantity = 2.345;
@@ -181,7 +177,7 @@ class QuantityUnitPrecisionValidatorTest extends ConstraintValidatorTestCase
         $this->assertNoViolation();
     }
 
-    public function testNullUnitPrecisionAndNotNullDefaultPrecision()
+    public function testNullUnitPrecisionAndNotNullDefaultPrecision(): void
     {
         $unitCode = 'item';
         $precision = 2;
@@ -219,7 +215,7 @@ class QuantityUnitPrecisionValidatorTest extends ConstraintValidatorTestCase
             ->assertRaised();
     }
 
-    public function testNullPrecision()
+    public function testNullPrecision(): void
     {
         $unitCode = 'item';
         $quantity = 2.345;
@@ -259,7 +255,7 @@ class QuantityUnitPrecisionValidatorTest extends ConstraintValidatorTestCase
     /**
      * @dataProvider validPrecisionProvider
      */
-    public function testValidPrecisionForLineItem(int $precision, float $quantity)
+    public function testValidPrecisionForLineItem(int $precision, float $quantity): void
     {
         $unitCode = 'item';
 
@@ -295,7 +291,7 @@ class QuantityUnitPrecisionValidatorTest extends ConstraintValidatorTestCase
         $this->assertNoViolation();
     }
 
-    public function testInvalidPrecisionForLineItem()
+    public function testInvalidPrecisionForLineItem(): void
     {
         $unitCode = 'item';
         $precision = 2;
@@ -338,7 +334,7 @@ class QuantityUnitPrecisionValidatorTest extends ConstraintValidatorTestCase
     /**
      * @dataProvider validPrecisionProvider
      */
-    public function testValidPrecisionForQuickAddRow(int $precision, float $quantity)
+    public function testValidPrecisionForQuickAddRow(int $precision, float $quantity): void
     {
         $unitCode = 'item';
 
@@ -361,7 +357,7 @@ class QuantityUnitPrecisionValidatorTest extends ConstraintValidatorTestCase
         $this->assertNoViolation();
     }
 
-    public function testInvalidPrecisionForQuickAddRow()
+    public function testInvalidPrecisionForQuickAddRow(): void
     {
         $unitCode = 'item';
         $precision = 2;
@@ -388,10 +384,7 @@ class QuantityUnitPrecisionValidatorTest extends ConstraintValidatorTestCase
             ->assertRaised();
     }
 
-    /**
-     * @return array
-     */
-    public function validPrecisionProvider()
+    public function validPrecisionProvider(): array
     {
         return [
             'precision 0'     => [

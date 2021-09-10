@@ -34,11 +34,6 @@ class PriceListCollectionProvider
      */
     protected $configConverter;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param ConfigManager $configManager
-     * @param PriceListConfigConverter $configConverter
-     */
     public function __construct(
         ManagerRegistry $registry,
         ConfigManager $configManager,

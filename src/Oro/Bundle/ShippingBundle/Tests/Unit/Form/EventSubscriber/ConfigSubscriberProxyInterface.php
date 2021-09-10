@@ -15,7 +15,6 @@ interface ConfigSubscriberProxyInterface extends EventSubscriberInterface
      */
     public function setFactory(FormFactoryInterface $factory);
 
-
     /**
      * @param ShippingMethodProviderInterface $shippingMethodProvider
      *

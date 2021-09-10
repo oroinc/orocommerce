@@ -61,19 +61,11 @@ class GenerateSitemapByWebsiteAndTypeProcessorTest extends \PHPUnit\Framework\Te
         );
     }
 
-    /**
-     * @return SessionInterface
-     */
     private function getSession(): SessionInterface
     {
         return $this->createMock(SessionInterface::class);
     }
 
-    /**
-     * @param array $body
-     *
-     * @return MessageInterface
-     */
     private function getMessage(array $body): MessageInterface
     {
         $message = new Message();
@@ -186,7 +178,7 @@ class GenerateSitemapByWebsiteAndTypeProcessorTest extends \PHPUnit\Framework\Te
         ]);
 
         $exception = new InvalidOptionsException(
-            'The option "type" with value 0 is expected to be of type "string", but is of type "integer".'
+            'The option "type" with value 0 is expected to be of type "string", but is of type "int".'
         );
         $this->logger->expects(self::once())
             ->method('critical')

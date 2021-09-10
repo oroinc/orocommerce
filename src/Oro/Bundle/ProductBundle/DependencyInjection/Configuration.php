@@ -207,11 +207,6 @@ class Configuration implements ConfigurationInterface
         return $treeBuilder;
     }
 
-
-    /**
-     * @param string $key
-     * @return string
-     */
     public static function getConfigKeyByName(string $key): string
     {
         return implode(ConfigManager::SECTION_MODEL_SEPARATOR, [static::ROOT_NODE, $key]);

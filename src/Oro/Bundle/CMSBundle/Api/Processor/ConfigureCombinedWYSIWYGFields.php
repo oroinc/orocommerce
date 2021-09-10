@@ -45,13 +45,6 @@ class ConfigureCombinedWYSIWYGFields extends ConfigureWYSIWYGFields
         $this->configureSourceWysiwygFields($definition, $entityClass, $fieldName);
     }
 
-    /**
-     * @param EntityDefinitionFieldConfig $wysiwygField
-     * @param string                      $entityClass
-     * @param string                      $fieldName
-     * @param EntityDefinitionConfig      $definition
-     * @param string                      $wysiwygFieldName
-     */
     private function addNestedRenderedValueField(
         EntityDefinitionFieldConfig $wysiwygField,
         string $entityClass,

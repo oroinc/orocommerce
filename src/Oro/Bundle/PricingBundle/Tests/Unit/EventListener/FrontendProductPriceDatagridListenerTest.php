@@ -77,9 +77,6 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit\Framework\TestCa
         $this->listener->addFeature('oro_pricing');
     }
 
-    /**
-     * @param array $priceCurrencies
-     */
     protected function setUpPriceListRequestHandler(array $priceCurrencies = [])
     {
         $this->scopeCriteriaRequestHandler
@@ -282,7 +279,6 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit\Framework\TestCa
             }
         }
     }
-
 
     /**
      * @return array

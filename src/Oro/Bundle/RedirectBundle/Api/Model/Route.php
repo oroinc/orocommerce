@@ -28,13 +28,6 @@ class Route
     /** @var int|null */
     private $redirectStatusCode;
 
-    /**
-     * @param string $id
-     * @param string $url
-     * @param string $routeName
-     * @param array  $routeParameters
-     * @param bool   $isSlug
-     */
     public function __construct(
         string $id,
         string $url,
@@ -49,66 +42,41 @@ class Route
         $this->isSlug = $isSlug;
     }
 
-    /**
-     * @return string
-     */
     public function getId(): string
     {
         return $this->id;
     }
 
-    /**
-     * @return string
-     */
     public function getUrl(): string
     {
         return $this->url;
     }
 
-    /**
-     * @return string
-     */
     public function getRouteName(): string
     {
         return $this->routeName;
     }
 
-    /**
-     * @return array
-     */
     public function getRouteParameters(): array
     {
         return $this->routeParameters;
     }
 
-    /**
-     * @return bool
-     */
     public function isSlug(): bool
     {
         return $this->isSlug;
     }
 
-    /**
-     * @return string|null
-     */
     public function getRedirectUrl(): ?string
     {
         return $this->redirectUrl;
     }
 
-    /**
-     * @return int|null
-     */
     public function getRedirectStatusCode(): ?int
     {
         return $this->redirectStatusCode;
     }
 
-    /**
-     * @param string $url
-     * @param int    $statusCode
-     */
     public function setRedirect(string $url, int $statusCode): void
     {
         $this->redirectUrl = $url;

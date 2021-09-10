@@ -22,10 +22,6 @@ class HideInvisibleProductCategories implements ProcessorInterface
     /** @var DoctrineHelper */
     private $doctrineHelper;
 
-    /**
-     * @param QueryAclHelper $queryAclHelper
-     * @param DoctrineHelper $doctrineHelper
-     */
     public function __construct(QueryAclHelper $queryAclHelper, DoctrineHelper $doctrineHelper)
     {
         $this->queryAclHelper = $queryAclHelper;

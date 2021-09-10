@@ -42,18 +42,16 @@ class AddressModelFactoryTest extends \PHPUnit\Framework\TestCase
         $this->doctrineHelper
             ->expects($this->any())
             ->method('getEntityReference')
-            ->willReturnCallback(
-                function ($classAlias, $id) {
-                    if (strpos($classAlias, 'Country')) {
-                        return new Country($id);
-                    }
-                    if (strpos($classAlias, 'Region')) {
-                        return new Region($id);
-                    }
-
-                    return null;
+            ->willReturnCallback(function ($classAlias, $id) {
+                if (str_contains($classAlias, 'Country')) {
+                    return new Country($id);
                 }
-            );
+                if (str_contains($classAlias, 'Region')) {
+                    return new Region($id);
+                }
+
+                return null;
+            });
 
         $this->assertEquals($expected, $this->factory->create($values));
     }

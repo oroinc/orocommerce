@@ -12,9 +12,6 @@ class ProductUnitFieldsSettingsProvider
      */
     private $productUnitFieldsSettings;
 
-    /**
-     * @param ProductUnitFieldsSettingsInterface $productUnitFieldsSettings
-     */
     public function __construct(ProductUnitFieldsSettingsInterface $productUnitFieldsSettings)
     {
         $this->productUnitFieldsSettings = $productUnitFieldsSettings;

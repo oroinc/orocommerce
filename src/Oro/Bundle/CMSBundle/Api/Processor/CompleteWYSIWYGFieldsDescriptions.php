@@ -28,10 +28,6 @@ class CompleteWYSIWYGFieldsDescriptions implements ProcessorInterface
     /** @var array */
     private $descriptions = [];
 
-    /**
-     * @param EntityDescriptionProvider $entityDescriptionProvider
-     * @param FileLocatorInterface      $fileLocator
-     */
     public function __construct(
         EntityDescriptionProvider $entityDescriptionProvider,
         FileLocatorInterface $fileLocator
@@ -104,12 +100,6 @@ class CompleteWYSIWYGFieldsDescriptions implements ProcessorInterface
         }
     }
 
-    /**
-     * @param EntityDefinitionConfig $definition
-     * @param string                 $entityClass
-     * @param array                  $renderedWysiwygFields
-     * @param string|null            $targetAction
-     */
     private function processRenderedWysiwygFields(
         EntityDefinitionConfig $definition,
         string $entityClass,
@@ -117,7 +107,7 @@ class CompleteWYSIWYGFieldsDescriptions implements ProcessorInterface
         ?string $targetAction
     ): void {
         foreach ($renderedWysiwygFields as $fieldName => $info) {
-            if (false !== strpos($fieldName, ConfigUtil::PATH_DELIMITER)) {
+            if (str_contains($fieldName, ConfigUtil::PATH_DELIMITER)) {
                 continue;
             }
             $field = $definition->getField($fieldName);
@@ -136,14 +126,6 @@ class CompleteWYSIWYGFieldsDescriptions implements ProcessorInterface
         }
     }
 
-    /**
-     * @param string      $entityClass
-     * @param string      $fieldName
-     * @param string|null $targetAction
-     * @param bool        $isRaw
-     *
-     * @return string
-     */
     private function getWysiwygFieldDescription(
         string $entityClass,
         string $fieldName,
@@ -160,12 +142,6 @@ class CompleteWYSIWYGFieldsDescriptions implements ProcessorInterface
         return $result;
     }
 
-    /**
-     * @param bool        $isRaw
-     * @param string|null $targetAction
-     *
-     * @return string
-     */
     private function getWysiwygFieldDescriptionFile(bool $isRaw, ?string $targetAction): string
     {
         if ($isRaw) {
@@ -179,13 +155,6 @@ class CompleteWYSIWYGFieldsDescriptions implements ProcessorInterface
         return 'wysiwyg.md';
     }
 
-    /**
-     * @param string      $entityClass
-     * @param string      $fieldName
-     * @param string|null $targetAction
-     *
-     * @return string
-     */
     private function getRenderedWysiwygFieldDescription(
         string $entityClass,
         string $fieldName,
@@ -205,11 +174,6 @@ class CompleteWYSIWYGFieldsDescriptions implements ProcessorInterface
         return $result;
     }
 
-    /**
-     * @param string $descriptionFile
-     *
-     * @return string
-     */
     private function loadDescriptionFile(string $descriptionFile): string
     {
         if (!isset($this->descriptions[$descriptionFile])) {
@@ -221,12 +185,6 @@ class CompleteWYSIWYGFieldsDescriptions implements ProcessorInterface
         return $this->descriptions[$descriptionFile];
     }
 
-    /**
-     * @param EntityDefinitionConfig $definition
-     * @param string                 $fieldName
-     *
-     * @return bool
-     */
     private function isFieldNotExistOrExcluded(EntityDefinitionConfig $definition, string $fieldName): bool
     {
         $field = $definition->getField($fieldName);

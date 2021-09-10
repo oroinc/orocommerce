@@ -60,15 +60,6 @@ class ProductPriceScopeCriteriaRequestHandler
      */
     private $priceScopeCriteriaFactory;
 
-    /**
-     * @param RequestStack $requestStack
-     * @param TokenAccessorInterface $tokenAccessor
-     * @param ManagerRegistry $registry
-     * @param CustomerUserRelationsProvider $relationsProvider
-     * @param WebsiteManager $websiteManager
-     * @param AuthorizationCheckerInterface $authorizationChecker
-     * @param ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory
-     */
     public function __construct(
         RequestStack $requestStack,
         TokenAccessorInterface $tokenAccessor,
@@ -87,9 +78,6 @@ class ProductPriceScopeCriteriaRequestHandler
         $this->priceScopeCriteriaFactory = $priceScopeCriteriaFactory;
     }
 
-    /**
-     * @return ProductPriceScopeCriteriaInterface
-     */
     public function getPriceScopeCriteria(): ProductPriceScopeCriteriaInterface
     {
         return $this->priceScopeCriteriaFactory->create(

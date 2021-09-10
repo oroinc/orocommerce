@@ -24,9 +24,6 @@ class QuickAddType extends AbstractType
     /** @var ProductsGrouperFactory */
     private $productsGrouperFactory;
 
-    /**
-     * @param ProductsGrouperFactory $productsGrouperFactory
-     */
     public function __construct(ProductsGrouperFactory $productsGrouperFactory)
     {
         $this->productsGrouperFactory = $productsGrouperFactory;
@@ -101,8 +98,6 @@ class QuickAddType extends AbstractType
 
     /**
      * Remove duplicated products and combine their quantities
-     *
-     * @param FormEvent $event
      */
     public function onPreSubmit(FormEvent $event)
     {

@@ -67,20 +67,11 @@ class ProductPriceRepository extends BaseProductPriceRepository
         $this->_em->getConnection()->executeQuery($sql, $parameters, $types);
     }
 
-    /**
-     * @param ShardManager $shardManager
-     * @param PriceList $priceList
-     */
     public function deleteInvalidPrices(ShardManager $shardManager, PriceList $priceList)
     {
         $this->deleteInvalidPricesByProducts($shardManager, $priceList);
     }
 
-    /**
-     * @param ShardManager $shardManager
-     * @param PriceList $priceList
-     * @param array $products
-     */
     public function deleteInvalidPricesByProducts(
         ShardManager $shardManager,
         PriceList $priceList,
@@ -157,11 +148,6 @@ class ProductPriceRepository extends BaseProductPriceRepository
         return $qb;
     }
 
-    /**
-     * @param BasePriceList $sourcePriceList
-     * @param BasePriceList $targetPriceList
-     * @param ShardQueryExecutorInterface $insertQueryExecutor
-     */
     public function copyPrices(
         BasePriceList $sourcePriceList,
         BasePriceList $targetPriceList,
@@ -234,10 +220,6 @@ class ProductPriceRepository extends BaseProductPriceRepository
         return array_map(fn ($value) => (int) current($value), $result);
     }
 
-    /**
-     * @param ShardManager $shardManager
-     * @param BaseProductPrice $price
-     */
     public function remove(ShardManager $shardManager, BaseProductPrice $price)
     {
         $tableName = $shardManager->getEnabledShardName($this->_entityName, ['priceList' => $price->getPriceList()]);

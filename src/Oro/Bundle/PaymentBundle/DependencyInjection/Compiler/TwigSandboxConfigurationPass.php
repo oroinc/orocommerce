@@ -5,15 +5,17 @@ namespace Oro\Bundle\PaymentBundle\DependencyInjection\Compiler;
 use Oro\Bundle\EmailBundle\DependencyInjection\Compiler\AbstractTwigSandboxConfigurationPass;
 
 /**
- * Compiler pass that collects extensions for service `oro_payment.twig.payment_method_extension` and
- * `oro_payment.twig.payment_status_extension` by `oro_email.email_renderer` tag
+ * Registers the following Twig functions for the email templates rendering sandbox:
+ * * get_payment_methods
+ * * get_payment_status_label
+ * * get_payment_status
  */
 class TwigSandboxConfigurationPass extends AbstractTwigSandboxConfigurationPass
 {
     /**
      * {@inheritDoc}
      */
-    protected function getFunctions()
+    protected function getFunctions(): array
     {
         return [
             'get_payment_methods',
@@ -25,7 +27,15 @@ class TwigSandboxConfigurationPass extends AbstractTwigSandboxConfigurationPass
     /**
      * {@inheritDoc}
      */
-    protected function getFilters()
+    protected function getFilters(): array
+    {
+        return [];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getTags(): array
     {
         return [];
     }
@@ -33,11 +43,10 @@ class TwigSandboxConfigurationPass extends AbstractTwigSandboxConfigurationPass
     /**
      * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         return [
-            'oro_payment.twig.payment_method_extension',
-            'oro_payment.twig.payment_status_extension'
+            'oro_payment.twig.payment_extension'
         ];
     }
 }

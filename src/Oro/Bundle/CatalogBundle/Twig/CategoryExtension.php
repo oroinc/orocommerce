@@ -17,25 +17,12 @@ use Twig\TwigFunction;
  */
 class CategoryExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    const NAME = 'oro_catalog_category_extension';
-
     /** @var ContainerInterface */
     protected $container;
 
-    /**
-     * @param ContainerInterface $container
-     */
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return self::NAME;
     }
 
     /**
@@ -66,21 +53,11 @@ class CategoryExtension extends AbstractExtension implements ServiceSubscriberIn
         return $tree;
     }
 
-    /**
-     * @param Category $category
-     *
-     * @return string
-     */
     public function getProductCategoryPath(Category $category): string
     {
         return implode(' / ', $this->getCategoriesTitles($category));
     }
 
-    /**
-     * @param Category $category
-     *
-     * @return string
-     */
     public function getProductCategoryTitle(Category $category): string
     {
         $categoriesTitles = $this->getCategoriesTitles($category);
@@ -89,11 +66,6 @@ class CategoryExtension extends AbstractExtension implements ServiceSubscriberIn
             : reset($categoriesTitles) . ' /.../ ' . end($categoriesTitles);
     }
 
-    /**
-     * @param Category $category
-     *
-     * @return array
-     */
     protected function getCategoriesTitles(Category $category): array
     {
         $title = $category->getDefaultTitle();

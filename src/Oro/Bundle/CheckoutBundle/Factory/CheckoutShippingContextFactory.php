@@ -42,13 +42,6 @@ class CheckoutShippingContextFactory
      */
     private $shippingContextBuilderFactory;
 
-    /**
-     * @param CheckoutLineItemsManager $checkoutLineItemsManager
-     * @param SubtotalProviderInterface $checkoutSubtotalProvider
-     * @param TotalProcessorProvider $totalProcessor
-     * @param OrderShippingLineItemConverterInterface $shippingLineItemConverter
-     * @param null|ShippingContextBuilderFactoryInterface $shippingContextBuilderFactory
-     */
     public function __construct(
         CheckoutLineItemsManager $checkoutLineItemsManager,
         SubtotalProviderInterface $checkoutSubtotalProvider,
@@ -101,10 +94,6 @@ class CheckoutShippingContextFactory
         return $shippingContextBuilder->getResult();
     }
 
-    /**
-     * @param ShippingContextBuilderInterface $shippingContextBuilder
-     * @param Checkout $checkout
-     */
     private function configureShippingContextBuilderFromCheckout(
         ShippingContextBuilderInterface $shippingContextBuilder,
         Checkout $checkout

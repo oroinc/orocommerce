@@ -21,10 +21,6 @@ class IsWorkflowStartFromShoppingListAllowed
      */
     protected $tokenStorage;
 
-    /**
-     * @param FeatureChecker        $featureChecker
-     * @param TokenStorageInterface $tokenStorage
-     */
     public function __construct(FeatureChecker $featureChecker, TokenStorageInterface $tokenStorage)
     {
         $this->featureChecker = $featureChecker;

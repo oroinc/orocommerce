@@ -27,10 +27,9 @@ class PaymentMethodsConfigsRuleControllerTest extends WebTestCase
     {
         /** @var PaymentMethodsConfigsRule $paymentRule */
         $paymentRule = $this->getReference('payment.payment_methods_configs_rule.1');
-        $this->client->request(
+        $this->client->jsonRequest(
             'POST',
             $this->getUrl('oro_api_disable_paymentmethodsconfigsrules', ['id' => $paymentRule->getId()]),
-            [],
             [],
             static::generateWsseAuthHeader(LoadUserData::USER_EDITOR, LoadUserData::USER_EDITOR)
         );
@@ -49,10 +48,9 @@ class PaymentMethodsConfigsRuleControllerTest extends WebTestCase
     {
         /** @var PaymentMethodsConfigsRule $paymentRule */
         $paymentRule = $this->getReference('payment.payment_methods_configs_rule.1');
-        $this->client->request(
+        $this->client->jsonRequest(
             'POST',
             $this->getUrl('oro_api_enable_paymentmethodsconfigsrules', ['id' => $paymentRule->getId()]),
-            [],
             [],
             static::generateWsseAuthHeader(LoadUserData::USER_EDITOR, LoadUserData::USER_EDITOR)
         );

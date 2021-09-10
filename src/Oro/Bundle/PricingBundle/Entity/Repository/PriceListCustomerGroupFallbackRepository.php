@@ -43,18 +43,13 @@ class PriceListCustomerGroupFallbackRepository extends EntityRepository
         )
         ->setParameter('website', $websiteId)
         ->setParameter('fallbackGroup', PriceListCustomerGroupFallback::WEBSITE);
-        
+
         $iterator = new BufferedIdentityQueryResultIterator($qb);
         $iterator->setHydrationMode(Query::HYDRATE_SCALAR);
 
         return $iterator;
     }
 
-    /**
-     * @param Website $website
-     * @param CustomerGroup $customerGroup
-     * @return bool
-     */
     public function hasFallbackOnNextLevel(Website $website, CustomerGroup $customerGroup): bool
     {
         $qb = $this->createQueryBuilder('f');

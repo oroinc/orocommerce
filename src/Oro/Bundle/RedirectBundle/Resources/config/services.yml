@@ -10,18 +10,13 @@ services:
             - ['%oro_api.rest.prefix%', '/js/', '/media/', '/_fragment', '/_profiler', '/_wdt']
             - '@oro_frontend.request.frontend_helper'
 
-    Oro\Bundle\RedirectBundle\Routing\MatchedUrlDecisionMaker:
-        alias: oro_redirect.routing.matched_url_decision_maker
-
     oro_redirect.routing.slug_url_matcher:
         class: Oro\Bundle\RedirectBundle\Routing\SlugUrlMatcher
         arguments:
             - '@router.default'
-            - '@doctrine'
-            - '@oro_scope.scope_manager'
             - '@oro_redirect.routing.matched_url_decision_maker'
-            - '@oro_security.acl_helper'
-            - '@oro_platform.maintenance'
+            - '@oro_redirect.slug_entity_finder'
+            - '@oro_maintenance.maintenance'
         calls:
             - [addUrlToMatchSlugFirst, ['/']]
         tags:
@@ -37,9 +32,6 @@ services:
             - '@oro_website.manager'
         tags:
             - { name: kernel.event_listener, event: kernel.request, method: onRequest, priority: -30 }
-
-    Oro\Bundle\RedirectBundle\Routing\SlugUrlMatcher:
-        alias: oro_redirect.routing.slug_url_matcher
 
     oro_redirect.routing.slug_redirect_matcher:
         class: Oro\Bundle\RedirectBundle\Routing\SlugRedirectMatcher
@@ -302,7 +294,7 @@ services:
             - '@oro_redirect.url_cache'
 
     oro_redirect.routing.sluggable_url_generator:
-        class: 'Oro\Bundle\RedirectBundle\Routing\SluggableUrlGenerator'
+        class: Oro\Bundle\RedirectBundle\Routing\SluggableUrlGenerator
         arguments:
             - '@oro_redirect.url_provider'
             - '@oro_redirect.provider.context_url_provider_registry'
@@ -311,18 +303,15 @@ services:
         tags:
             - { name: container.hot_path }
 
-    Oro\Bundle\RedirectBundle\Routing\SluggableUrlGenerator:
-        alias: oro_redirect.routing.sluggable_url_generator
-
     oro_redirect.provider.sluggable_url_cache:
         public: false
-        class: 'Oro\Bundle\RedirectBundle\Provider\SluggableUrlCacheAwareProvider'
+        class: Oro\Bundle\RedirectBundle\Provider\SluggableUrlCacheAwareProvider
         arguments:
             - '@oro_redirect.url_cache'
 
     oro_redirect.provider.sluggable_url_database:
         public: false
-        class: 'Oro\Bundle\RedirectBundle\Provider\SluggableUrlDatabaseAwareProvider'
+        class: Oro\Bundle\RedirectBundle\Provider\SluggableUrlDatabaseAwareProvider
         arguments:
             - '@oro_redirect.provider.sluggable_url_cache'
             - '@oro_redirect.url_cache'
@@ -336,6 +325,18 @@ services:
             - ['registerProvider', ['cache', '@oro_redirect.provider.sluggable_url_cache'] ]
             - ['registerProvider', ['database', '@oro_redirect.provider.sluggable_url_database'] ]
 
+    oro_redirect.slug_entity_finder:
+        class: Oro\Bundle\RedirectBundle\Provider\SlugEntityFinder
+        arguments:
+            - '@doctrine'
+            - '@oro_scope.scope_manager'
+            - '@oro_security.acl_helper'
+
+    oro_redirect.sluggable_entity_finder:
+        class: Oro\Bundle\RedirectBundle\Provider\SluggableEntityFinder
+        arguments:
+            - '@doctrine'
+
     oro_redirect.url_provider:
         public: false
         class: Oro\Bundle\RedirectBundle\Provider\SluggableUrlCacheAwareProvider
@@ -347,12 +348,14 @@ services:
         parent: router.default
         decorates: router
         calls:
+            - [ 'setUrlDecisionMaker', ['@oro_redirect.routing.matched_url_decision_maker'] ]
             - [ 'setContainer', ['@Psr\Container\ContainerInterface'] ]
         tags:
-            - { name: 'container.service_subscriber' }
-            - { name: 'container.service_subscriber', id: 'routing.loader' }
-            - { name: 'monolog.logger', channel: 'router' }
-            - { name: 'container.hot_path' }
+            - { name: container.service_subscriber }
+            - { name: container.service_subscriber, id: routing.loader }
+            - { name: container.service_subscriber, id: oro_redirect.routing.sluggable_url_generator }
+            - { name: container.service_subscriber, id: oro_redirect.routing.slug_url_matcher }
+            - { name: monolog.logger, channel: router }
 
     # This cache is optimised to work with file system and should not be reconfigured to use oro.cache.abstract
     # cache as the parent. If redis config bundle installed and configured,

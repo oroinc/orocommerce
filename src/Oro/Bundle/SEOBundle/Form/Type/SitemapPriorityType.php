@@ -33,7 +33,6 @@ class SitemapPriorityType extends AbstractType
         ]);
     }
 
-
     /**
      * {@inheritdoc}
      */

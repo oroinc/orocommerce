@@ -10,9 +10,6 @@ class ProductSearch implements \ArrayAccess
     /** @var array [name => value, ...] */
     private $properties = [];
 
-    /**
-     * @param int $id
-     */
     public function __construct(int $id)
     {
         $this->properties['id'] = $id;

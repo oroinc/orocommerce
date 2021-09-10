@@ -32,10 +32,6 @@ class OroPricingBundle implements
         $schema->dropTable('oro_price_product_minimal');
     }
 
-    /**
-     * @param Schema $schema
-     * @param QueryBag $queries
-     */
     private function renameCustomerTables(Schema $schema, QueryBag $queries)
     {
         $extension = $this->renameExtension;
@@ -49,10 +45,6 @@ class OroPricingBundle implements
         $extension->renameTable($schema, $queries, 'oro_cmb_price_list_to_acc', 'oro_cmb_price_list_to_cus');
     }
 
-    /**
-     * @param Schema $schema
-     * @param QueryBag $queries
-     */
     private function renameCustomerColumns(Schema $schema, QueryBag $queries)
     {
         $extension = $this->renameExtension;
@@ -67,7 +59,6 @@ class OroPricingBundle implements
         $table->removeForeignKey($fk);
         $table->dropIndex('oro_price_list_acc_gr_fb_unq');
         $extension->renameColumn($schema, $queries, $table, 'account_group_id', 'customer_group_id');
-
 
         $table = $schema->getTable('oro_cmb_plist_to_acc_gr');
         $fk = $this->getConstraintName($table, 'account_group_id');

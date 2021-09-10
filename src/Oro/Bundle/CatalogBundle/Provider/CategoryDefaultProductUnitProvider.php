@@ -29,7 +29,7 @@ class CategoryDefaultProductUnitProvider implements DefaultProductUnitProviderIn
     {
         $category = $this->category;
         $data = null;
-        
+
         while (null !== $category) {
             /** @var CategoryUnitPrecision $categoryUnitPrecision */
             $categoryUnitPrecision = null;
@@ -44,7 +44,7 @@ class CategoryDefaultProductUnitProvider implements DefaultProductUnitProviderIn
 
             $category = $category->getParentCategory();
         }
-        
+
         return $data;
     }
 

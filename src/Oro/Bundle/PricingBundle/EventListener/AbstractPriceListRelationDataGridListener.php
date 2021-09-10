@@ -28,17 +28,11 @@ abstract class AbstractPriceListRelationDataGridListener implements FeatureToggl
      */
     protected $registry;
 
-    /**
-     * @param Registry $registry
-     */
     public function __construct(Registry $registry)
     {
         $this->registry = $registry;
     }
 
-    /**
-     * @param BuildBefore $event
-     */
     public function onBuildBefore(BuildBefore $event)
     {
         if (!$this->isFeaturesEnabled()) {
@@ -51,9 +45,6 @@ abstract class AbstractPriceListRelationDataGridListener implements FeatureToggl
         $this->addPriceListFilter($config);
     }
 
-    /**
-     * @param OrmResultAfter $event
-     */
     public function onResultAfter(OrmResultAfter $event)
     {
         if (!$this->isFeaturesEnabled()) {
@@ -90,9 +81,6 @@ abstract class AbstractPriceListRelationDataGridListener implements FeatureToggl
         }
     }
 
-    /**
-     * @param DatagridConfiguration $config
-     */
     protected function addPriceListFilter(DatagridConfiguration $config)
     {
         $config->addFilter(
@@ -114,9 +102,6 @@ abstract class AbstractPriceListRelationDataGridListener implements FeatureToggl
         );
     }
 
-    /**
-     * @param DatagridConfiguration $config
-     */
     protected function addPriceListColumn(DatagridConfiguration $config)
     {
         $config->addColumn(

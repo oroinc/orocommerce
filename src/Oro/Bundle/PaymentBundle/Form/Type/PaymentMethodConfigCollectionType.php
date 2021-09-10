@@ -19,9 +19,6 @@ class PaymentMethodConfigCollectionType extends AbstractType
      */
     protected $subscriber;
 
-    /**
-     * @param RuleMethodConfigCollectionSubscriber $subscriber
-     */
     public function __construct(RuleMethodConfigCollectionSubscriber $subscriber)
     {
         $this->subscriber = $subscriber;

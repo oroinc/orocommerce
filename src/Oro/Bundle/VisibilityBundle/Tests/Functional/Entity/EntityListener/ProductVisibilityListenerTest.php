@@ -54,33 +54,21 @@ class ProductVisibilityListenerTest extends WebTestCase
         $this->customer = $this->getReference('customer.level_1');
     }
 
-    /**
-     * @return ScopeManager
-     */
     private function getScopeManager(): ScopeManager
     {
         return self::getContainer()->get('oro_scope.scope_manager');
     }
 
-    /**
-     * @return EntityManagerInterface
-     */
     private function getManagerForProductVisibility(): EntityManagerInterface
     {
         return $this->registry->getManagerForClass(ProductVisibility::class);
     }
 
-    /**
-     * @return EntityManagerInterface
-     */
     private function getManagerForCustomerGroupProductVisibility(): EntityManagerInterface
     {
         return $this->registry->getManagerForClass(CustomerGroupProductVisibility::class);
     }
 
-    /**
-     * @return EntityManagerInterface
-     */
     private function getManagerForCustomerProductVisibility(): EntityManagerInterface
     {
         return $this->registry->getManagerForClass(CustomerProductVisibility::class);

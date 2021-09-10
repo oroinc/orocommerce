@@ -26,17 +26,11 @@ class RobotsTxtSitemapManager
     /** @var array */
     private $content = [];
 
-    /**
-     * @param RobotsTxtFileManager $fileManager
-     */
     public function __construct(RobotsTxtFileManager $fileManager)
     {
         $this->fileManager = $fileManager;
     }
 
-    /**
-     * @param WebsiteInterface $website
-     */
     public function flush(WebsiteInterface $website)
     {
         $this->ensureContentLoaded($website);
@@ -68,9 +62,6 @@ class RobotsTxtSitemapManager
         }
     }
 
-    /**
-     * @param WebsiteInterface $website
-     */
     private function ensureContentLoaded(WebsiteInterface $website)
     {
         if (!$this->content) {

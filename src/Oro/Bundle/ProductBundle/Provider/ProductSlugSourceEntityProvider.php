@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\ProductBundle\Provider;
 
-use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\RedirectBundle\DependencyInjection\Configuration;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Entity\SlugAwareInterface;
+use Oro\Bundle\RedirectBundle\Provider\SluggableEntityFinder;
 use Oro\Bundle\RedirectBundle\Provider\SlugSourceEntityProviderInterface;
 
 /**
@@ -16,23 +15,12 @@ use Oro\Bundle\RedirectBundle\Provider\SlugSourceEntityProviderInterface;
  */
 class ProductSlugSourceEntityProvider implements SlugSourceEntityProviderInterface
 {
-    /**
-     * @var ManagerRegistry
-     */
-    protected $registry;
+    private SluggableEntityFinder $sluggableEntityFinder;
+    private ConfigManager $configManager;
 
-    /**
-     * @var ConfigManager
-     */
-    protected $configManager;
-
-    /**
-     * @param ManagerRegistry $registry
-     * @param ConfigManager $configManager
-     */
-    public function __construct(ManagerRegistry $registry, ConfigManager $configManager)
+    public function __construct(SluggableEntityFinder $sluggableEntityFinder, ConfigManager $configManager)
     {
-        $this->registry = $registry;
+        $this->sluggableEntityFinder = $sluggableEntityFinder;
         $this->configManager = $configManager;
     }
 
@@ -45,9 +33,6 @@ class ProductSlugSourceEntityProvider implements SlugSourceEntityProviderInterfa
             return null;
         }
 
-        /** @var ProductRepository $repository */
-        $repository = $this->registry->getManagerForClass(Product::class)->getRepository(Product::class);
-
-        return $repository->findOneBySlug($slug);
+        return $this->sluggableEntityFinder->findEntityBySlug(Product::class, $slug);
     }
 }

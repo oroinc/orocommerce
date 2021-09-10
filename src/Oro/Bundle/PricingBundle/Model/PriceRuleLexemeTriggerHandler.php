@@ -21,10 +21,6 @@ class PriceRuleLexemeTriggerHandler
     /** @var ManagerRegistry */
     private $doctrine;
 
-    /**
-     * @param PriceListTriggerHandler $priceListTriggerHandler
-     * @param ManagerRegistry         $doctrine
-     */
     public function __construct(
         PriceListTriggerHandler $priceListTriggerHandler,
         ManagerRegistry $doctrine

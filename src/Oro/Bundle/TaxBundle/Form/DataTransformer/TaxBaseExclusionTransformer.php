@@ -13,9 +13,6 @@ class TaxBaseExclusionTransformer implements DataTransformerInterface
      */
     protected $taxBaseExclusionFactory;
 
-    /**
-     * @param TaxBaseExclusionFactory $taxBaseExclusionFactory
-     */
     public function __construct(TaxBaseExclusionFactory $taxBaseExclusionFactory)
     {
         $this->taxBaseExclusionFactory = $taxBaseExclusionFactory;

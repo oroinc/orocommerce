@@ -8,6 +8,7 @@ use Oro\Bundle\CMSBundle\Entity\ContentWidgetUsage;
 use Oro\Bundle\CMSBundle\Entity\Repository\ContentWidgetUsageRepository;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 
 class ContentWidgetVoterTest extends \PHPUnit\Framework\TestCase
 {
@@ -26,10 +27,8 @@ class ContentWidgetVoterTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->token = $this->createMock(TokenInterface::class);
-
         $this->repository = $this->createMock(ContentWidgetUsageRepository::class);
 
-        /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject $doctrineHelper */
         $doctrineHelper = $this->createMock(DoctrineHelper::class);
         $doctrineHelper->expects($this->any())
             ->method('getEntityRepositoryForClass')
@@ -45,7 +44,7 @@ class ContentWidgetVoterTest extends \PHPUnit\Framework\TestCase
             ->method($this->anything());
 
         $this->assertEquals(
-            ContentWidgetVoter::ACCESS_ABSTAIN,
+            VoterInterface::ACCESS_ABSTAIN,
             $this->voter->vote($this->token, new \stdClass(), [])
         );
     }
@@ -56,16 +55,13 @@ class ContentWidgetVoterTest extends \PHPUnit\Framework\TestCase
             ->method($this->anything());
 
         $this->assertEquals(
-            ContentWidgetVoter::ACCESS_ABSTAIN,
+            VoterInterface::ACCESS_ABSTAIN,
             $this->voter->vote($this->token, new ContentWidget(), ['ATTR'])
         );
     }
 
     /**
      * @dataProvider voteProvider
-     *
-     * @param bool $found
-     * @param int $expected
      */
     public function testVote(bool $found, int $expected): void
     {
@@ -79,19 +75,16 @@ class ContentWidgetVoterTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $this->voter->vote($this->token, $subject, ['DELETE']));
     }
 
-    /**
-     * @return array
-     */
     public function voteProvider() : array
     {
         return [
             [
                 'found' => true,
-                'expected' => ContentWidgetVoter::ACCESS_DENIED,
+                'expected' => VoterInterface::ACCESS_DENIED,
             ],
             [
                 'found' => false,
-                'expected' => ContentWidgetVoter::ACCESS_ABSTAIN,
+                'expected' => VoterInterface::ACCESS_ABSTAIN,
             ],
         ];
     }
