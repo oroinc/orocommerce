@@ -93,4 +93,43 @@ class MapperTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals($expectedResult, $this->mapper->mapSelectedData($query, $item));
     }
+
+    public function testMapSelectedDataWithFlatFields()
+    {
+        $query = new Query();
+        $query->addSelect('integer.category_paths.1_2');
+        $query->addSelect('integer.category_paths.1_3 as third_category');
+        $query->addSelect('integer.category_paths.1_4 as fourth_category');
+        $query->addSelect('integer.category_paths.1_9 as missing_category');
+
+        $item1 = [
+            'category_paths.1_2' => '2',
+            'category_paths.1_3' => 3,
+            'category_paths.1_4' => 4,
+        ];
+        $item2 = [
+            'category_paths__SEPARATOR__1_2' => '2',
+            'category_paths__SEPARATOR__1_3' => 3,
+            'category_paths__SEPARATOR__1_4' => 4,
+        ];
+        $item3 = [
+            'category_paths' => [
+                '1_2' => '2',
+                '1_3' => 3,
+                '1_4' => 4,
+            ],
+        ];
+
+        $expectedResult = [
+            'category_paths.1_2' => 2,
+            'third_category' => 3,
+            'fourth_category' => 4,
+            'missing_category' => '',
+        ];
+
+        $this->assertSame($expectedResult, $this->mapper->mapSelectedData($query, $item1));
+        $this->assertSame($expectedResult, $this->mapper->mapSelectedData($query, $item2));
+        $this->assertSame($expectedResult, $this->mapper->mapSelectedData($query, $item3));
+    }
+
 }

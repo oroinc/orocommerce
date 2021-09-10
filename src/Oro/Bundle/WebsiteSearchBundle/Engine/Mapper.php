@@ -15,10 +15,9 @@ class Mapper
     /**
      * @param Query $query
      * @param array $item
-     * @param array $serviceFields
      * @return array
      */
-    public function mapSelectedData(Query $query, array $item, $serviceFields = [])
+    public function mapSelectedData(Query $query, array $item)
     {
         $selects = $query->getSelect();
         $selectAliases = $query->getSelectAliases();
@@ -40,17 +39,25 @@ class Mapper
                 $resultName = $name;
             }
 
-            // Skip service fields
-            if (in_array($resultName, $serviceFields, true)) {
-                continue;
+            $value = null;
+
+            // if flat object field
+            if (str_contains($name, '.')) {
+                $value = $this->parseFlatValue($item, $type, $name);
             }
 
-            $result[$resultName] = '';
-
-            $name = str_replace('.', BaseDriver::SPECIAL_SEPARATOR, $name);
-            if (isset($item[$name])) {
-                $result[$resultName] = $this->parseValue($item[$name], $type);
+            if (null === $value) {
+                if (isset($item[$name])) {
+                    $value = $this->parseValue($item[$name], $type);
+                } else {
+                    $name = str_replace('.', BaseDriver::SPECIAL_SEPARATOR, $name);
+                    if (isset($item[$name])) {
+                        $value = $this->parseValue($item[$name], $type);
+                    }
+                }
             }
+
+            $result[$resultName] = $value !== null ? $value : '';
         }
 
         return $result;
@@ -76,5 +83,27 @@ class Mapper
         }
 
         return $value;
+    }
+
+    /**
+     * @param array $item
+     * @param $name
+     * @return mixed
+     */
+    protected function parseFlatValue(array $item, $type, $name)
+    {
+        $nameParts = explode('.', $name);
+        // convert string to array
+        $dataArray = &$item;
+        foreach ($nameParts as $part) {
+            if (array_key_exists($part, $dataArray)) {
+                $dataArray = &$dataArray[$part];
+            } else {
+                $dataArray = null;
+                break;
+            }
+        }
+
+        return $this->parseValue($dataArray, $type);
     }
 }
