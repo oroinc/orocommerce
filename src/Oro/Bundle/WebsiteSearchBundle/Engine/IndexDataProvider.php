@@ -22,7 +22,7 @@ class IndexDataProvider
 {
     use ContextTrait;
 
-    const ALL_TEXT_FIELD = 'all_text';
+    const ALL_TEXT_PREFIX = 'all_text';
     const ALL_TEXT_L10N_FIELD = 'all_text_LOCALIZATION_ID';
 
     /** @var array */
@@ -144,7 +144,7 @@ class IndexDataProvider
                         $this->setIndexValue($preparedIndexData, $entityId, $allTextFieldName, $value, $type);
                     }
 
-                    if (!str_starts_with($fieldName, $self::ALL_TEXT_FIELD)) {
+                    if (!str_starts_with($fieldName, self::ALL_TEXT_PREFIX)) {
                         $singleValueFieldName = $this->placeholder->replace($singleValueFieldName, $placeholders);
                         $this->setIndexValue($preparedIndexData, $entityId, $singleValueFieldName, $value, $type);
                     }
@@ -196,7 +196,7 @@ class IndexDataProvider
     {
         if (!empty($fieldsValues[Query::TYPE_TEXT])) {
             foreach ($fieldsValues[Query::TYPE_TEXT] as $fieldName => $fieldValue) {
-                if (str_starts_with($fieldName, self::ALL_TEXT_FIELD)) {
+                if (str_starts_with($fieldName, self::ALL_TEXT_PREFIX)) {
                     $fieldsValues[Query::TYPE_TEXT][$fieldName] = $this->updateAllTextFieldValue($fieldValue);
                 }
             }
@@ -305,7 +305,7 @@ class IndexDataProvider
                 return $default;
             }
 
-            if (in_array($fieldName, [self::ALL_TEXT_FIELD, self::ALL_TEXT_L10N_FIELD], true)) {
+            if ($fieldName === self::ALL_TEXT_L10N_FIELD) {
                 return $configName === 'type' ? Query::TYPE_TEXT : $fieldName;
             }
 
@@ -340,7 +340,7 @@ class IndexDataProvider
             return $value;
         }
 
-        if ($type === Query::TYPE_TEXT && str_starts_with($fieldName, self::ALL_TEXT_FIELD)) {
+        if ($type === Query::TYPE_TEXT && str_starts_with($fieldName, self::ALL_TEXT_PREFIX)) {
             $value = $this->htmlTagHelper->stripTags((string)$value);
             $value = $this->htmlTagHelper->stripLongWords($value);
         }

@@ -122,10 +122,9 @@ class ProductVariantIndexDataProviderDecorator implements ProductIndexDataProvid
         \ArrayIterator $data,
         \ArrayIterator $variantData
     ): void {
-        $allTextFieldNames = [IndexDataProvider::ALL_TEXT_L10N_FIELD, IndexDataProvider::ALL_TEXT_FIELD];
         foreach ($variantData as $variantModel) {
             // add all_text fields from variants to main product
-            if (\in_array($variantModel->getFieldName(), $allTextFieldNames, true)) {
+            if ($variantModel->getFieldName() === IndexDataProvider::ALL_TEXT_L10N_FIELD) {
                 $data->append($variantModel);
             }
         }

@@ -314,7 +314,6 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
                     [1, 'title_WEBSITE_ID', '<p>SKU-01-gb</p>', ['WEBSITE_ID' => 1, 'LOCALIZATION_ID' => 6], true],
                     [1, 'descr_LOCALIZATION_ID', '<p>en_US</p>', ['WEBSITE_ID' => 1, 'LOCALIZATION_ID' => 5], true],
                     [1, 'descr_LOCALIZATION_ID', '<p>en_GB</p>', ['WEBSITE_ID' => 1, 'LOCALIZATION_ID' => 6], true],
-                    [1, 'all_text', 'for_all_text', true],
                     [1, 'all_text_LOCALIZATION_ID', 'title5 descr5 keywords5', ['LOCALIZATION_ID' => 5], true],
                     [1, 'all_text_LOCALIZATION_ID', 'title6 descr6 keywords6', ['LOCALIZATION_ID' => 6], true],
                 ],
@@ -322,8 +321,8 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
                     1 => [
                         'text' => [
                             'title_1' => '<p>SKU-01</p> <p>SKU-01-gb</p>',
-                            'all_text_5' => 'SKU-01 en_US title5 descr5 keywords5 for_all_text',
-                            'all_text_6' => 'SKU-01-gb en_GB title6 descr6 keywords6 for_all_text',
+                            'all_text_5' => 'SKU-01 en_US title5 descr5 keywords5',
+                            'all_text_6' => 'SKU-01-gb en_GB title6 descr6 keywords6',
                             'descr_5' => '<p>en_US</p>',
                             'descr_6' => '<p>en_GB</p>',
                         ],

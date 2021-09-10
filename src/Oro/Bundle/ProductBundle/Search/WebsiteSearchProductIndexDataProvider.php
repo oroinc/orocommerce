@@ -115,7 +115,7 @@ class WebsiteSearchProductIndexDataProvider implements ProductIndexDataProviderI
         if ($this->configurationProvider->isAttributeSearchable($attribute)) {
             $this->addToFields(
                 $data,
-                $isLocalized ? IndexDataProvider::ALL_TEXT_L10N_FIELD : IndexDataProvider::ALL_TEXT_FIELD,
+                IndexDataProvider::ALL_TEXT_L10N_FIELD,
                 $attributeType->getSearchableValue($attribute, $originalValue, $localization),
                 $placeholders,
                 $isLocalized,
