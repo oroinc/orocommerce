@@ -1852,3 +1852,11 @@ services:
             - '@oro_product.handler.request_content_variant'
         tags:
             - { name: layout.data_provider, alias: frontend_product_export_options }
+
+    oro_product.event_listener.product_quick_order_form_not_found:
+        class: Oro\Bundle\ProductBundle\EventListener\ProductQuickOrderFormNotFoundListener
+        arguments:
+            - '@router'
+            - '@oro_security.token_accessor'
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception, method: onKernelException}
