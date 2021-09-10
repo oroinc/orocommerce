@@ -39,28 +39,41 @@ class Mapper
                 $resultName = $name;
             }
 
-            $value = null;
-
-            // if flat object field
-            if (str_contains($name, '.')) {
-                $value = $this->parseFlatValue($item, $type, $name);
-            }
-
-            if (null === $value) {
-                if (isset($item[$name])) {
-                    $value = $this->parseValue($item[$name], $type);
-                } else {
-                    $name = str_replace('.', BaseDriver::SPECIAL_SEPARATOR, $name);
-                    if (isset($item[$name])) {
-                        $value = $this->parseValue($item[$name], $type);
-                    }
-                }
-            }
+            $value = $this->getValue($item, $type, $name);
 
             $result[$resultName] = $value !== null ? $value : '';
         }
 
         return $result;
+    }
+
+    /**
+     * @param array $item
+     * @param string $type
+     * @param string $name
+     * @return mixed
+     */
+    protected function getValue(array $item, $type, $name)
+    {
+        $value = null;
+
+        // if flat object field
+        if (str_contains($name, '.')) {
+            $value = $this->parseFlatValue($item, $type, $name);
+        }
+
+        if (null === $value) {
+            if (isset($item[$name])) {
+                $value = $this->parseValue($item[$name], $type);
+            } else {
+                $name = str_replace('.', BaseDriver::SPECIAL_SEPARATOR, $name);
+                if (isset($item[$name])) {
+                    $value = $this->parseValue($item[$name], $type);
+                }
+            }
+        }
+
+        return $value;
     }
 
     /**
@@ -87,7 +100,8 @@ class Mapper
 
     /**
      * @param array $item
-     * @param $name
+     * @param string $type
+     * @param string $name
      * @return mixed
      */
     protected function parseFlatValue(array $item, $type, $name)
