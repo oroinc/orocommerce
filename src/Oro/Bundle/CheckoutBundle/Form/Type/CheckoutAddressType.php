@@ -17,9 +17,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class CheckoutAddressType extends AbstractType
 {
-    const NAME = 'oro_checkout_address';
-    const SHIPPING_ADDRESS_NAME = 'shipping_address';
-
     /**
      * {@inheritdoc}
      */
@@ -70,17 +67,9 @@ class CheckoutAddressType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getName()
-    {
-        return $this->getBlockPrefix();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getBlockPrefix()
     {
-        return self::NAME;
+        return 'oro_checkout_address';
     }
 
     /**

@@ -152,7 +152,11 @@ services:
             - '@oro_ups.client.url_provider_basic'
 
     oro_ups.repository.shipping_service:
-        class: 'Oro\Bundle\UPSBundle\Entity\Repository\ShippingServiceRepository'
+        alias: Oro\Bundle\UPSBundle\Entity\Repository\ShippingServiceRepository
+
+    Oro\Bundle\UPSBundle\Entity\Repository\ShippingServiceRepository:
         parent: oro_entity.abstract_repository
         arguments:
             - 'Oro\Bundle\UPSBundle\Entity\ShippingService'
+        tags:
+            - { name: doctrine.repository_service }

@@ -124,35 +124,39 @@ class MatrixGridOrderManagerTest extends \PHPUnit\Framework\TestCase
         $this->variantAvailability->expects($this->exactly(2))
             ->method('getVariantFieldValues')
             ->willReturnMap([
-                ['size', ['s' => 'Small' , 'm' => 'Medium']],
-                ['color', ['red' => 'Red' , 'green' => 'Green']]
+                ['size', ['s' => 'Small', 'm' => 'Medium']],
+                ['color', ['red' => 'Red', 'green' => 'Green']]
             ]);
 
         $simpleProductSmallRed = (new ProductWithSizeAndColor())->setSize('s')->setColor('red')->setId(1);
         $simpleProductMediumGreen = (new ProductWithSizeAndColor())->setSize('m')->setColor('green')->setId(2);
         $simpleProductMediumRed = (new ProductWithSizeAndColor())->setSize('m')->setColor('green')->setId(3);
+        $simpleProductMediumNoColor = (new ProductWithSizeAndColor())->setSize('m')->setId(4);
 
         $simpleProductSmallRed->addUnitPrecision($productUnitPrecision);
         $simpleProductMediumGreen->addUnitPrecision($productUnitPrecision);
+        $simpleProductMediumNoColor->addUnitPrecision($productUnitPrecision);
 
         $this->variantAvailability->expects($this->once())
             ->method('getSimpleProductsByVariantFields')
             ->with($product)
-            ->willReturn([$simpleProductSmallRed, $simpleProductMediumGreen, $simpleProductMediumRed]);
-        $this->variantAvailability->expects($this->exactly(4))
+            ->willReturn([
+                $simpleProductSmallRed,
+                $simpleProductMediumGreen,
+                $simpleProductMediumRed,
+                $simpleProductMediumNoColor
+            ]);
+
+        $this->variantAvailability->expects($this->exactly(6))
             ->method('getVariantFieldScalarValue')
-            ->withConsecutive(
-                [$simpleProductSmallRed, 'size'],
-                [$simpleProductSmallRed, 'color'],
-                [$simpleProductMediumGreen, 'size'],
-                [$simpleProductMediumGreen, 'color']
-            )
-            ->willReturnOnConsecutiveCalls(
-                's',
-                'red',
-                'm',
-                'green'
-            );
+            ->willReturnMap([
+                [$simpleProductSmallRed, 'size', 's'],
+                [$simpleProductSmallRed, 'color', 'red'],
+                [$simpleProductMediumGreen, 'size', 'm'],
+                [$simpleProductMediumGreen, 'color', 'green'],
+                [$simpleProductMediumNoColor, 'size', 'm'],
+                [$simpleProductMediumNoColor, 'color', null]
+            ]);
 
         $columnSmallRed = new MatrixCollectionColumn();
         $columnSmallGreen = new MatrixCollectionColumn();
@@ -216,7 +220,7 @@ class MatrixGridOrderManagerTest extends \PHPUnit\Framework\TestCase
             ->method('getVariantFieldValues')
             ->willReturnMap([
                 ['size', ['s' => 'Small' , 'm' => 'Medium']],
-                ['color', ['red' => 'Red' , 'green' => 'Green']]
+                ['color', ['red' => 'Red', 'green' => 'Green']]
             ]);
 
         $simpleProductSmallRed = (new ProductWithSizeAndColor())->setSize('s')->setColor('red')->setId(1);
@@ -230,20 +234,15 @@ class MatrixGridOrderManagerTest extends \PHPUnit\Framework\TestCase
             ->method('getSimpleProductsByVariantFields')
             ->with($product)
             ->willReturn([$simpleProductSmallRed, $simpleProductMediumGreen, $simpleProductMediumRed]);
+
         $this->variantAvailability->expects($this->exactly(4))
             ->method('getVariantFieldScalarValue')
-            ->withConsecutive(
-                [$simpleProductSmallRed, 'size'],
-                [$simpleProductSmallRed, 'color'],
-                [$simpleProductMediumGreen, 'size'],
-                [$simpleProductMediumGreen, 'color']
-            )
-            ->willReturnOnConsecutiveCalls(
-                's',
-                'red',
-                'm',
-                'green'
-            );
+            ->willReturnMap([
+                [$simpleProductSmallRed, 'size', 's'],
+                [$simpleProductSmallRed, 'color', 'red'],
+                [$simpleProductMediumGreen, 'size', 'm'],
+                [$simpleProductMediumGreen, 'color', 'green'],
+            ]);
 
         $columnSmallRed = new MatrixCollectionColumn();
         $columnSmallGreen = new MatrixCollectionColumn();
@@ -392,18 +391,12 @@ class MatrixGridOrderManagerTest extends \PHPUnit\Framework\TestCase
             ]);
         $this->variantAvailability->expects($this->exactly(4))
             ->method('getVariantFieldScalarValue')
-            ->withConsecutive(
-                [$simpleProductNoDiscountNotInSale, 'discount'],
-                [$simpleProductNoDiscountNotInSale, 'inSale'],
-                [$simpleProductNoDiscountInSale, 'discount'],
-                [$simpleProductNoDiscountInSale, 'inSale']
-            )
-            ->willReturnOnConsecutiveCalls(
-                true,
-                true,
-                false,
-                false
-            );
+            ->willReturnMap([
+                [$simpleProductNoDiscountNotInSale, 'discount', true],
+                [$simpleProductNoDiscountNotInSale, 'inSale', true],
+                [$simpleProductNoDiscountInSale, 'discount', false],
+                [$simpleProductNoDiscountInSale, 'inSale', false],
+            ]);
 
         $columnDiscountInSale = new MatrixCollectionColumn();
         $columnDiscountNotInSale = new MatrixCollectionColumn();
@@ -559,8 +552,8 @@ class MatrixGridOrderManagerTest extends \PHPUnit\Framework\TestCase
         $this->variantAvailability->expects($this->exactly(2))
             ->method('getVariantFieldValues')
             ->willReturnMap([
-                ['size', ['s' => 'Small' , 'm' => 'Medium']],
-                ['color', ['red' => 'Red' , 'green' => 'Green']]
+                ['size', ['s' => 'Small', 'm' => 'Medium']],
+                ['color', ['red' => 'Red', 'green' => 'Green']]
             ]);
 
         $simpleProductSmallRed = (new ProductWithSizeAndColor())->setSize('s')->setColor('red')->setId(2);
@@ -577,18 +570,12 @@ class MatrixGridOrderManagerTest extends \PHPUnit\Framework\TestCase
             ->willReturn([$simpleProductSmallRed, $simpleProductMediumGreen, $simpleProductMediumRed]);
         $this->variantAvailability->expects($this->exactly(4))
             ->method('getVariantFieldScalarValue')
-            ->withConsecutive(
-                [$simpleProductSmallRed, 'size'],
-                [$simpleProductSmallRed, 'color'],
-                [$simpleProductMediumRed, 'size'],
-                [$simpleProductMediumRed, 'color']
-            )
-            ->willReturnOnConsecutiveCalls(
-                's',
-                'red',
-                'm',
-                'red'
-            );
+            ->willReturnMap([
+                [$simpleProductSmallRed, 'size', 's'],
+                [$simpleProductSmallRed, 'color', 'red'],
+                [$simpleProductMediumRed, 'size', 'm'],
+                [$simpleProductMediumRed, 'color', 'red'],
+            ]);
 
         $columnSmallRed = new MatrixCollectionColumn();
         $columnSmallGreen = new MatrixCollectionColumn();

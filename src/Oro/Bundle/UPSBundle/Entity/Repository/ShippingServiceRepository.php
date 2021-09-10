@@ -2,11 +2,14 @@
 
 namespace Oro\Bundle\UPSBundle\Entity\Repository;
 
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 
-class ShippingServiceRepository extends EntityRepository
+/**
+ * Doctrine repository for ShippingService entity
+ */
+class ShippingServiceRepository extends ServiceEntityRepository
 {
     /**
      * @param Country $country

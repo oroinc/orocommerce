@@ -12,16 +12,16 @@ services:
             - { name: doctrine.event_listener, event: onFlush }
 
     oro_visibility.acl.voter.customer:
-        class: 'Oro\Bundle\VisibilityBundle\Acl\Voter\ProductVisibilityVoter'
-        public: false
+        class: Oro\Bundle\VisibilityBundle\Acl\Voter\ProductVisibilityVoter
         arguments:
-            - "@oro_entity.doctrine_helper"
+            - '@oro_entity.doctrine_helper'
+            - '@oro_frontend.request.frontend_helper'
+            - '@Psr\Container\ContainerInterface'
         calls:
             - [setClassName, ['Oro\Bundle\ProductBundle\Entity\Product']]
-            - [setFrontendHelper, ["@oro_frontend.request.frontend_helper"]]
-            - [setResolvedProductVisibilityProvider, ['@oro_visibility.provider.resolved_product_visibility_provider']]
         tags:
             - { name: security.voter }
+            - { name: container.service_subscriber, id: oro_visibility.provider.resolved_product_visibility_provider }
 
     oro_visibility.event_listener.visibility_grid_listener:
         class: 'Oro\Bundle\VisibilityBundle\EventListener\VisibilityGridListener'
@@ -374,46 +374,88 @@ services:
             - { name: kernel.event_listener, event: oro_product.event.restrict_product_variant_event, method: onRestrictProductVariantEvent }
 
     oro_visibility.product_raw_repository:
-        class: Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\ProductVisibilityRepository
+        alias: Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\ProductVisibilityRepository
+
+    Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\ProductVisibilityRepository:
         parent: oro_entity.abstract_repository
         arguments:
             - Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility
+        tags:
+            - { name: doctrine.repository_service }
 
     oro_visibility.product_repository:
-        class: Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\ProductRepository
+        alias: Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\ProductRepository
+
+    Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\ProductRepository:
         parent: oro_entity.abstract_repository
         arguments:
             - Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\ProductVisibilityResolved
+        tags:
+            - { name: doctrine.repository_service }
 
     oro_visibility.customer_product_repository:
-        class: Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CustomerProductRepository
+        alias: Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CustomerProductRepository
+
+    Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CustomerProductRepository:
         parent: oro_entity.abstract_repository
         arguments:
             - Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerProductVisibilityResolved
+        tags:
+            - { name: doctrine.repository_service }
 
     oro_visibility.customer_group_product_repository:
-        class: Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CustomerGroupProductRepository
+        alias: Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CustomerGroupProductRepository
+
+    Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CustomerGroupProductRepository:
         parent: oro_entity.abstract_repository
         arguments:
             - Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerGroupProductVisibilityResolved
+        tags:
+            - { name: doctrine.repository_service }
 
     oro_visibility.customer_category_repository:
-        class: Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CustomerCategoryRepository
+        alias: Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CustomerCategoryRepository
+
+    Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CustomerCategoryRepository:
         parent: oro_entity.abstract_repository
         arguments:
             - Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerCategoryVisibilityResolved
+        tags:
+            - { name: doctrine.repository_service }
 
     oro_visibility.category_repository:
-        class: Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CategoryRepository
+        alias: Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CategoryRepository
+
+    Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CategoryRepository:
         parent: oro_entity.abstract_repository
         arguments:
             - Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CategoryVisibilityResolved
+        tags:
+            - { name: doctrine.repository_service }
 
     oro_visibility.customer_group_category_repository:
-        class: Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CustomerGroupCategoryRepository
+        alias: Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CustomerGroupCategoryRepository
+
+    Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CustomerGroupCategoryRepository:
         parent: oro_entity.abstract_repository
         arguments:
             - Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerGroupCategoryVisibilityResolved
+        tags:
+            - { name: doctrine.repository_service }
+
+    Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\CustomerGroupProductVisibilityRepository:
+        parent: oro_entity.abstract_repository
+        arguments:
+            - Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility
+        tags:
+            - { name: doctrine.repository_service }
+
+    Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\CustomerProductVisibilityRepository:
+        parent: oro_entity.abstract_repository
+        arguments:
+            - Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility
+        tags:
+            - { name: doctrine.repository_service }
 
     oro_visibility.async.visibility.customer_processor:
         class: Oro\Bundle\VisibilityBundle\Async\Visibility\CustomerProcessor

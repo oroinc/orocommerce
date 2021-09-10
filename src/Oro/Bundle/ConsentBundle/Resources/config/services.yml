@@ -203,7 +203,7 @@ services:
     oro_consent.security.acl.voter.consent:
         class: 'Oro\Bundle\ConsentBundle\Acl\Voter\ConsentVoter'
         arguments:
-            - "@oro_entity.doctrine_helper"
+            - '@oro_entity.doctrine_helper'
         calls:
             - [setClassName, ['Oro\Bundle\ConsentBundle\Entity\Consent']]
         tags:

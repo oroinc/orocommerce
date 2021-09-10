@@ -454,6 +454,14 @@ services:
         tags:
             - { name: validator.constraint_validator, alias: oro_product_attribute_family_usage_in_variant_field }
 
+    oro_product.validator.attribute_value_usages_product_variant_field:
+        class: 'Oro\Bundle\ProductBundle\Validator\Constraints\AttributeValueUsageInVariantValidator'
+        arguments:
+            - '@doctrine'
+            - '@oro_entity_extend.enum_synchronizer'
+        tags:
+            - { name: validator.constraint_validator, alias: oro_product_attribute_value_usage_in_variant_field }
+
     oro_product.event_listener.restricted_products_datagrid:
         class: 'Oro\Bundle\ProductBundle\EventListener\RestrictedProductsDatagridEventListener'
         arguments:
@@ -581,16 +589,31 @@ services:
             - { name: kernel.event_listener, event: oro_product.product_search_query.restriction, method: onSearchQuery }
 
     oro_product.repository.product:
-        class: 'Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository'
+        alias: Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository
+
+    Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository:
         parent: oro_entity.abstract_repository
         arguments:
             - 'Oro\Bundle\ProductBundle\Entity\Product'
+        tags:
+            - { name: doctrine.repository_service }
 
     oro_product.repository.product_unit:
-        class: 'Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository'
+        alias: Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository
+
+    Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository:
         parent: oro_entity.abstract_repository
         arguments:
             - 'Oro\Bundle\ProductBundle\Entity\ProductUnit'
+        tags:
+            - { name: doctrine.repository_service }
+
+    Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitPrecisionRepository:
+        parent: oro_entity.abstract_repository
+        arguments:
+            - 'Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision'
+        tags:
+            - { name: doctrine.repository_service }
 
     oro_product.restricted_repository.product:
         class: Oro\Bundle\ProductBundle\Entity\Repository\Restriction\RestrictedProductRepository
@@ -604,6 +627,8 @@ services:
         parent: oro_entity.abstract_repository
         arguments:
             - 'Oro\Bundle\ProductBundle\Entity\ProductImage'
+        tags:
+            - { name: doctrine.repository_service }
 
     oro_product.model.builder.quick_add_row_input_parser:
         class: 'Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowInputParser'
@@ -1154,21 +1179,22 @@ services:
         class: Oro\Bundle\ProductBundle\Acl\Voter\ProductCollectionSegmentVoter
         public: false
         arguments:
-            - "@oro_entity.doctrine_helper"
-            - "@oro_product.provider.content_variant_segment_provider"
+            - '@oro_entity.doctrine_helper'
+            - '@Psr\Container\ContainerInterface'
         calls:
             - [setClassName, ['Oro\Bundle\SegmentBundle\Entity\Segment']]
         tags:
             - { name: security.voter, priority: 500 }
+            - { name: container.service_subscriber, id: oro_product.provider.content_variant_segment_provider }
 
     oro_product.security.acl.voter.product_status:
         class: Oro\Bundle\ProductBundle\Acl\Voter\ProductStatusVoter
         public: false
         arguments:
-            - "@oro_entity.doctrine_helper"
+            - '@oro_entity.doctrine_helper'
+            - '@oro_frontend.request.frontend_helper'
         calls:
             - [setClassName, ['Oro\Bundle\ProductBundle\Entity\Product']]
-            - [setFrontendHelper, ["@oro_frontend.request.frontend_helper"]]
         tags:
             - { name: security.voter, priority: 100 }
 
@@ -1178,6 +1204,20 @@ services:
         arguments:
             - "@oro_config.manager"
         tags:
+            - { name: kernel.event_listener, event: kernel.controller, method: onKernelController, priority: -100 }
+
+    oro_product.feature.voter.feature_simple_variations_view_restriction:
+        class: Oro\Bundle\ProductBundle\Feature\Voter\SimpleVariationsRestrictionFeatureVoter
+        arguments:
+            - '@oro_config.manager'
+        tags:
+            - { name: oro_featuretogle.voter }
+
+    oro_product.event_listener.restrict_variant_product_view:
+        class: Oro\Bundle\ProductBundle\EventListener\RestrictVariantProductViewListener
+        public: false
+        tags:
+            - { name: oro_featuretogle.feature, feature: 'simple_variations_view_restriction' }
             - { name: kernel.event_listener, event: kernel.controller, method: onKernelController, priority: -100 }
 
     oro_product.provider.content_variant_segment_provider:
@@ -1821,3 +1861,11 @@ services:
             - '@oro_product.handler.request_content_variant'
         tags:
             - { name: layout.data_provider, alias: frontend_product_export_options }
+
+    oro_product.event_listener.product_quick_order_form_not_found:
+        class: Oro\Bundle\ProductBundle\EventListener\ProductQuickOrderFormNotFoundListener
+        arguments:
+            - '@router'
+            - '@oro_security.token_accessor'
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception, method: onKernelException}

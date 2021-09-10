@@ -137,16 +137,17 @@ services:
        public: false
 
     oro_rfp.acl.voter.frontend_request:
-        class: 'Oro\Bundle\RFPBundle\Acl\Voter\FrontendRequestVoter'
+        class: Oro\Bundle\RFPBundle\Acl\Voter\FrontendRequestVoter
         public: false
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@oro_frontend.request.frontend_helper'
-            - '@oro_workflow.manager'
+            - '@Psr\Container\ContainerInterface'
         calls:
             - [setClassName, ['Oro\Bundle\RFPBundle\Entity\Request']]
         tags:
             - { name: security.voter }
+            - { name: container.service_subscriber, id: oro_workflow.manager }
 
     oro_rfp.datagrid.listener.column:
         class: 'Oro\Bundle\RFPBundle\EventListener\RFPDatagridColumnListener'

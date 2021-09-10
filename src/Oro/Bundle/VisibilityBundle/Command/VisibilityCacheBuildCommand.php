@@ -40,5 +40,7 @@ class VisibilityCacheBuildCommand extends Command
         $output->writeln('<info>Start the process of building the cache</info>');
         $this->cacheBuilder->buildCache();
         $output->writeln('<info>The cache is updated successfully</info>');
+
+        return 0;
     }
 }

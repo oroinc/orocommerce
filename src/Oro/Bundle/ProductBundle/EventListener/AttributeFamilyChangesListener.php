@@ -40,7 +40,7 @@ class AttributeFamilyChangesListener
 
     public function onFlush(OnFlushEventArgs $eventArgs)
     {
-        if (!$this->requestStack->getMasterRequest()) {
+        if (!$this->requestStack->getMainRequest()) {
             return;
         }
 

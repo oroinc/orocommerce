@@ -7,7 +7,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\DependencyInjection\ExtensionTestCase;
 
 class OroPaymentTermExtensionTest extends ExtensionTestCase
 {
-    public function testLoad()
+    public function testLoad(): void
     {
         $this->loadExtension(new OroPaymentTermExtension());
 
@@ -29,8 +29,12 @@ class OroPaymentTermExtensionTest extends ExtensionTestCase
             'oro_payment_term.method.factory.payment_term',
             'oro_payment_term.payment_method_view_provider.payment_term',
             'oro_payment_term.method.view.factory.payment_term',
-            'oro_payment_term.repository.payment_term_settings',
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
+
+        $expectedAliases = [
+            'oro_payment_term.repository.payment_term_settings',
+        ];
+        $this->assertAliasesLoaded($expectedAliases);
     }
 }

@@ -54,6 +54,8 @@ HELP
     {
         $this->sitemapGenerationScheduler->scheduleSend();
         $output->writeln('<info>Sitemap generation scheduled</info>');
+
+        return 0;
     }
 
     public function getDefaultDefinition()

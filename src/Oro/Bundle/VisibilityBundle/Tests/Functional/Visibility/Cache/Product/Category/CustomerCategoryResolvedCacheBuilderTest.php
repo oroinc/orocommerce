@@ -44,7 +44,7 @@ class CustomerCategoryResolvedCacheBuilderTest extends AbstractProductResolvedCa
         $this->category = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
         $this->customer = $this->getReference('customer.level_1');
 
-        $container = $this->client->getContainer();
+        $container = $this->getContainer();
         $this->scopeManager = $container->get('oro_scope.scope_manager');
         $this->scope = $this->scopeManager->findOrCreate(
             CustomerCategoryVisibility::VISIBILITY_TYPE,

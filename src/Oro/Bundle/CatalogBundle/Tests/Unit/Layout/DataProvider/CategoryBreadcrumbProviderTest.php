@@ -127,7 +127,7 @@ class CategoryBreadcrumbProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->categoryProvider->expects($this->once())
             ->method('getIncludeSubcategoriesChoice')
-            ->willReturn(1);
+            ->willReturn(true);
 
         $this->urlGenerator->expects($this->exactly(2))
             ->method('generate')
@@ -192,7 +192,7 @@ class CategoryBreadcrumbProviderTest extends \PHPUnit\Framework\TestCase
             ->willReturn([$parentCategory]);
         $this->categoryProvider->expects($this->once())
             ->method('getIncludeSubcategoriesChoice')
-            ->willReturn(1);
+            ->willReturn(true);
 
         $this->urlGenerator->expects($this->exactly(2))
             ->method('generate')

@@ -22,7 +22,7 @@ define(function(require) {
             focusFieldsSelector: 'input:text[name]',
             previewFieldsSelector: 'input:text[name],select[name]',
             enabledFieldSelector: '[data-name="field__enabled"]',
-            additionalOptionSelector: '.control-group-oro_shipping_method_type_config',
+            additionalOptionSelector: '.control-group-collection_entry',
             focus: false,
             updateFlag: null
         },

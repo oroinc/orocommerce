@@ -37,7 +37,7 @@ class CustomerGroupProductResolvedCacheBuilderTest extends AbstractCacheBuilderT
      */
     protected function getCacheBuilder()
     {
-        $container = $this->client->getContainer();
+        $container = $this->getContainer();
 
         $productReindexManager = new ProductReindexManager(
             $container->get('event_dispatcher')

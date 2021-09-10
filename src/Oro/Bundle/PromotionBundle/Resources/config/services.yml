@@ -11,7 +11,7 @@ services:
         class: Oro\Bundle\PromotionBundle\Acl\Voter\PromotionMatchedProductSegmentVoter
         public: false
         arguments:
-            - "@oro_entity.doctrine_helper"
+            - '@oro_entity.doctrine_helper'
         calls:
             - [setClassName, ['Oro\Bundle\SegmentBundle\Entity\Segment']]
         tags:
@@ -473,11 +473,16 @@ services:
             - { name: form.type, alias: oro_promotion_discount_configuration }
 
     oro_promotion.repository.promotion:
-        class: Oro\Bundle\PromotionBundle\Entity\Repository\PromotionRepository
+        alias: Oro\Bundle\PromotionBundle\Entity\Repository\PromotionRepository
         public: true
+
+    Oro\Bundle\PromotionBundle\Entity\Repository\PromotionRepository:
         parent: oro_entity.abstract_repository
+        public: true
         arguments:
             - 'Oro\Bundle\PromotionBundle\Entity\Promotion'
+        tags:
+            - { name: doctrine.repository_service }
 
     oro_promotion.placeholder.discount_information_placeholder_filter:
         class: Oro\Bundle\PromotionBundle\Placeholder\DiscountInformationPlaceholderFilter

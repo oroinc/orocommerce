@@ -233,7 +233,7 @@ class ShoppingListLineItemHandler
      */
     public function getShoppingList($shoppingListId = null)
     {
-        return $this->currentShoppingListManager->getForCurrentUser($shoppingListId);
+        return $this->currentShoppingListManager->getForCurrentUser($shoppingListId, true);
     }
 
     /**

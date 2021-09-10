@@ -86,6 +86,8 @@ HELP
         $this->priceListResolver->updateRelations();
 
         $this->triggerHandler->commit();
+
+        return 0;
     }
 
     protected function combinePricesForScheduledCPL()

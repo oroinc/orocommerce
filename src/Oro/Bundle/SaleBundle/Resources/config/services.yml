@@ -221,16 +221,14 @@ services:
         parent: oro_product.storage.session_data_storage
 
     oro_sale.acl.voter.frontend_quote_permission_voter:
-        class: 'Oro\Bundle\SaleBundle\Acl\Voter\FrontendQuotePermissionVoter'
-        public: false
+        class: Oro\Bundle\SaleBundle\Acl\Voter\FrontendQuotePermissionVoter
         arguments:
             - '@oro_frontend.request.frontend_helper'
         tags:
             - { name: security.voter }
 
     oro_sale.acl.voter.frontend_quote_demand_permission_voter:
-        class: 'Oro\Bundle\SaleBundle\Acl\Voter\FrontendQuoteDemandPermissionVoter'
-        public: false
+        class: Oro\Bundle\SaleBundle\Acl\Voter\FrontendQuoteDemandPermissionVoter
         arguments:
             - '@oro_frontend.request.frontend_helper'
         tags:

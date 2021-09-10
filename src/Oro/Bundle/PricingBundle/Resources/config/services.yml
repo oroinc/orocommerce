@@ -1,14 +1,14 @@
 services:
     oro_pricing.acl.voter.product_list:
         class: 'Oro\Bundle\PricingBundle\Acl\Voter\PriceListVoter'
-        public: false
         arguments:
             - '@oro_entity.doctrine_helper'
-            - '@oro_pricing.price_list_reference_checker'
+            - '@Psr\Container\ContainerInterface'
         calls:
             - [setClassName, ['Oro\Bundle\PricingBundle\Entity\PriceList']]
         tags:
             - { name: security.voter, priority: 10 }
+            - { name: container.service_subscriber, id: oro_pricing.price_list_reference_checker }
 
     oro_pricing.datagrid.price_list_permissions_provider:
         class: 'Oro\Bundle\PricingBundle\Datagrid\PriceListPermissionProvider'
@@ -138,7 +138,7 @@ services:
         arguments:
             - '@oro_entity.doctrine_helper'
         tags:
-            - { name: oro_entity.virtual_relation_provider, priority: 120 }
+            - { name: oro_entity.virtual_relation_provider, priority: -120 }
 
     oro_pricing.provider.frontend_product_prices:
         class: 'Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider'

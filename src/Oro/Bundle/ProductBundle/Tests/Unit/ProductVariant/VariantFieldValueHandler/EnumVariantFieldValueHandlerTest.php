@@ -6,8 +6,8 @@ use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
-use Oro\Bundle\EntityExtendBundle\Model\EnumValue;
 use Oro\Bundle\EntityExtendBundle\Provider\EnumValueProvider;
+use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
@@ -141,14 +141,71 @@ class EnumVariantFieldValueHandlerTest extends \PHPUnit\Framework\TestCase
 
     public function testGetScalarValue()
     {
-        $fieldValue = new EnumValue();
-        $scalarValue = 1;
+        $fieldValue = new TestEnumValue(1, 'test');
 
         $this->doctrineHelper->expects($this->once())
             ->method('getSingleEntityIdentifier')
             ->with($fieldValue)
-            ->willReturn($scalarValue);
+            ->willReturn($fieldValue->getId());
 
-        $this->assertEquals($scalarValue, $this->handler->getScalarValue($fieldValue));
+        $this->assertEquals(1, $this->handler->getScalarValue($fieldValue));
+    }
+
+    public function testGetScalarValueWithNonEnum()
+    {
+        $this->doctrineHelper->expects($this->never())
+            ->method('getSingleEntityIdentifier');
+
+        $this->assertNull($this->handler->getScalarValue('1'));
+    }
+
+    public function testGetHumanReadableValueForEnumValue()
+    {
+        $fieldName = 'test_field';
+        $fieldValue = new TestEnumValue(1, 'test');
+
+        $this->doctrineHelper->expects($this->once())
+            ->method('getSingleEntityIdentifier')
+            ->with($fieldValue)
+            ->willReturn($fieldValue->getId());
+
+        $fieldConfigModel = new FieldConfigModel($fieldName);
+        $fieldConfigModel->fromArray('extend', ['target_entity' => Product::class]);
+
+        $this->configManager->expects($this->once())
+            ->method('getConfigFieldModel')
+            ->with(Product::class, $fieldName)
+            ->willReturn($fieldConfigModel);
+
+        $this->enumValueProvider->expects($this->once())
+            ->method('getEnumChoicesWithNonUniqueTranslation')
+            ->with(Product::class)
+            ->willReturn([1 => 'cache_data']);
+
+        $this->localeSettings->expects($this->once())
+            ->method('getLocale')
+            ->willReturn('en_US');
+
+        $this->assertEquals('cache_data', $this->handler->getHumanReadableValue($fieldName, $fieldValue));
+    }
+
+    public function testGetHumanReadableValueForScalarValue()
+    {
+        $fieldName = 'test_field';
+        $fieldValue = 'test';
+
+        $this->doctrineHelper->expects($this->never())
+            ->method('getSingleEntityIdentifier');
+
+        $this->configManager->expects($this->never())
+            ->method('getConfigFieldModel');
+
+        $this->enumValueProvider->expects($this->never())
+            ->method('getEnumChoicesWithNonUniqueTranslation');
+
+        $this->localeSettings->expects($this->never())
+            ->method('getLocale');
+
+        $this->assertEquals('N/A', $this->handler->getHumanReadableValue($fieldName, $fieldValue));
     }
 }

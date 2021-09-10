@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository;
 
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
@@ -18,7 +18,7 @@ use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerCategoryVisibi
  *  - scope
  *  - category
  */
-class CustomerCategoryRepository extends EntityRepository
+class CustomerCategoryRepository extends ServiceEntityRepository
 {
     use CategoryVisibilityResolvedTermTrait;
     use BasicOperationRepositoryTrait;

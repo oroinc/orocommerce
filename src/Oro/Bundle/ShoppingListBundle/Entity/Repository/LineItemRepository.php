@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Entity\Repository;
 
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\AbstractQuery;
-use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\BatchBundle\ORM\Query\ResultIterator\IdentifierHydrator;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
@@ -16,7 +16,7 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 /**
  * Entity repository for Shopping List Line Item entity
  */
-class LineItemRepository extends EntityRepository
+class LineItemRepository extends ServiceEntityRepository
 {
     /**
      * Find line item with the same product and unit in the specified shopping list

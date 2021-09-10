@@ -57,6 +57,7 @@ class TextContentVariantType extends AbstractType
         $resolver->setDefaults(
             [
                 'data_class' => TextContentVariant::class,
+                'error_mapping' => ['contentStyle' => 'content_style'],
             ]
         );
     }

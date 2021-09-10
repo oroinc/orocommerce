@@ -8,16 +8,16 @@ use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\SecurityBundle\Acl\BasicPermission;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
+use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 
 /**
- * Limits QuoteDemand entity by the logged in customer user or current visitor.
+ * On the storefront, denies access to QuoteDemand entities that does not belong
+ * to the logged in customer user or current visitor.
  * @see \Oro\Bundle\SaleBundle\Acl\AccessRule\FrontendQuoteDemandAccessRule
  */
-class FrontendQuoteDemandPermissionVoter extends Voter
+class FrontendQuoteDemandPermissionVoter implements VoterInterface
 {
-    /** @var FrontendHelper */
-    private $frontendHelper;
+    private FrontendHelper $frontendHelper;
 
     public function __construct(FrontendHelper $frontendHelper)
     {
@@ -25,35 +25,48 @@ class FrontendQuoteDemandPermissionVoter extends Voter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function supports($attribute, $subject)
+    public function vote(TokenInterface $token, $subject, array $attributes)
     {
-        return
-            BasicPermission::VIEW === $attribute
-            && $subject instanceof QuoteDemand
-            && $this->frontendHelper->isFrontendRequest();
-    }
-
-    /**
-     * {@inheritdoc}
-     * @var QuoteDemand $subject
-     * @var AnonymousCustomerUserToken $token
-     */
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
-    {
-        if ($token instanceof AnonymousCustomerUserToken) {
-            $quoteVisitor = $subject->getVisitor();
-            $tokenVisitor = $token->getVisitor();
-
-            return $quoteVisitor && $tokenVisitor && $quoteVisitor->getId() === $tokenVisitor->getId();
+        if (!$subject instanceof QuoteDemand || !$this->frontendHelper->isFrontendRequest()) {
+            return self::ACCESS_ABSTAIN;
         }
 
-        $tokenUser = $token->getUser();
-        if ($tokenUser instanceof CustomerUser) {
-            $quoteUser = $subject->getCustomerUser();
+        $vote = self::ACCESS_ABSTAIN;
+        foreach ($attributes as $attribute) {
+            if (BasicPermission::VIEW !== $attribute) {
+                continue;
+            }
 
-            return $quoteUser && $quoteUser->getId() === $tokenUser->getId();
+            $vote = self::ACCESS_DENIED;
+            if ($this->isGranted($subject, $token)) {
+                return self::ACCESS_GRANTED;
+            }
+        }
+
+        return $vote;
+    }
+
+    protected function isGranted(QuoteDemand $quoteDemand, TokenInterface $token): bool
+    {
+        if ($token instanceof AnonymousCustomerUserToken) {
+            $quoteVisitor = $quoteDemand->getVisitor();
+            $tokenVisitor = $token->getVisitor();
+
+            return
+                null !== $quoteVisitor
+                && null !== $tokenVisitor
+                && $quoteVisitor->getId() === $tokenVisitor->getId();
+        }
+
+        $user = $token->getUser();
+        if ($user instanceof CustomerUser) {
+            $quoteUser = $quoteDemand->getCustomerUser();
+
+            return
+                null !== $quoteUser
+                && $quoteUser->getId() === $user->getId();
         }
 
         return false;

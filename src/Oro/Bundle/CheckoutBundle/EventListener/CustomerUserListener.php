@@ -83,9 +83,9 @@ class CustomerUserListener
      * @param string $name
      * @return mixed
      */
-    private function getFromRequest($name)
+    private function getFromRequest(string $name)
     {
-        $request = $this->requestStack->getMasterRequest();
+        $request = $this->requestStack->getMainRequest();
 
         return $request->request->get($name);
     }

@@ -4,7 +4,7 @@ define(function(require) {
     const _ = require('underscore');
     const $ = require('jquery');
     const error = require('oroui/js/error');
-    const {stripRestrictedAttrs} = require('orocms/js/app/grapesjs/plugins/grapesjs-style-isolation');
+    const {stripRestrictedAttrs} = require('orocms/js/app/grapesjs/plugins/components/content-isolation');
 
     /**
      * Static get all tags in element node

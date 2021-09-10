@@ -2,10 +2,13 @@
 
 namespace Oro\Bundle\ShippingBundle\Entity\Repository;
 
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
 
-class ShippingMethodConfigRepository extends EntityRepository
+/**
+ * Doctrine repository for ShippingMethodConfig entity
+ */
+class ShippingMethodConfigRepository extends ServiceEntityRepository
 {
     /**
      * @param string $method

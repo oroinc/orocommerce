@@ -3,8 +3,11 @@
 namespace Oro\Bundle\ShippingBundle\Tools;
 
 use Oro\Bundle\DataGridBundle\Tools\DatagridRouteHelper;
-use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
+/**
+ * Generates URL or URI for the Datagrid filtered by parameters
+ */
 class FilteredDatagridRouteHelper implements DatagridAwareRouteHelperInterface
 {
     /**
@@ -29,14 +32,12 @@ class FilteredDatagridRouteHelper implements DatagridAwareRouteHelperInterface
      */
     public function __construct($gridRouteName, $gridName, DatagridRouteHelper $datagridRouteHelper)
     {
-        $this->gridRouteName = $gridRouteName;
-        $this->gridName = $gridName;
+        $this->gridRouteName = (string) $gridRouteName;
+        $this->gridName = (string) $gridName;
         $this->datagridRouteHelper = $datagridRouteHelper;
     }
 
     /**
-     * Generates URL or URI for the Datagrid filtered by parameters
-     *
      * Param 'filters' uses next format ['filterName' => 'filterCriterion', ... , 'filterNameN' => 'filterCriterionN']
      *
      * @param array $filters
@@ -44,8 +45,9 @@ class FilteredDatagridRouteHelper implements DatagridAwareRouteHelperInterface
      *
      * @return string
      */
-    public function generate(array $filters = [], $referenceType = RouterInterface::ABSOLUTE_PATH)
+    public function generate(array $filters = [], int $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH)
     {
+        $params = [];
         foreach ($filters as $filterName => $filterCriteria) {
             $params['f'][$filterName]['value'][''] = (string)$filterCriteria;
         }
