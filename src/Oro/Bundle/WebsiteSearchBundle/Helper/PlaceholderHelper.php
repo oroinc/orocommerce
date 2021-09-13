@@ -55,7 +55,12 @@ class PlaceholderHelper
             return false;
         }
 
-        $aliasPattern = str_replace($placeholderNames, $placeholderPatterns, $name);
+        if (str_contains($name, '.')) {
+            $parts = explode('.', $name);
+            $aliasPattern = $parts[0];
+        } else {
+            $aliasPattern = str_replace($placeholderNames, $placeholderPatterns, $name);
+        }
 
         return preg_match('/' . $aliasPattern . '/', $nameValue);
     }

@@ -46,7 +46,7 @@ class ManuallyAddedProductCollectionIndexerListenerTest extends FrontendWebTestC
             ->getSearchQuery('', 0, 10)
             ->addWhere(Criteria::expr()->eq(
                 sprintf(
-                    'integer.manually_added_to_%s_%s',
+                    'integer.manually_added_to.%s_%s',
                     WebCatalogEntityIndexerListener::ASSIGN_TYPE_CONTENT_VARIANT,
                     $contentVariantWithFiltersId
                 ),
@@ -64,7 +64,7 @@ class ManuallyAddedProductCollectionIndexerListenerTest extends FrontendWebTestC
             ->getSearchQuery('', 0, 10)
             ->addWhere(Criteria::expr()->eq(
                 sprintf(
-                    'integer.manually_added_to_%s_%s',
+                    'integer.manually_added_to.%s_%s',
                     WebCatalogEntityIndexerListener::ASSIGN_TYPE_CONTENT_VARIANT,
                     $contentVariantWithManuallyAddedId
                 ),
@@ -83,7 +83,7 @@ class ManuallyAddedProductCollectionIndexerListenerTest extends FrontendWebTestC
             ->getSearchQuery('', 0, 10)
             ->addWhere(Criteria::expr()->eq(
                 sprintf(
-                    'integer.manually_added_to_%s_%s',
+                    'integer.manually_added_to.%s_%s',
                     WebCatalogEntityIndexerListener::ASSIGN_TYPE_CONTENT_VARIANT,
                     $contentVariantWithMixedId
                 ),

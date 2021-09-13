@@ -204,7 +204,7 @@ class WebsiteSearchCategoryIndexerListenerTest extends \PHPUnit\Framework\TestCa
             'category_path' => [
                 ['value' => '1_555', 'all_text' => false],
              ],
-            'category_path_' . CategoryPathPlaceholder::NAME => [
+            'category_paths.' . CategoryPathPlaceholder::NAME => [
                 [
                     'value' => new PlaceholderValue(1, [CategoryPathPlaceholder::NAME => '1']),
                     'all_text' => false,
