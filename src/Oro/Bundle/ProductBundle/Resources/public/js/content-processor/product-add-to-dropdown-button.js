@@ -108,7 +108,7 @@ define([
                 }).append(this._prepareButtons($buttons));
 
                 $dropdown.find('.action-update, .action-remove, .action-new, .action-important')
-                    .wrapAll('<ul class="items-group"></ul>');
+                    .wrapAll('<ul class="items-group" role="menu"></ul>');
                 $dropdown.find('li.action-add').wrapAll('<ul class="items-group" role="menu"></ul>');
                 $dropdown.find('.items-group').wrapAll('<div class="item-container"></div>');
 
