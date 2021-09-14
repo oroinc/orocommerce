@@ -43,7 +43,8 @@
 
         <div class="row-fluid form-horizontal">
             <div class="cms-content">
-                {{ entity.content|render_content|oro_html_sanitize|raw }}
+                {% import '@OroCMS/macros.html.twig' as CMS %}
+                {{ CMS.renderWysiwygContentPreview(entity.content)|raw }}
             </div>
         </div>
     {% endset %}

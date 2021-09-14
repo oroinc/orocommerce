@@ -15,7 +15,7 @@ class SlugRequestFactory implements SlugRequestFactoryInterface
     public function createSlugRequest(Request $request): Request
     {
         $slugRequest = Request::create(
-            $request->attributes->get('_resolved_slug_url'),
+            (string) $request->attributes->get('_resolved_slug_url', ''),
             $request->getMethod(),
             $request->query->all(),
             $request->cookies->all(),

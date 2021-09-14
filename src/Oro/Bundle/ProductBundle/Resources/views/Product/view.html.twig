@@ -106,17 +106,31 @@
         </div>
     {% endset %}
 
+    {% import '@OroCMS/macros.html.twig' as CMS %}
+
     {% set shortDescriptions %}
         {{ infoMessage }}
         <div class="cms-content">
-            {{ UI.renderCollapsibleHtml(entity.defaultShortDescription|render_content|oro_html_sanitize, entity, 'defaultShortDescription', 'More', 'Less') }}
+            {{ UI.renderCollapsibleHtml(
+                CMS.renderWysiwygContentPreview(entity.defaultShortDescription),
+                entity,
+                'defaultShortDescription',
+                'More',
+                'Less'
+            ) }}
         </div>
     {% endset %}
 
     {% set descriptions %}
         {{ infoMessage }}
         <div class="cms-content">
-            {{ UI.renderCollapsibleHtml(entity.defaultDescription|render_content|oro_html_sanitize, entity, 'defaultDescription', 'More', 'Less') }}
+            {{ UI.renderCollapsibleHtml(
+                CMS.renderWysiwygContentPreview(entity.defaultDescription),
+                entity,
+                'defaultDescription',
+                'More',
+                'Less'
+            ) }}
         </div>
     {% endset %}
 

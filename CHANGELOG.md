@@ -8,6 +8,18 @@ The current file describes significant changes in the code that may affect the u
 #### ApplicationBundle
 * Removed all deprecated code intended to run multiple Symfony applications on the same codebase.
 
+### Changed
+#### CatalogBundle
+* Website search field `category_path_CATEGORY_PATH` has been renamed to `category_paths.CATEGORY_PATH`
+
+#### ProductBundle
+* Website search field `assigned_to_ASSIGN_TYPE_ASSIGN_ID` has been renamed to `assigned_to.ASSIGN_TYPE_ASSIGN_ID.CATEGORY_PATH`
+* Website search field `manually_added_to_ASSIGN_TYPE_ASSIGN_ID` has been renamed to `manually_added_to.ASSIGN_TYPE_ASSIGN_ID`
+
+#### VisibilityBundle
+* Website search field `visibility_customer_CUSTOMER_ID` has been renamed to `visibility_customer.CUSTOMER_ID`
+
+
 ## 5.0.0-alpha.2 (2021-05-28)
 [Show detailed list of changes](incompatibilities-5-0-alpha-2.md)
 

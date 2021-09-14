@@ -18,7 +18,7 @@ use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
  * Adds following category information to Product documents at search index
  * - category ID (category_id)
  * - full materialized path (category_path)
- * - parts of materialized path for all parent categories (category_path_CATEGORY_PATH)
+ * - parts of materialized path for all parent categories (category_paths.CATEGORY_PATH)
  * - category title (category_title_LOCALIZATION_ID)
  * - category short description (all_text_LOCALIZATION_ID)
  * - category long description (all_text_LOCALIZATION_ID)
@@ -128,7 +128,7 @@ class WebsiteSearchCategoryIndexerListener
 
             $event->addPlaceholderField(
                 $product->getId(),
-                'category_path_CATEGORY_PATH',
+                'category_paths.CATEGORY_PATH',
                 1,
                 [CategoryPathPlaceholder::NAME => $lastPart],
                 false

@@ -3,6 +3,7 @@
 @ticket-BB-17327
 @ticket-BB-17630
 @ticket-BB-19940
+@ticket-BB-20744
 @automatically-ticket-tagged
 @fixture-OroCatalogBundle:categories.yml
 @fixture-OroCustomerBundle:CustomerUserFixture.yml
@@ -170,3 +171,36 @@ Feature: Create product
     And filename of the image "cat2 wysiwyg image" is as remembered
     And filename of the file "cat1 wysiwyg file" is not as remembered
     And I should see "File of cat1"
+
+  Scenario: Prevent links in product descriptions content
+    Given I proceed as the Admin
+    And I go to Products/Products
+    And click "Create Product"
+    And click "Continue"
+    And fill "Create Product Form" with:
+      | SKU               | Test1234                                                           |
+      | Name              | Test Product 1                                                     |
+      | Status            | Enable                                                             |
+      | Unit Of Quantity  | item                                                               |
+      | Short Description | <a href=\"#\">link 1 in short</a><a href=\"/\">link 2 in short</a> |
+      | Description       | <a href=\"#\">link 1 in desc</a><a href=\"/\">link 2 in desc</a>   |
+  And I save and close form
+  And I should see product with:
+      | SKU | Test1234 |
+  When I click "link 1 in short"
+  Then I should see product with:
+    | SKU | Test1234 |
+  And I should see "This click cannot be processed in the preview mode." flash message and I close it
+  When I click "link 2 in short"
+  Then I should see product with:
+    | SKU | Test1234 |
+  And I should see "This click cannot be processed in the preview mode." flash message and I close it
+  When I click "link 1 in desc"
+  Then I should see product with:
+    | SKU | Test1234 |
+  And I should see "This click cannot be processed in the preview mode." flash message and I close it
+  When I click "link 2 in desc"
+  Then I should see product with:
+    | SKU | Test1234 |
+  And I should see "This click cannot be processed in the preview mode." flash message and I close it
+

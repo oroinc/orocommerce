@@ -35,11 +35,17 @@
                 {% endset %}
             {% endif %}
 
+            {% import '@OroCMS/macros.html.twig' as CMS %}
+
+            {% set toRenderValue = variant.content is defined and variant.content|length
+                ? CMS.renderWysiwygContentPreview(variant.content)
+                : 'oro.ui.empty'|trans
+            %}
             {{ UI.renderAttribute(
                 'oro.cms.page.content.label'|trans,
                 '<div class="control-label">' ~
                 infoMessage ~
-                variant.content|render_content|default('oro.ui.empty'|trans)|oro_html_sanitize|raw ~
+                toRenderValue|raw ~
                 '</div>')
             }}
 

@@ -11,8 +11,6 @@ define(function(require) {
 
         shoppingListCollection: null,
 
-        lineItemsCount: null,
-
         /**
          * @type {Object}
          */
@@ -21,10 +19,6 @@ define(function(require) {
             title: __('oro.shoppinglist.create_order_confirmation.title'),
             okText: __('oro.shoppinglist.create_order_confirmation.accept_button_title'),
             cancelText: __('oro.shoppinglist.create_order_confirmation.cancel_button_title')
-        },
-
-        listen: {
-            'line-items-init mediator': '_onLineItemsInit'
         },
 
         /**
@@ -40,18 +34,6 @@ define(function(require) {
         initialize: function(options) {
             this.hasEmptyMatrix = options.hasEmptyMatrix;
             return ShoppingListCreateOrderButtonComponent.__super__.initialize.call(this, options);
-        },
-
-        /**
-         * Listen line items init process
-         *
-         * @param {Array} lineItems
-         * @private
-         */
-        _onLineItemsInit: function(lineItems) {
-            this.lineItemsCount = lineItems.filter(function(lineItem) {
-                return lineItem.$el.attr('class').indexOf('--configurable') === -1;
-            }).length;
         },
 
         /**
@@ -90,9 +72,7 @@ define(function(require) {
             try {
                 skipConfirm = !mediator.execute('shoppinglist:hasEmptyMatrix');
             } catch (e) {
-                // handler isn't defined in mediator, check empty matrix in old way
-                skipConfirm = (this.hasEmptyMatrix && this.lineItemsCount === 0) || // empty matrix only
-                    (!this.hasEmptyMatrix); // not empty matrix or it doesn't exist in SL
+                skipConfirm = !!this.hasEmptyMatrix;
             }
 
             return skipConfirm;

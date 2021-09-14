@@ -5,6 +5,9 @@ namespace Oro\Bundle\ProductBundle\DataGrid;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
+/**
+ * Provides a methods to get current theme from request.
+ */
 class DataGridThemeHelper
 {
     const GRID_THEME_PARAM_NAME = 'row-view';
@@ -35,7 +38,7 @@ class DataGridThemeHelper
      * @param string $gridName
      * @return null|string
      */
-    public function getTheme($gridName)
+    public function getTheme(string $gridName)
     {
         $request = $this->requestStack->getCurrentRequest();
         if (!$request) {

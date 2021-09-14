@@ -66,11 +66,11 @@ class SluggableUrlGenerator implements UrlGeneratorInterface
     /**
      * {@inheritdoc}
      */
-    public function generate($name, $parameters = [], $referenceType = self::ABSOLUTE_PATH)
+    public function generate(string $name, array $parameters = [], int $referenceType = self::ABSOLUTE_PATH)
     {
         UrlParameterHelper::normalizeNumericTypes($parameters);
 
-        if ($referenceType === self::ABSOLUTE_PATH || $referenceType === false) {
+        if ($referenceType === self::ABSOLUTE_PATH) {
             return $this->generateSluggableUrl($name, $parameters);
         }
 

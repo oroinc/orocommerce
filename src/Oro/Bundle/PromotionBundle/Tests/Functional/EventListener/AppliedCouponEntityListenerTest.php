@@ -62,8 +62,6 @@ class AppliedCouponEntityListenerTest extends WebTestCase
 
     public function testPostPersistWithoutCoupon()
     {
-        $this->markTestSkipped('will be fixed in BB-19538');
-
         $manager = $this->getCouponUsageManager();
         foreach ($this->findAllCouponUsage() as $entity) {
             $manager->remove($entity);
@@ -77,7 +75,8 @@ class AppliedCouponEntityListenerTest extends WebTestCase
 
         $appliedCoupon = new AppliedCoupon();
         $appliedCoupon->setCouponCode('not_existing_coupon_code');
-        $appliedCoupon->setSourceCouponId(123);
+        // Sets max for 4-byte integer column as such ID is surely should not exist in functional test.
+        $appliedCoupon->setSourceCouponId(2147483647);
         $appliedCoupon->setSourcePromotionId(42);
         $appliedCoupon->setOrder($order);
 

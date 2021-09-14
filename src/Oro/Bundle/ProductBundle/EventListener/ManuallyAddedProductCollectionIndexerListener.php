@@ -82,7 +82,7 @@ class ManuallyAddedProductCollectionIndexerListener
             foreach ($variantIds as $variantId) {
                 $event->addPlaceholderField(
                     $recordId,
-                    'manually_added_to_ASSIGN_TYPE_ASSIGN_ID',
+                    'manually_added_to.ASSIGN_TYPE_ASSIGN_ID',
                     1,
                     [
                         AssignTypePlaceholder::NAME => WebCatalogEntityIndexerListener::ASSIGN_TYPE_CONTENT_VARIANT,
@@ -127,13 +127,13 @@ class ManuallyAddedProductCollectionIndexerListener
     {
         $variantsByRecordId = [];
         foreach ($entitiesData as $recordId => $data) {
-            if (empty($data['assigned_to_ASSIGN_TYPE_ASSIGN_ID'])
-                || !\is_array($data['assigned_to_ASSIGN_TYPE_ASSIGN_ID'])
+            if (empty($data['assigned_to.ASSIGN_TYPE_ASSIGN_ID'])
+                || !\is_array($data['assigned_to.ASSIGN_TYPE_ASSIGN_ID'])
             ) {
                 continue;
             }
 
-            foreach ($data['assigned_to_ASSIGN_TYPE_ASSIGN_ID'] as $assignData) {
+            foreach ($data['assigned_to.ASSIGN_TYPE_ASSIGN_ID'] as $assignData) {
                 /** @var PlaceholderValue $placeholderValue */
                 $placeholderValue = $assignData['value'];
                 $placeholders = $placeholderValue->getPlaceholders();

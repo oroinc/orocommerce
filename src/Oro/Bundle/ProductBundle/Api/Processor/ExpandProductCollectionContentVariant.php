@@ -91,7 +91,7 @@ class ExpandProductCollectionContentVariant implements ProcessorInterface
         }
 
         $searchQuery->addWhere(
-            Criteria::expr()->eq(sprintf('integer.assigned_to_variant_%s', $contentVariantId), 1)
+            Criteria::expr()->eq(sprintf('integer.assigned_to.variant_%s', $contentVariantId), 1)
         );
 
         $productSearchContext->setLastGroup(null);
