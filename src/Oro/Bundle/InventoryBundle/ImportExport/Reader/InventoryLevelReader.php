@@ -43,6 +43,8 @@ class InventoryLevelReader extends EntityReader
                 $qb->orderBy('o.sku', 'ASC');
                 break;
             case InventoryLevel::class:
+                $qb->addSelect('_product');
+                $qb->leftJoin('o.' . 'product', '_product');
                 $qb->orderBy('_product.sku', 'ASC');
                 break;
             default:
