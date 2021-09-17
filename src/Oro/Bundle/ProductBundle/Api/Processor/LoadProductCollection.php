@@ -121,7 +121,7 @@ class LoadProductCollection implements ProcessorInterface
         }
 
         $searchQuery->addWhere(
-            Criteria::expr()->eq(sprintf('integer.assigned_to_variant_%s', $context->getId()), 1)
+            Criteria::expr()->eq(sprintf('integer.assigned_to.variant_%s', $context->getId()), 1)
         );
 
         $productSearchContext->setLastGroup(null);

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Engine;
 
+use Oro\Bundle\SearchBundle\Engine\Orm\BaseDriver;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Query;
 
@@ -14,10 +15,9 @@ class Mapper
     /**
      * @param Query $query
      * @param array $item
-     * @param array $serviceFields
      * @return array
      */
-    public function mapSelectedData(Query $query, array $item, $serviceFields = [])
+    public function mapSelectedData(Query $query, array $item)
     {
         $selects = $query->getSelect();
         $selectAliases = $query->getSelectAliases();
@@ -39,19 +39,41 @@ class Mapper
                 $resultName = $name;
             }
 
-            // Skip service fields
-            if (in_array($resultName, $serviceFields, true)) {
-                continue;
-            }
+            $value = $this->getValue($item, $type, $name);
 
-            $result[$resultName] = '';
-
-            if (isset($item[$name])) {
-                $result[$resultName] = $this->parseValue($item[$name], $type);
-            }
+            $result[$resultName] = $value !== null ? $value : '';
         }
 
         return $result;
+    }
+
+    /**
+     * @param array $item
+     * @param string $type
+     * @param string $name
+     * @return mixed
+     */
+    protected function getValue(array $item, $type, $name)
+    {
+        $value = null;
+
+        // if flat object field
+        if (str_contains($name, '.')) {
+            $value = $this->parseFlatValue($item, $type, $name);
+        }
+
+        if (null === $value) {
+            if (isset($item[$name])) {
+                $value = $this->parseValue($item[$name], $type);
+            } else {
+                $name = str_replace('.', BaseDriver::SPECIAL_SEPARATOR, $name);
+                if (isset($item[$name])) {
+                    $value = $this->parseValue($item[$name], $type);
+                }
+            }
+        }
+
+        return $value;
     }
 
     /**
@@ -74,5 +96,28 @@ class Mapper
         }
 
         return $value;
+    }
+
+    /**
+     * @param array $item
+     * @param string $type
+     * @param string $name
+     * @return mixed
+     */
+    protected function parseFlatValue(array $item, $type, $name)
+    {
+        $nameParts = explode('.', $name);
+        // convert string to array
+        $dataArray = &$item;
+        foreach ($nameParts as $part) {
+            if (array_key_exists($part, $dataArray)) {
+                $dataArray = &$dataArray[$part];
+            } else {
+                $dataArray = null;
+                break;
+            }
+        }
+
+        return $this->parseValue($dataArray, $type);
     }
 }

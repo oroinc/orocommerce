@@ -1,0 +1,7 @@
+{%- macro renderWysiwygContentPreview(content) -%}
+    {% apply spaceless %}
+        {% if content is defined and content|length %}
+            <div data-page-component-view="orocms/js/app/grapesjs/grapesjs-content-preview">{{ content|render_content|oro_html_sanitize }}</div>
+        {% endif %}
+    {% endapply %}
+{%- endmacro -%}

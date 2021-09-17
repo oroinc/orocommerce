@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\DependencyInjection;
 
+use Oro\Bundle\ShoppingListBundle\Controller\Frontend\Api\Rest\LineItemController;
+use Oro\Bundle\ShoppingListBundle\Controller\Frontend\Api\Rest\ShoppingListController;
 use Oro\Bundle\ShoppingListBundle\DependencyInjection\OroShoppingListExtension;
 use Oro\Bundle\TestFrameworkBundle\Test\DependencyInjection\ExtensionTestCase;
 
@@ -29,6 +31,10 @@ class OroShoppingListExtensionTest extends ExtensionTestCase
             'oro_shopping_list.form.type.shopping_list',
             'oro_shopping_list.form.type.line_item',
             'oro_shopping_list.form.type.frontend_line_item_widget',
+
+            // REST API controllers
+            LineItemController::class,
+            ShoppingListController::class,
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
 

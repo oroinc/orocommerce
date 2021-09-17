@@ -42,7 +42,7 @@ class ProductRepository extends WebsiteSearchRepository
 
         $criteria = array_map(
             function (Category $category) {
-                return Criteria::expr()->exists('integer.category_path_'. $category->getMaterializedPath());
+                return Criteria::expr()->exists('integer.category_paths.'. $category->getMaterializedPath());
             },
             $categories
         );

@@ -69,12 +69,12 @@ class WebCatalogEntityIndexerListenerTest extends FrontendWebTestCase
         $query = $container->get('oro_product.website_search.repository.product')
             ->getSearchQuery(self::QUERY, 0, 1)
             ->addSelect(sprintf(
-                'integer.assigned_to_%s_%s as assigned',
+                'integer.assigned_to.%s_%s as assigned',
                 WebCatalogEntityIndexerListener::ASSIGN_TYPE_CONTENT_VARIANT,
                 $contentVariant->getId()
             ))
             ->addSelect(sprintf(
-                'integer.assigned_to_%s_%s as notAssigned',
+                'integer.assigned_to.%s_%s as notAssigned',
                 WebCatalogEntityIndexerListener::ASSIGN_TYPE_CONTENT_VARIANT,
                 $notAssignedContentVariant->getId()
             ));
