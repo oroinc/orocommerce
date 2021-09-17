@@ -104,7 +104,7 @@ datagrids:
                 label:         oro.order.shipping_method.label
                 type:          twig
                 frontend_type: html
-                template:      '@OroOrder/Order/Datagrid/shippingMethodFull.html.twig'
+                template:      '@OroOrder/Order/Datagrid/frontendShippingMethodFull.html.twig'
                 order: 100
         sorters:
             columns:
@@ -242,6 +242,7 @@ datagrids:
             item:
                 label:         oro.checkout.order_summary.item
                 frontend_type: shoppinglist-item
+                notMarkAsBlank: true
                 frontend_template:
                     default: tpl-loader!orocheckout/templates/datagrid/cell/item.html
                     message: tpl-loader!orocheckout/templates/datagrid/cell/item-message.html
@@ -266,7 +267,7 @@ datagrids:
                 frontend_template: tpl-loader!orocheckout/templates/datagrid/cell/price.html
             subtotal:
                 label:         oro.checkout.order_summary.subtotal
-                frontend_type: html-template
+                frontend_type: shoppinglist-html-template
                 frontend_template: tpl-loader!orocheckout/templates/datagrid/cell/subtotal.html
         sorters:
             columns:

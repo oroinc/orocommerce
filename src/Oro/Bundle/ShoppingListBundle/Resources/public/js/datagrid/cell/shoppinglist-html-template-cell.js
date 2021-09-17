@@ -9,6 +9,7 @@ const ShoppingListHtmlTemplateCell = HtmlTemplateCell.extend({
         const attrs = {};
 
         if (this.model.get('isConfigurable') && !this.model.get(this.column.get('name'))) {
+            attrs['aria-label'] = null;
             attrs['aria-colindex'] = null;
         }
 
