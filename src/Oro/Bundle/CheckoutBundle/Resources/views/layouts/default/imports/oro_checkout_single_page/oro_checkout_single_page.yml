@@ -277,9 +277,17 @@ layout:
             optionValue: '=data["workflowItem"].getData().get("customerConsents") ? data["workflowItem"].getData().get("customerConsents").toArray() : []'
 
         - '@add':
+            id: checkout_consent_subtree
+            blockType: layout_subtree_update
+            parentId: checkout_order_footer_col_first
+            prepend: true
+            options:
+                reloadEvents: []
+
+        - '@add':
             id: checkout_consent_container
             blockType: container
-            parentId: checkout_order_footer_col_first
+            parentId: checkout_consent_subtree
             prepend: true
             options:
                 visible: '="customer_consents" not in data["oro_frontend_consent_provider"].getExcludedSteps([], !data["workflowItem"].getData().get("consents_available"))'
@@ -288,8 +296,11 @@ layout:
             id: checkout_consent_message
             blockType: consent_acceptance_choice
             parentId: checkout_consent_container
+            prepend: true
             options:
                 appliedConsents: '=data["workflowItem"].getData().get("customerConsents") ? data["workflowItem"].getData().get("customerConsents").toArray() : []'
+                vars:
+                    allConsents: '=data["oro_frontend_consent_provider"].getAllConsentData()'
 
         - '@setOption':
             id: coupon_form_container

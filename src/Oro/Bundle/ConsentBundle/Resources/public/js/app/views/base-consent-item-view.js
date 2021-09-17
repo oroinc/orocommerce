@@ -135,9 +135,15 @@ define(function(require) {
          */
         _onChecked: function(event) {
             if ($(event.target).is(':checked') && this.cmsPageData) {
+                // Stop Propagation if popup agree is required
+                event.stopPropagation();
                 this.renderDialogWidget();
             }
-            this._updateFormElementToField($(event.target).is(':checked'));
+
+            // Disable consent if user just uncheck checkbox
+            if (!$(event.target).is(':checked') || !this.cmsPageData) {
+                this._updateFormElementToField($(event.target).is(':checked'));
+            }
         },
 
         /**
