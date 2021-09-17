@@ -122,7 +122,8 @@
         .grid-body-cell-quantity:not(.editable),
         .grid-body-cell-unit,
         .grid-body-cell-price,
-        .grid-body-cell-subtotal {
+        .grid-body-cell-subtotal,
+        .action-cell {
             padding-top: $responsive-shopping-cell-desktop-offset;
         }
 
@@ -136,7 +137,8 @@
             .grid-body-cell-price,
             .grid-body-cell-subtotal,
             .grid-body-cell-quantity,
-            .grid-body-cell-unit {
+            .grid-body-cell-unit,
+            .action-cell {
                 padding-top: $responsive-shopping-sub-cell-desktop-offset;
             }
         }
@@ -179,7 +181,8 @@
     .group-row {
         .grid-body-cell-quantity,
         .grid-body-cell-subtotal,
-        .grid-body-cell-unit {
+        .grid-body-cell-unit,
+        .action-cell {
             padding-top: $responsive-shopping-group-cell-offset-tablet;
         }
     }

@@ -33,6 +33,9 @@ $responsive-shopping-notification-row-offset-bottom-mobile: 7px !default;
 $responsive-shopping-notification-subrow-offset-top-mobile: 7px !default;
 
 $responsive-shopping-body-cell-offset-y-mobile: 2px !default;
+$responsive-shopping-body-cell-action-offset-y-mobile: (
+    $responsive-shopping-body-cell-offset-y-tablet - $grid-line-items-container-offset-x-mobile
+) !default;
 $responsive-shopping-body-cell-offset-x-mobile: 10px !default;
 $responsive-shopping-body-cell-offset-mobile: $responsive-shopping-body-cell-offset-y-mobile
     $responsive-shopping-body-cell-offset-x-mobile !default;

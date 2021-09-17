@@ -607,8 +607,6 @@ datagrids:
                 route_parameters:
                     className: 'Oro_Bundle_ShoppingListBundle_Entity_LineItem'
                 icon: file-text-o
-                launcherOptions:
-                    className: 'stretched'
                 frontend_options:
                     dialogOptions:
                         modal: true
@@ -620,8 +618,6 @@ datagrids:
                 route_parameters:
                     className: 'Oro_Bundle_ShoppingListBundle_Entity_LineItem'
                 icon: pencil
-                launcherOptions:
-                    className: 'stretched'
                 frontend_options:
                     dialogOptions:
                         modal: true
@@ -635,8 +631,6 @@ datagrids:
                 label: oro.shoppinglist.actions.delete_line_item.label
                 link: deleteLink
                 icon: trash-o
-                launcherOptions:
-                    className: 'stretched'
                 defaultMessages:
                     confirm_title: oro.shoppinglist.actions.delete_line_item.confirm_title
                     confirm_content: oro.shoppinglist.actions.delete_line_item.confirm_content
