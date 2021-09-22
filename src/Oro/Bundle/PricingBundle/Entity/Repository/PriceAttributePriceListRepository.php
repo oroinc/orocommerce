@@ -45,10 +45,8 @@ class PriceAttributePriceListRepository extends BasePriceListRepository
             ->select('
                 price_attribute_price_list.id,
                 price_attribute_price_list.name,
-                price_attribute_price_list.fieldName,
-                organization.name as organization_name
+                price_attribute_price_list.fieldName
             ')
-            ->leftJoin('price_attribute_price_list.organization', 'organization')
             ->orderBy('price_attribute_price_list.id');
 
         return $qb->getQuery()->getArrayResult();
