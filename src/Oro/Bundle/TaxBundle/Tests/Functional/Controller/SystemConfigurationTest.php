@@ -38,7 +38,7 @@ class SystemConfigurationTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $token = $this->getContainer()->get('security.csrf.token_manager')->getToken('tax_calculation')->getValue();
+        $token = $this->getCsrfToken('tax_calculation')->getValue();
         $form = $crawler->selectButton('Save settings')->form();
         $formData = ArrayUtil::arrayMergeRecursiveDistinct(
             $form->getPhpValues(),

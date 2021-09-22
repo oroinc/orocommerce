@@ -129,7 +129,7 @@ class AttributeFormViewListener extends BaseAttributeFormViewListener
 
                 $scrollData->addNamedBlock(
                     $attribute->getFieldName(),
-                    $this->translator->trans($config->get('label')),
+                    $this->translator->trans((string) $config->get('label')),
                     ++$priority
                 );
             }

@@ -296,7 +296,15 @@ oro.pricing:
                 label: Enable Oro Pricing
                 tooltip: Enable the default OroCommerce pricing management system.
             price_lists.title: Price Lists
-            precision.label: Pricing Precision
+            precision:
+                label: Subtotals Calculation Precision in Sales Documents
+                tooltip: The number of digits allowed in the fractional part of the subtotals, totals and taxes calculated in shopping lists, checkout, orders, and RFQs.
+            price_calculation_precision:
+                label: Price Calculation Precision in Price Lists
+                tooltip: The number of digits allowed in the fractional part of the price calculation rule results. The results will be rounded using the "round half away from zero" rule (2.5 will be rounded to 3). If this value is empty, the system will not apply any rounding until the maximum supported price precision (4 digits) is reached.
+                notice: >
+                    The updated Price Calculation Precision in Price Lists settings will be used for the newly generated prices only.
+                    In order to update the existing prices please run the following command:
             pricing_strategy.label: Pricing Strategy
             strategy_type:
                 choises:
@@ -304,7 +312,7 @@ oro.pricing:
                     minimal_prices: Minimal prices
             rounding_type:
                 label: Pricing Rounding Type
-                tooltip: Select the rounding type that is used when calculated product price has more digits in the fractional part than allowed by the Pricing Precision value
+                tooltip: The rounding type that is used when calculated product price or subtotal has more digits in the fractional part than allowed by the respective price precision settings.
                 choices:
                     ceil.label: Ceil
                     floor.label: Floor

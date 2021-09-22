@@ -8,49 +8,40 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Core\Exception\InsufficientAuthenticationException;
 
 class ProductAccessExceptionListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ExceptionEvent|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $event;
+    private RequestStack|\PHPUnit\Framework\MockObject\MockObject $requestStack;
 
-    /**
-     * @var RequestStack|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $requestStack;
-
-    /**
-     * @var ProductAccessExceptionListener
-     */
-    private $testable;
+    private ProductAccessExceptionListener $testable;
 
     protected function setUp(): void
     {
-        $this->event = $this->createMock(ExceptionEvent::class);
         $this->requestStack = $this->createMock(RequestStack::class);
 
         $this->testable = new ProductAccessExceptionListener($this->requestStack);
     }
 
-    public function testUnsupportedException()
+    public function testUnsupportedException(): void
     {
         $exampleException = new NotFoundHttpException();
 
-        $this->event->expects($this->once())
-            ->method('getThrowable')
-            ->willReturn($exampleException);
+        $event = new ExceptionEvent(
+            $this->createMock(HttpKernelInterface::class),
+            new Request(),
+            HttpKernelInterface::MAIN_REQUEST,
+            $exampleException
+        );
 
-        $this->event->expects($this->never())
-            ->method('setThrowable');
+        $this->testable->onAccessException($event);
 
-        $this->testable->onAccessException($this->event);
+        self::assertSame($exampleException, $event->getThrowable());
     }
 
-    public function testUnsupportedRoute()
+    public function testUnsupportedRoute(): void
     {
         $request = new Request();
         $request->attributes->set('_route', 'unknown_route');
@@ -61,26 +52,23 @@ class ProductAccessExceptionListenerTest extends \PHPUnit\Framework\TestCase
 
         $exampleException = new AccessDeniedHttpException();
 
-        $this->event->expects($this->once())
-            ->method('getThrowable')
-            ->willReturn($exampleException);
+        $event = new ExceptionEvent(
+            $this->createMock(HttpKernelInterface::class),
+            $request,
+            HttpKernelInterface::MAIN_REQUEST,
+            $exampleException
+        );
 
-        $this->testable->onAccessException($this->event);
+        $this->testable->onAccessException($event);
+
+        self::assertSame($exampleException, $event->getThrowable());
     }
 
     /**
      * @dataProvider exceptionDataProvider
      */
-    public function testAccessDeniedException(\Exception $exception)
+    public function testAccessDeniedException(\Exception $exception): void
     {
-        $this->event->expects($this->once())
-            ->method('getThrowable')
-            ->willReturn($exception);
-
-        $this->event->expects($this->once())
-            ->method('setThrowable')
-            ->with(new NotFoundHttpException('somemessage'));
-
         $request = new Request();
         $request->attributes->set('_route', ProductAccessExceptionListener::PRODUCT_VIEW_ROUTE);
 
@@ -88,7 +76,16 @@ class ProductAccessExceptionListenerTest extends \PHPUnit\Framework\TestCase
             ->method('getCurrentRequest')
             ->willReturn($request);
 
-        $this->testable->onAccessException($this->event);
+        $event = new ExceptionEvent(
+            $this->createMock(HttpKernelInterface::class),
+            $request,
+            HttpKernelInterface::MAIN_REQUEST,
+            $exception
+        );
+
+        $this->testable->onAccessException($event);
+
+        self::assertEquals(new NotFoundHttpException('somemessage'), $event->getThrowable());
     }
 
     public function exceptionDataProvider(): array

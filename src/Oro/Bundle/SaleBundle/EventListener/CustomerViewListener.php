@@ -20,7 +20,7 @@ class CustomerViewListener extends AbstractCustomerViewListener
     /**
      * {@inheritdoc}
      */
-    protected function getCustomerLabel()
+    protected function getCustomerLabel(): string
     {
         return 'oro.sale.quote.datagrid.customer.label';
     }
@@ -36,7 +36,7 @@ class CustomerViewListener extends AbstractCustomerViewListener
     /**
      * {@inheritdoc}
      */
-    protected function getCustomerUserLabel()
+    protected function getCustomerUserLabel(): string
     {
         return 'oro.sale.quote.datagrid.customer_user.label';
     }

@@ -17,20 +17,11 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class ShoppingListControllerTest extends WebTestCase
 {
-    /**
-     * @var EntityManagerInterface
-     */
-    protected $emProduct;
+    private EntityManagerInterface $emProduct;
 
-    /**
-     * @var EntityManagerInterface
-     */
-    protected $emFallback;
+    private EntityManagerInterface $emFallback;
 
-    /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
+    private TranslatorInterface $translator;
 
     protected function setUp(): void
     {
@@ -57,7 +48,7 @@ class ShoppingListControllerTest extends WebTestCase
     /**
      * @dataProvider getShoppingListDataProvider
      */
-    public function testQuantitysOnShoppingListView($quantity, $minLimit, $maxLimit)
+    public function testQuantitysOnShoppingListView(int $quantity, int $minLimit, int $maxLimit): void
     {
         /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
@@ -87,10 +78,7 @@ class ShoppingListControllerTest extends WebTestCase
         static::assertStringContainsString($createOrderLabel, $crawler->html());
     }
 
-    /**
-     * @return array
-     */
-    public function getShoppingListDataProvider()
+    public function getShoppingListDataProvider(): array
     {
         return [
             [
@@ -105,12 +93,12 @@ class ShoppingListControllerTest extends WebTestCase
      * @dataProvider getShoppingListErrorsDataProvider
      */
     public function testQuantityErrorMessagesOnShoppingListView(
-        $quantity,
-        $minLimit,
-        $maxLimit,
-        $errorLimit,
-        $errorMessage = null
-    ) {
+        int $quantity,
+        int $minLimit,
+        int $maxLimit,
+        int $errorLimit,
+        string $errorMessage
+    ): void {
         /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
         $lineItem = $shoppingList->getLineItems()[0];
@@ -133,10 +121,7 @@ class ShoppingListControllerTest extends WebTestCase
         static::assertStringContainsString($errorMessage, $this->client->getResponse()->getContent());
     }
 
-    /**
-     * @return array
-     */
-    public function getShoppingListErrorsDataProvider()
+    public function getShoppingListErrorsDataProvider(): array
     {
         return [
             [
@@ -156,12 +141,7 @@ class ShoppingListControllerTest extends WebTestCase
         ];
     }
 
-    /**
-     * @param Product $product
-     * @param int $minLimit
-     * @param int $maxLimit
-     */
-    protected function setProductLimits(Product $product, $minLimit, $maxLimit)
+    protected function setProductLimits(Product $product, int $minLimit, int $maxLimit): void
     {
         $entityFallback = $this->createFallbackEntity($minLimit);
         $entityFallback2 = $this->createFallbackEntity($maxLimit);
@@ -175,7 +155,7 @@ class ShoppingListControllerTest extends WebTestCase
      * @param mixed $scalarValue
      * @return EntityFieldFallbackValue
      */
-    protected function createFallbackEntity($scalarValue)
+    protected function createFallbackEntity($scalarValue): EntityFieldFallbackValue
     {
         $entityFallback = new EntityFieldFallbackValue();
         $entityFallback->setScalarValue($scalarValue);

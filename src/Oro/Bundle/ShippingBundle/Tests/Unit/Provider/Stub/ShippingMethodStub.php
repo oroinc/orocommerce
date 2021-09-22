@@ -98,7 +98,7 @@ class ShippingMethodStub implements ShippingMethodInterface
     /**
      * @return string
      */
-    public function getLabel()
+    public function getLabel(): string
     {
         return $this->label ?: $this->identifier . '.label';
     }

@@ -14,7 +14,7 @@ use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -33,12 +33,13 @@ class PriceListController extends AbstractController
      *      permission="VIEW"
      * )
      * @param PriceList $priceList
+     * @param Request $request
      * @return array
      */
-    public function viewAction(PriceList $priceList)
+    public function viewAction(PriceList $priceList, Request $request)
     {
         if (!$priceList->isActual()) {
-            $this->get(SessionInterface::class)->getFlashBag()->add(
+            $request->getSession()->getFlashBag()->add(
                 'warning',
                 $this->get(TranslatorInterface::class)->trans('oro.pricing.pricelist.not_actual.recalculation')
             );
@@ -166,7 +167,6 @@ class PriceListController extends AbstractController
             parent::getSubscribedServices(),
             [
                 TranslatorInterface::class,
-                SessionInterface::class,
                 UpdateHandler::class,
                 Messenger::class,
                 RendererInterface::class,

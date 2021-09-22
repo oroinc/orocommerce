@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
+use Oro\Bundle\ProductBundle\Controller\Frontend\BrandController;
 use Oro\Bundle\ProductBundle\Controller\Frontend\ProductController;
 use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
 use Oro\Bundle\ProductBundle\EventListener\RestrictVariantProductViewListener;
@@ -12,6 +13,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 class RestrictVariantProductViewListenerTest extends \PHPUnit\Framework\TestCase
 {
@@ -37,7 +39,7 @@ class RestrictVariantProductViewListenerTest extends \PHPUnit\Framework\TestCase
         bool $isFeatureEnabled,
         ?Product $product,
         bool $isLayoutRequest
-    ) {
+    ): void {
         if ($isLayoutRequest) {
             $request = Request::create('/product/view/1', 'GET', ['layout_block_ids' => ['test']]);
             $request->headers->set('X-Requested-With', 'XMLHttpRequest');
@@ -46,14 +48,12 @@ class RestrictVariantProductViewListenerTest extends \PHPUnit\Framework\TestCase
         }
         $request->attributes->set('product', $product);
 
-        $event = $this->createMock(ControllerEvent::class);
-        $event->expects($this->any())
-            ->method('getController')
-            ->willReturn($controller);
-
-        $event->expects($this->any())
-            ->method('getRequest')
-            ->willReturn($request);
+        $event = new ControllerEvent(
+            $this->createMock(HttpKernelInterface::class),
+            $controller,
+            $request,
+            HttpKernelInterface::MAIN_REQUEST
+        );
 
         $this->featureChecker->expects($this->any())
             ->method('isFeatureEnabled')
@@ -71,19 +71,15 @@ class RestrictVariantProductViewListenerTest extends \PHPUnit\Framework\TestCase
         $productVariant = $this->getEntity(Product::class, ['id' => 42]);
         $productVariant->addParentVariantLink($parentVariantLink);
 
-        $product = new Product();
-
-        yield 'no controller' => [null, true, $product, false];
-
         yield 'unsupported controller' => [
-            [new \stdClass(), 'test'],
+            [$this->createMock(BrandController::class), 'indexAction'],
             true,
             $productVariant,
             false
         ];
 
         yield 'unsupported action' => [
-            [$productController, 'createAction'],
+            [$productController, 'indexAction'],
             true,
             $productVariant,
             false
@@ -96,7 +92,7 @@ class RestrictVariantProductViewListenerTest extends \PHPUnit\Framework\TestCase
         yield 'is layout subtree request' => [[$productController, 'viewAction'], true, $productVariant, true];
     }
 
-    public function testRestriction()
+    public function testRestriction(): void
     {
         $parentVariantLink = new ProductVariantLink();
         /** @var Product $product */
@@ -106,14 +102,12 @@ class RestrictVariantProductViewListenerTest extends \PHPUnit\Framework\TestCase
         $request = Request::create('/product/view/1', 'GET', []);
         $request->attributes->set('product', $product);
 
-        $event = $this->createMock(ControllerEvent::class);
-        $event->expects($this->any())
-            ->method('getController')
-            ->willReturn([$this->createMock(ProductController::class), 'viewAction']);
-
-        $event->expects($this->any())
-            ->method('getRequest')
-            ->willReturn($request);
+        $event = new ControllerEvent(
+            $this->createMock(HttpKernelInterface::class),
+            [$this->createMock(ProductController::class), 'viewAction'],
+            $request,
+            HttpKernelInterface::MAIN_REQUEST
+        );
 
         $this->featureChecker->expects($this->any())
             ->method('isFeatureEnabled')

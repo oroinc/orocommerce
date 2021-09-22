@@ -103,7 +103,7 @@ class ShippingMethodsConfigsRuleController extends AbstractController
     {
         $form = $this->createForm(ShippingMethodsConfigsRuleType::class);
         if ($this->get(ShippingMethodsConfigsRuleHandler::class)->process($form, $entity)) {
-            $this->get('session')->getFlashBag()->add(
+            $request->getSession()->getFlashBag()->add(
                 'success',
                 $this->get(TranslatorInterface::class)->trans('oro.shipping.controller.rule.saved.message')
             );

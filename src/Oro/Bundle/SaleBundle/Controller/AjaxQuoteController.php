@@ -62,7 +62,7 @@ class AjaxQuoteController extends AbstractController
             'customerGroupPaymentTerm' => $customerGroupPaymentTerm ? $customerGroupPaymentTerm->getId() : null
         ];
         if ($quoteForm->has(AddressType::TYPE_SHIPPING . 'Address')) {
-            $responseData['shippingAddress'] = $this->renderForm(
+            $responseData['shippingAddress'] = $this->renderFormView(
                 $quoteForm->get(AddressType::TYPE_SHIPPING . 'Address')->createView()
             );
         }
@@ -98,12 +98,7 @@ class AjaxQuoteController extends AbstractController
         return new JsonResponse($event->getData());
     }
 
-    /**
-     * @param FormView $formView
-     *
-     * @return string
-     */
-    protected function renderForm(FormView $formView)
+    protected function renderFormView(FormView $formView): string
     {
         return $this->renderView('@OroSale/Form/customerAddressSelector.html.twig', ['form' => $formView]);
     }

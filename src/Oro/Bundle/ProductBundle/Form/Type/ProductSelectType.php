@@ -108,7 +108,7 @@ class ProductSelectType extends AbstractType
 
         if (!$productHolder->getProduct()) {
             $emptyValueTitle = $this->translator->trans(
-                $options['empty_label'],
+                (string) $options['empty_label'],
                 ['{title}' => $productHolder->getProductSku()]
             );
             $view->vars['configs']['placeholder'] = $emptyValueTitle;

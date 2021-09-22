@@ -17,40 +17,17 @@ use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 
 class LoginOnCheckoutListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var LoginOnCheckoutListener
-     */
-    private $listener;
+    private LoggerInterface|\PHPUnit\Framework\MockObject\MockObject $logger;
 
-    /**
-     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $logger;
+    private ConfigManager|\PHPUnit\Framework\MockObject\MockObject $configManager;
 
-    /**
-     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $configManager;
+    private CheckoutManager|\PHPUnit\Framework\MockObject\MockObject $checkoutManager;
 
-    /**
-     * @var CheckoutManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $checkoutManager;
+    private EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject $eventDispatcher;
 
-    /**
-     * @var InteractiveLoginEvent|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $event;
+    private LoginOnCheckoutListener $listener;
 
-    /**
-     * @var Request
-     */
-    private $request;
-
-    /**
-     * @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $eventDispatcher;
+    private Request $request;
 
     /**
      * {@inheritdoc}
@@ -67,10 +44,6 @@ class LoginOnCheckoutListenerTest extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->event = $this->getMockBuilder(InteractiveLoginEvent::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
 
         $this->listener = new LoginOnCheckoutListener(
@@ -83,134 +56,125 @@ class LoginOnCheckoutListenerTest extends \PHPUnit\Framework\TestCase
         $this->request = new Request();
     }
 
-    /**
-     * @param object $customerUser
-     */
-    private function configureToken($customerUser)
+    private function getEvent(object $customerUser): InteractiveLoginEvent
     {
         $token = $this->createMock(TokenInterface::class);
-        $token->expects($this->once())
+        $token->expects(self::once())
             ->method('getUser')
             ->willReturn($customerUser);
 
-        $this->event->expects($this->once())
-            ->method('getAuthenticationToken')
-            ->willReturn($token);
-
-        $this->event->expects($this->any())
-            ->method('getRequest')
-            ->willReturn($this->request);
+        return new InteractiveLoginEvent($this->request, $token);
     }
 
-    public function testOnInteractiveWrongToken()
+    public function testOnInteractiveWrongToken(): void
     {
-        $this->configureToken(new \stdClass());
-        $this->configManager->expects($this->never())->method('get');
-        $this->listener->onInteractiveLogin($this->event);
+        $event = $this->getEvent(new \stdClass());
+        $this->configManager->expects(self::never())->method('get');
+        $this->listener->onInteractiveLogin($event);
     }
 
-    public function testOnInteractiveReassignCustomerUser()
+    public function testOnInteractiveReassignCustomerUser(): void
     {
         $customerUser = new CustomerUser();
-        $this->configureToken($customerUser);
-        $this->checkoutManager->expects($this->once())
+        $event = $this->getEvent($customerUser);
+        $this->checkoutManager->expects(self::once())
             ->method('reassignCustomerUser')
             ->with($customerUser);
-        $this->configManager->expects($this->never())->method('get');
-        $this->listener->onInteractiveLogin($this->event);
+        $this->configManager->expects(self::never())->method('get');
+        $this->listener->onInteractiveLogin($event);
     }
 
-    public function testOnInteractiveLoginConfigurationDisabled()
+    public function testOnInteractiveLoginConfigurationDisabled(): void
     {
-        $this->configureToken(new CustomerUser());
+        $event = $this->getEvent(new CustomerUser());
         $this->request->request->add(['_checkout_id' => 777]);
-        $this->configManager->expects($this->once())
+        $this->configManager->expects(self::once())
             ->method('get')
             ->with('oro_checkout.guest_checkout')
             ->willReturn(false);
-        $this->checkoutManager->expects($this->never())->method('getCheckoutById');
-        $this->listener->onInteractiveLogin($this->event);
+        $this->checkoutManager->expects(self::never())->method('getCheckoutById');
+        $this->listener->onInteractiveLogin($event);
     }
 
-    public function testOnInteractiveLoginWrongCheckout()
+    public function testOnInteractiveLoginWrongCheckout(): void
     {
-        $this->configureToken(new CustomerUser());
+        $event = $this->getEvent(new CustomerUser());
         $this->request->request->add(['_checkout_id' => 777]);
-        $this->configManager->expects($this->once())
+        $this->configManager->expects(self::once())
             ->method('get')
             ->with('oro_checkout.guest_checkout')
             ->willReturn(true);
 
-        $this->checkoutManager->expects($this->once())
+        $this->checkoutManager->expects(self::once())
             ->method('getCheckoutById')
             ->with(777)
             ->willReturn(null);
 
-        $this->logger->expects($this->once())
+        $this->logger->expects(self::once())
             ->method('warning')
             ->with("Wrong checkout id - 777 passed during login from checkout");
 
-        $this->listener->onInteractiveLogin($this->event);
+        $this->listener->onInteractiveLogin($event);
     }
 
-    public function testOnInteractiveLoginCheckoutAssigned()
+    public function testOnInteractiveLoginCheckoutAssigned(): void
     {
         $customerUser = new CustomerUser();
-        $this->configureToken($customerUser);
+        $event = $this->getEvent($customerUser);
         $this->request->request->add(['_checkout_id' => 777]);
-        $this->configManager->expects($this->once())
+        $this->configManager->expects(self::once())
             ->method('get')
             ->with('oro_checkout.guest_checkout')
             ->willReturn(true);
 
         $checkout = new Checkout();
 
-        $this->checkoutManager->expects($this->once())
+        $this->checkoutManager->expects(self::once())
             ->method('getCheckoutById')
             ->with(777)
             ->willReturn($checkout);
 
-        $this->logger->expects($this->never())->method('warning');
+        $this->logger->expects(self::never())->method('warning');
 
-        $this->checkoutManager->expects($this->once())
+        $this->checkoutManager->expects(self::once())
             ->method('updateCheckoutCustomerUser')
             ->with($checkout, $customerUser);
 
-        $this->eventDispatcher->expects($this->never())
+        $this->eventDispatcher->expects(self::never())
             ->method('dispatch');
 
-        $this->listener->onInteractiveLogin($this->event);
+        $this->listener->onInteractiveLogin($event);
     }
 
-    public function testOnInteractiveLoginDispatchEvent()
+    public function testOnInteractiveLoginDispatchEvent(): void
     {
         $customerUser = new CustomerUser();
-        $this->configureToken($customerUser);
+        $interactiveLoginEvent = $this->getEvent($customerUser);
         $this->request->request->add(['_checkout_id' => 777]);
-        $this->configManager->expects($this->once())
+        $this->configManager->expects(self::once())
             ->method('get')
             ->with('oro_checkout.guest_checkout')
             ->willReturn(true);
 
-        $checkout       = new Checkout();
+        $checkout = new Checkout();
         $checkoutSource = new CheckoutSource();
         $checkout->setSource($checkoutSource);
 
-        $this->checkoutManager->expects($this->once())
+        $this->checkoutManager->expects(self::once())
             ->method('getCheckoutById')
             ->with(777)
             ->willReturn($checkout);
 
         $event = new LoginOnCheckoutEvent();
         $event->setSource($checkoutSource);
-        $this->eventDispatcher->expects($this->once())
+        $this->eventDispatcher->expects(self::once())
             ->method('hasListeners')
             ->with(LoginOnCheckoutEvent::NAME)
             ->willReturn(true);
-        $this->eventDispatcher->expects($this->once())
+        $this->eventDispatcher->expects(self::once())
             ->method('dispatch')
             ->with($event, LoginOnCheckoutEvent::NAME);
 
-        $this->listener->onInteractiveLogin($this->event);
+        $this->listener->onInteractiveLogin($interactiveLoginEvent);
     }
 }

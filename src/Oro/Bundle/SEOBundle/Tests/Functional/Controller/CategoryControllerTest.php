@@ -27,7 +27,7 @@ class CategoryControllerTest extends WebTestCase
 
         $this->checkSeoSectionExistence($crawler);
 
-        $crfToken = $this->getContainer()->get('security.csrf.token_manager')->getToken('category')->getValue();
+        $crfToken = $this->getCsrfToken('category')->getValue();
         $parameters = [
             'input_action' => 'save_and_stay',
             'oro_catalog_category' => ['_token' => $crfToken],

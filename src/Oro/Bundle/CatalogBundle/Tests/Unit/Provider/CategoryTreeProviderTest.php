@@ -14,29 +14,19 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class CategoryTreeProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var \PHPUnit\Framework\MockObject\MockObject|CategoryRepository */
-    protected $categoryRepository;
+    private CategoryRepository|\PHPUnit\Framework\MockObject\MockObject $categoryRepository;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|EventDispatcherInterface */
-    protected $eventDispatcher;
+    private EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject $eventDispatcher;
 
-    /** @var CategoryTreeProvider */
-    protected $provider;
+    private CategoryTreeProvider $provider;
 
-    /** @var MasterCatalogRootProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $masterCatalogRootProvider;
+    private MasterCatalogRootProvider|\PHPUnit\Framework\MockObject\MockObject $masterCatalogRootProvider;
 
     protected function setUp(): void
     {
-        $this->categoryRepository = $this->getMockBuilder(
-            'Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository'
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->categoryRepository = $this->createMock(CategoryRepository::class);
 
-        $this->eventDispatcher = $this->getMockBuilder('Symfony\Component\EventDispatcher\EventDispatcherInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
 
         $this->masterCatalogRootProvider = $this->createMock(MasterCatalogRootProvider::class);
 
@@ -59,7 +49,7 @@ class CategoryTreeProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetCategories()
+    public function testGetCategories(): void
     {
         $user = new CustomerUser();
 
@@ -86,7 +76,7 @@ class CategoryTreeProviderTest extends \PHPUnit\Framework\TestCase
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
             ->with($event, CategoryTreeCreateAfterEvent::NAME)
-            ->willReturn($visibleCategories);
+            ->willReturn($event);
 
         $this->masterCatalogRootProvider
             ->expects($this->never())
@@ -97,7 +87,7 @@ class CategoryTreeProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($visibleCategories, $actual);
     }
 
-    public function testGetCategoriesWithNoRootPassed()
+    public function testGetCategoriesWithNoRootPassed(): void
     {
         $user = new CustomerUser();
 
@@ -124,7 +114,7 @@ class CategoryTreeProviderTest extends \PHPUnit\Framework\TestCase
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
             ->with($event, CategoryTreeCreateAfterEvent::NAME)
-            ->willReturn($visibleCategories);
+            ->willReturn($event);
 
         $this->masterCatalogRootProvider
             ->expects($this->once())

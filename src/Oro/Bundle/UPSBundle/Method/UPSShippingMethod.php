@@ -15,6 +15,9 @@ use Oro\Bundle\UPSBundle\Factory\PriceRequestFactory;
 use Oro\Bundle\UPSBundle\Form\Type\UPSShippingMethodOptionsType;
 use Oro\Bundle\UPSBundle\Provider\UPSTransport as UPSTransportProvider;
 
+/**
+ * UPS shipping method implementation.
+ */
 class UPSShippingMethod implements
     ShippingMethodInterface,
     ShippingMethodIconAwareInterface,
@@ -60,7 +63,7 @@ class UPSShippingMethod implements
     /**
      * @var string
      */
-    private $label;
+    private string $label;
 
     /**
      * @var string|null
@@ -105,7 +108,7 @@ class UPSShippingMethod implements
         $enabled
     ) {
         $this->identifier = $identifier;
-        $this->label = $label;
+        $this->label = (string) $label;
         $this->icon = $icon;
         $this->types = $types;
         $this->transport = $transport;
@@ -142,7 +145,7 @@ class UPSShippingMethod implements
     /**
      * {@inheritDoc}
      */
-    public function getLabel()
+    public function getLabel(): string
     {
         return $this->label;
     }

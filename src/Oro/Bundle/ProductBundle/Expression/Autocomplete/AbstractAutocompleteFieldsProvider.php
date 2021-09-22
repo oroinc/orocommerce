@@ -7,6 +7,9 @@ use Oro\Component\Expression\FieldsProviderInterface;
 use Oro\Component\PhpUtils\ArrayUtil;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Provides base functionality for autocomplete fields.
+ */
 abstract class AbstractAutocompleteFieldsProvider implements AutocompleteFieldsProviderInterface
 {
     /**
@@ -123,7 +126,7 @@ abstract class AbstractAutocompleteFieldsProvider implements AutocompleteFieldsP
         foreach ($data as &$fields) {
             $fields = array_map(
                 function (array $item) {
-                    $item['label'] = $this->translator->trans($item['label']);
+                    $item['label'] = isset($item['label']) ? $this->translator->trans((string) $item['label']) : '';
 
                     return $item;
                 },

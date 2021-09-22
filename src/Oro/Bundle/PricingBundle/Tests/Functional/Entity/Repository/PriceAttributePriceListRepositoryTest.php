@@ -80,7 +80,6 @@ class PriceAttributePriceListRepositoryTest extends WebTestCase
             $item['id'] = $priceAttributePriceList->getId();
             $item['name'] = $priceAttributePriceList->getName();
             $item['fieldName'] = $priceAttributePriceList->getFieldName();
-            $item['organization_name'] = $priceAttributePriceList->getOrganization()->getName();
 
             array_push($expected, $item);
         }

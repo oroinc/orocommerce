@@ -21,7 +21,8 @@ define(function(require) {
             checkoutFlashNotifications: '[data-role="checkout-flash-notifications"]',
             defaultParameters: {
                 layout_block_ids: [
-                    'checkout_button_continue_right_wrapper'
+                    'checkout_button_continue_right_wrapper',
+                    'checkout_consent_subtree'
                 ],
                 _widgetContainer: 'ajax',
                 _wid: 'ajax_checkout'

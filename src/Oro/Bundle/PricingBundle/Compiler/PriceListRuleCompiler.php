@@ -5,6 +5,7 @@ namespace Oro\Bundle\PricingBundle\Compiler;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\PricingBundle\Entity\BaseProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
@@ -50,6 +51,11 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
     protected $fieldsProvider;
 
     /**
+     * @var ConfigManager
+     */
+    protected $configManager;
+
+    /**
      * @var array
      */
     protected $usedPriceRelations = [];
@@ -62,6 +68,11 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
     public function setFieldsProvider(FieldsProviderInterface $fieldsProvider)
     {
         $this->fieldsProvider = $fieldsProvider;
+    }
+
+    public function setConfigManager(ConfigManager $configManager)
+    {
+        $this->configManager = $configManager;
     }
 
     /**
@@ -153,6 +164,11 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
     {
         $params = [];
         $priceValue = (string)$this->getValueByExpression($qb, $rule->getRule(), $params);
+
+        $precision = $this->configManager->get('oro_pricing.price_calculation_precision');
+        if ($precision !== null && $precision !== '') {
+            $priceValue = sprintf('ROUND(%s, %d)', $priceValue, (int)$precision);
+        }
 
         if ($rule->getCurrencyExpression()) {
             $currencyValue = (string)$this->getValueByExpression($qb, $rule->getCurrencyExpression(), $params);
@@ -427,7 +443,7 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
     {
         return array_filter(
             $conditions,
-            function ($condition) {
+            static function ($condition) {
                 if (null === $condition) {
                     return false;
                 }

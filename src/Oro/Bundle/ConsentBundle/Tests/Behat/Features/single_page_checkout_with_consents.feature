@@ -160,6 +160,8 @@ Feature: Single page checkout with consents
     And I click on "Consent Link" with title "Collecting and storing personal data"
     And I scroll modal window to bottom
     And click "Agree"
+    And I should see "1 of 2 mandatory consents were accepted."
+    And I should see "Collecting and storing personal data"
     And fill form with:
       | I Agree with Email Newsletters | true |
     And I reload the page
@@ -206,4 +208,4 @@ Feature: Single page checkout with consents
     When fill form with:
       | New Mandatory Consent | true |
     Then I should not see a "Consent Popup" element
-    And the "New Mandatory Consent" checkbox should be checked
+    And I should see "All mandatory consents were accepted."

@@ -53,7 +53,7 @@ class WatermarkImageFilterProvider implements CustomImageFilterProviderInterface
 
             $config = [
                 'filters' => [
-                    'watermark' => [
+                    'watermark_image' => [
                         'image' => $filePath,
                         'size' => round($size / 100, 2),
                         'position' => $position

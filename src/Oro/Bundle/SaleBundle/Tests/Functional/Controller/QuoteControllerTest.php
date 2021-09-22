@@ -3,6 +3,7 @@
 namespace Oro\Bundle\SaleBundle\Tests\Functional\Controller;
 
 use Doctrine\Common\Collections\Collection;
+use Oro\Bundle\ActionBundle\Tests\Functional\OperationAwareTestTrait;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
 use Oro\Bundle\SaleBundle\Entity\Quote;
@@ -14,6 +15,8 @@ use Oro\Bundle\UserBundle\Entity\User;
 
 class QuoteControllerTest extends WebTestCase
 {
+    use OperationAwareTestTrait;
+
     /**
      * @var string
      */
@@ -389,30 +392,5 @@ class QuoteControllerTest extends WebTestCase
     protected function getReferencedUser($username)
     {
         return $this->getReference($username);
-    }
-
-    /**
-     * @param $operationName
-     * @param $entityId
-     * @param $entityClass
-     *
-     * @return array
-     */
-    protected function getOperationExecuteParams($operationName, $entityId, $entityClass)
-    {
-        $actionContext = [
-            'entityId'    => $entityId,
-            'entityClass' => $entityClass
-        ];
-        $container = self::getContainer();
-        $operation = $container->get('oro_action.operation_registry')->findByName($operationName);
-        $actionData = $container->get('oro_action.helper.context')->getActionData($actionContext);
-
-        $tokenData = $container
-            ->get('oro_action.operation.execution.form_provider')
-            ->createTokenData($operation, $actionData);
-        $container->get('session')->save();
-
-        return $tokenData;
     }
 }

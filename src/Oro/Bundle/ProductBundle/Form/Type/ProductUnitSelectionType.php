@@ -228,10 +228,11 @@ class ProductUnitSelectionType extends AbstractProductAwareType
         $productUnit = $productUnitHolder->getProductUnit();
 
         if ($this->isProductUnitRemoved($productUnitHolder, $product, $choices, $productUnit)) {
-            $removedValue = $this->translator->trans($productUnitHolder->getProductUnitCode());
+            $productUnitCode = (string) $productUnitHolder->getProductUnitCode();
+            $removedValue = $this->translator->trans($productUnitCode);
             $removedValueTitle = $this->translator->trans(
-                $options['empty_label'],
-                ['{title}' => $productUnitHolder->getProductUnitCode()]
+                (string) $options['empty_label'],
+                ['{title}' => $productUnitCode]
             );
             $view->vars['choices'][] = new ChoiceView(null, $removedValue, $removedValueTitle, ['selected' => true]);
         }
