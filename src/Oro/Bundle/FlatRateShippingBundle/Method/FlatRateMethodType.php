@@ -8,6 +8,9 @@ use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 
+/**
+ * Flat rate shipping method type implementation.
+ */
 class FlatRateMethodType implements ShippingMethodTypeInterface
 {
     const IDENTIFIER = 'primary';
@@ -20,14 +23,14 @@ class FlatRateMethodType implements ShippingMethodTypeInterface
     const PER_ITEM_TYPE = 'per_item';
 
     /** @var string */
-    protected $label;
+    protected string $label;
 
     /**
      * @param string $label
      */
     public function __construct($label)
     {
-        $this->label = $label;
+        $this->label = (string) $label;
     }
 
     /**
@@ -41,7 +44,7 @@ class FlatRateMethodType implements ShippingMethodTypeInterface
     /**
      * {@inheritdoc}
      */
-    public function getLabel()
+    public function getLabel(): string
     {
         return $this->label;
     }

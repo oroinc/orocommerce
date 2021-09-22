@@ -10,6 +10,9 @@ use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionResponse;
 use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Handles a Status mass action
+ */
 class StatusMassActionHandler implements MassActionHandlerInterface
 {
     const FLUSH_BATCH_SIZE = 100;
@@ -41,8 +44,8 @@ class StatusMassActionHandler implements MassActionHandlerInterface
      * @param TranslatorInterface $translator
      */
     public function __construct(
-        $responseMessage,
-        $repositoryClassPath,
+        string $responseMessage,
+        string $repositoryClassPath,
         EntityManager $entityManager,
         TranslatorInterface $translator
     ) {
@@ -135,7 +138,7 @@ class StatusMassActionHandler implements MassActionHandlerInterface
 
         return new MassActionResponse(
             $successful,
-            $this->translator->trans($responseMessage, ['%count%' => $entitiesCount]),
+            $this->translator->trans((string) $responseMessage, ['%count%' => $entitiesCount]),
             $options
         );
     }

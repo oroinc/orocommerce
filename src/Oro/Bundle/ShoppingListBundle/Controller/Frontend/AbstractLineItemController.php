@@ -13,12 +13,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 abstract class AbstractLineItemController extends AbstractController
 {
-    /**
-     * @param ShoppingList $shoppingList
-     * @param string $translationKey
-     * @return string
-     */
-    protected function getSuccessMessage(ShoppingList $shoppingList, $translationKey): string
+    protected function getSuccessMessage(ShoppingList $shoppingList, string $translationKey): string
     {
         $link = $this->get(ShoppingListUrlProvider::class)->getFrontendUrl($shoppingList);
         $label = htmlspecialchars($shoppingList->getLabel());

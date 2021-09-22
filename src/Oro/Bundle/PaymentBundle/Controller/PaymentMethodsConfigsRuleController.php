@@ -103,7 +103,7 @@ class PaymentMethodsConfigsRuleController extends AbstractController
     {
         $form = $this->createForm(PaymentMethodsConfigsRuleType::class);
         if ($this->get(PaymentMethodsConfigsRuleHandler::class)->process($form, $entity)) {
-            $this->get('session')->getFlashBag()->add(
+            $request->getSession()->getFlashBag()->add(
                 'success',
                 $this->get(TranslatorInterface::class)->trans('oro.payment.controller.rule.saved.message')
             );

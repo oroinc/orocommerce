@@ -49,6 +49,8 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
             ]
         );
         $this->registry = static::getContainer()->get('doctrine');
+
+        $this->ensureSessionIsAvailable();
     }
 
     public function testStartCheckoutProductsWithoutPrices()
@@ -59,7 +61,7 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
         $this->startCheckout($shoppingList);
         static::assertNull(self::$checkoutUrl);
 
-        $flashBag = static::getContainer()->get('session.flash_bag');
+        $flashBag = $this->getSession()->getFlashBag();
         $noItemsWithPriceError = $translator
             ->trans('oro.frontend.shoppinglist.messages.cannot_create_order_no_line_item_with_price');
         static::assertTrue($flashBag->has('error'));

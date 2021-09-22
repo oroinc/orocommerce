@@ -72,7 +72,7 @@ class ShippingExtensionTest extends \PHPUnit\Framework\TestCase
         $this->extension = new ShippingExtension($container);
     }
 
-    public function testFormatShippingMethodLabel()
+    public function testFormatShippingMethodLabel(): void
     {
         $shippingMethodName = 'test_shipping_method';
         $shippingMethodLabel = 'test_shipping_method_label';
@@ -88,7 +88,7 @@ class ShippingExtensionTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testFormatShippingMethodTypeLabel()
+    public function testFormatShippingMethodTypeLabel(): void
     {
         $shippingMethodName = 'test_shipping_method';
         $shippingTypeName  = 'test_shipping_method_type';
@@ -109,7 +109,7 @@ class ShippingExtensionTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testFormatShippingMethodWithTypeLabel()
+    public function testFormatShippingMethodWithTypeLabel(): void
     {
         $shippingMethodName = 'test_shipping_method';
         $shippingTypeName  = 'test_shipping_method_type';
@@ -130,7 +130,7 @@ class ShippingExtensionTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetShippingMethodConfigRenderDataDefault()
+    public function testGetShippingMethodConfigRenderDataDefault(): void
     {
         $methodName = 'method_1';
 
@@ -140,6 +140,8 @@ class ShippingExtensionTest extends \PHPUnit\Framework\TestCase
             ->willReturnCallback(function (ShippingMethodConfigDataEvent $event) use ($methodName) {
                 self::assertEquals($methodName, $event->getMethodIdentifier());
                 $event->setTemplate('@OroShipping/ShippingMethodsConfigsRule/shippingMethodWithOptions.html.twig');
+                
+                return $event;
             });
 
         self::assertEquals(
@@ -154,7 +156,7 @@ class ShippingExtensionTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetShippingMethodConfigRenderData()
+    public function testGetShippingMethodConfigRenderData(): void
     {
         $methodName = 'method_1';
         $template = '@FooBar/template.html.twig';
@@ -165,6 +167,8 @@ class ShippingExtensionTest extends \PHPUnit\Framework\TestCase
             ->willReturnCallback(function (ShippingMethodConfigDataEvent $event) use ($methodName, $template) {
                 self::assertEquals($methodName, $event->getMethodIdentifier());
                 $event->setTemplate($template);
+
+                return $event;
             });
 
         self::assertEquals(
@@ -173,7 +177,7 @@ class ShippingExtensionTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testIsShippingMethodEnabled()
+    public function testIsShippingMethodEnabled(): void
     {
         $methodIdentifier = 'method_1';
 
@@ -187,7 +191,7 @@ class ShippingExtensionTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testFormatDimensionsUnitValue()
+    public function testFormatDimensionsUnitValue(): void
     {
         $value = 42;
         $unit = new LengthUnit();
@@ -205,7 +209,7 @@ class ShippingExtensionTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testFormatDimensionsUnitValueShort()
+    public function testFormatDimensionsUnitValueShort(): void
     {
         $value = 42;
         $unit = new LengthUnit();
@@ -223,7 +227,7 @@ class ShippingExtensionTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testFormatDimensionsUnitValueCode()
+    public function testFormatDimensionsUnitValueCode(): void
     {
         $value = 42;
         $unitCode = 'kg';
@@ -243,7 +247,7 @@ class ShippingExtensionTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider formatLabelProvider
      */
-    public function testFormatWeightUnitLabel(string $code, bool $isShort, bool $isPlural, string $expected)
+    public function testFormatWeightUnitLabel(string $code, bool $isShort, bool $isPlural, string $expected): void
     {
         $this->weightUnitLabelFormatter->expects(self::once())
             ->method('format')
@@ -256,7 +260,7 @@ class ShippingExtensionTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testFormatWeightUnitValue()
+    public function testFormatWeightUnitValue(): void
     {
         $value = 42;
         $unit = new WeightUnit();
@@ -274,7 +278,7 @@ class ShippingExtensionTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testFormatWeightUnitValueShort()
+    public function testFormatWeightUnitValueShort(): void
     {
         $value = 42;
         $unit = new WeightUnit();
@@ -292,7 +296,7 @@ class ShippingExtensionTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testFormatWeightUnitValueCode()
+    public function testFormatWeightUnitValueCode(): void
     {
         $value = 42;
         $unitCode = 'kg';
@@ -312,7 +316,7 @@ class ShippingExtensionTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider formatLabelProvider
      */
-    public function testFormatLengthUnitLabel(string $code, bool $isShort, bool $isPlural, string $expected)
+    public function testFormatLengthUnitLabel(string $code, bool $isShort, bool $isPlural, string $expected): void
     {
         $this->lengthUnitLabelFormatter->expects(self::once())
             ->method('format')
@@ -328,7 +332,7 @@ class ShippingExtensionTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider formatLabelProvider
      */
-    public function testFormatFreightClassLabel(string $code, bool $isShort, bool $isPlural, string $expected)
+    public function testFormatFreightClassLabel(string $code, bool $isShort, bool $isPlural, string $expected): void
     {
         $this->freightClassLabelFormatter->expects(self::once())
             ->method('format')

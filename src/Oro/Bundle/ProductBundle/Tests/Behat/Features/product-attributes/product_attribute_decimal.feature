@@ -48,7 +48,7 @@ Feature: Product attribute decimal
       | DecimalField | 0,42 |
     And I save form
     Then I should see validation errors:
-      | DecimalField | This value is not valid. |
+      | DecimalField | Please enter a number. |
     When I fill "Product Form" with:
       | DecimalField | 0.42 |
     And I save and close form
@@ -68,7 +68,7 @@ Feature: Product attribute decimal
       | DecimalField | 0.42 |
     And I save form
     Then I should see validation errors:
-      | DecimalField | This value is not valid. |
+      | DecimalField | Please enter a number. |
     When I fill "Product Form" with:
       | DecimalField | 0,42 |
     And I save and close form

@@ -36,7 +36,7 @@ class ResizeProductImageMessageProcessorTest extends WebTestCase
         $this->processor = self::getContainer()->get('oro_product.async.resize_product_image_processor');
     }
 
-    private function getSession(): SessionInterface
+    private function getSessionMock(): SessionInterface
     {
         return $this->createMock(SessionInterface::class);
     }
@@ -161,7 +161,7 @@ class ResizeProductImageMessageProcessorTest extends WebTestCase
 
         self::assertEquals(
             MessageProcessorInterface::ACK,
-            $this->processor->process($message, $this->getSession())
+            $this->processor->process($message, $this->getSessionMock())
         );
 
         $this->assertValidImage($productImage, self::PRODUCT_LARGE_FILTER);

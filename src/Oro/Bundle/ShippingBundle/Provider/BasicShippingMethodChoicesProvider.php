@@ -6,6 +6,9 @@ use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Provides an array of the shipping methods.
+ */
 class BasicShippingMethodChoicesProvider implements ShippingMethodChoicesProviderInterface
 {
     /**

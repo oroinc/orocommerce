@@ -107,7 +107,7 @@ class CategoryControllerTest extends WebTestCase
             '{"wrong_id":{"visibility":"hidden"}}'
         );
 
-        static::assertStringContainsString('This value is not valid', $crawler->html());
+        static::assertStringContainsString('The selected choice is invalid.', $crawler->html());
         static::assertStringContainsString('VisibilityChangeSet', $crawler->html());
     }
 

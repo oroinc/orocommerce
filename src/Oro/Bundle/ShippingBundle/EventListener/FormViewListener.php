@@ -78,13 +78,7 @@ class FormViewListener
         $this->addBlock($event->getScrollData(), $template, 'oro.shipping.product.section.shipping_options', 1800);
     }
 
-    /**
-     * @param ScrollData $scrollData
-     * @param string $html
-     * @param string $label
-     * @param int $priority
-     */
-    protected function addBlock(ScrollData $scrollData, $html, $label, $priority)
+    protected function addBlock(ScrollData $scrollData, string $html, string $label, int $priority): void
     {
         $blockLabel = $this->translator->trans($label);
         $blockId    = $scrollData->addBlock($blockLabel, $priority);

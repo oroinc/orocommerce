@@ -15,6 +15,9 @@ use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 
 // @codingStandardsIgnoreEnd
 
+/**
+ * Fedex shipping method type implementation.
+ */
 class FedexShippingMethodType implements ShippingMethodTypeInterface
 {
     /**
@@ -82,9 +85,9 @@ class FedexShippingMethodType implements ShippingMethodTypeInterface
     /**
      * {@inheritDoc}
      */
-    public function getLabel()
+    public function getLabel(): string
     {
-        return $this->shippingService->getDescription();
+        return (string) $this->shippingService->getDescription();
     }
 
     /**

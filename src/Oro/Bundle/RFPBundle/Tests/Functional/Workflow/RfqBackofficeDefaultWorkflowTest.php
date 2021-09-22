@@ -11,7 +11,6 @@ use Oro\Bundle\WorkflowBundle\Model\TransitionManager;
 use Oro\Bundle\WorkflowBundle\Model\Workflow;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 use Symfony\Component\DomCrawler\Crawler;
-use Symfony\Component\HttpFoundation\Request as HttpRequest;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -48,9 +47,9 @@ class RfqBackofficeDefaultWorkflowTest extends WebTestCase
         $this->initClient([], static::generateBasicAuthHeader());
         $this->loadFixtures([LoadRequestData::class]);
 
+        $this->ensureSessionIsAvailable();
+
         $this->updateUserSecurityToken(self::AUTH_USER);
-        $this->getContainer()->get('request_stack')
-            ->push(HttpRequest::create($this->getUrl('oro_default')));
 
         $this->manager = $this->getContainer()->get('oro_workflow.manager');
         $this->systemManager = $this->getContainer()->get('oro_workflow.manager.system');

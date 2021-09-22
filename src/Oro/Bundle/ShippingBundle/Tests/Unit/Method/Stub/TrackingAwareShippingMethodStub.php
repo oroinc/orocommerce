@@ -34,9 +34,9 @@ class TrackingAwareShippingMethodStub implements ShippingMethodInterface, Shippi
     /**
      * {@inheritDoc}
      */
-    public function getLabel()
+    public function getLabel(): string
     {
-        return null;
+        return '';
     }
 
     /**

@@ -48,15 +48,14 @@ class MoveProductsMassActionHandlerTest extends WebTestCase
             ]
         );
 
-        $request = new Request();
-        $request->setMethod(Request::METHOD_POST);
+        $this->ensureSessionIsAvailable();
 
         $container = self::getContainer();
         $container->get('request_stack')
-            ->push($request);
+            ->getCurrentRequest()
+            ->setMethod(Request::METHOD_POST);
 
         $this->customerUser = $this->getCustomerUser();
-
         $container->get('security.token_storage')
             ->setToken($this->createToken($this->customerUser));
 

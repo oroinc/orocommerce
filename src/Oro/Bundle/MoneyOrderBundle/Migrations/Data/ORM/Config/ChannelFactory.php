@@ -9,6 +9,9 @@ use Oro\Bundle\MoneyOrderBundle\Integration\MoneyOrderChannelType;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Provides functionality to create a Channel
+ */
 class ChannelFactory
 {
     /**
@@ -60,6 +63,6 @@ class ChannelFactory
      */
     private function getChannelTypeTranslatedLabel(ChannelInterface $channel)
     {
-        return $this->translator->trans($channel->getLabel());
+        return $this->translator->trans((string) $channel->getLabel());
     }
 }

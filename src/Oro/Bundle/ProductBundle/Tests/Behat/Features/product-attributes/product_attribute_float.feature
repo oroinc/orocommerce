@@ -48,7 +48,7 @@ Feature: Product attribute float
       | FloatField | 321,67 |
     And I save form
     Then I should see validation errors:
-      | FloatField | This value is not valid. |
+      | FloatField | Please enter a number. |
     When I fill "Product Form" with:
       | FloatField | -1234.1234567891 |
     And I save and close form
@@ -68,7 +68,7 @@ Feature: Product attribute float
       | FloatField | 321.67 |
     And I save form
     Then I should see validation errors:
-      | FloatField | This value is not valid. |
+      | FloatField | Please enter a number. |
     When I fill "Product Form" with:
       | FloatField | -1234,1234567891 |
     And I save and close form

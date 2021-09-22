@@ -134,20 +134,20 @@ services:
 
     oro_product.storage.product_data_bag:
         class: Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag
-        public: false
         arguments:
             - '_product_data_bag'
         calls:
             - [setName, ['product_data_bag']]
+        tags:
+            - { name: oro_security.session_bag }
 
     oro_product.storage.session_data_storage:
         class: 'Oro\Bundle\ProductBundle\Storage\ProductDataStorage'
         abstract: true
         arguments:
-            - "@session"
+            - '@request_stack'
 
     oro_product.storage.product_data_storage:
-        class: 'Oro\Bundle\ProductBundle\Storage\ProductDataStorage'
         public: true
         parent: oro_product.storage.session_data_storage
 

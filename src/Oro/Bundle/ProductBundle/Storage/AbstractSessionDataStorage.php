@@ -2,44 +2,47 @@
 
 namespace Oro\Bundle\ProductBundle\Storage;
 
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
+/**
+ * Base class for data storages in session.
+ */
 abstract class AbstractSessionDataStorage extends AbstractDataStorage implements DataStorageInterface
 {
-    const BAG_NAME = 'product_data_bag';
+    protected RequestStack $requestStack;
 
-    /** @var SessionInterface */
-    protected $session;
+    protected ?AttributeBagInterface $bag = null;
 
-    /** @var AttributeBagInterface */
-    protected $bag;
-
-    public function __construct(SessionInterface $session)
+    public function __construct(RequestStack $requestStack)
     {
-        $this->session = $session;
+        $this->requestStack = $requestStack;
     }
 
-    /**
-     * @return AttributeBagInterface
-     */
-    protected function getBag()
+    protected function getBag(): AttributeBagInterface
     {
         if (!$this->bag) {
-            $this->bag = $this->session->getBag(self::BAG_NAME);
+            $bag = $this->requestStack->getSession()->getBag('product_data_bag');
+            if (!$bag instanceof AttributeBagInterface) {
+                throw new \LogicException(
+                    'Session bag %s was expected to be of type %s',
+                    'product_data_bag',
+                    AttributeBagInterface::class
+                );
+            }
+
+            $this->bag = $bag;
         }
 
         return $this->bag;
     }
 
-    /** {@inheritdoc} */
-    public function set(array $data)
+    public function set(array $data): void
     {
         $this->getBag()->set($this->getKey(), $this->prepareData($data));
     }
 
-    /** {@inheritdoc} */
-    public function get()
+    public function get(): array
     {
         if (!$this->getBag()->has($this->getKey())) {
             return [];
@@ -48,8 +51,7 @@ abstract class AbstractSessionDataStorage extends AbstractDataStorage implements
         return $this->parseData($this->getBag()->get($this->getKey(), null));
     }
 
-    /** {@inheritdoc} */
-    public function remove()
+    public function remove(): void
     {
         if ($this->getBag()->has($this->getKey())) {
             $this->getBag()->remove($this->getKey());
@@ -57,7 +59,9 @@ abstract class AbstractSessionDataStorage extends AbstractDataStorage implements
     }
 
     /**
+     * Returns the key for the element that stores storage data in a session bag.
+     *
      * @return string
      */
-    abstract protected function getKey();
+    abstract protected function getKey(): string;
 }

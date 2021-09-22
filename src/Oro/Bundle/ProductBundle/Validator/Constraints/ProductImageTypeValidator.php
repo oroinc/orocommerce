@@ -10,6 +10,9 @@ use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Validates ProductImageType.
+ */
 class ProductImageTypeValidator extends ConstraintValidator
 {
     const ALIAS = 'oro_product_image_type_validator';
@@ -82,9 +85,7 @@ class ProductImageTypeValidator extends ConstraintValidator
                 ->buildViolation(
                     $constraint->already_exists_message,
                     [
-                        '%type%' => $this->translator->trans(
-                            $validTypes[$value->getType()]->getLabel()
-                        )
+                        '%type%' => $this->translator->trans((string) $validTypes[$value->getType()]->getLabel())
                     ]
                 )
                 ->addViolation();

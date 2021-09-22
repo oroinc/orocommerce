@@ -333,7 +333,7 @@ class AjaxLineItemController extends AbstractLineItemController
      * @param string $message
      * @return array
      */
-    protected function getSuccessResponse(ShoppingList $shoppingList, Product $product, $message)
+    protected function getSuccessResponse(ShoppingList $shoppingList, Product $product, string $message): array
     {
         $productShoppingLists = $this->get(ProductShoppingListsDataProvider::class)
             ->getProductUnitsQuantity($product);

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Controller;
 
+use Oro\Bundle\ActionBundle\Tests\Functional\OperationAwareTestTrait;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberFilterType;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
@@ -21,6 +22,8 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class ProductControllerTest extends ProductHelperTestCase
 {
+    use OperationAwareTestTrait;
+
     /**
      * @var array
      */
@@ -523,32 +526,5 @@ class ProductControllerTest extends ProductHelperTestCase
         $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), $expectedCode);
 
         return $crawler;
-    }
-
-    /**
-     * @param $operationName
-     * @param $entityId
-     * @param $entityClass
-     * @param $datagrid
-     *
-     * @return array
-     */
-    protected function getOperationExecuteParams($operationName, $entityId, $entityClass, $datagrid = null)
-    {
-        $actionContext = [
-            'entityId'    => $entityId,
-            'entityClass' => $entityClass,
-            'datagrid'    => $datagrid
-        ];
-        $container = self::getContainer();
-        $operation = $container->get('oro_action.operation_registry')->findByName($operationName);
-        $actionData = $container->get('oro_action.helper.context')->getActionData($actionContext);
-
-        $tokenData = $container
-            ->get('oro_action.operation.execution.form_provider')
-            ->createTokenData($operation, $actionData);
-        $container->get('session')->save();
-
-        return $tokenData;
     }
 }
