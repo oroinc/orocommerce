@@ -6,7 +6,7 @@ define(function(require) {
 
     const LocalizedFieldSlugifyComponent = BaseSlugifyComponent.extend({
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function LocalizedFieldSlugifyComponent(options) {
             LocalizedFieldSlugifyComponent.__super__.constructor.call(this, options);

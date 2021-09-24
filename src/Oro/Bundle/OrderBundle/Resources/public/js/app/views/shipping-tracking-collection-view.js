@@ -16,14 +16,14 @@ define(function(require) {
         options: {},
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function ShippingTrackingCollectionView(options) {
             ShippingTrackingCollectionView.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});

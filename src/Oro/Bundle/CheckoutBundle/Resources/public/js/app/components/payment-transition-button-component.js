@@ -7,7 +7,7 @@ define(function(require) {
 
     const PaymentTransitionButtonComponent = TransitionButtonComponent.extend({
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function PaymentTransitionButtonComponent(options) {
             PaymentTransitionButtonComponent.__super__.constructor.call(this, options);
@@ -71,7 +71,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         transit: function(e, data) {
             e.preventDefault();
@@ -105,7 +105,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function() {
             if (this.disposed) {

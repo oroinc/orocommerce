@@ -43,14 +43,14 @@ define(function(require, exports, module) {
         massActionsInSticky: config.massActionsInSticky,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function BackendGrid(options) {
             BackendGrid.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.header = null;
@@ -94,7 +94,7 @@ define(function(require, exports, module) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         backgridInitialize: function() {
             if (this.selectState === null) {
@@ -119,7 +119,7 @@ define(function(require, exports, module) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         render: function() {
             this.$grid = this.$(this.selectors.grid);
@@ -167,7 +167,7 @@ define(function(require, exports, module) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         _afterRequest: function(jqXHR) {
             if (this.requestsCount === 1) {
@@ -177,7 +177,7 @@ define(function(require, exports, module) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         undelegateEvents: function() {
             this.collection.off('gridContentUpdate');
@@ -286,7 +286,7 @@ define(function(require, exports, module) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function() {
             pageStateChecker.removeChecker(this.hasSelections);

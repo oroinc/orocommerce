@@ -22,14 +22,14 @@ define(function(require) {
         visibleClass: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function ExpressionFieldSwitcher(options) {
             ExpressionFieldSwitcher.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             ExpressionFieldSwitcher.__super__.initialize.call(this, options);
@@ -94,7 +94,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function(options) {
             if (this.disposed) {

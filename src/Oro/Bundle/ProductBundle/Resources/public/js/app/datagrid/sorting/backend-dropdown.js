@@ -22,7 +22,7 @@ define(function(require) {
         className: '',
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         attributes: {
             'data-grid-sorting': ''
@@ -45,14 +45,14 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function BackendSortingDropdown(options) {
             BackendSortingDropdown.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             BackendSortingDropdown.__super__.initialize.call(this, options);
@@ -60,7 +60,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         onChangeSorting: function() {
             const obj = {};
@@ -79,7 +79,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initSubview: function(vp) {
             if (viewportManager.isApplicable(this.fullscreenMode)) {

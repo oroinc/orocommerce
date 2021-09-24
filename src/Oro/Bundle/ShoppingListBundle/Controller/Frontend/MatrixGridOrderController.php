@@ -45,9 +45,7 @@ class MatrixGridOrderController extends AbstractLineItemController
         $currentShoppingListManager = $this->get(CurrentShoppingListManager::class);
 
         $shoppingListId = $request->get('shoppingListId');
-        $shoppingList = $shoppingListId
-            ? $currentShoppingListManager->getForCurrentUser($shoppingListId)
-            : $currentShoppingListManager->getCurrent();
+        $shoppingList = $currentShoppingListManager->getShoppingListForCurrentUser($shoppingListId, false);
 
         $form = $this->get(MatrixGridOrderFormProvider::class)->getMatrixOrderForm($product, $shoppingList);
         $form->handleRequest($request);

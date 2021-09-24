@@ -14,14 +14,14 @@ define(function(require) {
 
     const FrontendCustomFiltersTogglePlugin = FrontendFiltersTogglePlugin.extend({
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function FrontendCustomFiltersTogglePlugin(main, options) {
             FrontendCustomFiltersTogglePlugin.__super__.constructor.call(this, main, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(main, options) {
             if (this.changeBehavior()) {
@@ -34,7 +34,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         enable: function() {
             if (!this.changeBehavior() || isApplicableWithViewport()) {

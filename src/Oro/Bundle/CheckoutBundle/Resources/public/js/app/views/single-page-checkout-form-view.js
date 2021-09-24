@@ -27,11 +27,13 @@ define(function(require) {
             originPaymentFormSelector: '[data-content="payment_method_form"]',
             stateTokenSelector: '[name$="[state_token]"]',
             couponCodeSelector: '[data-role="coupon-code"]',
+            consentCheckboxSelector: '[data-role="consent-checkbox"]',
+            consentsFieldSelector: '[data-name="field__customer-consents"]',
             entityId: null
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         events: {
             change: 'onChange',
@@ -40,7 +42,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         listen: {
             'before-save-state': 'onBeforeSaveState',
@@ -58,7 +60,7 @@ define(function(require) {
         timeout: 50,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function SinglePageCheckoutFormView(options) {
             this.onChange = _.debounce(this.onChange, this.timeout);
@@ -66,7 +68,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = _.extend({}, this.options, options || {});
@@ -96,7 +98,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         delegateEvents: function(events) {
             SinglePageCheckoutFormView.__super__.delegateEvents.call(this, events);
@@ -121,17 +123,7 @@ define(function(require) {
          * @param {jQuery.Event} event
          */
         onChange: function(event) {
-            if (this.subview('checkoutSubmitButton').isHovered()) {
-                return;
-            }
-
-            // Do not execute logic when hidden element (form) is refreshed
-            if (!$(event.target).is(':visible')) {
-                return;
-            }
-
-            // Do not execute logic if updated coupon code data. Coupons are handled by its own logic.
-            if ($(event.target).is(this.options.couponCodeSelector)) {
+            if (!this._isAvailableChange(event)) {
                 return;
             }
 
@@ -237,7 +229,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function() {
             if (this.disposed) {
@@ -247,6 +239,34 @@ define(function(require) {
             mediator.off('frontend:coupons:changed', this._afterApplyCoupon, this);
 
             SinglePageCheckoutFormView.__super__.dispose.call(this);
+        },
+
+        _isAvailableChange: function(event) {
+            if (this.subview('checkoutSubmitButton').isHovered()) {
+                return false;
+            }
+
+            // Do not execute logic if consent checkboxes are updated
+            if ($(event.target).is(this.options.consentCheckboxSelector)) {
+                return true;
+            }
+
+            // Allow to execute logic if consent field is updated
+            if ($(event.target).is(this.options.consentsFieldSelector)) {
+                return true;
+            }
+
+            // Do not execute logic when hidden element (form) is refreshed
+            if (!$(event.target).is(':visible')) {
+                return false;
+            }
+
+            // Do not execute logic if updated coupon code data. Coupons are handled by its own logic.
+            if ($(event.target).is(this.options.couponCodeSelector)) {
+                return false;
+            }
+
+            return true;
         },
 
         _disableShippingAddress: function() {

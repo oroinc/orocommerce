@@ -33,14 +33,14 @@ define(function(require) {
         dimension: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function BaseProductMatrixView(options) {
             BaseProductMatrixView.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             BaseProductMatrixView.__super__.initialize.call(this, options);
@@ -69,7 +69,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function() {
             delete this.prices;

@@ -115,6 +115,13 @@ class ContentBlock extends ExtendContentBlock implements
      *     cascade={"ALL"},
      *     orphanRemoval=true
      * )
+     * @ConfigField(
+     *      defaultValues={
+     *          "entity"={
+     *              "actualize_owning_side_on_change"=true
+     *          }
+     *      }
+     * )
      */
     protected $contentVariants;
 

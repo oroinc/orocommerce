@@ -35,7 +35,7 @@ define(function(require) {
         items: [],
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function OrderLineItemOffers(options) {
             OrderLineItemOffers.__super__.constructor.call(this, options);
@@ -96,7 +96,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function() {
             if (this.disposed) {

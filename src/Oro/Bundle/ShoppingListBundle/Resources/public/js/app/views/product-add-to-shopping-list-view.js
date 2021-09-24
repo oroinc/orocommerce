@@ -44,14 +44,14 @@ define(function(require) {
         rendered: false,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function ProductAddToShoppingListView(options) {
             ProductAddToShoppingListView.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             ProductAddToShoppingListView.__super__.initialize.call(this, options);

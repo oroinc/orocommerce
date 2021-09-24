@@ -29,19 +29,27 @@
             </div>
         </div>
     <% } else if (renderMode == 'collapse-mode') { %>
+        <% var collapseId = _.uniqueId('criteria-');  %>
+        <% var collapseContainerId = _.uniqueId('criteria-container-');  %>
         <div class="filter-box collapse-mode" <%= attributes %> >
             <div class="filters-box-collapse"
                  data-page-component-module="oroui/js/app/components/jquery-widget-component"
                  data-page-component-options="{&quot;widgetModule&quot;:&quot;oroui/js/widget/collapse-widget&quot;,&quot;open&quot;:false}"
             >
-                <div class="filters-box-collapse__trigger" data-collapse-trigger>
+                <div id="<%- collapseId %>"
+                     tabindex="0"
+                     role="button"
+                     class="filters-box-collapse__trigger"
+                     data-collapse-trigger
+                     aria-controls="<%- collapseContainerId %>"
+                >
                     <%- _.__('oro.product.product_filters.collapse.label')  %>
                     <div class="filters-box-collapse__icon" aria-hidden="true">
                         <span class="fa-plus"></span>
                         <span class="fa-minus"></span>
                     </div>
                 </div>
-                <div class="filter-container">
+                <div id="<%- collapseContainerId %>" class="filter-container" aria-labelledby="<%- collapseId %>">
                     <div class="dropdown-mode">
                         <div class="filters-box-collapse__container" data-collapse-container>
                             <% if (obj.enableMultiselectWidget) { %>

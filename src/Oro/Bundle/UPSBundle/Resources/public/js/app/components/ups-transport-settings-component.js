@@ -40,14 +40,14 @@ define(function(require) {
         shippingServiceByCountryRoute: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function UPSTransportSettingsComponent(options) {
             UPSTransportSettingsComponent.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);

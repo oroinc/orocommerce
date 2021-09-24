@@ -6,7 +6,7 @@ import template from 'tpl-loader!oroshoppinglist/templates/shoppinglist-image-po
 
 const ShoppingListImagePopoverView = BaseView.extend({
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     autoRender: true,
 
@@ -21,14 +21,14 @@ const ShoppingListImagePopoverView = BaseView.extend({
     title: null,
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     constructor: function ShoppingListImagePopoverView(options) {
         ShoppingListImagePopoverView.__super__.constructor.call(this, options);
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     initialize(options) {
         Object.assign(this, _.pick(options, 'src', 'title'));

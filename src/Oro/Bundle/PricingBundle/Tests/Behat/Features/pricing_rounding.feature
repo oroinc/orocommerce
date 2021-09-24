@@ -14,8 +14,8 @@ Feature: Pricing rounding
 
   Scenario: Create different window session
     Given sessions active:
-      | admin    |first_session |
-      | customer |second_session|
+      | admin    | first_session  |
+      | customer | second_session |
 
   Scenario: Create demo data
     Given I proceed as the admin
@@ -25,20 +25,20 @@ Feature: Pricing rounding
     And click "Product Prices"
     And click "Add Product Price"
     And fill "Product Price Form" with:
-      |Price List|Default Price List|
-      |Quantity  |1   |
-      |Value     |7.45|
-      |Currency  |$   |
+      | Price List | Default Price List |
+      | Quantity   | 1                  |
+      | Value      | 7.45               |
+      | Currency   | $                  |
     And save and close form
     And go to Products/ Products
     And click edit "SKU456" in grid
     And click "Product Prices"
     And click "Add Product Price"
     And fill "Product Price Form" with:
-      |Price List|Default Price List|
-      |Quantity  |1   |
-      |Value     |4.54|
-      |Currency  |$   |
+      | Price List | Default Price List |
+      | Quantity   | 1                  |
+      | Value      | 4.54               |
+      | Currency   | $                  |
     And save and close form
     Then I should see "Product has been saved" flash message
     And go to Sales/ Quotes
@@ -71,7 +71,7 @@ Feature: Pricing rounding
     Given I proceed as the admin
     And go to System/ Configuration
     When follow "Commerce/Catalog/Pricing" on configuration sidebar
-    And Pricing Precision field should has 4 value
+    And Subtotals Calculation Precision in Sales Documents field should has 4 value
     And I proceed as the customer
     And I signed in as AmandaRCole@example.org on the store frontend
     When click "NewCategory"
@@ -97,19 +97,19 @@ Feature: Pricing rounding
     Then should see "Subtotal $4.54"
     And should see "Total $4.54"
 
-  Scenario: Set Pricing Precision value to 0 (Half Up)
+  Scenario: Set Subtotals Calculation Precision in Sales Documents value to 0 (Half Up)
     Given I proceed as the admin
     And fill "PricingConfigurationForm" with:
-      |Pricing Precision System|false|
-      |Pricing Precision       |0    |
+      | Subtotals Calculation Precision in Sales Documents System | false |
+      | Subtotals Calculation Precision in Sales Documents        | 0     |
     And click "Save settings"
     And should see "Configuration saved" flash message
     When go to Products/ Products
     And click view "SKU123" in grid
     And click "Product Prices"
     Then should see following grid:
-      |Price List         |Quantity|Unit|Value |
-      |Default Price List |1       |item|7.45  |
+      | Price List         | Quantity | Unit | Value |
+      | Default Price List | 1        | item | 7.45  |
     When click "Edit"
     And click "Product Prices"
     Then Value field should has 7.4500 value
@@ -135,7 +135,7 @@ Feature: Pricing rounding
     Then should see "Subtotal $7"
     And should see "Total $10"
     And fill "Order Review Form" with:
-      |PO Number|Order1|
+      | PO Number | Order1 |
     And click "Submit Order"
     And I see the "Thank You" page with "Thank You For Your Purchase!" title
 
@@ -159,7 +159,7 @@ Feature: Pricing rounding
     Then should see "Subtotal $5"
     And should see "Total $8"
     And fill "Order Review Form" with:
-      |PO Number|Order2|
+      | PO Number | Order2 |
     And click "Submit Order"
     And I see the "Thank You" page with "Thank You For Your Purchase!" title
 
@@ -178,16 +178,16 @@ Feature: Pricing rounding
     And follow "Account"
     When click "Order History"
     Then should see following "PastOrdersGrid" grid:
-      |Order Number|Total |
-      |2           |$8.00 |
-      |1           |$10.00|
+      | Order Number | Total  |
+      | 2            | $8.00  |
+      | 1            | $10.00 |
 
     And I proceed as the admin
     When go to Sales/ Orders
     Then should see following grid:
-      |Order Number|Total |
-      |1           |$10.00|
-      |2           |$8.00 |
+      | Order Number | Total  |
+      | 1            | $10.00 |
+      | 2            | $8.00  |
     When click view "Order1" in grid
     Then should see "Subtotal $7"
     And should see "Total $10"
@@ -201,25 +201,25 @@ Feature: Pricing rounding
     And go to System/ Configuration
     And follow "Commerce/Catalog/Pricing" on configuration sidebar
     And fill "PricingConfigurationForm" with:
-      |Pricing Precision System|false|
-      |Pricing Precision       |1    |
+      | Subtotals Calculation Precision in Sales Documents System | false |
+      | Subtotals Calculation Precision in Sales Documents        | 1     |
     And click "Save settings"
     And should see "Configuration saved" flash message
     When go to Products/ Products
     And click view "SKU123" in grid
     And click "Product Prices"
     Then should see following grid:
-      |Price List         |Quantity|Unit|Value |
-      |Default Price List |1       |item|7.45  |
+      | Price List         | Quantity | Unit | Value |
+      | Default Price List | 1        | item | 7.45  |
     When click "Edit"
     And click "Product Prices"
     Then Value field should has 7.4500 value
     And click "Cancel"
     When go to Sales/ Orders
     Then should see following grid:
-      |Order Number|Total |
-      |1           |$10.00|
-      |2           |$8.00 |
+      | Order Number | Total  |
+      | 1            | $10.00 |
+      | 2            | $8.00  |
     When click view "Order1" in grid
     Then should see "Subtotal $7"
     And should see "Total $10"
@@ -268,7 +268,7 @@ Feature: Pricing rounding
     Then should see "Subtotal $7.5"
     And should see "Total $10.5"
     And fill "Order Review Form" with:
-      |PO Number|Order3|
+      | PO Number | Order3 |
     And click "Submit Order"
     And I see the "Thank You" page with "Thank You For Your Purchase!" title
 
@@ -300,26 +300,26 @@ Feature: Pricing rounding
     Then should see "Subtotal $4.5"
     And should see "Total $7.5"
     And fill "Order Review Form" with:
-      |PO Number|Order4|
+      | PO Number | Order4 |
     And click "Submit Order"
     And I see the "Thank You" page with "Thank You For Your Purchase!" title
     And follow "Account"
     When click "Order History"
     Then should see following "PastOrdersGrid" grid:
-      |Order Number|Total |
-      |4           |$7.50 |
-      |3           |$10.50|
-      |2           |$8.00 |
-      |1           |$10.00|
+      | Order Number | Total  |
+      | 4            | $7.50  |
+      | 3            | $10.50 |
+      | 2            | $8.00  |
+      | 1            | $10.00 |
 
     And I proceed as the admin
     When go to Sales/ Orders
     Then should see following grid:
-      |Order Number|Total |
-      |1           |$10.00|
-      |2           |$8.00 |
-      |3           |$10.50|
-      |4           |$7.50 |
+      | Order Number | Total  |
+      | 1            | $10.00 |
+      | 2            | $8.00  |
+      | 3            | $10.50 |
+      | 4            | $7.50  |
     When click view "Order3" in grid
     Then should see "Subtotal $7.50"
     And should see "Total $10.50"
@@ -333,18 +333,18 @@ Feature: Pricing rounding
     And go to System/ Configuration
     And follow "Commerce/Catalog/Pricing" on configuration sidebar
     And fill "PricingConfigurationForm" with:
-      |Pricing Precision System     |false    |
-      |Pricing Precision            |0        |
-      |Pricing Rounding Type System |false    |
-      |Pricing Rounding Type        |Half Down|
+      | Subtotals Calculation Precision in Sales Documents System | false     |
+      | Subtotals Calculation Precision in Sales Documents        | 0         |
+      | Pricing Rounding Type System                              | false     |
+      | Pricing Rounding Type                                     | Half Down |
     And click "Save settings"
     And should see "Configuration saved" flash message
     When go to Products/ Products
     And click view "SKU123" in grid
     And click "Product Prices"
     Then should see following grid:
-      |Price List         |Quantity|Unit|Value |
-      |Default Price List |1       |item|7.45  |
+      | Price List         | Quantity | Unit | Value |
+      | Default Price List | 1        | item | 7.45  |
     And I proceed as the customer
     And follow "Account"
     And click "Quotes"
@@ -377,18 +377,18 @@ Feature: Pricing rounding
     And go to System/ Configuration
     And follow "Commerce/Catalog/Pricing" on configuration sidebar
     And fill "PricingConfigurationForm" with:
-      |Pricing Precision System     |false |
-      |Pricing Precision            |0     |
-      |Pricing Rounding Type System |false |
-      |Pricing Rounding Type        |Ceil  |
+      | Subtotals Calculation Precision in Sales Documents System | false |
+      | Subtotals Calculation Precision in Sales Documents        | 0     |
+      | Pricing Rounding Type System                              | false |
+      | Pricing Rounding Type                                     | Ceil  |
     And click "Save settings"
     And should see "Configuration saved" flash message
     When go to Products/ Products
     And click view "SKU123" in grid
     And click "Product Prices"
     Then should see following grid:
-      |Price List         |Quantity|Unit|Value |
-      |Default Price List |1       |item|7.45  |
+      | Price List         | Quantity | Unit | Value |
+      | Default Price List | 1        | item | 7.45  |
     And I proceed as the customer
     And follow "Account"
     And click "Quotes"
@@ -414,18 +414,18 @@ Feature: Pricing rounding
     And go to System/ Configuration
     And follow "Commerce/Catalog/Pricing" on configuration sidebar
     And fill "PricingConfigurationForm" with:
-      |Pricing Precision System     |false |
-      |Pricing Precision            |0     |
-      |Pricing Rounding Type System |false |
-      |Pricing Rounding Type        |Floor |
+      | Subtotals Calculation Precision in Sales Documents System | false |
+      | Subtotals Calculation Precision in Sales Documents        | 0     |
+      | Pricing Rounding Type System                              | false |
+      | Pricing Rounding Type                                     | Floor |
     And click "Save settings"
     And should see "Configuration saved" flash message
     When go to Products/ Products
     And click view "SKU123" in grid
     And click "Product Prices"
     Then should see following grid:
-      |Price List         |Quantity|Unit|Value |
-      |Default Price List |1       |item|7.45  |
+      | Price List         | Quantity | Unit | Value |
+      | Default Price List | 1        | item | 7.45  |
     And I proceed as the customer
     And follow "Account"
     And click "Quotes"
@@ -451,18 +451,18 @@ Feature: Pricing rounding
     And go to System/ Configuration
     And follow "Commerce/Catalog/Pricing" on configuration sidebar
     And fill "PricingConfigurationForm" with:
-      |Pricing Precision System     |false    |
-      |Pricing Precision            |0        |
-      |Pricing Rounding Type System |false    |
-      |Pricing Rounding Type        |Half Even|
+      | Subtotals Calculation Precision in Sales Documents System | false     |
+      | Subtotals Calculation Precision in Sales Documents        | 0         |
+      | Pricing Rounding Type System                              | false     |
+      | Pricing Rounding Type                                     | Half Even |
     And click "Save settings"
     And should see "Configuration saved" flash message
     When go to Products/ Products
     And click view "SKU123" in grid
     And click "Product Prices"
     Then should see following grid:
-      |Price List         |Quantity|Unit|Value |
-      |Default Price List |1       |item|7.45  |
+      | Price List         | Quantity | Unit | Value |
+      | Default Price List | 1        | item | 7.45  |
     And I proceed as the customer
     And follow "Account"
     And click "Quotes"
@@ -482,10 +482,10 @@ Feature: Pricing rounding
     And go to System/ Configuration
     And follow "Commerce/Catalog/Pricing" on configuration sidebar
     When fill "PricingConfigurationForm" with:
-      | Pricing Precision System     | false   |
-      | Pricing Precision            | 2       |
-      | Pricing Rounding Type System | false   |
-      | Pricing Rounding Type        | Half Up |
+      | Subtotals Calculation Precision in Sales Documents System | false   |
+      | Subtotals Calculation Precision in Sales Documents        | 2       |
+      | Pricing Rounding Type System                              | false   |
+      | Pricing Rounding Type                                     | Half Up |
     And I save form
     Then I should see "Configuration saved" flash message
     When go to Products / Products

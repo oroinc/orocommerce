@@ -2,7 +2,7 @@ import BaseView from 'oroui/js/app/views/base/view';
 
 const PreviewFullNotesView = BaseView.extend({
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     events: {
         'mouseenter [data-role="notes"]': 'onMouseOver'
@@ -16,14 +16,14 @@ const PreviewFullNotesView = BaseView.extend({
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     constructor: function PreviewFullNotesView(options) {
         PreviewFullNotesView.__super__.constructor.call(this, options);
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     initialize(options) {
         this.popoverConfig = {...this.popoverConfig, ...options.popoverConfig};

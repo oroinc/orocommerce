@@ -6,6 +6,8 @@ oro:
                 units_select.label: Units
                 min: 'min'
                 max: 'max'
+                units_list:
+                    aria_label: '{{ label }} filter product units'
         click_to_select: Click to select price per unit
         qty: 'qty'
         unit_price: Unit Price

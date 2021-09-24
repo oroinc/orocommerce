@@ -32,7 +32,7 @@ const ShoppingListInlineEditingPlugin = InlineEditingPlugin.extend({
     $updateAllButton: $(updateAllBtnTpl()),
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     modalOptions: {
         ...InlineEditingPlugin.prototype.modalOptions,

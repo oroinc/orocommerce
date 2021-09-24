@@ -62,6 +62,7 @@ class Configuration implements ConfigurationInterface
     const MATRIX_FORM_POPUP = 'popup';
     const MATRIX_FORM_ALLOW_TO_ADD_EMPTY = 'matrix_form_allow_empty';
     const DISPLAY_SIMPLE_VARIATIONS = 'display_simple_variations';
+    const DISPLAY_SIMPLE_VARIATIONS_HIDE_COMPLETELY_BC = 'display_simple_variations_hide_completely_bc';
     const DISPLAY_SIMPLE_VARIATIONS_EVERYWHERE = 'everywhere';
     const DISPLAY_SIMPLE_VARIATIONS_HIDE_COMPLETELY = 'hide_completely';
     const DISPLAY_SIMPLE_VARIATIONS_HIDE_CATALOG = 'hide_catalog';
@@ -162,6 +163,10 @@ class Configuration implements ConfigurationInterface
                 static::MATRIX_FORM_ALLOW_TO_ADD_EMPTY => [
                     'type' => 'boolean',
                     'value' => true,
+                ],
+                static::DISPLAY_SIMPLE_VARIATIONS_HIDE_COMPLETELY_BC => [
+                    'type' => 'boolean',
+                    'value' => false
                 ],
                 static::DISPLAY_SIMPLE_VARIATIONS => [
                     'type' => 'string',

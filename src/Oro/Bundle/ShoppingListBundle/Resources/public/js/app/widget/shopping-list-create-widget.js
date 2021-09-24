@@ -10,14 +10,14 @@ define(function(require) {
         shoppingListCollection: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function ShoppingListCreateWidget(options) {
             ShoppingListCreateWidget.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             const urlOptions = {};

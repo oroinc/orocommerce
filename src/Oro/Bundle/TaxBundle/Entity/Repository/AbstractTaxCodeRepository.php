@@ -3,10 +3,10 @@
 namespace Oro\Bundle\TaxBundle\Entity\Repository;
 
 use Doctrine\Inflector\Inflector;
-use Doctrine\Inflector\Rules\English\InflectorFactory;
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\TaxBundle\Entity\AbstractTaxCode;
+use Oro\Component\DoctrineUtils\Inflector\InflectorFactory;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
@@ -17,11 +17,6 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
 abstract class AbstractTaxCodeRepository extends EntityRepository
 {
     const ALIAS_SUFFIX = 'TaxCode';
-
-    /**
-     * @var Inflector
-     */
-    private $inflector;
 
     /**
      * @var PropertyAccessor
@@ -65,16 +60,9 @@ abstract class AbstractTaxCodeRepository extends EntityRepository
         return $this->propertyAccessor;
     }
 
-    /**
-     * @return Inflector
-     */
-    protected function getInflector()
+    protected function getInflector(): Inflector
     {
-        if (!$this->inflector) {
-            $this->inflector = (new InflectorFactory())->build();
-        }
-
-        return $this->inflector;
+        return InflectorFactory::create();
     }
 
     /**

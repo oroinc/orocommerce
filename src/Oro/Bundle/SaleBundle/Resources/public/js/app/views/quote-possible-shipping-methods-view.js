@@ -6,14 +6,14 @@ define(function(require) {
 
     const QuotePossibleShippingMethodsView = PossibleShippingMethodsView.extend({
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function QuotePossibleShippingMethodsView(options) {
             QuotePossibleShippingMethodsView.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             QuotePossibleShippingMethodsView.__super__.initialize.call(this, options);
@@ -46,7 +46,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function() {
             if (this.disposed) {

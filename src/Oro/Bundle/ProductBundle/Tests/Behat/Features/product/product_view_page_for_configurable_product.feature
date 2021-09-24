@@ -11,7 +11,7 @@
 Feature: Product view page for configurable product
   In order to use product view page for configurable products
   As an Admin
-  I need to be able to add configurable products to shopping list from their viw page
+  I need to be able to add configurable products to shopping list from their view page
 
   Scenario: Create sessions
     Given sessions active:

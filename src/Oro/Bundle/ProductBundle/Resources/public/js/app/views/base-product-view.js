@@ -52,14 +52,14 @@ define(function(require) {
         originalProductId: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function BaseProductView(options) {
             BaseProductView.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             BaseProductView.__super__.initialize.call(this, options);
@@ -83,7 +83,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         delegateEvents: function(events) {
             BaseProductView.__super__.delegateEvents.call(this, events);

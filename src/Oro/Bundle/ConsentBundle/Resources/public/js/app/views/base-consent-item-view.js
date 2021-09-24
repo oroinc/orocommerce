@@ -64,14 +64,14 @@ define(function(require) {
         $valueField: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function BaseConsentItemView(options) {
             return BaseConsentItemView.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.$form = this.$el.closest('form');
@@ -135,9 +135,15 @@ define(function(require) {
          */
         _onChecked: function(event) {
             if ($(event.target).is(':checked') && this.cmsPageData) {
+                // Stop Propagation if popup agree is required
+                event.stopPropagation();
                 this.renderDialogWidget();
             }
-            this._updateFormElementToField($(event.target).is(':checked'));
+
+            // Disable consent if user just uncheck checkbox
+            if (!$(event.target).is(':checked') || !this.cmsPageData) {
+                this._updateFormElementToField($(event.target).is(':checked'));
+            }
         },
 
         /**

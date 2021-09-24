@@ -247,6 +247,15 @@ services:
         tags:
             - { name: form.type_extension, extended_type: Oro\Component\WebCatalog\Form\PageVariantType }
 
+    oro_web_catalog.form.extension.content_node_type:
+        class: Oro\Bundle\WebCatalogBundle\Form\Extension\ContentNodeTypeExtension
+        arguments:
+            - '@oro_web_catalog.content_variant_type.registry'
+            - '@oro_security.owner.metadata_provider.chain'
+            - '@oro_entity.doctrine_helper'
+        tags:
+            - { name: form.type_extension, extended_type: Oro\Bundle\WebCatalogBundle\Form\Type\ContentNodeType }
+
     oro_web_catalog.event_listener.website_search_index:
         class: 'Oro\Bundle\WebCatalogBundle\EventListener\WebCatalogEntityIndexerListener'
         arguments:

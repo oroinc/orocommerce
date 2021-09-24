@@ -70,14 +70,14 @@ define(function(require) {
         shoppingListCollection: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function ProductShoppingListsWidget(options) {
             ProductShoppingListsWidget.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, _.pick(options, [

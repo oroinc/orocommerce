@@ -16,7 +16,7 @@ use Oro\Bundle\PricingBundle\Model\DTO\ProductPriceDTO;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteria;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Provider\FrontendProductPricesExportProvider;
-use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
+use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
@@ -34,8 +34,8 @@ class FrontendProductPricesExportProviderTest extends TestCase
     /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     private ConfigManager $configManager;
 
-    /** @var ProductPriceProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private ProductPriceProvider $priceProvider;
+    /** @var ProductPriceProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private ProductPriceProviderInterface $priceProvider;
 
     /** @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private TokenAccessorInterface $tokenAccessor;
@@ -55,7 +55,7 @@ class FrontendProductPricesExportProviderTest extends TestCase
     protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);
-        $this->priceProvider = $this->createMock(ProductPriceProvider::class);
+        $this->priceProvider = $this->createMock(ProductPriceProviderInterface::class);
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
         $this->priceScopeCriteriaFactory = $this->createMock(ProductPriceScopeCriteriaFactoryInterface::class);
         $this->managerRegistry = $this->createMock(ManagerRegistry::class);

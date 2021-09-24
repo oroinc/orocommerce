@@ -2,9 +2,11 @@
 
 namespace Oro\Bundle\CMSBundle\DependencyInjection\Compiler;
 
+use Oro\Bundle\CMSBundle\DBAL\Types\WYSIWYGStyleType;
 use Oro\Bundle\CMSBundle\DBAL\Types\WYSIWYGType;
 use Oro\Bundle\CMSBundle\Validator\Constraints\TwigContent;
 use Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYG;
+use Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYGStyle;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
@@ -35,6 +37,10 @@ class ExtendFieldValidationLoaderPass implements CompilerPassInterface
                 'addConstraints',
                 [WYSIWYGType::TYPE, [[TwigContent::class => null], [WYSIWYG::class => null]]]
             );
+            $definition->addMethodCall(
+                'addConstraints',
+                [WYSIWYGStyleType::TYPE, [[TwigContent::class => null], [WYSIWYGStyle::class => null]]]
+            );
         }
     }
 
@@ -45,6 +51,10 @@ class ExtendFieldValidationLoaderPass implements CompilerPassInterface
             $definition->addMethodCall(
                 'addConstraints',
                 [WYSIWYGType::TYPE, [[TwigContent::class => null], [WYSIWYG::class => null]]]
+            );
+            $definition->addMethodCall(
+                'addConstraints',
+                [WYSIWYGStyleType::TYPE, [[TwigContent::class => null], [WYSIWYGStyle::class => null]]]
             );
         }
     }

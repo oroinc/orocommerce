@@ -93,7 +93,7 @@ oro_behat_extension:
         selector: 'div[data-page-component-name="product-prices-grid"] div.toolbar div.actions-panel'
         class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridToolbarActions
     ProductPricesGridFiltersState:
-        selector: 'div[data-page-component-name="product-prices-grid"] div.filters-state'
+        selector: 'div[data-page-component-name="product-prices-grid"] .filters-state'
     ProductPricesGridFilterItem:
       selector: 'div.filter-item'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilterItem
@@ -116,8 +116,8 @@ oro_behat_extension:
           Offset Of Processing CPL Prices Use Default: 'pricing[oro_pricing___offset_of_processing_cpl_prices][use_parent_scope_value]'
           Offset Of Processing CPL Prices: 'pricing[oro_pricing___offset_of_processing_cpl_prices][value]'
           Default Currency: 'pricing[oro_pricing_pro___default_currency][value]'
-          Pricing Precision System: 'pricing[oro_pricing___precision][use_parent_scope_value]'
-          Pricing Precision: 'pricing[oro_pricing___precision][value]'
+          Subtotals Calculation Precision in Sales Documents System: 'pricing[oro_pricing___precision][use_parent_scope_value]'
+          Subtotals Calculation Precision in Sales Documents: 'pricing[oro_pricing___precision][value]'
           Pricing Rounding Type System: 'pricing[oro_pricing___rounding_type][use_parent_scope_value]'
           Pricing Rounding Type: 'pricing[oro_pricing___rounding_type][value]'
           Allow To Round Displayed Prices And Amounts System: 'pricing[oro_locale___allow_to_round_displayed_prices_and_amounts][use_parent_scope_value]'
@@ -209,7 +209,7 @@ oro_behat_extension:
       options:
         mapping:
           Price: 'oro_pricing_price_list_product_price[price][value]'
-          
+
     QuickOrderFirstSkuField:
       selector: 'form[name="oro_product_quick_add"] input[name="oro_product_quick_add[products][0][productDisplayName]"]'
 

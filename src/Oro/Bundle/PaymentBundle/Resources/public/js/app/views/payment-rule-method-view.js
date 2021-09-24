@@ -16,14 +16,14 @@ define([
         requiredOptions: ['methodSelectSelector', 'buttonSelector', 'updateFlag', 'methods'],
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function PaymentRuleMethodView(options) {
             PaymentRuleMethodView.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         /**
          * @param options Object

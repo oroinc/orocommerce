@@ -69,6 +69,10 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                 'feature_enabled' => [
                     'value' => true,
                     'scope' => 'app'
+                ],
+                'price_calculation_precision' => [
+                    'value' => null,
+                    'scope' => 'app'
                 ]
             ]
         ];

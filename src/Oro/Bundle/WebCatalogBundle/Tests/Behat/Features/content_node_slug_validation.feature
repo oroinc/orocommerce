@@ -26,6 +26,13 @@ Feature: Content Node slug validation
     And I click "Add System Page"
     When I save form
     Then I should see "Content Node has been saved" flash message
+    And I click on "Content Node Titles Localization Form Fallbacks"
+    And fill "Content Node Titles Localization Form" with:
+      | Use Default             | false             |
+      | English (United States) | Products node ENG |
+    And I save form
+    And I click on "Product Form Slug Fallbacks"
+    And NodeEnglishSlug field should has products-node-eng value
 
   Scenario: Create content node with the same URL Slug on the same level should trigger validation error
     Given I click "Web Catalog Root"

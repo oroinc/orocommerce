@@ -56,7 +56,6 @@ class WYSIWYGValidator extends ConstraintValidator
             ['', '$1$2'],
             $value
         );
-        $scope = null;
 
         $contextObject = $this->context->getObject();
         $className = $contextObject ? get_class($contextObject) : $this->context->getClassName();

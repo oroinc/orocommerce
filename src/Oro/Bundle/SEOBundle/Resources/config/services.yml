@@ -1,5 +1,6 @@
 parameters:
     oro_seo.sitemap_directory: 'media/sitemaps'
+    oro_seo.sitemap_index_generate_single_thread: true
 
 services:
     oro_seo.event_listener.product_form_view:
@@ -278,6 +279,18 @@ services:
             - '@oro_seo.sitemap.public_filesystem_adapter'
             - '@oro_redirect.generator.canonical_url'
             - '@logger'
+        calls:
+            - ['setUseSingleThreadIndexGeneration', ['%oro_seo.sitemap_index_generate_single_thread%']]
+        tags:
+            - { name: oro_message_queue.client.message_processor }
+
+    oro_seo.async.generate_sitemap_index.single_thread:
+        class: Oro\Bundle\SEOBundle\Async\GenerateSitemapIndexSingleThreadProcessor
+        arguments:
+            - '@doctrine'
+            - '@oro_seo.sitemap.sitemap_index_dumper'
+            - '@oro_seo.sitemap.public_filesystem_adapter'
+            - '@logger'
         tags:
             - { name: oro_message_queue.client.message_processor }
 
@@ -384,6 +397,14 @@ services:
     oro_seo.event_listener.restrict_sitemap_product_by_status:
         class: Oro\Bundle\SEOBundle\EventListener\RestrictSitemapProductByStatusListener
         tags:
+            - { name: kernel.event_listener, event: oro_seo.event.restrict_sitemap_entity.product, method: restrictQueryBuilder }
+
+    oro_seo.event_listener.restrict_sitemap_simple_product:
+        class: Oro\Bundle\SEOBundle\EventListener\RestrictSitemapSimpleProductListener
+        arguments:
+            - '@oro_product.model.restrict_display_product_variants_query_builder_modifier'
+        tags:
+            - { name: oro_featuretogle.feature, feature: 'simple_variations_view_restriction_bc' }
             - { name: kernel.event_listener, event: oro_seo.event.restrict_sitemap_entity.product, method: restrictQueryBuilder }
 
     oro_seo.event_listener.restrict_sitemap_product_by_inventory_status:

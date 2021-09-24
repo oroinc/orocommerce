@@ -43,7 +43,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function ConfirmSlugChangeModal(options) {
             ConfirmSlugChangeModal.__super__.constructor.call(this, options);

@@ -10,7 +10,7 @@ define(function(require) {
     const RelatedItemsTabsComponent = BaseComponent.extend({
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function RelatedItemsTabsComponent(options) {
             RelatedItemsTabsComponent.__super__.constructor.call(this, options);

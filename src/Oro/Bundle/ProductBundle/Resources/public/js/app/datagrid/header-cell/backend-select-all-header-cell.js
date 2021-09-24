@@ -21,14 +21,14 @@ define(function(require) {
         template: template,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function BackendSelectAllHeaderCell(options) {
             BackendSelectAllHeaderCell.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.collection = options.collection;
@@ -40,7 +40,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         delegateEvents: function(events) {
             this.$('[data-checkbox-change-visible]')
