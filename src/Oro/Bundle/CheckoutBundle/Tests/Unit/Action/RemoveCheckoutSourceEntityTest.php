@@ -23,17 +23,13 @@ class RemoveCheckoutSourceEntityTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var ContextAccessor */
-    protected $contextAccessor;
+    private ContextAccessor $contextAccessor;
 
-    /** @var MockObject|ManagerRegistry */
-    protected $registry;
+    private MockObject|ManagerRegistry $registry;
 
-    /** @var ActionInterface */
-    protected $action;
+    private ActionInterface $action;
 
-    /** @var MockObject|EventDispatcher */
-    protected $dispatcher;
+    private MockObject|EventDispatcher $dispatcher;
 
     protected function setUp(): void
     {
@@ -53,7 +49,7 @@ class RemoveCheckoutSourceEntityTest extends \PHPUnit\Framework\TestCase
         $this->action->setDispatcher($this->dispatcher);
     }
 
-    public function testExecuteNotAnObjectException()
+    public function testExecuteNotAnObjectException(): void
     {
         $this->expectException(InvalidParameterException::class);
         $this->expectExceptionMessage(
@@ -69,7 +65,7 @@ class RemoveCheckoutSourceEntityTest extends \PHPUnit\Framework\TestCase
         $this->action->xexecuteAction($context);
     }
 
-    public function testExecuteIncorrectObjectException()
+    public function testExecuteIncorrectObjectException(): void
     {
         $this->expectException(InvalidParameterException::class);
         $this->expectExceptionMessage(
@@ -85,7 +81,7 @@ class RemoveCheckoutSourceEntityTest extends \PHPUnit\Framework\TestCase
         $this->action->xexecuteAction($context);
     }
 
-    public function testExecuteWithCheckoutWithEmptySourceEntity()
+    public function testExecuteWithCheckoutWithEmptySourceEntity(): void
     {
         $this->dispatcher->expects(static::never())->method('dispatch');
         $this->registry->expects(static::never())->method('getManagerForClass');
@@ -98,7 +94,7 @@ class RemoveCheckoutSourceEntityTest extends \PHPUnit\Framework\TestCase
         $this->action->xexecuteAction($context);
     }
 
-    public function testExecute()
+    public function testExecute(): void
     {
         /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getEntity(ShoppingList::class, ['id' => 1]);
@@ -140,7 +136,7 @@ class RemoveCheckoutSourceEntityTest extends \PHPUnit\Framework\TestCase
                     static::equalTo(CheckoutSourceEntityRemoveEvent::AFTER_REMOVE)
                 ]
             )
-        ->willReturnArgument(2);
+        ->willReturnArgument(0);
 
         $context = $this->createContextStub(
             $this->createCheckoutMock($checkoutSource, $shoppingList)

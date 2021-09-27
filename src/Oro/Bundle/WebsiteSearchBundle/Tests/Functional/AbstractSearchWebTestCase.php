@@ -24,7 +24,6 @@ use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadProductsToI
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Traits\DefaultLocalizationIdTestTrait;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Traits\DefaultWebsiteIdTestTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\OptionsResolver\Exception\InvalidArgumentException;
 
 /**
@@ -113,7 +112,8 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
 
         $this->preSetUp();
 
-        $this->getContainer()->get('request_stack')->push(Request::create(''));
+        $this->ensureSessionIsAvailable();
+
         $this->dispatcher = $this->getContainer()->get('event_dispatcher');
 
         $this->doctrineHelper = $this->getContainer()->get('oro_entity.doctrine_helper');

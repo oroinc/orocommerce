@@ -43,7 +43,7 @@ class WatermarkImageFilterProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetFilterConfig()
+    public function testGetFilterConfig(): void
     {
         $this->configManager->expects(self::any())
             ->method('get')
@@ -93,7 +93,7 @@ class WatermarkImageFilterProviderTest extends \PHPUnit\Framework\TestCase
 
         $expectedConfig = [
             'filters' => [
-                'watermark' => [
+                'watermark_image' => [
                     'image' => $expectedImagePath,
                     'size' => round(self::SIZE/ 100, 2),
                     'position' => self::POSITION
@@ -104,7 +104,7 @@ class WatermarkImageFilterProviderTest extends \PHPUnit\Framework\TestCase
         self::assertEquals($expectedConfig, $this->provider->getFilterConfig());
     }
 
-    public function testGetFilterConfigNoValue()
+    public function testGetFilterConfigNoValue(): void
     {
         $this->configManager->expects(self::any())
             ->method('get')
@@ -115,7 +115,7 @@ class WatermarkImageFilterProviderTest extends \PHPUnit\Framework\TestCase
         self::assertEquals([], $this->provider->getFilterConfig());
     }
 
-    public function testIsApplicable()
+    public function testIsApplicable(): void
     {
         $dimension = $this->createMock(ThemeImageTypeDimension::class);
 

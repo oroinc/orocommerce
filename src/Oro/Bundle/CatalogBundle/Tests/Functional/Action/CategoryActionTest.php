@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Functional\Action;
 
+use Oro\Bundle\ActionBundle\Tests\Functional\OperationAwareTestTrait;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Tests\Functional\CatalogTrait;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
@@ -10,7 +11,9 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class CategoryActionTest extends WebTestCase
 {
-    use OrganizationTrait, CatalogTrait;
+    use OrganizationTrait;
+    use CatalogTrait;
+    use OperationAwareTestTrait;
 
     protected function setUp(): void
     {
@@ -85,30 +88,5 @@ class CategoryActionTest extends WebTestCase
 
         $result = $this->client->getResponse();
         self::assertResponseStatusCodeEquals($result, 403);
-    }
-
-    /**
-     * @param $operationName
-     * @param $entityId
-     * @param $entityClass
-     *
-     * @return array
-     */
-    protected function getOperationExecuteParams($operationName, $entityId, $entityClass)
-    {
-        $actionContext = [
-            'entityId'    => $entityId,
-            'entityClass' => $entityClass
-        ];
-        $container = self::getContainer();
-        $operation = $container->get('oro_action.operation_registry')->findByName($operationName);
-        $actionData = $container->get('oro_action.helper.context')->getActionData($actionContext);
-
-        $tokenData = $container
-            ->get('oro_action.operation.execution.form_provider')
-            ->createTokenData($operation, $actionData);
-        $container->get('session')->save();
-
-        return $tokenData;
     }
 }

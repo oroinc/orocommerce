@@ -213,7 +213,9 @@ class ContentWidgetType extends AbstractType
     {
         if (isset($view->vars['block_config'])) {
             foreach ($view->vars['block_config'] as $block => $config) {
-                $view->vars['block_config'][$block]['title'] = $this->translator->trans($config['title']);
+                $view->vars['block_config'][$block]['title'] = isset($config['title'])
+                    ? $this->translator->trans((string) $config['title'])
+                    : '';
             }
         }
 

@@ -21,6 +21,9 @@ use Oro\Bundle\ShippingBundle\Method\ShippingTrackingAwareInterface;
 
 // @codingStandardsIgnoreEnd
 
+/**
+ * Fedex shipping method implementation.
+ */
 class FedexShippingMethod implements
     ShippingMethodInterface,
     ShippingMethodIconAwareInterface,
@@ -54,7 +57,7 @@ class FedexShippingMethod implements
     /**
      * @var string
      */
-    private $label;
+    private string $label;
 
     /**
      * @var string|null
@@ -142,7 +145,7 @@ class FedexShippingMethod implements
     /**
      * {@inheritDoc}
      */
-    public function getLabel()
+    public function getLabel(): string
     {
         return $this->label;
     }

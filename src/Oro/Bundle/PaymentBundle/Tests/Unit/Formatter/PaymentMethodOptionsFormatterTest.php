@@ -10,20 +10,11 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class PaymentMethodOptionsFormatterTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var PaymentMethodViewProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $paymentMethodViewProvider;
+    private PaymentMethodViewProviderInterface|\PHPUnit\Framework\MockObject\MockObject $paymentMethodViewProvider;
 
-    /**
-     * @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $eventDispatcher;
+    private EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject $eventDispatcher;
 
-    /**
-     * @var PaymentMethodOptionsFormatter
-     */
-    private $formatter;
+    private PaymentMethodOptionsFormatter $formatter;
 
     protected function setUp(): void
     {
@@ -32,7 +23,7 @@ class PaymentMethodOptionsFormatterTest extends \PHPUnit\Framework\TestCase
         $this->formatter = new PaymentMethodOptionsFormatter($this->paymentMethodViewProvider, $this->eventDispatcher);
     }
 
-    public function testFormatPaymentMethodOptionsWhenThrowsException()
+    public function testFormatPaymentMethodOptionsWhenThrowsException(): void
     {
         $paymentMethod = 'test_payment_method';
         $this->paymentMethodViewProvider->expects($this->once())
@@ -46,7 +37,7 @@ class PaymentMethodOptionsFormatterTest extends \PHPUnit\Framework\TestCase
         self::assertCount(0, $result);
     }
 
-    public function testFormatPaymentMethodOptions()
+    public function testFormatPaymentMethodOptions(): void
     {
         $paymentMethod = 'test_payment_method';
         $paymentMethodView = $this->createMock(PaymentMethodViewInterface::class);
@@ -62,8 +53,10 @@ class PaymentMethodOptionsFormatterTest extends \PHPUnit\Framework\TestCase
                 CollectFormattedPaymentOptionsEvent::EVENT_NAME
             )
             ->willReturnCallback(
-                function (CollectFormattedPaymentOptionsEvent $event, string $name) use ($option) {
+                function (CollectFormattedPaymentOptionsEvent $event) use ($option) {
                     $event->addOption($option);
+
+                    return $event;
                 }
             );
 

@@ -96,9 +96,19 @@ class ProductPriceEntityListenerTest extends WebTestCase
             $priceList,
             ['product' => $product, 'priceList' => $priceList, 'currency' => 'USD', 'quantity' => 10]
         );
+
         /** @var ProductPrice $price */
         $price = $prices[0];
         $price->setPrice(Price::create(12.2, 'USD'));
+        $price->setQuantity(20);
+
+        $priceManager->persist($price);
+        $em->flush();
+
+        //Ensure that no messages sent to MQ if no price changes
+        self::assertMessagesCount(Topics::RESOLVE_PRICE_RULES, 0);
+
+        $price->setPrice(Price::create($price->getPrice()->getValue() + 0.1, 'USD'));
         $price->setQuantity(20);
 
         $priceManager->persist($price);

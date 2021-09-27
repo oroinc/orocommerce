@@ -47,7 +47,7 @@ class CustomerViewListener extends AbstractCustomerViewListener implements Featu
     /**
      * {@inheritdoc}
      */
-    protected function getCustomerLabel()
+    protected function getCustomerLabel(): string
     {
         return 'oro.rfp.datagrid.customer.label';
     }
@@ -63,7 +63,7 @@ class CustomerViewListener extends AbstractCustomerViewListener implements Featu
     /**
      * {@inheritdoc}
      */
-    protected function getCustomerUserLabel()
+    protected function getCustomerUserLabel(): string
     {
         return 'oro.rfp.datagrid.customer_user.label';
     }

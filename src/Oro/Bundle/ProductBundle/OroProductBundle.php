@@ -6,7 +6,6 @@ use Oro\Bundle\LocaleBundle\DependencyInjection\Compiler\DefaultFallbackExtensio
 use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\AttributeBlockTypeMapperPass;
 use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\ComponentProcessorPass;
 use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\ProductCollectionCompilerPass;
-use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\ProductDataStorageSessionBagPass;
 use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\TwigSandboxConfigurationPass;
 use Oro\Bundle\ProductBundle\DependencyInjection\OroProductExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -37,7 +36,6 @@ class OroProductBundle extends Bundle
         parent::build($container);
 
         $container->addCompilerPass(new ComponentProcessorPass());
-        $container->addCompilerPass(new ProductDataStorageSessionBagPass());
         $container->addCompilerPass(new TwigSandboxConfigurationPass());
         $container->addCompilerPass(new DefaultFallbackExtensionPass([
             'Oro\Bundle\ProductBundle\Entity\Product' => [

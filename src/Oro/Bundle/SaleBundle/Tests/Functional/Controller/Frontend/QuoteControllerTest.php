@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Functional\Controller\Frontend;
 
+use Oro\Bundle\ActionBundle\Tests\Functional\OperationAwareTestTrait;
 use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\SaleBundle\Entity\Quote;
@@ -20,6 +21,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class QuoteControllerTest extends WebTestCase
 {
     use ConfigManagerAwareTestTrait;
+    use OperationAwareTestTrait;
 
     /**
      * {@inheritdoc}
@@ -795,23 +797,5 @@ class QuoteControllerTest extends WebTestCase
                 '.validation-failed:contains("Quantity should be greater than or equal to offered quantity")'
             )
         );
-    }
-
-    protected function getOperationExecuteParams($operationName, $entityId, $entityClass): array
-    {
-        $actionContext = [
-            'entityId'    => $entityId,
-            'entityClass' => $entityClass
-        ];
-        $container = static::getContainer();
-        $operation = $container->get('oro_action.operation_registry')->findByName($operationName);
-        $actionData = $container->get('oro_action.helper.context')->getActionData($actionContext);
-
-        $tokenData = $container
-            ->get('oro_action.operation.execution.form_provider')
-            ->createTokenData($operation, $actionData);
-        $container->get('session')->save();
-
-        return $tokenData;
     }
 }

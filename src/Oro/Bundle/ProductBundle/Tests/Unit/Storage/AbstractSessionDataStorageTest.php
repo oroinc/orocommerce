@@ -4,55 +4,54 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Storage;
 
 use Oro\Bundle\ProductBundle\Storage\AbstractSessionDataStorage;
 use Oro\Bundle\ProductBundle\Tests\Unit\Storage\Stub\StubAbstractSessionDataStorage;
-use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag;
+use Symfony\Component\HttpFoundation\Session\SessionBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
-class AbstractSessionDataStorageTest extends \PHPUnit\Framework\TestCase
+abstract class AbstractSessionDataStorageTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|SessionInterface
-     */
-    protected $session;
+    protected RequestStack|\PHPUnit\Framework\MockObject\MockObject $requestStack;
 
-    /**
-     * @var AbstractSessionDataStorage
-     */
-    protected $storage;
+    protected SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|AttributeBagInterface
-     */
-    protected $sessionBag;
+    protected SessionBagInterface $sessionBag;
+
+    protected AbstractSessionDataStorage $storage;
 
     protected function setUp(): void
     {
-        $this->session = $this->createMock('Symfony\Component\HttpFoundation\Session\SessionInterface');
-        $this->sessionBag = $this
-            ->createMock('Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface');
-        $this->session->expects($this->atMost(1))->method('getBag')->willReturn($this->sessionBag);
+        $this->requestStack = new RequestStack();
+        $this->session = $this->createMock(SessionInterface::class);
+        $this->sessionBag = new AttributeBag();
+
+        $request = new Request();
+        $request->setSession($this->session);
+        $this->requestStack
+            ->push($request);
+        $this->session
+            ->expects(self::atMost(1))
+            ->method('getBag')
+            ->willReturn($this->sessionBag);
 
         $this->initStorage();
     }
 
-    protected function initStorage()
+    protected function initStorage(): void
     {
         $this->storage = new StubAbstractSessionDataStorage($this->session);
     }
 
-    protected function tearDown(): void
-    {
-        unset($this->storage, $this->session);
-    }
+    abstract protected function getKey(): string;
 
-    public function testSet()
+    public function testSet(): void
     {
         $data = [['productId' => 42, 'qty' => 100]];
 
-        $this->sessionBag->expects($this->once())
-            ->method('set')
-            ->with($this->isType('string'), serialize($data));
-
         $this->storage->set($data);
+
+        self::assertEquals([$this->getKey() => serialize($data)], $this->sessionBag->all());
     }
 
     /**
@@ -61,22 +60,14 @@ class AbstractSessionDataStorageTest extends \PHPUnit\Framework\TestCase
      * @param mixed $storageData
      * @param array $expectedData
      */
-    public function testGet($storageData, array $expectedData)
+    public function testGet(mixed $storageData, array $expectedData): void
     {
-        $this->sessionBag->expects($this->once())
-            ->method('get')
-            ->with($this->isType('string'))
-            ->willReturn($storageData);
+        $this->sessionBag->set($this->getKey(), $storageData);
 
-        $this->sessionBag->expects($this->once())->method('has')->willReturn(true);
-
-        $this->assertEquals($expectedData, $this->storage->get());
+        self::assertEquals($expectedData, $this->storage->get());
     }
 
-    /**
-     * @return array
-     */
-    public function getProductsDataProvider()
+    public function getProductsDataProvider(): array
     {
         return [
             [null, []],
@@ -94,30 +85,24 @@ class AbstractSessionDataStorageTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testRemove()
+    public function testRemove(): void
     {
-        $this->sessionBag->expects($this->once())->method('has')->willReturn(true);
-
-        $this->sessionBag->expects($this->once())
-            ->method('remove')
-            ->with($this->isType('string'));
+        $this->sessionBag->set($this->getKey(), ['sample-key' => 'sample-value']);
 
         $this->storage->remove();
+
+        self::assertEmpty($this->sessionBag->all());
     }
 
-    public function testNothingToRemove()
+    public function testNothingToRemove(): void
     {
-        $this->sessionBag->expects($this->once())->method('has')->willReturn(false);
-        $this->sessionBag->expects($this->never())->method('remove');
-
         $this->storage->remove();
+
+        self::assertEmpty($this->sessionBag->all());
     }
 
-    public function testNothingToGet()
+    public function testNothingToGet(): void
     {
-        $this->sessionBag->expects($this->once())->method('has')->willReturn(false);
-        $this->sessionBag->expects($this->never())->method('get');
-
-        $this->storage->get();
+        self::assertEmpty($this->storage->get());
     }
 }

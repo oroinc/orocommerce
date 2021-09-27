@@ -535,7 +535,7 @@ class CategoryControllerTest extends WebTestCase
         if ($title === self::DEFAULT_SUBCATEGORY_TITLE) {
             $appendProduct = $testProductFour;
         };
-        $crfToken = $this->getContainer()->get('security.csrf.token_manager')->getToken('category')->getValue();
+        $crfToken = $this->getCsrfToken('category')->getValue();
         $params = [
             'input_action' => 'save_and_stay',
             'oro_catalog_category' => [

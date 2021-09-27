@@ -103,6 +103,8 @@ class SearchMessageProcessorTest extends \PHPUnit\Framework\TestCase
                 if ($event instanceof SearchProcessingEngineExceptionEvent) {
                     $event->setConsumptionResult(MessageProcessorInterface::REQUEUE);
                 }
+
+                return $event;
             });
     }
 
@@ -115,7 +117,7 @@ class SearchMessageProcessorTest extends \PHPUnit\Framework\TestCase
 
         $message->expects($this->once())
             ->method('getBody')
-            ->will($this->returnValue(json_encode($messageBody)));
+            ->willReturn(json_encode($messageBody));
 
         $message->expects($this->once())
             ->method('getProperty')

@@ -64,7 +64,7 @@ class ProductImageListenerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testPostPersist()
+    public function testPostPersist(): void
     {
         $this->imageTypeProvider->expects($this->any())
             ->method('getMaxNumberByType')
@@ -102,7 +102,7 @@ class ProductImageListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->postPersist($productImage, $this->lifecycleArgs);
     }
 
-    public function testPostPersistForNotMAinAndListingImage()
+    public function testPostPersistForNotMAinAndListingImage(): void
     {
         $this->imageTypeProvider->expects($this->any())
             ->method('getMaxNumberByType')
@@ -191,7 +191,7 @@ class ProductImageListenerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $types);
     }
 
-    public function testPostUpdate()
+    public function testPostUpdate(): void
     {
         $productImage = $this->prepareProductImage(24, 102);
 
@@ -201,12 +201,12 @@ class ProductImageListenerTest extends \PHPUnit\Framework\TestCase
                 new ProductImageResizeEvent($productImage->getId(), true),
                 ProductImageResizeEvent::NAME
             )
-            ->willReturn(true);
+            ->willReturnArgument(0);
 
         $this->listener->postUpdate($productImage, $this->lifecycleArgs);
     }
 
-    public function testFilePostUpdate()
+    public function testFilePostUpdate(): void
     {
         $productImage = $this->prepareProductImage(76, 103);
 
@@ -224,12 +224,12 @@ class ProductImageListenerTest extends \PHPUnit\Framework\TestCase
                 new ProductImageResizeEvent($productImage->getId(), true),
                 ProductImageResizeEvent::NAME
             )
-            ->willReturn(true);
+            ->willReturnArgument(0);
 
         $this->listener->filePostUpdate(new File(), $this->lifecycleArgs);
     }
 
-    public function testPostFlush()
+    public function testPostFlush(): void
     {
         $this->listener->postUpdate($this->prepareProductImage(10, 101), $this->lifecycleArgs);
         $this->listener->postUpdate($this->prepareProductImage(11, 101), $this->lifecycleArgs);
@@ -255,12 +255,7 @@ class ProductImageListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->postFlush(new PostFlushEventArgs($this->productImageEntityManager));
     }
 
-    /**
-     * @param int $imageId
-     * @param int $productId
-     * @return StubProductImage
-     */
-    private function prepareProductImage(int $imageId, int $productId)
+    private function prepareProductImage(int $imageId, int $productId): StubProductImage
     {
         $parentProductImage = new StubProductImage();
         $parentProductImage->setImage(new File());

@@ -221,11 +221,7 @@ class QuoteFormSubscriber implements EventSubscriberInterface
         return false;
     }
 
-    /**
-     * @param FormInterface $form
-     * @param string $error
-     */
-    protected function addFormError(FormInterface $form, $error)
+    protected function addFormError(FormInterface $form, string $error): void
     {
         $form->addError(new FormError($this->translator->trans($error)));
     }

@@ -355,7 +355,7 @@ class CheckoutWorkflowHelper
         foreach ($errors as $error) {
             $request->getSession()->getFlashBag()->add(
                 'error',
-                $this->translator->trans($error['message'], $error['parameters'])
+                $this->translator->trans((string) ($error['message'] ?? ''), (array) ($error['parameters'] ?? []))
             );
         }
     }

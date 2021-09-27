@@ -60,7 +60,7 @@ class PaymentExtensionTest extends \PHPUnit\Framework\TestCase
         $this->extension = new PaymentExtension($container);
     }
 
-    public function testGetPaymentMethods()
+    public function testGetPaymentMethods(): void
     {
         $entity = new \stdClass();
         $label = 'label';
@@ -88,7 +88,7 @@ class PaymentExtensionTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetPaymentMethodConfigRenderDataDefault()
+    public function testGetPaymentMethodConfigRenderDataDefault(): void
     {
         $methodName = 'method_1';
 
@@ -98,6 +98,8 @@ class PaymentExtensionTest extends \PHPUnit\Framework\TestCase
             ->willReturnCallback(function (PaymentMethodConfigDataEvent $event) use ($methodName) {
                 self::assertEquals($methodName, $event->getMethodIdentifier());
                 $event->setTemplate('@OroPayment/PaymentMethodsConfigsRule/paymentMethodWithOptions.html.twig');
+
+                return $event;
             });
 
         self::assertEquals(
@@ -112,7 +114,7 @@ class PaymentExtensionTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetPaymentMethodConfigRenderData()
+    public function testGetPaymentMethodConfigRenderData(): void
     {
         $methodName = 'method_1';
         $template = '@FooBar/template.html.twig';
@@ -124,6 +126,8 @@ class PaymentExtensionTest extends \PHPUnit\Framework\TestCase
                 function (PaymentMethodConfigDataEvent $event) use ($methodName, $template) {
                     self::assertEquals($methodName, $event->getMethodIdentifier());
                     $event->setTemplate($template);
+
+                    return $event;
                 }
             );
 
@@ -133,7 +137,7 @@ class PaymentExtensionTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testFormatPaymentStatusLabel()
+    public function testFormatPaymentStatusLabel(): void
     {
         $formattedValue = 'formattedValue';
 
@@ -148,7 +152,7 @@ class PaymentExtensionTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetPaymentStatus()
+    public function testGetPaymentStatus(): void
     {
         $object = new \stdClass();
         $status = PaymentStatusProvider::FULL;

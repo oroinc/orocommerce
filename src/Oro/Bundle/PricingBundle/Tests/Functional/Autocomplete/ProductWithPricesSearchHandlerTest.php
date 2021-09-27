@@ -35,9 +35,10 @@ class ProductWithPricesSearchHandlerTest extends FrontendWebTestCase
         );
 
         $this->loadFixtures([LoadFrontendProductData::class]);
-        $this->getContainer()->get('request_stack')->push(Request::create(''));
         $this->searchHandler = $this->getContainer()
             ->get('oro_pricing.form.autocomplete.product_with_prices.search_handler');
+
+        $this->ensureSessionIsAvailable();
     }
 
     public function testDoesNotReturnsNotMatchingProducts()
@@ -118,9 +119,12 @@ class ProductWithPricesSearchHandlerTest extends FrontendWebTestCase
     public function testSearchByMultipleSkus()
     {
         $skuList = [LoadProductData::PRODUCT_2, LoadProductData::PRODUCT_6];
+
+        $request = Request::create('', Request::METHOD_POST, ['sku' => $skuList]);
+        $request->setSession($this->getSession());
         $this->getContainer()
             ->get('request_stack')
-            ->push(Request::create('', Request::METHOD_POST, ['sku' => $skuList]));
+            ->push($request);
 
         $items = $this->searchHandler->search('', 1, 5);
 

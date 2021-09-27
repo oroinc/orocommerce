@@ -68,13 +68,13 @@ class RelatedItemsHandler
 
     /**
      * @param FormInterface $form
-     * @param string $message
+     * @param string|null $message
      */
-    private function addFormError(FormInterface $form, $message)
+    private function addFormError(FormInterface $form, ?string $message)
     {
         $form->addError(
             new FormError(
-                $this->translator->trans($message, [], 'validators')
+                $this->translator->trans((string) $message, [], 'validators')
             )
         );
     }

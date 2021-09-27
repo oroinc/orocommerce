@@ -11,6 +11,9 @@ use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Validates that one of fields should be blank.
+ */
 class BlankOneOfValidator extends ConstraintValidator
 {
     /**
@@ -72,7 +75,7 @@ class BlankOneOfValidator extends ConstraintValidator
     private function addViolation(array $fieldGroup, Constraint $constraint)
     {
         $fieldsTranslation = implode(', ', array_map(function ($value) {
-            return $this->translator->trans($value);
+            return $this->translator->trans((string) $value);
         }, $fieldGroup));
 
         $fieldNames = array_keys($fieldGroup);
