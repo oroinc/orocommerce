@@ -99,8 +99,6 @@ const ShoppingListInlineEditingPlugin = InlineEditingPlugin.extend({
             this.main.$el.find('.grid-header-cell-quantity').append(this.$updateAllButton);
         }
 
-        const isDisabled = this.$updateAllButton.is('[disabled]');
-
         if (this.hasChanges()) {
             this.$updateAllButton
                 .css('visibility', 'visible')
@@ -115,10 +113,6 @@ const ShoppingListInlineEditingPlugin = InlineEditingPlugin.extend({
                     'disabled': true,
                     'aria-hidden': true
                 });
-        }
-
-        if (isDisabled !== this.$updateAllButton.is('[disabled]')) {
-            this.main.trigger('content:update');
         }
     },
 
