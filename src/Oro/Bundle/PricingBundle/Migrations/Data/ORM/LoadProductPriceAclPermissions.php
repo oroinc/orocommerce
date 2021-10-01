@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Migrations\Data\ORM;
 
 use Doctrine\Persistence\ObjectManager;
+use Oro\Bundle\DistributionBundle\Handler\ApplicationState;
 use Oro\Bundle\SecurityBundle\Migrations\Data\ORM\AbstractLoadAclData;
 
 /**
@@ -17,7 +18,7 @@ class LoadProductPriceAclPermissions extends AbstractLoadAclData
      */
     public function load(ObjectManager $manager)
     {
-        if (!$this->container->hasParameter('installed') || !$this->container->getParameter('installed')) {
+        if (!$this->container->get(ApplicationState::class)->isInstalled()) {
             return;
         }
 

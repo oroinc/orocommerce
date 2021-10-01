@@ -18,7 +18,7 @@ services:
         arguments:
             - '@doctrine'
             - '@logger'
-            - '%installed%'
+            - '@oro_distribution.handler.application_status'
 
     oro_inventory.validator.quantity_to_order_validator:
         class: Oro\Bundle\InventoryBundle\Validator\QuantityToOrderValidatorService

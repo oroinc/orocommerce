@@ -3,6 +3,7 @@
 namespace Oro\Bundle\OrderBundle\Migrations\Data\ORM;
 
 use Doctrine\Persistence\ObjectManager;
+use Oro\Bundle\DistributionBundle\Handler\ApplicationState;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\SecurityBundle\Migrations\Data\ORM\AbstractUpdatePermissions;
 use Oro\Bundle\UserBundle\Entity\User;
@@ -17,7 +18,7 @@ class LoadPaymentPermissionsRolesData extends AbstractUpdatePermissions
      */
     public function load(ObjectManager $manager)
     {
-        if (!$this->container->hasParameter('installed') || !$this->container->getParameter('installed')) {
+        if (!$this->container->get(ApplicationState::class)->isInstalled()) {
             return;
         }
 

@@ -5,6 +5,7 @@ namespace Oro\Bundle\MoneyOrderBundle\Migrations\Schema;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\SchemaException;
 use Oro\Bundle\ConfigBundle\Migration\RenameConfigSectionQuery;
+use Oro\Bundle\DistributionBundle\Handler\ApplicationState;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
@@ -39,7 +40,7 @@ class OroMoneyOrderBundleInstaller implements Installation, ContainerAwareInterf
     public function up(Schema $schema, QueryBag $queries)
     {
         // update system configuration for installed instances
-        if ($this->container->hasParameter('installed') && $this->container->getParameter('installed')) {
+        if ($this->container->get(ApplicationState::class)->isInstalled()) {
             $queries->addPostQuery(new RenameConfigSectionQuery('orob2b_money_order', 'oro_money_order'));
         }
 
