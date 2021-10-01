@@ -100,8 +100,8 @@ Feature: Add Product to Customer User's Own Shopping List
     When I follow "Shopping List" link within flash message "Shopping list \"Shopping List\" was updated successfully"
     Then I should see following grid:
       | SKU       | Item                                                             | Qty Update All |
-      | PROD_B_11 | ConfigurableProductB Attribute 1: Value 11 Attribute 2: Value 21 | 1 item        |
-      | PROD_B_21 | ConfigurableProductB Attribute 1: Value 12 Attribute 2: Value 21 | 1 item        |
+      | PROD_B_11 | ConfigurableProductB Attribute 1: Value 11 Attribute 2: Value 21 | 1 item         |
+      | PROD_B_21 | ConfigurableProductB Attribute 1: Value 12 Attribute 2: Value 21 | 1 item         |
     And I click "Shopping List Actions"
     And I click "Delete"
     And I click "Yes, delete"
@@ -127,7 +127,7 @@ Feature: Add Product to Customer User's Own Shopping List
     When I open page with shopping list "Shopping List 3"
     Then I should see following grid:
       | SKU  | Item                               | Qty Update All |
-      | BB04 | Configurable Product 1 Note 4 text | 4 item        |
+      | BB04 | Configurable Product 1 Note 4 text | 4 item         |
 
   Scenario: To add a new product to shopping list in quick order form as the buyer with "Show All Lists In Shopping List Widgets" option on
     Given I click "Quick Order Form"
