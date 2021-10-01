@@ -285,6 +285,9 @@ oro_behat_extension:
     Shopping List Notes:
       selector: 'form[data-role="edit-notes-form"] textarea[name="oro_shopping_list_notes_type[notes]"]'
 
+    Shopping List Notes in Modal:
+      selector: 'div.modal textarea[name="notes"]'
+
     Save Shopping List Notes:
       selector: 'form[data-role="edit-notes-form"] button[data-role="apply"]'
 
@@ -438,6 +441,91 @@ oro_behat_extension:
     Frontend Customer User Shopping List View Grid:
       selector: 'div[data-page-component-name="frontend-customer-user-shopping-list-grid"]'
       class: Oro\Bundle\FrontendBundle\Tests\Behat\Element\Grid
+
+    Shopping List Edit Grid Header Input:
+      selector:
+        locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]//*[@aria-rowindex="1"]/*[@aria-colindex="1"]//input'
+        type: 'xpath'
+
+    Shopping List Edit Grid Select Row 1 Input:
+      selector:
+        locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]//*[@aria-rowindex="2"]/td[contains(@class, "select-row-cell")]//input'
+        type: 'xpath'
+
+    Shopping List Edit Grid Edit Note:
+      selector:
+        locator: '// tr[@aria-rowindex="2"]//a[@title="Edit Shopping List item Note"]'
+        type: 'xpath'
+
+    Shopping List Edit Grid Select Row 1 Delete:
+      selector:
+        locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]//*[@aria-rowindex="2"]/td[contains(@class, "action-cell")]//a[@title="Delete"]'
+        type: 'xpath'
+
+    Shopping List Edit Grid Header Mass Action:
+      selector:
+        locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]//*[@aria-rowindex="1"]/th[@aria-colindex="1"]'
+        type: 'xpath'
+
+    Shopping List Edit Grid Select Row 1 Mass Action:
+      selector:
+        locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]//*[@aria-rowindex="2"]/td[@aria-colindex="1"]'
+        type: 'xpath'
+
+    Shopping List Edit Grid Select Row 2 Mass Action:
+      selector:
+        locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]//*[@aria-rowindex="3"]/td[@aria-colindex="1"]'
+        type: 'xpath'
+
+    Shopping List Edit Grid Select Row 3 Mass Action:
+      selector:
+        locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]//*[@aria-rowindex="4"]/td[@aria-colindex="1"]'
+        type: 'xpath'
+
+    Shopping List Edit Grid Select Row 4 Mass Action:
+      selector:
+        locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]//*[@aria-rowindex="5"]/td[@aria-colindex="1"]'
+        type: 'xpath'
+
+    Shopping List Edit Grid Select Row 1 Sku:
+      selector:
+        locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]//*[@aria-rowindex="2"]/td[@aria-colindex="3"]'
+        type: 'xpath'
+
+    Shopping List Edit Grid Select Row 1 Item:
+      selector:
+        locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]//*[@aria-rowindex="2"]/td[@aria-colindex="4"]'
+        type: 'xpath'
+
+    Shopping List Edit Grid Select Row 1 Status:
+      selector:
+        locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]//*[@aria-rowindex="2"]/td[@aria-colindex="5"]'
+        type: 'xpath'
+
+    Shopping List Edit Grid Select Row 1 Qty:
+      selector:
+        locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]//*[@aria-rowindex="2"]/td[@aria-colindex="6"]'
+        type: 'xpath'
+
+    Shopping List Edit Grid Select Row 1 Price:
+      selector:
+        locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]//*[@aria-rowindex="2"]/td[@aria-colindex="8"]'
+        type: 'xpath'
+
+    Shopping List Edit Grid Select Row 1 Subtotal:
+      selector:
+        locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]//*[@aria-rowindex="2"]/td[@aria-colindex="9"]'
+        type: 'xpath'
+
+    Shopping List Edit Grid Select Row 1 Action:
+      selector:
+        locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]//*[@aria-rowindex="2"]/td[@aria-colindex="10"]'
+        type: 'xpath'
+
+    Shopping List Edit Grid Select Row 25 Action:
+      selector:
+        locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]//*[@aria-rowindex="26"]/td[@aria-colindex="10"]'
+        type: 'xpath'
 
     In Shopping Lists:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table

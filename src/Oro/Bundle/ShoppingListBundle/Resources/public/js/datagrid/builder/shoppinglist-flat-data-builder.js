@@ -14,7 +14,7 @@ const messageModel = item => {
         notificationCell: 'item',
         row_class_name: item.row_class_name + ' notification-row',
         isMessage: true,
-        isFake: true,
+        isAuxiliary: true,
         row_attributes: {
             'aria-hidden': true
         }

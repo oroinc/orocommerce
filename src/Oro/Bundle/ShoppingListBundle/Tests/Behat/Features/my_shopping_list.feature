@@ -685,7 +685,7 @@ Feature: My Shopping List
     And I click on "Shopping List Line Item 2 Save Changes Button"
     Then I should see following grid containing rows:
       | SKU  | Item                                                  |              | Qty Update All | Price  | Subtotal               |
-      | BB04 | Configurable Product 1 Color: Red Size: M Note 4 text | In Stock     | 10 each        | N/A    | N/A                    |
+      | BB04 | Configurable Product 1 Color: Red Size: M Note 4 text | In Stock     | 10 each        |        |                        |
       |      | Configurable Product 1                                |              | 10 items       |        | $194.00 -$97.00 $97.00 |
       | BB05 | Color: Green Size: L Note 5 text                      | Out of Stock | 3 item         | $11.00 | $33.00 -$16.50 $16.50  |
       | BB12 | Color: Blue Size: S Note 12 text                      | In Stock     | 7 item         | $23.00 | $161.00 -$80.50 $80.50 |
