@@ -10,6 +10,7 @@ use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityConfigBundle\Entity\Repository\AttributeFamilyRepository;
 use Oro\Bundle\EntityConfigBundle\Manager\AttributeManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Oro\Bundle\ProductBundle\Search\ProductIndexDataProviderInterface;
@@ -59,7 +60,10 @@ class WebsiteSearchProductIndexerListener
         $this->dataProvider = $dataProvider;
     }
 
-    public function onWebsiteSearchIndex(IndexEntityEvent $event)
+    /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     */
+    public function onWebsiteSearchIndex(IndexEntityEvent $event): void
     {
         $website = $this->getWebsite($event);
         if (!$website) {
@@ -129,11 +133,18 @@ class WebsiteSearchProductIndexerListener
             }
 
             if (array_key_exists($product->getId(), $productUnits)) {
-                $units = serialize($productUnits[$product->getId()]);
                 $event->addField(
                     $product->getId(),
                     'product_units',
-                    $units
+                    serialize($productUnits[$product->getId()])
+                );
+            }
+
+            if ($product->isConfigurable()) {
+                $event->addField(
+                    $product->getId(),
+                    'variant_fields_count',
+                    count($product->getVariantFields())
                 );
             }
         }
@@ -260,8 +271,8 @@ class WebsiteSearchProductIndexerListener
     protected function getProductRepository()
     {
         return $this->registry
-            ->getManagerForClass('OroProductBundle:Product')
-            ->getRepository('OroProductBundle:Product');
+            ->getManagerForClass(Product::class)
+            ->getRepository(Product::class);
     }
 
     /**
@@ -270,8 +281,8 @@ class WebsiteSearchProductIndexerListener
     protected function getProductUnitRepository()
     {
         return $this->registry
-            ->getManagerForClass('OroProductBundle:ProductUnit')
-            ->getRepository('OroProductBundle:ProductUnit');
+            ->getManagerForClass(ProductUnit::class)
+            ->getRepository(ProductUnit::class);
     }
 
     /**

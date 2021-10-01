@@ -7,31 +7,54 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Provider\ProductMatrixAvailabilityProvider;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
+use Oro\Bundle\ProductBundle\Search\ProductRepository as ProductSearchRepository;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
+use Oro\Bundle\SearchBundle\Query\Criteria\Criteria as SearchCriteria;
+use Oro\Bundle\SearchBundle\Query\Query as SearchQuery;
+use Oro\Bundle\SearchBundle\Query\Result\Item as ResultSearchItem;
+use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
 
 class ProductMatrixAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
 {
     /** @var ProductVariantAvailabilityProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $productVariantAvailability;
+    private $variantAvailability;
+
+    /** @var ProductSearchRepository|\PHPUnit\Framework\MockObject\MockObject */
+    private $productSearchRepository;
 
     /** @var ProductMatrixAvailabilityProvider */
     private $provider;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
-        $this->productVariantAvailability = $this->createMock(ProductVariantAvailabilityProvider::class);
+        $this->variantAvailability = $this->createMock(ProductVariantAvailabilityProvider::class);
+        $this->productSearchRepository = $this->createMock(ProductSearchRepository::class);
 
-        $this->provider = new ProductMatrixAvailabilityProvider($this->productVariantAvailability);
+        $this->provider = new ProductMatrixAvailabilityProvider(
+            $this->variantAvailability,
+            $this->productSearchRepository
+        );
+    }
+
+    private function getResultSearchItem(int $productId, ?array $productUnis): ResultSearchItem
+    {
+        return new ResultSearchItem(
+            Product::class,
+            $productId + 10,
+            null,
+            null,
+            [
+                'product_id'    => $productId,
+                'product_units' => null !== $productUnis ? serialize($productUnis) : null
+            ]
+        );
     }
 
     public function testIsMatrixFormAvailableWithSimpleProduct()
     {
         /** @var Product $simpleProduct */
         $simpleProduct = new ProductStub();
-        $this->productVariantAvailability->expects($this->never())
+        $this->variantAvailability->expects($this->never())
             ->method('getVariantFieldsAvailability');
 
         $this->assertEquals(false, $this->provider->isMatrixFormAvailable($simpleProduct));
@@ -58,7 +81,7 @@ class ProductMatrixAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
             ->setVariantFields($variantFields);
 
         // Matrix form should be available only for 1 or 2 attributes
-        $this->productVariantAvailability->expects($this->exactly(count($variantFields) <= 2 ? 1 : 0))
+        $this->variantAvailability->expects($this->exactly(count($variantFields) <= 2 ? 1 : 0))
             ->method('getSimpleProductsByVariantFields')
             ->with($product)
             ->willReturn($simpleProducts);
@@ -68,10 +91,7 @@ class ProductMatrixAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $this->provider->isMatrixFormAvailable($product));
     }
 
-    /**
-     * @return array
-     */
-    public function isMatrixFormAvailableProvider()
+    public function isMatrixFormAvailableProvider(): array
     {
         $unit = new ProductUnit();
         $unitPrecision = (new ProductUnitPrecision())->setUnit($unit);
@@ -111,8 +131,7 @@ class ProductMatrixAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
     {
         $simpleProduct = new ProductStub();
 
-        $this->productVariantAvailability
-            ->expects($this->never())
+        $this->variantAvailability->expects($this->never())
             ->method('getSimpleProductsGroupedByConfigurable');
 
         $this->assertEmpty($this->provider->isMatrixFormAvailableForProducts([$simpleProduct]));
@@ -156,5 +175,91 @@ class ProductMatrixAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
                 'expectedResult' => [],
             ],
         ];
+    }
+
+    public function testGetMatrixAvailabilityByConfigurableProductDataWhenVariantsCountIsNotAcceptable(): void
+    {
+        $configurableProductData = [
+            100 => ['each', 0]
+        ];
+        $matrixAvailability = [
+            100 => false
+        ];
+
+        $this->variantAvailability->expects($this->never())
+            ->method('getSimpleProductIdsByVariantFieldsGroupedByConfigurable');
+
+        $this->assertSame(
+            $matrixAvailability,
+            $this->provider->getMatrixAvailabilityByConfigurableProductData($configurableProductData)
+        );
+    }
+
+    public function testGetMatrixAvailabilityByConfigurableProductData(): void
+    {
+        $configurableProductData = [
+            100 => ['each', 1],
+            101 => ['each', 2],
+            102 => ['each', 0],
+            103 => ['each', 2],
+            104 => ['kg', 2]
+        ];
+        $matrixAvailability = [
+            102 => false, // variants count is not acceptable
+            100 => true,
+            101 => false, // no product units for simple product
+            103 => false, // no simple products
+            104 => false // not all simple products have applicable product units
+        ];
+        $configurableProductIdsForProductsWithAcceptableVariantsCount = [100, 101, 103, 104];
+        $simpleProducts = [
+            100 => [11, 12],
+            101 => [13],
+            104 => [14, 15],
+        ];
+        $simpleProductIds = [11, 12, 13, 14, 15];
+        $foundSimpleProducts = [
+            $this->getResultSearchItem(11, ['items' => 0, 'each' => 1]),
+            $this->getResultSearchItem(12, ['each' => 0]),
+            $this->getResultSearchItem(13, null),
+            $this->getResultSearchItem(14, ['items' => 0, 'kg' => 0]),
+            $this->getResultSearchItem(15, ['each' => 0])
+        ];
+
+        $this->variantAvailability->expects($this->once())
+            ->method('getSimpleProductIdsByVariantFieldsGroupedByConfigurable')
+            ->with($configurableProductIdsForProductsWithAcceptableVariantsCount)
+            ->willReturn($simpleProducts);
+
+        $searchQuery = $this->createMock(SearchQueryInterface::class);
+        $this->productSearchRepository->expects($this->once())
+            ->method('createQuery')
+            ->willReturn($searchQuery);
+        $searchQuery->expects($this->exactly(2))
+            ->method('addSelect')
+            ->withConsecutive(
+                ['product_id', SearchQuery::TYPE_INTEGER],
+                ['product_units', SearchQuery::TYPE_TEXT]
+            )
+            ->willReturnSelf();
+        $searchQuery->expects($this->exactly(2))
+            ->method('addWhere')
+            ->withConsecutive(
+                [SearchCriteria::expr()->in('integer.product_id', $simpleProductIds)],
+                [SearchCriteria::expr()->eq('integer.is_variant', 1)]
+            )
+            ->willReturnSelf();
+        $searchQuery->expects($this->once())
+            ->method('setMaxResults')
+            ->with(-1)
+            ->willReturnSelf();
+        $searchQuery->expects($this->once())
+            ->method('execute')
+            ->willReturn($foundSimpleProducts);
+
+        $this->assertSame(
+            $matrixAvailability,
+            $this->provider->getMatrixAvailabilityByConfigurableProductData($configurableProductData)
+        );
     }
 }

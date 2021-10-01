@@ -16,6 +16,13 @@ The current file describes significant changes in the code that may affect the u
 * Website search field `assigned_to_ASSIGN_TYPE_ASSIGN_ID` has been renamed to `assigned_to.ASSIGN_TYPE_ASSIGN_ID.CATEGORY_PATH`
 * Website search field `manually_added_to_ASSIGN_TYPE_ASSIGN_ID` has been renamed to `manually_added_to.ASSIGN_TYPE_ASSIGN_ID`
 
+#### ShoppingListBundle
+* The hydration of Product entities the `frontend-product-search-grid` datagrid was removed for simple products.
+* The datagrid extension `Oro\Bundle\ShoppingListBundle\Datagrid\Extension\FrontendMatrixProductGridExtension`
+  (service ID: `oro_shopping_list.datagrid.extension.frontend_product_grid`) was replaced with datagrid listener
+  `Oro\Bundle\ShoppingListBundle\Datagrid\EventListener\FrontendMatrixProductGridEventListener`
+  (service ID: `oro_shopping_list.datagrid.event_listener.frontend_matrix_product_grid`)
+
 #### VisibilityBundle
 * Website search field `visibility_customer_CUSTOMER_ID` has been renamed to `visibility_customer.CUSTOMER_ID`
 
