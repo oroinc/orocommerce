@@ -2,21 +2,18 @@
 
 namespace Oro\Bundle\CMSBundle\WYSIWYG;
 
-use Oro\Bundle\CMSBundle\Entity\ContentWidget;
 use Oro\Bundle\CMSBundle\Entity\ContentWidgetUsage;
-use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
 /**
  * Save uses of the content widgets in WYSIWYG fields
  */
 class ContentWidgetTwigFunctionProcessor implements WYSIWYGTwigFunctionProcessorInterface
 {
-    /** @var AclHelper */
-    protected $aclHelper;
+    private ContentWidgetProvider $contentWidgetProvider;
 
-    public function __construct(AclHelper $aclHelper)
+    public function __construct(ContentWidgetProvider $contentWidgetProvider)
     {
-        $this->aclHelper = $aclHelper;
+        $this->contentWidgetProvider = $contentWidgetProvider;
     }
 
     /**
@@ -63,7 +60,11 @@ class ContentWidgetTwigFunctionProcessor implements WYSIWYGTwigFunctionProcessor
 
         // Adding new widget usages
         if ($actualWidgetCalls) {
-            foreach ($this->getContentWidgets($processedDTO, \array_keys($actualWidgetCalls)) as $contentWidget) {
+            $contentWidgets = $this->contentWidgetProvider->getContentWidgets(
+                $processedDTO,
+                array_keys($actualWidgetCalls)
+            );
+            foreach ($contentWidgets as $contentWidget) {
                 $usage = new ContentWidgetUsage();
                 $usage->setContentWidget($contentWidget);
                 $usage->setEntityClass($ownerEntityClass);
@@ -76,14 +77,6 @@ class ContentWidgetTwigFunctionProcessor implements WYSIWYGTwigFunctionProcessor
         }
 
         return $isFlushNeeded;
-    }
-
-    protected function getContentWidgets(WYSIWYGProcessedDTO $processedDTO, array $names): array
-    {
-        return $processedDTO->getProcessedEntity()
-            ->getEntityManager()
-            ->getRepository(ContentWidget::class)
-            ->findAllByNames($names, $this->aclHelper);
     }
 
     /**
@@ -115,13 +108,14 @@ class ContentWidgetTwigFunctionProcessor implements WYSIWYGTwigFunctionProcessor
 
     /**
      * @param array $twigFunctionCalls
+     *
      * @return array ['widget_name' => true, ...]
      */
     private function getWidgetNames(array $twigFunctionCalls): array
     {
         $actualWidgetCalls = [];
         if (isset($twigFunctionCalls[self::FIELD_CONTENT_TYPE]['widget'])) {
-            foreach ($twigFunctionCalls[self::FIELD_CONTENT_TYPE]['widget'] as list($widgetName)) {
+            foreach ($twigFunctionCalls[self::FIELD_CONTENT_TYPE]['widget'] as [$widgetName]) {
                 if ($widgetName && \is_string($widgetName)) {
                     $actualWidgetCalls[$widgetName] = true;
                 }

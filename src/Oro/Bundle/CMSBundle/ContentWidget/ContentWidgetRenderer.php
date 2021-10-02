@@ -2,99 +2,93 @@
 
 namespace Oro\Bundle\CMSBundle\ContentWidget;
 
-use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CMSBundle\Entity\ContentWidget;
 use Oro\Bundle\LayoutBundle\Layout\LayoutManager;
-use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Component\Layout\LayoutBuilderInterface;
 use Oro\Component\Layout\LayoutContext;
-use Psr\Log\LoggerAwareInterface;
-use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
-use Psr\Log\NullLogger;
 
 /**
- * Renders content widget.
+ * Renders a content widget.
  */
-class ContentWidgetRenderer implements LoggerAwareInterface
+class ContentWidgetRenderer
 {
-    use LoggerAwareTrait;
+    private const ERROR_TEMPLATE = <<<HTML
+<div class="alert alert-error alert--compact" role="alert">
+    <span class="fa-exclamation alert-icon" aria-hidden="true"></span>
+    Rendering of the content widget "%s" failed: %s
+</div>
+HTML;
 
-    /** @var ManagerRegistry */
-    protected $doctrine;
-
-    /** @var LayoutManager */
-    private $layoutManager;
-
-    /** @var ContentWidgetTypeRegistry */
-    private $contentWidgetTypeRegistry;
+    private ContentWidgetProvider $contentWidgetProvider;
+    private ContentWidgetTypeRegistry $contentWidgetTypeRegistry;
+    private LayoutManager $layoutManager;
+    private LoggerInterface $logger;
+    private bool $debug;
 
     public function __construct(
-        ManagerRegistry $doctrine,
+        ContentWidgetProvider $contentWidgetProvider,
+        ContentWidgetTypeRegistry $contentWidgetTypeRegistry,
         LayoutManager $layoutManager,
-        ContentWidgetTypeRegistry $contentWidgetTypeRegistry
+        LoggerInterface $logger,
+        bool $debug,
     ) {
-        $this->doctrine = $doctrine;
-        $this->layoutManager = $layoutManager;
+        $this->contentWidgetProvider = $contentWidgetProvider;
         $this->contentWidgetTypeRegistry = $contentWidgetTypeRegistry;
-        $this->logger = new NullLogger();
-    }
-
-    public function setLogger(LoggerInterface $logger): void
-    {
+        $this->layoutManager = $layoutManager;
         $this->logger = $logger;
+        $this->debug = $debug;
     }
 
-    public function render(string $widgetName, Organization $organization = null): string
+    public function render(string $widgetName): string
     {
-        $contentWidget = $this->getContentWidget($widgetName, $organization);
-        if (!$contentWidget) {
-            $this->logger->error(
-                sprintf('Could not render content widget %s: cannot find content widget', $widgetName)
-            );
-
-            return '';
-        }
-
-        return $this->renderWidget($contentWidget);
-    }
-
-    protected function getContentWidget(string $widgetName, Organization $organization = null): ?ContentWidget
-    {
-        return $this->doctrine->getManagerForClass(ContentWidget::class)
-            ->getRepository(ContentWidget::class)
-            ->findOneBy(['name' => $widgetName]);
-    }
-
-    private function renderWidget(ContentWidget $contentWidget): string
-    {
-        $type = $this->contentWidgetTypeRegistry->getWidgetType($contentWidget->getWidgetType());
-        if (!$type) {
-            return '';
-        }
-
-        $layoutContext = new LayoutContext(
-            [
-                'data' => $type->getWidgetData($contentWidget),
-                'content_widget' => $contentWidget,
-            ],
-            ['content_widget']
-        );
-
         try {
-            $layoutBuilder = $this->layoutManager->getLayoutBuilder();
-            $layoutBuilder->add('content_widget_root', null, 'content_widget_root');
+            $widget = $this->contentWidgetProvider->getContentWidget($widgetName);
 
-            return $layoutBuilder->getLayout($layoutContext)
+            return $this->getWidgetLayoutBuilder()
+                ->getLayout($this->getWidgetLayoutContext($this->getWidgetType($widget), $widget))
                 ->render();
-        } catch (\Exception $exception) {
-            if ($this->logger) {
-                $this->logger->error(
-                    sprintf('Error occurred while rendering content widget %s', $contentWidget->getName()),
-                    ['exception' => $exception]
-                );
+        } catch (\Throwable $e) {
+            $this->logger->error(
+                sprintf('Error occurred while rendering content widget "%s".', $widgetName),
+                ['exception' => $e]
+            );
+            if ($this->debug) {
+                return sprintf(self::ERROR_TEMPLATE, $widgetName, $e->getMessage());
             }
         }
 
         return '';
+    }
+
+    protected function getWidgetType(ContentWidget $widget): ?ContentWidgetTypeInterface
+    {
+        $type = $this->contentWidgetTypeRegistry->getWidgetType($widget->getWidgetType());
+        if (null === $type) {
+            throw new \RuntimeException(sprintf(
+                'The context widget type "%s" does not exist.',
+                $widget->getWidgetType()
+            ));
+        }
+
+        return $type;
+    }
+
+    private function getWidgetLayoutBuilder(): LayoutBuilderInterface
+    {
+        $layoutBuilder = $this->layoutManager->getLayoutBuilder();
+        $layoutBuilder->add('content_widget_root', null, 'content_widget_root');
+
+        return $layoutBuilder;
+    }
+
+    private function getWidgetLayoutContext(
+        ContentWidgetTypeInterface $type,
+        ContentWidget $widget
+    ): LayoutContext {
+        return new LayoutContext(
+            ['data' => $type->getWidgetData($widget), 'content_widget' => $widget],
+            ['content_widget']
+        );
     }
 }
