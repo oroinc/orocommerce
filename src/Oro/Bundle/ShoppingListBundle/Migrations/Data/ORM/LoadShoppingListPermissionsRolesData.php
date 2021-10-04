@@ -4,6 +4,7 @@ namespace Oro\Bundle\ShoppingListBundle\Migrations\Data\ORM;
 
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
+use Oro\Bundle\DistributionBundle\Handler\ApplicationState;
 use Oro\Bundle\SecurityBundle\Migrations\Data\ORM\AbstractUpdatePermissions;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
@@ -17,7 +18,7 @@ class LoadShoppingListPermissionsRolesData extends AbstractUpdatePermissions
      */
     public function load(ObjectManager $manager)
     {
-        if (!$this->container->hasParameter('installed') || !$this->container->getParameter('installed')) {
+        if (!$this->container->get(ApplicationState::class)->isInstalled()) {
             return;
         }
 

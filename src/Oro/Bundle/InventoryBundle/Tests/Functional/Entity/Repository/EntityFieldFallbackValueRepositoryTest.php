@@ -5,6 +5,7 @@ namespace Oro\Bundle\InventoryBundle\Tests\Functional\Entity\Repository;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValueRepository;
 use Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\LoadProductRelatedFallbackValuesData;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
@@ -23,6 +24,14 @@ class EntityFieldFallbackValueRepositoryTest extends WebTestCase
         $this->repo = $this->client->getContainer()
             ->get('oro_entity.doctrine_helper')
             ->getEntityRepository(EntityFieldFallbackValue::class);
+    }
+
+    private function getFallbackValue(string $fieldName): EntityFieldFallbackValue
+    {
+        return $this->getReference(LoadProductRelatedFallbackValuesData::getReferenceName(
+            LoadProductData::PRODUCT_1,
+            $fieldName
+        ));
     }
 
     public function testFindByEntityFields()
@@ -61,11 +70,25 @@ class EntityFieldFallbackValueRepositoryTest extends WebTestCase
         ]);
     }
 
-    private function getFallbackValue(string $fieldName): EntityFieldFallbackValue
+    public function testFindEntityId()
     {
-        return $this->getReference(LoadProductRelatedFallbackValuesData::getReferenceName(
-            LoadProductData::PRODUCT_1,
-            $fieldName
-        ));
+        $fieldName = 'highlightLowInventory';
+        $productId = $this->getReference(LoadProductData::PRODUCT_1)->getId();
+        $entityFieldFallbackValueId = $this->getFallbackValue($fieldName)->getId();
+
+        $this->assertSame(
+            $productId,
+            $this->repo->findEntityId(Product::class, $fieldName, $entityFieldFallbackValueId)
+        );
+    }
+
+    public function testFindEntityIdWhenEntityNotFound()
+    {
+        $fieldName = 'highlightLowInventory';
+        $entityFieldFallbackValueId = 99999999;
+
+        $this->assertNull(
+            $this->repo->findEntityId(Product::class, $fieldName, $entityFieldFallbackValueId)
+        );
     }
 }

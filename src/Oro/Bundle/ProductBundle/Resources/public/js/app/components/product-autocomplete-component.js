@@ -42,6 +42,7 @@ define(function(require) {
                 selectors: {
                     row: '[data-role="row"]',
                     sku: '[data-name="field__product-sku"]',
+                    displayName: '[data-name="field__product-display-name"]',
                     error: '[data-role="autocomplete-error"]'
                 },
                 errorClass: 'error'
@@ -52,6 +53,7 @@ define(function(require) {
 
             this.$row = this.$el.closest(this.options.selectors.row);
             this.$sku = this.$row.find(this.options.selectors.sku);
+            this.$displayName = this.$row.find(this.options.selectors.displayName);
 
             this.product = $.extend(true, {
                 sku: this.$sku.val() || null,
@@ -63,6 +65,12 @@ define(function(require) {
 
             this.$el.on(`blur${this.eventNamespace()}`, _.debounce(this.onBlur.bind(this), 150));
             this.$el.on(`input${this.eventNamespace()}`, this.abortRequestIfEmpty.bind(this));
+
+            this.$sku.on(`validate-element${this.eventNamespace()}`, ({invalid, errorClass}) => {
+                _.defer(() => {
+                    this.$displayName.toggleClass(errorClass, invalid);
+                });
+            });
 
             mediator.on('autocomplete:validate-response', this.validateResponse, this);
         },
@@ -177,6 +185,7 @@ define(function(require) {
         updateProduct: function() {
             if (this.product.sku) {
                 this.$el.val(this.product.displayName);
+                this.$sku.valid();
             } else if (this.$el && this.$el.val().length > 0) {
                 this.showError();
 
@@ -215,6 +224,7 @@ define(function(require) {
             delete this.product;
             delete this.previousValue;
 
+            this.$sku.off(this.eventNamespace());
             this.$el.off(this.eventNamespace());
             mediator.off('autocomplete:validate-response', this.validateResponse, this);
 
