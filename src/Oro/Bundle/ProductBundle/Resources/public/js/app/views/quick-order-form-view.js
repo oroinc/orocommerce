@@ -5,6 +5,7 @@ import QuickAddCollection from 'oroproduct/js/app/models/quick-add-collection';
 import LoadingMaskView from 'oroui/js/app/views/loading-mask-view';
 import LoadingBarView from 'oroui/js/app/views/loading-bar-view';
 import Progress from 'oroui/js/app/services/progress';
+import messenger from 'oroui/js/messenger';
 
 const QuickOrderFromView = BaseView.extend({
     elem: {
@@ -13,13 +14,17 @@ const QuickOrderFromView = BaseView.extend({
         rows: '[data-name="field__name"]',
         buttons: '[data-role="quick-order-add-buttons"]',
         clear: '[data-role="quick-order-add-clear"]',
-        add: '.add-list-item'
+        add: '.add-list-item',
+        productSkus: '[data-name="field__product-sku"]',
+        collectionValidation: '[data-name="collection-validation"]'
     },
 
     events() {
         return {
             [`content:initialized ${this.elem.rowsCollection}`]: 'onContentInitialized',
-            [`click ${this.elem.clear}`]: 'clearRows'
+            [`click ${this.elem.clear}`]: 'clearRows',
+            [`validate-element ${this.elem.collectionValidation}`]: 'onValidateCollection',
+            [`change ${this.elem.productSkus}`]: 'onProductSkuUpdate'
         };
     },
 
@@ -149,7 +154,11 @@ const QuickOrderFromView = BaseView.extend({
     hideTopButtons() {
         this.$(this.elem.clear).addClass('hidden');
 
-        if (!this.topButtons || !this.topButtons instanceof $) {
+        if (
+            !this.topButtons ||
+            !(this.topButtons instanceof $) ||
+            typeof this.topButtons === 'string'
+        ) {
             return;
         }
         this.topButtons.detach();
@@ -206,6 +215,23 @@ const QuickOrderFromView = BaseView.extend({
 
     getRowsCount() {
         return this.$(this.elem.rows).length;
+    },
+
+    onProductSkuUpdate() {
+        this.$(this.elem.collectionValidation).valid();
+    },
+
+    onValidateCollection({target, invalid}) {
+        if (!invalid) {
+            messenger.clear('quick-order-collection-validation');
+            return;
+        }
+        const validator = this.$(this.elem.form).data('validator');
+        validator.errorsFor(target).hide();
+        messenger.notificationFlashMessage('error', validator.errorMap[target.name], {
+            hideCloseButton: true,
+            namespace: 'quick-order-collection-validation'
+        });
     }
 });
 

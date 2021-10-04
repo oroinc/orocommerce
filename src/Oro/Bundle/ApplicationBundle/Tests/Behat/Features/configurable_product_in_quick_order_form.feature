@@ -83,17 +83,17 @@ Feature: Configurable product in quick order form
     And I fill "QuickAddForm" with:
       | SKU1 | Shirt_Sku |
     And I wait for products to load
-    Then I should see text matching "Item Number Cannot Be Found"
+    Then I should see text matching "Item number cannot be found"
     When I click "Quick Order Form"
     And I fill "QuickAddForm" with:
       | SKU1 | EmptyShirt_Sku |
     And I wait for products to load
-    Then I should see text matching "Item Number Cannot Be Found"
+    Then I should see text matching "Item number cannot be found"
     When I click "Quick Order Form"
     And I fill "QuickAddForm" with:
       | SKU1 | Black_Shirt_L_sku |
     And I wait for products to load
-    Then I should see text matching "Item Number Cannot Be Found"
+    Then I should see text matching "Item number cannot be found"
     When I click "Quick Order Form"
     And I fill "Quick Add Copy Paste Form" with:
       | Paste your order | Shirt_Sku 1 |
