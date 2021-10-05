@@ -160,7 +160,7 @@ class LocalizedFallbackValueCollectionNormalizerTest extends WebTestCase
      *
      * @dataProvider denormalizeDataProvider
      */
-    public function testDenormalizer($actualData, $class, array $expectedData): void
+    public function testDenormalize($actualData, $class, array $expectedData): void
     {
         $expectedData = new ArrayCollection($this->convertArrayToEntities($expectedData));
 
@@ -183,11 +183,6 @@ class LocalizedFallbackValueCollectionNormalizerTest extends WebTestCase
                 'Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue',
                 [],
             ],
-            'type' => [
-                [],
-                'ArrayCollection<Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue>',
-                [],
-            ],
             'without localization' => [
                 ['default' => ['fallback' => 'system', 'string' => null, 'text' => null, 'wysiwyg' => 'value']],
                 'ArrayCollection<Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue>',
@@ -201,10 +196,18 @@ class LocalizedFallbackValueCollectionNormalizerTest extends WebTestCase
                     ],
                 ]
             ],
-            'localization with name' => [
+            'localization with name, default missing' => [
                 ['English' => ['fallback' => 'system', 'string' => null, 'text' => null, 'wysiwyg' => 'value']],
                 'ArrayCollection<Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue>',
                 [
+                    'default' => [
+                        'testEntity' => LocalizedFallbackValue::class,
+                        'testProperties' => [
+                            'fallback' => null,
+                            'wysiwyg' => null,
+                            'localization' => null
+                        ],
+                    ],
                     'English' => [
                         'testEntity' => 'Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue',
                         'testProperties' => [

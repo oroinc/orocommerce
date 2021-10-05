@@ -108,7 +108,7 @@
 {% endblock %}
 
 {% block _product_view_attribute_group_general_attribute_localized_fallback_descriptions_widget %}
-    {% set description = translated_value.wysiwyg|trim %}
+    {% set description = translated_value.wysiwyg is defined ? translated_value.wysiwyg|trim  : null %}
     {% if description %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' collapse-view collapse-view--overflow',
