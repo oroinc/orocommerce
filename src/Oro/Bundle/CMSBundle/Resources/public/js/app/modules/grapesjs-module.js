@@ -15,7 +15,6 @@ import TextBasicTypeBuilder from 'orocms/js/app/grapesjs/type-builders/text-basi
 import TextTypeBuilder from 'orocms/js/app/grapesjs/type-builders/text-type-builder';
 import VideoTypeBuilder from 'orocms/js/app/grapesjs/type-builders/video-type-builder';
 import MapTypeBuilder from 'orocms/js/app/grapesjs/type-builders/map-type-builder';
-import RadioTypeBuilder from 'orocms/js/app/grapesjs/type-builders/radio-type-builder';
 import GridTypeBuilder from 'orocms/js/app/grapesjs/type-builders/grid-type-builder';
 import ColumnTypeBuilder from 'orocms/js/app/grapesjs/type-builders/column-type-builder';
 import RowTypeBuilder from 'orocms/js/app/grapesjs/type-builders/row-type-builder';
@@ -64,9 +63,6 @@ ComponentManager.registerComponentTypes({
     },
     'image': {
         Constructor: ImageTypeBuilder
-    },
-    'radio': {
-        Constructor: RadioTypeBuilder
     },
     'video': {
         Constructor: VideoTypeBuilder
