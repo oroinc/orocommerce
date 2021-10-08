@@ -22,6 +22,14 @@ export default GrapesJS.plugins.add('grapesjs-components', function(editor, opti
         return dom;
     });
 
+    editor.editor.runDefault = _.wrap(editor.editor.runDefault, (func, opts = {}) => {
+        if (!editor.editor.get('Commands')) {
+            return;
+        }
+
+        func.call(editor.editor, opts);
+    });
+
     traitManagerExtends(editor);
 
     editor.ComponentRestriction = new ComponentRestriction(editor, options);
