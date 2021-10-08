@@ -3,7 +3,9 @@
 namespace Oro\Bundle\PromotionBundle\OrderTax\Mapper;
 
 use Brick\Math\BigDecimal;
+use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\PromotionBundle\Discount\DiscountContextInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountLineItemInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountLineItemSubtotalAfterDiscountsInterface;
 use Oro\Bundle\PromotionBundle\Executor\PromotionExecutor;
@@ -19,6 +21,7 @@ class OrderLineItemAfterDiscountsMapper implements TaxMapperInterface
     private TaxMapperInterface $innerMapper;
     private TaxationSettingsProvider $taxationSettingsProvider;
     private PromotionExecutor $promotionExecutor;
+    private ?DiscountContextInterface $discountContext = null;
 
     public function __construct(
         TaxMapperInterface $innerMapper,
@@ -44,7 +47,7 @@ class OrderLineItemAfterDiscountsMapper implements TaxMapperInterface
             $this->taxationSettingsProvider->isCalculateAfterPromotionsEnabled() &&
             $this->promotionExecutor->supports($order)
         ) {
-            $discountContext = $this->promotionExecutor->execute($order);
+            $discountContext = $this->getDiscountContext($order);
 
             /** @var DiscountLineItemInterface|DiscountLineItemSubtotalAfterDiscountsInterface $discountLineItem */
             foreach ($discountContext->getLineItems() as $discountLineItem) {
@@ -67,5 +70,14 @@ class OrderLineItemAfterDiscountsMapper implements TaxMapperInterface
         }
 
         return $taxable;
+    }
+
+    private function getDiscountContext(Order $order): DiscountContextInterface
+    {
+        if (null === $this->discountContext) {
+            $this->discountContext = $this->promotionExecutor->execute($order);
+        }
+
+        return $this->discountContext;
     }
 }
