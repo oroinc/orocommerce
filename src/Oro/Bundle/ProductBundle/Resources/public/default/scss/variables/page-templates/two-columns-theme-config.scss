@@ -1,6 +1,8 @@
 /* @theme: default; */
 // @productTheme: two-columns-theme;
 
+@use 'sass:math';
+
 $two-columns-theme-product-view-quantity-flex-direction-desktop: row-reverse !default;
 $two-columns-theme-product-view-quantity-unit-margin-right-desktop: 0 !default;
 $two-columns-theme-product-view-quantity-value-margin-right-desktop: 5px !default;
@@ -13,7 +15,7 @@ $two-columns-theme-product-price-label-font-weight-desktop: font-weight('bold') 
 $embedded-products-item-offset: 25px !default;
 $two-columns-theme-embedded-related-products-item-count-desktop: 2 !default;
 $two-columns-theme-embedded-related-products-item-gap-desktop: ($embedded-products-item-offset) -
-    ($embedded-products-item-offset / $two-columns-theme-embedded-related-products-item-count-desktop) !default;
+    math.div($embedded-products-item-offset, $two-columns-theme-embedded-related-products-item-count-desktop) !default;
 $two-columns-theme-embedded-related-products-item-width: calc(
     (100% / #{$two-columns-theme-embedded-related-products-item-count-desktop}) -
     #{$two-columns-theme-embedded-related-products-item-gap-desktop}

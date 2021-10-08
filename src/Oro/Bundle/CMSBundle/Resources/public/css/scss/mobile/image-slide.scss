@@ -20,11 +20,11 @@
 
     .responsive-block {
         &:first-of-type {
-            padding-right: $content-padding / 2;
+            padding-right: $content-padding * .5;
         }
 
         &:last-of-type {
-            padding-left: $content-padding / 2;
+            padding-left: $content-padding * .5;
         }
     }
 }

@@ -35,7 +35,7 @@
         .select-row-cell::after {
             position: absolute;
             top: $responsive-shopping-list-edit-action-in-desktop-height - 1px;
-            left: $datagrid-body-select-row-cell-offset-start + $checkbox-icon-size / 2;
+            left: $datagrid-body-select-row-cell-offset-start + $checkbox-icon-size * .5;
             transform: translateX(-50%);
             bottom: -1px;
 
@@ -50,14 +50,14 @@
 
     .sub-row {
         .cell-checkbox {
-            padding-left: $responsive-shopping-list-edit-checkbox-offset + $checkbox-icon-size / 2;
+            padding-left: $responsive-shopping-list-edit-checkbox-offset + $checkbox-icon-size * .5;
         }
 
         .select-row-cell {
             &::after {
                 position: absolute;
                 top: -($responsive-shopping-sub-row-border-width + 1px);
-                left: $datagrid-body-select-row-cell-offset-start + $checkbox-icon-size / 2;
+                left: $datagrid-body-select-row-cell-offset-start + $checkbox-icon-size * .5;
                 bottom: -1px;
                 transform: translateX(-50%);
 
@@ -87,7 +87,7 @@
     .filtered-out .select-row-cell::after {
         top: -1px;
         height:
-            $datagrid-body-cell-offset +  $responsive-shopping-list-edit-action-in-desktop-height / 2 -
+            $datagrid-body-cell-offset +  $responsive-shopping-list-edit-action-in-desktop-height * .5 -
             $responsive-shopping-sub-row-cell-inner-offset;
         bottom: auto;
     }
@@ -97,7 +97,7 @@
             top: 0;
             height:
                     $responsive-shopping-sub-row-cell-inner-offset +
-                    $responsive-shopping-list-edit-action-in-desktop-height / 2;
+                    $responsive-shopping-list-edit-action-in-desktop-height * .5;
             bottom: auto;
         }
 
@@ -260,7 +260,7 @@
 
             .select-row-cell {
                 &::after {
-                    left: $responsive-shopping-list-edit-select-row-cell-width-mobile / 2;
+                    left: $responsive-shopping-list-edit-select-row-cell-width-mobile * .5;
                 }
             }
         }
@@ -322,7 +322,7 @@
             }
 
             .cell-line {
-                width: $responsive-shopping-list-edit-select-row-cell-width-mobile / 2;
+                width: $responsive-shopping-list-edit-select-row-cell-width-mobile * .5;
                 top: 50%;
                 right: 50%;
             }
@@ -333,7 +333,7 @@
             height:
                 $responsive-shopping-grid-row-offset-mobile +
                 $responsive-shopping-body-cell-offset-y-mobile +
-                $responsive-shopping-list-edit-select-row-cell-height-mobile / 2 -
+                $responsive-shopping-list-edit-select-row-cell-height-mobile * .5 -
                 $responsive-shopping-sub-row-cell-inner-offset;
         }
 
@@ -342,7 +342,7 @@
             height:
                 $responsive-shopping-grid-row-offset-mobile +
                 $responsive-shopping-body-cell-offset-y-mobile +
-                $responsive-shopping-list-edit-select-row-cell-height-mobile / 2;
+                $responsive-shopping-list-edit-select-row-cell-height-mobile * .5;
         }
 
         // Need to increase weight of selector

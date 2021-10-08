@@ -29,7 +29,7 @@
     &__icon {
         position: absolute;
         top: 0;
-        left: -$checkout-navigation-icon-size / 2;
+        left: -$checkout-navigation-icon-size * .5;
 
         font-weight: font-weight('bold');
 
