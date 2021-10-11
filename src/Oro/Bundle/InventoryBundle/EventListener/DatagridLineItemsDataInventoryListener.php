@@ -49,6 +49,8 @@ class DatagridLineItemsDataInventoryListener
                 'inventoryStatus' => $product->getInventoryStatus()->getId(),
                 'isLowInventory' => $this->lowInventoryProvider->isLowInventoryProduct($product),
                 'isUpcoming' => $this->upcomingProductProvider->isUpcoming($product),
+                'minimumQuantityToOrder' => $product->getMinimumQuantityToOrder()->getScalarValue(),
+                'maximumQuantityToOrder' => $product->getMaximumQuantityToOrder()->getScalarValue()
             ];
 
             if ($lineItemData['isUpcoming']) {

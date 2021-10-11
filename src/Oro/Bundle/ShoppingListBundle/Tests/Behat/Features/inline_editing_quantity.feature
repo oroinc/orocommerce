@@ -10,6 +10,9 @@ Feature: Inline Editing Quantity
     Given I login as AmandaRCole@example.org buyer
     And I open page with shopping list Shopping List 1
     And I click on "Shopping List Line Item 1 Quantity"
-    And I type "1000000000000000" in "Shopping List Line Item 1 Quantity Input"
+    And I type "10000000000000000000000" in "Shopping List Line Item 1 Quantity Input"
+    And I click on empty space
+    And I should see "This value should be between 0 and 999,999,999,999,999."
+    And I type "999999999999999" in "Shopping List Line Item 1 Quantity Input"
     And I click on "Shopping List Line Item 1 Save Changes Button"
     Then I should see "Shopping list subtotal amount cannot exceed the 999999999999999.9999" flash message

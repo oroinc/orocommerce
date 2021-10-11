@@ -126,6 +126,10 @@ const ShoppingListInlineEditingPlugin = InlineEditingPlugin.extend({
 
         componentsToSend = componentsToSend.filter(component => component.isDataValid());
 
+        if (!componentsToSend.length) {
+            return;
+        }
+
         const sendData = {
             data: componentsToSend.map(component => component.getServerUpdateData()),
             fetchData: _.extend(this.getGridFetchData(), {
