@@ -1,0 +1,11 @@
+Oro\Bundle\ProductBundle\Entity\Product:
+    fields:
+        -
+            name: low_inventory_threshold
+            type: decimal
+        -
+            name: is_upcoming
+            type: integer
+        -
+            name: availability_date
+            type: datetime

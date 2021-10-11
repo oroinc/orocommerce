@@ -353,7 +353,7 @@ services:
         arguments:
             - '@doctrine'
             - '@logger'
-            - '%installed%'
+            - '@oro_distribution.handler.application_status'
 
     oro_shipping.listener.shipping_rule:
         class: 'Oro\Bundle\ShippingBundle\EventListener\Cache\ShippingRuleChangeListener'

@@ -135,7 +135,7 @@ oro:
 
         validation:
             sku:
-                not_found: 'Item Number Cannot Be Found'
+                not_found: 'Item number cannot be found'
             unit:
                 required: Unit is required
                 invalid: 'Unit {{ unit }} is invalid for this product'

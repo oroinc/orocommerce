@@ -42,6 +42,14 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  *      defaultValues={
  *          "entity"={
  *              "icon"="fa-shopping-cart",
+ *              "totals_mapping"={
+ *                  "type"="join_collection",
+ *                  "join_field"="totals",
+ *                  "relation_fields"={
+ *                       "currency"="currency",
+ *                       "subtotal"="subtotalValue"
+ *                  }
+ *              },
  *              "contact_information"={
  *                  "email"={
  *                      {"fieldName"="contactInformation"}

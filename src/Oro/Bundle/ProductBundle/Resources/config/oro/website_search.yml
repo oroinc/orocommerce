@@ -60,6 +60,10 @@ Oro\Bundle\ProductBundle\Entity\Product:
         -
             name: manually_added_to.ASSIGN_TYPE_ASSIGN_ID
             type: integer
+        -
+            name: variant_fields_count
+            type: integer
+            fulltext: false
 
 Oro\Bundle\ProductBundle\Entity\Brand:
     alias: oro_brand_WEBSITE_ID

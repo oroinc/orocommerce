@@ -2,39 +2,42 @@
 
 namespace Oro\Bundle\InventoryBundle\EventListener\Frontend;
 
-use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\InventoryBundle\Inventory\LowInventoryProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
 
 /**
- * Add highlight low inventory of the products on product grid
+ * Adds highlight low inventory of the products on the storefront product grid.
  */
 class ProductDatagridLowInventoryListener
 {
-    const COLUMN_LOW_INVENTORY = 'low_inventory';
+    private const SELECT_PATH = '[source][query][select]';
+    private const COLUMN_LOW_INVENTORY = 'low_inventory';
 
-    /** @var LowInventoryProvider */
-    private $lowInventoryProvider;
-
-    /** DoctrineHelper */
-    private $doctrineHelper;
+    private LowInventoryProvider $lowInventoryProvider;
+    private ManagerRegistry $doctrine;
 
     public function __construct(
         LowInventoryProvider $lowInventoryProvider,
-        DoctrineHelper $doctrineHelper
+        ManagerRegistry $doctrine
     ) {
         $this->lowInventoryProvider = $lowInventoryProvider;
-        $this->doctrineHelper = $doctrineHelper;
+        $this->doctrine = $doctrine;
     }
 
-    public function onPreBuild(PreBuild $event)
+    public function onPreBuild(PreBuild $event): void
     {
         $config = $event->getConfig();
+
+        $config->offsetAddToArrayByPath(
+            self::SELECT_PATH,
+            ['decimal.low_inventory_threshold as low_inventory_threshold']
+        );
 
         $config->offsetAddToArrayByPath(
             '[properties]',
@@ -47,63 +50,35 @@ class ProductDatagridLowInventoryListener
         );
     }
 
-    public function onResultAfter(SearchResultAfter $event)
+    public function onResultAfter(SearchResultAfter $event): void
     {
-        /** @var ResultRecord[] $records */
         $records = $event->getRecords();
+        if (!$records) {
+            return;
+        }
 
-        $products = $this->getProductsEntities($records);
-        $data = $this->prepareDataForIsLowInventoryCollection($products);
+        $data = [];
+        /** @var EntityManagerInterface $em */
+        $em = $this->doctrine->getManagerForClass(Product::class);
+        foreach ($records as $record) {
+            $lowInventoryThreshold = $record->getValue('low_inventory_threshold');
+            $data[] = [
+                'product' => $em->getReference(Product::class, $record->getValue('id')),
+                'product_unit' => $em->getReference(ProductUnit::class, $record->getValue('unit')),
+                'low_inventory_threshold' => $lowInventoryThreshold ?? -1,
+                'highlight_low_inventory' => (null !== $lowInventoryThreshold)
+            ];
+        }
+
         $lowInventoryResponse = $this->lowInventoryProvider->isLowInventoryCollection($data);
-
-        if (empty($lowInventoryResponse)) {
+        if (!$lowInventoryResponse) {
             return;
         }
 
         foreach ($records as $record) {
-            $productId = $record->getValue('id');
-            $lowInventoryValue = false;
-            if (array_key_exists($productId, $lowInventoryResponse)) {
-                $lowInventoryValue = $lowInventoryResponse[$productId];
-            }
-            $record->addData([self::COLUMN_LOW_INVENTORY => $lowInventoryValue]);
+            $record->addData([
+                self::COLUMN_LOW_INVENTORY => $lowInventoryResponse[$record->getValue('id')] ?? false
+            ]);
         }
-    }
-
-    /**
-     * @param Product[] $products
-     *
-     * @return array
-     */
-    protected function prepareDataForIsLowInventoryCollection(array $products)
-    {
-        $data = [];
-        foreach ($products as $product) {
-            $data[] = [
-                'product' => $product,
-            ];
-        }
-
-        return $data;
-    }
-
-    /**
-     * @param ResultRecord[] $records
-     *
-     * @return Product[]
-     */
-    protected function getProductsEntities(array $records)
-    {
-        $products = [];
-
-        /** @var ResultRecord[] $records */
-        foreach ($records as $record) {
-            $products[] = $record->getValue('id');
-        }
-
-        /** @var ProductRepository $productRepository */
-        $productRepository = $this->doctrineHelper->getEntityRepositoryForClass(Product::class);
-
-        return $productRepository->findBy(['id' => $products]);
     }
 }

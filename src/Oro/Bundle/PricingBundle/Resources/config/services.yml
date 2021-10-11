@@ -796,6 +796,7 @@ services:
             - '@oro_dataaudit.provider.audit_message_body_provider'
             - '@property_accessor'
             - '@logger'
+            - '@oro_distribution.handler.application_status'
         tags:
             - { name: kernel.event_listener, event: oro_pricing.product_price.save_after, method: onSave }
             - { name: kernel.event_listener, event: oro_pricing.product_price.remove, method: onRemove }
@@ -1561,7 +1562,3 @@ services:
         tags:
             - { name: kernel.event_listener, event: Oro\Bundle\ProductBundle\Event\CollectAutocompleteFieldsEvent, method: onCollectAutocompleteFields }
             - { name: kernel.event_listener, event: Oro\Bundle\ProductBundle\Event\ProcessAutocompleteDataEvent, method: onProcessAutocompleteData }
-
-    Oro\Bundle\PricingBundle\Config\Validation\ShardingEntityConfiguration:
-        tags:
-            - oro_entity_config.validation.entity_config

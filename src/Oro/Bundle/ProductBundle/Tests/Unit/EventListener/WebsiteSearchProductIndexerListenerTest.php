@@ -15,6 +15,7 @@ use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Oro\Bundle\ProductBundle\EventListener\WebsiteSearchProductIndexerListener;
@@ -124,6 +125,7 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
                 'newArrival' => true,
                 'createdAt' => new \DateTime('2017-09-09 00:00:00'),
                 'attributeFamily' => $attributeFamily,
+                'variantFields' => ['field1', 'field2']
             ]
         );
 
@@ -183,9 +185,9 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
         $em->expects($this->exactly(4))
             ->method('getRepository')
             ->withConsecutive(
-                ['OroProductBundle:Product'],
-                ['OroProductBundle:ProductUnit'],
-                ['OroProductBundle:ProductUnit'],
+                [Product::class],
+                [ProductUnit::class],
+                [ProductUnit::class],
                 [AttributeFamily::class]
             )
             ->willReturnOnConsecutiveCalls(
@@ -334,6 +336,12 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
             'attribute_family_id' => [
                 [
                     'value' => $attributeFamilyId,
+                    'all_text' => false
+                ]
+            ],
+            'variant_fields_count' => [
+                [
+                    'value' => 2,
                     'all_text' => false
                 ]
             ]

@@ -47,9 +47,10 @@ class MatrixGridOrderFormProvider extends AbstractFormProvider
      */
     public function getMatrixOrderForm(Product $product, ShoppingList $shoppingList = null)
     {
-        $collection = $this->matrixOrderManager->getMatrixCollection($product, $shoppingList);
-
-        return $this->getForm(MatrixCollectionType::class, $collection);
+        return $this->getForm(
+            MatrixCollectionType::class,
+            $this->matrixOrderManager->getMatrixCollection($product, $shoppingList)
+        );
     }
 
     /**
@@ -66,7 +67,7 @@ class MatrixGridOrderFormProvider extends AbstractFormProvider
     }
 
     /**
-     * @param Product           $product
+     * @param Product|null      $product
      * @param ShoppingList|null $shoppingList
      * @return FormView
      */
@@ -75,6 +76,7 @@ class MatrixGridOrderFormProvider extends AbstractFormProvider
         if (!$product) {
             return $this->getFormView(MatrixCollectionType::class);
         }
+
         $collection = $this->matrixOrderManager->getMatrixCollection($product, $shoppingList);
 
         return $this->getFormView(
@@ -104,7 +106,7 @@ class MatrixGridOrderFormProvider extends AbstractFormProvider
     }
 
     /**
-     * @param Product $product
+     * @param Product|null $product
      * @param ShoppingList|null $shoppingList
      * @return string
      */

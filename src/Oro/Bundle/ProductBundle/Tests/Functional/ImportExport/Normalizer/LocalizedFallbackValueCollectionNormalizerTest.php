@@ -139,7 +139,7 @@ class LocalizedFallbackValueCollectionNormalizerTest extends WebTestCase
      *
      * @dataProvider denormalizeDataProvider
      */
-    public function testDenormalizer(mixed $actualData, string $class, array $expectedData): void
+    public function testDenormalize(mixed $actualData, string $class, array $expectedData): void
     {
         $expectedData = new ArrayCollection($this->convertArrayToEntities($expectedData));
 
@@ -155,7 +155,7 @@ class LocalizedFallbackValueCollectionNormalizerTest extends WebTestCase
     public function denormalizeDataProvider(): array
     {
         return [
-            'not and array' => [
+            'not an array' => [
                 'value',
                 LocalizedFallbackValue::class,
                 [],
@@ -163,11 +163,6 @@ class LocalizedFallbackValueCollectionNormalizerTest extends WebTestCase
             'wrong type' => [
                 [],
                 LocalizedFallbackValue::class,
-                [],
-            ],
-            'type' => [
-                [],
-                'ArrayCollection<Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue>',
                 [],
             ],
             'without localization' => [
@@ -183,10 +178,18 @@ class LocalizedFallbackValueCollectionNormalizerTest extends WebTestCase
                     ],
                 ],
             ],
-            'localization with name' => [
+            'localization with name, default missing' => [
                 ['English' => ['fallback' => 'system', 'string' => 'value']],
                 'ArrayCollection<Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue>',
                 [
+                    'default' => [
+                        'testEntity' => LocalizedFallbackValue::class,
+                        'testProperties' => [
+                            'fallback' => null,
+                            'string' => null,
+                            'localization' => null
+                        ],
+                    ],
                     'English' => [
                         'testEntity' => LocalizedFallbackValue::class,
                         'testProperties' => [

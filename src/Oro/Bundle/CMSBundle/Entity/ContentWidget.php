@@ -14,7 +14,7 @@ use Oro\Component\Layout\ContextItemInterface;
 /**
  * Holds content widget information.
  *
- * @ORM\Entity(repositoryClass="Oro\Bundle\CMSBundle\Entity\Repository\ContentWidgetRepository")
+ * @ORM\Entity()
  * @ORM\Table(
  *      name="oro_cms_content_widget",
  *      uniqueConstraints={

@@ -7,6 +7,7 @@ use Oro\Bundle\DataAuditBundle\Async\Topics;
 use Oro\Bundle\DataAuditBundle\Provider\AuditConfigProvider;
 use Oro\Bundle\DataAuditBundle\Provider\AuditMessageBodyProvider;
 use Oro\Bundle\DataAuditBundle\Service\EntityToEntityChangeArrayConverter;
+use Oro\Bundle\DistributionBundle\Handler\ApplicationState;
 use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
@@ -68,6 +69,8 @@ class SendChangedProductPricesToMessageQueueListener implements OptionalListener
     /** @var bool */
     private $enabled = true;
 
+    private ApplicationState $applicationState;
+
     public function __construct(
         MessageProducerInterface $messageProducer,
         TokenStorageInterface $tokenStorage,
@@ -76,7 +79,8 @@ class SendChangedProductPricesToMessageQueueListener implements OptionalListener
         EntityNameResolver $entityNameResolver,
         AuditMessageBodyProvider $auditMessageBodyProvider,
         PropertyAccessor $propertyAccessor,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        ApplicationState $applicationState
     ) {
         $this->messageProducer = $messageProducer;
         $this->tokenStorage = $tokenStorage;
@@ -86,6 +90,7 @@ class SendChangedProductPricesToMessageQueueListener implements OptionalListener
         $this->auditMessageBodyProvider = $auditMessageBodyProvider;
         $this->propertyAccessor = $propertyAccessor;
         $this->logger = $logger;
+        $this->applicationState = $applicationState;
 
         $this->allInsertions = new \SplObjectStorage;
         $this->allUpdates = new \SplObjectStorage;
@@ -101,9 +106,17 @@ class SendChangedProductPricesToMessageQueueListener implements OptionalListener
         $this->enabled = $enabled;
     }
 
+    private function isEnabled(): bool
+    {
+        if (!$this->applicationState->isInstalled()) {
+            return false;
+        }
+        return $this->enabled;
+    }
+
     public function onSave(ProductPriceSaveAfterEvent $event)
     {
-        if (!$this->enabled || !$this->auditConfigProvider->isAuditableEntity(ProductPrice::class)) {
+        if (!$this->isEnabled() || !$this->auditConfigProvider->isAuditableEntity(ProductPrice::class)) {
             return;
         }
 
@@ -137,7 +150,7 @@ class SendChangedProductPricesToMessageQueueListener implements OptionalListener
 
     public function onRemove(ProductPriceRemove $event)
     {
-        if (!$this->enabled || !$this->auditConfigProvider->isAuditableEntity(ProductPrice::class)) {
+        if (!$this->isEnabled() || !$this->auditConfigProvider->isAuditableEntity(ProductPrice::class)) {
             return;
         }
 
@@ -171,7 +184,7 @@ class SendChangedProductPricesToMessageQueueListener implements OptionalListener
 
     public function onUpdated(ProductPricesUpdated $eventArgs)
     {
-        if (!$this->enabled) {
+        if (!$this->isEnabled()) {
             return;
         }
 

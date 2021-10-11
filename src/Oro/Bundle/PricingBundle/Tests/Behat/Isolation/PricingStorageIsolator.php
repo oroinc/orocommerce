@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Tests\Behat\Isolation;
 
 use Doctrine\DBAL\Connection;
+use Oro\Bundle\DistributionBundle\Handler\ApplicationState;
 use Oro\Bundle\TestFrameworkBundle\Behat\Isolation\Event\AfterFinishTestsEvent;
 use Oro\Bundle\TestFrameworkBundle\Behat\Isolation\Event\AfterIsolatedTestEvent;
 use Oro\Bundle\TestFrameworkBundle\Behat\Isolation\Event\BeforeIsolatedTestEvent;
@@ -32,7 +33,7 @@ class PricingStorageIsolator implements IsolatorInterface
      */
     public function isApplicable(ContainerInterface $container)
     {
-        if (!$container->getParameter('installed')) {
+        if (!$container->get(ApplicationState::class)->isInstalled()) {
             return false;
         }
 

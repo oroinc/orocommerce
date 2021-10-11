@@ -66,6 +66,9 @@ class OrderDiscountContextConverter implements DiscountContextConverterInterface
      */
     public function supports($sourceEntity): bool
     {
-        return $sourceEntity instanceof Order && $sourceEntity->getSourceEntityClass() !== Quote::class;
+        return
+            $sourceEntity instanceof Order
+            && $sourceEntity->getSourceEntityClass() !== Quote::class
+            && !$sourceEntity->getDisablePromotions();
     }
 }

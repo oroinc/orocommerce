@@ -25,7 +25,15 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  * @Config(
  *      defaultValues={
  *          "entity"={
- *              "icon"="fa-list-alt"
+ *              "icon"="fa-list-alt",
+ *              "totals_mapping"={
+ *                  "type"="entity_fields",
+ *                  "fields"={
+ *                       "currency"="totalCurrency",
+ *                       "subtotal"="subtotal",
+ *                       "total"="total"
+ *                  }
+ *              }
  *          }
  *      }
  * )

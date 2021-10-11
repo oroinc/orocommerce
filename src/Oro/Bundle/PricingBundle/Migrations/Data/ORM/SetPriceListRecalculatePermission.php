@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Migrations\Data\ORM;
 
 use Doctrine\Persistence\ObjectManager;
+use Oro\Bundle\DistributionBundle\Handler\ApplicationState;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\SecurityBundle\Acl\Extension\EntityAclExtension;
 use Oro\Bundle\SecurityBundle\Acl\Extension\ObjectIdentityHelper;
@@ -16,7 +17,7 @@ class SetPriceListRecalculatePermission extends AbstractUpdatePermissions
 {
     public function load(ObjectManager $manager)
     {
-        if (!$this->container->hasParameter('installed') || !$this->container->getParameter('installed')) {
+        if (!$this->container->get(ApplicationState::class)->isInstalled()) {
             return;
         }
 
