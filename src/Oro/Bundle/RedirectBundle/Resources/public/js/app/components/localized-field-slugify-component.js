@@ -44,11 +44,7 @@ define(function(require) {
             const $source = $(event.target);
             const $target = this.getTargetBySource($source);
 
-            if (!this.doSync) {
-                return;
-            }
-
-            if ($source.is(':disabled')) {
+            if ($target.is(':disabled') || $source.is(':disabled')) {
                 return;
             }
 
