@@ -13,6 +13,31 @@ define(function(require) {
         },
 
         /**
+         * Initializes Slugify component
+         * @param {Object} options
+         */
+        initialize: function(options) {
+            LocalizedFieldSlugifyComponent.__super__.initialize.apply(this, [options]);
+            this.$targets.on('change', this.syncTargetAfterFallbackValueChanged.bind(this));
+        },
+
+        /**
+         * @param {Object} event
+         */
+        syncTargetAfterFallbackValueChanged: function(event) {
+            const fallback = $(event.target);
+            if (fallback.prop('type') === 'checkbox' && event.originalEvent) {
+                if (!fallback.prop('checked')) {
+                    const target = this.getTargetByTargetFallBack(fallback);
+                    target.val(null);
+
+                    const source = this.getSourceByTargets(target);
+                    this.slugifySourceToTarget(source, target);
+                }
+            }
+        },
+
+        /**
          * @param {Object} options
          */
         syncField: function(event) {
@@ -49,6 +74,39 @@ define(function(require) {
         getTargetBySource: function($source) {
             const sourceIndex = this.$sources.index($source);
             return $(this.$targets.get(sourceIndex));
+        },
+
+        /**
+         * @param target
+         * @returns {*|jQuery|HTMLElement}
+         */
+        getSourceByTargets: function(target) {
+            const targetIndex = this.$targets.index(target);
+
+            return $(this.$sources.get(targetIndex));
+        },
+
+        /**
+         * @param target
+         * @returns {*|jQuery|HTMLElement}
+         */
+        getTargetByTargetFallBack: function(target) {
+            const targetIndex = this.$targets.index(target);
+
+            // The field with value will always precede the fallback field.
+            return $(this.$targets.get(targetIndex-1));
+        },
+
+        /**
+         * @inheritdoc
+         */
+        dispose: function() {
+            if (this.disposed) {
+                return;
+            }
+
+            this.$targets.off('change', this.syncTargetAfterFallbackValueChanged.bind(this));
+            LocalizedFieldSlugifyComponent.__super__.dispose.call(this);
         }
     });
 
