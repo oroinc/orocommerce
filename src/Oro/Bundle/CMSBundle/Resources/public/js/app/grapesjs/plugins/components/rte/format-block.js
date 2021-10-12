@@ -56,7 +56,28 @@ function findTextFormattingInRange(range, node = null) {
 
         return tags.concat(...findTextFormattingInRange(range, child));
     }, []);
-}
+};
+
+function setCaretPosition(element, caretPos) {
+    if (caretPos === 0) {
+        return;
+    }
+
+    if (element !== null) {
+        if (element.createTextRange) {
+            const range = element.createTextRange();
+            range.move('character', caretPos);
+            range.select();
+        } else {
+            if (element.selectionStart) {
+                element.focus();
+                element.setSelectionRange(caretPos, caretPos);
+            } else {
+                element.focus();
+            }
+        }
+    }
+};
 
 export default {
     name: 'formatBlock',
@@ -99,12 +120,20 @@ export default {
 
     result(rte) {
         const value = rte.actionbar.querySelector('[name="tag"]').value;
-        const selection = rte.doc.getSelection();
-        const parentNode = rte.selection().getRangeAt(0).startContainer.parentNode;
+        const selection = rte.selection();
+        const anchorOffset = selection.anchorOffset;
+        const parentNode = selection.getRangeAt(0).startContainer.parentNode;
         const range = selection.getRangeAt(0);
         const surround = makeSurroundNode(rte.doc);
         const isTag = range.commonAncestorContainer.nodeType === 1;
         const isTextNode = range.commonAncestorContainer.nodeType === 3;
+
+        const removeParent = parentNode => {
+            const text = parentNode.innerHTML;
+            parentNode.remove();
+            rte.insertHTML(text);
+            this.editor.trigger('change:canvasOffset');
+        };
 
         if (value === 'normal') {
             if (isTag) {
@@ -115,14 +144,14 @@ export default {
                 });
 
                 this.editor.trigger('change:canvasOffset');
+                setCaretPosition(rte.el, anchorOffset);
                 return;
             }
 
             if (isTextNode) {
-                const text = parentNode.innerHTML;
-                parentNode.remove();
-                this.editor.trigger('change:canvasOffset');
-                return rte.insertHTML(text);
+                removeParent(parentNode);
+                setCaretPosition(rte.el, anchorOffset);
+                return;
             }
         }
 
@@ -135,6 +164,8 @@ export default {
             range.setStartAfter(range.endContainer);
             selection.removeAllRanges();
             this.editor.trigger('change:canvasOffset');
+
+            setCaretPosition(rte.el, anchorOffset);
             return;
         }
 
@@ -150,10 +181,13 @@ export default {
             selection.removeAllRanges();
             selection.addRange(range);
             this.editor.trigger('change:canvasOffset');
+
+            setCaretPosition(rte.el, anchorOffset);
             return;
         }
 
         this.editor.trigger('change:canvasOffset');
+        setCaretPosition(rte.el, anchorOffset);
         return rte.exec('formatBlock', value);
     },
 

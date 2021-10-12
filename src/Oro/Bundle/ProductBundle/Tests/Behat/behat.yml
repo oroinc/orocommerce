@@ -677,6 +677,8 @@ oro_behat_extension:
           Url Slug: 'oro_web_catalog_content_node[slugPrototypesWithRedirect][slugPrototypes][values][default]'
           First Url Slug: 'oro_web_catalog_content_node[slugPrototypesWithRedirect][slugPrototypes][values][localizations][1][value]'
           First Url Slug Use Default: 'oro_web_catalog_content_node[slugPrototypesWithRedirect][slugPrototypes][values][localizations][1][use_fallback]'
+          Second Url Slug: 'oro_web_catalog_content_node[slugPrototypesWithRedirect][slugPrototypes][values][localizations][2][value]'
+          Second Url Slug Use Default: 'oro_web_catalog_content_node[slugPrototypesWithRedirect][slugPrototypes][values][localizations][2][use_fallback]'
           Meta Title: 'oro_web_catalog_content_node[metaTitles][values][default]'
           Meta Description: 'oro_web_catalog_content_node[metaDescriptions][values][default]'
           Meta Keywords: 'oro_web_catalog_content_node[metaKeywords][values][default]'
@@ -1121,10 +1123,8 @@ oro_behat_extension:
           Default Value: 'oro_web_catalog_content_node[titles][values][default]'
           Use Default: 'oro_web_catalog_content_node[titles][values][localizations][1][use_fallback]'
           English (United States): 'oro_web_catalog_content_node[titles][values][localizations][1][value]'
-
-    NodeEnglishSlug:
-      selector: 'input[name="oro_web_catalog_content_node[slugPrototypesWithRedirect][slugPrototypes][values][localizations][1][value]"]'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+          French Default: 'oro_web_catalog_content_node[titles][values][localizations][2][use_fallback]'
+          French: 'oro_web_catalog_content_node[titles][values][localizations][2][value]'
 
     Create Product Plus Button:
       selector: '.content-variant-item-default .entity-create-btn'

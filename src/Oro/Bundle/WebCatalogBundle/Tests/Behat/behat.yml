@@ -45,12 +45,34 @@ oro_behat_extension:
                 type: xpath
                 locator: '//li[contains(@class, "jstree-node")]/a[contains(., "Web Catalog Root")]/parent::li/ul//li[contains(@class, "jstree-node")]/a[contains(., "Products node")]/parent::li/ul//li[contains(@class, "jstree-node")]/a[contains(., "Products duplicate")]'
 
+        Content Node Form Titles Fallbacks:
+            selector:
+                type: xpath
+                locator: '//label[text()="Titles"]/../..//button[contains(@class, "fallback-status")]'
+
+        Content Node Form Url Slug Fallbacks:
+            selector:
+                type: xpath
+                locator: '//label[text()="URL Slug"]/../..//button[contains(@class, "fallback-status")]'
+
         Content Node:
             selector: 'form[name="oro_web_catalog_content_node"]'
             class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
             options:
                 mapping:
                     Title: 'oro_web_catalog_content_node[titles][values][default]'
+                    Title English (United States) value:
+                        type: 'xpath'
+                        locator: '//label[text() = "Titles"]/ancestor::div[contains(@class, "control-group")]//div[text() = "English (United States)"]/following-sibling::div//input[contains(@class, "fallback-item-value-input")]'
+                    Title English (United States) use fallback:
+                        type: 'xpath'
+                        locator: '//label[text() = "Titles"]/ancestor::div[contains(@class, "control-group")]//div[text() = "English (United States)"]/following-sibling::div//input[contains(@class, "checkbox-view__input")]'
+                    URL Slugs English (United States) value:
+                        type: 'xpath'
+                        locator: '//label[text() = "URL Slug"]/ancestor::div[contains(@class, "control-group")]//div[text() = "English (United States)"]/following-sibling::div//input[contains(@class, "fallback-item-value-input")]'
+                    URL Slugs English (United States) use fallback:
+                        type: 'xpath'
+                        locator: '//label[text() = "URL Slug"]/ancestor::div[contains(@class, "control-group")]//div[text() = "English (United States)"]/following-sibling::div//input[contains(@class, "checkbox-view__input")]'
                     Slug: 'oro_web_catalog_content_node[slugPrototypesWithRedirect][slugPrototypes][values][default]'
                     Meta Title: 'oro_web_catalog_content_node[metaTitles][values][default]'
                     Meta Description: 'oro_web_catalog_content_node[metaDescriptions][values][default]'

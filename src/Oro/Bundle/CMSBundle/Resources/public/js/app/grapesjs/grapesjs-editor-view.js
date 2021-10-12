@@ -16,6 +16,7 @@ import 'orocms/js/app/grapesjs/plugins/components/grapesjs-components';
 import 'orocms/js/app/grapesjs/plugins/import/import';
 import 'orocms/js/app/grapesjs/plugins/code/code';
 import 'orocms/js/app/grapesjs/plugins/panel-scrolling-hints';
+import RteEditorPlugin from 'orocms/js/app/grapesjs/plugins/oro-rte-editor';
 import {escapeWrapper, getWrapperAttrs} from 'orocms/js/app/grapesjs/plugins/grapesjs-style-isolation';
 import i18nMessages from 'orocms/js/app/grapesjs/plugins/i18n-messages';
 import ContentParser from 'orocms/js/app/grapesjs/plugins/grapesjs-content-parser';
@@ -194,6 +195,8 @@ const GrapesjsEditorView = BaseView.extend({
      */
     wrapperSelector: '.page-content-editor, .fallback-item-value, .content-variant-item',
 
+    fallbackContainer: '.fallback-container',
+
     /**
      * @property {jQuery.Element}
      */
@@ -215,6 +218,18 @@ const GrapesjsEditorView = BaseView.extend({
      * @property {Array}
      */
     allowBreakpoints: config.allowBreakpoints,
+
+    /**
+     * Is editor enabled
+     * @property {boolean}
+     */
+    enabled: false,
+
+    /**
+     * If editor init in fallback container
+     * @property {boolean}
+     */
+    inFallbackContainer: false,
 
     /**
      * List of grapesjs plugins
@@ -263,14 +278,17 @@ const GrapesjsEditorView = BaseView.extend({
     },
 
     events: {
-        'wysiwyg:enable': 'enableEditor',
-        'wysiwyg:disable': 'disableEditor'
+        'wysiwyg:enable': 'throttleEnableEditor',
+        'wysiwyg:disable': 'throttleDisableEditor'
     },
 
     /**
      * @inheritdoc
      */
     constructor: function GrapesjsEditorView(options) {
+        this.throttleEnableEditor = _.throttle(this.enableEditor.bind(this), 250);
+        this.throttleDisableEditor = _.throttle(this.disableEditor.bind(this), 250);
+
         GrapesjsEditorView.__super__.constructor.call(this, options);
     },
 
@@ -278,9 +296,10 @@ const GrapesjsEditorView = BaseView.extend({
      * @inheritdoc
      * @param options
      */
-    initialize: function(options = {}) {
+    initialize(options = {}) {
         this.builderOptions = {...this.builderOptions, ...options.builderOptions};
         this.setCurrentContentAlias();
+        this.inFallbackContainer = !!this.$el.closest(this.fallbackContainer).length;
         this.$parent = this.$el.closest(this.wrapperSelector);
         this.$stylesInputElement = this.$parent.find(this.stylesInputSelector);
 
@@ -314,7 +333,10 @@ const GrapesjsEditorView = BaseView.extend({
     /**
      * @inheritdoc
      */
-    render: function() {
+    render() {
+        this.renderStart = true;
+        this.timeoutId = null;
+
         if (_.isMobile() || _.isTouchDevice()) {
             this.message = mediator.execute('showFlashMessage', 'error', __('oro.cms.wysiwyg.mobile.flash_message'), {
                 container: this.$el.parent(),
@@ -333,9 +355,39 @@ const GrapesjsEditorView = BaseView.extend({
     /**
      * @inheritdoc
      */
-    dispose: function() {
+    dispose() {
         if (this.disposed) {
             return;
+        }
+
+        this.disableEditor();
+        GrapesjsEditorView.__super__.dispose.call(this);
+    },
+
+    timeoutEditor(callback) {
+        if (this.timeoutId) {
+            clearTimeout(this.timeoutId);
+        }
+        this.timeoutId = setTimeout(() => callback(), 250);
+    },
+
+    /**
+     * Set disable editor
+     */
+    disableEditor() {
+        if (this.renderStart) {
+            return this.timeoutEditor(this.disableEditor.bind(this));
+        }
+
+        if (!this.builder || !this.enabled) {
+            return;
+        }
+
+        this.builder.trigger('destroy');
+        this.builderUndelegateEvents();
+
+        for (const command of Object.keys(this.builder.Commands.getActive())) {
+            this.builder.Commands.stop(command);
         }
 
         if (this._panelManagerModule) {
@@ -348,35 +400,29 @@ const GrapesjsEditorView = BaseView.extend({
             delete this._devicesModule;
         }
 
-        this.disableEditor();
-        GrapesjsEditorView.__super__.dispose.call(this);
-    },
+        this.builder.destroy();
+        this.disposeElements();
 
-    /**
-     * Set disable editor
-     */
-    disableEditor: function() {
-        if (this.builder) {
-            this.builder.trigger('destroy');
-            this.builderUndelegateEvents();
-            this.builder.destroy();
-
-            this.disposeElements();
-
-            this.builder = null;
-        }
+        this.builder = null;
+        this.enabled = false;
     },
 
     /**
      * Set enable editor
      */
-    enableEditor: function() {
-        if (!this.builder) {
-            this.render();
+    enableEditor() {
+        if (this.builder || this.enabled) {
+            return;
         }
+
+        if (this.renderStart && this.inFallbackContainer && !this.timeoutId) {
+            return this.timeoutEditor(this.enableEditor.bind(this));
+        }
+
+        this.render();
     },
 
-    disposeElements: function() {
+    disposeElements() {
         this.$el.show();
         this.$container.remove();
     },
@@ -385,7 +431,7 @@ const GrapesjsEditorView = BaseView.extend({
      * Creates editor container
      * @returns {*}
      */
-    initContainer: function() {
+    initContainer() {
         this.$container = $('<div class="grapesjs" data-skip-input-widgets />');
         this.$container.appendTo(this.$el.parent());
     },
@@ -393,7 +439,7 @@ const GrapesjsEditorView = BaseView.extend({
     /**
      * Initialize builder instance
      */
-    initBuilder: function() {
+    initBuilder() {
         this.builder = grapesJS.init({
             avoidInlineStyle: 1,
             container: this.$container.get(0),
@@ -427,45 +473,19 @@ const GrapesjsEditorView = BaseView.extend({
     /**
      * Add builder event listeners
      */
-    builderDelegateEvents: function() {
+    builderDelegateEvents() {
         const canvas = this.builder.Canvas;
         const $form = this.$el.closest('form');
 
-        $form.on(`keyup${this.eventNamespace()} keydown${this.eventNamespace()}`, e => {
-            const keyCode = e.keyCode || e.which;
-            if (keyCode === 13 && this.$container.get(0).contains(e.target)) {
-                e.preventDefault();
-                return false;
-            }
-        });
-
-        this.$el.closest('.scrollable-container').on(`scroll${this.eventNamespace()}`, () => {
-            this.builder.trigger('change:canvasOffset');
-        });
-
-        canvas.getCanvasView().$el.on(`scroll${this.eventNamespace()}`, e => {
-            const $cvTools = $(e.target).find('#gjs-cv-tools');
-
-            $cvTools.css({
-                top: e.target.scrollTop
-            });
-
-            // Force recalculate highlight boxes positions;
-            this.builder.trigger('frame:updated', {
-                frame: canvas.model.get('frame')
-            });
-        });
-
-        this.builder.on('load', this._onLoadBuilder.bind(this));
-        this.builder.on('update', this._onUpdatedBuilder.bind(this));
-        this.builder.on('component:update', _.debounce(this._onComponentUpdatedBuilder.bind(this), 100));
-        this.builder.on('changeTheme', this._updateTheme.bind(this));
-        this.builder.on('component:selected', this.componentSelected.bind(this));
-        this.builder.on('component:deselected', this.componentDeselected.bind(this));
-        this.builder.on('rteToolbarPosUpdate', this.updateRtePosition.bind(this));
-
+        this.listenTo(this.builder, 'load', this._onLoadBuilder.bind(this));
+        this.listenTo(this.builder, 'update', this._onUpdatedBuilder.bind(this));
+        this.listenTo(this.builder, 'component:update', this._onComponentUpdatedBuilder.bind(this));
+        this.listenTo(this.builder, 'changeTheme', this._updateTheme.bind(this));
+        this.listenTo(this.builder, 'component:selected', this.componentSelected.bind(this));
+        this.listenTo(this.builder, 'component:deselected}', this.componentDeselected.bind(this));
+        this.listenTo(this.builder, 'rteToolbarPosUpdate', this.updateRtePosition.bind(this));
         // Fix reload form when click export to zip dialog
-        this.builder.on('run:export-template', () => {
+        this.listenTo(this.builder, 'run:export-template', () => {
             $(this.builder.Modal.getContentEl())
                 .find('.gjs-btn-prim').on('click', e => {
                     e.preventDefault();
@@ -486,12 +506,42 @@ const GrapesjsEditorView = BaseView.extend({
                 }
             }.bind(this)
         );
+
+        $form.on(`keyup${this.eventNamespace()} keydown${this.eventNamespace()}`, e => {
+            const keyCode = e.keyCode || e.which;
+            if (keyCode === 13 && this.$container.get(0).contains(e.target)) {
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        canvas.getCanvasView().$el.on(`scroll${this.eventNamespace()}`, e => {
+            if (!this.enabled) {
+                return;
+            }
+            const $cvTools = $(e.target).find('#gjs-cv-tools');
+
+            $cvTools.css({
+                top: e.target.scrollTop
+            });
+
+            // Force recalculate highlight boxes positions;
+            this.builder.trigger('frame:updated', {
+                frame: canvas.model.get('frame')
+            });
+        });
+
+        this.$el.closest('.scrollable-container').on(`scroll${this.eventNamespace()}`, () => {
+            if (this.enabled) {
+                this.builder.trigger('change:canvasOffset');
+            }
+        });
     },
 
     /**
      * Remove builder event listeners
      */
-    builderUndelegateEvents: function() {
+    builderUndelegateEvents() {
         this.$el.closest('form').off(this.eventNamespace());
         this.$el.closest('.scrollable-container').off(this.eventNamespace());
         this.$stylesInputElement.off(this.eventNamespace());
@@ -504,8 +554,10 @@ const GrapesjsEditorView = BaseView.extend({
             canvas.getCanvasView().$el.off(this.eventNamespace());
             $(canvas.getBody()).off();
         }
+
+        this.stopListening(this.builder);
+
         if (this.builder) {
-            this.builder.off();
             this.builder.editor.view.$el.find('.gjs-toolbar').off('mouseover');
         }
     },
@@ -514,7 +566,7 @@ const GrapesjsEditorView = BaseView.extend({
      * Get current theme
      * @returns {Object}
      */
-    getCurrentTheme: function() {
+    getCurrentTheme() {
         return _.find(this.themes, function(theme) {
             return theme.active;
         });
@@ -533,14 +585,14 @@ const GrapesjsEditorView = BaseView.extend({
      * @param panel {String}
      * @param name {String}
      */
-    setActiveButton: function(panel, name) {
+    setActiveButton(panel, name) {
         this.builder.Commands.run(name);
         const button = this.builder.Panels.getButton(panel, name);
 
         button.set('active', true);
     },
 
-    setCurrentContentAlias: function() {
+    setCurrentContentAlias() {
         this.form = this.$el.closest('form');
         const contentBlockAliasField = this.form.find('[name="oro_cms_content_block[alias]"]');
         if (contentBlockAliasField.length && contentBlockAliasField.val()) {
@@ -548,7 +600,7 @@ const GrapesjsEditorView = BaseView.extend({
         }
     },
 
-    setAlternativeFields: function() {
+    setAlternativeFields() {
         const fieldPrefix = this.$el.attr('data-ftid');
         const styleFiledName = fieldPrefix + '_style';
 
@@ -563,7 +615,7 @@ const GrapesjsEditorView = BaseView.extend({
      * Get editor content
      * @returns {String}
      */
-    getEditorContent: function() {
+    getEditorContent() {
         return this.builder.getIsolatedHtml();
     },
 
@@ -571,7 +623,7 @@ const GrapesjsEditorView = BaseView.extend({
      * Get editor styles
      * @returns {String}
      */
-    getEditorStyles: function() {
+    getEditorStyles() {
         return this.builder.getIsolatedCss();
     },
 
@@ -633,7 +685,7 @@ const GrapesjsEditorView = BaseView.extend({
     /**
      * Add wrapper classes for iframe with content
      */
-    _addClassForFrameWrapper: function() {
+    _addClassForFrameWrapper() {
         $(this.builder.Canvas.getFrameEl().contentDocument).find('#wrapper').addClass(this.contextClass);
     },
 
@@ -661,7 +713,7 @@ const GrapesjsEditorView = BaseView.extend({
      * Onload builder handler
      * @private
      */
-    _onLoadBuilder: function() {
+    _onLoadBuilder() {
         this._panelManagerModule = new PanelManagerModule({
             builder: this.builder,
             themes: this.themes
@@ -682,13 +734,18 @@ const GrapesjsEditorView = BaseView.extend({
         mediator.trigger('page:afterChange');
 
         this.$el.closest('.ui-dialog-content').dialog('option', 'minWidth', MIN_EDITOR_WIDTH);
+
+        this.enabled = true;
+        _.delay(() => {
+            this.renderStart = false;
+        }, 250);
     },
 
     /**
      * Update builder handler
      * @private
      */
-    _onUpdatedBuilder: function() {
+    _onUpdatedBuilder() {
         mediator.trigger('grapesjs:updated', this.builder);
         this._updateInitialField();
     },
@@ -698,12 +755,11 @@ const GrapesjsEditorView = BaseView.extend({
      * @param state
      * @private
      */
-    _onComponentUpdatedBuilder: function(state) {
+    _onComponentUpdatedBuilder(state) {
         if (!this.componentUpdated) {
             mediator.on('dropdown-button:click', this._onComponentUpdatedBuilder, this);
         }
         this._updateInitialField();
-        this.builder.trigger('change:canvasOffset');
         mediator.trigger('grapesjs:components:updated', state);
         this.componentUpdated = true;
     },
@@ -713,7 +769,7 @@ const GrapesjsEditorView = BaseView.extend({
      * @param selected {String}
      * @private
      */
-    _updateTheme: function(selected) {
+    _updateTheme(selected) {
         if (!_.isUndefined(this.activeTheme) && this.activeTheme.name === selected) {
             this.setActiveTheme(selected);
             return false;
@@ -745,7 +801,7 @@ const GrapesjsEditorView = BaseView.extend({
      * @param theme {String}
      * @private
      */
-    setActiveTheme: function(theme) {
+    setActiveTheme(theme) {
         this.activeTheme = _.find(this.themes, function(theme) {
             return theme.active;
         });
@@ -755,8 +811,8 @@ const GrapesjsEditorView = BaseView.extend({
      * Update source textarea and styles
      * @private
      */
-    _updateInitialField: function() {
-        if (this.builder.CodeValidator.isInvalid()) {
+    _updateInitialField() {
+        if (!this.builder || this.builder.CodeValidator.isInvalid()) {
             return;
         }
 
@@ -785,7 +841,7 @@ const GrapesjsEditorView = BaseView.extend({
      * @returns {GrapesjsEditorView.builderOptions|{fromElement}}
      * @private
      */
-    _prepareBuilderOptions: function() {
+    _prepareBuilderOptions() {
         _.extend(this.builderOptions
             , this._getPlugins()
             , this._getStorageManagerConfig()
@@ -803,7 +859,7 @@ const GrapesjsEditorView = BaseView.extend({
      * @returns {{storageManager: (*|void)}}
      * @private
      */
-    _getStorageManagerConfig: function() {
+    _getStorageManagerConfig() {
         return {
             storageManager: _.extend({}, this.storageManager, {
                 id: this.storagePrefix
@@ -816,7 +872,7 @@ const GrapesjsEditorView = BaseView.extend({
      * @returns {{styleManager: *}}
      * @private
      */
-    _getStyleManagerConfig: function() {
+    _getStyleManagerConfig() {
         return {
             styleManager: this.styleManager
         };
@@ -827,7 +883,7 @@ const GrapesjsEditorView = BaseView.extend({
      * @returns {{traitManager: *}}
      * @private
      */
-    _getTaitManagerConfig: function() {
+    _getTaitManagerConfig() {
         return {
             traitManager: this.traitManager
         };
@@ -838,11 +894,11 @@ const GrapesjsEditorView = BaseView.extend({
      * @returns {{canvasCss: string, canvas: {styles: (*|string)[]}}}
      * @private
      */
-    _getCanvasConfig: function() {
+    _getCanvasConfig() {
         const theme = this.getCurrentTheme();
         return _.extend({}, this.canvasConfig, {
             canvas: {
-                styles: [theme.stylesheet]
+                styles: theme ? [theme.stylesheet] : ['']
             },
             protectedCss: []
         });
@@ -853,7 +909,7 @@ const GrapesjsEditorView = BaseView.extend({
      * @returns {*|void}
      * @private
      */
-    _getAssetConfig: function() {
+    _getAssetConfig() {
         return {
             assetManager: this.assetManagerConfig
         };
@@ -864,13 +920,14 @@ const GrapesjsEditorView = BaseView.extend({
      * @returns {{plugins: *, pluginsOpts: (GrapesjsEditorView.builderPlugins|{"gjs-preset-webpage"})}}
      * @private
      */
-    _getPlugins: function() {
+    _getPlugins() {
         return {
             plugins: [
                 i18nMessages,
                 CodeValidator,
                 ContentParser,
                 parserPostCSS,
+                RteEditorPlugin,
                 ...Object.keys(this.builderPlugins)
             ],
             pluginsOpts: this.builderPlugins
@@ -878,6 +935,9 @@ const GrapesjsEditorView = BaseView.extend({
     },
 
     updateRtePosition(pos) {
+        if (!this.builder) {
+            return;
+        }
         const $builderIframe = $(this.builder.Canvas.getFrameEl());
         const selected = this.builder.getSelected();
         if (!selected) {
@@ -890,7 +950,7 @@ const GrapesjsEditorView = BaseView.extend({
 
         $(this.rte.actionbar).parent().css('margin-left', '');
 
-        if ($builderIframe.innerWidth() <= (pos.canvasOffsetLeft + targetWidth)) {
+        if ($el && $builderIframe.innerWidth() <= (pos.canvasOffsetLeft + targetWidth)) {
             $(this.rte.actionbar).parent().css('margin-left', $el.outerWidth() - targetWidth);
         }
         if (pos.top < 0 && $builderIframe.innerHeight() > (pos.canvasOffsetTop + targetHeight)) {

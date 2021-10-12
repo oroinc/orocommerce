@@ -189,35 +189,15 @@ const ContentWidgetTypeBuilder = BaseTypeBuilder.extend({
                         event.extentOffset += offset;
                     }
 
-                    sel.components(
-                        insetIntoString(
-                            originalText
-                            , `<span
+                    sel.setContent(insetIntoString(
+                        originalText
+                        , `<span
                                 data-title="${data.model.get('name')}"
                                 data-type="${data.model.get('widgetType')}"
                                 class="content-widget-inline"
                                 >{{ widget("${data.model.get('name')}") }}</span>`
-                            , event.offset, event.extentOffset
-                        )
-                    ).forEach(child => {
-                        child.get('type') !== data.model.get('type') && child.set({
-                            layerable: 0,
-                            selectable: 0,
-                            hoverable: 0,
-                            editable: 0,
-                            draggable: 0,
-                            droppable: 0,
-                            highlightable: 0
-                        });
-
-                        if (child.get('attributes') && child.get('attributes').id) {
-                            const attrs = child.get('attributes');
-                            delete attrs.id;
-                            child.set('attributes', {
-                                ...attrs
-                            });
-                        }
-                    });
+                        , event.offset, event.extentOffset
+                    ));
                 } else {
                     sel.onContentBlockChange(sel, data.model);
                 }
@@ -237,8 +217,8 @@ const ContentWidgetTypeBuilder = BaseTypeBuilder.extend({
     },
 
     onInit() {
-        this.editor.RichTextEditor.remove('inlineWidget');
-        this.editor.RichTextEditor.add('inlineWidget', {
+        this.editor.RteEditor.addAction({
+            name: 'inlineWidget',
             order: 50,
             icon: '<span class="fa fa-object-ungroup" aria-hidden="true"></span>',
             group: 'widgets',
