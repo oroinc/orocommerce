@@ -4,7 +4,6 @@ namespace Oro\Bundle\PromotionBundle\Executor;
 
 use Doctrine\Common\Cache\Cache;
 use Oro\Bundle\CacheBundle\Generator\ObjectCacheKeyGenerator;
-use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PromotionBundle\Discount\Converter\DiscountContextConverterInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContextInterface;
 use Oro\Bundle\PromotionBundle\Discount\Strategy\StrategyProvider;
@@ -94,10 +93,6 @@ class PromotionExecutor
      */
     public function supports($sourceEntity)
     {
-        if ($sourceEntity instanceof Order && $sourceEntity->getDisablePromotions()) {
-            return false;
-        }
-
         return $this->discountContextConverter->supports($sourceEntity);
     }
 }

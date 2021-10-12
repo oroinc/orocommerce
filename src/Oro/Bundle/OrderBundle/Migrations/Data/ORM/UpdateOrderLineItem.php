@@ -5,6 +5,7 @@ namespace Oro\Bundle\OrderBundle\Migrations\Data\ORM;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ObjectManager;
+use Oro\Bundle\DistributionBundle\Handler\ApplicationState;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
@@ -73,6 +74,6 @@ class UpdateOrderLineItem extends AbstractFixture implements ContainerAwareInter
      */
     private function isApplicable()
     {
-        return $this->container->hasParameter('installed') && $this->container->getParameter('installed');
+        return $this->container->get(ApplicationState::class)->isInstalled();
     }
 }

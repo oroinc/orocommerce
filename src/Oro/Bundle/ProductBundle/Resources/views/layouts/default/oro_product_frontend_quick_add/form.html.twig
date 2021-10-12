@@ -4,9 +4,10 @@
     {% set disabled = form.parent.vars.disabled %}
     {% set allow_delete = form.parent.vars.allow_delete %}
     {% set row_component_name = form.vars.attr['data-ftid'] %}
+
     <div data-content="{{ name }}"
-         data-validation-optional-group
          data-role="row"
+         data-validation-optional-group
          class="quick-order-add__row fields-row"
          {{ block('widget_container_attributes') }}
     >
@@ -74,7 +75,13 @@
         {% endif %}
         {% set attr = attr|merge({
             'class': (attr.class is defined ? attr.class ~ ' ' : '') ~  'quick-order-add__grid grid-container',
-            'data-validation': false
+            'data-validation': {
+                NotBlankGroup: {
+                    message: 'oro.product.at_least_one_item'|trans,
+                    selector: '[data-name="field__product-display-name"], [data-name="field__product-sku"], [data-name="field__product-quantity"]',
+                    payload: null
+                }
+            }|json_encode
         }) %}
         {% set id = id ~ '_collection' %}
         {% set prototype_name = form.vars.prototype_name %}
@@ -85,7 +92,9 @@
                  data-row-count-add="{{ form.vars.row_count_add }}"
                  data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %}
                  data-prototype="{{ prototype_html|escape }}"{% endif %}
+                 data-collection="{{ full_name }}"
             >
+                <input type="hidden" name="validate_{{ full_name }}" data-collection-name="{{ full_name }}" data-name="collection-validation" data-validate-element>
                 {% if form.children|length %}
                     {% for child in form.children %}
                         {{ form_widget(child) }}
@@ -100,7 +109,7 @@
 
         {% if allow_add %}
             <button class="btn btn--primary btn--block add-list-item"
-               data-container=".js-item-collection" type="button"
+               data-container=".js-item-collection" type="button" data-validate-collection="false"
             >
                 <span class="fa-plus-circle" aria-hidden="true"></span>
                 <span>{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</span>

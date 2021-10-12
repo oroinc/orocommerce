@@ -14,17 +14,20 @@ class WysiwygField extends Element
      */
     public function setValue($value)
     {
+        $this->session->wait(300);
         $this->session->executeScript(
             sprintf(
                 '(function(){
-                    $("#%s").val("%s")
-                        .trigger("change")
+                    $("#%s")
                         .trigger("wysiwyg:disable")
+                        .val("%s")
+                        .trigger("change")
                         .trigger("wysiwyg:enable");
                 })()',
                 $this->getAttribute('id'),
                 $value
             )
         );
+        $this->session->wait(300);
     }
 }

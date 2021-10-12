@@ -15,11 +15,12 @@ oro:
         skip_empty_periods.label: "Exclude Empty Periods"
         item_number.label: "Item #"
         variant.plural_label: Product Variants
+        at_least_one_item: Please add at least one item
         sku:
             label: SKU
             placeholder: "Enter Product Name or Item Number"
             aria_label: Product
-            not_found: Item Number Cannot Be Found
+            not_found: Item number cannot be found
             description: The code of the product.
         back_order:
             label:        Backorder

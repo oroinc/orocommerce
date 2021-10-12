@@ -79,7 +79,7 @@ Feature: Create RFQ with product variant
     And I fill "QuickAddForm" with:
       | SKU1 | PROD_A_1 |
     And I wait for products to load
-    Then I should see text matching "Item Number Cannot Be Found"
+    Then I should see text matching "Item number cannot be found"
 
   Scenario: Simple product variations are hidden by default from autocomplete search result
     # Check Search

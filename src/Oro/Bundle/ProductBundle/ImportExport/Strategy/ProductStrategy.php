@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\ImportExport\Strategy;
 
 use Oro\Bundle\BatchBundle\Item\Support\ClosableInterface;
+use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\LocaleBundle\ImportExport\Strategy\LocalizedFallbackValueAwareStrategy;
 use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -270,6 +271,8 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
             ) {
                 $entity->addUnitPrecision($primaryUnitPrecision);
             }
+        } elseif ($entity instanceof EntityFieldFallbackValue) {
+            $this->strategyHelper->importEntity($existingEntity, $entity, ['id']);
         }
 
         parent::importExistingEntity($entity, $existingEntity, $itemData, $excludedFields);

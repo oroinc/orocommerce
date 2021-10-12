@@ -210,3 +210,12 @@ services:
             - "@oro_inventory.manager.inventory_manager"
         tags:
             - { name: doctrine.event_listener, event: onFlush }
+
+    oro_inventory.event_listener.product_product_inventory_fields_changed:
+        class: Oro\Bundle\InventoryBundle\EventListener\Search\ProductInventoryFieldsChangedListener
+        arguments:
+            - '@oro_website.indexation_entities_container'
+            - '@oro_product.search.product_reindex_manager'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue, event: postUpdate}
+            - { name: kernel.event_listener, event: oro_config.update_after, method: onConfigUpdate }

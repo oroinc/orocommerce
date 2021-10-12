@@ -796,6 +796,7 @@ services:
             - '@oro_dataaudit.provider.audit_message_body_provider'
             - '@property_accessor'
             - '@logger'
+            - '@oro_distribution.handler.application_status'
         tags:
             - { name: kernel.event_listener, event: oro_pricing.product_price.save_after, method: onSave }
             - { name: kernel.event_listener, event: oro_pricing.product_price.remove, method: onRemove }

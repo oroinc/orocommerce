@@ -8,6 +8,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ActivityBundle\EntityConfig\ActivityScope;
 use Oro\Bundle\ActivityListBundle\Entity\ActivityList;
 use Oro\Bundle\ActivityListBundle\Tools\ActivityListEntityConfigDumperExtension;
+use Oro\Bundle\DistributionBundle\Handler\ApplicationState;
 use Oro\Bundle\EntityBundle\Tools\SafeDatabaseChecker;
 use Oro\Bundle\EntityConfigBundle\Migration\RemoveManyToManyRelationQuery;
 use Oro\Bundle\EntityConfigBundle\Migration\RemoveManyToOneRelationQuery;
@@ -30,36 +31,25 @@ class EntityConfigRelationsMigration
     const SHIPPING_RULE_METHOD_TYPE_CONFIG_CLASS_NAME = 'Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig';
     const SHIPPING_RULE_DESTINATION_CLASS_NAME = 'Oro\Bundle\ShippingBundle\Entity\ShippingRuleDestination';
 
-    /**
-     * @var ManagerRegistry
-     */
-    private $managerRegistry;
+    private ManagerRegistry $managerRegistry;
 
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
-    /**
-     * @var bool
-     */
-    private $applicationInstalled;
+    private ApplicationState $applicationState;
 
-    /**
-     * @param ManagerRegistry $managerRegistry
-     * @param LoggerInterface $logger
-     * @param bool $applicationInstalled
-     */
-    public function __construct(ManagerRegistry $managerRegistry, LoggerInterface $logger, $applicationInstalled)
-    {
+    public function __construct(
+        ManagerRegistry $managerRegistry,
+        LoggerInterface $logger,
+        ApplicationState $applicationState
+    ) {
         $this->managerRegistry = $managerRegistry;
         $this->logger = $logger;
-        $this->applicationInstalled = (bool)$applicationInstalled;
+        $this->applicationState = $applicationState;
     }
 
     public function migrate()
     {
-        if (!$this->applicationInstalled) {
+        if (!$this->applicationState->isInstalled()) {
             return;
         }
 
