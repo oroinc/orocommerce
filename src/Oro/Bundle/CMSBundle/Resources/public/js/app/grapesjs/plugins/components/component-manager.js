@@ -1,7 +1,5 @@
 import _ from 'underscore';
-import $ from 'jquery';
 import BaseClass from 'oroui/js/base-class';
-import rteActions from './rte';
 
 const ComponentManager = BaseClass.extend({
     typeBuildersOptions: null,
@@ -23,7 +21,6 @@ const ComponentManager = BaseClass.extend({
         Object.assign(this, _.pick(options, 'editor', 'typeBuildersOptions'));
 
         this.applyTypeBuilders();
-        this.renderRteActions();
     },
 
     dispose() {
@@ -34,46 +31,6 @@ const ComponentManager = BaseClass.extend({
         _.invoke(this.typeBuilders, 'dispose');
 
         ComponentManager.__super__.dispose.call(this);
-    },
-
-    /**
-     * Add Rich Text Editor actions
-     */
-    renderRteActions() {
-        const {RichTextEditor} = this.editor;
-        const $actionBar = $(RichTextEditor.actionbar);
-
-        [...RichTextEditor.getAll(), ...rteActions]
-            .sort((a, b) => a.order - b.order)
-            .forEach(item => {
-                const {group, name, command, result, init} = item;
-                if (RichTextEditor.get(name)) {
-                    RichTextEditor.remove(name);
-                }
-
-                if (command && !result) {
-                    item.result = rte => rte.exec(command);
-                }
-
-                item.editor = this.editor;
-
-                RichTextEditor.add(name, item);
-
-                if (group) {
-                    if (!$actionBar.find(`[data-group-by="${group}"]`).length) {
-                        $actionBar.append($('<div />', {
-                            'data-group-by': group,
-                            'class': 'actionbar-group'
-                        }));
-                    }
-
-                    $(item.btn).appendTo($actionBar.find(`[data-group-by="${group}"]`));
-                }
-
-                if (init && _.isFunction(init)) {
-                    init(RichTextEditor);
-                }
-            });
     },
 
     /**

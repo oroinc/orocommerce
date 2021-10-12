@@ -184,6 +184,7 @@ function parseNodes(el, config, ct = '', parent = {}) {
             if (_.some(node.childNodes, ({nodeType}) => nodeType === 3)) {
                 !model.type && (model.type = 'text');
             }
+
             model.components = parseNodes(node, config, ct, model);
         }
 
@@ -289,4 +290,8 @@ export default function ContentParser(editor) {
     const cTypes = editor.DomComponents.componentTypes;
 
     editor.Parser.parseHtml = html => htmlParser(html, editor.getConfig(), cTypes, editor.Parser.parseCss);
+
+    editor.Parser.parseTextBlockContentFromString = html => {
+        return editor.Parser.parseHtml(`<div>${html}</div>`).html[0].components;
+    };
 }
