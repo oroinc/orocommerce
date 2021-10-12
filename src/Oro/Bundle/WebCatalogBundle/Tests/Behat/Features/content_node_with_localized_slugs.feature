@@ -28,7 +28,7 @@ Feature: Content node with localized slugs
   Scenario: Uncheck "Use default value" checkbox for English (United States) localization slug
     Given I click "Content Node Form Url Slug Fallbacks"
     Then "Content Node" must contains values:
-      | URL Slugs English (United States) value |  |
+      | URL Slugs English (United States) value | acme |
     When I fill "Content Node" with:
       | URL Slugs English (United States) use fallback | false |
     Then "Content Node" must contains values:
