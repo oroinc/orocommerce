@@ -101,7 +101,6 @@ const ShoppinglistLineItemEditorView = TextEditorView.extend({
     onUnitValueChange(event) {
         this.onValueChange(event);
         this.updateUnitPrecision();
-        console.log(this);
     },
 
     updateUnitPrecision() {

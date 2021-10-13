@@ -3,11 +3,12 @@
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
+use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue as InventoryStatus;
 use Oro\Bundle\InventoryBundle\EventListener\DatagridLineItemsDataInventoryListener;
 use Oro\Bundle\InventoryBundle\Inventory\LowInventoryProvider;
 use Oro\Bundle\InventoryBundle\Provider\UpcomingProductProvider;
-use Oro\Bundle\InventoryBundle\Tests\Unit\Stubs\ProductStub;
+use Oro\Bundle\InventoryBundle\Tests\Unit\EventListener\Stub\ProductStub;
 use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatterInterface;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\ProductBundle\Event\DatagridLineItemsDataEvent;
@@ -83,9 +84,7 @@ class DatagridLineItemsDataInventoryListenerTest extends \PHPUnit\Framework\Test
 
     public function testOnLineItemData(): void
     {
-        $product = new ProductStub(1);
-        $inventoryStatus = new InventoryStatus('in_stock', 'In Stock');
-        $product->setInventoryStatus($inventoryStatus);
+        $product = $this->createProduct();
 
         $this->upcomingProductProvider->expects($this->once())
             ->method('isUpcoming')
@@ -116,6 +115,8 @@ class DatagridLineItemsDataInventoryListenerTest extends \PHPUnit\Framework\Test
                 'availabilityDate' => 'Jun 10, 2020',
                 'isLowInventory' => false,
                 'inventoryStatus' => 'in_stock',
+                'minimumQuantityToOrder' => 1,
+                'maximumQuantityToOrder' => 10,
             ],
             $event->getDataForLineItem(42)
         );
@@ -123,9 +124,7 @@ class DatagridLineItemsDataInventoryListenerTest extends \PHPUnit\Framework\Test
 
     public function testOnLineItemDataWithoutAvailabilityDate(): void
     {
-        $product = new ProductStub(1);
-        $inventoryStatus = new InventoryStatus('in_stock', 'In Stock');
-        $product->setInventoryStatus($inventoryStatus);
+        $product = $this->createProduct();
 
         $this->upcomingProductProvider->expects($this->once())
             ->method('isUpcoming')
@@ -155,6 +154,8 @@ class DatagridLineItemsDataInventoryListenerTest extends \PHPUnit\Framework\Test
                 'isUpcoming' => true,
                 'isLowInventory' => true,
                 'inventoryStatus' => 'in_stock',
+                'minimumQuantityToOrder' => 1,
+                'maximumQuantityToOrder' => 10,
             ],
             $event->getDataForLineItem(42)
         );
@@ -162,9 +163,7 @@ class DatagridLineItemsDataInventoryListenerTest extends \PHPUnit\Framework\Test
 
     public function testOnLineItemDataNotUpcoming(): void
     {
-        $product = new ProductStub(1);
-        $inventoryStatus = new InventoryStatus('in_stock', 'In Stock');
-        $product->setInventoryStatus($inventoryStatus);
+        $product = $this->createProduct();
 
         $this->upcomingProductProvider->expects($this->once())
             ->method('isUpcoming')
@@ -192,8 +191,27 @@ class DatagridLineItemsDataInventoryListenerTest extends \PHPUnit\Framework\Test
                 'isUpcoming' => false,
                 'isLowInventory' => true,
                 'inventoryStatus' => 'in_stock',
+                'minimumQuantityToOrder' => 1,
+                'maximumQuantityToOrder' => 10,
             ],
             $event->getDataForLineItem(42)
         );
+    }
+
+    private function createProduct(): ProductStub
+    {
+        $product = new ProductStub();
+        $inventoryStatus = new InventoryStatus('in_stock', 'In Stock');
+        $product->setInventoryStatus($inventoryStatus);
+
+        $minimumQuantityFallback = new EntityFieldFallbackValue();
+        $minimumQuantityFallback->setScalarValue(1);
+        $product->setMinimumQuantityToOrder($minimumQuantityFallback);
+
+        $maximumQuantityFallback = new EntityFieldFallbackValue();
+        $maximumQuantityFallback->setScalarValue(10);
+        $product->setMaximumQuantityToOrder($maximumQuantityFallback);
+
+        return $product;
     }
 }
