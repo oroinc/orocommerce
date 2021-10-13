@@ -147,7 +147,7 @@ define(function(require) {
          * @returns {boolean}
          */
         isAllowedTag: function(type) {
-            return this.allowTags === false || this.contains(type);
+            return this.allowTags === false || this.contains(type) || type === '';
         },
 
         /**

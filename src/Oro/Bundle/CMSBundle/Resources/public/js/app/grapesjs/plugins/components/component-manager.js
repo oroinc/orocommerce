@@ -4,11 +4,16 @@ import BaseClass from 'oroui/js/base-class';
 const ComponentManager = BaseClass.extend({
     typeBuildersOptions: null,
 
-    typeBuilders: [],
+    /**
+     * Store type builders
+     * @property {Array}
+     */
+    typeBuilders: null,
 
     editor: null,
 
     constructor: function ComponentManager(options) {
+        this.typeBuilders = [];
         ComponentManager.__super__.constructor.call(this, options);
     },
 

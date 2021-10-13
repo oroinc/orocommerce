@@ -163,10 +163,15 @@ const TextTypeBuilder = BaseTypeBuilder.extend({
          */
         wrapComponent(tagName = 'div') {
             const {model} = this;
-            model
-                .set('content', model.toHTML())
-                .set('attributes', {})
-                .set('tagName', tagName);
+            const content = model.toHTML();
+            const {margin, padding} = this.editor.Canvas.getWindow().getComputedStyle(this.el);
+            const [newModel] = model.replaceWith(`<${tagName}>${content}</${tagName}>`);
+
+            newModel.view.el.style.margin = margin;
+            newModel.view.el.style.padding = padding;
+
+            this.editor.select(newModel);
+            newModel.view.$el.trigger('dblclick');
         },
 
         /**
@@ -202,23 +207,27 @@ const TextTypeBuilder = BaseTypeBuilder.extend({
          * Active RTE handler
          * @param {Event} e
          */
-        onActive(event) {
-            this.constructor.__super__.onActive.call(this, event);
+        async onActive(event) {
+            if (this.model.parent().get('type') === 'text') {
+                return;
+            }
+
+            if (TAGS.includes(this.model.get('tagName'))) {
+                return this.wrapComponent('div');
+            }
+
+            await this.constructor.__super__.onActive.call(this, event);
             const {activeRte, $el, cid} = this;
 
             if (activeRte) {
                 $el.off(`keypress.${cid}`).on(`keypress.${cid}`, this.onPressEnter.bind(this));
-
-                if (TAGS.includes(this.model.get('tagName'))) {
-                    this.wrapComponent('div');
-                }
             }
         },
 
         /**
          * Disable element content editing
          */
-        disableEditing(clean = true) {
+        async disableEditing(clean = true) {
             const {model, rte, activeRte, em, $el, cid} = this;
             if (!model) {
                 return;
@@ -230,7 +239,7 @@ const TextTypeBuilder = BaseTypeBuilder.extend({
                 $el.off(`keypress.${cid}`);
 
                 try {
-                    rte.disable(this, activeRte);
+                    await rte.disable(this, activeRte);
                 } catch (err) {
                     em.logError(err);
                 }
