@@ -106,13 +106,13 @@
         </div>
     {% endset %}
 
-    {% import '@OroCMS/macros.html.twig' as CMS %}
+    {% import '@OroEntityConfig/macros.html.twig' as entityConfig %}
 
     {% set shortDescriptions %}
         {{ infoMessage }}
         <div class="cms-content">
             {{ UI.renderCollapsibleHtml(
-                CMS.renderWysiwygContentPreview(entity.defaultShortDescription),
+                entityConfig.renderWysiwygContentPreview(entity.defaultShortDescription),
                 entity,
                 'defaultShortDescription',
                 'More',
@@ -125,7 +125,7 @@
         {{ infoMessage }}
         <div class="cms-content">
             {{ UI.renderCollapsibleHtml(
-                CMS.renderWysiwygContentPreview(entity.defaultDescription),
+                entityConfig.renderWysiwygContentPreview(entity.defaultDescription),
                 entity,
                 'defaultDescription',
                 'More',
