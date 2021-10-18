@@ -19,23 +19,17 @@ class DatagridLineItemsDataInventoryListenerTest extends \PHPUnit\Framework\Test
 {
     use EntityTrait;
 
-    /** @var \DateTime */
-    private $availabilityDate;
+    private \DateTime $availabilityDate;
 
-    /** @var UpcomingProductProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $upcomingProductProvider;
+    private UpcomingProductProvider|\PHPUnit\Framework\MockObject\MockObject $upcomingProductProvider;
 
-    /** @var LowInventoryProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $lowInventoryProvider;
+    private LowInventoryProvider|\PHPUnit\Framework\MockObject\MockObject $lowInventoryProvider;
 
-    /** @var DateTimeFormatterInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $formatter;
+    private DateTimeFormatterInterface|\PHPUnit\Framework\MockObject\MockObject $formatter;
 
-    /** @var LocaleSettings|\PHPUnit\Framework\MockObject\MockObject */
-    private $localeSettings;
+    private LocaleSettings|\PHPUnit\Framework\MockObject\MockObject $localeSettings;
 
-    /** @var DatagridLineItemsDataInventoryListener */
-    private $listener;
+    private DatagridLineItemsDataInventoryListener $listener;
 
     protected function setUp(): void
     {
@@ -45,13 +39,13 @@ class DatagridLineItemsDataInventoryListenerTest extends \PHPUnit\Framework\Test
         $this->lowInventoryProvider = $this->createMock(LowInventoryProvider::class);
 
         $this->formatter = $this->createMock(DateTimeFormatterInterface::class);
-        $this->formatter->expects($this->any())
+        $this->formatter->expects(self::any())
             ->method('formatDate')
             ->with($this->availabilityDate, null, null, 'Europe/London')
             ->willReturn('Jun 10, 2020');
 
         $this->localeSettings = $this->createMock(LocaleSettings::class);
-        $this->localeSettings->expects($this->any())
+        $this->localeSettings->expects(self::any())
             ->method('getTimeZone')
             ->willReturn('Europe/London');
 
@@ -65,10 +59,10 @@ class DatagridLineItemsDataInventoryListenerTest extends \PHPUnit\Framework\Test
 
     public function testOnLineItemDataWithoutProduct(): void
     {
-        $this->upcomingProductProvider->expects($this->never())
+        $this->upcomingProductProvider->expects(self::never())
             ->method($this->anything());
 
-        $this->lowInventoryProvider->expects($this->never())
+        $this->lowInventoryProvider->expects(self::never())
             ->method($this->anything());
 
         $event = new DatagridLineItemsDataEvent(
@@ -79,24 +73,24 @@ class DatagridLineItemsDataInventoryListenerTest extends \PHPUnit\Framework\Test
 
         $this->listener->onLineItemData($event);
 
-        $this->assertEquals([], $event->getDataForLineItem(42));
+        self::assertEquals([], $event->getDataForLineItem(42));
     }
 
     public function testOnLineItemData(): void
     {
         $product = $this->createProduct();
 
-        $this->upcomingProductProvider->expects($this->once())
+        $this->upcomingProductProvider->expects(self::once())
             ->method('isUpcoming')
             ->with($product)
             ->willReturn(true);
 
-        $this->upcomingProductProvider->expects($this->once())
+        $this->upcomingProductProvider->expects(self::once())
             ->method('getAvailabilityDate')
             ->with($product)
             ->willReturn($this->availabilityDate);
 
-        $this->lowInventoryProvider->expects($this->once())
+        $this->lowInventoryProvider->expects(self::once())
             ->method('isLowInventoryProduct')
             ->with($product)
             ->willReturn(false);
@@ -109,7 +103,7 @@ class DatagridLineItemsDataInventoryListenerTest extends \PHPUnit\Framework\Test
 
         $this->listener->onLineItemData($event);
 
-        $this->assertEquals(
+        self::assertEquals(
             [
                 'isUpcoming' => true,
                 'availabilityDate' => 'Jun 10, 2020',
@@ -126,17 +120,17 @@ class DatagridLineItemsDataInventoryListenerTest extends \PHPUnit\Framework\Test
     {
         $product = $this->createProduct();
 
-        $this->upcomingProductProvider->expects($this->once())
+        $this->upcomingProductProvider->expects(self::once())
             ->method('isUpcoming')
             ->with($product)
             ->willReturn(true);
 
-        $this->upcomingProductProvider->expects($this->once())
+        $this->upcomingProductProvider->expects(self::once())
             ->method('getAvailabilityDate')
             ->with($product)
             ->willReturn(null);
 
-        $this->lowInventoryProvider->expects($this->once())
+        $this->lowInventoryProvider->expects(self::once())
             ->method('isLowInventoryProduct')
             ->with($product)
             ->willReturn(true);
@@ -149,7 +143,7 @@ class DatagridLineItemsDataInventoryListenerTest extends \PHPUnit\Framework\Test
 
         $this->listener->onLineItemData($event);
 
-        $this->assertEquals(
+        self::assertEquals(
             [
                 'isUpcoming' => true,
                 'isLowInventory' => true,
@@ -165,15 +159,15 @@ class DatagridLineItemsDataInventoryListenerTest extends \PHPUnit\Framework\Test
     {
         $product = $this->createProduct();
 
-        $this->upcomingProductProvider->expects($this->once())
+        $this->upcomingProductProvider->expects(self::once())
             ->method('isUpcoming')
             ->with($product)
             ->willReturn(false);
 
-        $this->upcomingProductProvider->expects($this->never())
+        $this->upcomingProductProvider->expects(self::never())
             ->method('getAvailabilityDate');
 
-        $this->lowInventoryProvider->expects($this->once())
+        $this->lowInventoryProvider->expects(self::once())
             ->method('isLowInventoryProduct')
             ->with($product)
             ->willReturn(true);
@@ -186,13 +180,49 @@ class DatagridLineItemsDataInventoryListenerTest extends \PHPUnit\Framework\Test
 
         $this->listener->onLineItemData($event);
 
-        $this->assertEquals(
+        self::assertEquals(
             [
                 'isUpcoming' => false,
                 'isLowInventory' => true,
                 'inventoryStatus' => 'in_stock',
                 'minimumQuantityToOrder' => 1,
                 'maximumQuantityToOrder' => 10,
+            ],
+            $event->getDataForLineItem(42)
+        );
+    }
+
+    public function testOnLineItemDataWithoutQuantityToOrder(): void
+    {
+        $product = new ProductStub();
+        $inventoryStatus = new InventoryStatus('in_stock', 'In Stock');
+        $product->setInventoryStatus($inventoryStatus);
+
+        $this->upcomingProductProvider->expects(self::once())
+            ->method('isUpcoming')
+            ->with($product)
+            ->willReturn(false);
+
+        $this->lowInventoryProvider->expects(self::once())
+            ->method('isLowInventoryProduct')
+            ->with($product)
+            ->willReturn(true);
+
+        $event = new DatagridLineItemsDataEvent(
+            [$this->getEntity(LineItem::class, ['id' => 42, 'product' => $product])],
+            $this->createMock(DatagridInterface::class),
+            []
+        );
+
+        $this->listener->onLineItemData($event);
+
+        self::assertEquals(
+            [
+                'isUpcoming' => false,
+                'isLowInventory' => true,
+                'inventoryStatus' => 'in_stock',
+                'minimumQuantityToOrder' => null,
+                'maximumQuantityToOrder' => null,
             ],
             $event->getDataForLineItem(42)
         );
