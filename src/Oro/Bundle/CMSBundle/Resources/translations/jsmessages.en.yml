@@ -461,8 +461,6 @@ oro.cms:
             add_edit_link: 'Edit a Link'
         mobile:
             flash_message: 'The visual editor cannot be displayed on the current device.'
-        content_preview:
-            message_prevent_click: 'This click cannot be processed in the preview mode.'
 
     change_type:
         confirmation:

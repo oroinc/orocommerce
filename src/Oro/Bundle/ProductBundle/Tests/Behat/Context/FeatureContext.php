@@ -1501,6 +1501,33 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
     }
 
     /**
+     * Example: When I click on dropdown element in grid row contains "Charlie"
+     *
+     * @Given /^(?:|I )click on "(?P<elementName>[\w\s]*)" element in grid row contains "(?P<content>(?:[^"]|\\")*)"$/
+     *
+     * @param string $elementName
+     * @param string $content
+     */
+    public function clickOnElementInCell(string $elementName, string $content)
+    {
+        /** @var Grid $grid */
+        $grid = $this->elementFactory->createElement('Grid');
+        self::assertTrue($grid->isIsset(), 'Element "Grid" not found on the page');
+
+        $row = $grid->getRowByContent($content);
+
+        if ($row) {
+            $xpath = $this->elementFactory->createElement($elementName)->getXpath();
+
+            $element = $row->find('xpath', $xpath);
+
+            if ($element) {
+                $element->click();
+            }
+        }
+    }
+
+    /**
      * Example: I should see remembered "main" image preview
      *
      * @Then /^(?:|I )should see remembered "(?P<imageType>[^"]*)" image preview$/

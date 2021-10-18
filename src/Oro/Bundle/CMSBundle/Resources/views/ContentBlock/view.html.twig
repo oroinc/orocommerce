@@ -35,10 +35,10 @@
                 {% endset %}
             {% endif %}
 
-            {% import '@OroCMS/macros.html.twig' as CMS %}
+            {% import '@OroEntityConfig/macros.html.twig' as entityConfig %}
 
             {% set toRenderValue = variant.content is defined and variant.content|length
-                ? CMS.renderWysiwygContentPreview(variant.content)
+                ? entityConfig.renderWysiwygContentPreview(variant.content)
                 : 'oro.ui.empty'|trans
             %}
             {{ UI.renderAttribute(
