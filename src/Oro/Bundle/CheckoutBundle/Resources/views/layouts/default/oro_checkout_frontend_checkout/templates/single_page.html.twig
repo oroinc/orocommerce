@@ -227,7 +227,7 @@
             'data-address-type': 'shipping',
             'data-new-address-label': renderedAddress,
             'placeholder': 'oro.checkout.form.address.enter.new_address.placeholder.label'|trans
-        }, 'placeholder': ''}) }}
+        }, 'placeholder': 'oro.checkout.form.address.enter.new_address.placeholder.label'|trans}) }}
         {{ form_row(form.ship_to_billing_address, {'attr': {'data-role': 'checkout-ship-to'}}) }}
     {% endif %}
 {%- endblock %}
@@ -240,7 +240,7 @@
             'data-address-type': 'billing',
             'data-new-address-label': renderedAddress,
             'placeholder': 'oro.checkout.form.address.enter.new_address.placeholder.label'|trans
-        }, 'placeholder': ''}) }}
+        }, 'placeholder': 'oro.checkout.form.address.enter.new_address.placeholder.label'|trans}) }}
     </div>
 {%- endblock %}
 
@@ -342,7 +342,7 @@
             checkout.customerUser.isGuest
             %}
                 <div class="grid__row grid__row--offset-none"
-                          data-page-component-module="oroui/js/app/components/view-component",
+                          data-page-component-module="oroui/js/app/components/view-component"
                           data-page-component-options="{{ {
                               view: 'orocheckout/js/app/views/late-checkout-registration-view',
                               selectors: {

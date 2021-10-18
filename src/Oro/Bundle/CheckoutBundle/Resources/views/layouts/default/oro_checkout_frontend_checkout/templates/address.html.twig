@@ -82,10 +82,10 @@
                     {{ form_row(address_form.city, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.city'|trans}}) }}
                 </div>
                 <div class="grid__column grid__column--2 grid__column--tablet-small-gutter-l-none">
-                    {{ form_row(address_form.country) }}
+                    {{ form_row(address_form.country, {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.country'|trans}) }}
                 </div>
                 <div class="grid__column grid__column--2 grid__column--tablet-small-gutter-l-none">
-                    {{ form_row(address_form.region) }}
+                    {{ form_row(address_form.region, {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.region'|trans}) }}
                 </div>
                 <div class="grid__column grid__column--2 col-zip-error grid__column--tablet-small-gutter-l-none">
                     {{ form_row(address_form.postalCode, {'attr' : {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.zip'|trans}}) }}
