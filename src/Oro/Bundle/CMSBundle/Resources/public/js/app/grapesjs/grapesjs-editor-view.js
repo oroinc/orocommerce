@@ -690,7 +690,7 @@ const GrapesjsEditorView = BaseView.extend({
     /**
      * Add wrapper classes for iframe with content
      */
-    _addClassForFrameWrapper: function() {
+    _addClassForFrameWrapper() {
         $(this.builder.Canvas.getFrameEl().contentDocument).find('body').addClass(this.contextClass);
     },
 
