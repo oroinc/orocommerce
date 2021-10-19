@@ -29,7 +29,7 @@ const ShoppinglistLineItemEditorView = TextEditorView.extend({
                 ...this.validationRules.Range,
                 min: this.model.getMinimumQuantity(),
                 max: this.model.getMaximumQuantity()
-            }
+            };
         }
     },
 
