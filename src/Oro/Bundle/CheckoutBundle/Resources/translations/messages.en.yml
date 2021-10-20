@@ -219,6 +219,8 @@ oro:
                             last_name: ""
                             sufix: ""
                         email: ""
+                        country: 'Country'
+                        region: 'State'
         form:
             address.manual: New address
             address.group_label:

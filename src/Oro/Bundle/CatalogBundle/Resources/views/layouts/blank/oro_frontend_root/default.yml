@@ -13,9 +13,7 @@ layout:
                     siblingId: featured_menu_container
                     options:
                         attr:
-                            itemprop: 'hasOfferCatalog'
                             itemscope: ~
-                            itemtype: 'http://schema.org/OfferCatalog'
                 featured_categories:
                     blockType: embedded_list
                     options:
@@ -24,6 +22,10 @@ layout:
                         items: '=data["featured_categories"].getAll([2,3,4,6,7,8,9,10,11])'
                         items_data:
                             categoryProductsCount: '=data["categories_products"].getCountByCategories([2,3,4,6,7,8,9,10,11])'
+                        attr:
+                            itemprop: 'hasOfferCatalog'
+                            itemscope: ~
+                            itemtype: 'http://schema.org/OfferCatalog'
                 featured_category:
                     blockType: container
                     options:
