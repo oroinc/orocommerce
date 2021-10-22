@@ -158,7 +158,7 @@
 
     {% set data = {'dataBlocks': dataBlocks} %}
     {{ parent() }}
-    <script type="text/javascript">
+    <script>
         loadModules(['underscore', 'orotranslation/js/translator', 'oroui/js/mediator'],
         function (_, __, mediator) {
             mediator.on('widget_success:notification-email-dialog', function () {
