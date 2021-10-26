@@ -3,14 +3,13 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Async\MessageFilter;
 
 use Oro\Bundle\MessageQueueBundle\Client\MessageBuffer;
-use Oro\Bundle\VisibilityBundle\Async\Visibility\ProductMessageFilter;
 use Oro\Bundle\WebsiteSearchBundle\Async\MessageFilter\ReindexMessageFilter;
 
 class ReindexMessageFilterTest extends \PHPUnit\Framework\TestCase
 {
     private const TOPIC = 'test_topic';
 
-    /** @var ProductMessageFilter */
+    /** @var ReindexMessageFilter */
     private $filter;
 
     protected function setUp(): void
