@@ -10,6 +10,7 @@ use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterf
 use Oro\Bundle\EntityExtendBundle\Migration\OroOptions;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
+use Oro\Bundle\ProductBundle\Migrations\Schema\OroProductBundleInstaller;
 
 /**
  * This migration add attributes to Product entity to use in functional tests.
@@ -50,6 +51,7 @@ class AddAttributesToProductMigration implements Migration, ExtendExtensionAware
         $this->addFloatAttribute($productTable);
         $this->addDateTimeAttribute($productTable);
         $this->addMoneyAttribute($productTable);
+        $this->addNamesConflictingEnumAttributes($schema, $productTable);
     }
 
     /**
@@ -275,6 +277,77 @@ class AddAttributesToProductMigration implements Migration, ExtendExtensionAware
                     'entity' => ['label' => 'extend.entity.test.test_attr_money']
                 ])
             ]
+        );
+    }
+
+    /**
+     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Doctrine\DBAL\Schema\SchemaException
+     */
+    private function addNamesConflictingEnumAttributes(Schema $schema, Table $table)
+    {
+        $this->extendExtension->addEnumField(
+            $schema,
+            $table,
+            'type_contact',
+            'test_prod_attr_enum',
+            false,
+            false,
+            $this->getAttributeOptions([
+                'entity' => ['label' => 'extend.entity.test.type_contact'],
+                'attribute' => ['sortable' => true]
+            ])
+        );
+
+        $this->extendExtension->addEnumField(
+            $schema,
+            $table,
+            'contact_type',
+            'test_prod_attr_enum',
+            false,
+            false,
+            $this->getAttributeOptions([
+                'entity' => ['label' => 'extend.entity.test.contact_type'],
+                'attribute' => ['sortable' => true]
+            ])
+        );
+
+        $this->addLocalizedAttribute($schema, $table->getName(), 'contact');
+    }
+
+    /**
+     * Add a many-to-many relation between a given table and the table corresponding to the
+     * LocalizedFallbackValue entity, with the given relation name.
+     *
+     * @param Schema $schema
+     * @param string $ownerTable
+     * @param string $relationName
+     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Doctrine\DBAL\Schema\SchemaException
+     */
+    private function addLocalizedAttribute($schema, $ownerTable, $relationName)
+    {
+        $targetTable = $schema->getTable($ownerTable);
+
+        // Column names are used to show a title of target entity
+        $targetTitleColumnNames = $targetTable->getPrimaryKeyColumns();
+        // Column names are used to show detailed info about target entity
+        $targetDetailedColumnNames = $targetTable->getPrimaryKeyColumns();
+        // Column names are used to show target entity in a grid
+        $targetGridColumnNames = $targetTable->getPrimaryKeyColumns();
+
+        $this->extendExtension->addManyToManyRelation(
+            $schema,
+            $targetTable,
+            $relationName,
+            OroProductBundleInstaller::FALLBACK_LOCALE_VALUE_TABLE_NAME,
+            $targetTitleColumnNames,
+            $targetDetailedColumnNames,
+            $targetGridColumnNames,
+            $this->getAttributeOptions([
+                'entity' => ['label' => 'extend.entity.test.' . $relationName],
+                'attribute' => ['sortable' => true]
+            ])
         );
     }
 }
