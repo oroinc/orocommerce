@@ -16,7 +16,6 @@ use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Oro\Bundle\ProductBundle\Search\ProductIndexDataProviderInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider;
-use Oro\Bundle\WebsiteBundle\Provider\WebsiteLocalizationProvider;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 
@@ -26,35 +25,24 @@ use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
  */
 class WebsiteSearchProductIndexerListener
 {
-    /** @var WebsiteContextManager */
-    private $websiteContextManager;
-
-    /** @var WebsiteLocalizationProvider */
-    private $websiteLocalizationProvider;
-
-    /** @var ManagerRegistry */
-    private $registry;
-
-    /** @var AttachmentManager */
-    private $attachmentManager;
-
-    /** @var AttributeManager */
-    private $attributeManager;
-
-    /** @var ProductIndexDataProviderInterface */
-    private $dataProvider;
+    private WebsiteContextManager $websiteContextManager;
+    private AbstractWebsiteLocalizationProvider $websiteLocalizationProvider;
+    private ManagerRegistry $doctrine;
+    private AttachmentManager $attachmentManager;
+    private AttributeManager $attributeManager;
+    private ProductIndexDataProviderInterface $dataProvider;
 
     public function __construct(
         AbstractWebsiteLocalizationProvider $websiteLocalizationProvider,
         WebsiteContextManager $websiteContextManager,
-        ManagerRegistry $registry,
+        ManagerRegistry $doctrine,
         AttachmentManager $attachmentManager,
         AttributeManager $attributeManager,
         ProductIndexDataProviderInterface $dataProvider
     ) {
         $this->websiteLocalizationProvider = $websiteLocalizationProvider;
         $this->websiteContextManager = $websiteContextManager;
-        $this->registry = $registry;
+        $this->doctrine = $doctrine;
         $this->attachmentManager = $attachmentManager;
         $this->attributeManager = $attributeManager;
         $this->dataProvider = $dataProvider;
@@ -132,7 +120,7 @@ class WebsiteSearchProductIndexerListener
                 );
             }
 
-            if (array_key_exists($product->getId(), $productUnits)) {
+            if (\array_key_exists($product->getId(), $productUnits)) {
                 $event->addField(
                     $product->getId(),
                     'product_units',
@@ -154,7 +142,7 @@ class WebsiteSearchProductIndexerListener
     {
         $websiteId = $this->websiteContextManager->getWebsiteId($event->getContext());
         if ($websiteId) {
-            return $this->registry->getManagerForClass(Website::class)->find(Website::class, $websiteId);
+            return $this->doctrine->getManagerForClass(Website::class)->find(Website::class, $websiteId);
         }
 
         return null;
@@ -185,13 +173,7 @@ class WebsiteSearchProductIndexerListener
         }
     }
 
-    /**
-     * @param FieldConfigModel $attribute
-     * @param Product $product
-     * @param array $attributeFamilies
-     * @return bool
-     */
-    private function isAllowedToIndex(FieldConfigModel $attribute, Product $product, array $attributeFamilies)
+    private function isAllowedToIndex(FieldConfigModel $attribute, Product $product, array $attributeFamilies): bool
     {
         if ($this->attributeManager->isSystem($attribute)) {
             return true;
@@ -203,58 +185,40 @@ class WebsiteSearchProductIndexerListener
 
         $attributeFamily = $product->getAttributeFamily();
 
-        return !$attributeFamily || in_array($attributeFamily->getId(), $attributeFamilies[$attribute->getId()], true);
+        return
+            null === $attributeFamily
+            || \in_array($attributeFamily->getId(), $attributeFamilies[$attribute->getId()], true);
     }
 
-    /**
-     * @param IndexEntityEvent $event
-     * @param array $productImages
-     * @param int $productId
-     */
-    private function processImages(IndexEntityEvent $event, array $productImages, $productId)
+    private function processImages(IndexEntityEvent $event, array $productImages, int $productId): void
     {
         if (isset($productImages[$productId])) {
             /** @var File $entity */
             $entity = $productImages[$productId];
-            $largeImageUrl = $this->attachmentManager->getFilteredImageUrl(
-                $entity,
-                FrontendProductDatagridListener::PRODUCT_IMAGE_FILTER_LARGE
-            );
-            $mediumImageUrl = $this->attachmentManager->getFilteredImageUrl(
-                $entity,
-                FrontendProductDatagridListener::PRODUCT_IMAGE_FILTER_MEDIUM
-            );
-            $smallImageUrl = $this->attachmentManager->getFilteredImageUrl(
-                $entity,
-                FrontendProductDatagridListener::PRODUCT_IMAGE_FILTER_SMALL
+            $event->addField(
+                $productId,
+                'image_product_large',
+                $this->attachmentManager->getFilteredImageUrl($entity, 'product_large')
             );
             $event->addField(
                 $productId,
-                'image_' . FrontendProductDatagridListener::PRODUCT_IMAGE_FILTER_LARGE,
-                $largeImageUrl
+                'image_product_medium',
+                $this->attachmentManager->getFilteredImageUrl($entity, 'product_medium')
             );
             $event->addField(
                 $productId,
-                'image_' . FrontendProductDatagridListener::PRODUCT_IMAGE_FILTER_MEDIUM,
-                $mediumImageUrl
-            );
-            $event->addField(
-                $productId,
-                'image_' . FrontendProductDatagridListener::PRODUCT_IMAGE_FILTER_SMALL,
-                $smallImageUrl
+                'image_product_small',
+                $this->attachmentManager->getFilteredImageUrl($entity, 'product_small')
             );
         }
     }
 
     /**
      * Cleans up a unicode string from control characters
-     *
-     * @param string|array $data
-     * @return string
      */
-    private function cleanUpStrings($data)
+    private function cleanUpStrings(mixed $data): mixed
     {
-        if (is_array($data)) {
+        if (\is_array($data)) {
             foreach ($data as $key => $value) {
                 $data[$key] = $this->cleanUpStrings($value);
             }
@@ -262,36 +226,23 @@ class WebsiteSearchProductIndexerListener
             return $data;
         }
 
-        return is_string($data) ? preg_replace(['/[[:cntrl:]]/', '/\s+/'], ' ', $data) : $data;
+        return \is_string($data)
+            ? preg_replace(['/[[:cntrl:]]/', '/\s+/'], ' ', $data)
+            : $data;
     }
 
-    /**
-     * @return ProductRepository
-     */
-    protected function getProductRepository()
+    private function getProductRepository(): ProductRepository
     {
-        return $this->registry
-            ->getManagerForClass(Product::class)
-            ->getRepository(Product::class);
+        return $this->doctrine->getRepository(Product::class);
     }
 
-    /**
-     * @return ProductUnitRepository
-     */
-    protected function getProductUnitRepository()
+    private function getProductUnitRepository(): ProductUnitRepository
     {
-        return $this->registry
-            ->getManagerForClass(ProductUnit::class)
-            ->getRepository(ProductUnit::class);
+        return $this->doctrine->getRepository(ProductUnit::class);
     }
 
-    /**
-     * @return AttributeFamilyRepository
-     */
-    protected function getAttributeFamilyRepository()
+    private function getAttributeFamilyRepository(): AttributeFamilyRepository
     {
-        return $this->registry
-            ->getManagerForClass(AttributeFamily::class)
-            ->getRepository(AttributeFamily::class);
+        return $this->doctrine->getRepository(AttributeFamily::class);
     }
 }

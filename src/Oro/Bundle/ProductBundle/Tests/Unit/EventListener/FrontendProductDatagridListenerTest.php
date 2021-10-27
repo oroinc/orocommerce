@@ -18,20 +18,16 @@ class FrontendProductDatagridListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var FrontendProductDatagridListener
-     */
-    protected $listener;
+    private const NO_IMAGE_PATH = '/path/no_image.jpg';
 
-    /**
-     * @var DataGridThemeHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $themeHelper;
+    /** @var DataGridThemeHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $themeHelper;
 
-    /**
-     * @var ImagePlaceholderProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $imagePlaceholderProvider;
+    /** @var ImagePlaceholderProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $imagePlaceholderProvider;
+
+    /** @var FrontendProductDatagridListener */
+    private $listener;
 
     protected function setUp(): void
     {
@@ -46,11 +42,8 @@ class FrontendProductDatagridListenerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider onPreBuildDataProvider
-     *
-     * @param string $themeName
-     * @param array $expectedConfig
      */
-    public function testOnPreBuild($themeName, array $expectedConfig)
+    public function testOnPreBuild(string $themeName, array $expectedConfig)
     {
         $gridName = 'grid-name';
         $this->themeHelper->expects($this->any())
@@ -66,9 +59,8 @@ class FrontendProductDatagridListenerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     * @return array
      */
-    public function onPreBuildDataProvider()
+    public function onPreBuildDataProvider(): array
     {
         return [
             'list'  => [
@@ -79,6 +71,10 @@ class FrontendProductDatagridListenerTest extends \PHPUnit\Framework\TestCase
                         'product_units' => [
                             'type' => 'field',
                             'frontend_type' => 'row_array',
+                        ],
+                        'hasImage' => [
+                            'type' => 'field',
+                            'frontend_type' => 'boolean',
                         ]
                     ],
                     'columns' => [
@@ -99,6 +95,10 @@ class FrontendProductDatagridListenerTest extends \PHPUnit\Framework\TestCase
                             'type'      => LocalizedValueProperty::NAME,
                             'data_name' => 'shortDescriptions',
                         ],
+                        'hasImage' => [
+                            'type' => 'field',
+                            'frontend_type' => 'boolean',
+                        ]
                     ],
                     'columns'    => [
                         'image'            => ['label' => 'oro.product.image.label'],
@@ -114,6 +114,10 @@ class FrontendProductDatagridListenerTest extends \PHPUnit\Framework\TestCase
                         'product_units' => [
                             'type'          => 'field',
                             'frontend_type' => 'row_array',
+                        ],
+                        'hasImage' => [
+                            'type' => 'field',
+                            'frontend_type' => 'boolean',
                         ]
                     ],
                     'columns'    => [
@@ -127,38 +131,21 @@ class FrontendProductDatagridListenerTest extends \PHPUnit\Framework\TestCase
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @dataProvider onResultAfterDataProvider
-     *
-     * @param string $themeName
-     * @param array $data
-     * @param array $expectedData
      */
-    public function testOnResultAfter(
-        $themeName,
-        array $data,
-        array $expectedData
-    ) {
+    public function testOnResultAfter(string $themeName, array $data, array $expectedData)
+    {
         $records = [];
         foreach ($data as $record) {
             $records[] = new ResultRecord($record);
         }
 
-        /**
-         * @var SearchResultAfter|\PHPUnit\Framework\MockObject\MockObject $event
-         */
-        $event = $this->getMockBuilder(SearchResultAfter::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $event = $this->createMock(SearchResultAfter::class);
         $event->expects($this->once())
             ->method('getRecords')
             ->willReturn($records);
 
-        /**
-         * @var Datagrid|\PHPUnit\Framework\MockObject\MockObject $datagrid
-         */
-        $datagrid = $this->getMockBuilder(Datagrid::class)
-            ->disableOriginalConstructor()->getMock();
-
         $gridName = 'grid-name';
+        $datagrid = $this->createMock(Datagrid::class);
         $datagrid->expects($this->once())
             ->method('getName')
             ->willReturn($gridName);
@@ -170,7 +157,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit\Framework\TestCase
         $this->imagePlaceholderProvider->expects($this->any())
             ->method('getPath')
             ->with('product_medium')
-            ->willReturn('/some/test/url.png');
+            ->willReturn(self::NO_IMAGE_PATH);
 
         $event->expects($this->once())
             ->method('getDatagrid')
@@ -178,18 +165,17 @@ class FrontendProductDatagridListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->listener->onResultAfter($event);
         foreach ($expectedData as $expectedRecord) {
+            /** @var ResultRecord $record */
             $record = current($records);
             $this->assertEquals($expectedRecord['id'], $record->getValue('id'));
+            $this->assertSame($expectedRecord['hasImage'], $record->getValue('hasImage'));
             $this->assertEquals($expectedRecord['image'], $record->getValue('image'));
             $this->assertEquals($expectedRecord['expectedUnits'], $record->getValue('product_units'));
             next($records);
         }
     }
 
-    /**
-     * @return array
-     */
-    public function onResultAfterDataProvider()
+    public function onResultAfterDataProvider(): array
     {
         return [
             [
@@ -211,6 +197,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit\Framework\TestCase
                 'expectedData' => [
                     [
                         'id'            => 1,
+                        'hasImage'      => true,
                         'image'         => '/image/1/medium',
                         'expectedUnits' => [
                             'each' => 3,
@@ -219,13 +206,15 @@ class FrontendProductDatagridListenerTest extends \PHPUnit\Framework\TestCase
                     ],
                     [
                         'id'            => 2,
-                        'image'         => '/some/test/url.png',
+                        'hasImage'      => false,
+                        'image'         => self::NO_IMAGE_PATH,
                         'expectedUnits' => [
                             'bottle' => 0
                         ]
                     ],
                     [
                         'id'            => 3,
+                        'hasImage'      => true,
                         'image'         => '/image/3/medium',
                         'expectedUnits' => []
                     ],
@@ -249,16 +238,19 @@ class FrontendProductDatagridListenerTest extends \PHPUnit\Framework\TestCase
                 'expectedData' => [
                     [
                         'id'            => 1,
+                        'hasImage'      => true,
                         'image'         => '/image/1/medium',
                         'expectedUnits' => []
                     ],
                     [
                         'id'            => 2,
-                        'image'         => '/some/test/url.png',
+                        'hasImage'      => false,
+                        'image'         => self::NO_IMAGE_PATH,
                         'expectedUnits' => []
                     ],
                     [
                         'id'            => 3,
+                        'hasImage'      => true,
                         'image'         => '/image/3/medium',
                         'expectedUnits' => []
                     ],
@@ -269,23 +261,16 @@ class FrontendProductDatagridListenerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider themesWithoutImageDataProvider
-     *
-     * @param string $themeName
      */
-    public function testOnResultAfterViewWithoutImage($themeName)
+    public function testOnResultAfterViewWithoutImage(string $themeName)
     {
-        /** @var SearchResultAfter|\PHPUnit\Framework\MockObject\MockObject $event */
-        $event = $this->getMockBuilder(SearchResultAfter::class)
-            ->disableOriginalConstructor()->getMock();
+        $event = $this->createMock(SearchResultAfter::class);
         $event->expects($this->once())
             ->method('getRecords')
             ->willReturn([]);
 
-        /** @var Datagrid|\PHPUnit\Framework\MockObject\MockObject $datagrid */
-        $datagrid = $this->getMockBuilder(Datagrid::class)
-            ->disableOriginalConstructor()->getMock();
-
         $gridName = 'grid-name';
+        $datagrid = $this->createMock(Datagrid::class);
         $datagrid->expects($this->once())
             ->method('getName')
             ->willReturn($gridName);
@@ -301,10 +286,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->onResultAfter($event);
     }
 
-    /**
-     * @return array
-     */
-    public function themesWithoutImageDataProvider()
+    public function themesWithoutImageDataProvider(): array
     {
         return [
             ['themeName' => DataGridThemeHelper::VIEW_LIST],
