@@ -1,6 +1,7 @@
 @regression
 @ticket-BB-20395
 @fixture-OroProductBundle:products.yml
+@pricing-storage-combined
 
 Feature: Price list rules rounding
   In order to control price generation based on a price rule
