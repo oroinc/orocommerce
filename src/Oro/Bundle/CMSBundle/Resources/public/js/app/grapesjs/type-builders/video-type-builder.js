@@ -36,7 +36,8 @@ const VideoTypeBuilder = BaseTypeBuilder.extend({
 
                 if (el.tagName === 'VIDEO' || (el.tagName === 'IFRAME' && isExtProv)) {
                     result = {
-                        type: 'video'
+                        type: 'video',
+                        initial: true
                     };
 
                     if (el.src) {
@@ -155,8 +156,10 @@ const VideoTypeBuilder = BaseTypeBuilder.extend({
             },
             view: {
                 onRender() {
-                    this.em.removeSelected();
-                    this.em.addSelected(this.el);
+                    if (!this.model.get('initial')) {
+                        this.em.removeSelected();
+                        this.em.addSelected(this.el);
+                    }
                     return this;
                 },
 
