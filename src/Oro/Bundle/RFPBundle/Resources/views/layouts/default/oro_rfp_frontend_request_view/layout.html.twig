@@ -191,6 +191,8 @@
                         <td class="grid-cell">
                             {% if requestProductItem.price %}
                                 {{ requestProductItem.price|oro_format_price }}
+                            {% else %}
+                                <span class="blank-value">{{ 'oro.datagrid.cell.blank.placeholder'|trans }}</span>
                             {% endif %}
                         </td>
                     </tr>

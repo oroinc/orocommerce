@@ -17,9 +17,9 @@ Feature: Shopping List Line Items
     And I click "Shopping List Actions"
     When I click "Edit"
     And I should see following grid:
-      | SKU | QtyUpdate All |
-      | AA1 | 1 set         |
-      | AA1 | 2 item        |
+      | SKU | Qty Update All |
+      | AA1 | 1 set          |
+      | AA1 | 2 item         |
     And I click on "Shopping List Line Item 1 Quantity"
     And I fill "Shopping List Line Item Form" with:
       | Quantity | 3    |
@@ -27,8 +27,8 @@ Feature: Shopping List Line Items
     And I click on "Shopping List Line Item 1 Save Changes Button"
     Then I should see "ShoppingListProductTableRowSuccess" element inside "Frontend Shopping List Edit Grid" element
     And I should see following grid:
-      | SKU | QtyUpdate All |
-      | AA1 | 5 item        |
+      | SKU | Qty Update All |
+      | AA1 | 5 item         |
 
   Scenario: Check edit permission for line item
     When I proceed as the Admin

@@ -1,4 +1,4 @@
-@regression
+ @regression
 @ticket-BB-10500
 @fixture-OroShoppingListBundle:MatrixForms.yml
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
@@ -249,8 +249,8 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     Then I should see "Shopping list \"Source Shopping List\" was updated successfully"
     When I follow "Source Shopping List" link within flash message "Shopping list \"Source Shopping List\" was updated successfully"
     Then I should see following grid:
-      | SKU  | Item                 | QtyUpdate All                   | Price  | Subtotal |
-      | CNFB | ConfigurableProductB | Click "edit" to select variants |        | N/A      |
+      | SKU  | Item                 | Qty Update All                  | Price | Subtotal |
+      | CNFB | ConfigurableProductB | Click "edit" to select variants |       |          |
     And I click on "First Line Item Row Checkbox"
     And I click "Move to another Shopping List" link from mass action dropdown
     And I click "Filter Toggle" in "UiDialog" element
@@ -264,8 +264,8 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I click "Yes, delete"
     And I open page with shopping list "Shopping List"
     Then I should see following grid:
-      | SKU  | Item                 | QtyUpdate All                   | Price  | Subtotal |
-      | CNFB | ConfigurableProductB | Click "edit" to select variants |        | N/A      |
+      | SKU  | Item                 | Qty Update All                  | Price  | Subtotal |
+      | CNFB | ConfigurableProductB | Click "edit" to select variants |        |          |
 
   Scenario: Order empty matrix form
     When I click Edit CNFB in grid
@@ -300,7 +300,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I click view Shopping List in grid
     Then I should see following grid:
       | SKU  | Item                 | Qty | Unit                            | Price  | Subtotal |
-      | CNFB | ConfigurableProductB |     | Click "edit" to select variants |        | N/A      |
+      | CNFB | ConfigurableProductB |     | Click "edit" to select variants |        |          |
 
   Scenario: Create request for quote with empty matrix form
     When I click "Shopping List Actions"
@@ -348,13 +348,13 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       | Value 14 | -        | -        | 1        |
     And I click "Accept"
     Then I should see following grid:
-      | SKU       | Item                                                             |          | QtyUpdate All | Price  | Subtotal |
-      | SKU123    | 400-Watt Bulb Work Light                                         | In Stock | 5 item        | $2.00  | $10.00   |
-      | PROD_B_11 | ConfigurableProductB Attribute 1: Value 11 Attribute 2: Value 21 | In Stock | 1 item        | $12.00 | $12.00   |
-      | PROD_B_12 | ConfigurableProductB Attribute 1: Value 11 Attribute 2: Value 22 | In Stock | 1 item        | $12.00 | $12.00   |
-      | PROD_B_21 | ConfigurableProductB Attribute 1: Value 12 Attribute 2: Value 21 | In Stock | 1 item        | $12.00 | $12.00   |
-      | PROD_B_23 | ConfigurableProductB Attribute 1: Value 12 Attribute 2: Value 23 | In Stock | 1 item        | $12.00 | $12.00   |
-      | PROD_B_43 | ConfigurableProductB Attribute 1: Value 14 Attribute 2: Value 23 | In Stock | 1 item        | $12.00 | $12.00   |
+      | SKU       | Item                                                             |          | Qty Update All | Price  | Subtotal |
+      | SKU123    | 400-Watt Bulb Work Light                                         | In Stock | 5 item         | $2.00  | $10.00   |
+      | PROD_B_11 | ConfigurableProductB Attribute 1: Value 11 Attribute 2: Value 21 | In Stock | 1 item         | $12.00 | $12.00   |
+      | PROD_B_12 | ConfigurableProductB Attribute 1: Value 11 Attribute 2: Value 22 | In Stock | 1 item         | $12.00 | $12.00   |
+      | PROD_B_21 | ConfigurableProductB Attribute 1: Value 12 Attribute 2: Value 21 | In Stock | 1 item         | $12.00 | $12.00   |
+      | PROD_B_23 | ConfigurableProductB Attribute 1: Value 12 Attribute 2: Value 23 | In Stock | 1 item         | $12.00 | $12.00   |
+      | PROD_B_43 | ConfigurableProductB Attribute 1: Value 14 Attribute 2: Value 23 | In Stock | 1 item         | $12.00 | $12.00   |
     When I click "Create Order"
     Then I should not see "Confirmation This shopping list contains configurable products with no variations. Proceed to checkout without these products?"
     And I should see "Checkout"

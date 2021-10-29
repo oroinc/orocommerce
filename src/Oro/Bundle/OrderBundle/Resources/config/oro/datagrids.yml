@@ -83,7 +83,7 @@ datagrids:
                 label:         oro.order.payment_status.label
                 type:          twig
                 frontend_type: html
-                template:      'OroOrderBundle:Order:Datagrid/paymentStatus.html.twig'
+                template:      'OroOrderBundle:Order:Datagrid/frontendPaymentStatus.html.twig'
             #Hidden fields goes next
             poNumber:
                 label:         oro.order.po_number.label
@@ -107,7 +107,7 @@ datagrids:
                 label:         oro.order.shipping_method.label
                 type:          twig
                 frontend_type: html
-                template:      'OroOrderBundle:Order:Datagrid/shippingMethodFull.html.twig'
+                template:      'OroOrderBundle:Order:Datagrid/frontendShippingMethodFull.html.twig'
                 renderable:    false
             updatedAt:
                 label:         oro.ui.updated_at

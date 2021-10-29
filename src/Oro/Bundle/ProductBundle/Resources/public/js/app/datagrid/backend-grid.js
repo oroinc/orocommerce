@@ -292,6 +292,13 @@ define(function(require, exports, module) {
             pageStateChecker.removeChecker(this.hasSelections);
             BackendGrid.__super__.dispose.call(this);
             $(window).off('.' + this.cid);
+        },
+
+        /**
+         * @inheritDoc
+         */
+        setGridAriaAttrs() {
+            // Nothing to reuse
         }
     });
 
