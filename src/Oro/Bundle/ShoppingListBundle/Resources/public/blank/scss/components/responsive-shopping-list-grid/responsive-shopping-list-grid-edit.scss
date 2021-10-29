@@ -115,23 +115,11 @@
                 padding-top: $responsive-shopping-sub-row-cell-inner-offset;
             }
         }
-
-        // Need to increase weight of selector
-        .action.stretched .icon::before {
-            // Line height is equal to a image height
-            line-height: $responsive-shopping-list-edit-action-in-desktop-height;
-        }
     }
 }
 
 @include breakpoint('tablet') {
     .responsive-shopping-list-grid-edit {
-        // Need to increase weight of selector
-        .action.stretched .icon::before {
-            // Line height is equal to a row line item height
-            line-height: $responsive-shopping-list-edit-action-in-tablet-height;
-        }
-
         .grid-row {
             .grid-body-cell {
                 &-price,
@@ -215,15 +203,19 @@
             align-self: flex-start;
             width: $responsive-shopping-list-edit-action-cell-width-mobile;
             padding-left: 0;
+            padding-right: 0;
             margin: 0;
         }
 
         .grid-row {
             .grid-body-cell {
                 &-price,
-                &-subtotal,
-                &.action-cell {
+                &-subtotal {
                     padding-top: $responsive-shopping-body-cell-offset-y-mobile;
+                }
+
+                &.action-cell {
+                    padding-top: $responsive-shopping-body-cell-action-offset-y-mobile;
                 }
             }
         }
@@ -343,12 +335,6 @@
                 $responsive-shopping-grid-row-offset-mobile +
                 $responsive-shopping-body-cell-offset-y-mobile +
                 $responsive-shopping-list-edit-select-row-cell-height-mobile / 2;
-        }
-
-        // Need to increase weight of selector
-        .action.stretched .icon::before {
-            // Line height is equal to a image height
-            line-height: $responsive-shopping-list-edit-action-in-mobile-height;
         }
     }
 }

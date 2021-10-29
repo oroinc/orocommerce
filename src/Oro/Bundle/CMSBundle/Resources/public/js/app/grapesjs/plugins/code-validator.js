@@ -132,7 +132,10 @@ const CodeValidator = BaseClass.extend({
             className: 'modal oro-modal-danger editor-lock-overlay',
             allowClose: false,
             allowCancel: false,
-            okButtonClass: 'btn btn-danger open-code-editor'
+            okButtonClass: 'btn btn-danger open-code-editor',
+            attributes: {
+                role: 'alertdialog'
+            }
         });
 
         this.lockOverlay.$el.appendTo(this.editor.getEl());

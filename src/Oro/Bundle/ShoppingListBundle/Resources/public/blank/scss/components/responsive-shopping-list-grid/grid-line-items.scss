@@ -62,13 +62,9 @@
 
     &__edit-notes {
         display: inline-flex;
-        margin-left: $offset-x-m;
+        justify-content: center;
+        margin-left: $offset-x-s;
         color: $launcher-item-icon-color;
-
-        @include hover-focus {
-            text-decoration: none;
-            color: $launcher-item-icon-hover-focus-color;
-        }
     }
 
     &__ellipsis {

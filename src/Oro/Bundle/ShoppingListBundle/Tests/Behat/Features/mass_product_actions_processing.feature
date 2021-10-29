@@ -56,9 +56,9 @@ Feature: Mass Product Actions processing
     When I hover on "Shopping Cart"
     And I click "Shopping List of Amanda" on shopping list widget
     Then I should see following grid:
-      | SKU   | QtyUpdate All |
-      | PSKU1 | 10 set        |
-      | PSKU2 | 15 item       |
+      | SKU   | Qty Update All |
+      | PSKU1 | 10 set         |
+      | PSKU2 | 15 item        |
 
   Scenario: "Add to Shopping List of Amanda" mass action on the category list view
     Given I proceed as the User
@@ -74,10 +74,10 @@ Feature: Mass Product Actions processing
     When I hover on "Shopping Cart"
     And I click "Shopping List of Amanda" on shopping list widget
     Then I should see following grid:
-      | SKU   | QtyUpdate All |
-      | PSKU1 | 10 set        |
-      | PSKU2 | 15 item       |
-      | PSKU3 | 7 set         |
+      | SKU   | Qty Update All |
+      | PSKU1 | 10 set         |
+      | PSKU2 | 15 item        |
+      | PSKU3 | 7 set          |
 
   Scenario: Should be possible to check mass action checkbox on All products page
     Given I proceed as the User
