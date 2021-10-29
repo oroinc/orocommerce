@@ -102,6 +102,8 @@
         }
 
         &__description {
+            @include line-clamp();
+
             &--list-view {
                 font-size: $base-font-size;
                 line-height: $base-line-height;

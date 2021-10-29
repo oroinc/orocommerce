@@ -70,7 +70,8 @@
 
 {% block __oro_product_grid__product_image_holder_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " product-item__image-holder product-item__image-holder--{{ class_prefix }}"
+        '~class': " product-item__image-holder product-item__image-holder--{{ class_prefix }}",
+        'data-page-component-init-on': 'click,focusin'
     }) %}
 
     <div {{ block('block_attributes') }}>
@@ -146,7 +147,7 @@
 
     <h2 {{ block('block_attributes') }}>
         <a href="{{ product.view_link }}"
-           class="view-product"{% if 'gallery-view' in class_prefix %} data-page-component-line-clamp{% endif %}
+           class="view-product{% if 'gallery-view' in class_prefix %} line-clamp{% endif %}"
            itemprop="url"
            title="{{ block('container_widget')|trim|raw }}"
         >
@@ -188,7 +189,8 @@
 
     {% if not is_configurable_product_type(product.type) %}
         <div {{ block('block_attributes') }}>
-            <div data-page-component-module="oroproduct/js/app/datagrid/cell/backend-select-row-cell"></div>
+            <div data-page-component-init-on="asap"
+                 data-page-component-module="oroproduct/js/app/datagrid/cell/backend-select-row-cell"></div>
         </div>
     {% endif %}
 {% endblock %}
