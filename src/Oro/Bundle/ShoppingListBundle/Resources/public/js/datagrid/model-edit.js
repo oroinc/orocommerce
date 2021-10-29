@@ -72,11 +72,11 @@ const ShoppingListEditItemModel = ShoppingListModel.extend({
     },
 
     getMinimumQuantity() {
-        return this.get('minimumQuantityToOrder') ? this.get('minimumQuantityToOrder') : 0;
+        return this.get('minimumQuantityToOrder') || 0;
     },
 
     getMaximumQuantity() {
-        return this.get('maximumQuantityToOrder') ? this.get('maximumQuantityToOrder') : 1000000000;
+        return this.get('maximumQuantityToOrder') || 1000000000;
     }
 });
 
