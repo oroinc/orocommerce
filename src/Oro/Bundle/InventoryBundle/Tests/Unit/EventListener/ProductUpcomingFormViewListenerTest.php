@@ -10,9 +10,7 @@ use Twig\Environment;
 
 class ProductUpcomingFormViewListenerTest extends AbstractFallbackFieldsFormViewTest
 {
-    /**
-     * @var ProductUpcomingFormViewListener
-     */
+    /** @var ProductUpcomingFormViewListener */
     protected $fallbackFieldsFormView;
 
     protected function setUp(): void
@@ -29,21 +27,31 @@ class ProductUpcomingFormViewListenerTest extends AbstractFallbackFieldsFormView
     public function testOnProductView()
     {
         $env = $this->createMock(Environment::class);
-        $env->expects($this->once())->method('render')->willReturn('Rendered template');
-        $this->event->expects($this->once())->method('getEnvironment')->willReturn($env);
+        $env->expects($this->once())
+            ->method('render')
+            ->willReturn('Rendered template');
+        $this->event->expects($this->once())
+            ->method('getEnvironment')
+            ->willReturn($env);
 
         $this->scrollData->expects($this->once())
             ->method('addSubBlockData')
             ->with('test block id', 0, 'Rendered template');
 
-        $this->event->expects($this->once())->method('getScrollData')->willReturn($this->scrollData);
-        $this->event->expects($this->once())->method('getEntity')->willReturn(new Product());
+        $this->event->expects($this->once())
+            ->method('getScrollData')
+            ->willReturn($this->scrollData);
+        $this->event->expects($this->once())
+            ->method('getEntity')
+            ->willReturn(new Product());
 
-        $this->scrollData->expects($this->once())->method('getData')->willReturn([
-            ScrollData::DATA_BLOCKS => [
-                'test block id' => [ScrollData::TITLE => 'oro.product.sections.inventory.trans']
-            ]
-        ]);
+        $this->scrollData->expects($this->once())
+            ->method('getData')
+            ->willReturn([
+                ScrollData::DATA_BLOCKS => [
+                    'test block id' => [ScrollData::TITLE => 'oro.product.sections.inventory.trans']
+                ]
+            ]);
 
         $this->fallbackFieldsFormView->onProductView($this->event);
     }
@@ -51,14 +59,23 @@ class ProductUpcomingFormViewListenerTest extends AbstractFallbackFieldsFormView
     public function testOnProductEdit()
     {
         $env = $this->getMockBuilder(Environment::class)->disableOriginalConstructor()->getMock();
-        $env->expects($this->once())->method('render')->willReturn('Rendered template');
+        $env->expects($this->once())
+            ->method('render')
+            ->willReturn('Rendered template');
 
-        $this->event->expects($this->once())->method('getEnvironment')->willReturn($env);
-        $this->scrollData->expects($this->once())->method('getData')->willReturn(
-            ['dataBlocks' => [1 => ['title' => 'oro.product.sections.inventory.trans']]]
-        );
-        $this->scrollData->expects($this->once())->method('addSubBlockData');
-        $this->event->expects($this->once())->method('getScrollData')->willReturn($this->scrollData);
+        $this->event->expects($this->once())
+            ->method('getEnvironment')
+            ->willReturn($env);
+        $this->scrollData->expects($this->once())
+            ->method('getData')
+            ->willReturn(
+                ['dataBlocks' => [1 => ['title' => 'oro.product.sections.inventory.trans']]]
+            );
+        $this->scrollData->expects($this->once())
+            ->method('addSubBlockData');
+        $this->event->expects($this->once())
+            ->method('getScrollData')
+            ->willReturn($this->scrollData);
 
         $this->fallbackFieldsFormView->onProductEdit($this->event);
     }

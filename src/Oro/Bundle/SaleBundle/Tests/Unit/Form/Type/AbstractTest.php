@@ -5,7 +5,6 @@ namespace Oro\Bundle\SaleBundle\Tests\Unit\Form\Type;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
-use Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type\PriceTypeGenerator;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerUserMultiSelectType;
@@ -31,59 +30,46 @@ use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
 use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntityValidator;
 use Symfony\Component\Form\FormTypeInterface;
 
 abstract class AbstractTest extends FormIntegrationTestCase
 {
-    const QP_TYPE1          = QuoteProduct::TYPE_REQUESTED;
-    const QPO_PRICE_TYPE1   = QuoteProductOffer::PRICE_TYPE_UNIT;
+    protected const QP_TYPE1 = QuoteProduct::TYPE_REQUESTED;
+    protected const QPO_PRICE_TYPE1 = QuoteProductOffer::PRICE_TYPE_UNIT;
 
-    /**
-     * @var FormTypeInterface
-     */
+    /** @var FormTypeInterface */
     protected $formType;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|QuoteProductFormatter
-     */
+    /** @var QuoteProductFormatter|\PHPUnit\Framework\MockObject\MockObject */
     protected $quoteProductFormatter;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|QuoteProductOfferFormatter
-     */
+    /** @var QuoteProductOfferFormatter|\PHPUnit\Framework\MockObject\MockObject */
     protected $quoteProductOfferFormatter;
 
     protected function configureQuoteProductOfferFormatter()
     {
-        $this->quoteProductFormatter = $this->getMockBuilder(
-            'Oro\Bundle\SaleBundle\Formatter\QuoteProductFormatter'
-        )
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
-
-        $this->quoteProductFormatter
+        $this->quoteProductFormatter = $this->createMock(QuoteProductFormatter::class);
+        $this->quoteProductFormatter->expects(self::any())
             ->method('formatTypeLabels')
             ->willReturnArgument(0);
 
         $this->quoteProductOfferFormatter = $this->createMock(QuoteProductOfferFormatter::class);
-
         $this->quoteProductOfferFormatter->expects(self::any())
             ->method('formatPriceTypeLabels')
             ->willReturnArgument(0);
     }
 
     /**
-     * @param bool $isValid
-     * @param array $submittedData
-     * @param mixed $expectedData
-     * @param mixed $defaultData
-     * @param array $options
-     *
      * @dataProvider submitProvider
      */
-    public function testSubmit($isValid, $submittedData, $expectedData, $defaultData = null, $options = [])
-    {
+    public function testSubmit(
+        bool $isValid,
+        array $submittedData,
+        mixed $expectedData,
+        mixed $defaultData = null,
+        array $options = []
+    ) {
         $form = $this->factory->create(get_class($this->formType), $defaultData, $options);
 
         self::assertEquals($defaultData, $form->getData());
@@ -96,10 +82,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
         self::assertEquals($expectedData, $form->getData());
     }
 
-    /**
-     * @return array
-     */
-    abstract public function submitProvider();
+    abstract public function submitProvider(): array;
 
     /**
      * {@inheritdoc}
@@ -108,8 +91,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
     {
         $quoteProductConstraint = new Constraints\QuoteProduct();
 
-        $UniqueEntity = $this->getMockBuilder('Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntityValidator')
-        ->disableOriginalConstructor()->getMock();
+        $UniqueEntity = $this->createMock(UniqueEntityValidator::class);
 
         $quantityUnitPrecision = new QuantityUnitPrecision();
         $roundingService = $this->createMock(RoundingServiceInterface::class);
@@ -126,55 +108,41 @@ abstract class AbstractTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * @return QuoteProductOfferType
-     */
-    protected function prepareQuoteProductOfferType()
+    protected function prepareQuoteProductOfferType(): QuoteProductOfferType
     {
         $quoteProductOfferType = new QuoteProductOfferType($this->quoteProductOfferFormatter);
-        $quoteProductOfferType->setDataClass('Oro\Bundle\SaleBundle\Entity\QuoteProductOffer');
+        $quoteProductOfferType->setDataClass(QuoteProductOffer::class);
 
         return $quoteProductOfferType;
     }
 
-    /**
-     * @return QuoteProductRequestType
-     */
-    protected function prepareQuoteProductRequestType()
+    protected function prepareQuoteProductRequestType(): QuoteProductRequestType
     {
         $quoteProductRequestType = new QuoteProductRequestType();
-        $quoteProductRequestType->setDataClass('Oro\Bundle\SaleBundle\Entity\QuoteProductRequest');
+        $quoteProductRequestType->setDataClass(QuoteProductRequest::class);
 
         return $quoteProductRequestType;
     }
 
-    /**
-     * @return PriceType
-     */
-    protected function preparePriceType()
+    protected function preparePriceType(): PriceType
     {
-        return PriceTypeGenerator::createPriceType($this);
+        $priceType = new PriceType();
+        $priceType->setDataClass(Price::class);
+
+        return $priceType;
     }
 
-    /**
-     * @return EntityType
-     */
-    protected function prepareProductEntityType()
+    protected function prepareProductEntityType(): EntityType
     {
-        $entityType = new EntityType(
+        return new EntityType(
             [
                 2 => $this->getEntity(Product::class, 2),
                 3 => $this->getEntity(Product::class, 3),
             ]
         );
-
-        return $entityType;
     }
 
-    /**
-     * @return EntityType
-     */
-    protected function prepareUserMultiSelectType()
+    protected function prepareUserMultiSelectType(): EntityType
     {
         return new EntityType(
             [
@@ -188,10 +156,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
         );
     }
 
-    /**
-     * @return EntityType
-     */
-    protected function prepareCustomerUserMultiSelectType()
+    protected function prepareCustomerUserMultiSelectType(): EntityType
     {
         return new EntityType(
             [
@@ -207,12 +172,12 @@ abstract class AbstractTest extends FormIntegrationTestCase
 
     /**
      * @param array $codes
+     *
      * @return ProductUnit[]
      */
-    protected function getProductUnits(array $codes)
+    protected function getProductUnits(array $codes): array
     {
         $res = [];
-
         foreach ($codes as $code) {
             $res[] = (new ProductUnit())->setCode($code);
         }
@@ -223,7 +188,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
     /**
      * @return ProductUnitPrecision[]
      */
-    protected function getProductUnitPrecisions()
+    protected function getProductUnitPrecisions(): array
     {
         return [
             (new ProductUnitPrecision())->setUnit((new ProductUnit())->setCode('kg')),
@@ -231,10 +196,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * @return EntityType
-     */
-    protected function prepareProductUnitSelectionType()
+    protected function prepareProductUnitSelectionType(): EntityType
     {
         return new ProductUnitSelectionTypeStub(
             [
@@ -244,13 +206,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
         );
     }
 
-    /**
-     * @param string $className
-     * @param int $id
-     * @param string $primaryKey
-     * @return object
-     */
-    protected function getEntity($className, $id, $primaryKey = 'id')
+    protected function getEntity(string $className, int|string $id, string $primaryKey = 'id'): object
     {
         static $entities = [];
         if (!isset($entities[$className][$id])) {
@@ -261,46 +217,17 @@ abstract class AbstractTest extends FormIntegrationTestCase
         return $entities[$className][$id];
     }
 
-    /**
-     * @param string $className
-     * @param array $fields
-     * @return \PHPUnit\Framework\MockObject\MockObject
-     */
-    protected function getMockEntity($className, array $fields = [])
-    {
-        $mock = $this->getMockBuilder($className)
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
-
-        foreach ($fields as $method => $value) {
-            $mock->expects(self::any())
-                ->method($method)
-                ->willReturn($value);
-        }
-
-        return $mock;
-    }
-
-    /**
-     * @param int $id
-     * @return User
-     */
-    protected function getUser($id)
+    protected function getUser(int $id): User
     {
         return $this->getEntity(User::class, $id);
     }
 
-    /**
-     * @param int $id
-     * @return CustomerUser
-     */
-    protected function getCustomerUser($id)
+    protected function getCustomerUser(int $id): CustomerUser
     {
-        $organization = $this->getMockBuilder(OrganizationInterface::class)->getMock();
+        $organization = $this->createMock(OrganizationInterface::class);
         $role = $this->createMock(Role::class);
 
-        $customer = $this->getMockBuilder(Customer::class)->getMock();
+        $customer = $this->createMock(Customer::class);
 
         /** @var CustomerUser $customerUser */
         $customerUser = $this->getEntity(CustomerUser::class, $id);
@@ -316,22 +243,23 @@ abstract class AbstractTest extends FormIntegrationTestCase
     }
 
     /**
-     * @param int $productId
-     * @param int $type
-     * @param string $comment
-     * @param string $commentCustomer
+     * @param int                   $productId
+     * @param int                   $type
+     * @param string                $comment
+     * @param string                $commentCustomer
      * @param QuoteProductRequest[] $requests
-     * @param QuoteProductOffer[] $offers
+     * @param QuoteProductOffer[]   $offers
+     *
      * @return QuoteProduct
      */
     protected function getQuoteProduct(
-        $productId = null,
-        $type = null,
-        $comment = null,
-        $commentCustomer = null,
+        int $productId = null,
+        int $type = null,
+        string $comment = null,
+        string $commentCustomer = null,
         array $requests = [],
         array $offers = []
-    ) {
+    ): QuoteProduct {
         $product = null;
 
         if ($productId) {
@@ -348,8 +276,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
             ->setProduct($product)
             ->setType($type)
             ->setComment($comment)
-            ->setCommentCustomer($commentCustomer)
-        ;
+            ->setCommentCustomer($commentCustomer);
 
         foreach ($requests as $request) {
             $quoteProduct->addQuoteProductRequest($request);
@@ -362,21 +289,13 @@ abstract class AbstractTest extends FormIntegrationTestCase
         return $quoteProduct;
     }
 
-    /**
-     * @param int $productId
-     * @param float $quantity
-     * @param string $unitCode
-     * @param int $priceType
-     * @param Price $price
-     * @return QuoteProductOffer
-     */
     protected function getQuoteProductOffer(
-        $productId = null,
-        $quantity = null,
-        $unitCode = null,
-        $priceType = null,
+        int $productId = null,
+        float $quantity = null,
+        string $unitCode = null,
+        int $priceType = null,
         Price $price = null
-    ) {
+    ): QuoteProductOffer {
         $quoteProductOffer = new QuoteProductOffer();
         $quoteProductOffer->setQuoteProduct($this->getQuoteProduct($productId));
 
@@ -399,19 +318,12 @@ abstract class AbstractTest extends FormIntegrationTestCase
         return $quoteProductOffer;
     }
 
-    /**
-     * @param int $productId
-     * @param float $quantity
-     * @param string $unitCode
-     * @param Price $price
-     * @return QuoteProductOffer
-     */
     protected function getQuoteProductRequest(
-        $productId = null,
-        $quantity = null,
-        $unitCode = null,
+        int $productId = null,
+        float $quantity = null,
+        string $unitCode = null,
         Price $price = null
-    ) {
+    ): QuoteProductRequest {
         $quoteProductRequest = new QuoteProductRequest();
         $quoteProductRequest->setQuoteProduct($this->getQuoteProduct($productId));
 

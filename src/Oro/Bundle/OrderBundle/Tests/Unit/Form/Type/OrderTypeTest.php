@@ -7,7 +7,6 @@ use Oro\Bundle\CurrencyBundle\Entity\MultiCurrency;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
-use Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type\PriceTypeGenerator;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerSelectType;
@@ -73,19 +72,19 @@ class OrderTypeTest extends TypeTestCase
     private $type;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|TotalProcessorProvider */
-    protected $totalsProvider;
+    private $totalsProvider;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|LineItemSubtotalProvider */
-    protected $lineItemSubtotalProvider;
+    private $lineItemSubtotalProvider;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|DiscountSubtotalProvider */
-    protected $discountSubtotalProvider;
+    private $discountSubtotalProvider;
 
     /** @var PriceMatcher|\PHPUnit\Framework\MockObject\MockObject */
-    protected $priceMatcher;
+    private $priceMatcher;
 
     /** @var RateConverterInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $rateConverter;
+    private $rateConverter;
 
     /** @var NumberFormatter|\PHPUnit\Framework\MockObject\MockObject */
     private $numberFormatter;
@@ -145,11 +144,8 @@ class OrderTypeTest extends TypeTestCase
 
     /**
      * @dataProvider submitDataProvider
-     *
-     * @param $submitData
-     * @param Order $expectedOrder
      */
-    public function testSubmitValidData($submitData, $expectedOrder)
+    public function testSubmitValidData(array $submitData, Order $expectedOrder)
     {
         $order = new Order();
         $order->setTotalDiscounts(Price::create(99, 'USD'));
@@ -158,15 +154,15 @@ class OrderTypeTest extends TypeTestCase
             'data' => $order
         ];
 
-        $this->orderCurrencyHandler->expects($this->any())->method('setOrderCurrency');
+        $this->orderCurrencyHandler->expects($this->any())
+            ->method('setOrderCurrency');
 
         $form = $this->factory->create(OrderType::class, null, $options);
 
         $subtotal = new Subtotal();
         $subtotal->setAmount(99);
         $subtotal->setCurrency('USD');
-        $this->lineItemSubtotalProvider
-            ->expects($this->any())
+        $this->lineItemSubtotalProvider->expects($this->any())
             ->method('getSubtotal')
             ->willReturn($subtotal);
 
@@ -174,23 +170,18 @@ class OrderTypeTest extends TypeTestCase
         $total->setAmount(0);
         $total->setCurrency('USD');
 
-        $this->totalsProvider
-            ->expects($this->once())
+        $this->totalsProvider->expects($this->once())
             ->method('enableRecalculation')
             ->willReturnSelf();
-
-        $this->totalsProvider
-            ->expects($this->once())
+        $this->totalsProvider->expects($this->once())
             ->method('getTotal')
             ->willReturn($total);
 
-        $this->discountSubtotalProvider
-            ->expects($this->any())
+        $this->discountSubtotalProvider->expects($this->any())
             ->method('getSubtotal')
             ->willReturn([]);
 
-        $this->rateConverter
-            ->expects($this->exactly(2))
+        $this->rateConverter->expects($this->exactly(2))
             ->method('getBaseCurrencyAmount')
             ->willReturnCallback(function (MultiCurrency $value) {
                 return $value->getValue();
@@ -202,10 +193,7 @@ class OrderTypeTest extends TypeTestCase
         $this->assertEquals($expectedOrder, $form->getData());
     }
 
-    /**
-     * @return array
-     */
-    public function submitDataProvider()
+    public function submitDataProvider(): array
     {
         return [
             'valid data' => [
@@ -370,14 +358,7 @@ class OrderTypeTest extends TypeTestCase
         ];
     }
 
-    /**
-     * @param string $className
-     * @param int $id
-     * @param string $primaryKey
-     *
-     * @return object
-     */
-    protected function getEntity($className, $id, $primaryKey = 'id')
+    private function getEntity(string $className, int|string $id, string $primaryKey = 'id'): object
     {
         static $entities = [];
         if (!isset($entities[$className][$id])) {
@@ -388,25 +369,17 @@ class OrderTypeTest extends TypeTestCase
         return $entities[$className][$id];
     }
 
-    /**
-     * @return StubEntityType
-     */
-    protected function prepareProductEntityType()
+    private function prepareProductEntityType(): StubEntityType
     {
-        $entityType = new StubEntityType(
+        return new StubEntityType(
             [
                 2 => $this->getEntity(Product::class, 2),
                 3 => $this->getEntity(Product::class, 3),
             ]
         );
-
-        return $entityType;
     }
 
-    /**
-     * @return ProductUnitSelectionTypeStub
-     */
-    protected function prepareProductUnitSelectionType()
+    private function prepareProductUnitSelectionType(): ProductUnitSelectionTypeStub
     {
         return new ProductUnitSelectionTypeStub(
             [
@@ -416,19 +389,15 @@ class OrderTypeTest extends TypeTestCase
         );
     }
 
-    /**
-     * @return PriceType
-     */
-    protected function preparePriceType()
+    private function preparePriceType(): PriceType
     {
-        return PriceTypeGenerator::createPriceType($this);
+        $priceType = new PriceType();
+        $priceType->setDataClass(Price::class);
+
+        return $priceType;
     }
 
-    /**
-     * @param array $data
-     * @return Order
-     */
-    protected function getOrder($data)
+    private function getOrder(array $data): Order
     {
         $order = new Order();
         $accessor = PropertyAccess::createPropertyAccessor();
@@ -450,11 +419,7 @@ class OrderTypeTest extends TypeTestCase
         return $order;
     }
 
-    /**
-     * @param array $data
-     * @return OrderLineItem
-     */
-    protected function getLineItem($data)
+    private function getLineItem(array $data): OrderLineItem
     {
         $lineItem = new OrderLineItem();
         $accessor = PropertyAccess::createPropertyAccessor();

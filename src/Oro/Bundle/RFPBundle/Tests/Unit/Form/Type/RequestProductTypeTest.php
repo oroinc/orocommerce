@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
@@ -27,18 +28,13 @@ class RequestProductTypeTest extends AbstractTest
 {
     use QuantityTypeTrait;
 
-    /**
-     * @var RequestProductType
-     */
+    /** @var RequestProductType */
     protected $formType;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->formType = new RequestProductType();
-        $this->formType->setDataClass('Oro\Bundle\RFPBundle\Entity\RequestProduct');
+        $this->formType->setDataClass(RequestProduct::class);
 
         parent::setUp();
     }
@@ -57,7 +53,6 @@ class RequestProductTypeTest extends AbstractTest
 
                 return true;
             }));
-        ;
 
         $this->formType->configureOptions($resolver);
     }
@@ -94,10 +89,7 @@ class RequestProductTypeTest extends AbstractTest
         $this->assertEquals($expectedData, $view->vars);
     }
 
-    /**
-     * @return array
-     */
-    public function buildViewProvider()
+    public function buildViewProvider(): array
     {
         return [
             'test options' => [
@@ -117,11 +109,9 @@ class RequestProductTypeTest extends AbstractTest
     }
 
     /**
-     * @return array
-     *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function finishViewProvider()
+    public function finishViewProvider(): array
     {
         return [
             'empty request product' => [
@@ -209,30 +199,25 @@ class RequestProductTypeTest extends AbstractTest
         ];
     }
 
-    /**
-     * @param int $id
-     * @param array $units
-     * @return Product|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected function createProduct($id, array $units = [])
+    private function createProduct(int $id, array $units = []): Product
     {
-        $product = $this->getMockEntity(
-            'Oro\Bundle\ProductBundle\Entity\Product',
-            [
-                'getId' => $id,
-                'getAvailableUnitsPrecision' => $units,
-            ]
-        );
+        $product = $this->createMock(Product::class);
+        $product->expects(self::any())
+            ->method('getId')
+            ->willReturn($id);
+        $product->expects(self::any())
+            ->method('getAvailableUnitsPrecision')
+            ->willReturn($units);
 
         return $product;
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    public function submitProvider()
+    public function submitProvider(): array
     {
-        $requestProductItem = $this->getRequestProductItem(2, 10, 'kg', $this->createPrice(20, 'USD'));
+        $requestProductItem = $this->getRequestProductItem(2, 10, 'kg', Price::create(20, 'USD'));
 
         return [
             'empty form' => [
@@ -303,11 +288,11 @@ class RequestProductTypeTest extends AbstractTest
      */
     protected function getExtensions()
     {
-        $priceType                  = $this->preparePriceType();
-        $productSelectType          = $this->prepareProductSelectType();
-        $currencySelectionType      = new CurrencySelectionTypeStub();
-        $requestProductItemType     = $this->prepareRequestProductItemType();
-        $productUnitSelectionType   = $this->prepareProductUnitSelectionType();
+        $priceType = $this->preparePriceType();
+        $productSelectType = $this->prepareProductSelectType();
+        $currencySelectionType = new CurrencySelectionTypeStub();
+        $requestProductItemType = $this->prepareRequestProductItemType();
+        $productUnitSelectionType = $this->prepareProductUnitSelectionType();
 
         return [
             new PreloadedExtension(
@@ -327,7 +312,7 @@ class RequestProductTypeTest extends AbstractTest
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
     protected function getValidators()
     {
