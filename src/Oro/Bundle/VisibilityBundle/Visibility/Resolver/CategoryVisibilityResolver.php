@@ -21,7 +21,7 @@ use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository;
  */
 class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
 {
-    public const OPTION_CATEGORY_VISIBILITY = 'oro_visibility.category_visibility';
+    private const OPTION_CATEGORY_VISIBILITY = 'oro_visibility.category_visibility';
 
     /** @var ManagerRegistry */
     private $doctrine;

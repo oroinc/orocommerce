@@ -15,6 +15,7 @@ The current file describes significant changes in the code that may affect the u
 #### ProductBundle
 * Website search field `assigned_to_ASSIGN_TYPE_ASSIGN_ID` has been renamed to `assigned_to.ASSIGN_TYPE_ASSIGN_ID.CATEGORY_PATH`
 * Website search field `manually_added_to_ASSIGN_TYPE_ASSIGN_ID` has been renamed to `manually_added_to.ASSIGN_TYPE_ASSIGN_ID`
+* In order to improve page performance, some JS-components within product item blocks are initialized only on `click` and `focusin` DOM-events. See  [Initialize Components on DOM events](https://doc.oroinc.com/frontend/javascript/page-component/#initialize-components-on-dom-events)
 
 #### ShoppingListBundle
 * The hydration of Product entities the `frontend-product-search-grid` datagrid was removed for simple products.

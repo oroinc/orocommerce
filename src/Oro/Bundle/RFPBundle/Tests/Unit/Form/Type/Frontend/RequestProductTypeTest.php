@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Type\Frontend;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
@@ -26,17 +27,12 @@ class RequestProductTypeTest extends AbstractTest
 {
     use QuantityTypeTrait;
 
-    /**
-     * @var RequestProductType
-     */
+    /** @var RequestProductType */
     protected $formType;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
-        $this->formType     = new RequestProductType();
+        $this->formType = new RequestProductType();
         $this->formType->setDataClass(RequestProduct::class);
 
         parent::setUp();
@@ -58,11 +54,11 @@ class RequestProductTypeTest extends AbstractTest
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    public function submitProvider()
+    public function submitProvider(): array
     {
-        $requestProductItem = $this->getRequestProductItem(2, 10, 'kg', $this->createPrice(20, 'USD'));
+        $requestProductItem = $this->getRequestProductItem(2, 10, 'kg', Price::create(20, 'USD'));
 
         return [
             'empty form' => [
@@ -134,11 +130,11 @@ class RequestProductTypeTest extends AbstractTest
      */
     protected function getExtensions()
     {
-        $priceType                  = $this->preparePriceType();
-        $entityType                 = $this->prepareProductSelectType();
-        $currencySelectionType      = new CurrencySelectionTypeStub();
-        $requestProductItemType     = $this->prepareRequestProductItemType();
-        $productUnitSelectionType   = $this->prepareProductUnitSelectionType();
+        $priceType = $this->preparePriceType();
+        $entityType = $this->prepareProductSelectType();
+        $currencySelectionType = new CurrencySelectionTypeStub();
+        $requestProductItemType = $this->prepareRequestProductItemType();
+        $productUnitSelectionType = $this->prepareProductUnitSelectionType();
 
         $requestProductType = new BaseRequestProductType();
         $requestProductType->setDataClass(RequestProduct::class);
@@ -166,7 +162,7 @@ class RequestProductTypeTest extends AbstractTest
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
     protected function getValidators()
     {

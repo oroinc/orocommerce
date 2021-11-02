@@ -49,7 +49,8 @@
 
 {% block __oro_product_list_item__product_image_holder_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product-item__image-holder product-item__image-holder--{{ class_prefix }}'
+        '~class': ' product-item__image-holder product-item__image-holder--{{ class_prefix }}',
+        'data-page-component-init-on': 'click,focusin'
     }) %}
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
@@ -137,11 +138,11 @@
     {% set productName = product.names|localized_value %}
     <h3 {{ block('block_attributes') }} itemprop="productID" content="{{ product.id }}">
         <a href="{{ path('oro_product_frontend_product_view', {id: product.id}) }}"
-           class="view-product"
+           class="view-product line-clamp"
            itemprop="url"
            title="{{ productName|e('html_attr') }}"
            {% if isTargetBlank is defined and isTargetBlank %}target="_blank"{% endif %}
-           data-page-component-line-clamp><span itemprop="name">{{ productName }}</span></a>
+           ><span itemprop="name">{{ productName }}</span></a>
     </h3>
 {% endblock %}
 
@@ -191,15 +192,7 @@
 
 {% block __oro_product_list_item__product_short_description_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product__description product__description--{{ class_prefix }}',
-        'data-page-component-module': "oroui/js/app/components/viewport-component",
-        '~data-page-component-options': {
-            viewport: {
-                maxScreenType: 'mobile-landscape'
-            },
-            component: 'oroui/js/app/components/jquery-widget-component',
-            widgetModule: 'orofrontend/default/js/widgets/line-clamp-widget'
-        }|json_encode
+        '~class': ' product__description product__description--{{ class_prefix }}'
     }) %}
 
     {% if (class_prefix == 'list-view') %}
@@ -223,7 +216,8 @@
 {% block __oro_product_list_item__product_secondary_content_container_widget %}
     {% if matrixFormType != 'inline' %}
         {% set attr = layout_attr_defaults(attr, {
-            '~class': ' product-item__secondary-content product-item__secondary-content--{{ class_prefix }}'
+            '~class': ' product-item__secondary-content product-item__secondary-content--{{ class_prefix }}',
+            'data-page-component-init-on': 'click,focusin'
         }) %}
         <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
     {% endif %}

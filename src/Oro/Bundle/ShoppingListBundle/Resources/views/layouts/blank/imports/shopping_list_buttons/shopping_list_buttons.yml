@@ -20,3 +20,5 @@ layout:
             parentId: __root
             blockType: container
             prepend: true
+            options:
+                visible: '=data["acl"].isGranted("oro_shopping_list_frontend_update") && (context["is_logged_in"] || (!context["is_logged_in"] && data["feature"].isFeatureEnabled("guest_shopping_list")))'

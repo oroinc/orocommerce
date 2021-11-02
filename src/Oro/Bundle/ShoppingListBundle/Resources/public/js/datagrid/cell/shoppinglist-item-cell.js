@@ -6,6 +6,18 @@ const ShoppingListItemCell = HtmlTemplateCell.extend({
         this.listenTo(this.model, 'change', this.render);
     },
 
+    _attributes() {
+        const attrs = {};
+
+        if (this.model.get('isMessage')) {
+            attrs['id'] = this.model.get('id');
+        } else {
+            attrs['aria-describedby'] = this.model.get('messageModelId');
+        }
+
+        return attrs;
+    },
+
     render() {
         const templateKey = this.model.get('isMessage') ? 'message' : 'default';
         const template = this.getTemplateFunction(templateKey);
@@ -39,7 +51,7 @@ const ShoppingListItemCell = HtmlTemplateCell.extend({
 
         const launcher = this.editNotesAction.createLauncher({
             launcherMode: 'icon-only',
-            className: 'grid-line-items__edit-notes'
+            className: 'btn btn--plain btn--size-xs grid-line-items__edit-notes'
         });
         $note.after(launcher.render().$el);
     }

@@ -8,7 +8,7 @@ $grid-line-items-field-val-offset: 2px !default;
 
 $grid-line-line-height: 1.45 !default;
 
-$grid-line-clip-none-offset: 6px !default;
+$grid-line-clip-none-offset: $offset-x-m !default;
 
 $grid-line-separator-height: 16px !default;
 $grid-line-separator-offset: 0 8px !default;

@@ -13,12 +13,12 @@ Feature: Delete line item from Shopping List
     And I click "Shopping List Actions"
     And I click "Edit"
     And I should see following grid:
-      | SKU | QtyUpdate All |
-      | AA1 | 1 set         |
-      | AA1 | 2 item        |
+      | SKU | Qty Update All |
+      | AA1 | 1 set          |
+      | AA1 | 2 item         |
     When I click Delete AA1 in grid
     And I click "Yes, Delete" in modal window
     Then I should see 'The "Product1" product was successfully deleted' flash message
     And I should see following grid:
-      | SKU | QtyUpdate All |
-      | AA1 | 2 item        |
+      | SKU | Qty Update All |
+      | AA1 | 2 item         |

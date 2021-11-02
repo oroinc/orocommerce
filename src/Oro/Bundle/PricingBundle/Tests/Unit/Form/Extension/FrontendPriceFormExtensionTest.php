@@ -2,55 +2,48 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Extension;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
-use Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type\PriceTypeGenerator;
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\PricingBundle\Form\Extension\FrontendPriceFormExtension;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
-use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 
 class FrontendPriceFormExtensionTest extends FormIntegrationTestCase
 {
-    use EntityTrait;
-
-    /**
-     * @var FrontendHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var FrontendHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $frontendHelper;
 
     /**
-     * @var UserCurrencyManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $userCurrencyManager;
-
-    /**
-     * @return array
+     * {@inheritDoc}
      */
     protected function getExtensions()
     {
         $this->frontendHelper = $this->createMock(FrontendHelper::class);
-        $this->userCurrencyManager = $this->createMock(UserCurrencyManager::class);
-        $this->userCurrencyManager->method('getAvailableCurrencies')
-            ->willReturn(['USD', 'EUR']);
 
-        $this->userCurrencyManager->method('getUserCurrency')
+        $userCurrencyManager = $this->createMock(UserCurrencyManager::class);
+        $userCurrencyManager->method('getAvailableCurrencies')
+            ->willReturn(['USD', 'EUR']);
+        $userCurrencyManager->method('getUserCurrency')
             ->willReturn('EUR');
+
+        $priceType = new PriceType();
+        $priceType->setDataClass(Price::class);
 
         $currencySelectionType = new CurrencySelectionTypeStub();
 
         return [
             new PreloadedExtension(
                 [
-                    PriceType::class => PriceTypeGenerator::createPriceType($this),
+                    PriceType::class => $priceType,
                     CurrencySelectionType::class => $currencySelectionType,
                 ],
                 [
                     PriceType::class => [
-                        new FrontendPriceFormExtension($this->frontendHelper, $this->userCurrencyManager),
+                        new FrontendPriceFormExtension($this->frontendHelper, $userCurrencyManager),
                     ],
 
                 ]
@@ -81,9 +74,9 @@ class FrontendPriceFormExtensionTest extends FormIntegrationTestCase
         $form->setData(null);
         $formData = $form->getData();
         $this->assertNull($formData);
-        $this->assertEquals($form->get('currency')->getData(), 'EUR');
+        $this->assertEquals('EUR', $form->get('currency')->getData());
         $this->assertNull($form->getConfig()->getOption('additional_currencies'));
-        $this->assertEquals($form->getConfig()->getOption('currencies_list'), ['USD', 'EUR']);
-        $this->assertEquals($form->getConfig()->getOption('default_currency'), 'EUR');
+        $this->assertEquals(['USD', 'EUR'], $form->getConfig()->getOption('currencies_list'));
+        $this->assertEquals('EUR', $form->getConfig()->getOption('default_currency'));
     }
 }

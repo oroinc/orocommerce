@@ -17,9 +17,10 @@
     <div class="price-value-container" data-name="price-value">
         <% if (typeof price !== 'undefined' && price) { %>
         <%- price %>
-        <% } else { %>
-        <span data-name="price-not-found" data-label="<%- _metadata.label %>:"
-            ><%- _.__('oro.pricing.product_prices.price_not_found.short_label') %></span>
+        <% } else if (obj._blankContent) { %>
+        <span data-name="price-not-found"
+              data-label="<%- _metadata.label %>:"
+              data-blank-content="<%- _blankContent %>"></span>
         <% } %>
         <% if (obj.productId) { %>
         <button type="button"

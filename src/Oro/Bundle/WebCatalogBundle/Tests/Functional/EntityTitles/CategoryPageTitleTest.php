@@ -6,9 +6,12 @@ use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserD
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebCatalogBundle\Tests\Functional\EntityTitles\DataFixtures\AbstractLoadWebCatalogData;
 use Oro\Bundle\WebCatalogBundle\Tests\Functional\EntityTitles\DataFixtures\LoadWebCatalogCategoryData;
+use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\WebsiteSearchExtensionTrait;
 
 class CategoryPageTitleTest extends WebTestCase
 {
+    use WebsiteSearchExtensionTrait;
+
     protected function setUp(): void
     {
         $this->initClient(
@@ -21,6 +24,8 @@ class CategoryPageTitleTest extends WebTestCase
                 LoadWebCatalogCategoryData::class,
             ]
         );
+
+        $this->reindexProductData();
     }
 
     public function testWebCatalogTitles()

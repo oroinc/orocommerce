@@ -70,7 +70,8 @@
 
 {% block __oro_product_grid__product_image_holder_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " product-item__image-holder product-item__image-holder--{{ class_prefix }}"
+        '~class': " product-item__image-holder product-item__image-holder--{{ class_prefix }}",
+        'data-page-component-init-on': 'click,focusin'
     }) %}
 
     <div {{ block('block_attributes') }}>
@@ -85,12 +86,7 @@
         'aria-label': 'oro.product.frontend.index.view_details_prefix'|trans ~ ' ' ~ product.name
     }) %}
 
-    {% set isNoImage = true %}
-    {% if product.image is defined %}
-        {% set isNoImage = (product.image|trim) == (product_image_placeholder('product_large')|e|trim) %}
-    {% endif %}
-
-    {% if popup_gallery and not isNoImage %}
+    {% if popup_gallery and product.hasImage %}
         {% set options = {
             view: 'orofrontend/js/app/components/popup-gallery-widget',
             ajaxMode: true,
@@ -112,14 +108,7 @@
 {% endblock %}
 
 {% block __oro_product_grid__product_popup_gallery_widget %}
-    {% import '@OroProduct/image_macros.html.twig' as Image %}
-
-    {% set isNoImage = true %}
-    {% if product.image is defined %}
-        {% set isNoImage = (product.image|trim|split('/')|last) == (product_image_placeholder('product_large')|e|trim|split('/')|last) %}
-    {% endif %}
-
-    {% if not isNoImage %}
+    {% if product.hasImage %}
         {% set attr = layout_attr_defaults(attr, {
             '~class': ' view-product-gallery',
             'data-trigger-gallery-open': '',
@@ -127,13 +116,11 @@
             'aria-label': 'oro.product.images.zoom.label'|trans,
             'type': 'button'
         }) %}
-
         <button {{ block('block_attributes') }}></button>
     {% endif %}
 {% endblock %}
 
 {% block __oro_product_grid__product_view_image_widget %}
-    {% import '@OroProduct/image_macros.html.twig' as Image %}
     {% import '@OroUI/macros.html.twig' as UI %}
 
     {% set attr = layout_attr_defaults(attr, {
@@ -160,7 +147,7 @@
 
     <h2 {{ block('block_attributes') }}>
         <a href="{{ product.view_link }}"
-           class="view-product"{% if 'gallery-view' in class_prefix %} data-page-component-line-clamp{% endif %}
+           class="view-product{% if 'gallery-view' in class_prefix %} line-clamp{% endif %}"
            itemprop="url"
            title="{{ block('container_widget')|trim|raw }}"
         >
@@ -202,7 +189,8 @@
 
     {% if not is_configurable_product_type(product.type) %}
         <div {{ block('block_attributes') }}>
-            <div data-page-component-module="oroproduct/js/app/datagrid/cell/backend-select-row-cell"></div>
+            <div data-page-component-init-on="asap"
+                 data-page-component-module="oroproduct/js/app/datagrid/cell/backend-select-row-cell"></div>
         </div>
     {% endif %}
 {% endblock %}

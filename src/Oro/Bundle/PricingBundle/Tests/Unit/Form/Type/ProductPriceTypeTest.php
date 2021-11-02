@@ -5,7 +5,6 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Type;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
-use Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type\PriceTypeGenerator;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
@@ -32,31 +31,12 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
 {
     use QuantityTypeTrait;
 
-    /**
-     * @var ProductPriceType
-     */
-    protected $formType;
+    /** @var ProductPriceType */
+    private $formType;
 
-    /**
-     * @var array
-     */
-    protected $priceLists = [
-        'Test',
-        'Test 01'
-    ];
-
-    /**
-     * @var array
-     */
-    protected $units = [
-        'item',
-        'kg'
-    ];
-
-    /**
-     * @var string
-     */
-    protected $locale;
+    private array $priceLists = ['Test', 'Test 01'];
+    private array$units = ['item', 'kg' ];
+    private string $locale;
 
     /**
      * {@inheritdoc}
@@ -65,7 +45,7 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
     {
         $this->locale = \Locale::getDefault();
         $this->formType = new ProductPriceType();
-        $this->formType->setDataClass('Oro\Bundle\PricingBundle\Entity\ProductPrice');
+        $this->formType->setDataClass(ProductPrice::class);
         parent::setUp();
     }
 
@@ -75,11 +55,11 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
     protected function tearDown(): void
     {
         \Locale::setDefault($this->locale);
-        unset($this->formType);
+        parent::tearDown();
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
     protected function getExtensions()
     {
@@ -94,7 +74,9 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
             $this->prepareProductUnitSelectionChoices(),
             ProductPriceUnitSelectorType::NAME
         );
-        $priceType = PriceTypeGenerator::createPriceType($this);
+
+        $priceType = new PriceType();
+        $priceType->setDataClass(Price::class);
 
         return [
             new PreloadedExtension(
@@ -122,17 +104,13 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @param ProductPrice $defaultData
-     * @param array $submittedData
-     * @param ProductPrice $expectedData
-     * @param string $locale
      * @dataProvider submitProvider
      */
     public function testSubmit(
         ProductPrice $defaultData,
-        $submittedData,
+        array $submittedData,
         ProductPrice $expectedData,
-        $locale = 'en'
+        string $locale = 'en'
     ) {
         \Locale::setDefault($locale);
         $form = $this->factory->create(ProductPriceType::class, $defaultData, []);
@@ -145,10 +123,7 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expectedData, $form->getData());
     }
 
-    /**
-     * @return array
-     */
-    public function submitProvider()
+    public function submitProvider(): array
     {
         $product = new Product();
         $product->setSku('sku_test_001');
@@ -242,18 +217,12 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * Test getName
-     */
     public function testGetName()
     {
         $this->assertEquals(ProductPriceType::NAME, $this->formType->getName());
     }
 
-    /**
-     * @return array
-     */
-    protected function prepareProductUnitSelectionChoices()
+    private function prepareProductUnitSelectionChoices(): array
     {
         $choices = [];
         foreach ($this->units as $unitCode) {

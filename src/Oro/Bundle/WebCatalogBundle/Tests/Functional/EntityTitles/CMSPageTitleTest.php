@@ -5,9 +5,12 @@ namespace Oro\Bundle\WebCatalogBundle\Tests\Functional\EntityTitles;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebCatalogBundle\Tests\Functional\EntityTitles\DataFixtures\AbstractLoadWebCatalogData;
 use Oro\Bundle\WebCatalogBundle\Tests\Functional\EntityTitles\DataFixtures\LoadWebCatalogPageData;
+use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\WebsiteSearchExtensionTrait;
 
 class CMSPageTitleTest extends WebTestCase
 {
+    use WebsiteSearchExtensionTrait;
+
     protected function setUp(): void
     {
         $this->initClient();
@@ -17,6 +20,8 @@ class CMSPageTitleTest extends WebTestCase
                 LoadWebCatalogPageData::class
             ]
         );
+
+        $this->reindexProductData();
     }
 
     public function testWebCatalogTitles()

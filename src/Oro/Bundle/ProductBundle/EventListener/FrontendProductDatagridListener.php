@@ -16,21 +16,13 @@ use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
  */
 class FrontendProductDatagridListener
 {
-    const COLUMN_PRODUCT_UNITS = 'product_units';
+    private const COLUMN_SHORT_DESCRIPTION = 'shortDescription';
+    private const COLUMN_PRODUCT_UNITS = 'product_units';
+    private const COLUMN_HAS_IMAGE = 'hasImage';
+    private const COLUMN_IMAGE = 'image';
 
-    const PRODUCT_IMAGE_FILTER_LARGE = 'product_large';
-    const PRODUCT_IMAGE_FILTER_MEDIUM = 'product_medium';
-    const PRODUCT_IMAGE_FILTER_SMALL = 'product_small';
-
-    /**
-     * @var DataGridThemeHelper
-     */
-    protected $themeHelper;
-
-    /**
-     * @var ImagePlaceholderProviderInterface
-     */
-    protected $imagePlaceholderProvider;
+    private DataGridThemeHelper $themeHelper;
+    private ImagePlaceholderProviderInterface $imagePlaceholderProvider;
 
     public function __construct(
         DataGridThemeHelper $themeHelper,
@@ -40,28 +32,38 @@ class FrontendProductDatagridListener
         $this->imagePlaceholderProvider = $imagePlaceholderProvider;
     }
 
-    public function onPreBuild(PreBuild $event)
+    public function onPreBuild(PreBuild $event): void
     {
         $config = $event->getConfig();
 
         $config->offsetAddToArrayByPath(
             '[properties]',
-            [self::COLUMN_PRODUCT_UNITS => [
-                'type' => 'field',
-                'frontend_type' => PropertyInterface::TYPE_ROW_ARRAY]
+            [
+                self::COLUMN_PRODUCT_UNITS => [
+                    'type' => 'field',
+                    'frontend_type' => PropertyInterface::TYPE_ROW_ARRAY
+                ],
+                self::COLUMN_HAS_IMAGE => [
+                    'type' => 'field',
+                    'frontend_type' => PropertyInterface::TYPE_BOOLEAN
+                ]
             ]
         );
 
         // add theme processing
-        $gridName = $config->getName();
-        $this->updateConfigByView($config, $this->themeHelper->getTheme($gridName));
+        $this->updateConfigByView($config, $this->themeHelper->getTheme($config->getName()));
     }
 
-    /**
-     * @param DatagridConfiguration $config
-     * @param string $viewName
-     */
-    protected function updateConfigByView(DatagridConfiguration $config, $viewName)
+    public function onResultAfter(SearchResultAfter $event): void
+    {
+        /** @var ResultRecord[] $records */
+        $records = $event->getRecords();
+
+        $this->addProductUnits($records);
+        $this->addProductImages($event, $records);
+    }
+
+    private function updateConfigByView(DatagridConfiguration $config, string $viewName): void
     {
         switch ($viewName) {
             case DataGridThemeHelper::VIEW_LIST:
@@ -78,93 +80,89 @@ class FrontendProductDatagridListener
         }
     }
 
-    protected function addImageToConfig(DatagridConfiguration $config)
+    private function addImageToConfig(DatagridConfiguration $config): void
     {
-        $updates = [
-            '[columns]' => [
-                'image' => [
-                    'label' => 'oro.product.image.label',
+        $config->offsetAddToArrayByPath(
+            '[columns]',
+            [
+                self::COLUMN_IMAGE => [
+                    'label' => 'oro.product.image.label'
                 ]
-            ],
-        ];
-        $this->applyUpdatesToConfig($config, $updates);
+            ]
+        );
     }
 
-    protected function addShortDescriptionToConfig(DatagridConfiguration $config)
+    private function addShortDescriptionToConfig(DatagridConfiguration $config): void
     {
-        $updates = [
-            '[columns]' => [
-                'shortDescription' => [
-                    'label' => 'oro.product.short_descriptions.label',
+        $config->offsetAddToArrayByPath(
+            '[columns]',
+            [
+                self::COLUMN_SHORT_DESCRIPTION => [
+                    'label' => 'oro.product.short_descriptions.label'
                 ]
-            ],
-            '[properties]' => [
-                'shortDescription' => [
+            ]
+        );
+        $config->offsetAddToArrayByPath(
+            '[properties]',
+            [
+                self::COLUMN_SHORT_DESCRIPTION => [
                     'type' => LocalizedValueProperty::NAME,
-                    'data_name' => 'shortDescriptions',
+                    'data_name' => 'shortDescriptions'
                 ]
-            ],
-        ];
-        $this->applyUpdatesToConfig($config, $updates);
-    }
-
-    protected function applyUpdatesToConfig(DatagridConfiguration $config, array $updates)
-    {
-        foreach ($updates as $path => $update) {
-            $config->offsetAddToArrayByPath($path, $update);
-        }
-    }
-
-    public function onResultAfter(SearchResultAfter $event)
-    {
-        /** @var ResultRecord[] $records */
-        $records = $event->getRecords();
-
-        $this->addProductUnits($records);
-        $this->addProductImages($event, $records);
+            ]
+        );
     }
 
     /**
      * @param SearchResultAfter $event
      * @param ResultRecord[] $records
      */
-    protected function addProductImages(SearchResultAfter $event, array $records)
+    private function addProductImages(SearchResultAfter $event, array $records): void
     {
         $gridName = $event->getDatagrid()->getName();
         $theme = $this->themeHelper->getTheme($gridName);
         switch ($theme) {
-            case DataGridThemeHelper::VIEW_LIST:
-                $imageFilter = self::PRODUCT_IMAGE_FILTER_MEDIUM;
-                break;
             case DataGridThemeHelper::VIEW_GRID:
-                $imageFilter = self::PRODUCT_IMAGE_FILTER_LARGE;
+                $imageFilter = 'product_large';
                 break;
+            case DataGridThemeHelper::VIEW_LIST:
             case DataGridThemeHelper::VIEW_TILES:
-                $imageFilter = self::PRODUCT_IMAGE_FILTER_MEDIUM;
+                $imageFilter = 'product_medium';
                 break;
             default:
                 return;
         }
 
-        $noImagePath = $this->imagePlaceholderProvider->getPath($imageFilter);
+        $noImagePath = false;
         foreach ($records as $record) {
-            $productImageUrl = $record->getValue('image_' . $imageFilter) ?: $noImagePath;
-            $record->addData(['image' => $productImageUrl]);
+            $hasProductImage = true;
+            $productImageUrl = $record->getValue('image_' . $imageFilter);
+            if (!$productImageUrl) {
+                if (false === $noImagePath) {
+                    $noImagePath = $this->imagePlaceholderProvider->getPath($imageFilter);
+                }
+                $hasProductImage = false;
+                $productImageUrl = $noImagePath;
+            }
+            $record->addData([
+                self::COLUMN_HAS_IMAGE => $hasProductImage,
+                self::COLUMN_IMAGE => $productImageUrl
+            ]);
         }
     }
 
     /**
      * @param ResultRecord[] $records
      */
-    protected function addProductUnits($records)
+    private function addProductUnits(array $records): void
     {
         foreach ($records as $record) {
             $productUnits = $record->getValue('product_units');
-            $units = [];
-            if ($productUnits) {
-                $units = unserialize($productUnits);
-            }
-            $record->addData([self::COLUMN_PRODUCT_UNITS => $units]);
+            $record->addData([
+                self::COLUMN_PRODUCT_UNITS => $productUnits
+                    ? unserialize($productUnits, ['allowed_classes' => false])
+                    : []
+            ]);
         }
     }
 }

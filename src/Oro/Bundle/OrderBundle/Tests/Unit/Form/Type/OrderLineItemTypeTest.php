@@ -12,13 +12,12 @@ use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectEntityTypeStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Form\FormTypeInterface;
 
 class OrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
 {
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|ProductUnitsProvider
-     */
-    protected $productUnitsProvider;
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ProductUnitsProvider */
+    private $productUnitsProvider;
 
     /**
      * {@inheritdoc}
@@ -65,7 +64,7 @@ class OrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
     /**
      * {@inheritdoc}
      */
-    public function getFormType()
+    public function getFormType(): FormTypeInterface
     {
         return new OrderLineItemType($this->productUnitsProvider);
     }
@@ -73,7 +72,7 @@ class OrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
     /**
      * {@inheritdoc}
      */
-    public function submitDataProvider()
+    public function submitDataProvider(): array
     {
         /** @var Product $product */
         $product = $this->getEntity(Product::class, ['id' => 1]);
@@ -155,7 +154,7 @@ class OrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
     /**
      * {@inheritdoc}
      */
-    protected function getExpectedSections()
+    protected function getExpectedSections(): ArrayCollection
     {
         return new ArrayCollection(
             [
@@ -175,7 +174,7 @@ class OrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
     /**
      * {@inheritdoc}
      */
-    public function getExpectedOptions()
+    public function getExpectedOptions(): array
     {
         return [
             'currency' => null,

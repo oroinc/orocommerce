@@ -29,7 +29,7 @@ layout:
             optionName: vars
             optionValue:
                 # additional user check to correctly render the widget on the backend
-                visible: '=data["show_add_button"] and (is_a(data["current_user"].getCurrentUser(), "Oro\\Bundle\\UserBundle\\Entity\\User") === false)'
+                visible: '=data["show_add_button"] and data["current_user"].isFrontendRequest()'
         - '@setOption':
             id: product_line_item_form_fields
             optionName: form

@@ -8,9 +8,7 @@ use Twig\Environment;
 
 class CategoryUpcomingFormViewListenerTest extends AbstractFallbackFieldsFormViewTest
 {
-    /**
-     * @var CategoryUpcomingFormViewListener
-     */
+    /** @var CategoryUpcomingFormViewListener */
     protected $fallbackFieldsFormView;
 
     protected function setUp(): void
@@ -27,14 +25,23 @@ class CategoryUpcomingFormViewListenerTest extends AbstractFallbackFieldsFormVie
     public function testOnCategoryEdit()
     {
         $env = $this->getMockBuilder(Environment::class)->disableOriginalConstructor()->getMock();
-        $env->expects($this->once())->method('render')->willReturn('Rendered template');
-        $this->event->expects($this->once())->method('getEnvironment')->willReturn($env);
+        $env->expects($this->once())
+            ->method('render')
+            ->willReturn('Rendered template');
+        $this->event->expects($this->once())
+            ->method('getEnvironment')
+            ->willReturn($env);
 
-        $this->scrollData->expects($this->once())->method('getData')->willReturn(
-            ['dataBlocks' => [1 => ['title' => 'oro.catalog.sections.default_options.trans']]]
-        );
-        $this->scrollData->expects($this->once())->method('addSubBlockData');
-        $this->event->expects($this->once())->method('getScrollData')->willReturn($this->scrollData);
+        $this->scrollData->expects($this->once())
+            ->method('getData')
+            ->willReturn(
+                ['dataBlocks' => [1 => ['title' => 'oro.catalog.sections.default_options.trans']]]
+            );
+        $this->scrollData->expects($this->once())
+            ->method('addSubBlockData');
+        $this->event->expects($this->once())
+            ->method('getScrollData')
+            ->willReturn($this->scrollData);
 
         $this->fallbackFieldsFormView->onCategoryEdit($this->event);
     }

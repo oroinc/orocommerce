@@ -6,14 +6,9 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
-use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
-use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
-use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteProductOfferType;
 use Oro\Component\Testing\Unit\PreloadedExtension;
@@ -25,19 +20,14 @@ class QuoteProductOfferTypeTest extends AbstractTest
 {
     use QuantityTypeTrait;
 
-    /**
-     * @var QuoteProductOfferType
-     */
+    /** @var QuoteProductOfferType */
     protected $formType;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->configureQuoteProductOfferFormatter();
         $this->formType = new QuoteProductOfferType($this->quoteProductOfferFormatter);
-        $this->formType->setDataClass('Oro\Bundle\SaleBundle\Entity\QuoteProductOffer');
+        $this->formType->setDataClass(QuoteProductOffer::class);
         parent::setUp();
     }
 
@@ -70,10 +60,7 @@ class QuoteProductOfferTypeTest extends AbstractTest
         }
     }
 
-    /**
-     * @return array
-     */
-    public function postSetDataProvider()
+    public function postSetDataProvider(): array
     {
         return [
             'empty values' => [
@@ -97,9 +84,9 @@ class QuoteProductOfferTypeTest extends AbstractTest
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    public function submitProvider()
+    public function submitProvider(): array
     {
         return [
             'empty form' => [
@@ -120,7 +107,7 @@ class QuoteProductOfferTypeTest extends AbstractTest
                     ],
                 ],
                 'expectedData'  => $this
-                    ->getQuoteProductOffer(2, 88, 'kg', self::QPO_PRICE_TYPE1, $this->createPrice(99, 'EUR'))
+                    ->getQuoteProductOffer(2, 88, 'kg', self::QPO_PRICE_TYPE1, Price::create(99, 'EUR'))
                     ->setQuoteProduct(null),
                 'defaultData'   => $this->getQuoteProductOffer(2)
                     ->setQuoteProduct(null),
@@ -136,7 +123,7 @@ class QuoteProductOfferTypeTest extends AbstractTest
                     ],
                 ],
                 'expectedData'  => $this
-                    ->getQuoteProductOffer(3, 1, 'kg', self::QPO_PRICE_TYPE1, $this->createPrice(11, 'EUR')),
+                    ->getQuoteProductOffer(3, 1, 'kg', self::QPO_PRICE_TYPE1, Price::create(11, 'EUR')),
                 'defaultData'   => $this->getQuoteProductOffer(3),
             ],
             'empty price type' => [
@@ -149,7 +136,7 @@ class QuoteProductOfferTypeTest extends AbstractTest
                         'currency'  => 'EUR',
                     ],
                 ],
-                'expectedData'  => $this->getQuoteProductOffer(4, 88, 'kg', null, $this->createPrice(99, 'EUR')),
+                'expectedData'  => $this->getQuoteProductOffer(4, 88, 'kg', null, Price::create(99, 'EUR')),
                 'defaultData'   => $this->getQuoteProductOffer(4),
             ],
             'empty product unit' => [
@@ -163,7 +150,7 @@ class QuoteProductOfferTypeTest extends AbstractTest
                     ],
                 ],
                 'expectedData'  => $this
-                    ->getQuoteProductOffer(5, 22, null, self::QPO_PRICE_TYPE1, $this->createPrice(33, 'EUR')),
+                    ->getQuoteProductOffer(5, 22, null, self::QPO_PRICE_TYPE1, Price::create(33, 'EUR')),
                 'defaultData'   => $this->getQuoteProductOffer(5),
             ],
             'empty price' => [
@@ -188,56 +175,10 @@ class QuoteProductOfferTypeTest extends AbstractTest
                     ],
                 ],
                 'expectedData'  => $this
-                    ->getQuoteProductOffer(7, 11, 'kg', self::QPO_PRICE_TYPE1, $this->createPrice(22, 'EUR')),
+                    ->getQuoteProductOffer(7, 11, 'kg', self::QPO_PRICE_TYPE1, Price::create(22, 'EUR')),
                 'defaultData'   => $this->getQuoteProductOffer(7),
             ],
         ];
-    }
-
-    /**
-     * @param int $id
-     * @param ProductUnit[] $productUnits
-     * @param string $unitCode
-     * @return \PHPUnit\Framework\MockObject\MockObject|QuoteProductOffer
-     */
-    protected function createQuoteProductOffer($id, array $productUnits = [], $unitCode = null)
-    {
-        $productUnit = null;
-
-        $product = new Product();
-        foreach ($productUnits as $unit) {
-            $product->addUnitPrecision((new ProductUnitPrecision())->setUnit($unit));
-
-            if ($unitCode && $unit->getCode() === $unitCode) {
-                $productUnit = $unit;
-            }
-        }
-
-        $item = $this->createMock(QuoteProductOffer::class);
-        $item->expects($this->any())
-            ->method('getId')
-            ->willReturn($id);
-        $item->expects($this->any())
-            ->method('getQuoteProduct')
-            ->willReturn((new QuoteProduct())->setProduct($product));
-        $item->expects($this->any())
-            ->method('getProductUnit')
-            ->willReturn($productUnit);
-        $item->expects($this->any())
-            ->method('getProductUnitCode')
-            ->willReturn($unitCode);
-
-        return $item;
-    }
-
-    /**
-     * @param float $value
-     * @param string $currency
-     * @return Price
-     */
-    protected function createPrice($value, $currency)
-    {
-        return Price::create($value, $currency);
     }
 
     /**
@@ -245,15 +186,14 @@ class QuoteProductOfferTypeTest extends AbstractTest
      */
     protected function getExtensions()
     {
-        $priceType                  = $this->preparePriceType();
-        $currencySelectionType      = new CurrencySelectionTypeStub();
-        $productUnitSelectionType   = $this->prepareProductUnitSelectionType();
+        $priceType = $this->preparePriceType();
+        $currencySelectionType = new CurrencySelectionTypeStub();
+        $productUnitSelectionType = $this->prepareProductUnitSelectionType();
 
         return [
             new PreloadedExtension(
                 [
                     QuoteProductOfferType::class => $this->formType,
-                    ProductUnitSelectionType::class => new ProductUnitSelectionTypeStub(),
                     PriceType::class => $priceType,
                     CurrencySelectionType::class => $currencySelectionType,
                     ProductUnitSelectionType::class => $productUnitSelectionType,

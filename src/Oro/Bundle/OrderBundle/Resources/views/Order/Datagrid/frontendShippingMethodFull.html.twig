@@ -1,0 +1,5 @@
+{% set shippingMethod  =  record.getValue('shippingMethod') %}
+{% set shippingMethodType  =  record.getValue('shippingMethodType') %}
+{%- if shippingMethod -%}
+    {{ get_shipping_method_type_label(shippingMethod, shippingMethodType)|trans }}
+{%- endif -%}
