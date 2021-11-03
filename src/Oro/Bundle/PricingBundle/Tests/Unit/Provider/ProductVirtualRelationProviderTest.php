@@ -2,30 +2,21 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Provider;
 
-use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceAttributePriceListRepository;
 use Oro\Bundle\PricingBundle\Provider\ProductVirtualRelationProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
 class ProductVirtualRelationProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ProductVirtualRelationProvider
-     */
-    protected $provider;
-
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|DoctrineHelper
-     */
-    protected $doctrineHelper;
+    /** @var ProductVirtualRelationProvider */
+    private $provider;
 
     protected function setUp(): void
     {
-        $repository = $this->getMockBuilder(PriceAttributePriceListRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $repository = $this->createMock(PriceAttributePriceListRepository::class);
         $repository->expects($this->any())
             ->method('getFieldNames')
             ->willReturn([
@@ -41,33 +32,24 @@ class ProductVirtualRelationProviderTest extends \PHPUnit\Framework\TestCase
                 ]
             ]);
 
-        $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->doctrineHelper->expects($this->any())
+        $doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $doctrineHelper->expects($this->any())
             ->method('getEntityRepository')
             ->with(PriceAttributePriceList::class)
             ->willReturn($repository);
 
-        $this->provider = new ProductVirtualRelationProvider($this->doctrineHelper);
+        $this->provider = new ProductVirtualRelationProvider($doctrineHelper);
     }
 
     /**
      * @dataProvider isVirtualRelationProvider
-     * @param string $class
-     * @param string $field
-     * @param bool $expected
      */
-    public function testIsVirtualRelation($class, $field, $expected)
+    public function testIsVirtualRelation(string $class, string $field, bool $expected)
     {
         $this->assertEquals($expected, $this->provider->isVirtualRelation($class, $field));
     }
 
-    /**
-     * @return array
-     */
-    public function isVirtualRelationProvider()
+    public function isVirtualRelationProvider(): array
     {
         return [
             [Product::class, 'msrp', true],
@@ -78,19 +60,13 @@ class ProductVirtualRelationProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getVirtualRelationQueryProvider
-     * @param string $class
-     * @param string $field
-     * @param array $expected
      */
-    public function testGetVirtualRelationQuery($class, $field, array $expected)
+    public function testGetVirtualRelationQuery(string $class, string $field, array $expected)
     {
         $this->assertEquals($expected, $this->provider->getVirtualRelationQuery($class, $field));
     }
 
-    /**
-     * @return array
-     */
-    public function getVirtualRelationQueryProvider()
+    public function getVirtualRelationQueryProvider(): array
     {
         return [
             [
@@ -100,7 +76,7 @@ class ProductVirtualRelationProviderTest extends \PHPUnit\Framework\TestCase
                     'join' => [
                         'left' => [
                             [
-                                'join' => 'Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice',
+                                'join' => PriceAttributeProductPrice::class,
                                 'alias' => 'msrpPrice',
                                 'conditionType' => 'WITH',
                                 'condition' => '(msrpPrice.product = entity and msrpPrice.priceList = 1)',
@@ -115,18 +91,13 @@ class ProductVirtualRelationProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getVirtualRelationsProvider
-     * @param string $class
-     * @param array $expected
      */
-    public function testGetVirtualRelations($class, array $expected)
+    public function testGetVirtualRelations(string $class, array $expected)
     {
         $this->assertEquals($expected, $this->provider->getVirtualRelations($class));
     }
 
-    /**
-     * @return array
-     */
-    public function getVirtualRelationsProvider()
+    public function getVirtualRelationsProvider(): array
     {
         return [
             [
@@ -135,13 +106,13 @@ class ProductVirtualRelationProviderTest extends \PHPUnit\Framework\TestCase
                     'msrp' => [
                         'label' => 'MSRP',
                         'relation_type' => 'manyToOne',
-                        'related_entity_name' => 'Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice',
+                        'related_entity_name' => PriceAttributeProductPrice::class,
                         'target_join_alias' => 'msrpPrice',
                         'query' => [
                             'join' => [
                                 'left' => [
                                     [
-                                        'join' => 'Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice',
+                                        'join' => PriceAttributeProductPrice::class,
                                         'alias' => 'msrpPrice',
                                         'conditionType' => 'WITH',
                                         'condition' => '(msrpPrice.product = entity and msrpPrice.priceList = 1)',
@@ -153,13 +124,13 @@ class ProductVirtualRelationProviderTest extends \PHPUnit\Framework\TestCase
                     'map' => [
                         'label' => 'MAP',
                         'relation_type' => 'manyToOne',
-                        'related_entity_name' => 'Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice',
+                        'related_entity_name' => PriceAttributeProductPrice::class,
                         'target_join_alias' => 'mapPrice',
                         'query' => [
                             'join' => [
                                 'left' => [
                                     [
-                                        'join' => 'Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice',
+                                        'join' => PriceAttributeProductPrice::class,
                                         'alias' => 'mapPrice',
                                         'conditionType' => 'WITH',
                                         'condition' => '(mapPrice.product = entity and mapPrice.priceList = 2)',
@@ -176,18 +147,13 @@ class ProductVirtualRelationProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getTargetJoinAliasDataProvider
-     * @param string $fieldName
-     * @param string $joinAlias
      */
-    public function testGetTargetJoinAlias($fieldName, $joinAlias)
+    public function testGetTargetJoinAlias(string $fieldName, string $joinAlias)
     {
         $this->assertEquals($joinAlias, $this->provider->getTargetJoinAlias(Product::class, $fieldName));
     }
 
-    /**
-     * @return array
-     */
-    public function getTargetJoinAliasDataProvider()
+    public function getTargetJoinAliasDataProvider(): array
     {
         return [
             [

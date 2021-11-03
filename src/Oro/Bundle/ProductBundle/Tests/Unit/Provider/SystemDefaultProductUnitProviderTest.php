@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Provider;
 
-use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Provider\SystemDefaultProductUnitProvider;

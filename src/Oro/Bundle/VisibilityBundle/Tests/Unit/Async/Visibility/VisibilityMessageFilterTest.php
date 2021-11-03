@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Async\Visibility;
 
-use Oro\Bundle\ApiBundle\Tests\Unit\Fixtures\Entity\Product;
 use Oro\Bundle\MessageQueueBundle\Client\MessageBuffer;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\VisibilityBundle\Async\Visibility\VisibilityMessageFilter;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility;
