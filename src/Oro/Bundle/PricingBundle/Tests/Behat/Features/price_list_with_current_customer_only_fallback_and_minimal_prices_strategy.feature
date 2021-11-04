@@ -1,4 +1,5 @@
 @regression
+@pricing-storage-combined
 @ticket-BB-20698
 @fixture-OroCustomerBundle:CustomerUserAmandaRCole.yml
 @fixture-OroCheckoutBundle:CheckoutProductFixture.yml

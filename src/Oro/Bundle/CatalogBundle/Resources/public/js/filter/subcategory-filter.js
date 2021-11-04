@@ -6,24 +6,24 @@ define(function(require) {
 
     const SubcategoryFilter = MultiselectFilter.extend({
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         emptyValue: {
             value: []
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         template: template,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         populateDefault: false,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function SubcategoryFilter(options) {
             SubcategoryFilter.__super__.constructor.call(this, options);

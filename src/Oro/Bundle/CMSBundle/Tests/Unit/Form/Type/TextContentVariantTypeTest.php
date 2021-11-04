@@ -46,39 +46,43 @@ class TextContentVariantTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    public function testBuildForm()
+    public function testBuildForm(): void
     {
         $form = $this->factory->create(TextContentVariantType::class);
 
-        $this->assertTrue($form->has('scopes'));
-        $this->assertTrue($form->has('content'));
-        $this->assertTrue($form->has('default'));
+        self::assertTrue($form->has('scopes'));
+        self::assertTrue($form->has('content'));
+        self::assertTrue($form->has('default'));
+        self::assertEquals(
+            ['contentStyle' => 'content_style'],
+            $form->getConfig()->getOption('error_mapping')
+        );
     }
 
     /**
      * @dataProvider submitDataProvider
      *
-     * @param ContentBlock $existingData
+     * @param TextContentVariant $existingData
      * @param array $submittedData
-     * @param ContentBlock $expectedData
+     * @param TextContentVariant $expectedData
      */
-    public function testSubmit($existingData, $submittedData, $expectedData)
-    {
+    public function testSubmit(
+        TextContentVariant $existingData,
+        array $submittedData,
+        TextContentVariant $expectedData
+    ): void {
         $form = $this->factory->create(TextContentVariantType::class, $existingData);
 
-        $this->assertEquals($existingData, $form->getData());
+        self::assertEquals($existingData, $form->getData());
 
         $form->submit($submittedData);
-        $this->assertTrue($form->isValid());
-        $this->assertTrue($form->isSynchronized());
+        self::assertTrue($form->isValid());
+        self::assertTrue($form->isSynchronized());
 
-        $this->assertEquals($expectedData, $form->getData());
+        self::assertEquals($expectedData, $form->getData());
     }
 
-    /**
-     * @return array
-     */
-    public function submitDataProvider()
+    public function submitDataProvider(): array
     {
         return [
             'new entity' => [

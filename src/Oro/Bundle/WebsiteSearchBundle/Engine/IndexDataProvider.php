@@ -289,7 +289,7 @@ class IndexDataProvider
     /**
      * @param string|array $value
      *
-     * @return array
+     * @return string
      */
     private function updateAllTextFieldValue($value)
     {
@@ -372,7 +372,7 @@ class IndexDataProvider
             );
         }
 
-        $field = end($fields);
+        $field = $this->findBestMatchedFieldConfig($fields);
 
         $result = $field[$configName];
 
@@ -428,5 +428,32 @@ class IndexDataProvider
         );
 
         return $restrictEntitiesEvent->getQueryBuilder();
+    }
+
+    /**
+     * Finds best matched field config based on length of field name without placeholders
+     *
+     * @param array $fields
+     *
+     * @return array
+     */
+    private function findBestMatchedFieldConfig(array $fields): array
+    {
+        $field = end($fields);
+
+        if (count($fields) > 1) {
+            $availablePlaceholders = $this->placeholderHelper->getPlaceholderKeys();
+
+            $lastCheckedFieldLength = 0;
+            foreach ($fields as $keyFieldName => $config) {
+                $cleanFieldName = str_replace($availablePlaceholders, '', $keyFieldName);
+                if (strlen($cleanFieldName) > $lastCheckedFieldLength) {
+                    $lastCheckedFieldLength = strlen($cleanFieldName);
+                    $field = $config;
+                }
+            }
+        }
+
+        return $field;
     }
 }

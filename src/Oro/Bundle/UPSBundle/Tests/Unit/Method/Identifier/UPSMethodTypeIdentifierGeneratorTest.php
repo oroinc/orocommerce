@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\UPSBundle\Tests\Units\Method\Identifier;
+namespace Oro\Bundle\UPSBundle\Tests\Unit\Method\Identifier;
 
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;

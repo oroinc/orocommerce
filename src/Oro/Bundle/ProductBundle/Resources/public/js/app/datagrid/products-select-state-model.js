@@ -6,7 +6,7 @@ define(function(require) {
 
     const ProductsSelectStateModel = SelectStateModel.extend({
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function ProductsSelectStateModel(attrs, options) {
             ProductsSelectStateModel.__super__.constructor.call(this, attrs, options);

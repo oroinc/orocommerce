@@ -11,7 +11,7 @@ define(function(require) {
      */
     const ProductsPricesComponent = BaseProductsPricesComponent.extend({
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function ProductsPricesComponent(options) {
             ProductsPricesComponent.__super__.constructor.call(this, options);

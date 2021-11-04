@@ -96,6 +96,7 @@ oro:
                 form:
                     messages:
                         all_agreements_accepted: All mandatory consents were accepted.
+                        some_of_all_agreements_accepted: '%some% of %all% mandatory consents were accepted.'
 
         customer_user:
             accepted.label: 'Yes'

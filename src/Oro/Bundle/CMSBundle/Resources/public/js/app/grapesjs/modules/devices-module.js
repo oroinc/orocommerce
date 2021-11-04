@@ -38,14 +38,14 @@ define(function(require) {
         canvasEl: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function DevicesModule(options) {
             DevicesModule.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             if (!options.builder) {
@@ -128,6 +128,9 @@ define(function(require) {
          * Create buttons controls via breakpoints
          */
         createButtons() {
+            if (!this.builder) {
+                return;
+            }
             const devicePanel = this.builder.Panels.getPanel('devices-c');
             const deviceButton = devicePanel.get('buttons');
             const DeviceManager = this.builder.DeviceManager;

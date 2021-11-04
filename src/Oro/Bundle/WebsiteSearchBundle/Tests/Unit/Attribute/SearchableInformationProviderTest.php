@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Attribute;
 
 use Oro\Bundle\CMSBundle\Attribute\Type\WYSIWYGAttributeType;
 use Oro\Bundle\EntityConfigBundle\Attribute\Type\BooleanAttributeType;

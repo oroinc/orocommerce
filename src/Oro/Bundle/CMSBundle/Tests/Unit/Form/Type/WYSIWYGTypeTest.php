@@ -72,10 +72,12 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
                     ]
                 ],
                 'attr' => [
-                    'class' => 'grapesjs-textarea hide'
+                    'class' => 'grapesjs-textarea hide',
+                    'data-validation-force' => 'true'
                 ],
                 'auto_render' => true,
-                'error_bubbling' => true
+                'error_bubbling' => true,
+                'entity_class' => null,
             ])
             ->will($this->returnSelf());
 
@@ -142,6 +144,49 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
             'auto_render' => true,
         ]);
 
+        $this->assertEquals('wysiwyg', $view->vars['attr']['data-grapesjs-field']);
+        $this->assertEquals('component/module', $view->vars['attr']['data-page-component-module']);
+        $this->assertEquals(
+            '{"view":"app\/view","allow_tags":["h1","h2","h3"]'
+            . ',"allowed_iframe_domains":[]'
+            . ',"autoRender":true'
+            . ',"entityClass":"Oro\\\\Bundle\\\\CMSBundle\\\\Entity\\\\Page"'
+            . ',"stylesInputSelector":"[data-grapesjs-styles=\"wysiwyg_style\"]",'
+            . '"propertiesInputSelector":"[data-grapesjs-properties=\"wysiwyg_properties\"]"}',
+            $view->vars['attr']['data-page-component-options']
+        );
+    }
+
+    public function testFinishViewWithEntityClassOption(): void
+    {
+        $this->purifierScopeProvider
+            ->expects($this->once())
+            ->method('getScope')
+            ->with(Page::class, 'wysiwyg')
+            ->willReturn('default');
+
+        $this->htmlTagProvider
+            ->expects($this->once())
+            ->method('getAllowedElements')
+            ->with('default')
+            ->willReturn(['h1', 'h2', 'h3']);
+
+        $view = new FormView();
+        $form = $this->factory->create(WYSIWYGType::class, null, ['entity_class' => Page::class]);
+        $type = new WYSIWYGType(
+            $this->htmlTagProvider,
+            $this->purifierScopeProvider,
+            $this->digitalAssetTwigTagsConverter
+        );
+        $type->finishView($view, $form, [
+            'page-component' => [
+                'module' => 'component/module',
+                'options' => ['view' => 'app/view']
+            ],
+            'auto_render' => true,
+        ]);
+
+        $this->assertEquals('wysiwyg', $view->vars['attr']['data-grapesjs-field']);
         $this->assertEquals('component/module', $view->vars['attr']['data-page-component-module']);
         $this->assertEquals(
             '{"view":"app\/view","allow_tags":["h1","h2","h3"]'

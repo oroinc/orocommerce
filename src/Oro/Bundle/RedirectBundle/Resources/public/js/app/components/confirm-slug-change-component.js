@@ -55,7 +55,7 @@ define(function(require) {
         confirmModal: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function ConfirmSlugChangeComponent(options) {
             ConfirmSlugChangeComponent.__super__.constructor.call(this, options);
@@ -170,7 +170,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function() {
             if (this.disposed) {

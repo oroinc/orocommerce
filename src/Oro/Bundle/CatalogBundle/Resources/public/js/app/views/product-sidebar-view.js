@@ -41,7 +41,7 @@ define(function(require) {
         gridName: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function ProductSidebarView(options) {
             ProductSidebarView.__super__.constructor.call(this, options);

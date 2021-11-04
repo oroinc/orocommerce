@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CustomerBundle\Tests\Unit\Validator\Constraints;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Validator\Constraints;
 
 use Oro\Bundle\TaxBundle\Entity\ZipCode;
 use Oro\Bundle\TaxBundle\Tests\Component\ZipCodeTestHelper;

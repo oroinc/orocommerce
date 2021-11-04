@@ -7,6 +7,8 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 
 /**
+ * Contains all required business logic that must used by all Price List relation
+ *
  * @ORM\MappedSuperclass
  */
 class BasePriceListRelation implements WebsiteAwareInterface, PriceListAwareInterface
@@ -124,12 +126,12 @@ class BasePriceListRelation implements WebsiteAwareInterface, PriceListAwareInte
     }
 
     /**
-     * @param boolean $mergeAllowed
+     * @param bool $mergeAllowed
      * @return $this
      */
     public function setMergeAllowed($mergeAllowed)
     {
-        $this->mergeAllowed = $mergeAllowed;
+        $this->mergeAllowed = (bool) $mergeAllowed;
 
         return $this;
     }

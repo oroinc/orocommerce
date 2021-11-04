@@ -54,14 +54,14 @@ define(function(require) {
         shoppingListOwnerChangeUrl: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function ShoppingListAssignLinkView(options) {
             return ShoppingListAssignLinkView.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             ShoppingListAssignLinkView.__super__.initialize.call(this, options);

@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\PaymentBundle\Tests\Unit\EventListenerExpressionLanguage;
+namespace Oro\Bundle\PaymentBundle\Tests\Unit\ExpressionLanguage;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PaymentBundle\Context\PaymentLineItem;

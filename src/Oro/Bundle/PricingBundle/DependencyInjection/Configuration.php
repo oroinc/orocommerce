@@ -36,6 +36,7 @@ class Configuration implements ConfigurationInterface
     const FULL_COMBINED_PRICE_LIST = 'full_combined_price_list';
     const OFFSET_OF_PROCESSING_CPL_PRICES = 'offset_of_processing_cpl_prices';
     const PRICE_LIST_STRATEGIES = 'price_strategy';
+    const PRICE_CALCULATION_PRECISION = 'price_calculation_precision';
 
     /**
      * @var string
@@ -72,6 +73,7 @@ class Configuration implements ConfigurationInterface
                 ],
                 self::PRICE_LIST_STRATEGIES => ['type' => 'string', 'value' => MinimalPricesCombiningStrategy::NAME],
                 'feature_enabled' => ['value' => true],
+                self::PRICE_CALCULATION_PRECISION => ['type' => 'integer', 'value' => null],
             ]
         );
 

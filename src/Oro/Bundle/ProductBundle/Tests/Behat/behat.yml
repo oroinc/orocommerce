@@ -71,7 +71,7 @@ oro_behat_extension:
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridToolbarActions
 
     RelatedProductsViewGridFiltersState:
-      selector: 'div[data-page-component-name="products-related-products-view"] div.filters-state'
+      selector: 'div[data-page-component-name="products-related-products-view"] .filters-state'
 
     RelatedProductsViewGridFilterItem:
       selector: 'div[data-page-component-name="products-related-products-view"] div.filter-item'
@@ -93,7 +93,7 @@ oro_behat_extension:
         class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridToolbarActions
 
     SelectRelatedProductsGridFiltersState:
-        selector: 'div[data-page-component-name="products-related-products-select"] div.filters-state'
+        selector: 'div[data-page-component-name="products-related-products-select"] .filters-state'
 
     SelectRelatedProductsGridFilterItem:
       selector: 'div[data-page-component-name="products-related-products-select"] div.filter-item'
@@ -112,7 +112,7 @@ oro_behat_extension:
         class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridToolbarActions
 
     RelatedProductsEditGridFiltersState:
-        selector: 'div[data-page-component-name="products-related-products-edit"] div.filters-state'
+        selector: 'div[data-page-component-name="products-related-products-edit"] .filters-state'
 
     RelatedProductsEditGridFilterItem:
       selector: 'div[data-page-component-name="products-related-products-edit"] div.filter-item'
@@ -149,7 +149,7 @@ oro_behat_extension:
         class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridToolbarActions
 
     SelectUpsellProductsGridFiltersState:
-        selector: 'div[data-page-component-name="products-upsell-products-select"] div.filters-state'
+        selector: 'div[data-page-component-name="products-upsell-products-select"] .filters-state'
 
     SelectUpsellProductsGridFilterItem:
       selector: 'div[data-page-component-name="products-upsell-products-select"] div.filter-item'
@@ -168,7 +168,7 @@ oro_behat_extension:
         class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridToolbarActions
 
     UpsellProductsEditGridFiltersState:
-        selector: 'div[data-page-component-name="products-upsell-products-edit"] div.filters-state'
+        selector: 'div[data-page-component-name="products-upsell-products-edit"] .filters-state'
 
     UpsellProductsEditGridFilterItem:
       selector: 'div[data-page-component-name="products-upsell-products-edit"] div.filter-item'
@@ -505,6 +505,12 @@ oro_behat_extension:
             type: 'css'
             locator: 'select[name="oro_product_quick_add[products][1][productUnit]"]'
             element: Select
+          SUBTOTAL1:
+            type: 'css'
+            locator: 'div[data-ftid="oro_product_quick_add_products_0"] input[data-name="field__product-subtotal"]'
+          SUBTOTAL2:
+            type: 'css'
+            locator: 'div[data-ftid="oro_product_quick_add_products_1"] input[data-name="field__product-subtotal"]'
 
     Quick Order Form > QTY1:
       selector:
@@ -671,6 +677,8 @@ oro_behat_extension:
           Url Slug: 'oro_web_catalog_content_node[slugPrototypesWithRedirect][slugPrototypes][values][default]'
           First Url Slug: 'oro_web_catalog_content_node[slugPrototypesWithRedirect][slugPrototypes][values][localizations][1][value]'
           First Url Slug Use Default: 'oro_web_catalog_content_node[slugPrototypesWithRedirect][slugPrototypes][values][localizations][1][use_fallback]'
+          Second Url Slug: 'oro_web_catalog_content_node[slugPrototypesWithRedirect][slugPrototypes][values][localizations][2][value]'
+          Second Url Slug Use Default: 'oro_web_catalog_content_node[slugPrototypesWithRedirect][slugPrototypes][values][localizations][2][use_fallback]'
           Meta Title: 'oro_web_catalog_content_node[metaTitles][values][default]'
           Meta Description: 'oro_web_catalog_content_node[metaDescriptions][values][default]'
           Meta Keywords: 'oro_web_catalog_content_node[metaKeywords][values][default]'
@@ -755,7 +763,7 @@ oro_behat_extension:
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilters
 
     ProductFrontendGridFiltersState:
-      selector: 'div[data-page-component-name="frontend-product-search-grid"] div.filters-state'
+      selector: 'div[data-page-component-name="frontend-product-search-grid"] .filters-state'
 
     ProductFrontendGridToolbarActions:
       selector: 'div[data-page-component-name="frontend-product-search-grid"] div.toolbar div.actions-panel'
@@ -1115,6 +1123,8 @@ oro_behat_extension:
           Default Value: 'oro_web_catalog_content_node[titles][values][default]'
           Use Default: 'oro_web_catalog_content_node[titles][values][localizations][1][use_fallback]'
           English (United States): 'oro_web_catalog_content_node[titles][values][localizations][1][value]'
+          French Default: 'oro_web_catalog_content_node[titles][values][localizations][2][use_fallback]'
+          French: 'oro_web_catalog_content_node[titles][values][localizations][2][value]'
 
     Create Product Plus Button:
       selector: '.content-variant-item-default .entity-create-btn'

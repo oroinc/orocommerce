@@ -76,7 +76,8 @@ const QuickAddRowPricesView = BaseView.extend({
 
     checkMinQtyForUnit() {
         const unit = this.model.get('unit');
-        if (unit && this.prices && this.prices[unit]) {
+        const changedManually = this.model.get('quantity_changed_manually');
+        if (!changedManually && unit && this.prices && this.prices[unit]) {
             const quantity = this.model.get('quantity');
             const unitPrices = this.prices[unit];
             const index = _.findLastIndex(unitPrices, price => price.quantity);

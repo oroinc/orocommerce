@@ -21,7 +21,8 @@ define(function(require) {
             checkoutFlashNotifications: '[data-role="checkout-flash-notifications"]',
             defaultParameters: {
                 layout_block_ids: [
-                    'checkout_button_continue_right_wrapper'
+                    'checkout_button_continue_right_wrapper',
+                    'checkout_consent_subtree'
                 ],
                 _widgetContainer: 'ajax',
                 _wid: 'ajax_checkout'
@@ -39,14 +40,14 @@ define(function(require) {
         jqXHR: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function SinglePageCheckoutComponent(options) {
             SinglePageCheckoutComponent.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = _.extend({}, this.options, options || {});
@@ -259,7 +260,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function() {
             if (this.disposed) {

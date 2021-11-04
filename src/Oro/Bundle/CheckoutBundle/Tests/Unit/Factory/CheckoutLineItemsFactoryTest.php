@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CheckoutBundle\Bundle\Tests\Unit\Factory;
+namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Factory;
 
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CheckoutBundle\Factory\CheckoutLineItemsFactory;

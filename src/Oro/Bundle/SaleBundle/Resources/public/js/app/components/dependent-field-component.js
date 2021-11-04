@@ -58,7 +58,7 @@ define(function(require) {
         $dependee: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function DependentFieldComponent(options) {
             DependentFieldComponent.__super__.constructor.call(this, options);
@@ -82,7 +82,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function() {
             if (this.disposed) {

@@ -170,6 +170,13 @@ Oro\Bundle\PricingBundle\Entity\ProductPrice:
         quantity: 2
         unit: '@item'
         value: 6
+    price6:
+        product: '@product6'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 12
+        unit: '@item'
+        value: 10
 
 Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
     priceRelation1:
@@ -183,6 +190,9 @@ Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
         priceList: '@defaultPriceList'
     priceRelation5:
         product: '@product5'
+        priceList: '@defaultPriceList'
+    priceRelation6:
+        product: '@product6'
         priceList: '@defaultPriceList'
 
 Oro\Bundle\InventoryBundle\Entity\InventoryLevel:
@@ -205,4 +215,8 @@ Oro\Bundle\InventoryBundle\Entity\InventoryLevel:
     inventoryLevel5:
         product: '@product5'
         productUnitPrecision: '@precision4'
+        quantity: 100
+    inventoryLevel6:
+        product: '@product6'
+        productUnitPrecision: '@precision6'
         quantity: 100

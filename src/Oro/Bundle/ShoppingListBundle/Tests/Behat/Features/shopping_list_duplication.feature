@@ -31,9 +31,9 @@ Feature: Shopping list duplication
     And I should not see "Some products are not available and cannot be added to shopping list" flash message
     And I should see "Shopping List A (copied "
     And I should see following grid:
-      | SKU | QtyUpdate All |
-      | AA1 | 10 item       |
-      | AA3 | 20 item       |
+      | SKU | Qty Update All |
+      | AA1 | 10 item        |
+      | AA3 | 20 item        |
 
   Scenario: Duplicate shopping list with restricted items
     When Buyer is on "Shopping List B" shopping list
@@ -58,8 +58,8 @@ Feature: Shopping list duplication
     And I should see "Some products are not available and cannot be added to shopping list" flash message
     And I should see "Shopping List B (copied "
     And I should see following grid:
-      | SKU | QtyUpdate All |
-      | AA3 | 40 item       |
+      | SKU | Qty Update All |
+      | AA3 | 40 item        |
     And I should not see "AA2"
 
   Scenario: Check duplicate button for shopping list with all restricted items

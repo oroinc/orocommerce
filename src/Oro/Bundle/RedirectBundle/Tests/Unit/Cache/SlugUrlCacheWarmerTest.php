@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\RedirectBundle\Tests\Cache;
+namespace Oro\Bundle\RedirectBundle\Tests\Unit\Cache;
 
 use Oro\Bundle\RedirectBundle\Async\Topics;
 use Oro\Bundle\RedirectBundle\Cache\SlugUrlCacheWarmer;

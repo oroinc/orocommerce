@@ -5,6 +5,7 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Manager;
 use Doctrine\Common\Cache\Cache;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Tests\Unit\Stub\CustomerUserStub;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
@@ -21,6 +22,7 @@ use Oro\Component\Testing\Unit\EntityTrait;
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class CurrentShoppingListManagerTest extends \PHPUnit\Framework\TestCase
 {
@@ -50,6 +52,9 @@ class CurrentShoppingListManagerTest extends \PHPUnit\Framework\TestCase
     /** @var ShoppingListRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $shoppingListRepository;
 
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ConfigManager */
+    private $configManager;
+
     protected function setUp(): void
     {
         $this->shoppingListManager = $this->createMock(ShoppingListManager::class);
@@ -57,6 +62,7 @@ class CurrentShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $this->cache = $this->createMock(Cache::class);
         $this->aclHelper = $this->createMock(AclHelper::class);
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
+        $this->configManager = $this->createMock(ConfigManager::class);
 
         $this->shoppingListEntityManager = $this->createMock(EntityManagerInterface::class);
         $this->shoppingListRepository = $this->createMock(ShoppingListRepository::class);
@@ -78,6 +84,7 @@ class CurrentShoppingListManagerTest extends \PHPUnit\Framework\TestCase
             $this->aclHelper,
             $this->tokenAccessor
         );
+        $this->currentShoppingListManager->setConfigManager($this->configManager);
     }
 
     /**
@@ -212,6 +219,27 @@ class CurrentShoppingListManagerTest extends \PHPUnit\Framework\TestCase
             ->willReturn(false);
         $this->guestShoppingListManager->expects($this->never())
             ->method('getShoppingListsForCustomerVisitor');
+    }
+
+    /**
+     * @param int $customerUserId
+     */
+    private function setCustomerUserForTokenAccessor(int $customerUserId = 234): void
+    {
+        $customerUser = $this->getCustomerUser($customerUserId);
+        $this->tokenAccessor->expects($this->atLeastOnce())
+            ->method('getUser')
+            ->willReturn($customerUser);
+    }
+
+    /**
+     * @param ShoppingList $shoppingList
+     * @param int $customerUserId
+     */
+    private function setCustomerUserForShoppingList(ShoppingList $shoppingList, int $customerUserId = 2345): void
+    {
+        $customerUser = $this->getCustomerUser($customerUserId);
+        $shoppingList->setCustomerUser($customerUser);
     }
 
     public function labelDataProvider()
@@ -474,10 +502,7 @@ class CurrentShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $newShoppingList = $this->getShoppingList($newShoppingListId);
 
         $customerUserId = 234;
-        $customerUser = $this->getCustomerUser($customerUserId);
-        $this->tokenAccessor->expects($this->atLeastOnce())
-            ->method('getUser')
-            ->willReturn($customerUser);
+        $this->setCustomerUserForTokenAccessor($customerUserId);
 
         $this->expectNoGuestShoppingList();
         $this->expectCacheFetchAndSave($customerUserId, false, $newShoppingListId);
@@ -495,7 +520,10 @@ class CurrentShoppingListManagerTest extends \PHPUnit\Framework\TestCase
             ->with(true, '')
             ->willReturn($newShoppingList);
 
-        $this->assertEquals($newShoppingList, $this->currentShoppingListManager->getForCurrentUser($shoppingListId));
+        $this->assertEquals(
+            $newShoppingList,
+            $this->currentShoppingListManager->getForCurrentUser($shoppingListId)
+        );
     }
 
     public function testGetForCurrentUserWithoutShoppingListId()
@@ -504,10 +532,7 @@ class CurrentShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $newShoppingList = $this->getShoppingList($newShoppingListId);
 
         $customerUserId = 234;
-        $customerUser = $this->getCustomerUser($customerUserId);
-        $this->tokenAccessor->expects($this->atLeastOnce())
-            ->method('getUser')
-            ->willReturn($customerUser);
+        $this->setCustomerUserForTokenAccessor($customerUserId);
 
         $this->expectNoGuestShoppingList();
         $this->expectCacheFetchAndSave($customerUserId, false, $newShoppingListId);
@@ -524,6 +549,146 @@ class CurrentShoppingListManagerTest extends \PHPUnit\Framework\TestCase
             ->willReturn($newShoppingList);
 
         $this->assertEquals($newShoppingList, $this->currentShoppingListManager->getForCurrentUser());
+    }
+
+    public function testGetShoppingListForCurrentUserWithShoppingListIdAndShoppingListDoesNotExistWithoutCreate()
+    {
+        $shoppingListId = 123;
+
+        $customerUserId = 234;
+        $this->setCustomerUserForTokenAccessor($customerUserId);
+
+        $this->expectNoGuestShoppingList();
+        $this->cache->expects($this->once())
+            ->method('fetch')
+            ->with($customerUserId)
+            ->willReturn(null);
+        $this->shoppingListRepository->expects($this->once())
+            ->method('findByUserAndId')
+            ->with($this->aclHelper, $shoppingListId)
+            ->willReturn(null);
+        $this->shoppingListRepository->expects($this->once())
+            ->method('findAvailableForCustomerUser')
+            ->with($this->aclHelper, false)
+            ->willReturn(null);
+        $this->shoppingListManager->expects($this->never())
+            ->method('create');
+
+        $this->assertNull($this->currentShoppingListManager->getShoppingListForCurrentUser($shoppingListId, false));
+    }
+
+    public function testGetShoppingListForCurrentUserWithoutShoppingListIdWithoutCreate()
+    {
+        $customerUserId = 234;
+        $this->setCustomerUserForTokenAccessor($customerUserId);
+
+        $this->expectNoGuestShoppingList();
+        $this->cache->expects($this->once())
+            ->method('fetch')
+            ->with($customerUserId)
+            ->willReturn(null);
+        $this->shoppingListRepository->expects($this->never())
+            ->method('findByUserAndId');
+        $this->shoppingListRepository->expects($this->once())
+            ->method('findAvailableForCustomerUser')
+            ->with($this->aclHelper, false)
+            ->willReturn(null);
+        $this->shoppingListManager->expects($this->never())
+            ->method('create');
+
+        $this->assertNull($this->currentShoppingListManager->getShoppingListForCurrentUser(null, false));
+    }
+
+    public function testGetShoppingListForCurrentUserShareShoppingListExistedButShowAllShoppingListOptionOffWithCreate()
+    {
+        $shoppingListId = 123;
+        $shoppingList = $this->getShoppingList($shoppingListId);
+        $newShoppingListId = 1234;
+        $newShoppingList = $this->getShoppingList($newShoppingListId);
+
+        $customerUserId = 234;
+        $this->setCustomerUserForTokenAccessor($customerUserId);
+        $this->setCustomerUserForShoppingList($shoppingList);
+
+        $this->expectNoGuestShoppingList();
+        $this->cache->expects($this->once())
+            ->method('fetch')
+            ->with($customerUserId)
+            ->willReturn(null);
+        $this->shoppingListRepository->expects($this->never())
+            ->method('findByUserAndId');
+        $this->shoppingListRepository->expects($this->once())
+            ->method('findAvailableForCustomerUser')
+            ->with($this->aclHelper, false)
+            ->willReturn($shoppingList);
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with('oro_shopping_list.show_all_in_shopping_list_widget')
+            ->willReturn(false);
+        $this->shoppingListManager->expects($this->once())
+            ->method('create')
+            ->with(true, '')
+            ->willReturn($newShoppingList);
+
+        $this->assertSame($newShoppingList, $this->currentShoppingListManager->getShoppingListForCurrentUser());
+    }
+
+    public function testGetShoppingListForCurrentUserShareShoppingListExistedButShowAllOptionOffWithoutCreate()
+    {
+        $shoppingListId = 123;
+        $shoppingList = $this->getShoppingList($shoppingListId);
+
+        $customerUserId = 234;
+        $this->setCustomerUserForTokenAccessor($customerUserId);
+        $this->setCustomerUserForShoppingList($shoppingList);
+
+        $this->expectNoGuestShoppingList();
+        $this->cache->expects($this->once())
+            ->method('fetch')
+            ->with($customerUserId)
+            ->willReturn(null);
+        $this->shoppingListRepository->expects($this->never())
+            ->method('findByUserAndId');
+        $this->shoppingListRepository->expects($this->once())
+            ->method('findAvailableForCustomerUser')
+            ->with($this->aclHelper, false)
+            ->willReturn($shoppingList);
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with('oro_shopping_list.show_all_in_shopping_list_widget')
+            ->willReturn(false);
+        $this->shoppingListManager->expects($this->never())
+            ->method('create');
+
+        $this->assertNull($this->currentShoppingListManager->getShoppingListForCurrentUser(null, false));
+    }
+
+    public function testGetForCurrentUserShareShoppingListExistedAndShowAllShoppingListOptionOn()
+    {
+        $shoppingListId = 123;
+        $shoppingList = $this->getShoppingList($shoppingListId);
+
+        $customerUserId = 234;
+        $this->setCustomerUserForTokenAccessor($customerUserId);
+        $this->setCustomerUserForShoppingList($shoppingList);
+
+        $this->expectNoGuestShoppingList();
+        $this->cache->expects($this->once())
+            ->method('fetch')
+            ->with($customerUserId)
+            ->willReturn(null);
+        $this->shoppingListRepository->expects($this->never())
+            ->method('findByUserAndId');
+        $this->shoppingListRepository->expects($this->once())
+            ->method('findAvailableForCustomerUser')
+            ->with($this->aclHelper, false)
+            ->willReturn($shoppingList);
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with('oro_shopping_list.show_all_in_shopping_list_widget')
+            ->willReturn(true);
+
+        $this->assertSame($shoppingList, $this->currentShoppingListManager->getShoppingListForCurrentUser());
     }
 
     public function testGetShoppingListsWithCurrentFirstForGuestShoppingLists()

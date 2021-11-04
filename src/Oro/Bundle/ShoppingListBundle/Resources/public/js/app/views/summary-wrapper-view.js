@@ -13,14 +13,14 @@ const SummaryWrapperView = BaseView.extend({
     tabbableElements: null,
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     constructor: function SummaryWrapperView(options) {
         SummaryWrapperView.__super__.constructor.call(this, options);
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     initialize(options) {
         this.options = Object.assign({}, options || {}, this.options);

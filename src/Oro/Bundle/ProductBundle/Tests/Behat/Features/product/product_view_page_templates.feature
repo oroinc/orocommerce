@@ -90,6 +90,7 @@ Feature: Product View Page Templates
       | Admin | first_session  |
       | Buyer | second_session |
 
+
   Scenario: Prepare product attributes
     Given I operate as the Admin
     And login as administrator
@@ -102,9 +103,9 @@ Feature: Product View Page Templates
       | Type       | Select |
     And I click "Continue"
     And set Options with:
-      | Label  |
-      | Green  |
-      | Red    |
+      | Label |
+      | Green |
+      | Red   |
     And I save form
     Then I should see "Attribute was successfully saved" flash message
 
@@ -116,9 +117,9 @@ Feature: Product View Page Templates
       | Type       | Select |
     And I click "Continue"
     And set Options with:
-      | Label  |
-      | L      |
-      | M      |
+      | Label |
+      | L     |
+      | M     |
     And I save form
     Then I should see "Attribute was successfully saved" flash message
 
@@ -140,10 +141,10 @@ Feature: Product View Page Templates
     And I go to Products / Product Families
     And I click Edit Default in grid
     And set Attribute Groups with:
-      | Label         | Visible | Attributes |
-      | Color group   | true    | [Color]    |
-      | Size group    | true    | [Size]     |
-      | Remark group  | true    | [Remark]   |
+      | Label        | Visible | Attributes |
+      | Color group  | true    | [Color]    |
+      | Size group   | true    | [Size]     |
+      | Remark group | true    | [Remark]   |
     And I save form
     Then I should see "Successfully updated" flash message
 
@@ -151,8 +152,8 @@ Feature: Product View Page Templates
     Given I go to Products / Products
     When I click Edit gtsh_l in grid
     And I fill "ProductForm" with:
-      | Color  | Green |
-      | Size   | L     |
+      | Color  | Green                              |
+      | Size   | L                                  |
       | Remark | Test text for Green simple product |
     And I save form
     Then I should see "Product has been saved" flash message
@@ -160,8 +161,8 @@ Feature: Product View Page Templates
     When I go to Products / Products
     And I click Edit rtsh_m in grid
     And I fill "ProductForm" with:
-      | Color  | Red     |
-      | Size   | M       |
+      | Color  | Red                              |
+      | Size   | M                                |
       | Remark | Test text for Red simple product |
     And I save form
     Then I should see "Product has been saved" flash message
@@ -178,6 +179,15 @@ Feature: Product View Page Templates
     And I check gtsh_l and rtsh_m in grid
     And I save form
     Then I should see "Product has been saved" flash message
+
+  Scenario: Change configuration to display simple variations
+    When go to System/ Configuration
+    And I follow "Commerce/Product/Configurable Products" on configuration sidebar
+    And I fill "Display Simple Variations Form" with:
+      | Display Simple Variations Default | false      |
+      | Display Simple Variations         | everywhere |
+    And click "Save settings"
+    Then I should see "Configuration saved" flash message
 
   Scenario: Open, fill and submit Matrix Order Form
     Given I operate as the Buyer

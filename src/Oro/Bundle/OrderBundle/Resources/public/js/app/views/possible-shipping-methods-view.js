@@ -48,14 +48,14 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function PossibleShippingMethodsView(options) {
             PossibleShippingMethodsView.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             PossibleShippingMethodsView.__super__.initialize.call(this, options);

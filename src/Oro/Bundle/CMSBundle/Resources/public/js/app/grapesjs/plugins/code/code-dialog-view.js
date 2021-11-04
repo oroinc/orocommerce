@@ -9,7 +9,7 @@ define(function(require) {
 
     const CodeDialogView = BaseView.extend({
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         optionNames: BaseView.prototype.optionNames.concat([
             'editor', 'codeViewerOptions',
@@ -17,7 +17,7 @@ define(function(require) {
         ]),
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         autoRender: true,
 
@@ -99,7 +99,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          * @param options
          */
         initialize: function(options) {
@@ -110,7 +110,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          *
          * @returns {{modalCodeButton: CodeDialogView.modalCodeButton}}
          */
@@ -121,7 +121,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         render: function() {
             CodeDialogView.__super__.render.call(this);
@@ -160,7 +160,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function() {
             if (this.disposed) {

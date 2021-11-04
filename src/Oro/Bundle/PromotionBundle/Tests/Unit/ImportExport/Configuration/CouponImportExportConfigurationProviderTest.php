@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\PromotionBundle\Test\Unit\ImportExport\Configuration;
+namespace Oro\Bundle\PromotionBundle\Tests\Unit\ImportExport\Configuration;
 
 use Oro\Bundle\ImportExportBundle\Configuration\ImportExportConfiguration;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;

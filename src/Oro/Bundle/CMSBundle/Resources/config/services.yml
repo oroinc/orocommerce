@@ -474,3 +474,10 @@ services:
             - '@doctrine'
         tags:
             - { name: oro.requirements_provider }
+
+    oro_cms.event_listener.command.sanitize_wysiwyg_notice_on_platform_update:
+        class: Oro\Bundle\CMSBundle\EventListener\SanitizeWysiwygNoticeOnPlatformUpdateListener
+        arguments:
+            - '@oro_config.global'
+        tags:
+            - { name: kernel.event_listener, event: console.terminate, method: onConsoleTerminate }

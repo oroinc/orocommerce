@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CMSBundle\Tests\Unit\ContentBlockView\Model;
+namespace Oro\Bundle\CMSBundle\Tests\Unit\ContentBlock\Model;
 
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\CMSBundle\ContentBlock\Model\ContentBlockView;

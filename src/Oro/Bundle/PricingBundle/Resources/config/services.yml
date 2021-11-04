@@ -339,6 +339,16 @@ services:
             - { name: kernel.event_listener, event: oro_config.settings_before_save.oro_pricing.default_price_list, method: onSettingsSaveBefore }
             - { name: kernel.event_listener, event: oro_config.update_after, method: updateAfter }
 
+    oro_pricing.event_listener.price_calculation_precision_system_config_listener:
+        class: 'Oro\Bundle\PricingBundle\EventListener\PriceCalculationPrecisionSystemConfigListener'
+        arguments:
+            - '@doctrine'
+            - '@oro_pricing.cache.rule_cache'
+            - '@session'
+            - '@translator'
+        tags:
+            - { name: kernel.event_listener, event: oro_config.update_after, method: updateAfter }
+
     oro_pricing.price_list_relation_trigger_handler.combined:
         class: 'Oro\Bundle\PricingBundle\Model\CombinedPriceListRelationTriggerHandler'
         arguments:
@@ -991,6 +1001,7 @@ services:
         parent: oro_pricing.compiler.abstract_rule_compiler
         calls:
             - [setFieldsProvider, ['@oro_product.expression.fields_provider']]
+            - [setConfigManager, ['@oro_config.manager']]
 
     oro_pricing.compiler.product_assignment_rule_compiler:
         class: 'Oro\Bundle\PricingBundle\Compiler\ProductAssignmentRuleCompiler'

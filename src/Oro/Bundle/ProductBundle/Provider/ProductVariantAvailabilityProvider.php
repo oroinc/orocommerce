@@ -93,6 +93,9 @@ class ProductVariantAvailabilityProvider
 
             foreach ($availableSimpleProducts as $simpleProduct) {
                 $variantFieldValue = $this->getVariantFieldScalarValue($simpleProduct, $variantField);
+                if ($variantFieldValue === null) {
+                    continue;
+                }
                 $variantsAvailability[$variantField][$variantFieldValue] = true;
             }
         }

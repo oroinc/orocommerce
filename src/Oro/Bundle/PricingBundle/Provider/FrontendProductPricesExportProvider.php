@@ -24,7 +24,7 @@ class FrontendProductPricesExportProvider
 {
     private ConfigManager $configManager;
 
-    private ProductPriceProvider $priceProvider;
+    private ProductPriceProviderInterface $priceProvider;
 
     private TokenAccessorInterface $tokenAccessor;
 
@@ -43,7 +43,7 @@ class FrontendProductPricesExportProvider
     public function __construct(
         ManagerRegistry $managerRegistry,
         ConfigManager $configManager,
-        ProductPriceProvider $priceProvider,
+        ProductPriceProviderInterface $priceProvider,
         TokenAccessorInterface $tokenAccessor,
         ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory,
         UserCurrencyManager $currencyManager

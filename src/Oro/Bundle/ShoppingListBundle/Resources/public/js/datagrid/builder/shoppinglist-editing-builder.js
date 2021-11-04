@@ -7,7 +7,9 @@ const shoppingListEditingBuilder = {
             options.metadata.plugins = [];
         }
 
-        options.metadata.inline_editing.default_editors = ShoppingListEditors;
+        if (options.metadata.inline_editing) {
+            options.metadata.inline_editing.default_editors = ShoppingListEditors;
+        }
         options.metadata.options.model = ShoppingListEditItemModel;
 
         deferred.resolve();

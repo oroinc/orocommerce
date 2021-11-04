@@ -26,7 +26,7 @@ define(function(require) {
         subtotalUrl: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function QuoteDemandComponent(options) {
             QuoteDemandComponent.__super__.constructor.call(this, options);

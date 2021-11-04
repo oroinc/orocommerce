@@ -34,6 +34,11 @@ export const escapeWrapper = html => {
     return html;
 };
 
+export const escapeCss = css => css
+    .replace(cssWrapperScopeRegexp, '#wrapper{')
+    .replace(componentCssIdRegexp, '')
+    .replace(cssChildrenScopeRegexp, '');
+
 export const getWrapperAttrs = html => {
     const attrs = {};
     if (hasIsolation(html)) {
@@ -114,6 +119,15 @@ export default GrapesJS.plugins.add('grapesjs-style-isolation', (editor, options
             .replace(cssWrapperScopeRegexp, '#wrapper{')
             .replace(componentCssIdRegexp, '')
             .replace(cssChildrenScopeRegexp, '');
+
+        const errors = editor.CodeValidator.validate(`<style>${css}</style>`);
+
+        if (errors.length) {
+            console.error(`Invalid styles cannot apply in editor, check source code "
+                ${errors.map((({message}) => message)).join('\n')}
+            "`);
+            return false;
+        }
 
         const _res = editor.Parser.parseCss(css).reduce((acc, rule, index, collection) => {
             const {state = '', atRuleType = '', mediaText = '', selectorsAdd = ''} = rule;

@@ -43,6 +43,7 @@ class OroCMSExtension extends Extension
         $loader->load('form_types.yml');
         $loader->load('block_types.yml');
         $loader->load('controllers.yml');
+        $loader->load('commands.yml');
 
         if ('test' === $container->getParameter('kernel.environment')) {
             $loader->load('services_test.yml');

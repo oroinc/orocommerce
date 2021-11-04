@@ -69,14 +69,14 @@ define(function(require) {
         quantityEventsEnabled: true,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function QuoteProductToOrderComponent(options) {
             QuoteProductToOrderComponent.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);

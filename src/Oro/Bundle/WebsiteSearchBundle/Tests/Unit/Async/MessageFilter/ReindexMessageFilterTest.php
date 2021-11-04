@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Async\Visibility;
+namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Async\MessageFilter;
 
 use Oro\Bundle\MessageQueueBundle\Client\MessageBuffer;
 use Oro\Bundle\VisibilityBundle\Async\Visibility\ProductMessageFilter;

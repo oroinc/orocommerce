@@ -4,17 +4,20 @@ namespace Oro\Bundle\PricingBundle\Provider;
 
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 
+/**
+ * DTO contains all required information about PriceList for use in combining price list logic.
+ */
 class PriceListSequenceMember
 {
     /** @var  PriceList */
     protected $priceList;
 
-    /** @var  boolean */
+    /** @var bool|null */
     protected $mergeAllowed;
 
     /**
      * @param PriceList $priceList
-     * @param boolean $mergeAllowed
+     * @param bool|null $mergeAllowed
      */
     public function __construct(PriceList $priceList, $mergeAllowed)
     {
@@ -31,10 +34,10 @@ class PriceListSequenceMember
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isMergeAllowed()
     {
-        return $this->mergeAllowed;
+        return (bool) $this->mergeAllowed;
     }
 }

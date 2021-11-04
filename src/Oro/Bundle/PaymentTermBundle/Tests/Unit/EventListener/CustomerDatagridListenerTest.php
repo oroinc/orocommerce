@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\PaymentTermBundle\Tests\Unit\Datagrid;
+namespace Oro\Bundle\PaymentTermBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;

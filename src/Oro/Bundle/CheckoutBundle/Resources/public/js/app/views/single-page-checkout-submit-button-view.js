@@ -12,7 +12,7 @@ define(function(require) {
         isHoveredFlag: false, // Marks submit button hovered if true
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function SinglePageCheckoutSubmitButtonView(options) {
             SinglePageCheckoutSubmitButtonView.__super__.constructor.call(this, options);

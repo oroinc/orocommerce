@@ -12,7 +12,7 @@ define(function(require) {
         $element: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function BreadcrumbsNavigationBlock(options) {
             BreadcrumbsNavigationBlock.__super__.constructor.call(this, options);
@@ -23,7 +23,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.$element = options._sourceElement;

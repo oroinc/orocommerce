@@ -268,9 +268,10 @@ class ProductAssignmentRuleCompilerTest extends WebTestCase
     {
         $actual = $qb->getQuery()->getArrayResult();
         $actual = array_map(
-            function (array $value) {
+            static function (array $value) {
+                unset($value['id']);
                 return array_map(
-                    function ($val) {
+                    static function ($val) {
                         if (is_numeric($val)) {
                             $val = (int)$val;
                         }

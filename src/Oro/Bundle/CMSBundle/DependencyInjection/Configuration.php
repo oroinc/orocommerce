@@ -11,20 +11,13 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
  */
 class Configuration implements ConfigurationInterface
 {
-    /**
-     * @var string
-     */
     public const DIRECT_EDITING = 'direct_editing';
 
-    /**
-     * @var string
-     */
     public const LOGIN_PAGE_CSS_FIELD_OPTION = 'login_page_css_field';
 
-    /**
-     * @var string
-     */
     public const DIRECT_URL_PREFIX = 'landing_page_direct_url_prefix';
+
+    public const IS_SANITIZE_WYSIWYG_NOTICE_SHOWN = 'flag_sanitize_wysiwyg_notice';
 
     /** @var array */
     private $contentRestrictionModes = [];
@@ -86,7 +79,10 @@ class Configuration implements ConfigurationInterface
         SettingsBuilder::append(
             $rootNode,
             [
-                self::DIRECT_URL_PREFIX => ['value' => '']
+                self::DIRECT_URL_PREFIX => ['value' => ''],
+                // Not present on UI, used only as flag in
+                // {@see Oro\Bundle\CMSBundle\EventListener\SanitizeWysiwygNoticeOnPlatformUpdateListener}
+                self::IS_SANITIZE_WYSIWYG_NOTICE_SHOWN => ['value' => false],
             ]
         );
 

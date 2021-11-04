@@ -6,14 +6,14 @@ define(function(require) {
 
     const ProductDataGidComponent = DataGridComponent.extend({
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function ProductDataGidComponent(options) {
             ProductDataGidComponent.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         collectModules: function() {
             // If another Grid view is present
@@ -31,7 +31,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         insertDataGrid: function(options) {
             const selector = options.gridMainContainer || '.oro-datagrid';
@@ -40,7 +40,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         build: function(...args) {
             ProductDataGidComponent.__super__.build.apply(this, args);
@@ -51,7 +51,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function() {
             this.grid.off(null, null, this);

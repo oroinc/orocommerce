@@ -65,17 +65,26 @@ const TextTypeBuilder = BaseTypeBuilder.extend({
             }
         },
 
-        replaceWith(el) {
+        replaceWith(el, updateStyle = true) {
             const styles = this.getStyle();
             const classes = this.getClasses();
             const newModels = this.constructor.__super__.replaceWith.call(this, el);
 
-            newModels.forEach(model => {
-                model.setStyle(styles);
-                model.setClass(classes);
-            });
+            if (updateStyle) {
+                newModels.forEach(model => {
+                    model.setStyle(styles);
+                    model.setClass(classes);
+                });
+            }
 
             return newModels;
+        },
+
+        setContent(content, options = {}) {
+            this.set('content', content, options);
+            this.view.syncContent({
+                force: true
+            });
         }
     },
 
@@ -163,8 +172,16 @@ const TextTypeBuilder = BaseTypeBuilder.extend({
         /**
          * Remove component wrapper
          */
-        removeWrapper() {
-            const [model] = this.model.replaceWith(this.getContent());
+        removeWrapper(select = true) {
+            const id = this.model.getId();
+            const [model] = this.model.replaceWith(this.getContent(), select);
+            model.set('attributes', {
+                ...model.get('attributes'),
+                id
+            });
+            if (!select) {
+                return;
+            }
             this.editor.select(model);
         },
 
@@ -190,7 +207,7 @@ const TextTypeBuilder = BaseTypeBuilder.extend({
             const {activeRte, $el, cid} = this;
 
             if (activeRte) {
-                $el.on(`keypress.${cid}`, this.onPressEnter.bind(this));
+                $el.off(`keypress.${cid}`).on(`keypress.${cid}`, this.onPressEnter.bind(this));
 
                 if (TAGS.includes(this.model.get('tagName'))) {
                     this.wrapComponent('div');
@@ -218,18 +235,28 @@ const TextTypeBuilder = BaseTypeBuilder.extend({
                     em.logError(err);
                 }
 
-                this.syncContent();
+                if (clean) {
+                    this.syncContent();
+                }
             }
 
             this.toggleEvents();
 
             if (clean && this.isSingleLine()) {
-                this.removeWrapper();
+                this.removeWrapper(typeof clean === 'boolean');
             }
 
             if (model.get('tagName') && this.getContent() === '') {
                 model.set('content', __('oro.cms.wysiwyg.component.text.content'));
             }
+        },
+
+        dispose() {
+            if (this.disposed) {
+                return;
+            }
+
+            this.constructor.__super__.dispose.call(this);
         },
 
         updateContentText({model, ...args}) {
@@ -244,52 +271,32 @@ const TextTypeBuilder = BaseTypeBuilder.extend({
          * @param opts
          */
         syncContent(opts = {}) {
-            const {model, rte, rteEnabled} = this;
-            if (!rteEnabled && !opts.force) return;
+            const {model, rteEnabled} = this;
+            if (!rteEnabled && !opts.force) {
+                return;
+            }
             const content = this.getContent();
             const comps = model.components();
+            const previousModels = _.clone(comps);
             const contentOpt = {
                 fromDisable: false,
-                previousModels: _.clone(comps),
                 idUpdate: true,
+                previousModels,
                 ...opts
             };
+
             comps.length && comps.reset(null, opts);
             model.set('content', '', contentOpt);
 
-            // If there is a custom RTE the content is just baked staticly
-            // inside 'content'
-            if (rte.customRte) {
-                model.set('content', content, contentOpt);
-            } else {
-                const clean = model => {
-                    const textable = !!model.get('textable');
-                    const selectable =
-                        !['text', 'default', ''].some(type => model.is(type)) || textable;
+            // Avoid re-render on reset with silent option
+            !opts.silent && model.trigger('change:content', model, '', contentOpt);
 
-                    model.set({
-                        _innertext: false,
-                        editable: selectable && model.get('editable'),
-                        selectable: selectable,
-                        hoverable: selectable,
-                        removable: textable,
-                        draggable: textable,
-                        highlightable: 0,
-                        copyable: textable,
-                        ...(!textable && {toolbar: ''})
-                    }, opts);
+            comps.add(this.em.get('Parser').parseTextBlockContentFromString(content), {
+                previousModels,
+                ...opts
+            });
 
-                    model.get('components').each(model => clean(model));
-                };
-
-                // Avoid re-render on reset with silent option
-                !opts.silent && model.trigger('change:content', model, '', contentOpt);
-
-                comps.add(content, opts);
-
-                comps.each(model => clean(model));
-                comps.trigger('resetNavigator');
-            }
+            comps.trigger('resetNavigator');
         }
     }
 });

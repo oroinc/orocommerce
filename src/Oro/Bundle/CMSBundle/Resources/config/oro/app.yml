@@ -93,6 +93,10 @@ oro_form:
                 ul:
                     attributes:
                         - role
+                        - type
+                ol:
+                    attributes:
+                        - type
                 li:
                     attributes:
                         - aria-current

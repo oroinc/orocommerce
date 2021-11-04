@@ -55,6 +55,15 @@ Feature: Create product with dialog widget
     And I save and close form
     Then I should see "Successfully updated" flash message
 
+  Scenario: Change configuration to display simple variations to allow 1GB81 to be accessed
+    When go to System/ Configuration
+    And I follow "Commerce/Product/Configurable Products" on configuration sidebar
+    And I fill "Display Simple Variations Form" with:
+      | Display Simple Variations Default | false      |
+      | Display Simple Variations         | everywhere |
+    And click "Save settings"
+    Then I should see "Configuration saved" flash message
+
   Scenario: Prepare first simple product
     Given I proceed as the Admin
     And I go to Products/Products

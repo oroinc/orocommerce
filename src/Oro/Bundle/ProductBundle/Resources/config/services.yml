@@ -464,6 +464,14 @@ services:
         tags:
             - { name: validator.constraint_validator, alias: oro_product_attribute_family_usage_in_variant_field }
 
+    oro_product.validator.attribute_value_usages_product_variant_field:
+        class: 'Oro\Bundle\ProductBundle\Validator\Constraints\AttributeValueUsageInVariantValidator'
+        arguments:
+            - '@doctrine'
+            - '@oro_entity_extend.enum_synchronizer'
+        tags:
+            - { name: validator.constraint_validator, alias: oro_product_attribute_value_usage_in_variant_field }
+
     oro_product.event_listener.restricted_products_datagrid:
         class: 'Oro\Bundle\ProductBundle\EventListener\RestrictedProductsDatagridEventListener'
         arguments:
@@ -1190,6 +1198,20 @@ services:
         tags:
             - { name: kernel.event_listener, event: kernel.controller, method: onKernelController, priority: -100 }
 
+    oro_product.feature.voter.feature_simple_variations_view_restriction:
+        class: Oro\Bundle\ProductBundle\Feature\Voter\SimpleVariationsRestrictionFeatureVoter
+        arguments:
+            - '@oro_config.manager'
+        tags:
+            - { name: oro_featuretogle.voter }
+
+    oro_product.event_listener.restrict_variant_product_view:
+        class: Oro\Bundle\ProductBundle\EventListener\RestrictVariantProductViewListener
+        public: false
+        tags:
+            - { name: oro_featuretogle.feature, feature: 'simple_variations_view_restriction_bc' }
+            - { name: kernel.event_listener, event: kernel.controller, method: onKernelController, priority: -100 }
+
     oro_product.provider.content_variant_segment_provider:
         class: Oro\Bundle\ProductBundle\Provider\ContentVariantSegmentProvider
         public: true
@@ -1830,3 +1852,11 @@ services:
             - '@oro_product.handler.request_content_variant'
         tags:
             - { name: layout.data_provider, alias: frontend_product_export_options }
+
+    oro_product.event_listener.product_quick_order_form_not_found:
+        class: Oro\Bundle\ProductBundle\EventListener\ProductQuickOrderFormNotFoundListener
+        arguments:
+            - '@router'
+            - '@oro_security.token_accessor'
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception, method: onKernelException}

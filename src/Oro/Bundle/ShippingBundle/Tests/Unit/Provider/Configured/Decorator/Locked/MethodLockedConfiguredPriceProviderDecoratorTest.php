@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Configured\Decorator\MethodLocked;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Configured\Decorator\Locked;
 
 // @codingStandardsIgnoreStart
 use Oro\Bundle\CurrencyBundle\Entity\Price;

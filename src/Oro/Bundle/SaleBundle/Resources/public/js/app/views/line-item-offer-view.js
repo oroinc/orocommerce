@@ -17,14 +17,14 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function LineItemOfferView(options) {
             LineItemOfferView.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.elementsEvents.unit = ['product-units:change', 'onProductUnitsChange'];

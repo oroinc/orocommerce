@@ -17,19 +17,19 @@ const FilterItemsHintView = BaseView.extend({
     renderMode: '',
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     template: template,
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     events: {
         'click .reset-filter-button': 'resetAllFilters'
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     attributes: {
         'class': 'filter-box',
@@ -43,14 +43,14 @@ const FilterItemsHintView = BaseView.extend({
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     constructor: function FilterItemsHintView(options) {
         FilterItemsHintView.__super__.constructor.call(this, options);
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     initialize(options) {
         _.extend(this, _.pick(options, ['renderMode', 'gridName']));
@@ -67,7 +67,7 @@ const FilterItemsHintView = BaseView.extend({
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     render() {
         FilterItemsHintView.__super__.render.call(this);

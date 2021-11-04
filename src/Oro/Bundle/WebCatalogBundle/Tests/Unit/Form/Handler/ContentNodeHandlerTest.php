@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Form\Handler;
 
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\ApiBundle\Util\DoctrineHelper;

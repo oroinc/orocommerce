@@ -9,21 +9,21 @@ define(function(require) {
 
     const ShoppingListCollectionComponent = BaseComponent.extend({
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         listen: {
             'shopping-list:line-items:update-response mediator': '_onLineItemsUpdate'
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function ShoppingListCollectionComponent(options) {
             ShoppingListCollectionComponent.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.collection = new BaseCollection(options.shoppingLists);

@@ -37,14 +37,14 @@ define(function(require) {
         timeoutId: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function EntryPointComponent(options) {
             EntryPointComponent.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
@@ -147,7 +147,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function() {
             if (this.disposed) {

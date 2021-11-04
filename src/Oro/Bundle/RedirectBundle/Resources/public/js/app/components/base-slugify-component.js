@@ -30,7 +30,7 @@ define(function(require) {
         doSync: true,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function SlugifyComponent(options) {
             SlugifyComponent.__super__.constructor.call(this, options);
@@ -88,7 +88,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function() {
             if (this.disposed) {
