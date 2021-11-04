@@ -120,7 +120,6 @@ class TextFilteredIndexDataProviderTest extends IndexDataProviderTest
                         [1, 'title_WEBSITE_ID', '<p>SKU-01-gb</p>', ['WEBSITE_ID' => 1, 'LOCALIZATION_ID' => 6], true],
                         [1, 'descr_LOCALIZATION_ID', '<p>en_US</p>', ['WEBSITE_ID' => 1, 'LOCALIZATION_ID' => 5], true],
                         [1, 'descr_LOCALIZATION_ID', '<p>en_GB</p>', ['WEBSITE_ID' => 1, 'LOCALIZATION_ID' => 6], true],
-                        [1, 'all_text', 'for_all_text', true],
                         [1, 'all_text_LOCALIZATION_ID', 'title5 descr5 keywords5', ['LOCALIZATION_ID' => 5], true],
                         [1, 'all_text_LOCALIZATION_ID', 'title6 descr6 keywords6', ['LOCALIZATION_ID' => 6], true],
                     ],
@@ -128,8 +127,8 @@ class TextFilteredIndexDataProviderTest extends IndexDataProviderTest
                         1 => [
                             'text' => [
                                 'title_1' => 'SKU-01 SKU-01-gb',
-                                'all_text_5' => 'SKU-01 en_US title5 descr5 keywords5 for_all_text',
-                                'all_text_6' => 'SKU-01-gb en_GB title6 descr6 keywords6 for_all_text',
+                                'all_text_5' => 'SKU-01 en_US title5 descr5 keywords5',
+                                'all_text_6' => 'SKU-01-gb en_GB title6 descr6 keywords6',
                                 'descr_5' => 'en_US',
                                 'descr_6' => 'en_GB',
                             ],
