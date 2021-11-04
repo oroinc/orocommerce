@@ -66,7 +66,9 @@ class ProductImageCollectionValidator extends ConstraintValidator
             ) {
                 $this->context
                     ->buildViolation($constraint->message, [
-                        '%type%' => $this->translator->trans($maxTypeValues['label']),
+                        '%type%' => isset($maxTypeValues['label'])
+                            ? $this->translator->trans((string) $maxTypeValues['label'])
+                            : '',
                         '%maxNumber%' => $maxTypeValues['max']
                     ])
                     ->addViolation();

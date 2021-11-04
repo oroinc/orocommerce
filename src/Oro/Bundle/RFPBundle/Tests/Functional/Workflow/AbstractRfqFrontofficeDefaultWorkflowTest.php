@@ -9,7 +9,6 @@ use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\Workflow;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 use Symfony\Component\DomCrawler\Crawler;
-use Symfony\Component\HttpFoundation\Request as HttpRequest;
 
 abstract class AbstractRfqFrontofficeDefaultWorkflowTest extends FrontendWebTestCase
 {
@@ -36,7 +35,6 @@ abstract class AbstractRfqFrontofficeDefaultWorkflowTest extends FrontendWebTest
         $this->loadFixtures([LoadRequestData::class]);
 
         $this->updateCustomerUserSecurityToken($this->getCustomerUserEmail());
-        $this->getContainer()->get('request_stack')->push(new HttpRequest());
 
         $this->manager = $this->getContainer()->get('oro_workflow.manager');
         $this->systemManager = $this->getContainer()->get('oro_workflow.manager.system');
@@ -47,6 +45,8 @@ abstract class AbstractRfqFrontofficeDefaultWorkflowTest extends FrontendWebTest
 
         $this->workflow = $this->manager->getWorkflow($this->getWorkflowName());
         $this->request = $this->getReference(LoadRequestData::REQUEST2);
+
+        $this->ensureSessionIsAvailable();
     }
 
     /**

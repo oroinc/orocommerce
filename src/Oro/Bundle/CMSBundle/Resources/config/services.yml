@@ -207,10 +207,15 @@ services:
         arguments:
             - !tagged_iterator oro_cms.wysiwyg.twig_function_processor
 
+    oro_cms.wysiwyg.content_widget_provider:
+        class: Oro\Bundle\CMSBundle\WYSIWYG\ContentWidgetProvider
+        arguments:
+            - '@oro_security.acl_helper'
+
     oro_cms.wysiwyg.content_widget_twig_function_processor:
         class: 'Oro\Bundle\CMSBundle\WYSIWYG\ContentWidgetTwigFunctionProcessor'
         arguments:
-            - '@oro_security.acl_helper'
+            - '@oro_cms.wysiwyg.content_widget_provider'
         tags:
             - { name: oro_cms.wysiwyg.twig_function_processor }
 
@@ -312,14 +317,19 @@ services:
     oro_cms.layout_manager:
         synthetic: true
 
+    oro_cms.content_widget.provider:
+        class: Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetProvider
+        arguments:
+            - '@doctrine'
+
     oro_cms.content_widget.renderer:
         class: Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetRenderer
         arguments:
-            - '@doctrine'
-            - '@oro_cms.layout_manager'
+            - '@oro_cms.content_widget.provider'
             - '@oro_cms.content_widget.type_registry'
-        calls:
-            - [setLogger, ['@logger']]
+            - '@oro_cms.layout_manager'
+            - '@logger'
+            - '%kernel.debug%'
         tags:
             - { name: monolog.logger, channel: oro_cms }
 

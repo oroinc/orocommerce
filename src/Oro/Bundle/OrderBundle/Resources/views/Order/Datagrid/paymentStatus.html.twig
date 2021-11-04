@@ -1,6 +1,6 @@
 {% set data = record.getValue('paymentStatus') %}
-{% if data is not empty %}
+{%- if data is not empty -%}
     {{ get_payment_status_label(data) }}
-{% else %}
+{%- else -%}
     {{ 'oro.ui.empty'|trans }}
-{% endif %}
+{%- endif -%}

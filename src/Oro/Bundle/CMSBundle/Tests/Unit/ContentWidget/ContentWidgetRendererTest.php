@@ -2,15 +2,12 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Unit\ContentWidget;
 
-use Doctrine\ORM\EntityManager;
-use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetProvider;
 use Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetRenderer;
 use Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetTypeRegistry;
 use Oro\Bundle\CMSBundle\Entity\ContentWidget;
-use Oro\Bundle\CMSBundle\Entity\Repository\ContentWidgetRepository;
 use Oro\Bundle\CMSBundle\Tests\Unit\ContentWidget\Stub\ContentWidgetTypeStub;
 use Oro\Bundle\LayoutBundle\Layout\LayoutManager;
-use Oro\Bundle\TestFrameworkBundle\Test\Logger\LoggerAwareTraitTestTrait;
 use Oro\Component\Layout\Layout;
 use Oro\Component\Layout\LayoutBuilderInterface;
 use Oro\Component\Layout\LayoutContext;
@@ -18,154 +15,210 @@ use Psr\Log\LoggerInterface;
 
 class ContentWidgetRendererTest extends \PHPUnit\Framework\TestCase
 {
-    use LoggerAwareTraitTestTrait;
+    private const ERROR_TEMPLATE = <<<HTML
+<div class="alert alert-error alert--compact" role="alert">
+    <span class="fa-exclamation alert-icon" aria-hidden="true"></span>
+    Rendering of the content widget "sample-widget" failed: %s
+</div>
+HTML;
 
     private const SAMPLE_WIDGET = 'sample-widget';
     private const SAMPLE_RESULT = 'sample-result';
-    private const SAMPLE_TEMPLATE = 'sample-template';
     private const SAMPLE_SETTINGS = ['param' => 'value'];
 
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    private $doctrine;
+    /** @var ContentWidgetProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $contentWidgetProvider;
 
     /** @var LayoutManager|\PHPUnit\Framework\MockObject\MockObject */
     private $layoutManager;
 
-    /** @var ContentWidgetTypeRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    private $contentWidgetTypeRegistry;
-
     /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $logger;
 
-    /** @var ContentWidgetRenderer */
-    private $renderer;
-
     protected function setUp(): void
     {
-        $this->doctrine = $this->createMock(ManagerRegistry::class);
+        $this->contentWidgetProvider = $this->createMock(ContentWidgetProvider::class);
         $this->layoutManager = $this->createMock(LayoutManager::class);
-
-        $this->contentWidgetTypeRegistry = $this->createMock(ContentWidgetTypeRegistry::class);
-        $this->contentWidgetTypeRegistry->expects($this->any())
-            ->method('getWidgetType')
-            ->willReturnMap(
-                [
-                    [ContentWidgetTypeStub::getName(), new ContentWidgetTypeStub()]
-                ]
-            );
-
         $this->logger = $this->createMock(LoggerInterface::class);
+    }
 
-        $this->renderer = new ContentWidgetRenderer(
-            $this->doctrine,
+    private function getRenderer(bool $debug): ContentWidgetRenderer
+    {
+        $contentWidgetTypeRegistry = $this->createMock(ContentWidgetTypeRegistry::class);
+        $contentWidgetTypeRegistry->expects(self::any())
+            ->method('getWidgetType')
+            ->willReturnMap([
+                [ContentWidgetTypeStub::getName(), new ContentWidgetTypeStub()]
+            ]);
+
+        return new ContentWidgetRenderer(
+            $this->contentWidgetProvider,
+            $contentWidgetTypeRegistry,
             $this->layoutManager,
-            $this->contentWidgetTypeRegistry
+            $this->logger,
+            $debug
         );
-
-        $this->setUpLoggerMock($this->renderer);
     }
 
-    public function testRenderWhenNoContentWidget(): void
+    private function getContentWidget(array|\Throwable $data): ContentWidget
     {
-        $this->assertLoggerErrorMethodCalled();
+        $contentWidget = $this->createMock(ContentWidget::class);
+        $contentWidget->expects(self::any())
+            ->method('getName')
+            ->willReturn(self::SAMPLE_WIDGET);
+        $contentWidget->expects(self::once())
+            ->method('getWidgetType')
+            ->willReturn(ContentWidgetTypeStub::getName());
+        if ($data instanceof \Throwable) {
+            $contentWidget->expects(self::once())
+                ->method('getSettings')
+                ->willThrowException($data);
+        } else {
+            $contentWidget->expects(self::once())
+                ->method('getSettings')
+                ->willReturn($data);
+        }
 
-        $this->mockFindOneByName(null);
-
-        $this->assertEquals('', $this->renderer->render(self::SAMPLE_WIDGET));
+        return $contentWidget;
     }
 
-    public function testRenderWhenException(): void
+    public function debugDataProvider(): array
     {
-        $contentWidget = $this->mockContentWidget();
-        $this->mockFindOneByName($contentWidget);
+        return [
+            [false],
+            [true]
+        ];
+    }
 
-        $this->layoutManager
+    /**
+     * @dataProvider debugDataProvider
+     */
+    public function testRenderWhenNoContentWidget(bool $debug): void
+    {
+        $exception = new \RuntimeException('The context widget does not exist.');
+
+        $this->contentWidgetProvider->expects(self::once())
+            ->method('getContentWidget')
+            ->with(self::SAMPLE_WIDGET)
+            ->willThrowException($exception);
+
+        $this->logger->expects(self::once())
+            ->method('error')
+            ->with('Error occurred while rendering content widget "sample-widget".');
+
+        $expectedResult = $debug ? sprintf(self::ERROR_TEMPLATE, $exception->getMessage()) : '';
+        $result = $this->getRenderer($debug)->render(self::SAMPLE_WIDGET);
+        self::assertSame($expectedResult, $result);
+    }
+
+    /**
+     * @dataProvider debugDataProvider
+     */
+    public function testRenderWhenExceptionDuringRendering(bool $debug): void
+    {
+        $exception = new \Exception('some error');
+        $contentWidget = $this->getContentWidget(self::SAMPLE_SETTINGS);
+
+        $this->contentWidgetProvider->expects(self::once())
+            ->method('getContentWidget')
+            ->with(self::SAMPLE_WIDGET)
+            ->willReturn($contentWidget);
+
+        $layout = $this->createMock(Layout::class);
+        $layoutBuilder = $this->createMock(LayoutBuilderInterface::class);
+        $this->layoutManager->expects(self::once())
             ->method('getLayoutBuilder')
-            ->willThrowException(new \Exception());
+            ->willReturn($layoutBuilder);
+        $layoutBuilder->expects(self::once())
+            ->method('add')
+            ->with('content_widget_root', null, 'content_widget_root');
+        $layoutBuilder->expects(self::once())
+            ->method('getLayout')
+            ->with(
+                new LayoutContext(
+                    ['data' => ['settings' => self::SAMPLE_SETTINGS], 'content_widget' => $contentWidget],
+                    ['content_widget']
+                )
+            )
+            ->willReturn($layout);
+        $layout->expects(self::once())
+            ->method('render')
+            ->willThrowException($exception);
 
-        $this->assertLoggerErrorMethodCalled();
+        $this->logger->expects(self::once())
+            ->method('error')
+            ->with('Error occurred while rendering content widget "sample-widget".');
 
-        $this->assertEquals(
-            '',
-            $this->renderer->render(self::SAMPLE_WIDGET)
-        );
+        $expectedResult = $debug ? sprintf(self::ERROR_TEMPLATE, $exception->getMessage()) : '';
+        $result = $this->getRenderer($debug)->render(self::SAMPLE_WIDGET);
+        self::assertSame($expectedResult, $result);
+    }
+
+    /**
+     * @dataProvider debugDataProvider
+     */
+    public function testRenderWhenExceptionDuringGettingContextWidgetData(bool $debug): void
+    {
+        $exception = new \Error('some error');
+        $contentWidget = $this->getContentWidget($exception);
+
+        $this->contentWidgetProvider->expects(self::once())
+            ->method('getContentWidget')
+            ->with(self::SAMPLE_WIDGET)
+            ->willReturn($contentWidget);
+
+        $layoutBuilder = $this->createMock(LayoutBuilderInterface::class);
+        $this->layoutManager->expects(self::once())
+            ->method('getLayoutBuilder')
+            ->willReturn($layoutBuilder);
+        $layoutBuilder->expects(self::once())
+            ->method('add')
+            ->with('content_widget_root', null, 'content_widget_root');
+        $layoutBuilder->expects(self::never())
+            ->method('getLayout');
+
+        $this->logger->expects(self::once())
+            ->method('error')
+            ->with('Error occurred while rendering content widget "sample-widget".');
+
+        $expectedResult = $debug ? sprintf(self::ERROR_TEMPLATE, $exception->getMessage()) : '';
+        $result = $this->getRenderer($debug)->render(self::SAMPLE_WIDGET);
+        self::assertSame($expectedResult, $result);
     }
 
     public function testRender(): void
     {
-        $contentWidget = $this->mockContentWidget();
-        $this->mockFindOneByName($contentWidget);
+        $contentWidget = $this->getContentWidget(self::SAMPLE_SETTINGS);
 
-        $layoutContext = $this->createMock(Layout::class);
-        $layoutContext->expects($this->once())
-            ->method('render')
-            ->willReturn(self::SAMPLE_RESULT);
+        $this->contentWidgetProvider->expects(self::once())
+            ->method('getContentWidget')
+            ->with(self::SAMPLE_WIDGET)
+            ->willReturn($contentWidget);
 
+        $layout = $this->createMock(Layout::class);
         $layoutBuilder = $this->createMock(LayoutBuilderInterface::class);
-        $layoutBuilder->expects($this->once())
+        $this->layoutManager->expects(self::once())
+            ->method('getLayoutBuilder')
+            ->willReturn($layoutBuilder);
+        $layoutBuilder->expects(self::once())
             ->method('add')
             ->with('content_widget_root', null, 'content_widget_root');
-        $layoutBuilder->expects($this->once())
+        $layoutBuilder->expects(self::once())
             ->method('getLayout')
             ->with(
                 new LayoutContext(
-                    [
-                        'data' => [
-                            'settings' => self::SAMPLE_SETTINGS,
-                        ],
-                        'content_widget' => $contentWidget,
-                    ],
+                    ['data' => ['settings' => self::SAMPLE_SETTINGS], 'content_widget' => $contentWidget],
                     ['content_widget']
                 )
             )
-            ->willReturn($layoutContext);
+            ->willReturn($layout);
+        $layout->expects(self::once())
+            ->method('render')
+            ->willReturn(self::SAMPLE_RESULT);
 
-        $this->layoutManager->expects($this->once())
-            ->method('getLayoutBuilder')
-            ->willReturn($layoutBuilder);
+        $this->logger->expects(self::never())
+            ->method('error');
 
-        $this->assertEquals(
-            self::SAMPLE_RESULT,
-            $this->renderer->render(self::SAMPLE_WIDGET)
-        );
-    }
-
-    private function mockFindOneByName(?ContentWidget $contentWidget): void
-    {
-        $this->doctrine
-            ->method('getManagerForClass')
-            ->with(ContentWidget::class)
-            ->willReturn($manager = $this->createMock(EntityManager::class));
-
-        $manager
-            ->method('getRepository')
-            ->with(ContentWidget::class)
-            ->willReturn($repo = $this->createMock(ContentWidgetRepository::class));
-
-        $repo
-            ->method('findOneBy')
-            ->with(['name' => self::SAMPLE_WIDGET])
-            ->willReturn($contentWidget);
-    }
-
-    /**
-     * @return ContentWidget|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function mockContentWidget(): ContentWidget
-    {
-        $contentWidget = $this->createMock(ContentWidget::class);
-        $contentWidget
-            ->method('getWidgetType')
-            ->willReturn(ContentWidgetTypeStub::getName());
-
-        $contentWidget
-            ->method('getLayout')
-            ->willReturn(self::SAMPLE_TEMPLATE);
-
-        $contentWidget
-            ->method('getSettings')
-            ->willReturn(self::SAMPLE_SETTINGS);
-
-        return $contentWidget;
+        self::assertEquals(self::SAMPLE_RESULT, $this->getRenderer(false)->render(self::SAMPLE_WIDGET));
     }
 }

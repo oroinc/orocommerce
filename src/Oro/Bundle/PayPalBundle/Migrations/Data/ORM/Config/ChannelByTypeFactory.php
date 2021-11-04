@@ -10,6 +10,9 @@ use Oro\Bundle\PayPalBundle\Integration\PayPalPayflowGatewayChannelType;
 use Oro\Bundle\PayPalBundle\Integration\PayPalPaymentsProChannelType;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Provides functionality to create a Channel
+ */
 class ChannelByTypeFactory
 {
     /**
@@ -111,6 +114,6 @@ class ChannelByTypeFactory
      */
     private function getChannelTypeTranslatedLabel(ChannelInterface $channel)
     {
-        return $this->translator->trans($channel->getLabel());
+        return $this->translator->trans((string) $channel->getLabel());
     }
 }

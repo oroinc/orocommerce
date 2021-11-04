@@ -3,7 +3,6 @@
 namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Entity\Repository;
 
 use Doctrine\ORM\Proxy\Proxy;
-use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryWithEntityFallbackValuesData;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
@@ -13,11 +12,8 @@ use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadCheckoutSubtotal
 use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadShoppingListsCheckoutsData;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
-use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData as LoadAuthCustomerUserData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\ProductName;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 
@@ -253,36 +249,6 @@ class CheckoutRepositoryTest extends FrontendWebTestCase
 
         $checkouts = $this->getRepository()->findBy(['customerUser' => null]);
         $this->assertCount(5, $checkouts);
-    }
-
-    public function testFindForCheckoutAction(): void
-    {
-        $localization = $this->getReference('en_CA');
-        $checkoutRef = $this->getReference(LoadShoppingListsCheckoutsData::CHECKOUT_4);
-        $checkout = $this->getRepository()->findForCheckoutAction($checkoutRef->getId());
-
-        $this->assertNotNull($checkout);
-        $this->assertTrue($checkout->getLineItems()->isInitialized());
-
-        $lineItem = $checkout->getLineItems()[0];
-
-        $product = $lineItem->getProduct();
-        $this->assertNotProxyOrInitialized($product, Product::class);
-        $this->assertNotProxyOrInitialized($product->getMinimumQuantityToOrder(), EntityFieldFallbackValue::class);
-        $this->assertNotProxyOrInitialized($product->getMaximumQuantityToOrder(), EntityFieldFallbackValue::class);
-        $this->assertNotProxyOrInitialized($product->getHighlightLowInventory(), EntityFieldFallbackValue::class);
-        $this->assertNotProxyOrInitialized($product->getIsUpcoming(), EntityFieldFallbackValue::class);
-
-        $this->assertTrue($product->getNames()->isInitialized());
-        $this->assertNotProxyOrInitialized($product->getDefaultName(), ProductName::class);
-        $this->assertNotProxyOrInitialized($product->getName($localization), ProductName::class);
-
-        $category = $product->getCategory();
-        $this->assertNotProxyOrInitialized($category, Category::class);
-        $this->assertNotProxyOrInitialized($category->getMinimumQuantityToOrder(), EntityFieldFallbackValue::class);
-        $this->assertNotProxyOrInitialized($category->getMaximumQuantityToOrder(), EntityFieldFallbackValue::class);
-        $this->assertNotProxyOrInitialized($category->getHighlightLowInventory(), EntityFieldFallbackValue::class);
-        $this->assertNotProxyOrInitialized($category->getIsUpcoming(), EntityFieldFallbackValue::class);
     }
 
     public function testFindWithInvalidSubtotals()

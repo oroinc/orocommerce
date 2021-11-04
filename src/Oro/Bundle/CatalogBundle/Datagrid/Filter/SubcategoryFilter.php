@@ -120,6 +120,6 @@ class SubcategoryFilter extends AbstractFilter
     {
         $dataName = $this->get(FilterUtility::DATA_NAME_KEY);
 
-        return sprintf('%s.%s_%s', Query::TYPE_INTEGER, $dataName, CategoryPathPlaceholder::NAME);
+        return sprintf('%s.%s.%s', Query::TYPE_INTEGER, $dataName, CategoryPathPlaceholder::NAME);
     }
 }

@@ -34,7 +34,7 @@ class SystemConfigurationTest extends WebTestCase
 
         static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
-        $token = static::getContainer()->get('security.csrf.token_manager')->getToken('shipping_origin')->getValue();
+        $token = $this->getCsrfToken('shipping_origin')->getValue();
         $form = $crawler->selectButton('Save settings')->form();
         $formData = ArrayUtil::arrayMergeRecursiveDistinct(
             $form->getPhpValues(),

@@ -64,7 +64,7 @@ Feature: Guest Checkout should always starts from enter credential step
       | Zip/Postal Code | 10115           |
     And click "Continue"
     And I scroll to top
-    Then I should see "Enter Shiiping Address"
+    Then I should see "Enter Shipping Address"
 
   Scenario: Re-create order from guest shopping list after Shipping Information step
     Given I open shopping list widget
@@ -87,7 +87,7 @@ Feature: Guest Checkout should always starts from enter credential step
       | Zip/Postal Code | 10115           |
     And I click "Continue"
     And I scroll to top
-    Then I should see "Enter Shiiping Address"
+    Then I should see "Enter Shipping Address"
     When I fill form with:
       | First Name      | Tester1         |
       | Last Name       | Testerson       |
@@ -121,7 +121,7 @@ Feature: Guest Checkout should always starts from enter credential step
       | Zip/Postal Code | 10115           |
     And I click "Continue"
     And I scroll to top
-    Then I should see "Enter Shiiping Address"
+    Then I should see "Enter Shipping Address"
     When I fill form with:
       | First Name      | Tester1         |
       | Last Name       | Testerson       |
@@ -158,7 +158,7 @@ Feature: Guest Checkout should always starts from enter credential step
       | Zip/Postal Code | 10115           |
     And I click "Continue"
     And I scroll to top
-    Then I should see "Enter Shiiping Address"
+    Then I should see "Enter Shipping Address"
     When I fill form with:
       | First Name      | Tester1         |
       | Last Name       | Testerson       |

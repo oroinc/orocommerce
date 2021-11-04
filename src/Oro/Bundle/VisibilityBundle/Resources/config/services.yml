@@ -83,6 +83,13 @@ services:
         tags:
             - { name: doctrine.event_listener, event: onFlush }
 
+    oro_visibility.event_listener.default_visibility_changed:
+        class: Oro\Bundle\VisibilityBundle\EventListener\DefaultVisibilityChangedListener
+        arguments:
+            - '@event_dispatcher'
+        tags:
+            - { name: kernel.event_listener, event: oro_config.update_after, method: onConfigUpdate }
+
     oro_visibility.provider.visibility_choices:
         class: 'Oro\Bundle\VisibilityBundle\Provider\VisibilityChoicesProvider'
         public: false

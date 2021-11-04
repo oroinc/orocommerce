@@ -2,16 +2,16 @@
 
 namespace Oro\Bundle\ProductBundle\Storage;
 
+/**
+ * Interface for storages holding arbitrary array data.
+ */
 interface DataStorageInterface
 {
-    const STORAGE_KEY = 'storage';
+    public const STORAGE_KEY = 'storage';
 
-    public function set(array $data);
+    public function set(array $data): void;
 
-    /**
-     * @return array
-     */
-    public function get();
+    public function get(): array;
 
-    public function remove();
+    public function remove(): void;
 }

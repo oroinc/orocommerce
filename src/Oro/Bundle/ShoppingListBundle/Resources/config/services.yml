@@ -489,18 +489,19 @@ services:
             - '@oro_shopping_list.manager.shopping_list'
             - '@oro_shopping_list.manager.current_shopping_list'
 
-    oro_shopping_list.datagrid.extension.frontend_product_grid:
-        class: 'Oro\Bundle\ShoppingListBundle\Datagrid\Extension\FrontendMatrixProductGridExtension'
+    oro_shopping_list.datagrid.event_listener.frontend_matrix_product_grid:
+        class: 'Oro\Bundle\ShoppingListBundle\Datagrid\EventListener\FrontendMatrixProductGridEventListener'
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@oro_shopping_list.manager.current_shopping_list'
             - '@oro_shopping_list.layout.data_provider.matrix_order_form'
-            - '@oro_product.layout.data_provider.product_list_form_availability_provider'
+            - '@oro_product.product_form_availability_provider'
             - '@oro_pricing.layout.data_provider.frontend_product_prices'
             - '@oro_shopping_list.layout.data_provider.matrix_grid_order'
             - '@oro_product.datagrid_theme_helper'
         tags:
-            - { name: oro_datagrid.extension }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
+            - { name: kernel.event_listener, event: oro_datagrid.search_datasource.result.after.frontend-product-search-grid, method: onResultAfter }
 
     oro_shopping_list.datagrid.extension.frontend_customer_user_shopping_list_grid:
         class: 'Oro\Bundle\ShoppingListBundle\Datagrid\Extension\FrontendLineItemsGridExtension'

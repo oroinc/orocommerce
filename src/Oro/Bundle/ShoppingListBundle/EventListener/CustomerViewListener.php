@@ -20,7 +20,7 @@ class CustomerViewListener extends AbstractCustomerViewListener
     /**
      * {@inheritdoc}
      */
-    protected function getCustomerLabel()
+    protected function getCustomerLabel(): string
     {
         return 'oro.shoppinglist.entity_plural_label';
     }
@@ -36,7 +36,7 @@ class CustomerViewListener extends AbstractCustomerViewListener
     /**
      * {@inheritdoc}
      */
-    protected function getCustomerUserLabel()
+    protected function getCustomerUserLabel(): string
     {
         return 'oro.shoppinglist.entity_plural_label';
     }

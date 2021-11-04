@@ -22,7 +22,7 @@
     font-size: 13px;
 
     [class^='fa-'] {
-        margin: 0 $content-padding-small / 2;
+        margin: 0 $content-padding-small * .5;
     }
 }
 

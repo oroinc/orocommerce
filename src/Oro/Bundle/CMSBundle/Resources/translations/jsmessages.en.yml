@@ -460,7 +460,8 @@ oro.cms:
             add_new_link: 'Insert a Link'
             add_edit_link: 'Edit a Link'
         mobile:
-            flash_message: 'The screen size is too small to display an editor.'
+            flash_message: 'The visual editor cannot be displayed on the current device.'
+
     change_type:
         confirmation:
             title: 'Change Type'

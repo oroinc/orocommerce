@@ -15,7 +15,7 @@ class ShippingMethodTypeStub implements ShippingMethodTypeInterface
     /**
      * @var string
      */
-    protected $label;
+    protected string $label = '';
 
     /**
      * @var int
@@ -48,7 +48,7 @@ class ShippingMethodTypeStub implements ShippingMethodTypeInterface
     /**
      * @return string
      */
-    public function getLabel()
+    public function getLabel(): string
     {
         return $this->label ?: $this->identifier . '.label';
     }

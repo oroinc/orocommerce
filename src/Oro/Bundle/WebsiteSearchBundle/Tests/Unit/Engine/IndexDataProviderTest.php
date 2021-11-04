@@ -67,7 +67,7 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testCollectContextForWebsite()
+    public function testCollectContextForWebsite(): void
     {
         $websiteId = 1;
         $context = [WebsiteIdPlaceholder::NAME => $websiteId];
@@ -97,7 +97,7 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetRestrictedEntitiesQueryBuilder()
+    public function testGetRestrictedEntitiesQueryBuilder(): void
     {
         $this->aliasResolver->expects($this->once())
             ->method('getAlias')
@@ -115,8 +115,10 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
                 [$this->isInstanceOf(RestrictIndexEntityEvent::class), RestrictIndexEntityEvent::NAME],
                 [$this->isInstanceOf(RestrictIndexEntityEvent::class), RestrictIndexEntityEvent::NAME . '.std']
             )
-            ->willReturnCallback(function () use ($qb) {
+            ->willReturnCallback(function ($event) use ($qb) {
                 $qb->select(['something']);
+
+                return $event;
             });
 
         $this->assertSame(
@@ -129,7 +131,7 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider entitiesDataProvider
      */
-    public function testGetEntitiesData(array $entityConfig, array $indexData, array $expected)
+    public function testGetEntitiesData(array $entityConfig, array $indexData, array $expected): void
     {
         $this->aliasResolver->expects($this->once())
             ->method('getAlias')
@@ -171,8 +173,11 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
                         $method = count($data) === 4 ? 'addField' : 'addPlaceholderField';
                         call_user_func_array([$event, $method], $data);
                     }
+
+                    return $event;
                 }),
-                new ReturnCallback(function () {
+                new ReturnCallback(function ($event) {
+                    return $event;
                 }),
             );
 
@@ -496,7 +501,7 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testGetEntitiesDataConfigMissing()
+    public function testGetEntitiesDataConfigMissing(): void
     {
         $this->expectException(InvalidConfigurationException::class);
         $this->expectExceptionMessage('Missing option "type" for "sku" field');
@@ -510,6 +515,8 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
             ->method('dispatch')
             ->willReturnCallback(function (IndexEntityEvent $event) {
                 $event->addField(1, 'sku', 'SKU-01');
+
+                return $event;
             });
 
         $this->indexDataProvider->getEntitiesData(\stdClass::class, [], [], ['fields' => []]);

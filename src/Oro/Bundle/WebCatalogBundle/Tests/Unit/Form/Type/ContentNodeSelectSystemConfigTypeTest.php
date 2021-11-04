@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Form\Type;
 
-use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
@@ -31,9 +31,6 @@ class ContentNodeSelectSystemConfigTypeTest extends FormIntegrationTestCase
     /** @var ContentNodeSelectSystemConfigType */
     private $formType;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);

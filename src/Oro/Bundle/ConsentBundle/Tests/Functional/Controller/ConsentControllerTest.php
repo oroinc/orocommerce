@@ -4,6 +4,7 @@ namespace Oro\Bundle\ConsentBundle\Tests\Functional\Controller;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
+use Oro\Bundle\ActionBundle\Tests\Functional\OperationAwareTestTrait;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConsentBundle\Entity\Consent;
 use Oro\Bundle\ConsentBundle\Tests\Functional\Entity\ConsentFeatureTrait;
@@ -17,6 +18,7 @@ use Symfony\Component\DomCrawler\Form;
 class ConsentControllerTest extends WebTestCase
 {
     use ConsentFeatureTrait;
+    use OperationAwareTestTrait;
 
     const CONSENT_TEST_NAME = "Test Consent";
     const CONSENT_UPDATED_TEST_NAME = "Test Updated Consent";
@@ -232,30 +234,5 @@ class ConsentControllerTest extends WebTestCase
         $this->assertEquals(false, $consent->getDeclinedNotification());
 
         return $consent;
-    }
-
-    /**
-     * @param $operationName
-     * @param $entityId
-     * @param $entityClass
-     *
-     * @return array
-     */
-    protected function getOperationExecuteParams($operationName, $entityId, $entityClass)
-    {
-        $actionContext = [
-            'entityId'    => $entityId,
-            'entityClass' => $entityClass
-        ];
-        $container = self::getContainer();
-        $operation = $container->get('oro_action.operation_registry')->findByName($operationName);
-        $actionData = $container->get('oro_action.helper.context')->getActionData($actionContext);
-
-        $tokenData = $container
-            ->get('oro_action.operation.execution.form_provider')
-            ->createTokenData($operation, $actionData);
-        $container->get('session')->save();
-
-        return $tokenData;
     }
 }

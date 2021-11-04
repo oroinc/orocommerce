@@ -6,6 +6,7 @@ namespace Oro\Bundle\CommerceBundle\CacheWarmer;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\DistributionBundle\Handler\ApplicationState;
 use Oro\Bundle\EntityBundle\Tools\SafeDatabaseChecker;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
 use Psr\Log\LoggerInterface;
@@ -16,20 +17,20 @@ use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
  */
 class ExtendEntityCacheWarmer implements CacheWarmerInterface
 {
-    /** @var ManagerRegistry */
-    private $managerRegistry;
+    private ManagerRegistry $managerRegistry;
 
-    /** @var LoggerInterface */
-    private $logger;
+    private LoggerInterface $logger;
 
-    /** @var bool */
-    private $applicationInstalled;
+    private ApplicationState $applicationState;
 
-    public function __construct(ManagerRegistry $managerRegistry, LoggerInterface $logger, $applicationInstalled)
-    {
+    public function __construct(
+        ManagerRegistry $managerRegistry,
+        LoggerInterface $logger,
+        ApplicationState $applicationState
+    ) {
         $this->managerRegistry = $managerRegistry;
         $this->logger = $logger;
-        $this->applicationInstalled = (bool)$applicationInstalled;
+        $this->applicationState = $applicationState;
     }
 
     /**
@@ -60,7 +61,7 @@ class ExtendEntityCacheWarmer implements CacheWarmerInterface
 
     public function warmUp($cacheDir)
     {
-        if (!$this->applicationInstalled) {
+        if (!$this->applicationState->isInstalled()) {
             return;
         }
 

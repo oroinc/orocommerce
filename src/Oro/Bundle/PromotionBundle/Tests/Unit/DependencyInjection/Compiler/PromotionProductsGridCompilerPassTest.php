@@ -3,10 +3,9 @@
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\DependencyInjection\Compiler;
 
 use Oro\Bundle\PromotionBundle\DependencyInjection\Compiler\PromotionProductsGridCompilerPass;
-use Oro\Component\DependencyInjection\Tests\Unit\Compiler\TaggedServicesCompilerPassCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class PromotionProductsGridCompilerPassTest extends TaggedServicesCompilerPassCase
+class PromotionProductsGridCompilerPassTest extends \PHPUnit\Framework\TestCase
 {
     public function testProcess()
     {

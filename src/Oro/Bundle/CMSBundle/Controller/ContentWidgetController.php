@@ -56,7 +56,9 @@ class ContentWidgetController extends AbstractController
             : [];
 
         foreach ($additionalBlocks as &$additionalBlock) {
-            $additionalBlock['title'] = $translator->trans($additionalBlock['title']);
+            $additionalBlock['title'] = isset($additionalBlock['title'])
+                ? $translator->trans((string) $additionalBlock['title'])
+                : '';
         }
 
         return [

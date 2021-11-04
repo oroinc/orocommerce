@@ -38,6 +38,8 @@ abstract class FrontendWebTestCase extends WebTestCase
             $user->getOrganization(),
             $user->getUserRoles()
         );
+
+        $this->ensureSessionIsAvailable();
         $this->getContainer()->get('security.token_storage')->setToken($token);
     }
 }

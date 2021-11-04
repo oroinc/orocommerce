@@ -27,6 +27,44 @@ const VideoTypeBuilder = BaseTypeBuilder.extend({
         };
 
         this.editor.DomComponents.addType(this.componentType, {
+            isComponent(el) {
+                let result = '';
+                const isYtProv = /youtube\.com\/embed/.test(el.src);
+                const isYtncProv = /youtube-nocookie\.com\/embed/.test(el.src);
+                const isViProv = /player\.vimeo\.com\/video/.test(el.src);
+                const isExtProv = isYtProv || isYtncProv || isViProv;
+
+                if (el.tagName === 'VIDEO' || (el.tagName === 'IFRAME' && isExtProv)) {
+                    result = {
+                        type: 'video',
+                        initial: true
+                    };
+
+                    if (el.src) {
+                        result.src = el.src;
+                    }
+
+                    if (isExtProv) {
+                        if (isYtProv) {
+                            result.provider = 'yt';
+                        } else if (isYtncProv) {
+                            result.provider = 'ytnc';
+                        } else if (isViProv) {
+                            result.provider = 'vi';
+                        }
+                    } else {
+                        result = {
+                            ...result,
+                            controls: el.getAttribute('controls') ? 1 : 0,
+                            loop: el.getAttribute('loop') ? 1 : 0,
+                            autoplay: el.getAttribute('autoplay') ? 1 : 0,
+                            poster: el.getAttribute('poster') || ''
+                        };
+                    }
+                }
+                return result;
+            },
+
             model: {
                 getProviderTrait() {
                     const providerTrait = this.constructor.__super__.getProviderTrait.call(this);
@@ -79,8 +117,26 @@ const VideoTypeBuilder = BaseTypeBuilder.extend({
                 getAttrToHTML() {
                     const attr = this.constructor.__super__.getAttrToHTML.call(this);
                     const tagName = this.getTagNameByProvider(this.get('provider'));
-                    if (tagName === 'video' && this.get('poster')) {
-                        attr.poster = this.get('poster');
+                    attr.loop && delete attr.loop;
+                    attr.autoplay && delete attr.autoplay;
+                    attr.controls && delete attr.controls;
+
+                    if (tagName === 'video') {
+                        if (this.get('poster')) {
+                            attr.poster = this.get('poster');
+                        }
+
+                        if (this.get('loop')) {
+                            attr.loop = 'loop';
+                        }
+
+                        if (this.get('autoplay')) {
+                            attr.autoplay = 'autoplay';
+                        }
+
+                        if (this.get('controls')) {
+                            attr.controls = 'controls';
+                        }
                     }
 
                     return attr;
@@ -100,8 +156,10 @@ const VideoTypeBuilder = BaseTypeBuilder.extend({
             },
             view: {
                 onRender() {
-                    this.em.removeSelected();
-                    this.em.addSelected(this.el);
+                    if (!this.model.get('initial')) {
+                        this.em.removeSelected();
+                        this.em.addSelected(this.el);
+                    }
                     return this;
                 },
 

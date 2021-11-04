@@ -50,11 +50,26 @@ system_configuration:
             priority: 20
             options:
                 label: oro.pricing.system_configuration.fields.precision.label
+                tooltip: oro.pricing.system_configuration.fields.precision.tooltip
                 required: true
                 constraints:
                     - NotBlank: ~
                     - Range:
                         min: 0
+                    - Type:
+                        type: integer
+        oro_pricing.price_calculation_precision:
+            data_type: integer
+            type: Symfony\Component\Form\Extension\Core\Type\IntegerType
+            search_type: text
+            priority: 30
+            options:
+                label: oro.pricing.system_configuration.fields.price_calculation_precision.label
+                tooltip: oro.pricing.system_configuration.fields.price_calculation_precision.tooltip
+                constraints:
+                    - Range:
+                        min: 0
+                        max: 4
                     - Type:
                         type: integer
         oro_pricing.offset_of_processing_cpl_prices:
@@ -106,6 +121,7 @@ system_configuration:
                                         children:
                                             - oro_pricing.rounding_type
                                             - oro_pricing.precision
+                                            - oro_pricing.price_calculation_precision
                                     default_price_lists:
                                         priority: 100
                                         children:

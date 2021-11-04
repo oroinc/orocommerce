@@ -8,6 +8,9 @@ use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Validates that one of fields is required.
+ */
 class NotBlankOneOfValidator extends ConstraintValidator
 {
     /**
@@ -55,7 +58,7 @@ class NotBlankOneOfValidator extends ConstraintValidator
                 $constraint->message,
                 [
                     "%fields%" => implode(', ', array_map(function ($value) {
-                        return $this->translator->trans($value);
+                        return $this->translator->trans((string) $value);
                     }, $fieldGroup))
                 ]
             )

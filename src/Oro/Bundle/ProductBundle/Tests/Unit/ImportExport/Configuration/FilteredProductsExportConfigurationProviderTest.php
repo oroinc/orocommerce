@@ -6,7 +6,7 @@ use Oro\Bundle\DataGridBundle\ImportExport\FilteredEntityReader;
 use Oro\Bundle\ImportExportBundle\Configuration\ImportExportConfiguration;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\ImportExport\Configuration\FilteredProductsExportConfigurationProvider;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class FilteredProductsExportConfigurationProviderTest extends \PHPUnit\Framework\TestCase
 {

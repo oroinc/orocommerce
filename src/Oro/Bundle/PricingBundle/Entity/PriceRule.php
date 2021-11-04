@@ -11,7 +11,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
  * This entity represents price rule for price list
  *
  * @ORM\Table(name="oro_price_rule")
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass="Oro\Bundle\PricingBundle\Entity\Repository\PriceRuleRepository")
  */
 class PriceRule
 {

@@ -5,6 +5,7 @@ namespace Oro\Bundle\InventoryBundle\CacheWarmer;
 use Doctrine\DBAL\Connection;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ActivityListBundle\Entity\ActivityList;
+use Oro\Bundle\DistributionBundle\Handler\ApplicationState;
 use Oro\Bundle\EntityBundle\ORM\DatabasePlatformInterface;
 use Oro\Bundle\EntityBundle\Tools\SafeDatabaseChecker;
 use Oro\Bundle\EntityConfigBundle\Migration\RemoveManyToManyRelationQuery;
@@ -34,27 +35,27 @@ class EntityConfigRelationsMigration
     /** @var LoggerInterface */
     private $logger;
 
-    /** @var bool */
-    private $applicationInstalled;
+    /** @var ApplicationState */
+    private $applicationState;
 
     /**
      * @param ManagerRegistry $managerRegistry
      * @param LoggerInterface $logger
-     * @param bool $applicationInstalled
+     * @param ApplicationState $applicationState
      */
     public function __construct(
         ManagerRegistry $managerRegistry,
         LoggerInterface $logger,
-        $applicationInstalled
+        ApplicationState $applicationState
     ) {
         $this->managerRegistry = $managerRegistry;
         $this->logger = $logger;
-        $this->applicationInstalled = (bool)$applicationInstalled;
+        $this->applicationState = $applicationState;
     }
 
     public function migrate()
     {
-        if (!$this->applicationInstalled) {
+        if (!$this->applicationState->isInstalled()) {
             return;
         }
 

@@ -234,7 +234,7 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit\Framework\TestCa
                                 0 => 'options',
                             ],
                             'subcategory' => [
-                                'data_name' => 'category_path',
+                                'data_name' => 'category_paths',
                                 'label' => 'oro.catalog.filter.subcategory.label',
                                 'type' => 'subcategory',
                                 'rootCategory' => $this->createCategory(self::CATEGORY_ID, '1_42'),
@@ -310,7 +310,7 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit\Framework\TestCa
                     0 => 'options',
                 ],
                 'subcategory' => [
-                    'data_name' => 'category_path',
+                    'data_name' => 'category_paths',
                     'label' => 'oro.catalog.filter.subcategory.label',
                     'type' => 'subcategory',
                     'rootCategory' => $this->createCategory(self::CATEGORY_ID, '1_42'),
@@ -465,7 +465,7 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit\Framework\TestCa
                     0 => 'options',
                 ],
                 'subcategory' => [
-                    'data_name' => 'category_path',
+                    'data_name' => 'category_paths',
                     'label' => 'oro.catalog.filter.subcategory.label',
                     'type' => 'subcategory',
                     'rootCategory' => $this->createCategory(self::CATEGORY_ID, '1_42'),
@@ -602,7 +602,7 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit\Framework\TestCa
                     0 => 'options',
                 ],
                 'subcategory' => [
-                    'data_name' => 'category_path',
+                    'data_name' => 'category_paths',
                     'label' => 'oro.catalog.filter.subcategory.label',
                     'type' => 'subcategory',
                     'rootCategory' => $this->createCategory(self::CATEGORY_ID, '1_42'),

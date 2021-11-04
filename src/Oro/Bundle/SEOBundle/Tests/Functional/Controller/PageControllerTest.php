@@ -30,7 +30,7 @@ class PageControllerTest extends WebTestCase
 
         $this->checkSeoSectionExistence($crawler);
 
-        $crfToken = $this->getContainer()->get('security.csrf.token_manager')->getToken('cms_page')->getValue();
+        $crfToken = $this->getCsrfToken('cms_page')->getValue();
         $parameters = [
             'input_action' => 'save_and_stay',
             'oro_cms_page' => ['_token' => $crfToken],

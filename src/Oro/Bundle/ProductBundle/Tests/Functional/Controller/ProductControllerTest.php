@@ -182,14 +182,12 @@ class ProductControllerTest extends ProductHelperTestCase
         $crawler = $this->client->getCrawler();
         $button = $crawler->selectLink('Duplicate');
         $this->assertCount(1, $button);
-        $operationName = 'oro_product_duplicate';
-        $entityClass = Product::class;
-        $operationExecuteParams = $this->getOperationExecuteParams($operationName, ['id' => $entityId], $entityClass);
-        $url = $button->attr('data-operation-url');
+        $buttonOptions = json_decode((string) $button->attr('data-options'), true);
+
         $this->client->request(
             'POST',
-            $url,
-            $operationExecuteParams,
+            $button->attr('data-operation-url'),
+            $buttonOptions['executionTokenData'] ?? [],
             [],
             ['HTTP_X-Requested-With' => 'XMLHttpRequest']
         );
@@ -585,18 +583,16 @@ class ProductControllerTest extends ProductHelperTestCase
     {
         $entityClass = Product::class;
         $operationName = 'DELETE';
-        $operationExecuteParams = $this->getOperationExecuteParams($operationName, $id, $entityClass);
+
+        $crawler = $this->client->request('GET', $this->getUrl('oro_product_view', ['id' => $id]));
+        $button = $crawler->selectLink('Delete');
+        $this->assertNotEmpty($button);
+        $buttonOptions = json_decode((string) $button->attr('data-options'), true);
+
         $this->client->request(
             'POST',
-            $this->getUrl(
-                'oro_action_operation_execute',
-                [
-                    'operationName' => $operationName,
-                    'entityId'      => $id,
-                    'entityClass'   => $entityClass,
-                ]
-            ),
-            $operationExecuteParams,
+            $button->attr('data-operation-url'),
+            $buttonOptions['executionTokenData'] ?? [],
             [],
             ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest']
         );
@@ -710,30 +706,5 @@ class ProductControllerTest extends ProductHelperTestCase
         );
 
         $this->assertEmpty($this->parseProductImages($crawler));
-    }
-
-    /**
-     * @param $operationName
-     * @param $entityId
-     * @param $entityClass
-     *
-     * @return array
-     */
-    protected function getOperationExecuteParams($operationName, $entityId, $entityClass)
-    {
-        $actionContext = [
-            'entityId'    => $entityId,
-            'entityClass' => $entityClass
-        ];
-        $container = static::getContainer();
-        $operation = $container->get('oro_action.operation_registry')->findByName($operationName);
-        $actionData = $container->get('oro_action.helper.context')->getActionData($actionContext);
-
-        $tokenData = $container
-            ->get('oro_action.operation.execution.form_provider')
-            ->createTokenData($operation, $actionData);
-        $container->get('session')->save();
-
-        return $tokenData;
     }
 }

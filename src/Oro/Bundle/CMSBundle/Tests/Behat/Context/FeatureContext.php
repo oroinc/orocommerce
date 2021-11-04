@@ -49,11 +49,13 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
             $wysiwygElementName
         ));
 
+        $this->getSession()->wait(300);
         $function = sprintf(
             '(function(){
-                $("#%s").val("%s")
-                    .trigger("change")
+                $("#%s")
                     .trigger("wysiwyg:disable")
+                    .val("%s")
+                    .trigger("change")
                     .trigger("wysiwyg:enable");
             })()',
             $wysiwygContentElement->getAttribute('id'),
@@ -61,6 +63,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
         );
 
         $this->getSession()->executeScript($function);
+        $this->getSession()->wait(300);
     }
 
     /**

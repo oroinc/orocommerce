@@ -2,9 +2,12 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerSelectType;
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerUserMultiSelectType;
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerUserSelectType;
@@ -17,6 +20,7 @@ use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecision;
 use Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecisionValidator;
 use Oro\Bundle\RFPBundle\Entity\Request;
+use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\RFPBundle\Form\Type\RequestProductItemType;
 use Oro\Bundle\RFPBundle\Form\Type\RequestProductType;
 use Oro\Bundle\RFPBundle\Form\Type\RequestType;
@@ -30,18 +34,13 @@ class RequestTypeTest extends AbstractTest
 {
     use QuantityTypeTrait;
 
-    /**
-     * @var RequestType
-     */
+    /** @var RequestType */
     protected $formType;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->formType = new RequestType();
-        $this->formType->setDataClass('Oro\Bundle\RFPBundle\Entity\Request');
+        $this->formType->setDataClass(Request::class);
 
         parent::setUp();
     }
@@ -53,7 +52,7 @@ class RequestTypeTest extends AbstractTest
             ->method('setDefaults')
             ->with(
                 [
-                    'data_class' => 'Oro\Bundle\RFPBundle\Entity\Request',
+                    'data_class' => Request::class,
                     'csrf_token_id'  => 'rfp_request',
                 ]
             );
@@ -62,20 +61,19 @@ class RequestTypeTest extends AbstractTest
     }
 
     /**
-     * @return array
-     *
+     * {@inheritDoc}
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function submitProvider()
+    public function submitProvider(): array
     {
-        $requestProductItem = $this->getRequestProductItem(2, 10, 'kg', $this->createPrice(20, 'USD'));
-        $requestProduct     = $this->getRequestProduct(2, 'comment_stripped', [$requestProductItem]);
+        $requestProductItem = $this->getRequestProductItem(2, 10, 'kg', Price::create(20, 'USD'));
+        $requestProduct = $this->getRequestProduct(2, 'comment_stripped', [$requestProductItem]);
 
-        $longStr    = str_repeat('a', 256);
-        $longEmail  = $longStr . '@example.com';
-        $email      = 'test@example.com';
-        $date       = '2015-10-15';
-        $dateObj    = new \DateTime($date . 'T00:00:00+0000');
+        $longStr = str_repeat('a', 256);
+        $longEmail = $longStr . '@example.com';
+        $email = 'test@example.com';
+        $date = '2015-10-15';
+        $dateObj = new \DateTime($date . 'T00:00:00+0000');
 
         return [
             'valid data' => [
@@ -113,9 +111,9 @@ class RequestTypeTest extends AbstractTest
                     'note',
                     'company',
                     'role',
+                    '123',
                     'poNumber',
-                    $dateObj,
-                    '123'
+                    $dateObj
                 )
                     ->addRequestProduct($requestProduct)
                     ->addAssignedUser($this->getUser(1))
@@ -127,9 +125,9 @@ class RequestTypeTest extends AbstractTest
                     'note',
                     'company',
                     'role',
+                    '123',
                     'poNumber',
-                    $dateObj,
-                    '123'
+                    $dateObj
                 ),
             ],
             'valid data empty items' => [
@@ -152,9 +150,9 @@ class RequestTypeTest extends AbstractTest
                     'note',
                     'company',
                     'role',
+                    '123',
                     'poNumber',
-                    $dateObj,
-                    '123'
+                    $dateObj
                 ),
                 'defaultData'   => $this->getRequest(
                     'FirstName',
@@ -163,9 +161,9 @@ class RequestTypeTest extends AbstractTest
                     'note',
                     'company',
                     'role',
+                    '123',
                     'poNumber',
-                    $dateObj,
-                    '123'
+                    $dateObj
                 ),
             ],
             'empty first name' => [
@@ -313,6 +311,7 @@ class RequestTypeTest extends AbstractTest
                     'note',
                     'company',
                     'role',
+                    null,
                     $longStr,
                     $dateObj
                 ),
@@ -337,8 +336,8 @@ class RequestTypeTest extends AbstractTest
                     'note',
                     'company',
                     'role',
-                    'poNumber',
-                    null
+                    null,
+                    'poNumber'
                 ),
                 'defaultData'   => $this->getRequest(),
             ],
@@ -362,8 +361,6 @@ class RequestTypeTest extends AbstractTest
                     'note',
                     'company',
                     'role',
-                    null,
-                    null,
                     '123'
                 ),
                 'defaultData'   => $this->getRequest(),
@@ -372,76 +369,36 @@ class RequestTypeTest extends AbstractTest
     }
 
     /**
-     * @param string $firstName
-     * @param string $lastName
-     * @param string $email
-     * @param string $note
-     * @param string $company
-     * @param string $role
-     * @param string $poNumber
-     * @param \DateTime $shipUntil
-     * @param string $phone
-     * @return Request
-     */
-    protected function getRequest(
-        $firstName = null,
-        $lastName = null,
-        $email = null,
-        $note = null,
-        $company = null,
-        $role = null,
-        $poNumber = null,
-        $shipUntil = null,
-        $phone = null
-    ) {
-        $request = new Request();
-
-        $request
-            ->setFirstName($firstName)
-            ->setLastName($lastName)
-            ->setEmail($email)
-            ->setNote($note)
-            ->setCompany($company)
-            ->setRole($role)
-            ->setPhone($phone)
-            ->setPoNumber($poNumber)
-            ->setShipUntil($shipUntil)
-        ;
-
-        return $request;
-    }
-
-    /**
      * {@inheritdoc}
      */
     protected function getExtensions()
     {
-        $priceType                  = $this->preparePriceType();
-        $productSelectType          = $this->prepareProductSelectType();
-        $userMultiSelectType        = $this->prepareUserMultiSelectType();
-        $currencySelectionType      = new CurrencySelectionTypeStub();
-        $requestProductItemType     = $this->prepareRequestProductItemType();
-        $productUnitSelectionType   = $this->prepareProductUnitSelectionType();
-        $customerMultiSelectType     = $this->prepareCustomerUserMultiSelectType();
+        $priceType = $this->preparePriceType();
+        $productSelectType = $this->prepareProductSelectType();
+        $userMultiSelectType = $this->prepareUserMultiSelectType();
+        $currencySelectionType = new CurrencySelectionTypeStub();
+        $requestProductItemType = $this->prepareRequestProductItemType();
+        $productUnitSelectionType = $this->prepareProductUnitSelectionType();
+        $customerMultiSelectType = $this->prepareCustomerUserMultiSelectType();
 
         $customerSelectType = new StubEntityType(
             [
-                1 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', 1),
-                2 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', 2),
+                1 => $this->getEntity(Customer::class, 1),
+                2 => $this->getEntity(Customer::class, 2),
             ],
             CustomerSelectType::NAME
         );
 
         $customerUserSelectType = new StubEntityType(
             [
-                1 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUser', 1),
-                2 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUser', 2),
+                1 => $this->getEntity(CustomerUser::class, 1),
+                2 => $this->getEntity(CustomerUser::class, 2),
             ],
             CustomerUserSelectType::NAME
         );
 
         $requestProductType = new RequestProductType();
-        $requestProductType->setDataClass('Oro\Bundle\RFPBundle\Entity\RequestProduct');
+        $requestProductType->setDataClass(RequestProduct::class);
 
         return [
             new PreloadedExtension(
@@ -466,7 +423,7 @@ class RequestTypeTest extends AbstractTest
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
     protected function getValidators()
     {

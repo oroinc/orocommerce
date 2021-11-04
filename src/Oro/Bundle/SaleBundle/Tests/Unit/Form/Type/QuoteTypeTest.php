@@ -83,8 +83,8 @@ class QuoteTypeTest extends AbstractTest
             $this->quoteFormSubscriber,
             $this->authorizationChecker
         );
-
         $this->formType->setDataClass(Quote::class);
+
         parent::setUp();
     }
 
@@ -176,6 +176,7 @@ class QuoteTypeTest extends AbstractTest
     }
 
     /**
+     * {@inheritDoc}
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function submitProvider(): array
@@ -332,7 +333,6 @@ class QuoteTypeTest extends AbstractTest
 
     public function testBuildFormWithPaymentTerm()
     {
-        /** @var FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject $builder */
         $builder = $this->createMock(FormBuilderInterface::class);
         $quote = new Quote();
         $customerGroup = new CustomerGroup();
@@ -352,7 +352,6 @@ class QuoteTypeTest extends AbstractTest
 
     public function testBuildFormWithNoPaymentTerm()
     {
-        /** @var FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject $builder */
         $builder = $this->createMock(FormBuilderInterface::class);
         $quote = new Quote();
 
@@ -368,7 +367,6 @@ class QuoteTypeTest extends AbstractTest
 
     /**
      * {@inheritdoc}
-     *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     protected function getExtensions()
@@ -411,15 +409,15 @@ class QuoteTypeTest extends AbstractTest
             PriceListSelectType::NAME
         );
 
-        $priceType                  = $this->preparePriceType();
-        $entityType                 = $this->prepareProductEntityType();
-        $productSelectType          = new ProductSelectTypeStub();
-        $userMultiSelectType        = $this->prepareUserMultiSelectType();
-        $currencySelectionType      = new CurrencySelectionTypeStub();
-        $productUnitSelectionType   = $this->prepareProductUnitSelectionType();
-        $quoteProductOfferType      = $this->prepareQuoteProductOfferType();
-        $quoteProductRequestType    = $this->prepareQuoteProductRequestType();
-        $customerUserMultiSelectType  = $this->prepareCustomerUserMultiSelectType();
+        $priceType = $this->preparePriceType();
+        $entityType = $this->prepareProductEntityType();
+        $productSelectType = new ProductSelectTypeStub();
+        $userMultiSelectType = $this->prepareUserMultiSelectType();
+        $currencySelectionType = new CurrencySelectionTypeStub();
+        $productUnitSelectionType = $this->prepareProductUnitSelectionType();
+        $quoteProductOfferType = $this->prepareQuoteProductOfferType();
+        $quoteProductRequestType = $this->prepareQuoteProductRequestType();
+        $customerUserMultiSelectType = $this->prepareCustomerUserMultiSelectType();
 
         $quoteProductType = new QuoteProductType(
             $translator,

@@ -5,6 +5,7 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Helper;
 use Oro\Bundle\SearchBundle\Provider\AbstractSearchMappingProvider;
 use Oro\Bundle\WebsiteSearchBundle\Helper\PlaceholderHelper;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\AbstractPlaceholder;
+use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderInterface;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderRegistry;
 
 class PlaceholderHelperTest extends \PHPUnit\Framework\TestCase
@@ -58,8 +59,38 @@ class PlaceholderHelperTest extends \PHPUnit\Framework\TestCase
             'with placeholder' => [
                 'name' => 'oro_test_WEBSITE_ID',
                 'nameValue' => 'oro_test_1a',
-                'expected' => true
-            ]
+                'expected' => true,
+            ],
+            [
+                'name' => 'test_WEBSITE_ID',
+                'nameValue' => 'oro_test_1a',
+                'expected' => false,
+            ],
+            [
+                'name' => 'oro_test_WEBSITE_ID',
+                'nameValue' => 'test_1a',
+                'expected' => false,
+            ],
+            [
+                'name' => 'test_WEBSITE_ID',
+                'nameValue' => 'test_oro_1a',
+                'expected' => true, // Probably it is a bug
+            ],
+            [
+                'name' => 'test_oro_WEBSITE_ID',
+                'nameValue' => 'test_1a',
+                'expected' => false,
+            ],
+            [
+                'name' => 'test_oro_WEBSITE_ID_data',
+                'nameValue' => 'test_oro_1a_data',
+                'expected' => true,
+            ],
+            [
+                'name' => 'test_oro_WEBSITE_ID_data',
+                'nameValue' => 'test_oro_1a_data_2b',
+                'expected' => true,
+            ],
         ];
     }
 
@@ -122,5 +153,22 @@ class PlaceholderHelperTest extends \PHPUnit\Framework\TestCase
                 'expected' => ''
             ],
         ];
+    }
+
+    public function testGetPlaceholderKeys(): void
+    {
+        $placeholder = $this->getMockBuilder(PlaceholderInterface::class)->getMock();
+
+        $placeholder
+            ->expects($this->any())
+            ->method('getPlaceholder')
+            ->willReturn('WEBSITE_ID');
+
+        $this->placeholderRegistry
+            ->expects($this->once())
+            ->method('getPlaceholders')
+            ->willReturn([$placeholder]);
+
+        $this->assertEquals(['WEBSITE_ID'], $this->helper->getPlaceholderKeys());
     }
 }

@@ -6,6 +6,9 @@ use Oro\Bundle\ShippingBundle\Method\ShippingMethodIconAwareInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
+/**
+ * Flat rate shipping method implementation.
+ */
 class FlatRateMethod implements ShippingMethodInterface, ShippingMethodIconAwareInterface
 {
     /**
@@ -16,7 +19,7 @@ class FlatRateMethod implements ShippingMethodInterface, ShippingMethodIconAware
     /**
      * @var string
      */
-    protected $label;
+    protected string $label;
 
     /**
      * @var string|null
@@ -42,7 +45,7 @@ class FlatRateMethod implements ShippingMethodInterface, ShippingMethodIconAware
     public function __construct($identifier, $label, $icon, $enabled)
     {
         $this->identifier = $identifier;
-        $this->label = $label;
+        $this->label = (string) $label;
         $this->icon = $icon;
         $this->type = new FlatRateMethodType($label);
         $this->enabled = $enabled;
@@ -75,7 +78,7 @@ class FlatRateMethod implements ShippingMethodInterface, ShippingMethodIconAware
     /**
      * {@inheritDoc}
      */
-    public function getLabel()
+    public function getLabel(): string
     {
         return $this->label;
     }

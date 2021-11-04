@@ -2,6 +2,8 @@
 @ticket-BB-9989
 @fixture-OroProductBundle:ProductAttributesFixture.yml
 @fixture-OroLocaleBundle:GermanLocalization.yml
+@elasticsearch
+
 Feature: Product attribute float
   In order to have custom attributes for Product entity
   As an Administrator
@@ -48,7 +50,7 @@ Feature: Product attribute float
       | FloatField | 321,67 |
     And I save form
     Then I should see validation errors:
-      | FloatField | This value is not valid. |
+      | FloatField | Please enter a number. |
     When I fill "Product Form" with:
       | FloatField | -1234.1234567891 |
     And I save and close form
@@ -68,7 +70,7 @@ Feature: Product attribute float
       | FloatField | 321.67 |
     And I save form
     Then I should see validation errors:
-      | FloatField | This value is not valid. |
+      | FloatField | Please enter a number. |
     When I fill "Product Form" with:
       | FloatField | -1234,1234567891 |
     And I save and close form
@@ -82,7 +84,6 @@ Feature: Product attribute float
     Then I should not see "SKU123" product
     And I should not see "SKU456" product
 
-  @skip
   Scenario: Check product grid filter and sorter
     Given I click "NewCategory"
     And I should see "SKU123" product
@@ -92,7 +93,6 @@ Feature: Product attribute float
     And I should not see "SKU456" product
     And grid sorter should have "FloatField" options
 
-  @skip
   Scenario: Check product attribute is formatted according to localization on front store
     When I click "View Details" for "SKU123" product
     Then I should see "-1.234,1234567891"

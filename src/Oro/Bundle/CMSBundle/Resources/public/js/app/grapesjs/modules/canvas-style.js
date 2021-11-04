@@ -5,7 +5,7 @@ export default `
         outline: 3px solid #0c809e !important;
     }
     
-    #wrapper {
+    [data-gjs-type="wrapper"] {
         padding: 3px;
     }
     

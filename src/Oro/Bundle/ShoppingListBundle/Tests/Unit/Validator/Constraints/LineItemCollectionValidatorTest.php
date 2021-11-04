@@ -10,8 +10,7 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class LineItemCollectionValidatorTest extends ConstraintValidatorTestCase
 {
-    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $eventDispatcher;
+    private EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject $eventDispatcher;
 
     protected function setUp(): void
     {
@@ -19,12 +18,12 @@ class LineItemCollectionValidatorTest extends ConstraintValidatorTestCase
         parent::setUp();
     }
 
-    protected function createValidator()
+    protected function createValidator(): LineItemCollectionValidator
     {
         return new LineItemCollectionValidator($this->eventDispatcher);
     }
 
-    public function testValidateIgnoredIfNoListeners()
+    public function testValidateIgnoredIfNoListeners(): void
     {
         $this->eventDispatcher->expects($this->once())
             ->method('hasListeners')
@@ -38,7 +37,7 @@ class LineItemCollectionValidatorTest extends ConstraintValidatorTestCase
         $this->assertNoViolation();
     }
 
-    public function testValidateBuildViolation()
+    public function testValidateBuildViolation(): void
     {
         $this->eventDispatcher->expects($this->once())
             ->method('hasListeners')
@@ -47,6 +46,8 @@ class LineItemCollectionValidatorTest extends ConstraintValidatorTestCase
             ->method('dispatch')
             ->willReturnCallback(function (LineItemValidateEvent $event) {
                 $event->addErrorByUnit('testSku', 'item', 'testMessage');
+
+                return $event;
             });
 
         $constraint = $this->createMock(LineItemCollection::class);

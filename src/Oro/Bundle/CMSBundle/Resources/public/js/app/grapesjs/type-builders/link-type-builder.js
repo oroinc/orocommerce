@@ -39,7 +39,7 @@ const LinkTypeBuilder = BaseTypeBuilder.extend({
                 link.setAttribute(TEMP_ATTR, '');
                 dialog.open();
                 dialog.on('create-link-dialog:valid', data => {
-                    const $link = $(editor.Canvas.getWrapperEl()).find(`[${TEMP_ATTR}]`);
+                    const $link = $(editor.Canvas.getBody()).find(`[${TEMP_ATTR}]`);
                     const newAttrs = Object.assign({title: ''}, data);
 
                     for (const [attr, value] of Object.entries(newAttrs)) {
@@ -60,7 +60,7 @@ const LinkTypeBuilder = BaseTypeBuilder.extend({
                     }
                     unlink = false;
                 }).on('close hidden', () => {
-                    const $link = $(editor.Canvas.getWrapperEl()).find(`[${TEMP_ATTR}]`);
+                    const $link = $(editor.Canvas.getBody()).find(`[${TEMP_ATTR}]`);
 
                     $link.removeAttr(TEMP_ATTR);
 

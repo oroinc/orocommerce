@@ -17,17 +17,17 @@ Feature: Shopping List Line Items
     And I click "Shopping List Actions"
     And I click "Edit"
     And I should see following grid:
-      | SKU | QtyUpdate All |
-      | AA1 | 1 set         |
-      | AA1 | 2 item        |
+      | SKU | Qty Update All |
+      | AA1 | 1 set          |
+      | AA1 | 2 item         |
     And I click on "Shopping List Line Item 1 Quantity"
     And I fill "Shopping List Line Item Form" with:
       | Quantity | 3    |
       | Unit     | item |
     When I save changes for "Shopping List Line Item 1" row
     Then I should see following grid:
-      | SKU | QtyUpdate All |
-      | AA1 | 5 item        |
+      | SKU | Qty Update All |
+      | AA1 | 5 item         |
 
   Scenario: Check edit permission for line item
     When I proceed as the Admin

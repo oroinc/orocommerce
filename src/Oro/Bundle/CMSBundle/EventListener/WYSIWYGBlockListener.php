@@ -62,7 +62,7 @@ class WYSIWYGBlockListener
 
                 $scrollData->addNamedBlock(
                     $newBlockKey,
-                    $this->translator->trans($config->get('label')),
+                    $this->translator->trans((string) $config->get('label')),
                     $wysiwygSectionPriority
                 );
 

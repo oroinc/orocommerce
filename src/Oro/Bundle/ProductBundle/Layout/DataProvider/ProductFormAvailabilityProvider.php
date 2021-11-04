@@ -8,6 +8,10 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Provider\ProductMatrixAvailabilityProvider;
 use Oro\Bundle\UIBundle\Provider\UserAgentProvider;
 
+/**
+ * Provides a set of methods to check matrix form availability for configurable products.
+ * @see \Oro\Bundle\ProductBundle\Provider\ProductFormAvailabilityProvider
+ */
 class ProductFormAvailabilityProvider
 {
     /** @var ConfigManager */

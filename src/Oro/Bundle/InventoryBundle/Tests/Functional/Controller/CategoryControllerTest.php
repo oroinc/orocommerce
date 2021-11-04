@@ -73,10 +73,7 @@ class CategoryControllerTest extends WebTestCase
         $this->updateFallbackField($form, $maxScalar, $maxFallback, 'oro_catalog_category', 'maximumQuantityToOrder');
         $form['input_action'] = 'save_and_stay';
         $values = $form->getPhpValues();
-        $values['oro_catalog_category']['_token'] = $this->getContainer()
-            ->get('security.csrf.token_manager')
-            ->getToken('category')
-            ->getValue();
+        $values['oro_catalog_category']['_token'] = $this->getCsrfToken('category')->getValue();
 
         $this->client->followRedirects();
 

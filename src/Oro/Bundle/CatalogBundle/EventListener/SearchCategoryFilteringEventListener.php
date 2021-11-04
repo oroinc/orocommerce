@@ -123,7 +123,7 @@ class SearchCategoryFilteringEventListener
 
         $filters = $config->offsetGetByPath(Configuration::FILTERS_PATH, []);
         $filters['columns'][SubcategoryFilter::FILTER_TYPE_NAME] = [
-            'data_name' => 'category_path',
+            'data_name' => 'category_paths',
             'label' => 'oro.catalog.filter.subcategory.label',
             'type' => SubcategoryFilter::FILTER_TYPE_NAME,
             'rootCategory' => $category,

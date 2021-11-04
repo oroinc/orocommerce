@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\PricingBundle;
 
-use Oro\Bundle\PricingBundle\DependencyInjection\CompilerPass\DisableDataAuditListenerPass;
 use Oro\Bundle\PricingBundle\DependencyInjection\CompilerPass\PricesStrategyPass;
 use Oro\Bundle\PricingBundle\DependencyInjection\CompilerPass\ProductExpressionServicesPass;
 use Oro\Bundle\PricingBundle\DependencyInjection\CompilerPass\SubtotalProviderPass;
@@ -34,7 +33,6 @@ class OroPricingBundle extends Bundle
     {
         parent::build($container);
 
-        $container->addCompilerPass(new DisableDataAuditListenerPass());
         $container->addCompilerPass(new SubtotalProviderPass());
         $container->addCompilerPass(new ProductExpressionServicesPass());
         $container->addCompilerPass(new PricesStrategyPass());

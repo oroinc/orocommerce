@@ -24,22 +24,22 @@ class PaymentTermProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * @var \PHPUnit\Framework\MockObject\MockObject|PaymentTermAssociationProvider
      */
-    protected $paymentTermAssociationProvider;
+    private $paymentTermAssociationProvider;
 
     /**
      * @var \PHPUnit\Framework\MockObject\MockObject|TokenStorageInterface
      */
-    protected $tokenStorage;
+    private $tokenStorage;
 
     /**
      * @var \PHPUnit\Framework\MockObject\MockObject|EventDispatcherInterface
      */
-    protected $eventDispatcher;
+    private $eventDispatcher;
 
     /**
      * @var PaymentTermProvider
      */
-    protected $provider;
+    private $provider;
 
     protected function setUp(): void
     {
@@ -56,35 +56,38 @@ class PaymentTermProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testPaymentTermFromCustomer()
+    public function testPaymentTermFromCustomer(): void
     {
         $customer = new Customer();
         $paymentTerm = new PaymentTerm();
 
-        $this->paymentTermAssociationProvider->expects($this->once())->method('getPaymentTerm')
+        $this->paymentTermAssociationProvider->expects($this->once())
+            ->method('getPaymentTerm')
             ->willReturn($paymentTerm);
 
         $this->assertSame($paymentTerm, $this->provider->getPaymentTerm($customer));
     }
 
-    public function testPaymentTermFromCustomerWithoutGroup()
+    public function testPaymentTermFromCustomerWithoutGroup(): void
     {
         $customer = new Customer();
 
-        $this->paymentTermAssociationProvider->expects($this->once())->method('getPaymentTerm')
+        $this->paymentTermAssociationProvider->expects($this->once())
+            ->method('getPaymentTerm')
             ->willReturn(null);
 
         $this->assertNull($this->provider->getPaymentTerm($customer));
     }
 
-    public function testPaymentTermFromCustomerGroup()
+    public function testPaymentTermFromCustomerGroup(): void
     {
         $customer = new Customer();
         $group = new CustomerGroup();
         $customer->setGroup($group);
         $paymentTerm = new PaymentTerm();
 
-        $this->paymentTermAssociationProvider->expects($this->exactly(2))->method('getPaymentTerm')
+        $this->paymentTermAssociationProvider->expects($this->exactly(2))
+            ->method('getPaymentTerm')
             ->willReturnMap(
                 [
                     [$customer, null, null],
@@ -95,104 +98,116 @@ class PaymentTermProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($paymentTerm, $this->provider->getPaymentTerm($customer));
     }
 
-    public function testGetCurrentFormResolvePaymentTermEvent()
+    public function testGetCurrentFormResolvePaymentTermEvent(): void
     {
         $paymentTerm = new PaymentTerm();
         $this->eventDispatcher
             ->expects($this->once())
             ->method('dispatch')
             ->with($this->isInstanceOf(ResolvePaymentTermEvent::class), $this->equalTo(ResolvePaymentTermEvent::NAME))
-            ->will(
-                $this->returnCallback(
-                    function (ResolvePaymentTermEvent $event, $name) use ($paymentTerm) {
-                        $event->setPaymentTerm($paymentTerm);
-                    }
-                )
+            ->willReturnCallback(
+                function (ResolvePaymentTermEvent $event) use ($paymentTerm) {
+                    $event->setPaymentTerm($paymentTerm);
+
+                    return $event;
+                }
             );
         $this->assertSame($paymentTerm, $this->provider->getCurrentPaymentTerm());
     }
 
-    public function testGetCurrentWithoutToken()
+    public function testGetCurrentWithoutToken(): void
     {
-        $this->eventDispatcher
-            ->expects($this->once())
+        $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
             ->with($this->isInstanceOf(ResolvePaymentTermEvent::class), $this->equalTo(ResolvePaymentTermEvent::NAME));
-        $this->tokenStorage->expects($this->once())->method('getToken')->willReturn(null);
+        $this->tokenStorage->expects($this->once())
+            ->method('getToken')
+            ->willReturn(null);
         $this->assertNull($this->provider->getCurrentPaymentTerm());
     }
 
-    public function testGetCurrentWithoutUser()
+    public function testGetCurrentWithoutUser(): void
     {
-        $this->eventDispatcher
-            ->expects($this->once())
+        $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
             ->with($this->isInstanceOf(ResolvePaymentTermEvent::class), $this->equalTo(ResolvePaymentTermEvent::NAME));
         $token = $this->createMock(TokenInterface::class);
-        $token->expects($this->once())->method('getUser')->willReturn(null);
-        $this->tokenStorage->expects($this->once())->method('getToken')->willReturn($token);
+        $token->expects($this->once())
+            ->method('getUser')
+            ->willReturn(null);
+        $this->tokenStorage->expects($this->once())
+            ->method('getToken')
+            ->willReturn($token);
         $this->assertNull($this->provider->getCurrentPaymentTerm());
     }
 
-    public function testGetCurrent()
+    public function testGetCurrent(): void
     {
-        $this->eventDispatcher
-            ->expects($this->once())
+        $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
             ->with($this->isInstanceOf(ResolvePaymentTermEvent::class), $this->equalTo(ResolvePaymentTermEvent::NAME));
         $paymentTerm = new PaymentTerm();
-        $this->paymentTermAssociationProvider->expects($this->once())->method('getPaymentTerm')
+        $this->paymentTermAssociationProvider->expects($this->once())
+            ->method('getPaymentTerm')
             ->willReturn($paymentTerm);
         $token = $this->createMock(TokenInterface::class);
         $customerUser = new CustomerUser();
         $customerUser->setCustomer(new Customer());
-        $token->expects($this->exactly(2))->method('getUser')->willReturn($customerUser);
-        $this->tokenStorage->expects($this->once())->method('getToken')->willReturn($token);
+        $token->expects($this->exactly(2))
+            ->method('getUser')
+            ->willReturn($customerUser);
+        $this->tokenStorage->expects($this->once())
+            ->method('getToken')
+            ->willReturn($token);
         $this->assertSame($paymentTerm, $this->provider->getCurrentPaymentTerm());
     }
 
-    public function testGetCurrentForCustomerVisitorWithoutCustomerUser()
+    public function testGetCurrentForCustomerVisitorWithoutCustomerUser(): void
     {
-        $this->eventDispatcher
-            ->expects($this->once())
+        $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
             ->with($this->isInstanceOf(ResolvePaymentTermEvent::class), $this->equalTo(ResolvePaymentTermEvent::NAME));
-        $this->paymentTermAssociationProvider->expects($this->never())->method('getPaymentTerm');
+        $this->paymentTermAssociationProvider->expects($this->never())
+            ->method('getPaymentTerm');
         $token = $this->createMock(AnonymousCustomerUserToken::class);
         $visitor = new CustomerVisitor();
         $token->expects($this->once())
             ->method('getVisitor')
-            ->will($this->returnValue($visitor));
-        $this->tokenStorage->expects($this->once())->method('getToken')->willReturn($token);
+            ->willReturn($visitor);
+        $this->tokenStorage->expects($this->once())
+            ->method('getToken')
+            ->willReturn($token);
         $this->assertNull($this->provider->getCurrentPaymentTerm());
     }
 
-    public function testGetCurrentForCustomerVisitorWithoutCustomer()
+    public function testGetCurrentForCustomerVisitorWithoutCustomer(): void
     {
-        $this->eventDispatcher
-            ->expects($this->once())
+        $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
             ->with($this->isInstanceOf(ResolvePaymentTermEvent::class), $this->equalTo(ResolvePaymentTermEvent::NAME));
-        $this->paymentTermAssociationProvider->expects($this->never())->method('getPaymentTerm');
+        $this->paymentTermAssociationProvider->expects($this->never())
+            ->method('getPaymentTerm');
         $token = $this->createMock(AnonymousCustomerUserToken::class);
         $visitor = new CustomerVisitor();
         $customerUser = new CustomerUser();
         $visitor->setCustomerUser($customerUser);
         $token->expects($this->exactly(2))
             ->method('getVisitor')
-            ->will($this->returnValue($visitor));
-        $this->tokenStorage->expects($this->once())->method('getToken')->willReturn($token);
+            ->willReturn($visitor);
+        $this->tokenStorage->expects($this->once())
+            ->method('getToken')
+            ->willReturn($token);
         $this->assertNull($this->provider->getCurrentPaymentTerm());
     }
 
-    public function testGetCurrentForCustomerVisitorWithCustomerUser()
+    public function testGetCurrentForCustomerVisitorWithCustomerUser(): void
     {
-        $this->eventDispatcher
-            ->expects($this->once())
+        $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
             ->with($this->isInstanceOf(ResolvePaymentTermEvent::class), $this->equalTo(ResolvePaymentTermEvent::NAME));
         $paymentTerm = new PaymentTerm();
-        $this->paymentTermAssociationProvider->expects($this->once())->method('getPaymentTerm')
+        $this->paymentTermAssociationProvider->expects($this->once())
+            ->method('getPaymentTerm')
             ->willReturn($paymentTerm);
         $token = $this->createMock(AnonymousCustomerUserToken::class);
         $visitor = new CustomerVisitor();
@@ -201,52 +216,58 @@ class PaymentTermProviderTest extends \PHPUnit\Framework\TestCase
         $visitor->setCustomerUser($customerUser);
         $token->expects($this->exactly(3))
             ->method('getVisitor')
-            ->will($this->returnValue($visitor));
-        $this->tokenStorage->expects($this->once())->method('getToken')->willReturn($token);
+            ->willReturn($visitor);
+        $this->tokenStorage->expects($this->once())
+            ->method('getToken')
+            ->willReturn($token);
         $this->assertSame($paymentTerm, $this->provider->getCurrentPaymentTerm());
     }
 
-    public function testCustomerPaymentTermFromOwner()
+    public function testCustomerPaymentTermFromOwner(): void
     {
         $customer = new Customer();
         $paymentTerm = new PaymentTerm();
         $owner = PaymentTermAwareStub::create($customer);
 
-        $this->paymentTermAssociationProvider->expects($this->once())->method('getPaymentTerm')
+        $this->paymentTermAssociationProvider->expects($this->once())
+            ->method('getPaymentTerm')
             ->willReturn($paymentTerm);
 
         $this->assertSame($paymentTerm, $this->provider->getCustomerPaymentTermByOwner($owner));
     }
 
-    public function testCustomerPaymentTermFromOwnerWithoutCustomer()
+    public function testCustomerPaymentTermFromOwnerWithoutCustomer(): void
     {
         $owner = PaymentTermAwareStub::create();
 
-        $this->paymentTermAssociationProvider->expects($this->never())->method('getPaymentTerm');
+        $this->paymentTermAssociationProvider->expects($this->never())
+            ->method('getPaymentTerm');
 
         $this->assertNull($this->provider->getCustomerPaymentTermByOwner($owner));
     }
 
-    public function testCustomerPaymentTermFromGroupOwnerWithoutCustomer()
+    public function testCustomerPaymentTermFromGroupOwnerWithoutCustomer(): void
     {
         $owner = PaymentTermAwareStub::create();
 
-        $this->paymentTermAssociationProvider->expects($this->never())->method('getPaymentTerm');
+        $this->paymentTermAssociationProvider->expects($this->never())
+            ->method('getPaymentTerm');
 
         $this->assertNull($this->provider->getCustomerGroupPaymentTermByOwner($owner));
     }
 
-    public function testCustomerPaymentTermFromGroupOwnerWithoutCustomerGroup()
+    public function testCustomerPaymentTermFromGroupOwnerWithoutCustomerGroup(): void
     {
         $customer = new Customer();
         $owner = PaymentTermAwareStub::create($customer);
 
-        $this->paymentTermAssociationProvider->expects($this->never())->method('getPaymentTerm');
+        $this->paymentTermAssociationProvider->expects($this->never())
+            ->method('getPaymentTerm');
 
         $this->assertNull($this->provider->getCustomerGroupPaymentTermByOwner($owner));
     }
 
-    public function testCustomerPaymentTermFromGroupOwner()
+    public function testCustomerPaymentTermFromGroupOwner(): void
     {
         $paymentTerm = new PaymentTerm();
         $customer = new Customer();
@@ -254,13 +275,14 @@ class PaymentTermProviderTest extends \PHPUnit\Framework\TestCase
         $customer->setGroup($group);
         $owner = PaymentTermAwareStub::create($customer);
 
-        $this->paymentTermAssociationProvider->expects($this->once())->method('getPaymentTerm')
+        $this->paymentTermAssociationProvider->expects($this->once())
+            ->method('getPaymentTerm')
             ->willReturn($paymentTerm);
 
         $this->assertSame($paymentTerm, $this->provider->getCustomerGroupPaymentTermByOwner($owner));
     }
 
-    public function testGetObjectPaymentTermNotAnObject()
+    public function testGetObjectPaymentTermNotAnObject(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Object expected, "array" given');
@@ -268,15 +290,17 @@ class PaymentTermProviderTest extends \PHPUnit\Framework\TestCase
         $this->provider->getObjectPaymentTerm([]);
     }
 
-    public function testGetObjectPaymentTermFromSecondAssociation()
+    public function testGetObjectPaymentTermFromSecondAssociation(): void
     {
         $paymentTerm = new PaymentTerm();
         $entity = new PaymentTermAwareStub($paymentTerm);
 
-        $this->paymentTermAssociationProvider->expects($this->once())->method('getAssociationNames')
+        $this->paymentTermAssociationProvider->expects($this->once())
+            ->method('getAssociationNames')
             ->willReturn(['firstProp', 'paymentTerm']);
 
-        $this->paymentTermAssociationProvider->expects($this->exactly(2))->method('getPaymentTerm')
+        $this->paymentTermAssociationProvider->expects($this->exactly(2))
+            ->method('getPaymentTerm')
             ->withConsecutive(
                 [$entity, 'firstProp'],
                 [$entity, 'paymentTerm']
@@ -289,15 +313,17 @@ class PaymentTermProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetObjectPaymentTermEmpty()
+    public function testGetObjectPaymentTermEmpty(): void
     {
         $paymentTerm = new PaymentTerm();
         $entity = new PaymentTermAwareStub($paymentTerm);
 
-        $this->paymentTermAssociationProvider->expects($this->once())->method('getAssociationNames')
+        $this->paymentTermAssociationProvider->expects($this->once())
+            ->method('getAssociationNames')
             ->willReturn(['firstProp', 'paymentTerm']);
 
-        $this->paymentTermAssociationProvider->expects($this->exactly(2))->method('getPaymentTerm')
+        $this->paymentTermAssociationProvider->expects($this->exactly(2))
+            ->method('getPaymentTerm')
             ->withConsecutive(
                 [$entity, 'firstProp'],
                 [$entity, 'paymentTerm']

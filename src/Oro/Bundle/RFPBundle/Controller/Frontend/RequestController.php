@@ -85,14 +85,14 @@ class RequestController extends AbstractController
      * @Layout
      *
      * @param Request $request
-     * @return array
+     * @return array|Response
      */
     public function createAction(Request $request)
     {
         $rfpRequest = $this->get(RequestManager::class)->create();
         $this->addProductItemsToRfpRequest($rfpRequest, $request);
 
-        $response = $this->update($rfpRequest);
+        $response = $this->update($rfpRequest, $request);
 
         if ($response instanceof Response) {
             return $response;
@@ -115,11 +115,11 @@ class RequestController extends AbstractController
      * @param RFPRequest $rfpRequest
      * @return array|RedirectResponse
      */
-    public function updateAction(RFPRequest $rfpRequest)
+    public function updateAction(RFPRequest $rfpRequest, Request $request)
     {
         $this->assertValidInternalStatus($rfpRequest);
 
-        $response = $this->update($rfpRequest);
+        $response = $this->update($rfpRequest, $request);
 
         if ($response instanceof Response) {
             return $response;
@@ -135,9 +135,9 @@ class RequestController extends AbstractController
      *
      * @return array
      */
-    public function successAction()
+    public function successAction(Request $request)
     {
-        $rfqID = $this->get('session')->get(self::LAST_SUCCESS_RFQ_SESSION_NAME);
+        $rfqID = $request->getSession()->get(self::LAST_SUCCESS_RFQ_SESSION_NAME);
         if ($rfqID !== null) {
             $repository = $this->get(DoctrineHelper::class)->getEntityRepositoryForClass(RFPRequest::class);
             $rfpRequest = $repository->find($rfqID);
@@ -159,7 +159,7 @@ class RequestController extends AbstractController
      * @param RFPRequest $rfpRequest
      * @return array|RedirectResponse
      */
-    protected function update(RFPRequest $rfpRequest)
+    protected function update(RFPRequest $rfpRequest, Request $request)
     {
         $handler = $this->get(RequestUpdateHandler::class);
         $isCreateAction = !$rfpRequest->getId();
@@ -186,7 +186,7 @@ class RequestController extends AbstractController
                     'parameters' => [],
                 ];
             },
-            function (RFPRequest $rfpRequest) use ($isCreateAction) {
+            function (RFPRequest $rfpRequest) use ($isCreateAction, $request) {
                 if ($this->isGranted('VIEW', $rfpRequest)) {
                     return [
                         'route' => 'oro_rfp_frontend_request_view',
@@ -195,7 +195,8 @@ class RequestController extends AbstractController
                 }
 
                 if ($isCreateAction) {
-                    $this->get('session')->set(self::LAST_SUCCESS_RFQ_SESSION_NAME, $rfpRequest->getId());
+                    $request->getSession()->set(self::LAST_SUCCESS_RFQ_SESSION_NAME, $rfpRequest->getId());
+
                     return [
                         'route' => 'oro_rfp_frontend_request_success',
                         'parameters' => [],

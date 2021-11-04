@@ -1,0 +1,9 @@
+services:
+    _defaults:
+        public: true
+
+    OroShoppingListBundleFrontendRestApiController:
+        namespace: Oro\Bundle\ShoppingListBundle\Controller\Frontend\Api\Rest\
+        resource: '../../Controller/Frontend/Api/Rest/*Controller.php'
+        calls:
+            - [setContainer, ['@service_container']]

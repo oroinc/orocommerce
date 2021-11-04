@@ -43,7 +43,7 @@
 
         height: $shopping-lists-area-trigger-size;
         width: $shopping-lists-area-trigger-size;
-        margin-top: -($shopping-lists-area-trigger-size / 2);
+        margin-top: -($shopping-lists-area-trigger-size * .5);
 
         border-radius: 0;
         color: $shopping-lists-content-color;

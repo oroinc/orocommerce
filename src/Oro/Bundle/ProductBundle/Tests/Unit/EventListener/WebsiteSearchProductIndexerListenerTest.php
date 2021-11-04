@@ -15,6 +15,7 @@ use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Oro\Bundle\ProductBundle\EventListener\WebsiteSearchProductIndexerListener;
@@ -28,12 +29,11 @@ use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderValue;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\ReflectionUtil;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
-
     private const DESCRIPTION_DEFAULT_LOCALE = 'description default';
     private const DESCRIPTION_CUSTOM_LOCALE = 'description custom';
 
@@ -44,7 +44,7 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
     private $websiteLocalizationProvider;
 
     /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    private $registry;
+    private $doctrine;
 
     /** @var AttachmentManager|\PHPUnit\Framework\MockObject\MockObject */
     private $attachmentManager;
@@ -62,7 +62,7 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
     {
         $this->websiteContextManager = $this->createMock(WebsiteContextManager::class);
         $this->websiteLocalizationProvider = $this->createMock(AbstractWebsiteLocalizationProvider::class);
-        $this->registry = $this->createMock(ManagerRegistry::class);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->attachmentManager = $this->createMock(AttachmentManager::class);
         $this->attributeManager = $this->createMock(AttributeManager::class);
         $this->dataProvider = $this->createMock(ProductIndexDataProviderInterface::class);
@@ -70,29 +70,15 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
         $this->listener = new WebsiteSearchProductIndexerListener(
             $this->websiteLocalizationProvider,
             $this->websiteContextManager,
-            $this->registry,
+            $this->doctrine,
             $this->attachmentManager,
             $this->attributeManager,
             $this->dataProvider
         );
     }
 
-    private function prepareLocalizedValue(
-        Localization $localization = null,
-        string $string = null,
-        string $text = null
-    ): LocalizedFallbackValue {
-        $value = new LocalizedFallbackValue();
-        $value
-            ->setString($string)
-            ->setText($text)
-            ->setLocalization($localization);
-
-        return $value;
-    }
-
     /**
-     * * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function testOnWebsiteSearchIndexProductClass()
     {
@@ -100,32 +86,27 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
         $website = new Website();
         $website->setOrganization($organization);
 
-        /** @var Localization $firstLocale */
-        $firstLocale = $this->getEntity(Localization::class, ['id' => 1]);
-
-        /** @var Localization $secondLocale */
-        $secondLocale = $this->getEntity(Localization::class, ['id' => 2]);
+        $firstLocale = $this->getLocalization(1);
+        $secondLocale = $this->getLocalization(2);
 
         $this->websiteLocalizationProvider->expects($this->once())
             ->method('getLocalizationsByWebsiteId')
             ->willReturn([$firstLocale, $secondLocale]);
 
         $attributeFamilyId = 42;
-        $attributeFamily = $this->getEntity(AttributeFamily::class, ['id' => $attributeFamilyId]);
+        $attributeFamily = $this->getAttributeFamily($attributeFamilyId);
 
-        $product = $this->getEntity(
-            ProductWithInventoryStatus::class,
-            [
-                'id' => 777,
-                'sku' => 'sku123Абв',
-                'status' => Product::STATUS_ENABLED,
-                'type' => Product::TYPE_CONFIGURABLE,
-                'inventoryStatus' => new InventoryStatus('in_stock', 'In Stock'),
-                'newArrival' => true,
-                'createdAt' => new \DateTime('2017-09-09 00:00:00'),
-                'attributeFamily' => $attributeFamily,
-            ]
-        );
+        $productId = 777;
+        $product = new ProductWithInventoryStatus();
+        ReflectionUtil::setId($product, $productId);
+        $product->setSku('sku123Абв');
+        $product->setStatus(Product::STATUS_ENABLED);
+        $product->setType(Product::TYPE_CONFIGURABLE);
+        $product->setInventoryStatus(new InventoryStatus('in_stock', 'In Stock'));
+        $product->setNewArrival(true);
+        $product->setCreatedAt(new \DateTime('2017-09-09 00:00:00'));
+        $product->setAttributeFamily($attributeFamily);
+        $product->setVariantFields(['field1', 'field2']);
 
         $event = new IndexEntityEvent(Product::class, [$product], []);
 
@@ -138,29 +119,29 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
         $unitRepository = $this->createMock(ProductUnitRepository::class);
         $attributeFamilyRepository = $this->createMock(AttributeFamilyRepository::class);
 
-        $entity = $this->getImageFileEntities();
+        $image = $this->getImage();
 
         $productRepository->expects($this->once())
             ->method('getListingImagesFilesByProductIds')
-            ->with([777])
-            ->willReturn([777 => $entity]);
+            ->with([$productId])
+            ->willReturn([$productId => $image]);
 
         $unitRepository->expects($this->once())
             ->method('getProductsUnits')
-            ->with([777])
-            ->willReturn([777 => ['item', 'set']]);
+            ->with([$productId])
+            ->willReturn([$productId => ['item' => 3, 'set' => 0]]);
 
         $unitRepository->expects($this->once())
             ->method('getPrimaryProductsUnits')
-            ->with([777])
-            ->willReturn([777 => 'item']);
+            ->with([$productId])
+            ->willReturn([$productId => 'item']);
 
-        $attribute1 = $this->getEntity(FieldConfigModel::class, ['id' => 1001, 'fieldName' => 'sku']);
-        $attribute2 = $this->getEntity(FieldConfigModel::class, ['id' => 1002, 'fieldName' => 'newArrival']);
-        $attribute3 = $this->getEntity(FieldConfigModel::class, ['id' => 1003, 'fieldName' => 'descriptions']);
-        $attribute4 = $this->getEntity(FieldConfigModel::class, ['id' => 1004, 'fieldName' => 'createdAt']);
-        $attribute5 = $this->getEntity(FieldConfigModel::class, ['id' => 1005, 'fieldName' => 'skipped']);
-        $attribute6 = $this->getEntity(FieldConfigModel::class, ['id' => 1006, 'fieldName' => 'system']);
+        $attribute1 = $this->getFieldConfigModel(1001, 'sku');
+        $attribute2 = $this->getFieldConfigModel(1002, 'newArrival');
+        $attribute3 = $this->getFieldConfigModel(1003, 'descriptions');
+        $attribute4 = $this->getFieldConfigModel(1004, 'createdAt');
+        $attribute5 = $this->getFieldConfigModel(1005, 'skipped');
+        $attribute6 = $this->getFieldConfigModel(1006, 'system');
 
         $attributeFamilyRepository->expects($this->once())
             ->method('getFamilyIdsForAttributesByOrganization')
@@ -180,32 +161,24 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
             ->method('find')
             ->with(Website::class, 1)
             ->willReturn($website);
-        $em->expects($this->exactly(4))
-            ->method('getRepository')
-            ->withConsecutive(
-                ['OroProductBundle:Product'],
-                ['OroProductBundle:ProductUnit'],
-                ['OroProductBundle:ProductUnit'],
-                [AttributeFamily::class]
-            )
-            ->willReturnOnConsecutiveCalls(
-                $productRepository,
-                $unitRepository,
-                $unitRepository,
-                $attributeFamilyRepository
-            );
-        $this->registry->expects($this->any())
+        $this->doctrine->expects($this->any())
             ->method('getManagerForClass')
             ->willReturn($em);
+        $this->doctrine->expects($this->any())
+            ->method('getRepository')
+            ->willReturnMap([
+                [Product::class, null, $productRepository],
+                [ProductUnit::class, null, $unitRepository],
+                [AttributeFamily::class, null, $attributeFamilyRepository]
+            ]);
 
         $this->attachmentManager->expects($this->exactly(3))
             ->method('getFilteredImageUrl')
-            ->withConsecutive([$entity], [$entity])
-            ->willReturnOnConsecutiveCalls(
-                '/large/image',
-                '/medium/image',
-                '/small/image'
-            );
+            ->willReturnMap([
+                [$image, 'product_large', UrlGeneratorInterface::ABSOLUTE_PATH, '/large/image'],
+                [$image, 'product_medium', UrlGeneratorInterface::ABSOLUTE_PATH, '/medium/image'],
+                [$image, 'product_small', UrlGeneratorInterface::ABSOLUTE_PATH, '/small/image']
+            ]);
 
         $this->attributeManager->expects($this->once())
             ->method('getActiveAttributesByClassForOrganization')
@@ -237,21 +210,15 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
         $model6 = new ProductIndexDataModel('system', 'system', [], false, false);
         $model7 = new ProductIndexDataModel('descriptions', $this->createMultiControlCharString(), [], true, false);
 
-        $this->dataProvider
-            ->expects($this->exactly(5))
+        $this->dataProvider->expects($this->exactly(5))
             ->method('getIndexData')
-            ->willReturnMap(
-                [
-                    [$product, $attribute1, [$firstLocale, $secondLocale], new \ArrayIterator([$model1])],
-                    [$product, $attribute2, [$firstLocale, $secondLocale], new \ArrayIterator([$model2])],
-                    [
-                        $product, $attribute3, [$firstLocale, $secondLocale],
-                        new \ArrayIterator([$model3, $model4, $model7])
-                    ],
-                    [$product, $attribute4, [$firstLocale, $secondLocale], new \ArrayIterator([$model5])],
-                    [$product, $attribute6, [$firstLocale, $secondLocale], new \ArrayIterator([$model6])],
-                ]
-            );
+            ->willReturnMap([
+                [$product, $attribute1, [$firstLocale, $secondLocale], new \ArrayIterator([$model1])],
+                [$product, $attribute2, [$firstLocale, $secondLocale], new \ArrayIterator([$model2])],
+                [$product, $attribute3, [$firstLocale, $secondLocale], new \ArrayIterator([$model3, $model4, $model7])],
+                [$product, $attribute4, [$firstLocale, $secondLocale], new \ArrayIterator([$model5])],
+                [$product, $attribute6, [$firstLocale, $secondLocale], new \ArrayIterator([$model6])],
+            ]);
 
         $this->listener->onWebsiteSearchIndex($event);
 
@@ -267,14 +234,14 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
             'all_text_LOCALIZATION_ID' => [
                 [
                     'value' => new PlaceholderValue(
-                        $this->prepareLocalizedValue($firstLocale, null, self::DESCRIPTION_DEFAULT_LOCALE),
+                        $this->getLocalizedFallbackValue($firstLocale, null, self::DESCRIPTION_DEFAULT_LOCALE),
                         [LocalizationIdPlaceholder::NAME => $firstLocale->getId()]
                     ),
                     'all_text' => true,
                 ],
                 [
                     'value' => new PlaceholderValue(
-                        $this->prepareLocalizedValue($secondLocale, null, self::DESCRIPTION_CUSTOM_LOCALE),
+                        $this->getLocalizedFallbackValue($secondLocale, null, self::DESCRIPTION_CUSTOM_LOCALE),
                         [LocalizationIdPlaceholder::NAME => $secondLocale->getId()]
                     ),
                     'all_text' => true,
@@ -300,7 +267,7 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
             ],
             'product_units' => [
                 [
-                    'value' => serialize(['item', 'set']),
+                    'value' => serialize(['item' => 3, 'set' => 0]),
                     'all_text' => false
                 ]
             ],
@@ -336,6 +303,12 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
                     'value' => $attributeFamilyId,
                     'all_text' => false
                 ]
+            ],
+            'variant_fields_count' => [
+                [
+                    'value' => 2,
+                    'all_text' => false
+                ]
             ]
         ];
 
@@ -356,16 +329,50 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
         return $multicharText . 'ASDF456' . chr(127) . 'ASDF789';
     }
 
-    private function getImageFileEntities(): File
+    private function getImage(): File
     {
-        $file = $this->createMock(File::class);
-        $file->expects($this->any())
-            ->method('getId')
-            ->willReturn(1);
-        $file->expects($this->any())
-            ->method('getFilename')
-            ->willReturn('/image/filename');
+        $file = new File();
+        ReflectionUtil::setId($file, 1);
+        $file->setFilename('/image/filename');
 
         return $file;
+    }
+
+    private function getLocalization(int $id): Localization
+    {
+        $localization = new Localization();
+        ReflectionUtil::setId($localization, $id);
+
+        return $localization;
+    }
+
+    private function getLocalizedFallbackValue(
+        Localization $localization = null,
+        string $string = null,
+        string $text = null
+    ): LocalizedFallbackValue {
+        $value = new LocalizedFallbackValue();
+        $value->setString($string);
+        $value->setText($text);
+        $value->setLocalization($localization);
+
+        return $value;
+    }
+
+    private function getAttributeFamily(int $id): AttributeFamily
+    {
+        $attributeFamily = new AttributeFamily();
+        ReflectionUtil::setId($attributeFamily, $id);
+
+        return $attributeFamily;
+    }
+
+    private function getFieldConfigModel(int $id, string $fieldName): FieldConfigModel
+    {
+        $fieldConfigModel = new FieldConfigModel();
+        ReflectionUtil::setId($fieldConfigModel, $id);
+        $fieldConfigModel->setFieldName($fieldName);
+
+        return $fieldConfigModel;
     }
 }

@@ -88,7 +88,9 @@ class ConfigurableProductProvider
         if ($translateLabels) {
             if (!$this->translatedCustomFields) {
                 foreach ($this->customFields as $k => $customField) {
-                    $customField['label'] = $this->translator->trans($customField['label']);
+                    $customField['label'] = isset($customField['label'])
+                        ? $this->translator->trans((string) $customField['label'])
+                        : '';
 
                     $this->translatedCustomFields[$k] = $customField;
                 }

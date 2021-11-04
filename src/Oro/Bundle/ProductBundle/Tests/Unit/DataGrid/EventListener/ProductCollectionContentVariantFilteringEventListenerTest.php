@@ -283,7 +283,7 @@ class ProductCollectionContentVariantFilteringEventListenerTest extends \PHPUnit
         $searchQuery->expects($this->exactly(2))
             ->method('addWhere')
             ->withConsecutive(
-                [Criteria::expr()->eq(sprintf('integer.assigned_to_variant_%s', $contentVariantId), 1)],
+                [Criteria::expr()->eq(sprintf('integer.assigned_to.variant_%s', $contentVariantId), 1)],
                 [Criteria::expr()->gte('integer.is_variant', 0)]
             );
         /** @var SearchDatasource|\PHPUnit\Framework\MockObject\MockObject $datasource */
@@ -329,9 +329,9 @@ class ProductCollectionContentVariantFilteringEventListenerTest extends \PHPUnit
         $searchQuery->expects($this->exactly(2))
             ->method('addWhere')
             ->withConsecutive(
-                [Criteria::expr()->eq(sprintf('integer.assigned_to_variant_%s', $contentVariantId), 1)],
+                [Criteria::expr()->eq(sprintf('integer.assigned_to.variant_%s', $contentVariantId), 1)],
                 [Criteria::expr()->orX(
-                    Criteria::expr()->eq(sprintf('integer.manually_added_to_variant_%s', $contentVariantId), 1),
+                    Criteria::expr()->eq(sprintf('integer.manually_added_to.variant_%s', $contentVariantId), 1),
                     Criteria::expr()->eq('integer.is_variant', 0)
                 )]
             );

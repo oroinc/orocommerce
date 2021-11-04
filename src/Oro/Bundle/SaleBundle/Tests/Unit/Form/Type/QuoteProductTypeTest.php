@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
@@ -16,7 +16,6 @@ use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
-use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteProductOfferType;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteProductRequestType;
@@ -32,66 +31,43 @@ class QuoteProductTypeTest extends AbstractTest
 {
     use QuantityTypeTrait;
 
-    /**
-     * @var QuoteProductType
-     */
+    /** @var QuoteProductType */
     protected $formType;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface
-     */
-    protected $translator;
+    /** @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface */
+    private $translator;
 
-    /**
-     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $registry;
+    /** @var ProductUnitRepository|\PHPUnit\Framework\MockObject\MockObject */
+    private $repository;
 
-    /**
-     * @var ObjectManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $manager;
-
-    /**
-     * @var ProductUnitRepository|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $repository;
-
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);
         $this->repository = $this->createMock(ProductUnitRepository::class);
 
-        $this->manager = $this->createMock(ObjectManager::class);
-        $this->manager->expects($this->any())
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->expects($this->any())
             ->method('getRepository')
-            ->willReturn($this->repository)
-        ;
+            ->willReturn($this->repository);
 
-        $this->registry = $this->createMock(ManagerRegistry::class);
-        $this->registry->expects($this->any())
+        $doctrine = $this->createMock(ManagerRegistry::class);
+        $doctrine->expects($this->any())
             ->method('getManagerForClass')
-            ->willReturn($this->manager)
-        ;
+            ->willReturn($em);
 
         $productUnitLabelFormatter = $this->createMock(UnitLabelFormatterInterface::class);
         $productUnitLabelFormatter->expects($this->any())
             ->method('format')
-            ->will($this->returnCallback(function ($unitCode, $isShort) {
+            ->willReturnCallback(function ($unitCode, $isShort) {
                 return $unitCode . '-formatted-' . ($isShort ? 'short' : 'full');
-            }))
-        ;
+            });
         $productUnitLabelFormatter->expects($this->any())
             ->method('formatChoices')
-            ->will($this->returnCallback(function ($units, $isShort) {
+            ->willReturnCallback(function ($units, $isShort) {
                 return array_map(function ($unit) use ($isShort) {
                     return $unit . '-formatted2-' . ($isShort ? 'short' : 'full');
                 }, $units);
-            }))
-        ;
+            });
 
         $this->configureQuoteProductOfferFormatter();
 
@@ -99,7 +75,7 @@ class QuoteProductTypeTest extends AbstractTest
             $this->translator,
             $productUnitLabelFormatter,
             $this->quoteProductFormatter,
-            $this->registry
+            $doctrine
         );
         $this->formType->setDataClass(QuoteProduct::class);
 
@@ -120,8 +96,7 @@ class QuoteProductTypeTest extends AbstractTest
                 $this->assertArrayHasKey('allow_add_free_form_items', $options);
 
                 return true;
-            }))
-        ;
+            }));
 
         $this->formType->configureOptions($resolver);
     }
@@ -133,8 +108,7 @@ class QuoteProductTypeTest extends AbstractTest
     {
         $this->repository->expects($this->once())
             ->method('getAllUnits')
-            ->willReturn($inputData['allUnits'])
-        ;
+            ->willReturn($inputData['allUnits']);
 
         $view = new FormView();
 
@@ -148,11 +122,9 @@ class QuoteProductTypeTest extends AbstractTest
     }
 
     /**
-     * @return array
-     *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function finishViewProvider()
+    public function finishViewProvider(): array
     {
         $defaultOptions = [
             'compact_units' => true,
@@ -356,31 +328,27 @@ class QuoteProductTypeTest extends AbstractTest
         ];
     }
 
-    /**
-     * @param int $id
-     * @param array $units
-     * @return \PHPUnit\Framework\MockObject\MockObject|Product
-     */
-    protected function createProduct($id, array $units = [])
+    private function createProduct(int $id, array $units = []): Product
     {
-        $product = $this->getMockEntity(
-            'Oro\Bundle\ProductBundle\Entity\Product',
-            [
-                'getId' => $id,
-                'getAvailableUnitCodes' => array_keys($units),
-                'getSellUnitsPrecision' => $units
-            ]
-        );
+        $product = $this->createMock(Product::class);
+        $product->expects(self::any())
+            ->method('getId')
+            ->willReturn($id);
+        $product->expects(self::any())
+            ->method('getAvailableUnitCodes')
+            ->willReturn(array_keys($units));
+        $product->expects(self::any())
+            ->method('getSellUnitsPrecision')
+            ->willReturn($units);
 
         return $product;
     }
 
     /**
-     * @return array
-     *
+     * {@inheritDoc}
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function submitProvider()
+    public function submitProvider(): array
     {
         $quoteProductOffer = $this->getQuoteProductOffer(2, 10, 'kg', self::QPO_PRICE_TYPE1, Price::create(20, 'USD'));
 
@@ -528,61 +496,20 @@ class QuoteProductTypeTest extends AbstractTest
     }
 
     /**
-     * @param int $id
-     * @param Product $product
-     * @param string $productSku
-     * @param Product $replacement
-     * @param string $replacementSku
-     * @param int $type
-     * @return \PHPUnit\Framework\MockObject\MockObject|QuoteProduct
-     */
-    protected function createQuoteProduct(
-        $id,
-        Product $product = null,
-        $productSku = null,
-        Product $replacement = null,
-        $replacementSku = null,
-        $type = QuoteProduct::TYPE_OFFER
-    ) {
-        $quoteProduct = $this->createMock(QuoteProduct::class);
-        $quoteProduct->expects($this->any())
-            ->method('getId')
-            ->willReturn($id);
-        $quoteProduct->expects($this->any())
-            ->method('isTypeNotAvailable')
-            ->willReturn($type === QuoteProduct::TYPE_NOT_AVAILABLE);
-        $quoteProduct->expects($this->any())
-            ->method('getProduct')
-            ->willReturn($product);
-        $quoteProduct->expects($this->any())
-            ->method('getProductSku')
-            ->willReturn($productSku);
-        $quoteProduct->expects($this->any())
-            ->method('getProductReplacement')
-            ->willReturn($replacement);
-        $quoteProduct->expects($this->any())
-            ->method('getProductReplacementSku')
-            ->willReturn($replacementSku);
-
-        return $quoteProduct;
-    }
-
-    /**
      * {@inheritdoc}
      */
     protected function getExtensions()
     {
-        $priceType                  = $this->preparePriceType();
-        $entityType                 = $this->prepareProductEntityType();
-        $productUnitSelectionType   = $this->prepareProductUnitSelectionType();
-        $quoteProductOfferType      = $this->prepareQuoteProductOfferType();
-        $quoteProductRequestType    = $this->prepareQuoteProductRequestType();
+        $priceType = $this->preparePriceType();
+        $entityType = $this->prepareProductEntityType();
+        $productUnitSelectionType = $this->prepareProductUnitSelectionType();
+        $quoteProductOfferType = $this->prepareQuoteProductOfferType();
+        $quoteProductRequestType = $this->prepareQuoteProductRequestType();
 
         return [
             new PreloadedExtension(
                 [
                     $this->formType,
-                    ProductUnitSelectionType::class => new ProductUnitSelectionTypeStub(),
                     ProductSelectType::class        => new ProductSelectTypeStub(),
                     CurrencySelectionType::class    => new CurrencySelectionTypeStub(),
                     PriceType::class                => $priceType,

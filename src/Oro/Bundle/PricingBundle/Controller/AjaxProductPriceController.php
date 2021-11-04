@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\PricingBundle\Controller;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\ActionBundle\Helper\ContextHelper;
 use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
@@ -24,7 +22,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Adds actions to update, delete and get prices by customer or matching prices via AJAX
@@ -117,7 +114,7 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
      *
      * {@inheritdoc}
      */
-    public function deleteAction(PriceList $priceList, $productPriceId)
+    public function deleteAction(Request $request, PriceList $priceList, $productPriceId)
     {
         /** @var ProductPriceRepository $priceRepository */
         $priceRepository = $this->getDoctrine()->getRepository(ProductPrice::class);
@@ -129,7 +126,6 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
                 ['id' => $productPriceId]
             );
         $code = JsonResponse::HTTP_OK;
-        $errors = new ArrayCollection();
         $message = '';
 
         if (empty($productPrice)) {
@@ -148,27 +144,11 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
         $response = [
             'successful' => $code === JsonResponse::HTTP_OK,
             'message' => $message,
-            'messages' => $this->prepareMessages($errors),
             'refreshGrid' => $this->get(ContextHelper::class)->getActionData()->getRefreshGrid(),
-            'flashMessages' => $this->get('session')->getFlashBag()->all()
+            'flashMessages' => $request->getSession()->getFlashBag()->all()
         ];
 
         return new JsonResponse($response, $code);
-    }
-
-    /**
-     * @param Collection $messages
-     * @return array
-     */
-    protected function prepareMessages(Collection $messages)
-    {
-        $result = [];
-
-        foreach ($messages as $message) {
-            $result[] = $this->get(TranslatorInterface::class)->trans($message['message'], $message['parameters']);
-        }
-
-        return $result;
     }
 
     /**
@@ -179,7 +159,6 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
         return array_merge(
             parent::getSubscribedServices(),
             [
-                TranslatorInterface::class,
                 ShardManager::class,
                 UpdateHandlerFacade::class,
                 ProductPriceHandler::class,

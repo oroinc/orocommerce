@@ -39,7 +39,7 @@ class EntityDependenciesResolverTest extends \PHPUnit\Framework\TestCase
         unset($this->mappingProvider, $this->eventDispatcher, $this->entityDependenciesResolver);
     }
 
-    public function testGetClassesForReindexWhenAllClassesReturned()
+    public function testGetClassesForReindexWhenAllClassesReturned(): void
     {
         $expectedClasses = ['Product', 'Category', 'User'];
 
@@ -55,7 +55,7 @@ class EntityDependenciesResolverTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedClasses, $this->entityDependenciesResolver->getClassesForReindex());
     }
 
-    public function testGetClassesForReindexWithDependentClasses()
+    public function testGetClassesForReindexWithDependentClasses(): void
     {
         $this->eventDispatcher
             ->expects($this->once())
@@ -63,12 +63,14 @@ class EntityDependenciesResolverTest extends \PHPUnit\Framework\TestCase
             ->with($this->isInstanceOf(CollectDependentClassesEvent::class), CollectDependentClassesEvent::NAME)
             ->willReturnCallback(function (CollectDependentClassesEvent $event, $eventName) {
                 $event->addClassDependencies('Product', ['Category', 'User']);
+
+                return $event;
             });
 
         $this->assertEquals(['User', 'Product'], $this->entityDependenciesResolver->getClassesForReindex('User'));
     }
 
-    public function testGetClassesForReindexWithCircularDependency()
+    public function testGetClassesForReindexWithCircularDependency(): void
     {
         $this->eventDispatcher
             ->expects($this->once())
@@ -78,6 +80,8 @@ class EntityDependenciesResolverTest extends \PHPUnit\Framework\TestCase
                 $event->addClassDependencies('User', ['Category']);
                 $event->addClassDependencies('Category', ['Product']);
                 $event->addClassDependencies('Product', ['User']);
+
+                return $event;
             });
 
         $this->assertEquals(

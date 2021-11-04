@@ -1,6 +1,8 @@
 /* @theme: default; */
 // @productTheme: two-columns-theme;
 
+@use 'sass:math';
+
 @include breakpoint('desktop') {
     .two-columns-theme.product-view {
         .product-price {
@@ -56,7 +58,7 @@
 
                         // stylelint-disable-next-line selector-max-compound-selectors
                         .embedded-list__item {
-                            width: (100% / $two-columns-theme-embedded-related-products-item-count-desktop);
+                            width: math.div(100%, $two-columns-theme-embedded-related-products-item-count-desktop);
                             margin-right: 0;
                         }
                     }

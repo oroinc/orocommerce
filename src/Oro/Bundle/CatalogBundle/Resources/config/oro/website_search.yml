@@ -12,5 +12,5 @@ Oro\Bundle\ProductBundle\Entity\Product:
             type: text
             fulltext: false
         -
-            name: category_path_CATEGORY_PATH
+            name: category_paths.CATEGORY_PATH
             type: integer

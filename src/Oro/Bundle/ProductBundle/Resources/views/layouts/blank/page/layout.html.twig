@@ -9,7 +9,8 @@
 
         {% if mode == 'icon' %}
             {% set attr = layout_attr_defaults(attr, {
-                '~class': ' product-sticker--icon'
+                '~class': ' product-sticker--icon',
+                'role': 'img'
             }) %}
         {% elseif mode == 'text' %}
             {% set attr = layout_attr_defaults(attr, {
@@ -28,15 +29,14 @@
 
             {% if mode == 'icon' %}
                 {% set attr = layout_attr_defaults(attr, {
-                    '~class': ' product-sticker--' ~ position
+                    '~class': ' product-sticker--' ~ position,
+                    'aria-label': ('oro.product.sticker.' ~ sticker.type)|trans
                 }) %}
             {% endif %}
 
             <div {{ block('block_attributes') }}>
                 {%- if mode == 'text' -%}
                     {{- ('oro.product.sticker.' ~ sticker.type)|trans -}}
-                {%- else -%}
-                    <span aria-label="{{- ('oro.product.sticker.' ~ sticker.type)|trans -}}"></span>
                 {%- endif -%}
             </div>
         {% endfor %}

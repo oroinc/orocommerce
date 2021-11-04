@@ -61,8 +61,6 @@ class ProductControllerTest extends WebTestCase
 
         $this->assertCount(1, $shoppingList->getLineItems());
 
-        $tokenManager = $this->getContainer()->get('security.csrf.token_manager');
-
         $this->ajaxRequest(
             'POST',
             $this->getUrl(
@@ -76,7 +74,7 @@ class ProductControllerTest extends WebTestCase
                 'oro_product_frontend_line_item' => [
                     'quantity' => 5,
                     'unit'     => 'liter',
-                    '_token'   => $tokenManager->getToken('oro_product_frontend_line_item')->getValue()
+                    '_token'   => $this->getCsrfToken('oro_product_frontend_line_item')->getValue()
                 ]
             ]
         );

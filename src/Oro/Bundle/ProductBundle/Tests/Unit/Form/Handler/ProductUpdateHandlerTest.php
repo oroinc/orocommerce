@@ -119,7 +119,7 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
         $this->handler->setRelatedItemsHandler($this->relatedItemsHandler);
     }
 
-    public function testHandleUpdateFailsWhenFormHandlerIsInvalid()
+    public function testHandleUpdateFailsWhenFormHandlerIsInvalid(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage(
@@ -134,7 +134,7 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
         $this->handler->update($entity, $this->form, 'Saved', new \stdClass());
     }
 
-    public function testHandleUpdateWorksWithBlankDataAndNoHandler()
+    public function testHandleUpdateWorksWithBlankDataAndNoHandler(): void
     {
         $this->request->initialize(['_wid' => 'WID']);
 
@@ -154,7 +154,7 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $result);
     }
 
-    public function testUpdateWorksWithBlankDataAndNoHandler()
+    public function testUpdateWorksWithBlankDataAndNoHandler(): void
     {
         $this->request->initialize(['_wid' => 'WID']);
 
@@ -166,7 +166,7 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $result);
     }
 
-    public function testHandleUpdateWorksWithInvalidForm()
+    public function testHandleUpdateWorksWithInvalidForm(): void
     {
         $this->request->initialize(['_wid' => 'WID'], self::FORM_DATA);
         $this->request->setMethod('POST');
@@ -192,6 +192,8 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
             ->willReturnCallback(function (FormProcessEvent $event) use ($entity) {
                 $this->assertSame($this->form, $event->getForm());
                 $this->assertSame($entity, $event->getData());
+                
+                return $event;
             });
 
         $expected = $this->getExpectedSaveData($this->form, $entity);
@@ -206,7 +208,7 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $result);
     }
 
-    public function testUpdateWithInvalidForm()
+    public function testUpdateWithInvalidForm(): void
     {
         $this->request->initialize(['_wid' => 'WID']);
         $this->request->setMethod('POST');
@@ -231,6 +233,8 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
             ->willReturnCallback(function (FormProcessEvent $event) use ($entity) {
                 $this->assertSame($this->form, $event->getForm());
                 $this->assertSame($entity, $event->getData());
+
+                return $event;
             });
 
         $expected = $this->getExpectedSaveData($this->form, $entity);
@@ -239,7 +243,7 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $result);
     }
 
-    public function testHandleUpdateWorksWithValidForm()
+    public function testHandleUpdateWorksWithValidForm(): void
     {
         $this->request->initialize(['_wid' => 'WID'], self::FORM_DATA);
         $this->request->setMethod('POST');
@@ -295,6 +299,8 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
             ->willReturnCallback(function (FormProcessEvent|AfterFormProcessEvent $event) use ($entity) {
                 $this->assertSame($this->form, $event->getForm());
                 $this->assertSame($entity, $event->getData());
+
+                return $event;
             });
 
         $expected = $this->getExpectedSaveData($this->form, $entity);
@@ -310,7 +316,7 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $result);
     }
 
-    public function testUpdateWorksWithValidForm()
+    public function testUpdateWorksWithValidForm(): void
     {
         $this->request->initialize(['_wid' => 'WID'], self::FORM_DATA);
         $this->request->setMethod('POST');
@@ -366,6 +372,8 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
             ->willReturnCallback(function (FormProcessEvent|AfterFormProcessEvent $event) use ($entity) {
                 $this->assertSame($this->form, $event->getForm());
                 $this->assertSame($entity, $event->getData());
+
+                return $event;
             });
 
         $expected = $this->getExpectedSaveData($this->form, $entity);
@@ -375,7 +383,7 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $result);
     }
 
-    public function testHandleUpdateWorksWhenFormFlushFailed()
+    public function testHandleUpdateWorksWhenFormFlushFailed(): void
     {
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('Test flush exception');
@@ -420,7 +428,7 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testUpdateWorksWhenFormFlushFailed()
+    public function testUpdateWorksWhenFormFlushFailed(): void
     {
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('Test flush exception');
@@ -459,7 +467,7 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
         $this->handler->update($entity, $this->form, 'Saved');
     }
 
-    public function testHandleUpdateBeforeFormDataSetInterrupted()
+    public function testHandleUpdateBeforeFormDataSetInterrupted(): void
     {
         $this->request->initialize(['_wid' => 'WID']);
 
@@ -473,6 +481,8 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
             ->with($this->isInstanceOf(FormProcessEvent::class), Events::BEFORE_FORM_DATA_SET)
             ->willReturnCallback(function (FormProcessEvent $event) {
                 $event->interruptFormProcess();
+
+                return $event;
             });
 
         $expected = $this->getExpectedSaveData($this->form, $entity);
@@ -487,7 +497,7 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $result);
     }
 
-    public function testHandleUpdateInterruptedBeforeFormSubmit()
+    public function testHandleUpdateInterruptedBeforeFormSubmit(): void
     {
         $this->request->initialize(['_wid' => 'WID']);
         $this->request->setMethod('POST');
@@ -505,9 +515,12 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
             )
             ->willReturnOnConsecutiveCalls(
                 new ReturnCallback(function (FormProcessEvent $event) {
+                    return $event;
                 }),
                 new ReturnCallback(function (FormProcessEvent $event) {
                     $event->interruptFormProcess();
+
+                    return $event;
                 })
             );
 
@@ -523,7 +536,7 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $result);
     }
 
-    public function testUpdateInterruptedBeforeFormSubmit()
+    public function testUpdateInterruptedBeforeFormSubmit(): void
     {
         $this->request->initialize(['_wid' => 'WID']);
         $this->request->setMethod('POST');
@@ -541,9 +554,12 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
             )
             ->willReturnOnConsecutiveCalls(
                 new ReturnCallback(function (FormProcessEvent $event) {
+                    return $event;
                 }),
                 new ReturnCallback(function (FormProcessEvent $event) {
                     $event->interruptFormProcess();
+
+                    return $event;
                 })
             );
 
@@ -553,7 +569,7 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $result);
     }
 
-    public function testHandleUpdateWorksWithFormHandler()
+    public function testHandleUpdateWorksWithFormHandler(): void
     {
         $this->request->initialize(['_wid' => 'WID']);
 
@@ -585,7 +601,7 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $result);
     }
 
-    public function testHandleUpdateWorksWithRouteCallback()
+    public function testHandleUpdateWorksWithRouteCallback(): void
     {
         $this->request->initialize(['_wid' => 'WID']);
 
@@ -631,7 +647,7 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $result);
     }
 
-    public function testHandleUpdateWorksWithoutWid()
+    public function testHandleUpdateWorksWithoutWid(): void
     {
         $queryParameters = ['qwe' => 'rty'];
         $this->request->query = new ParameterBag($queryParameters);
@@ -678,7 +694,7 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $result);
     }
 
-    public function testUpdateWorksWithoutWid()
+    public function testUpdateWorksWithoutWid(): void
     {
         $this->request->query = new ParameterBag(['qwe' => 'rty']);
 
@@ -704,7 +720,7 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($redirectResponse, $actual);
     }
 
-    public function testUpdateWorksWithoutFormHandler()
+    public function testUpdateWorksWithoutFormHandler(): void
     {
         $this->request->initialize(['_wid' => 'WID']);
 
@@ -722,7 +738,7 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $result);
     }
 
-    public function testUpdateWorksWithoutFormHandlerAndWithResultCallback()
+    public function testUpdateWorksWithoutFormHandlerAndWithResultCallback(): void
     {
         $this->request->initialize(['_wid' => 'WID']);
 
@@ -748,7 +764,7 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $result);
     }
 
-    public function testSaveAndDuplicate()
+    public function testSaveAndDuplicate(): void
     {
         $queryParameters = ['qwe' => 'rty'];
         $this->request->initialize(
@@ -834,7 +850,7 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(302, $result->getStatusCode());
     }
 
-    public function testBlankDataNoHandler()
+    public function testBlankDataNoHandler(): void
     {
         $this->request->initialize(['_wid' => 'WID']);
 
@@ -854,7 +870,7 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $result);
     }
 
-    public function testSaveHandler()
+    public function testSaveHandler(): void
     {
         $this->request->initialize(['_wid' => 'WID']);
 
@@ -895,7 +911,7 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $result);
     }
 
-    public function testSaveHandlerAddRelatedProducts()
+    public function testSaveHandlerAddRelatedProducts(): void
     {
         $this->request->initialize(['_wid' => 'WID']);
 
@@ -929,7 +945,7 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $result);
     }
 
-    public function testSaveHandlerRemoveRelatedProducts()
+    public function testSaveHandlerRemoveRelatedProducts(): void
     {
         $this->request->initialize(['_wid' => 'WID']);
 
@@ -963,7 +979,7 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $result);
     }
 
-    public function testSaveHandlerAddRelatedProductsFails()
+    public function testSaveHandlerAddRelatedProductsFails(): void
     {
         $this->request->initialize(['_wid' => 'WID']);
 

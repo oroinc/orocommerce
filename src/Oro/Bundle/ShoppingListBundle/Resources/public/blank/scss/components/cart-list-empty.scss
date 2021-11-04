@@ -22,7 +22,7 @@
         top: 50%;
         left: 20px;
 
-        margin-top: -$icon-size / 2;
+        margin-top: -$icon-size * .5;
 
         @include badge(50px, 24px);
     }

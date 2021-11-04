@@ -227,7 +227,7 @@
             'data-address-type': 'shipping',
             'data-new-address-label': renderedAddress,
             'placeholder': 'oro.checkout.form.address.enter.new_address.placeholder.label'|trans
-        }, 'placeholder': ''}) }}
+        }, 'placeholder': 'oro.checkout.form.address.enter.new_address.placeholder.label'|trans}) }}
         {{ form_row(form.ship_to_billing_address, {'attr': {'data-role': 'checkout-ship-to'}}) }}
     {% endif %}
 {%- endblock %}
@@ -240,7 +240,7 @@
             'data-address-type': 'billing',
             'data-new-address-label': renderedAddress,
             'placeholder': 'oro.checkout.form.address.enter.new_address.placeholder.label'|trans
-        }, 'placeholder': ''}) }}
+        }, 'placeholder': 'oro.checkout.form.address.enter.new_address.placeholder.label'|trans}) }}
     </div>
 {%- endblock %}
 
@@ -342,7 +342,7 @@
             checkout.customerUser.isGuest
             %}
                 <div class="grid__row grid__row--offset-none"
-                          data-page-component-module="oroui/js/app/components/view-component",
+                          data-page-component-module="oroui/js/app/components/view-component"
                           data-page-component-options="{{ {
                               view: 'orocheckout/js/app/views/late-checkout-registration-view',
                               selectors: {
@@ -417,9 +417,12 @@
 
 {% block _checkout_consent_message_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        'class': 'notification notification--success',
+        'class': 'notification notification--success form-row',
         'role': 'alert'
     }) %}
+
+    {% set requiredConsents = allConsents|default([])|filter(v => v.required) %}
+    {% set acceptedRequiredConsents = requiredConsents|filter(v => v.accepted) %}
 
     {% if consents is empty %}
         <div {{ block('block_attributes') }}>
@@ -428,6 +431,29 @@
                 {{ 'oro.consent.frontend.single_page_checkout.form.messages.all_agreements_accepted'|trans }}
                 {{ parent_block_widget(block) }}
             </span>
+        </div>
+    {% elseif acceptedRequiredConsents is not empty %}
+        <div {{ block('block_attributes') }}>
+            <div class="notification__item">
+                <span class="fa-check" aria-hidden="true"></span>
+                {{ 'oro.consent.frontend.single_page_checkout.form.messages.some_of_all_agreements_accepted'|trans({
+                    '%some%': acceptedRequiredConsents|length,
+                    '%all%': requiredConsents|length
+                }) }}
+            </div>
+            <ul class="notification__list">
+            {% for consent in acceptedRequiredConsents %}
+                <li class="notification__item">
+                    {%- if consent.cmsPageData.url is defined %}
+                        <a href="{{- consent.cmsPageData.url -}}" target="_blank" class="link">
+                            {{- consent.title -}}
+                        </a>
+                    {%- else -%}
+                        {{- consent.title -}}
+                    {%- endif -%}
+                </li>
+            {% endfor %}
+            </ul>
         </div>
     {% endif %}
 {% endblock %}

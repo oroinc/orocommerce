@@ -26,10 +26,13 @@ define(function(require) {
         sortUnitPricesByLowQuantity: function(pricesByUnit = {}) {
             const unit = Object.keys(pricesByUnit)[0];
             const prices = Object.values(pricesByUnit)[0];
+            const data = {};
 
-            return {
-                [unit]: PricesHelper.sortByLowQuantity(prices)
-            };
+            if (unit) {
+                data[unit] = PricesHelper.sortByLowQuantity(prices);
+            }
+
+            return data;
         },
 
         preparePrices: function(prices) {

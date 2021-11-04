@@ -121,7 +121,7 @@ const QuickAddRowView = BaseView.extend({
         let value = this.$(this.attrElem[attr]).val();
         switch (attr) {
             case 'quantity':
-                value = QuantityHelper.getQuantityNumberOrDefaultValue(value, NaN);
+                value = QuantityHelper.getQuantityNumberOrDefaultValue(value, null);
                 break;
         }
         return value;

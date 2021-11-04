@@ -13,7 +13,11 @@ const messageModel = item => {
         id: item.id + _.uniqueId('-bind-'),
         notificationCell: 'item',
         row_class_name: item.row_class_name + ' notification-row',
-        isMessage: true
+        isMessage: true,
+        isAuxiliary: true,
+        row_attributes: {
+            'aria-hidden': true
+        }
     };
 
     item.messageModelId = messageItem.id;

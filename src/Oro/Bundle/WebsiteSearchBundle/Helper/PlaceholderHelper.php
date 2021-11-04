@@ -4,6 +4,7 @@ namespace Oro\Bundle\WebsiteSearchBundle\Helper;
 
 use Oro\Bundle\SearchBundle\Provider\AbstractSearchMappingProvider;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderDecorator;
+use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderInterface;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderRegistry;
 
 /**
@@ -55,9 +56,14 @@ class PlaceholderHelper
             return false;
         }
 
-        $aliasPattern = str_replace($placeholderNames, $placeholderPatterns, $name);
+        if (str_contains($name, '.')) {
+            $parts = explode('.', $name);
+            $aliasPattern = $parts[0];
+        } else {
+            $aliasPattern = str_replace($placeholderNames, $placeholderPatterns, $name);
+        }
 
-        return preg_match('/' . $aliasPattern . '/', $nameValue);
+        return preg_match('/^' . $aliasPattern . '/', $nameValue);
     }
 
     /**
@@ -78,5 +84,15 @@ class PlaceholderHelper
         }
 
         return $entityClass;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getPlaceholderKeys(): array
+    {
+        return array_map(function (PlaceholderInterface $placeholder) {
+            return $placeholder->getPlaceholder();
+        }, $this->placeholderRegistry->getPlaceholders());
     }
 }

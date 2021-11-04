@@ -29,6 +29,7 @@ class OroPaymentExtension extends Extension
         $loader->load('form_types.yml');
         $loader->load('block_types.yml');
         $loader->load('controllers.yml');
+        $loader->load('controllers_api.yml');
     }
 
     /**

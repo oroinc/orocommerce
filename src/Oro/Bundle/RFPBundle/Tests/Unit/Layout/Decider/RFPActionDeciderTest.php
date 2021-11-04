@@ -51,6 +51,8 @@ class RFPActionDeciderTest extends \PHPUnit\Framework\TestCase
                 function (FormSubmitCheckEvent $event, string $eventName) {
                     self::assertEquals('rfp.form_submit_check.testName', $eventName);
                     $event->setShouldSubmitOnError(true);
+
+                    return $event;
                 }
             );
         self::assertTrue($this->decider->shouldFormSubmitWithErrors());
