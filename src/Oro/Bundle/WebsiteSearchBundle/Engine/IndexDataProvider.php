@@ -45,8 +45,8 @@ class IndexDataProvider
     /** @var PlaceholderHelper */
     private $placeholderHelper;
 
-    /** @var bool */
-    private $enableAllText = true;
+    /** @var array */
+    private $engineParameters;
 
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
@@ -65,11 +65,9 @@ class IndexDataProvider
     /**
      * @param array $engineParameters
      */
-    public function setEnableAllText(array $engineParameters)
+    public function setEngineParameters(array $engineParameters)
     {
-        if (isset($engineParameters['enable_all_text'])) {
-            $this->enableAllText = $engineParameters['enable_all_text'];
-        }
+        $this->engineParameters = $engineParameters;
     }
 
     /**
@@ -129,7 +127,7 @@ class IndexDataProvider
         );
         $allText = $allTextL10N;
 
-        if ($this->enableAllText) {
+        if ($this->isAllTextEnabled()) {
             $allText = $this->getFieldConfig($entityConfig, self::ALL_TEXT_FIELD, 'name', self::ALL_TEXT_FIELD);
         }
 
@@ -193,14 +191,14 @@ class IndexDataProvider
         $allTextValue = $this->getIndexValue($preparedIndexData, $entityId, $allText);
 
         foreach ($allTextFieldNames as $allTextFieldName) {
-            if ($this->enableAllText) {
+            if ($this->isAllTextEnabled()) {
                 $fieldsValue = $this->getIndexValue($preparedIndexData, $entityId, $allTextFieldName);
                 $this->setIndexValue($preparedIndexData, $entityId, $allText, $fieldsValue);
             }
             $this->setIndexValue($preparedIndexData, $entityId, $allTextFieldName, $allTextValue);
         }
 
-        if (!$this->enableAllText) {
+        if (!$this->isAllTextEnabled()) {
             $preparedIndexData[$entityId] = $this->removeField($preparedIndexData[$entityId], $allText);
         }
 
@@ -455,5 +453,17 @@ class IndexDataProvider
         }
 
         return $field;
+    }
+
+    /**
+     * @return bool
+     */
+    private function isAllTextEnabled()
+    {
+        if (isset($this->engineParameters['enable_all_text'])) {
+            return $this->engineParameters['enable_all_text'];
+        }
+
+        return true;
     }
 }

@@ -499,7 +499,7 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetEntitiesDataWithAllTextDisabled(array $entityConfig, array $indexData, array $expected)
     {
-        $this->indexDataProvider->setEnableAllText(['enable_all_text' => false]);
+        $this->indexDataProvider->setEngineParameters(['enable_all_text' => false]);
 
         $this->aliasResolver->expects($this->once())->method('getAlias')->with(\stdClass::class)->willReturn('std');
         $this->tagHelper->expects($this->any())->method('stripTags')->willReturnCallback(
