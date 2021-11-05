@@ -469,6 +469,10 @@ datagrids:
                 frontend_type: boolean
             availabilityDate:
                 frontend_type: datetime
+            minimumQuantityToOrder:
+                frontend_type: number
+            maximumQuantityToOrder:
+                frontend_type: number
             inventoryStatus: ~
             productConfiguration:
                 frontend_type: row_array
@@ -593,6 +597,10 @@ datagrids:
                     enable: true
                     editor:
                         view: oroshoppinglist/js/app/views/editor/shoppinglist-line-item-editor-view
+                    validation_rules:
+                        Range:
+                            min: 0
+                            max: 100000000
                     validation_groups: [update]
             unit:
                 renderable: false

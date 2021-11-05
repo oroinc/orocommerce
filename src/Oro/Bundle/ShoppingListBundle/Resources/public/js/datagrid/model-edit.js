@@ -69,6 +69,14 @@ const ShoppingListEditItemModel = ShoppingListModel.extend({
     flashRowHighlight(type = 'success', delay = this.highlightDelay) {
         this.highlightRow(type);
         this.unhighlightRow(type, delay);
+    },
+
+    getMinimumQuantity() {
+        return this.get('minimumQuantityToOrder') || 0;
+    },
+
+    getMaximumQuantity() {
+        return this.get('maximumQuantityToOrder') || 1000000000;
     }
 });
 

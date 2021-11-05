@@ -34,6 +34,9 @@ class ProductStub extends Product
     /** @var EntityFieldFallbackValue */
     private $isUpcoming;
 
+    /** @var string|object|null */
+    private $inventoryStatus;
+
     /**
      * @return string
      */
@@ -184,5 +187,21 @@ class ProductStub extends Product
     public function setIsUpcoming($isUpcoming)
     {
         $this->isUpcoming = $isUpcoming;
+    }
+
+    /**
+     * @return string|object|null
+     */
+    public function getInventoryStatus()
+    {
+        return $this->inventoryStatus;
+    }
+
+    /**
+     * @param string|object|null $inventoryStatus
+     */
+    public function setInventoryStatus($inventoryStatus): void
+    {
+        $this->inventoryStatus = $inventoryStatus;
     }
 }

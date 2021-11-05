@@ -20,6 +20,17 @@ const ShoppinglistLineItemEditorView = TextEditorView.extend({
         this.formatter = new NumberFormatter(options);
         this.updateUnitList(this.model.get('unit'));
         ShoppinglistLineItemEditorView.__super__.initialize.call(this, options);
+        this.updateRangeValidationRule();
+    },
+
+    updateRangeValidationRule() {
+        if (this.validationRules.Range) {
+            this.validationRules.Range = {
+                ...this.validationRules.Range,
+                min: this.model.getMinimumQuantity(),
+                max: this.model.getMaximumQuantity()
+            };
+        }
     },
 
     render() {
