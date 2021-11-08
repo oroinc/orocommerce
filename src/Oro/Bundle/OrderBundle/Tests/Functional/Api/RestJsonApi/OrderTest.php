@@ -88,6 +88,31 @@ class OrderTest extends RestJsonApiTestCase
         self::assertSame($productId, $lineItem->getProduct()->getId());
     }
 
+    public function testCreateWhenLineItemDoesNotHaveProductRelationshipButHaveProductSkuWhenSkuIsNumber()
+    {
+        /** @var Product $product */
+        $product = $this->getReference('product-100');
+        $productId = $product->getId();
+        $productSku = $product->getSku();
+
+        $data = $this->getRequestData('create_order_product_sku.yml');
+        $data['included'][0]['attributes']['productSku'] = $productSku;
+        $response = $this->post(
+            ['entity' => 'orders'],
+            $data
+        );
+
+        $orderId = (int)$this->getResourceId($response);
+
+        /** @var Order $item */
+        $order = $this->getEntityManager()->find(Order::class, $orderId);
+        self::assertCount(1, $order->getLineItems());
+        /** @var OrderLineItem $lineItem */
+        $lineItem = $order->getLineItems()->first();
+        self::assertEquals($productSku, $lineItem->getProductSku());
+        self::assertSame($productId, $lineItem->getProduct()->getId());
+    }
+
     public function testTryToCreateWhenLineItemDoesNotHaveProductRelationshipAndHaveUnknownProductSku()
     {
         $data = $this->getRequestData('create_order_product_sku.yml');

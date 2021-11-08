@@ -2,15 +2,11 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures;
 
-use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
-
 /**
  * Load Product fixtures
  */
 class LoadProductData extends AbstractLoadProductData
 {
-    use UserUtilityTrait;
-
     const PRODUCT_1 = 'product-1';
     const PRODUCT_2 = 'product-2';
     const PRODUCT_3 = 'product-3';
@@ -40,14 +36,6 @@ class LoadProductData extends AbstractLoadProductData
     const PRODUCT_7_DEFAULT_SLUG_PROTOTYPE = 'продукт-7.slugPrototypes.default';
     const PRODUCT_8_DEFAULT_SLUG_PROTOTYPE = 'product-8.slugPrototypes.default';
     const PRODUCT_9_DEFAULT_SLUG_PROTOTYPE = 'продукт-9.slugPrototypes.default';
-
-    const PRODUCTS_1_2_3_6_7 = [
-        LoadProductData::PRODUCT_1,
-        LoadProductData::PRODUCT_2,
-        LoadProductData::PRODUCT_3,
-        LoadProductData::PRODUCT_6,
-        LoadProductData::PRODUCT_7,
-    ];
 
     /**
      * {@inheritDoc]
