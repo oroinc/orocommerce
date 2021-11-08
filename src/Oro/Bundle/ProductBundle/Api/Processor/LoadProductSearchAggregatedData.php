@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\ProductBundle\Api\Processor;
 
-use Oro\Bundle\ApiBundle\Exception\InvalidSearchQueryException;
 use Oro\Bundle\ApiBundle\Model\Error;
 use Oro\Bundle\ApiBundle\Model\ErrorSource;
-use Oro\Bundle\ApiBundle\Model\SearchResult;
 use Oro\Bundle\ApiBundle\Processor\ListContext;
 use Oro\Bundle\ApiBundle\Request\Constraint;
+use Oro\Bundle\SearchBundle\Api\Exception\InvalidSearchQueryException;
+use Oro\Bundle\SearchBundle\Api\Model\SearchResult;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 

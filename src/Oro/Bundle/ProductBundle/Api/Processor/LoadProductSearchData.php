@@ -3,16 +3,16 @@
 namespace Oro\Bundle\ProductBundle\Api\Processor;
 
 use Oro\Bundle\ApiBundle\Config\EntityDefinitionConfig;
-use Oro\Bundle\ApiBundle\Exception\InvalidSearchQueryException;
 use Oro\Bundle\ApiBundle\Metadata\EntityMetadata;
 use Oro\Bundle\ApiBundle\Model\Error;
 use Oro\Bundle\ApiBundle\Model\ErrorSource;
-use Oro\Bundle\ApiBundle\Model\SearchResult;
 use Oro\Bundle\ApiBundle\Processor\ListContext;
 use Oro\Bundle\ApiBundle\Request\Constraint;
 use Oro\Bundle\ApiBundle\Request\DataType;
 use Oro\Bundle\ApiBundle\Util\ConfigUtil;
 use Oro\Bundle\ProductBundle\Api\Model\ProductSearch;
+use Oro\Bundle\SearchBundle\Api\Exception\InvalidSearchQueryException;
+use Oro\Bundle\SearchBundle\Api\Model\SearchResult;
 use Oro\Bundle\SearchBundle\Query\Result\Item as SearchResultItem;
 use Oro\Bundle\WebsiteSearchBundle\Query\WebsiteSearchQuery;
 use Oro\Component\ChainProcessor\ContextInterface;

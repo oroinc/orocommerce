@@ -1,6 +1,6 @@
 services:
     oro_website_search.api.filter_factory.website_search_query:
-        class: Oro\Bundle\ApiBundle\Filter\SearchQueryFilterFactory
+        class: Oro\Bundle\SearchBundle\Api\Filter\SearchQueryFilterFactory
         public: false
         arguments:
             - '@oro_website_search.provider.search_mapping'
@@ -8,7 +8,7 @@ services:
             - '@oro_website_search.api.search_query_criteria_visitor'
 
     oro_website_search.api.filter_factory.website_search_aggregation:
-        class: Oro\Bundle\ApiBundle\Filter\SearchAggregationFilterFactory
+        class: Oro\Bundle\SearchBundle\Api\Filter\SearchAggregationFilterFactory
         public: false
         arguments:
             - '@oro_website_search.api.field_resolver_factory.website_search_aggregation_filter'
@@ -20,7 +20,7 @@ services:
             - '@oro_website_search.provider.search_mapping'
 
     oro_website_search.api.field_resolver_factory.website_search_aggregation_filter:
-        class: Oro\Bundle\ApiBundle\Filter\SearchFieldResolverFactory
+        class: Oro\Bundle\SearchBundle\Api\Filter\SearchFieldResolverFactory
         public: false
         arguments:
             - '@oro_website_search.provider.search_mapping'

@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Api;
 
-use Oro\Bundle\ApiBundle\Filter\SearchFieldResolver as BaseResolver;
+use Oro\Bundle\SearchBundle\Api\Filter\SearchFieldResolver as BaseResolver;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\EnumIdPlaceholder;
 
 /**
