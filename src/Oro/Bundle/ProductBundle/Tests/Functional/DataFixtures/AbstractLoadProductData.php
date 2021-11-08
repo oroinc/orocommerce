@@ -101,7 +101,7 @@ abstract class AbstractLoadProductData extends AbstractFixture implements
                 ->setStatus($item['status'])
                 ->setPrimaryUnitPrecision($unitPrecision)
                 ->setType($item['type'])
-                ->setFeatured($item['featured']);
+                ->setFeatured($item['featured'] ?? false);
 
             if (isset($item['attributeFamily'])) {
                 $product->setAttributeFamily($this->getReference($item['attributeFamily']));
@@ -109,12 +109,12 @@ abstract class AbstractLoadProductData extends AbstractFixture implements
 
             $this->addAdvancedValue($item, $product);
             $this->addEntityFieldFallbackValue($item, $product);
-            $this->addProductImages($item, $product);
+            $this->addProductImages($referenceName, $item, $product);
 
             $manager->persist($product);
-            $this->addReference($product->getSku(), $product);
+            $this->addReference($referenceName, $product);
             $this->addReference(
-                sprintf('product_unit_precision.%s', implode('.', [$product->getSku(), $unit->getCode()])),
+                'product_unit_precision.' . $referenceName . '.' . $unit->getCode(),
                 $unitPrecision
             );
         }
@@ -214,7 +214,7 @@ abstract class AbstractLoadProductData extends AbstractFixture implements
         }
     }
 
-    private function addProductImages(array $item, Product $product)
+    private function addProductImages(string $productReferenceName, array $item, Product $product)
     {
         if (empty($item['images'])) {
             return;
@@ -222,7 +222,7 @@ abstract class AbstractLoadProductData extends AbstractFixture implements
 
         $fileManager = $this->container->get('oro_attachment.file_manager');
         foreach ($item['images'] as $image) {
-            $fileName = $item['productCode'] . '.jpg';
+            $fileName = $productReferenceName . '.jpg';
             if (is_file(__DIR__. '/files/' . $fileName)) {
                 $imageFile = $fileManager->createFileEntity(__DIR__ . '/files/' . $fileName);
             } else {
@@ -230,12 +230,12 @@ abstract class AbstractLoadProductData extends AbstractFixture implements
                 $imageFile->setFilename($fileName);
             }
 
-            $imageFile->setOriginalFilename($item['productCode'] . '-original.jpg');
+            $imageFile->setOriginalFilename($productReferenceName . '-original.jpg');
             $imageFile->setExtension('jpg');
             $imageFile->setParentEntityClass(ProductImage::class);
             $imageFile->setMimeType('image/jpeg');
             $imageFile->setOwner($product->getOwner());
-            $this->setReference($image['reference'] . '.' . $item['productCode'], $imageFile);
+            $this->setReference($image['reference'] . '.' . $productReferenceName, $imageFile);
 
             $productImage = new ProductImage();
             $productImage->setImage($imageFile);

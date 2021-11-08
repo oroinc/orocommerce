@@ -1,5 +1,6 @@
 dependencies:
   - Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData
+  - Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductNumericSkuData
   - Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders
 
 Oro\Bundle\OrderBundle\Entity\OrderLineItem:
