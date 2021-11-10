@@ -43,7 +43,7 @@ class RelatedItemsProductEditListener
 
     /**
      * @param string $name
-     * @return \Oro\Bundle\ProductBundle\RelatedItem\AbstractRelatedItemConfigProvider
+     * @return \Oro\Bundle\ProductBundle\RelatedItem\RelatedItemConfigProviderInterface
      */
     protected function getConfigProvider($name)
     {

@@ -5,50 +5,40 @@ namespace Oro\Bundle\ProductBundle\Provider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Oro\Bundle\ProductBundle\Search\ProductRepository as ProductSearchRepository;
-use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
-use Oro\Bundle\SearchBundle\Query\Query;
 
 /**
- * Provides information whether matrix for is available for products.
+ * Provides information whether matrix form is available for products.
  */
 class ProductMatrixAvailabilityProvider
 {
-    const MATRIX_AVAILABILITY_COUNT = 2;
+    private const MATRIX_AVAILABILITY_COUNT = 2;
 
-    /** @var ProductVariantAvailabilityProvider */
-    private $variantAvailability;
+    private ProductVariantAvailabilityProvider $variantAvailability;
+    private FrontendProductUnitsProvider $productUnitsProvider;
 
-    /** @var ProductSearchRepository */
-    private $productSearchRepository;
-
-    /** @var array */
-    private $cache;
+    private array $matrixFormAvailability = [];
 
     public function __construct(
         ProductVariantAvailabilityProvider $variantAvailability,
-        ProductSearchRepository $productSearchRepository
+        FrontendProductUnitsProvider $productUnitsProvider
     ) {
         $this->variantAvailability = $variantAvailability;
-        $this->productSearchRepository = $productSearchRepository;
+        $this->productUnitsProvider = $productUnitsProvider;
     }
 
-    /**
-     * @param Product $product
-     * @return bool
-     */
-    public function isMatrixFormAvailable(Product $product)
+    public function isMatrixFormAvailable(Product $product): bool
     {
         if ($product->isSimple()) {
             return false;
         }
 
-        if (isset($this->cache[$product->getId()])) {
-            return $this->cache[$product->getId()];
+        $productId = $product->getId();
+        if (isset($this->matrixFormAvailability[$productId])) {
+            return $this->matrixFormAvailability[$productId];
         }
 
         $availability = $this->getMatrixAvailability($product);
-        $this->cache[$product->getId()] = $availability;
+        $this->matrixFormAvailability[$productId] = $availability;
 
         return $availability;
     }
@@ -91,11 +81,8 @@ class ProductMatrixAvailabilityProvider
             }
         }
         if ($configurableProductIds) {
-            $simpleProducts = $this->variantAvailability->getSimpleProductIdsByVariantFieldsGroupedByConfigurable(
-                $configurableProductIds
-            );
-            $simpleProductsIds = array_unique(array_merge(...$simpleProducts));
-            $simpleProductsData = $this->loadSimpleProducts($simpleProductsIds);
+            $simpleProducts = $this->getSimpleProducts($configurableProductIds);
+            $simpleProductUnits = $this->getSimpleProductUnits($simpleProducts);
             foreach ($configurableProductIds as $configurableProductId) {
                 if (empty($simpleProducts[$configurableProductId])) {
                     $result[$configurableProductId] = false;
@@ -103,7 +90,9 @@ class ProductMatrixAvailabilityProvider
                     $isUnitSupportedBySimpleProducts = true;
                     [$configurableUnit] = $configurableProductData[$configurableProductId];
                     foreach ($simpleProducts[$configurableProductId] as $simpleProductId) {
-                        if (!isset($simpleProductsData[$simpleProductId]['product_units'][$configurableUnit])) {
+                        if (!isset($simpleProductUnits[$simpleProductId])
+                            || !\in_array($configurableUnit, $simpleProductUnits[$simpleProductId], true)
+                        ) {
                             $isUnitSupportedBySimpleProducts = false;
                             break;
                         }
@@ -117,37 +106,29 @@ class ProductMatrixAvailabilityProvider
     }
 
     /**
-     * @param int[] $productIds
+     * @param int[] $configurableProductIds
      *
-     * @return array [product id => product data, ...]
+     * @return array [configurable product id => [simple product id, ...], ...]
      */
-    private function loadSimpleProducts(array $productIds): array
+    private function getSimpleProducts(array $configurableProductIds): array
     {
-        if (!$productIds) {
-            return [];
-        }
+        return $this->variantAvailability->getSimpleProductIdsByVariantFieldsGroupedByConfigurable(
+            $configurableProductIds
+        );
+    }
 
-        $items = $this->productSearchRepository->createQuery()
-            ->addSelect('product_id', Query::TYPE_INTEGER)
-            ->addSelect('product_units', Query::TYPE_TEXT)
-            ->addWhere(Criteria::expr()->in('integer.product_id', $productIds))
-            ->addWhere(Criteria::expr()->eq('integer.is_variant', 1))
-            ->setMaxResults(-1)
-            ->execute();
+    /**
+     * @param array $simpleProducts [configurable product id => [simple product id, ...], ...]
+     *
+     * @return array [product id => [unit code, ...], ...]
+     */
+    private function getSimpleProductUnits(array $simpleProducts): array
+    {
+        $simpleProductIds = array_unique(array_merge(...$simpleProducts));
 
-        $result = [];
-        foreach ($items as $item) {
-            $itemData = $item->getSelectedData();
-            $productId = $itemData['product_id'];
-            $productUnits = $itemData['product_units'];
-            $deserializedProductUnits = $productUnits
-                ? unserialize($productUnits, ['allowed_classes' => false])
-                : [];
-            $itemData['product_units'] = $deserializedProductUnits;
-            $result[$productId] = $itemData;
-        }
-
-        return $result;
+        return $simpleProductIds
+            ? $this->productUnitsProvider->getUnitsForProducts($simpleProductIds)
+            : [];
     }
 
     private function getMatrixAvailability(Product $product): bool

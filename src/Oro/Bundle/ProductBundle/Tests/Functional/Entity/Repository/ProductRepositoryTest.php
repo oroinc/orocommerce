@@ -6,14 +6,13 @@ use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\EntityConfigBundle\Tests\Functional\DataFixtures\LoadAttributeFamilyData;
-use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -22,21 +21,29 @@ use Oro\Component\Testing\Unit\EntityTrait;
  */
 class ProductRepositoryTest extends WebTestCase
 {
-    use EntityTrait;
-
-    /**
-     * @var ProductRepository
-     */
-    protected $repository;
-
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
 
-        $this->loadFixtures([LoadProductData::class]);
+        $this->loadFixtures([LoadProductData::class, LoadOrganization::class]);
+    }
 
-        $this->repository = $this->getContainer()->get('doctrine')->getRepository(Product::class);
+    private function getRepository(): ProductRepository
+    {
+        return $this->getContainer()->get('doctrine')->getRepository(Product::class);
+    }
+
+    private function getProduct(string $reference): Product
+    {
+        return $this->getReference($reference);
+    }
+
+    private function referencesToEntities(array $references): array
+    {
+        return array_map(function ($reference) {
+            return $this->getReference($reference);
+        }, $references);
     }
 
     public function testFindOneBySku()
@@ -51,12 +58,8 @@ class ProductRepositoryTest extends WebTestCase
 
     /**
      * @dataProvider getSearchQueryBuilderDataProvider
-     * @param string $search
-     * @param int $firstResult
-     * @param int $maxResult
-     * @param array $expected
      */
-    public function testGetSearchQueryBuilder($search, $firstResult, $maxResult, array $expected)
+    public function testGetSearchQueryBuilder(string $search, int $firstResult, int $maxResult, array $expected)
     {
         $queryBuilder = $this->getRepository()->getSearchQueryBuilder($search, $firstResult, $maxResult);
         $result = array_map(
@@ -69,10 +72,7 @@ class ProductRepositoryTest extends WebTestCase
         $this->assertEquals($expected, $result);
     }
 
-    /**
-     * @return array
-     */
-    public function getSearchQueryBuilderDataProvider()
+    public function getSearchQueryBuilderDataProvider(): array
     {
         return [
             'product, 0, 10' => [
@@ -111,10 +111,8 @@ class ProductRepositoryTest extends WebTestCase
 
     /**
      * @dataProvider patternsAndSkuListProvider
-     * @param string $pattern
-     * @param array $expectedSkuList
      */
-    public function testFindAllSkuByPattern($pattern, array $expectedSkuList)
+    public function testFindAllSkuByPattern(string $pattern, array $expectedSkuList)
     {
         $result = $this->getRepository()->getAllSkuByPatternQueryBuilder($pattern)->getQuery()->getResult();
         $actualSkuList = [];
@@ -128,10 +126,7 @@ class ProductRepositoryTest extends WebTestCase
         }
     }
 
-    /**
-     * @return array
-     */
-    public function patternsAndSkuListProvider()
+    public function patternsAndSkuListProvider(): array
     {
         $products = [
             LoadProductData::PRODUCT_1,
@@ -162,23 +157,6 @@ class ProductRepositoryTest extends WebTestCase
         $result = $builder->getQuery()->getResult();
         $this->assertCount(1, $result);
         $this->assertEquals($product, $result[0]);
-    }
-
-    /**
-     * @param string $reference
-     * @return Product
-     */
-    protected function getProduct($reference)
-    {
-        return $this->getReference($reference);
-    }
-
-    /**
-     * @return ProductRepository
-     */
-    protected function getRepository()
-    {
-        return $this->repository;
     }
 
     public function testGetProductsIdsBySku()
@@ -221,10 +199,7 @@ class ProductRepositoryTest extends WebTestCase
         );
     }
 
-    /**
-     * @return array
-     */
-    public function getProductsNamesBySkuDataProvider()
+    public function getProductsNamesBySkuDataProvider(): array
     {
         return [
             [
@@ -254,7 +229,7 @@ class ProductRepositoryTest extends WebTestCase
      */
     public function testGetListingImagesFilesByProductIds(array $products, array $expectedImages)
     {
-        $result = $this->repository->getListingImagesFilesByProductIds($this->referencesToEntities($products));
+        $result = $this->getRepository()->getListingImagesFilesByProductIds($this->referencesToEntities($products));
 
         $this->assertCount(count($expectedImages), $result);
 
@@ -263,10 +238,7 @@ class ProductRepositoryTest extends WebTestCase
         }
     }
 
-    /**
-     * @return array
-     */
-    public function getListingImagesFilesByProductIdsDataProvider()
+    public function getListingImagesFilesByProductIdsDataProvider(): array
     {
         return [
             [
@@ -302,7 +274,9 @@ class ProductRepositoryTest extends WebTestCase
      */
     public function testGetListingAndMainImagesFilesByProductIds(array $products, array $expectedImages): void
     {
-        $result = $this->repository->getListingAndMainImagesFilesByProductIds($this->referencesToEntities($products));
+        $result = $this->getRepository()->getListingAndMainImagesFilesByProductIds(
+            $this->referencesToEntities($products)
+        );
 
         $this->assertCount(count($expectedImages), $result);
 
@@ -359,21 +333,15 @@ class ProductRepositoryTest extends WebTestCase
 
     /**
      * @dataProvider getImagesFilesByProductIdDataProvider
-     *
-     * @param int $productId
-     * @param array $expectedImages
      */
-    public function testImagesFilesByProductId($productId, array $expectedImages)
+    public function testImagesFilesByProductId(string $productReference, array $expectedImages)
     {
-        $result = $this->repository->getImagesFilesByProductId($this->getReference($productId));
+        $result = $this->getRepository()->getImagesFilesByProductId($this->getProduct($productReference));
 
         $this->assertEquals($this->referencesToEntities($expectedImages), array_values($result));
     }
 
-    /**
-     * @return array
-     */
-    public function getImagesFilesByProductIdDataProvider()
+    public function getImagesFilesByProductIdDataProvider(): array
     {
         return [
             [
@@ -396,7 +364,7 @@ class ProductRepositoryTest extends WebTestCase
         /** @var Product $product */
         $product = $this->getRepository()->findOneBy(['sku' => LoadProductData::PRODUCT_9]);
 
-        $result = $this->repository
+        $result = $this->getRepository()
             ->getPrimaryUnitPrecisionCodeQueryBuilder(mb_strtolower($product->getSku()))
             ->getQuery()
             ->getOneOrNullResult(AbstractQuery::HYDRATE_SINGLE_SCALAR);
@@ -404,22 +372,11 @@ class ProductRepositoryTest extends WebTestCase
     }
 
     /**
-     * @param array $references
-     * @return array
-     */
-    protected function referencesToEntities(array $references)
-    {
-        return array_map(function ($reference) {
-            return $this->getReference($reference);
-        }, $references);
-    }
-
-    /**
      * @dataProvider findByCaseInsensitiveDataProvider
      */
     public function testFindByCaseInsensitive(array $criteria, array $expectedSkus)
     {
-        $actualProducts = $this->repository->findByCaseInsensitive($criteria);
+        $actualProducts = $this->getRepository()->findByCaseInsensitive($criteria);
 
         $actualSkus = [];
         foreach ($actualProducts as $product) {
@@ -434,7 +391,7 @@ class ProductRepositoryTest extends WebTestCase
 
     public function testFindByCaseInsensitiveWithObject()
     {
-        $criteria = ['organization' => $this->getEntity(Organization::class, ['id' => 1])];
+        $criteria = ['organization' => $this->getReference(LoadOrganization::ORGANIZATION)];
         $expectedSkus = [
             LoadProductData::PRODUCT_1,
             LoadProductData::PRODUCT_2,
@@ -447,7 +404,7 @@ class ProductRepositoryTest extends WebTestCase
             LoadProductData::PRODUCT_9,
         ];
 
-        $actualProducts = $this->repository->findByCaseInsensitive($criteria);
+        $actualProducts = $this->getRepository()->findByCaseInsensitive($criteria);
 
         $actualSkus = [];
         foreach ($actualProducts as $product) {
@@ -460,10 +417,7 @@ class ProductRepositoryTest extends WebTestCase
         }
     }
 
-    /**
-     * @return array
-     */
-    public function findByCaseInsensitiveDataProvider()
+    public function findByCaseInsensitiveDataProvider(): array
     {
         return [
             'regular sku' => [
@@ -530,10 +484,8 @@ class ProductRepositoryTest extends WebTestCase
 
     public function testGetProductIdsByAttributeFamilies()
     {
-        /** @var Product $product5 */
-        $product5 = $this->getReference(LoadProductData::PRODUCT_5);
-        /** @var Product $product9 */
-        $product9 = $this->getReference(LoadProductData::PRODUCT_9);
+        $product5 = $this->getProduct(LoadProductData::PRODUCT_5);
+        $product9 = $this->getProduct(LoadProductData::PRODUCT_9);
 
         $this->assertEquals(
             [
@@ -541,45 +493,24 @@ class ProductRepositoryTest extends WebTestCase
                 $product9->getId(),
             ],
             $this->getRepository()->getProductIdsByAttributeFamilies(
-                [
-                    $this->getReference(LoadAttributeFamilyData::ATTRIBUTE_FAMILY_1)
-                ]
+                [$this->getReference(LoadAttributeFamilyData::ATTRIBUTE_FAMILY_1)]
             )
-        );
-    }
-
-    public function testGetConfigurableProductIds()
-    {
-        /** @var Product $product1 */
-        $product1 = $this->getReference(LoadProductData::PRODUCT_1);
-        /** @var Product $product8 */
-        $product8 = $this->getReference(LoadProductData::PRODUCT_8);
-
-        $this->assertEquals(
-            [$product8->getId()],
-            array_column($this->getRepository()
-                ->getConfigurableProductIdsQueryBuilder([$product1, $product8])
-                ->getQuery()
-                ->getArrayResult(), 'id')
         );
     }
 
     public function testGetSimpleProductIdsByParentProductsQueryBuilder()
     {
-        /** @var Product $product1 */
-        $product1 = $this->getReference(LoadProductData::PRODUCT_1);
-        /** @var Product $product2 */
-        $product2 = $this->getReference(LoadProductData::PRODUCT_2);
-        /** @var Product $product3 */
-        $product3 = $this->getReference(LoadProductData::PRODUCT_3);
-        /** @var Product $product8 */
-        $product8 = $this->getReference(LoadProductData::PRODUCT_8);
-        /** @var Product $product9 */
-        $product9 = $this->getReference(LoadProductData::PRODUCT_9);
+        $product1 = $this->getProduct(LoadProductData::PRODUCT_1);
+        $product2 = $this->getProduct(LoadProductData::PRODUCT_2);
+        $product3 = $this->getProduct(LoadProductData::PRODUCT_3);
+        $product8 = $this->getProduct(LoadProductData::PRODUCT_8);
+        $product9 = $this->getProduct(LoadProductData::PRODUCT_9);
 
         $this->prepareConfigurableVariants();
 
-        $qb = $this->getRepository()->getSimpleProductIdsByParentProductsQueryBuilder([$product8, $product9]);
+        $qb = $this->getRepository()->getSimpleProductIdsByParentProductsQueryBuilder(
+            [$product8->getId(), $product9->getId()]
+        );
         $qb->orderBy('p.id');
         $result = $qb->getQuery()->getArrayResult();
 
@@ -595,16 +526,11 @@ class ProductRepositoryTest extends WebTestCase
 
     public function testGetVariantsMapping()
     {
-        /** @var Product $product1 */
-        $product1 = $this->getReference(LoadProductData::PRODUCT_1);
-        /** @var Product $product2 */
-        $product2 = $this->getReference(LoadProductData::PRODUCT_2);
-        /** @var Product $product3 */
-        $product3 = $this->getReference(LoadProductData::PRODUCT_3);
-        /** @var Product $product8 */
-        $product8 = $this->getReference(LoadProductData::PRODUCT_8);
-        /** @var Product $product9 */
-        $product9 = $this->getReference(LoadProductData::PRODUCT_9);
+        $product1 = $this->getProduct(LoadProductData::PRODUCT_1);
+        $product2 = $this->getProduct(LoadProductData::PRODUCT_2);
+        $product3 = $this->getProduct(LoadProductData::PRODUCT_3);
+        $product8 = $this->getProduct(LoadProductData::PRODUCT_8);
+        $product9 = $this->getProduct(LoadProductData::PRODUCT_9);
 
         $this->prepareConfigurableVariants();
 
@@ -614,7 +540,7 @@ class ProductRepositoryTest extends WebTestCase
         $expected[$product3->getId()] = [$product9->getId()];
         $this->assertEquals(
             $expected,
-            $this->getRepository()->getVariantsMapping([$product8, $product9])
+            $this->getRepository()->getVariantsMapping([$product8->getId(), $product9->getId()])
         );
     }
 
@@ -622,10 +548,8 @@ class ProductRepositoryTest extends WebTestCase
     {
         $this->prepareConfigurableVariants();
 
-        /** @var Product $product8 */
-        $product8 = $this->getReference(LoadProductData::PRODUCT_8);
-        /** @var Product $product1 */
-        $product1 = $this->getReference(LoadProductData::PRODUCT_1);
+        $product8 = $this->getProduct(LoadProductData::PRODUCT_8);
+        $product1 = $this->getProduct(LoadProductData::PRODUCT_1);
 
         $parentProducts = $this->getRepository()->getParentProductsForSimpleProduct($product1);
         $this->assertNotEmpty($parentProducts);
@@ -637,10 +561,8 @@ class ProductRepositoryTest extends WebTestCase
     {
         $this->prepareConfigurableVariants();
 
-        /** @var Product $product9 */
-        $product9 = $this->getReference(LoadProductData::PRODUCT_9);
-        /** @var Product $product3 */
-        $product3 = $this->getReference(LoadProductData::PRODUCT_3);
+        $product9 = $this->getProduct(LoadProductData::PRODUCT_9);
+        $product3 = $this->getProduct(LoadProductData::PRODUCT_3);
 
         $simpleProducts = $this->getRepository()->getSimpleProductsForConfigurableProduct($product9);
         $this->assertNotEmpty($simpleProducts);
@@ -652,8 +574,7 @@ class ProductRepositoryTest extends WebTestCase
     {
         $this->prepareConfigurableVariants();
 
-        /** @var Product $product9 */
-        $product9 = $this->getReference(LoadProductData::PRODUCT_9);
+        $product9 = $this->getProduct(LoadProductData::PRODUCT_9);
 
         /** @var EntityManagerInterface $em */
         $em = $this->getContainer()->get('doctrine')->getManagerForClass(Product::class);
@@ -661,8 +582,7 @@ class ProductRepositoryTest extends WebTestCase
         $product9->setVariantFields($variantFields);
         $em->flush();
 
-        /** @var Product $product3 */
-        $product3 = $this->getReference(LoadProductData::PRODUCT_3);
+        $product3 = $this->getProduct(LoadProductData::PRODUCT_3);
 
         $attributes = $this->getRepository()->getRequiredAttributesForSimpleProduct($product3);
         $this->assertEquals(
@@ -671,18 +591,13 @@ class ProductRepositoryTest extends WebTestCase
         );
     }
 
-    protected function prepareConfigurableVariants()
+    private function prepareConfigurableVariants()
     {
-        /** @var Product $product1 */
-        $product1 = $this->getReference(LoadProductData::PRODUCT_1);
-        /** @var Product $product2 */
-        $product2 = $this->getReference(LoadProductData::PRODUCT_2);
-        /** @var Product $product3 */
-        $product3 = $this->getReference(LoadProductData::PRODUCT_3);
-        /** @var Product $product8 */
-        $product8 = $this->getReference(LoadProductData::PRODUCT_8);
-        /** @var Product $product9 */
-        $product9 = $this->getReference(LoadProductData::PRODUCT_9);
+        $product1 = $this->getProduct(LoadProductData::PRODUCT_1);
+        $product2 = $this->getProduct(LoadProductData::PRODUCT_2);
+        $product3 = $this->getProduct(LoadProductData::PRODUCT_3);
+        $product8 = $this->getProduct(LoadProductData::PRODUCT_8);
+        $product9 = $this->getProduct(LoadProductData::PRODUCT_9);
 
         /** @var ManagerRegistry $registry */
         $registry = $this->getContainer()->get('doctrine');

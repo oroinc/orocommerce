@@ -133,7 +133,7 @@ class MatrixGridOrderController extends AbstractLineItemController
     protected function getSuccessResponse(ShoppingList $shoppingList, Product $product, string $message): array
     {
         $productShoppingLists = $this->get(ProductShoppingListsDataProvider::class)
-            ->getProductUnitsQuantity($product);
+            ->getProductUnitsQuantity($product->getId());
 
         return [
             'successful' => true,

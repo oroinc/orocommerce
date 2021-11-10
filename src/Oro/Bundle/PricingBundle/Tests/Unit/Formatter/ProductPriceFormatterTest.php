@@ -10,62 +10,57 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatterInterface;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\ReflectionUtil;
 
 class ProductPriceFormatterTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
-
-    /**
-     * @var ProductPriceFormatter
-     */
-    protected $formatter;
-
-    /**
-     * @var NumberFormatter|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $numberFormatter;
-
-    /**
-     * @var UnitLabelFormatterInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $unitLabelFormatter;
-
-    /**
-     * @var UnitValueFormatterInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $unitValueFormatter;
+    /** @var ProductPriceFormatter */
+    private $formatter;
 
     protected function setUp(): void
     {
-        $this->numberFormatter = $this->getMockBuilder(NumberFormatter::class)
-            ->disableOriginalConstructor()->getMock();
-        $this->numberFormatter->expects($this->any())
+        $numberFormatter = $this->createMock(NumberFormatter::class);
+        $numberFormatter->expects($this->any())
             ->method('formatCurrency')
-            ->will($this->returnCallback(function ($price, $currencyIsoCode) {
+            ->willReturnCallback(function ($price, $currencyIsoCode) {
                 return sprintf('%.2f %s formatted_price', $price, $currencyIsoCode);
-            }));
-        $this->unitLabelFormatter = $this
-            ->getMockBuilder(UnitLabelFormatterInterface::class)
-            ->disableOriginalConstructor()->getMock();
-        $this->unitLabelFormatter->expects($this->any())
+            });
+
+        $unitLabelFormatter = $this->createMock(UnitLabelFormatterInterface::class);
+        $unitLabelFormatter->expects($this->any())
             ->method('format')
-            ->will($this->returnCallback(function ($unit) {
+            ->willReturnCallback(function ($unit) {
                 return sprintf('%s formatted_unit', $unit);
-            }));
-        $this->unitValueFormatter = $this
-            ->getMockBuilder(UnitValueFormatterInterface::class)
-            ->disableOriginalConstructor()->getMock();
-        $this->unitValueFormatter->expects($this->any())
+            });
+
+        $unitValueFormatter = $this->createMock(UnitValueFormatterInterface::class);
+        $unitValueFormatter->expects($this->any())
             ->method('formatCode')
-            ->will($this->returnCallback(function ($quantity, $unit) {
+            ->willReturnCallback(function ($quantity, $unit) {
                 return sprintf('%d %s quantity_with_unit', $quantity, $unit);
-            }));
+            });
+
         $this->formatter = new ProductPriceFormatter(
-            $this->numberFormatter,
-            $this->unitLabelFormatter,
-            $this->unitValueFormatter
+            $numberFormatter,
+            $unitLabelFormatter,
+            $unitValueFormatter
         );
+    }
+
+    private function getProduct(int $id): Product
+    {
+        $product = new Product();
+        ReflectionUtil::setId($product, $id);
+
+        return $product;
+    }
+
+    private function getProductUnit(string $unitCode): ProductUnit
+    {
+        $unit = new ProductUnit();
+        $unit->setCode($unitCode);
+
+        return $unit;
     }
 
     /**
@@ -76,10 +71,7 @@ class ProductPriceFormatterTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedData, $this->formatter->formatProducts($products));
     }
 
-    /**
-     * @return array
-     */
-    public function formatProductsDataProvider()
+    public function formatProductsDataProvider(): array
     {
         return [
             [
@@ -87,28 +79,28 @@ class ProductPriceFormatterTest extends \PHPUnit\Framework\TestCase
                     1 => [
                         'item' => [
                             new ProductPriceDTO(
-                                $this->getEntity(Product::class, ['id' => 1]),
+                                $this->getProduct(1),
                                 Price::create(14.45, 'USD'),
                                 1,
-                                $this->getEntity(ProductUnit::class, ['code' => 'item'])
+                                $this->getProductUnit('item')
                             )
                         ],
                         'set' => [
                             new ProductPriceDTO(
-                                $this->getEntity(Product::class, ['id' => 1]),
+                                $this->getProduct(1),
                                 Price::create(12.45, 'EUR'),
                                 10,
-                                $this->getEntity(ProductUnit::class, ['code' => 'set'])
+                                $this->getProductUnit('set')
                             )
                         ],
                     ],
                     2 => [
                         'kg' => [
                             new ProductPriceDTO(
-                                $this->getEntity(Product::class, ['id' => 2]),
+                                $this->getProduct(2),
                                 Price::create(10.22, 'USD'),
                                 1,
-                                $this->getEntity(ProductUnit::class, ['code' => 'kg'])
+                                $this->getProductUnit('kg')
                             )
                         ],
                     ]

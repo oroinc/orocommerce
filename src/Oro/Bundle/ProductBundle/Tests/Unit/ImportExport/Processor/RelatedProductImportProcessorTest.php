@@ -16,22 +16,19 @@ use Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Entity\Repository\RelatedItem\RelatedProductRepository;
 use Oro\Bundle\ProductBundle\ImportExport\Processor\RelatedProductImportProcessor;
-use Oro\Bundle\ProductBundle\RelatedItem\AbstractRelatedItemConfigProvider;
+use Oro\Bundle\ProductBundle\RelatedItem\RelatedItemConfigProviderInterface;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
-use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class RelatedProductImportProcessorTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
-
     /** @var ProductRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $productRepository;
 
     /** @var RelatedProductRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $relatedProductRepository;
 
-    /** @var AbstractRelatedItemConfigProvider|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var RelatedItemConfigProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $configProvider;
 
     /** @var ImportStrategyHelper|\PHPUnit\Framework\MockObject\MockObject */
@@ -69,12 +66,10 @@ class RelatedProductImportProcessorTest extends \PHPUnit\Framework\TestCase
         $objectManager = $this->createMock(ObjectManager::class);
         $objectManager->expects($this->any())
             ->method('getRepository')
-            ->willReturnMap(
-                [
-                    [Product::class, $this->productRepository],
-                    [RelatedProduct::class, $this->relatedProductRepository],
-                ]
-            );
+            ->willReturnMap([
+                [Product::class, $this->productRepository],
+                [RelatedProduct::class, $this->relatedProductRepository],
+            ]);
 
         $registry = $this->createMock(ManagerRegistry::class);
         $registry->expects($this->any())
@@ -86,7 +81,7 @@ class RelatedProductImportProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('trans')
             ->willReturnArgument(0);
 
-        $this->configProvider = $this->createMock(AbstractRelatedItemConfigProvider::class);
+        $this->configProvider = $this->createMock(RelatedItemConfigProviderInterface::class);
         $this->importStrategyHelper = $this->createMock(ImportStrategyHelper::class);
         $this->aclHelper = $this->createMock(AclHelper::class);
 

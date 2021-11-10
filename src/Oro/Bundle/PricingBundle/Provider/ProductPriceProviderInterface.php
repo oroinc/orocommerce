@@ -14,15 +14,11 @@ interface ProductPriceProviderInterface
 {
     /**
      * @param ProductPriceScopeCriteriaInterface $scopeCriteria
-     * @param int[]|Product[] $products
-     * @param string[] $currencies
-     * @param string|null $unitCode
+     * @param int[]|Product[]                    $products
+     * @param string[]                           $currencies
+     * @param string|null                        $unitCode
      *
-     * @return array
-     * [
-     *    'product.id' => ProductPriceInterface[],
-     *     ...
-     * ]
+     * @return array [product id => [ProductPriceInterface, ...], ...]
      */
     public function getPricesByScopeCriteriaAndProducts(
         ProductPriceScopeCriteriaInterface $scopeCriteria,
@@ -35,11 +31,7 @@ interface ProductPriceProviderInterface
      * @param ProductPriceCriteria[]             $productPriceCriteria
      * @param ProductPriceScopeCriteriaInterface $scopeCriteria
      *
-     * @return array
-     * [
-     *    product.id => Oro\Bundle\CurrencyBundle\Entity\Price|null,
-     *    ...
-     * ]
+     * @return array [product id => Oro\Bundle\CurrencyBundle\Entity\Price|null, ...]
      */
     public function getMatchedPrices(
         array $productPriceCriteria,
@@ -48,7 +40,8 @@ interface ProductPriceProviderInterface
 
     /**
      * @param ProductPriceScopeCriteriaInterface $scopeCriteria
-     * @return array|string[]
+     *
+     * @return string[]
      */
     public function getSupportedCurrencies(ProductPriceScopeCriteriaInterface $scopeCriteria): array;
 }

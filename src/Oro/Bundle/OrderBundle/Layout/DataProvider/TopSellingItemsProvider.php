@@ -2,51 +2,70 @@
 
 namespace Oro\Bundle\OrderBundle\Layout\DataProvider;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
-use Oro\Bundle\ProductBundle\Provider\ProductsProviderInterface;
+use Oro\Bundle\ProductBundle\Model\ProductView;
+use Oro\Bundle\ProductBundle\Provider\ProductListBuilder;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
 /**
- * Top selling products
+ * Provides top selling products.
  */
-class TopSellingItemsProvider implements ProductsProviderInterface
+class TopSellingItemsProvider
 {
-    const DEFAULT_QUANTITY = 10;
+    private const PRODUCT_LIST_TYPE = 'top_selling_items';
+    private const DEFAULT_QUANTITY = 10;
 
-    /**
-     * @var ProductRepository
-     */
-    protected $productRepository;
+    private ManagerRegistry $doctrine;
+    private ProductManager $productManager;
+    private AclHelper $aclHelper;
+    private ProductListBuilder $productListBuilder;
 
-    /**
-     * @var ProductManager
-     */
-    protected $productManager;
-
-    /**
-     * @var AclHelper
-     */
-    private $aclHelper;
+    /** @var array|null [product view, ...] */
+    private ?array $products = null;
 
     public function __construct(
-        ProductRepository $productRepository,
+        ManagerRegistry $doctrine,
         ProductManager $productManager,
-        AclHelper $aclHelper
+        AclHelper $aclHelper,
+        ProductListBuilder $productListBuilder
     ) {
-        $this->productRepository = $productRepository;
+        $this->doctrine = $doctrine;
         $this->productManager = $productManager;
         $this->aclHelper = $aclHelper;
+        $this->productListBuilder = $productListBuilder;
     }
 
     /**
-     * {@inheritDoc}
+     * @return ProductView[]
      */
-    public function getProducts()
+    public function getProducts(): array
     {
-        $queryBuilder = $this->productRepository->getFeaturedProductsQueryBuilder(self::DEFAULT_QUANTITY);
-        $this->productManager->restrictQueryBuilder($queryBuilder, []);
+        if (null === $this->products) {
+            $this->products = $this->loadProducts();
+        }
 
-        return $this->aclHelper->apply($queryBuilder)->getResult();
+        return $this->products;
+    }
+
+    private function loadProducts(): array
+    {
+        $qb = $this->getProductRepository()
+            ->getFeaturedProductsQueryBuilder(self::DEFAULT_QUANTITY)
+            ->select('product.id');
+        $this->productManager->restrictQueryBuilder($qb, []);
+        $rows = $this->aclHelper->apply($qb)->getArrayResult();
+        if (!$rows) {
+            return [];
+        }
+
+        return $this->productListBuilder->getProductsByIds(self::PRODUCT_LIST_TYPE, array_column($rows, 'id'));
+    }
+
+    private function getProductRepository(): ProductRepository
+    {
+        return $this->doctrine->getRepository(Product::class);
     }
 }

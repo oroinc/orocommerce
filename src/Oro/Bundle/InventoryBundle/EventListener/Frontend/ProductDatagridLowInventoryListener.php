@@ -12,7 +12,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
 
 /**
- * Adds highlight low inventory of the products on the storefront product grid.
+ * Adds information required to highlight low inventory products to storefront product grid.
  */
 class ProductDatagridLowInventoryListener
 {
@@ -65,8 +65,8 @@ class ProductDatagridLowInventoryListener
             $data[] = [
                 'product' => $em->getReference(Product::class, $record->getValue('id')),
                 'product_unit' => $em->getReference(ProductUnit::class, $record->getValue('unit')),
-                'low_inventory_threshold' => $lowInventoryThreshold ?? -1,
-                'highlight_low_inventory' => (null !== $lowInventoryThreshold)
+                'low_inventory_threshold' => $lowInventoryThreshold ?: -1,
+                'highlight_low_inventory' => (bool)$lowInventoryThreshold
             ];
         }
 

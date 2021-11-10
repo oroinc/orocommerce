@@ -1,9 +1,0 @@
-layout:
-    actions:
-        - '@setBlockTheme':
-            themes: '@OroInventory/layouts/blank/imports/oro_product_list/low_inventory.html.twig'
-        - '@add':
-            id: __product_low_inventory_label
-            parentId: __product_specification
-            blockType: container
-            prepend: true

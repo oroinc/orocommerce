@@ -328,10 +328,19 @@ services:
             - '@oro_cms.content_widget.provider'
             - '@oro_cms.content_widget.type_registry'
             - '@oro_cms.layout_manager'
+            - '@oro_frontend.request.frontend_helper'
+            - '@oro_cms.content_widget.frontend_emulator'
             - '@logger'
             - '%kernel.debug%'
         tags:
             - { name: monolog.logger, channel: oro_cms }
+
+    oro_cms.content_widget.frontend_emulator:
+        class: Oro\Bundle\CMSBundle\ContentWidget\FrontendEmulator
+        arguments:
+            - '@oro_website.manager'
+            - '@oro_locale.provider.current_localization'
+            - '@oro_frontend_localization.manager.user_localization'
 
     oro_cms.tools.wysiwyg_content_checker:
         class: Oro\Bundle\CMSBundle\Tools\WYSIWYGContentChecker

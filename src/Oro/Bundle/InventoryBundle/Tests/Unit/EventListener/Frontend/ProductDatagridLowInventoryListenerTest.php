@@ -155,7 +155,7 @@ class ProductDatagridLowInventoryListenerTest extends \PHPUnit\Framework\TestCas
         $record2 = new ResultRecord([
             'id'                      => $product2Id,
             'unit'                    => $productUnit2Code,
-            'low_inventory_threshold' => null
+            'low_inventory_threshold' => ''
         ]);
 
         $data = [

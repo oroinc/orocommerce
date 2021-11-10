@@ -5,16 +5,13 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\ImportExport\Configuration;
 use Oro\Bundle\ImportExportBundle\Configuration\ImportExportConfiguration;
 use Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct;
 use Oro\Bundle\ProductBundle\ImportExport\Configuration\RelatedProductsImportExportConfigurationProvider;
-use Oro\Bundle\ProductBundle\RelatedItem\AbstractRelatedItemConfigProvider;
 use Oro\Bundle\ProductBundle\RelatedItem\Helper\RelatedItemConfigHelper;
+use Oro\Bundle\ProductBundle\RelatedItem\RelatedItemConfigProviderInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class RelatedProductsImportExportConfigurationProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $translator;
-
     /** @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $authorizationChecker;
 
@@ -26,20 +23,18 @@ class RelatedProductsImportExportConfigurationProviderTest extends \PHPUnit\Fram
 
     protected function setUp(): void
     {
-        $this->translator = $this->createMock(TranslatorInterface::class);
-        $this->translator->expects($this->any())
-            ->method('trans')
-            ->willReturnCallback(
-                static function ($key) {
-                    return 'translated ' . $key;
-                }
-            );
-
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
         $this->relatedItemConfigHelper = $this->createMock(RelatedItemConfigHelper::class);
 
+        $translator = $this->createMock(TranslatorInterface::class);
+        $translator->expects($this->any())
+            ->method('trans')
+            ->willReturnCallback(function ($key) {
+                return 'translated ' . $key;
+            });
+
         $this->provider = new RelatedProductsImportExportConfigurationProvider(
-            $this->translator,
+            $translator,
             $this->authorizationChecker,
             $this->relatedItemConfigHelper
         );
@@ -52,7 +47,7 @@ class RelatedProductsImportExportConfigurationProviderTest extends \PHPUnit\Fram
             ->with('oro_related_products_edit')
             ->willReturn(true);
 
-        $configProvider = $this->createMock(AbstractRelatedItemConfigProvider::class);
+        $configProvider = $this->createMock(RelatedItemConfigProviderInterface::class);
         $configProvider->expects($this->once())
             ->method('isEnabled')
             ->willReturn(true);
@@ -92,7 +87,7 @@ class RelatedProductsImportExportConfigurationProviderTest extends \PHPUnit\Fram
             ->with('oro_related_products_edit')
             ->willReturn(false);
 
-        $configProvider = $this->createMock(AbstractRelatedItemConfigProvider::class);
+        $configProvider = $this->createMock(RelatedItemConfigProviderInterface::class);
         $configProvider->expects($this->once())
             ->method('isEnabled')
             ->willReturn(true);
@@ -121,7 +116,7 @@ class RelatedProductsImportExportConfigurationProviderTest extends \PHPUnit\Fram
         $this->authorizationChecker->expects($this->never())
             ->method('isGranted');
 
-        $configProvider = $this->createMock(AbstractRelatedItemConfigProvider::class);
+        $configProvider = $this->createMock(RelatedItemConfigProviderInterface::class);
         $configProvider->expects($this->once())
             ->method('isEnabled')
             ->willReturn(false);

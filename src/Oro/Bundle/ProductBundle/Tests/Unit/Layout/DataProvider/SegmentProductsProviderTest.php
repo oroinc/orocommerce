@@ -2,352 +2,300 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Layout\DataProvider;
 
-use Doctrine\Common\Cache\CacheProvider;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\Configuration;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Query\Parameter;
-use Doctrine\ORM\QueryBuilder;
-use Doctrine\Persistence\ManagerRegistry;
-use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
+use Doctrine\Common\Annotations\AnnotationReader;
+use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
+use Doctrine\ORM\Query;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Layout\DataProvider\SegmentProductsProvider;
-use Oro\Bundle\ProductBundle\Tests\Unit\Stub\QueryStub as Query;
-use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
+use Oro\Bundle\ProductBundle\Layout\SegmentProducts\SegmentProductsQueryProvider;
+use Oro\Bundle\ProductBundle\Model\ProductView;
+use Oro\Bundle\ProductBundle\Provider\ProductListBuilder;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
-use Oro\Bundle\SegmentBundle\Entity\Manager\SegmentManager;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Component\Testing\ReflectionUtil;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Oro\Component\TestUtils\ORM\Mocks\EntityManagerMock;
+use Oro\Component\TestUtils\ORM\OrmTestCase;
 
-class SegmentProductsProviderTest extends \PHPUnit\Framework\TestCase
+class SegmentProductsProviderTest extends OrmTestCase
 {
-    private const CACHE_KEY = 'segment_products_0_42_1';
+    private const PRODUCT_LIST_TYPE = 'segment_products';
 
-    /** @var SegmentManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $segmentManager;
-
-    /** @var ProductManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $productManager;
-
-    /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var EntityManagerMock */
     private $em;
 
-    /** @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $cache;
+    /** @var SegmentProductsQueryProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $segmentProductsQueryProvider;
 
-    /** @var SymmetricCrypterInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $crypter;
+    /** @var ProductListBuilder|\PHPUnit\Framework\MockObject\MockObject */
+    private $productListBuilder;
 
     /** @var AclHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $aclHelper;
 
     /** @var SegmentProductsProvider */
-    private $segmentProductsProvider;
+    private $provider;
 
     protected function setUp(): void
     {
-        $this->segmentManager = $this->createMock(SegmentManager::class);
-        $this->productManager = $this->createMock(ProductManager::class);
-        $this->em = $this->createMock(EntityManagerInterface::class);
+        $this->em = $this->getTestEntityManager();
+        $this->em->getConfiguration()->setMetadataDriverImpl(new AnnotationDriver(
+            new AnnotationReader(),
+            'Oro\Bundle\ProductBundle\Entity'
+        ));
 
-        $registry = $this->createMock(ManagerRegistry::class);
-        $registry->expects($this->any())
-            ->method('getManagerForClass')
-            ->willReturn($this->em);
-
-        $token = $this->createMock(TokenInterface::class);
-        $token->expects($this->any())
-            ->method('getUser')
-            ->willReturn(null);
-
-        $tokenStorage = $this->createMock(TokenStorageInterface::class);
-        $tokenStorage->expects($this->any())
-            ->method('getToken')
-            ->willReturn($token);
-
-        $this->cache = $this->createMock(CacheProvider::class);
-        $this->crypter = $this->createMock(SymmetricCrypterInterface::class);
-
+        $this->segmentProductsQueryProvider = $this->createMock(SegmentProductsQueryProvider::class);
+        $this->productListBuilder = $this->createMock(ProductListBuilder::class);
         $this->aclHelper = $this->createMock(AclHelper::class);
-        $this->aclHelper->expects($this->any())
-            ->method('apply')
-            ->willReturnArgument(0);
 
-        $this->segmentProductsProvider = new SegmentProductsProvider(
-            $this->segmentManager,
-            $this->productManager,
-            $registry,
-            $tokenStorage,
-            $this->crypter,
+        $this->provider = new SegmentProductsProvider(
+            $this->segmentProductsQueryProvider,
+            $this->productListBuilder,
             $this->aclHelper
         );
-        $this->segmentProductsProvider->setCache($this->cache, 3600);
-    }
-
-    public function testGetProducts(): void
-    {
-        $queryBuilder = $this->getQueryBuilder();
-
-        $segment = $this->getSegment(42);
-        $dql = 'DQL SELECT';
-        $qbParameters = new ArrayCollection([new Parameter('parameter', 1)]);
-        $hash = $this->getHashData($dql, ['parameter' => 1], ['hint' => 1]);
-
-        $this->cache->expects($this->once())
-            ->method('fetch')
-            ->with(self::CACHE_KEY)
-            ->willReturn(null);
-        $this->cache->expects($this->once())
-            ->method('save')
-            ->with(
-                self::CACHE_KEY,
-                [
-                    'dql' => $dql,
-                    'parameters' => ['parameter' => 1],
-                    'hints' => ['hint' => 1],
-                    'hash' => sprintf('encrypt_%s', $hash),
-                ],
-                3600
-            );
-
-        $queryBuilder->expects($this->once())
-            ->method('getDQL')
-            ->willReturn($dql);
-        $queryBuilder->expects($this->once())
-            ->method('getParameters')
-            ->willReturn($qbParameters);
-
-        $this->crypter->expects($this->any())
-            ->method('encryptData')
-            ->with($hash)
-            ->willReturn(sprintf('encrypt_%s', $hash));
-
-        $result = [new Product()];
-
-        $query = $this->createMock(Query::class);
-        $query->expects($this->once())
-            ->method('setMaxResults')
-            ->with(4)
-            ->willReturnSelf();
-        $query->expects($this->once())
-            ->method('execute')
-            ->with(['parameter' => 1])
-            ->willReturn($result);
-
-        $this->em->expects($this->once())
-            ->method('createQuery')
-            ->with($dql)
-            ->willReturn($query);
-
-        $configuration = $this->createMock(Configuration::class);
-        $configuration->expects($this->once())
-            ->method('getDefaultQueryHints')
-            ->willReturn(['hint' => 1]);
-        $configuration->expects($this->once())
-            ->method('setDefaultQueryHint')
-            ->with('hint', 1);
-
-        $this->em->expects($this->atLeastOnce())
-            ->method('getConfiguration')
-            ->willReturn($configuration);
-
-        $this->assertEquals($result, $this->segmentProductsProvider->getProducts($segment, 1, 4));
-    }
-
-    public function testGetProductsWithCache(): void
-    {
-        $segment = $this->getSegment(42);
-        $dql = 'DQL SELECT';
-        $hash = $this->getHashData($dql, ['parameter' => 1], ['hint' => 1]);
-
-        $this->cache->expects($this->once())
-            ->method('fetch')
-            ->with(self::CACHE_KEY)
-            ->willReturn(
-                [
-                    'dql' => $dql,
-                    'parameters' => ['parameter' => 1],
-                    'hints' => ['hint' => 1],
-                    'hash' => sprintf('encrypt_%s', $hash)
-                ]
-            );
-
-        $this->crypter->expects($this->any())
-            ->method('encryptData')
-            ->with($dql)
-            ->willReturn($hash);
-        $this->crypter->expects($this->any())
-            ->method('decryptData')
-            ->with(sprintf('encrypt_%s', $hash))
-            ->willReturn($hash);
-
-        $configuration = $this->createMock(Configuration::class);
-        $configuration->expects($this->never())
-            ->method('getDefaultQueryHints')
-            ->willReturn(['hint' => 1]);
-        $configuration->expects($this->once())
-            ->method('setDefaultQueryHint')
-            ->with('hint', 1);
-
-        $this->em->expects($this->atLeastOnce())
-            ->method('getConfiguration')
-            ->willReturn($configuration);
-
-        $result = [new Product()];
-
-        $query = $this->createMock(Query::class);
-        $query->expects($this->once())
-            ->method('setMaxResults')
-            ->willReturnSelf();
-        $query->expects($this->once())
-            ->method('execute')
-            ->with(['parameter' => 1])
-            ->willReturn($result);
-
-        $this->em->expects($this->once())
-            ->method('createQuery')
-            ->with($dql)
-            ->willReturn($query);
-
-        $this->assertEquals($result, $this->segmentProductsProvider->getProducts($segment, 1, 4));
-    }
-
-    public function testGetProductsWithInvalidCache(): void
-    {
-        $segment = $this->getSegment(42);
-        $dql = 'DQL SELECT';
-        $invalidDql = 'INVALID DQL SELECT';
-        $qbParameters = new ArrayCollection([new Parameter('parameter', 1)]);
-        $hash = $this->getHashData($dql, ['parameter' => 1], ['hint' => 1]);
-
-        $this->cache->expects($this->once())
-            ->method('fetch')
-            ->willReturn(
-                [
-                    'dql' => $invalidDql,
-                    'parameters' => ['parameter' => 1],
-                    'hints' => ['hint' => 1],
-                    'hash' => sprintf('encrypt_%s', $hash)
-                ]
-            );
-
-        $this->cache->expects($this->once())
-            ->method('save')
-            ->with(
-                self::CACHE_KEY,
-                [
-                    'dql' => $dql,
-                    'parameters' => ['parameter' => 1],
-                    'hints' => ['hint' => 1],
-                    'hash' => sprintf('encrypt_%s', $hash),
-                ],
-                3600
-            );
-
-        $queryBuilder = $this->getQueryBuilder();
-        $queryBuilder->expects($this->once())
-            ->method('getDQL')
-            ->willReturn($dql);
-        $queryBuilder->expects($this->once())
-            ->method('getParameters')
-            ->willReturn($qbParameters);
-        $queryBuilder->expects($this->once())
-            ->method('getEntityManager')
-            ->willReturn($this->em);
-
-        $this->crypter->expects($this->once())
-            ->method('encryptData')
-            ->with($hash)
-            ->willReturn(sprintf('encrypt_%s', $hash));
-        $this->crypter->expects($this->once())
-            ->method('decryptData')
-            ->with(sprintf('encrypt_%s', $hash))
-            ->willReturn($hash);
-
-        $configuration = $this->createMock(Configuration::class);
-        $configuration->expects($this->once())
-            ->method('getDefaultQueryHints')
-            ->willReturn(['hint' => 1]);
-        $configuration->expects($this->once())
-            ->method('setDefaultQueryHint')
-            ->with('hint', 1);
-
-        $this->em->expects($this->atLeastOnce())
-            ->method('getConfiguration')
-            ->willReturn($configuration);
-
-        $result = [new Product()];
-
-        $query = $this->createMock(Query::class);
-        $query->expects($this->once())
-            ->method('setMaxResults')
-            ->willReturnSelf();
-        $query->expects($this->once())
-            ->method('execute')
-            ->with(['parameter' => 1])
-            ->willReturn($result);
-
-        $this->em->expects($this->once())
-            ->method('createQuery')
-            ->with($dql)
-            ->willReturn($query);
-
-        $this->assertEquals($result, $this->segmentProductsProvider->getProducts($segment, 1, 4));
-    }
-
-    public function testGetProductsQueryBuilderIsNull(): void
-    {
-        $this->cache->expects($this->once())
-            ->method('fetch')
-            ->with(self::CACHE_KEY)
-            ->willReturn(null);
-        $this->cache->expects($this->never())
-            ->method('save');
-
-        $this->em->expects($this->never())
-            ->method('createQuery');
-
-        $this->assertEquals([], $this->segmentProductsProvider->getProducts($this->getSegment(42), 1, 4));
-    }
-
-    /**
-     * @return QueryBuilder|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function getQueryBuilder(): QueryBuilder
-    {
-        $queryBuilder = $this->createMock(QueryBuilder::class);
-        $queryBuilder->expects($this->any())
-            ->method('getEntityManager')
-            ->willReturn($this->em);
-
-        $this->segmentManager->expects($this->once())
-            ->method('getEntityQueryBuilder')
-            ->willReturn($queryBuilder);
-        $this->productManager->expects($this->once())
-            ->method('restrictQueryBuilder')
-            ->with($queryBuilder, [])
-            ->willReturn($queryBuilder);
-
-        return $queryBuilder;
     }
 
     private function getSegment(int $id): Segment
     {
         $segment = new Segment();
         ReflectionUtil::setId($segment, $id);
-        $segment->setRecordsLimit(1);
+        $segment->setRecordsLimit(25);
 
         return $segment;
     }
 
-    private function getHashData(string $dql, array $parameters, array $queryHints): string
+    private function getQuery(): Query
     {
-        return md5(serialize([
-            'dql' => $dql,
-            'parameters' => $parameters,
-            'hints' => $queryHints,
-        ]));
+        return $this->em->createQuery('SELECT p.id FROM ' . Product::class . ' p');
+    }
+
+    private function getProductView(int $id): ProductView
+    {
+        $productView = new ProductView();
+        $productView->set('id', $id);
+
+        return $productView;
+    }
+
+    public function testGetProducts(): void
+    {
+        $segment = $this->getSegment(42);
+        $minItemsLimit = 1;
+        $maxItemsLimit = 4;
+        $productId = 100;
+
+        $query = $this->getQuery();
+        $this->segmentProductsQueryProvider->expects(self::once())
+            ->method('getQuery')
+            ->with(self::identicalTo($segment), self::PRODUCT_LIST_TYPE)
+            ->willReturn($query);
+        $this->aclHelper->expects(self::once())
+            ->method('apply')
+            ->with(self::identicalTo($query))
+            ->willReturnArgument(0);
+
+        $this->setQueryExpectation(
+            $this->getDriverConnectionMock($this->em),
+            sprintf('SELECT o0_.id AS id_0 FROM oro_product o0_ LIMIT %d', $maxItemsLimit),
+            [['id_0' => $productId]]
+        );
+
+        $productViews = [$this->getProductView($productId)];
+        $this->productListBuilder->expects(self::once())
+            ->method('getProductsByIds')
+            ->with(self::PRODUCT_LIST_TYPE, [$productId])
+            ->willReturn($productViews);
+
+        $this->assertEquals($productViews, $this->provider->getProducts($segment, $minItemsLimit, $maxItemsLimit));
+        // test memory cache
+        $this->assertEquals($productViews, $this->provider->getProducts($segment, $minItemsLimit, $maxItemsLimit));
+    }
+
+    public function testGetProductsWhenMaxItemsLimitEqualsToMinItemsLimit(): void
+    {
+        $segment = $this->getSegment(42);
+        $minItemsLimit = 1;
+        $maxItemsLimit = 1;
+        $productId = 100;
+
+        $query = $this->getQuery();
+        $this->segmentProductsQueryProvider->expects(self::once())
+            ->method('getQuery')
+            ->with(self::identicalTo($segment), self::PRODUCT_LIST_TYPE)
+            ->willReturn($query);
+        $this->aclHelper->expects(self::once())
+            ->method('apply')
+            ->with(self::identicalTo($query))
+            ->willReturnArgument(0);
+
+        $this->setQueryExpectation(
+            $this->getDriverConnectionMock($this->em),
+            sprintf('SELECT o0_.id AS id_0 FROM oro_product o0_ LIMIT %d', $maxItemsLimit),
+            [['id_0' => $productId]]
+        );
+
+        $productViews = [$this->getProductView($productId)];
+        $this->productListBuilder->expects(self::once())
+            ->method('getProductsByIds')
+            ->with(self::PRODUCT_LIST_TYPE, [$productId])
+            ->willReturn($productViews);
+
+        $this->assertEquals($productViews, $this->provider->getProducts($segment, $minItemsLimit, $maxItemsLimit));
+        // test memory cache
+        $this->assertEquals($productViews, $this->provider->getProducts($segment, $minItemsLimit, $maxItemsLimit));
+    }
+
+    public function testGetProductsWhenMinItemsLimitDoesNotReached(): void
+    {
+        $segment = $this->getSegment(42);
+        $minItemsLimit = 2;
+        $maxItemsLimit = 4;
+        $productId = 100;
+
+        $query = $this->getQuery();
+        $this->segmentProductsQueryProvider->expects(self::once())
+            ->method('getQuery')
+            ->with(self::identicalTo($segment), self::PRODUCT_LIST_TYPE)
+            ->willReturn($query);
+        $this->aclHelper->expects(self::once())
+            ->method('apply')
+            ->with(self::identicalTo($query))
+            ->willReturnArgument(0);
+
+        $this->setQueryExpectation(
+            $this->getDriverConnectionMock($this->em),
+            sprintf('SELECT o0_.id AS id_0 FROM oro_product o0_ LIMIT %d', $maxItemsLimit),
+            [['id_0' => $productId]]
+        );
+
+        $this->productListBuilder->expects(self::never())
+            ->method('getProductsByIds');
+
+        $this->assertSame([], $this->provider->getProducts($segment, $minItemsLimit, $maxItemsLimit));
+        // test memory cache
+        $this->assertSame([], $this->provider->getProducts($segment, $minItemsLimit, $maxItemsLimit));
+    }
+
+    public function testGetProductsWhenNoProducts(): void
+    {
+        $segment = $this->getSegment(42);
+        $minItemsLimit = 1;
+        $maxItemsLimit = 4;
+
+        $query = $this->getQuery();
+        $this->segmentProductsQueryProvider->expects(self::once())
+            ->method('getQuery')
+            ->with(self::identicalTo($segment), self::PRODUCT_LIST_TYPE)
+            ->willReturn($query);
+        $this->aclHelper->expects(self::once())
+            ->method('apply')
+            ->with(self::identicalTo($query))
+            ->willReturnArgument(0);
+
+        $this->setQueryExpectation(
+            $this->getDriverConnectionMock($this->em),
+            sprintf('SELECT o0_.id AS id_0 FROM oro_product o0_ LIMIT %d', $maxItemsLimit),
+            []
+        );
+
+        $this->productListBuilder->expects(self::never())
+            ->method('getProductsByIds');
+
+        $this->assertSame([], $this->provider->getProducts($segment, $minItemsLimit, $maxItemsLimit));
+        // test memory cache
+        $this->assertSame([], $this->provider->getProducts($segment, $minItemsLimit, $maxItemsLimit));
+    }
+
+    public function testGetProductsWhenNoQuery(): void
+    {
+        $segment = $this->getSegment(42);
+        $minItemsLimit = 1;
+        $maxItemsLimit = 4;
+
+        $this->segmentProductsQueryProvider->expects(self::once())
+            ->method('getQuery')
+            ->with(self::identicalTo($segment), self::PRODUCT_LIST_TYPE)
+            ->willReturn(null);
+        $this->aclHelper->expects(self::never())
+            ->method('apply');
+        $this->productListBuilder->expects(self::never())
+            ->method('getProductsByIds');
+
+        $this->assertSame([], $this->provider->getProducts($segment, $minItemsLimit, $maxItemsLimit));
+        // test memory cache
+        $this->assertSame([], $this->provider->getProducts($segment, $minItemsLimit, $maxItemsLimit));
+    }
+
+    public function testGetProductsWhenMaxItemsLimitIsInvalid(): void
+    {
+        $segment = $this->getSegment(42);
+        $minItemsLimit = 1;
+        $maxItemsLimit = 0;
+
+        $this->segmentProductsQueryProvider->expects(self::never())
+            ->method('getQuery');
+        $this->aclHelper->expects(self::never())
+            ->method('apply');
+        $this->productListBuilder->expects(self::never())
+            ->method('getProductsByIds');
+
+        $this->assertSame([], $this->provider->getProducts($segment, $minItemsLimit, $maxItemsLimit));
+        // test memory cache
+        $this->assertSame([], $this->provider->getProducts($segment, $minItemsLimit, $maxItemsLimit));
+    }
+
+    public function testGetProductsWhenMaxItemsLimitIsLessThanMinItemsLimit(): void
+    {
+        $segment = $this->getSegment(42);
+        $minItemsLimit = 5;
+        $maxItemsLimit = 4;
+
+        $this->segmentProductsQueryProvider->expects(self::never())
+            ->method('getQuery');
+        $this->aclHelper->expects(self::never())
+            ->method('apply');
+        $this->productListBuilder->expects(self::never())
+            ->method('getProductsByIds');
+
+        $this->assertSame([], $this->provider->getProducts($segment, $minItemsLimit, $maxItemsLimit));
+        // test memory cache
+        $this->assertSame([], $this->provider->getProducts($segment, $minItemsLimit, $maxItemsLimit));
+    }
+
+    public function testGetProductsShouldNotOverrideAnotherCachedResult(): void
+    {
+        $segment = $this->getSegment(42);
+        $productId = 100;
+
+        $query = $this->getQuery();
+        $this->segmentProductsQueryProvider->expects(self::exactly(2))
+            ->method('getQuery')
+            ->with(self::identicalTo($segment), self::PRODUCT_LIST_TYPE)
+            ->willReturn($query);
+        $this->aclHelper->expects(self::exactly(2))
+            ->method('apply')
+            ->with(self::identicalTo($query))
+            ->willReturnArgument(0);
+
+        $this->addQueryExpectation(
+            'SELECT o0_.id AS id_0 FROM oro_product o0_ LIMIT 4',
+            [['id_0' => $productId]]
+        );
+        $this->addQueryExpectation(
+            'SELECT o0_.id AS id_0 FROM oro_product o0_ LIMIT 5',
+            [['id_0' => $productId]]
+        );
+        $this->applyQueryExpectations($this->getDriverConnectionMock($this->em));
+
+        $productViews = [$this->getProductView($productId)];
+        $this->productListBuilder->expects(self::exactly(2))
+            ->method('getProductsByIds')
+            ->with(self::PRODUCT_LIST_TYPE, [$productId])
+            ->willReturn($productViews);
+
+        $this->assertEquals($productViews, $this->provider->getProducts($segment, 1, 4));
+        $this->assertEquals($productViews, $this->provider->getProducts($segment, 1, 5));
+        // test memory cache
+        $this->assertEquals($productViews, $this->provider->getProducts($segment, 1, 4));
+        $this->assertEquals($productViews, $this->provider->getProducts($segment, 1, 5));
     }
 }

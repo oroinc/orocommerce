@@ -7,6 +7,7 @@ services:
             - '@oro_pricing.user_currency_manager'
             - '@oro_pricing.formatter.product_price_formatter'
             - '@oro_pricing.provider.product_price'
+            - '@oro_product.provider.frontend_product_units_provider'
         tags:
             - { name: layout.data_provider, alias: frontend_product_prices }
 

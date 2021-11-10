@@ -2,15 +2,13 @@
 
 namespace Oro\Bundle\ProductBundle\ContentWidget;
 
-use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetTypeInterface;
 use Oro\Bundle\CMSBundle\Entity\ContentWidget;
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductMiniBlockContentWidgetSettingsType;
+use Oro\Bundle\ProductBundle\Model\ProductView;
+use Oro\Bundle\ProductBundle\Provider\ProductListBuilder;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Twig\Environment;
 
 /**
@@ -18,29 +16,19 @@ use Twig\Environment;
  */
 class ProductMiniBlockContentWidgetType implements ContentWidgetTypeInterface
 {
-    /** @var ManagerRegistry */
-    private $registry;
+    private const PRODUCT_LIST_TYPE = 'product_mini_block';
 
-    /** @var int */
-    private $instanceNumber = 0;
+    private ProductListBuilder $productListBuilder;
+    private int $instanceNumber = 0;
 
-    /** @var AuthorizationCheckerInterface */
-    private $authorizationChecker;
-
-    /**@var ConfigManager */
-    private $configManager;
-
-    public function __construct(
-        ManagerRegistry $registry,
-        AuthorizationCheckerInterface $authorizationChecker,
-        ConfigManager $configManager
-    ) {
-        $this->registry = $registry;
-        $this->authorizationChecker = $authorizationChecker;
-        $this->configManager = $configManager;
+    public function __construct(ProductListBuilder $productListBuilder)
+    {
+        $this->productListBuilder = $productListBuilder;
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public static function getName(): string
     {
         return 'product_mini_block';
@@ -67,9 +55,9 @@ class ProductMiniBlockContentWidgetType implements ContentWidgetTypeInterface
                 'subblocks' => [
                     [
                         'data' => [
-                            $twig->render('@OroProduct/ProductMiniBlockContentWidget/options.html.twig', $data),
+                            $twig->render('@OroProduct/ProductMiniBlockContentWidget/options.html.twig', $data)
                         ]
-                    ],
+                    ]
                 ]
             ]
         ];
@@ -91,29 +79,12 @@ class ProductMiniBlockContentWidgetType implements ContentWidgetTypeInterface
         $data = $contentWidget->getSettings();
         $data['instanceNumber'] = $this->instanceNumber++;
 
-        $product = $data['product'] ?? null;
-        if ($product) {
-            $data['product'] = $this->registry->getManagerForClass(Product::class)
-                ->getRepository(Product::class)
-                ->find($product);
-
-            if (!$this->authorizationChecker->isGranted('VIEW', $data['product']) ||
-                !$this->isInventoryStatusVisible($data['product'])
-            ) {
-                $data['product'] = null;
-            }
+        $productId = $data['product'] ?? null;
+        if ($productId) {
+            $data['product'] = $this->getProduct($productId);
         }
 
         return $data;
-    }
-
-    private function isInventoryStatusVisible(Product $product): bool
-    {
-        $allowedStatuses = $this->configManager->get('oro_product.general_frontend_product_visibility');
-
-        return $product->getInventoryStatus() ?
-            \in_array($product->getInventoryStatus()->getId(), $allowedStatuses, true) :
-            true;
     }
 
     /**
@@ -130,5 +101,19 @@ class ProductMiniBlockContentWidgetType implements ContentWidgetTypeInterface
     public function getDefaultTemplate(ContentWidget $contentWidget, Environment $twig): string
     {
         return '';
+    }
+
+    private function getProduct(int $productId): ?ProductView
+    {
+        $result = null;
+        $products = $this->productListBuilder->getProductsByIds(self::PRODUCT_LIST_TYPE, [$productId]);
+        foreach ($products as $product) {
+            if ($product->getId() === $productId) {
+                $result = $product;
+                break;
+            }
+        }
+
+        return $result;
     }
 }

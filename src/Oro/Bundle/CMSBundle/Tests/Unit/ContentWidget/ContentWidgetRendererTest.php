@@ -5,8 +5,10 @@ namespace Oro\Bundle\CMSBundle\Tests\Unit\ContentWidget;
 use Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetProvider;
 use Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetRenderer;
 use Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetTypeRegistry;
+use Oro\Bundle\CMSBundle\ContentWidget\FrontendEmulator;
 use Oro\Bundle\CMSBundle\Entity\ContentWidget;
 use Oro\Bundle\CMSBundle\Tests\Unit\ContentWidget\Stub\ContentWidgetTypeStub;
+use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\LayoutBundle\Layout\LayoutManager;
 use Oro\Component\Layout\Layout;
 use Oro\Component\Layout\LayoutBuilderInterface;
@@ -32,6 +34,12 @@ HTML;
     /** @var LayoutManager|\PHPUnit\Framework\MockObject\MockObject */
     private $layoutManager;
 
+    /** @var FrontendHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $frontendHelper;
+
+    /** @var FrontendEmulator|\PHPUnit\Framework\MockObject\MockObject */
+    private $frontendEmulator;
+
     /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $logger;
 
@@ -39,6 +47,8 @@ HTML;
     {
         $this->contentWidgetProvider = $this->createMock(ContentWidgetProvider::class);
         $this->layoutManager = $this->createMock(LayoutManager::class);
+        $this->frontendHelper = $this->createMock(FrontendHelper::class);
+        $this->frontendEmulator = $this->createMock(FrontendEmulator::class);
         $this->logger = $this->createMock(LoggerInterface::class);
     }
 
@@ -55,6 +65,8 @@ HTML;
             $this->contentWidgetProvider,
             $contentWidgetTypeRegistry,
             $this->layoutManager,
+            $this->frontendHelper,
+            $this->frontendEmulator,
             $this->logger,
             $debug
         );
@@ -97,6 +109,12 @@ HTML;
     {
         $exception = new \RuntimeException('The context widget does not exist.');
 
+        $this->frontendHelper->expects(self::once())
+            ->method('isFrontendRequest')
+            ->willReturn(true);
+        $this->frontendEmulator->expects(self::never())
+            ->method(self::anything());
+
         $this->contentWidgetProvider->expects(self::once())
             ->method('getContentWidget')
             ->with(self::SAMPLE_WIDGET)
@@ -107,8 +125,7 @@ HTML;
             ->with('Error occurred while rendering content widget "sample-widget".');
 
         $expectedResult = $debug ? sprintf(self::ERROR_TEMPLATE, $exception->getMessage()) : '';
-        $result = $this->getRenderer($debug)->render(self::SAMPLE_WIDGET);
-        self::assertSame($expectedResult, $result);
+        self::assertSame($expectedResult, $this->getRenderer($debug)->render(self::SAMPLE_WIDGET));
     }
 
     /**
@@ -118,6 +135,12 @@ HTML;
     {
         $exception = new \Exception('some error');
         $contentWidget = $this->getContentWidget(self::SAMPLE_SETTINGS);
+
+        $this->frontendHelper->expects(self::once())
+            ->method('isFrontendRequest')
+            ->willReturn(true);
+        $this->frontendEmulator->expects(self::never())
+            ->method(self::anything());
 
         $this->contentWidgetProvider->expects(self::once())
             ->method('getContentWidget')
@@ -150,8 +173,7 @@ HTML;
             ->with('Error occurred while rendering content widget "sample-widget".');
 
         $expectedResult = $debug ? sprintf(self::ERROR_TEMPLATE, $exception->getMessage()) : '';
-        $result = $this->getRenderer($debug)->render(self::SAMPLE_WIDGET);
-        self::assertSame($expectedResult, $result);
+        self::assertSame($expectedResult, $this->getRenderer($debug)->render(self::SAMPLE_WIDGET));
     }
 
     /**
@@ -161,6 +183,12 @@ HTML;
     {
         $exception = new \Error('some error');
         $contentWidget = $this->getContentWidget($exception);
+
+        $this->frontendHelper->expects(self::once())
+            ->method('isFrontendRequest')
+            ->willReturn(true);
+        $this->frontendEmulator->expects(self::never())
+            ->method(self::anything());
 
         $this->contentWidgetProvider->expects(self::once())
             ->method('getContentWidget')
@@ -182,13 +210,18 @@ HTML;
             ->with('Error occurred while rendering content widget "sample-widget".');
 
         $expectedResult = $debug ? sprintf(self::ERROR_TEMPLATE, $exception->getMessage()) : '';
-        $result = $this->getRenderer($debug)->render(self::SAMPLE_WIDGET);
-        self::assertSame($expectedResult, $result);
+        self::assertSame($expectedResult, $this->getRenderer($debug)->render(self::SAMPLE_WIDGET));
     }
 
     public function testRender(): void
     {
         $contentWidget = $this->getContentWidget(self::SAMPLE_SETTINGS);
+
+        $this->frontendHelper->expects(self::once())
+            ->method('isFrontendRequest')
+            ->willReturn(true);
+        $this->frontendEmulator->expects(self::never())
+            ->method(self::anything());
 
         $this->contentWidgetProvider->expects(self::once())
             ->method('getContentWidget')
@@ -220,5 +253,96 @@ HTML;
             ->method('error');
 
         self::assertEquals(self::SAMPLE_RESULT, $this->getRenderer(false)->render(self::SAMPLE_WIDGET));
+    }
+
+    public function testRenderInBackoffice(): void
+    {
+        $contentWidget = $this->getContentWidget(self::SAMPLE_SETTINGS);
+
+        $this->frontendHelper->expects(self::once())
+            ->method('isFrontendRequest')
+            ->willReturn(false);
+        $this->frontendEmulator->expects(self::once())
+            ->method('startFrontendRequestEmulation');
+        $this->frontendEmulator->expects(self::once())
+            ->method('stopFrontendRequestEmulation');
+
+        $this->contentWidgetProvider->expects(self::once())
+            ->method('getContentWidget')
+            ->with(self::SAMPLE_WIDGET)
+            ->willReturn($contentWidget);
+
+        $layout = $this->createMock(Layout::class);
+        $layoutBuilder = $this->createMock(LayoutBuilderInterface::class);
+        $this->layoutManager->expects(self::once())
+            ->method('getLayoutBuilder')
+            ->willReturn($layoutBuilder);
+        $layoutBuilder->expects(self::once())
+            ->method('add')
+            ->with('content_widget_root', null, 'content_widget_root');
+        $layoutBuilder->expects(self::once())
+            ->method('getLayout')
+            ->with(
+                new LayoutContext(
+                    ['data' => ['settings' => self::SAMPLE_SETTINGS], 'content_widget' => $contentWidget],
+                    ['content_widget']
+                )
+            )
+            ->willReturn($layout);
+        $layout->expects(self::once())
+            ->method('render')
+            ->willReturn(self::SAMPLE_RESULT);
+
+        $this->logger->expects(self::never())
+            ->method('error');
+
+        self::assertEquals(self::SAMPLE_RESULT, $this->getRenderer(false)->render(self::SAMPLE_WIDGET));
+    }
+
+    public function testRenderInBackofficeWhenExceptionDuringRendering(): void
+    {
+        $exception = new \Exception('some error');
+        $contentWidget = $this->getContentWidget(self::SAMPLE_SETTINGS);
+
+        $this->frontendHelper->expects(self::once())
+            ->method('isFrontendRequest')
+            ->willReturn(false);
+        $this->frontendEmulator->expects(self::once())
+            ->method('startFrontendRequestEmulation');
+        $this->frontendEmulator->expects(self::once())
+            ->method('stopFrontendRequestEmulation');
+
+        $this->contentWidgetProvider->expects(self::once())
+            ->method('getContentWidget')
+            ->with(self::SAMPLE_WIDGET)
+            ->willReturn($contentWidget);
+
+        $layout = $this->createMock(Layout::class);
+        $layoutBuilder = $this->createMock(LayoutBuilderInterface::class);
+        $this->layoutManager->expects(self::once())
+            ->method('getLayoutBuilder')
+            ->willReturn($layoutBuilder);
+        $layoutBuilder->expects(self::once())
+            ->method('add')
+            ->with('content_widget_root', null, 'content_widget_root');
+        $layoutBuilder->expects(self::once())
+            ->method('getLayout')
+            ->with(
+                new LayoutContext(
+                    ['data' => ['settings' => self::SAMPLE_SETTINGS], 'content_widget' => $contentWidget],
+                    ['content_widget']
+                )
+            )
+            ->willReturn($layout);
+        $layout->expects(self::once())
+            ->method('render')
+            ->willThrowException($exception);
+
+        $this->logger->expects(self::once())
+            ->method('error')
+            ->with('Error occurred while rendering content widget "sample-widget".');
+
+        $expectedResult = sprintf(self::ERROR_TEMPLATE, $exception->getMessage());
+        self::assertSame($expectedResult, $this->getRenderer(true)->render(self::SAMPLE_WIDGET));
     }
 }

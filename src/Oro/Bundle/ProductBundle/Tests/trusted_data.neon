@@ -8,9 +8,6 @@ trusted_data:
         Oro\Bundle\ProductBundle\EventListener\ProductVisibilityRestrictionList:
             applyQueryRestrictions:
                 restrictions: true
-        Oro\Bundle\ProductBundle\Layout\DataProvider\AbstractSegmentProductsProvider:
-            restoreQuery:
-                data: true
         Oro\Bundle\ProductBundle\Api\Processor\BuildProductSearchQuery:
             buildSearchQuery:
                 selectFieldNames: true

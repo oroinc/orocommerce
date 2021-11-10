@@ -8,7 +8,7 @@ use Oro\Bundle\ImportExportBundle\Processor\ImportProcessor;
 use Oro\Bundle\ImportExportBundle\Strategy\Import\ImportStrategyHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct;
-use Oro\Bundle\ProductBundle\RelatedItem\AbstractRelatedItemConfigProvider;
+use Oro\Bundle\ProductBundle\RelatedItem\RelatedItemConfigProviderInterface;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -23,7 +23,7 @@ class RelatedProductImportProcessor extends ImportProcessor
     /** @var TranslatorInterface */
     private $translator;
 
-    /** @var AbstractRelatedItemConfigProvider */
+    /** @var RelatedItemConfigProviderInterface */
     private $configProvider;
 
     /** @var ImportStrategyHelper */
@@ -35,7 +35,7 @@ class RelatedProductImportProcessor extends ImportProcessor
     public function __construct(
         ManagerRegistry $registry,
         TranslatorInterface $translator,
-        AbstractRelatedItemConfigProvider $configProvider,
+        RelatedItemConfigProviderInterface $configProvider,
         ImportStrategyHelper $importStrategyHelper,
         AclHelper $aclHelper
     ) {

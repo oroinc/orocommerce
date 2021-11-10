@@ -2,11 +2,22 @@
 
 namespace Oro\Bundle\ProductBundle\RelatedItem\UpsellProduct;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
-use Oro\Bundle\ProductBundle\RelatedItem\AbstractRelatedItemConfigProvider;
+use Oro\Bundle\ProductBundle\RelatedItem\RelatedItemConfigProviderInterface;
 
-class UpsellProductConfigProvider extends AbstractRelatedItemConfigProvider
+/**
+ * The configuration provider for upsell products.
+ */
+class UpsellProductConfigProvider implements RelatedItemConfigProviderInterface
 {
+    private ConfigManager $configManager;
+
+    public function __construct(ConfigManager $configManager)
+    {
+        $this->configManager = $configManager;
+    }
+
     /**
      * {@inheritdoc}
      */

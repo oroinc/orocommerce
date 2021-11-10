@@ -3,18 +3,21 @@
 namespace Oro\Bundle\ProductBundle\RelatedItem\Helper;
 
 use Oro\Bundle\ProductBundle\Exception\ConfigProviderNotFoundException;
-use Oro\Bundle\ProductBundle\RelatedItem\AbstractRelatedItemConfigProvider;
+use Oro\Bundle\ProductBundle\RelatedItem\RelatedItemConfigProviderInterface;
 
+/**
+ * The registry of configuration providers for related items.
+ */
 class RelatedItemConfigHelper
 {
-    const RELATED_ITEMS_TRANSLATION_NAMESPACE = 'oro.product.sections';
-    const RELATED_ITEMS_TRANSLATION_DEFAULT = 'related_items';
+    private const RELATED_ITEMS_TRANSLATION_NAMESPACE = 'oro.product.sections';
+    private const RELATED_ITEMS_TRANSLATION_DEFAULT = 'related_items';
 
-    /** @var AbstractRelatedItemConfigProvider[] */
+    /** @var RelatedItemConfigProviderInterface[] */
     private $configProviders = [];
 
     /**
-     * @return AbstractRelatedItemConfigProvider[]
+     * @return RelatedItemConfigProviderInterface[]
      */
     public function getConfigProviders()
     {
@@ -24,7 +27,7 @@ class RelatedItemConfigHelper
     /**
      * @param string $providerName
      *
-     * @return AbstractRelatedItemConfigProvider
+     * @return RelatedItemConfigProviderInterface
      * @throws ConfigProviderNotFoundException
      */
     public function getConfigProvider($providerName)
@@ -37,12 +40,12 @@ class RelatedItemConfigHelper
     }
 
     /**
-     * @param string                            $providerName
-     * @param AbstractRelatedItemConfigProvider $configProvider
+     * @param string                             $providerName
+     * @param RelatedItemConfigProviderInterface $configProvider
      *
      * @return RelatedItemConfigHelper
      */
-    public function addConfigProvider($providerName, AbstractRelatedItemConfigProvider $configProvider)
+    public function addConfigProvider($providerName, RelatedItemConfigProviderInterface $configProvider)
     {
         $this->configProviders[$providerName] = $configProvider;
 

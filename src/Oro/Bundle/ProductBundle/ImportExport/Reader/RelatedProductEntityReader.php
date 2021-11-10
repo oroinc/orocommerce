@@ -11,7 +11,7 @@ use Oro\Bundle\ImportExportBundle\Reader\IteratorBasedReader;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
-use Oro\Bundle\ProductBundle\RelatedItem\AbstractRelatedItemConfigProvider;
+use Oro\Bundle\ProductBundle\RelatedItem\RelatedItemConfigProviderInterface;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
 /**
@@ -25,14 +25,14 @@ class RelatedProductEntityReader extends IteratorBasedReader
     /** @var AclHelper */
     private $aclHelper;
 
-    /** @var AbstractRelatedItemConfigProvider */
+    /** @var RelatedItemConfigProviderInterface */
     private $configProvider;
 
     public function __construct(
         ContextRegistry $contextRegistry,
         ManagerRegistry $registry,
         AclHelper $aclHelper,
-        AbstractRelatedItemConfigProvider $configProvider
+        RelatedItemConfigProviderInterface $configProvider
     ) {
         parent::__construct($contextRegistry);
 

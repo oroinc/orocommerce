@@ -3,71 +3,109 @@
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Layout\DataProvider;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Model\ProductView;
 use Oro\Bundle\ShoppingListBundle\DataProvider\ProductShoppingListsDataProvider;
 use Oro\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendShoppingListProductUnitsQuantityProvider;
-use Oro\Component\Testing\Unit\EntityTrait;
 
 class FrontendShoppingListProductUnitsQuantityProviderTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
-
-    /** @var ProductShoppingListsDataProvider */
-    protected $productShoppingListsDataProvider;
+    /** @var ProductShoppingListsDataProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $productShoppingListsDataProvider;
 
     /** @var FrontendShoppingListProductUnitsQuantityProvider */
-    protected $provider;
+    private $provider;
 
     protected function setUp(): void
     {
-        $this->productShoppingListsDataProvider = $this
-            ->getMockBuilder('Oro\Bundle\ShoppingListBundle\DataProvider\ProductShoppingListsDataProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->productShoppingListsDataProvider = $this->createMock(ProductShoppingListsDataProvider::class);
 
         $this->provider = new FrontendShoppingListProductUnitsQuantityProvider(
             $this->productShoppingListsDataProvider
         );
     }
 
-    protected function tearDown(): void
+    public function testGetByProductWhenNoProduct()
     {
-        unset(
-            $this->provider,
-            $this->productShoppingListsDataProvider
-        );
+        $this->productShoppingListsDataProvider->expects(self::never())
+            ->method('getProductsUnitsQuantity');
+
+        self::assertNull($this->provider->getByProduct(null));
     }
 
     /**
      * @dataProvider getByProductDataProvider
      */
-    public function testGetByProduct(Product $product = null, array $expected = null)
+    public function testGetByProduct(int $productId, ?array $expected)
     {
-        $this->productShoppingListsDataProvider
-            ->expects($this->any())
-            ->method('getProductsUnitsQuantity')
-            ->willReturn($expected ? [$expected] : $expected);
+        $product = $this->createMock(Product::class);
+        $product->expects(self::any())
+            ->method('getId')
+            ->willReturn($productId);
 
-        $this->assertEquals($expected, $this->provider->getByProduct($product));
+        $shoppingLists = [];
+        if (null !== $expected) {
+            $shoppingLists = [$productId => $expected];
+        }
+
+        $this->productShoppingListsDataProvider->expects(self::once())
+            ->method('getProductsUnitsQuantity')
+            ->willReturn($shoppingLists);
+
+        self::assertSame($expected, $this->provider->getByProduct($product));
     }
 
     /**
-     * @return array
+     * @dataProvider getByProductDataProvider
      */
-    public function getByProductDataProvider()
+    public function testGetByProductView(int $productId, ?array $expected)
     {
-        $product = $this->getMockBuilder('Oro\Bundle\ProductBundle\Entity\Product')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $product->expects($this->any())->method('getId')->willReturn(0);
+        $product = new ProductView();
+        $product->set('id', $productId);
+
+        $shoppingLists = [];
+        if (null !== $expected) {
+            $shoppingLists = [$productId => $expected];
+        }
+
+        $this->productShoppingListsDataProvider->expects(self::once())
+            ->method('getProductsUnitsQuantity')
+            ->willReturn($shoppingLists);
+
+        self::assertSame($expected, $this->provider->getByProduct($product));
+    }
+
+    /**
+     * @dataProvider getByProductDataProvider
+     */
+    public function testGetByProducts(int $productId, ?array $expected)
+    {
+        $shoppingLists = [];
+        if (null === $expected) {
+            $expected = [];
+        } else {
+            $shoppingLists = [$productId => $expected];
+            $expected = [$productId => $expected];
+        }
+
+        $this->productShoppingListsDataProvider->expects(self::any())
+            ->method('getProductsUnitsQuantity')
+            ->willReturn($shoppingLists);
+
+        $productView = new ProductView();
+        $productView->set('id', $productId);
+
+        self::assertSame($expected, $this->provider->getByProducts([$productView]));
+    }
+
+    public function getByProductDataProvider(): array
+    {
         return [
-            'no_product' => [
-                'product' => null,
-            ],
             'no_prices' => [
-                'product' => new Product()
+                'productId' => 123,
+                'expected' => null
             ],
             'single_shopping_list' => [
-                'product' => $product,
+                'productId' => 123,
                 'expected' => [
                     [
                         'id' => 1,
@@ -81,7 +119,7 @@ class FrontendShoppingListProductUnitsQuantityProviderTest extends \PHPUnit\Fram
                 ]
             ],
             'a_few_shopping_lists' => [
-                'product' => $product,
+                'productId' => 123,
                 'expected' => [
                     [
                         'id' => 1,

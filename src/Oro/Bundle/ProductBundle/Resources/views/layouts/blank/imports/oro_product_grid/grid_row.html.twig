@@ -21,9 +21,7 @@
 {% endblock %}
 
 {% block __oro_product_grid__product_widget %}
-    {% set product = datagrid_row|merge({
-        getDefaultName: datagrid_row.name
-    }) %}
+    {% set product = datagrid_row %}
 
     {% set matrixForm = product.matrixForm %}
     {% if matrixForm.type == 'inline' and not blocks.product_datagrid_cell_matrix_wrapper.vars.visible %}

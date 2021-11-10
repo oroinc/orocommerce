@@ -13,7 +13,7 @@ services:
             - ['setContainer', ['@Psr\Container\ContainerInterface']]
         tags:
             - { name: container.service_subscriber }
-            - { name: container.service_subscriber, id: 'oro_product.layout.data_provider.product_view_form_availability_provider' }
+            - { name: container.service_subscriber, id: oro_product.layout.data_provider.product_view_form_availability_provider, key: Oro\Bundle\ProductBundle\Layout\DataProvider\ProductViewFormAvailabilityProvider }
 
     Oro\Bundle\ProductBundle\Controller\BrandController:
         calls:

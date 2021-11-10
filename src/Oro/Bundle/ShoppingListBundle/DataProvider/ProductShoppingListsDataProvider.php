@@ -4,7 +4,6 @@ namespace Oro\Bundle\ShoppingListBundle\DataProvider;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -17,23 +16,13 @@ use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
  */
 class ProductShoppingListsDataProvider
 {
-    /** @var CurrentShoppingListManager */
-    protected $currentShoppingListManager;
+    private CurrentShoppingListManager $currentShoppingListManager;
+    private LineItemRepository $lineItemRepository;
+    private AclHelper $aclHelper;
+    private TokenAccessorInterface $tokenAccessor;
+    private ConfigManager $configManager;
 
-    /** @var LineItemRepository */
-    protected $lineItemRepository;
-
-    /** @var AclHelper */
-    protected $aclHelper;
-
-    /** @var TokenAccessorInterface */
-    protected $tokenAccessor;
-
-    /** @var ConfigManager */
-    protected $configManager;
-
-    /** @var boolean|null */
-    private $isShowAllShoppingLists;
+    private ?bool $isShowAllShoppingLists = null;
 
     public function __construct(
         CurrentShoppingListManager $currentShoppingListManager,
@@ -50,26 +39,25 @@ class ProductShoppingListsDataProvider
     }
 
     /**
-     * @param Product $product
+     * @param int $productId
      *
-     * @return array|null
+     * @return array|null [shopping list data (array), ...]
      */
-    public function getProductUnitsQuantity(Product $product)
+    public function getProductUnitsQuantity(int $productId): ?array
     {
-        $shoppingLists = $this->getProductsUnitsQuantity([$product]);
+        $shoppingLists = $this->getProductsUnitsQuantity([$productId]);
 
-        return $shoppingLists[$product->getId()] ?? null;
+        return $shoppingLists[$productId] ?? null;
     }
 
     /**
-     * @param Product[] $products
+     * @param int[] $productIds
      *
-     * @return array
+     * @return array [product id => [shopping list data (array), ...], ...]
      */
-    public function getProductsUnitsQuantity(array $products)
+    public function getProductsUnitsQuantity(array $productIds): array
     {
         $currentShoppingList = $this->currentShoppingListManager->getCurrent();
-
         if (!$currentShoppingList) {
             return [];
         }
@@ -77,36 +65,32 @@ class ProductShoppingListsDataProvider
         if ($this->tokenAccessor->getToken() instanceof AnonymousCustomerUserToken) {
             $shoppingLists = $this->prepareShoppingListsForGuestUser($currentShoppingList);
         } else {
-            $shoppingLists = $this->prepareShoppingLists($products);
+            $shoppingLists = $this->prepareShoppingLists($productIds);
         }
 
-        $shoppingLists = $this->sortShoppingLists($shoppingLists, $currentShoppingList);
-
-        return $shoppingLists;
+        return $this->sortShoppingLists($shoppingLists, $currentShoppingList);
     }
 
     /**
      * @param ShoppingList $currentShoppingList
      *
-     * @return array
+     * @return array [product id => [shopping list id => shopping list data (array), ...], ...]
      */
-    private function prepareShoppingListsForGuestUser(ShoppingList $currentShoppingList)
+    private function prepareShoppingListsForGuestUser(ShoppingList $currentShoppingList): array
     {
-        $lineItems = $currentShoppingList->getLineItems()->toArray();
-
-        return $this->prepareShoppingListsData($lineItems);
+        return $this->prepareShoppingListsData($currentShoppingList->getLineItems()->toArray());
     }
 
     /**
-     * @param Product[] $products
+     * @param int[] $productIds
      *
-     * @return array
+     * @return array [product id => [shopping list id => shopping list data (array), ...], ...]
      */
-    private function prepareShoppingLists(array $products)
+    private function prepareShoppingLists(array $productIds): array
     {
         $lineItems = $this->lineItemRepository->getProductItemsWithShoppingListNames(
             $this->aclHelper,
-            $products,
+            $productIds,
             $this->isShowAllInShoppingListWidget() ? null : $this->tokenAccessor->getUser()
         );
 
@@ -115,7 +99,7 @@ class ProductShoppingListsDataProvider
 
     private function isShowAllInShoppingListWidget(): bool
     {
-        if ($this->isShowAllShoppingLists === null) {
+        if (null === $this->isShowAllShoppingLists) {
             $this->isShowAllShoppingLists = (bool)$this->configManager
                 ->get('oro_shopping_list.show_all_in_shopping_list_widget');
         }
@@ -126,40 +110,45 @@ class ProductShoppingListsDataProvider
     /**
      * @param LineItem[] $lineItems
      *
-     * @return array
+     * @return array [product id => [shopping list id => shopping list data (array), ...], ...]
      */
-    private function prepareShoppingListsData(array $lineItems)
+    private function prepareShoppingListsData(array $lineItems): array
     {
         $shoppingLists = [];
-
         foreach ($lineItems as $lineItem) {
-            $product = $lineItem->getProduct();
-
             if ($lineItem->getParentProduct()) {
-                $parentProduct = $lineItem->getParentProduct();
-                $productShoppingLists = $this->saveShoppingListData($parentProduct->getId(), $lineItem, $shoppingLists);
-                $shoppingLists[$parentProduct->getId()] = $productShoppingLists;
+                $parentProductId = $lineItem->getParentProduct()->getId();
+                $shoppingLists[$parentProductId] = $this->saveShoppingListData(
+                    $parentProductId,
+                    $lineItem,
+                    $shoppingLists
+                );
             }
 
-            $productShoppingLists = $this->saveShoppingListData($product->getId(), $lineItem, $shoppingLists);
-            $shoppingLists[$product->getId()] = $productShoppingLists;
+            $productId = $lineItem->getProduct()->getId();
+            $shoppingLists[$productId] = $this->saveShoppingListData(
+                $productId,
+                $lineItem,
+                $shoppingLists
+            );
         }
 
         return $shoppingLists;
     }
 
     /**
-     * @param int $productId
+     * @param int      $productId
      * @param LineItem $lineItem
-     * @param array $shoppingLists
-     * @return array
+     * @param array    $shoppingLists [product id => [shopping list id => shopping list data (array), ...], ...]
+     *
+     * @return array [shopping list id => shopping list data (array), ...]
      */
-    private function saveShoppingListData($productId, LineItem $lineItem, array $shoppingLists)
+    private function saveShoppingListData(int $productId, LineItem $lineItem, array $shoppingLists): array
     {
         $shoppingList = $lineItem->getShoppingList();
         $shoppingListId = $shoppingList->getId();
 
-        $productShoppingLists = $this->getProductShoppingList($shoppingLists, $productId);
+        $productShoppingLists = $shoppingLists[$productId] ?? [];
 
         if (!isset($productShoppingLists[$shoppingListId])) {
             $productShoppingLists[$shoppingListId] = [
@@ -181,16 +170,15 @@ class ProductShoppingListsDataProvider
     }
 
     /**
-     * @param array $shoppingLists
+     * @param array        $shoppingLists [product id => [shopping list id => shopping list data (array), ...], ...]
      * @param ShoppingList $currentShoppingList
      *
-     * @return array
+     * @return array [product id => [shopping list data (array), ...], ...]
      */
-    private function sortShoppingLists(array $shoppingLists, ShoppingList $currentShoppingList)
+    private function sortShoppingLists(array $shoppingLists, ShoppingList $currentShoppingList): array
     {
         $sortedShoppingLists = [];
         $currentShoppingListId = $currentShoppingList->getId();
-
         foreach ($shoppingLists as $productId => $productShoppingLists) {
             if (isset($productShoppingLists[$currentShoppingListId])) {
                 $currentShoppingList = $productShoppingLists[$currentShoppingListId];
@@ -202,16 +190,5 @@ class ProductShoppingListsDataProvider
         }
 
         return $sortedShoppingLists;
-    }
-
-    /**
-     * @param array $shoppingLists
-     * @param int $productId
-     *
-     * @return array
-     */
-    private function getProductShoppingList(array $shoppingLists, $productId)
-    {
-        return $shoppingLists[$productId] ?? [];
     }
 }

@@ -3,11 +3,11 @@
 namespace Oro\Bundle\ProductBundle\Entity\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
 /**
  * Doctrine repository for ProductUnit entity
@@ -16,18 +16,20 @@ class ProductUnitRepository extends ServiceEntityRepository
 {
     /**
      * @param Product $product
+     *
      * @return ProductUnit[]
      */
-    public function getProductUnits(Product $product)
+    public function getProductUnits(Product $product): array
     {
         return $this->getProductUnitsQueryBuilder($product)->getQuery()->getResult();
     }
 
     /**
      * @param Product[] $products
-     * @return array
+     *
+     * @return array [product id => [unit code => unit precision, ...], ...]
      */
-    public function getProductsUnits(array $products)
+    public function getProductsUnits(array $products): array
     {
         if (count($products) === 0) {
             return [];
@@ -58,9 +60,10 @@ class ProductUnitRepository extends ServiceEntityRepository
 
     /**
      * @param Product[] $products
-     * @return array
+     *
+     * @return array [product id => unit code, ...]
      */
-    public function getPrimaryProductsUnits(array $products)
+    public function getPrimaryProductsUnits(array $products): array
     {
         if (count($products) === 0) {
             return [];
@@ -84,43 +87,65 @@ class ProductUnitRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param array $products
-     * @return QueryBuilder
+     * @param int[] $productIds
+     *
+     * @return array [product id => [unit code, ...], ...]
      */
-    protected function getProductsUnitsQueryBuilder(array $products)
+    public function getProductsUnitsByProductIds(array $productIds): array
+    {
+        if (!$productIds) {
+            return [];
+        }
+
+        $rows = $this->createQueryBuilder('unit')
+            ->select('IDENTITY(unitPrecision.product) AS productId, unit.code AS code')
+            ->innerJoin(ProductUnitPrecision::class, 'unitPrecision', Join::WITH, 'unitPrecision.unit = unit')
+            ->andWhere('unitPrecision.sell = true')
+            ->andWhere('unitPrecision.product IN (:products)')
+            ->setParameter('products', $productIds)
+            ->addOrderBy('unitPrecision.unit')
+            ->getQuery()
+            ->getArrayResult();
+
+        $result = [];
+        foreach ($rows as $row) {
+            $result[$row['productId']][] = $row['code'];
+        }
+
+        return $result;
+    }
+
+    private function getProductsUnitsQueryBuilder(array $products): QueryBuilder
     {
         $qb = $this->createQueryBuilder('unit');
-        $qb->join(
-            'OroProductBundle:ProductUnitPrecision',
+        $qb->innerJoin(
+            ProductUnitPrecision::class,
             'productUnitPrecision',
             Join::WITH,
-            $qb->expr()->eq('productUnitPrecision.unit', 'unit')
+            'productUnitPrecision.unit = unit'
         )
             ->leftJoin(
-                'OroProductBundle:Product',
+                Product::class,
                 'product',
                 Join::WITH,
                 'product.primaryUnitPrecision = productUnitPrecision'
             )
             ->addOrderBy('productUnitPrecision.unit')
             ->andWhere('productUnitPrecision.sell = true')
-            ->andWhere($qb->expr()->in('productUnitPrecision.product', ':products'))
+            ->andWhere('productUnitPrecision.product IN (:products)')
             ->setParameter('products', $products);
+
         return $qb;
     }
 
-    /**
-     * @param array $products
-     * @param array $codes
-     * @return array
-     */
-    public function getProductsUnitsByCodes(array $products, array $codes)
+    public function getProductsUnitsByCodes(array $products, array $codes): array
     {
         if (count($products) === 0 || count($codes) === 0) {
             return [];
         }
+
         $qb = $this->getProductsUnitsQueryBuilder($products);
-        $qb->andWhere($qb->expr()->in('unit', ':units'))
+        $qb->andWhere('unit IN (:units)')
             ->setParameter('units', $codes);
 
         return array_reduce($qb->getQuery()->execute(), function ($result, ProductUnit $unit) {
@@ -132,60 +157,33 @@ class ProductUnitRepository extends ServiceEntityRepository
     /**
      * @return ProductUnit[]
      */
-    public function getAllUnits()
+    public function getAllUnits(): array
     {
         return $this->findBy([], ['code' => 'ASC']);
     }
 
-    /**
-     * @param Product $product
-     *
-     * @return QueryBuilder
-     */
-    public function getProductUnitsQueryBuilder(Product $product)
+    public function getProductUnitsQueryBuilder(Product $product): QueryBuilder
     {
         $qb = $this->createQueryBuilder('unit');
         $qb
             ->select('unit')
-            ->join(
-                'OroProductBundle:ProductUnitPrecision',
+            ->innerJoin(
+                ProductUnitPrecision::class,
                 'productUnitPrecision',
                 Join::WITH,
-                $qb->expr()->eq('productUnitPrecision.unit', 'unit')
+                'productUnitPrecision.unit = unit'
             )
             ->addOrderBy('unit.code')
-            ->andWhere($qb->expr()->eq('productUnitPrecision.product', ':product'))
+            ->andWhere('productUnitPrecision.product = :product')
             ->setParameter('product', $product);
 
         return $qb;
     }
 
     /**
-     * @param int $productId
-     * @return QueryBuilder
-     *
-     * @throws \InvalidArgumentException if id is not valid
-     * @throws EntityNotFoundException if entity not found by id
+     * @return string[]
      */
-    public function getProductUnitsQueryBuilderById($productId)
-    {
-        if (!is_numeric($productId)) {
-            throw new \InvalidArgumentException();
-        }
-
-        $product = $this->_em->getReference('OroProductBundle:Product', (int)$productId);
-        if (!$product) {
-            throw new EntityNotFoundException();
-        }
-
-        /** @var Product $product */
-        return $this->getProductUnitsQueryBuilder($product);
-    }
-
-    /**
-     * @return array
-     */
-    public function getAllUnitCodes()
+    public function getAllUnitCodes(): array
     {
         $results = $this->createQueryBuilder('unit')
             ->select('unit.code')
@@ -193,11 +191,6 @@ class ProductUnitRepository extends ServiceEntityRepository
             ->getQuery()
             ->getScalarResult();
 
-        $codes = [];
-        foreach ($results as $result) {
-            $codes[] = $result['code'];
-        }
-
-        return $codes;
+        return array_column($results, 'code');
     }
 }

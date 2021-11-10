@@ -11,6 +11,8 @@ use Oro\Bundle\UIBundle\Provider\UserAgentProvider;
 
 class ProductFormAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
 {
+    private const MATRIX_FORM_CONFIG_OPTION_NAME = 'test.matrix_form_type';
+
     /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     private $configManager;
 
@@ -31,6 +33,7 @@ class ProductFormAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->provider = new ProductFormAvailabilityProvider(
             $this->configManager,
+            self::MATRIX_FORM_CONFIG_OPTION_NAME,
             $this->productMatrixAvailabilityProvider,
             $this->userAgentProvider
         );
@@ -61,7 +64,7 @@ class ProductFormAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->configManager->expects(self::once())
             ->method('get')
-            ->with('oro_product.matrix_form_on_product_listing')
+            ->with(self::MATRIX_FORM_CONFIG_OPTION_NAME)
             ->willReturn(Configuration::MATRIX_FORM_NONE);
 
         $this->productMatrixAvailabilityProvider->expects(self::never())
@@ -82,7 +85,7 @@ class ProductFormAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->configManager->expects(self::once())
             ->method('get')
-            ->with('oro_product.matrix_form_on_product_listing')
+            ->with(self::MATRIX_FORM_CONFIG_OPTION_NAME)
             ->willReturn(Configuration::MATRIX_FORM_INLINE);
 
         $this->productMatrixAvailabilityProvider->expects(self::once())
@@ -107,7 +110,7 @@ class ProductFormAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->configManager->expects(self::once())
             ->method('get')
-            ->with('oro_product.matrix_form_on_product_listing')
+            ->with(self::MATRIX_FORM_CONFIG_OPTION_NAME)
             ->willReturn(Configuration::MATRIX_FORM_INLINE);
 
         $this->productMatrixAvailabilityProvider->expects(self::once())
@@ -132,7 +135,7 @@ class ProductFormAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->configManager->expects(self::once())
             ->method('get')
-            ->with('oro_product.matrix_form_on_product_listing')
+            ->with(self::MATRIX_FORM_CONFIG_OPTION_NAME)
             ->willReturn(Configuration::MATRIX_FORM_INLINE);
 
         $this->productMatrixAvailabilityProvider->expects(self::once())
@@ -167,7 +170,7 @@ class ProductFormAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->configManager->expects(self::once())
             ->method('get')
-            ->with('oro_product.matrix_form_on_product_listing')
+            ->with(self::MATRIX_FORM_CONFIG_OPTION_NAME)
             ->willReturn(Configuration::MATRIX_FORM_INLINE);
 
         $this->productMatrixAvailabilityProvider->expects(self::once())
@@ -202,7 +205,7 @@ class ProductFormAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->configManager->expects(self::once())
             ->method('get')
-            ->with('oro_product.matrix_form_on_product_listing')
+            ->with(self::MATRIX_FORM_CONFIG_OPTION_NAME)
             ->willReturn(Configuration::MATRIX_FORM_INLINE);
 
         $this->productMatrixAvailabilityProvider->expects(self::once())

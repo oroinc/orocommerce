@@ -314,20 +314,12 @@ services:
     oro_order.layout.provider.top_selling_items:
         class: 'Oro\Bundle\OrderBundle\Layout\DataProvider\TopSellingItemsProvider'
         arguments:
-            - "@oro_product.repository.product"
-            - "@oro_product.product.manager"
-            - "@oro_security.acl_helper"
+            - '@doctrine'
+            - '@oro_product.product.manager'
+            - '@oro_security.acl_helper'
+            - '@oro_product.product_list_builder'
         tags:
             - { name: layout.data_provider, alias: top_selling_items }
-
-    oro_order.layout.provider.top_selling_items.cache_decorator:
-        parent: oro_product.doctrine.abstract_cached_provider_decorator
-        decorates: oro_order.layout.provider.top_selling_items
-        decoration_priority: 10
-        arguments:
-            - '@oro_order.layout.provider.top_selling_items.cache_decorator.inner'
-            - '@oro.cache.memory_cache_chain'
-            - 'oro_order.layout.provider.top_selling_items'
 
     oro_order.factory.shipping_context:
         class: 'Oro\Bundle\OrderBundle\Factory\OrderShippingContextFactory'

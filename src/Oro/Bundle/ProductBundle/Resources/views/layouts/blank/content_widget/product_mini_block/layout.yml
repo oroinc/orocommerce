@@ -22,16 +22,12 @@ layout:
             optionValue:
                 product: '=data["product"]'
                 stickers: '=data["product"] ? data["oro_product_stickers"].getStickers(data["product"]) : []'
-                matrixFormType: '=data["product"] ? data["product_list_form_availability_provider"].getAvailableMatrixFormType(data["product"], "gallery-view") : null'
+                matrixFormType: '=data["product"] ? data["product_list_form_availability_provider"].getAvailableMatrixFormType(data["product"]) : null'
                 isTargetBlank: '=data["current_user"].isFrontendRequest() === false'
         - '@setOption':
-            id: product_line_item_form_fields
-            optionName: form
-            optionValue: '=data["oro_product_form"].getLineItemFormView(data.offsetExists("product")?data["product"], data["instanceNumber"])'
-        - '@setOption':
-            id: product_line_item_form_end
-            optionName: form
-            optionValue: '=data["oro_product_form"].getLineItemFormView(data.offsetExists("product")?data["product"], data["instanceNumber"])'
+            id: product_line_item_form
+            optionName: instance_name
+            optionValue: '="product_mini_block_"~data["instanceNumber"]'
         - '@appendOption':
             id: product_line_item_form
             optionName: vars

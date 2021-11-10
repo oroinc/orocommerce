@@ -12,7 +12,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 abstract class AbstractAssignerDatabaseStrategy implements AssignerStrategyInterface
 {
     /**
-     * @var AbstractRelatedItemConfigProvider
+     * @var RelatedItemConfigProviderInterface
      */
     protected $configProvider;
 
@@ -21,7 +21,7 @@ abstract class AbstractAssignerDatabaseStrategy implements AssignerStrategyInter
      */
     protected $doctrineHelper;
 
-    public function __construct(DoctrineHelper $doctrineHelper, AbstractRelatedItemConfigProvider $configProvider)
+    public function __construct(DoctrineHelper $doctrineHelper, RelatedItemConfigProviderInterface $configProvider)
     {
         $this->doctrineHelper = $doctrineHelper;
         $this->configProvider = $configProvider;

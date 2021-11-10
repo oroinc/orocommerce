@@ -615,14 +615,6 @@ services:
         tags:
             - { name: doctrine.repository_service }
 
-    oro_product.restricted_repository.product:
-        class: Oro\Bundle\ProductBundle\Entity\Repository\Restriction\RestrictedProductRepository
-        arguments:
-            - '@oro_entity.doctrine_helper'
-            - '@oro_product.product.manager'
-            - '@oro_security.acl_helper'
-            - 'Oro\Bundle\ProductBundle\Entity\Product'
-
     oro_product.repository.product_image:
         parent: oro_entity.abstract_repository
         arguments:
@@ -699,41 +691,70 @@ services:
             - '@form.factory'
             - '@router'
             - '@oro_product.provider.product_variant_availability_provider'
+            - '@doctrine'
         tags:
             - { name: layout.data_provider, alias: oro_product_form }
 
-    oro_product.product_form_availability_provider:
-        class: 'Oro\Bundle\ProductBundle\Provider\ProductFormAvailabilityProvider'
+    oro_product.product_list_event_dispatcher:
+        class: Oro\Bundle\ProductBundle\Event\ProductListEventDispatcher
         arguments:
-            - '@oro_config.manager'
-            - '@oro_product.provider.product_matrix_availability_provider'
-            - '@oro_ui.user_agent_provider'
+            - '@event_dispatcher'
+
+    oro_product.product_list_builder:
+        class: Oro\Bundle\ProductBundle\Provider\ProductListBuilder
+        arguments:
+            - '@oro_search.query_factory'
+            - '@oro_product.product_list_event_dispatcher'
+
+    oro_product.event_listener.product_list:
+        class: Oro\Bundle\ProductBundle\EventListener\ProductListEventListener
+        arguments:
+            - '@oro_product.provider.product_image_placeholder'
+        tags:
+            - { name: kernel.event_listener, event: oro_product.product_list.build_query, method: onBuildQuery, priority: 10 }
+            - { name: kernel.event_listener, event: oro_product.product_list.build_result, method: onBuildResult, priority: 10 }
+
+    oro_product.provider.frontend_product_units_provider:
+        class: Oro\Bundle\ProductBundle\Provider\FrontendProductUnitsProvider
+        arguments:
+            - '@doctrine'
 
     oro_product.provider.product_matrix_availability_provider:
         class: 'Oro\Bundle\ProductBundle\Provider\ProductMatrixAvailabilityProvider'
         arguments:
             - '@oro_product.provider.product_variant_availability_provider'
-            - '@oro_product.website_search.repository.product'
+            - '@oro_product.provider.frontend_product_units_provider'
 
-    oro_product.layout.data_provider.product_form_availability_provider:
-        abstract: true
-        class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\ProductFormAvailabilityProvider'
+    oro_product.provider.product_view_form_availability:
+        class: 'Oro\Bundle\ProductBundle\Provider\ProductFormAvailabilityProvider'
         arguments:
             - '@oro_config.manager'
+            - 'oro_product.matrix_form_on_product_view'
+            - '@oro_product.provider.product_matrix_availability_provider'
+            - '@oro_ui.user_agent_provider'
+
+    oro_product.provider.product_list_form_availability:
+        class: 'Oro\Bundle\ProductBundle\Provider\ProductFormAvailabilityProvider'
+        arguments:
+            - '@oro_config.manager'
+            - 'oro_product.matrix_form_on_product_listing'
             - '@oro_product.provider.product_matrix_availability_provider'
             - '@oro_ui.user_agent_provider'
 
     oro_product.layout.data_provider.product_view_form_availability_provider:
-        parent: oro_product.layout.data_provider.product_form_availability_provider
-        calls:
-            - [setMatrixFormConfig, ['matrix_form_on_product_view']]
+        class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\ProductViewFormAvailabilityProvider'
+        arguments:
+            - '@oro_product.provider.product_view_form_availability'
+            - '@oro_product.provider.product_matrix_availability_provider'
+            - '@oro_config.manager'
+            - '@oro_ui.user_agent_provider'
         tags:
             - { name: layout.data_provider, alias: product_view_form_availability_provider }
 
     oro_product.layout.data_provider.product_list_form_availability_provider:
-        parent: oro_product.layout.data_provider.product_form_availability_provider
-        calls:
-            - [setMatrixFormConfig, ['matrix_form_on_product_listing']]
+        class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\ProductListFormAvailabilityProvider'
+        arguments:
+            - '@oro_product.provider.product_list_form_availability'
         tags:
             - { name: layout.data_provider, alias: product_list_form_availability_provider }
 
@@ -815,36 +836,53 @@ services:
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\SegmentBundle\Entity\Segment', event: preRemove }
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\SegmentBundle\Entity\Segment', event: postPersist }
 
-    oro_product.layout.data_provider.abstract_segment_products_provider:
-        class: Oro\Bundle\ProductBundle\Layout\DataProvider\AbstractSegmentProductsProvider
-        abstract: true
+    oro_product.layout.segment_products_query_cache:
+        class: Oro\Bundle\ProductBundle\Layout\SegmentProducts\SegmentProductsQueryCache
         arguments:
-            - '@oro_segment.segment_manager'
-            - '@oro_website.manager'
-            - '@oro_product.provider.segment'
-            - '@oro_product.product.manager'
-            - '@oro_config.manager'
             - '@doctrine'
-            - '@security.token_storage'
             - '@oro_security.encoder.default'
-            - '@oro_security.acl_helper'
-        calls:
-            - [setCache, ['@oro_product.layout.data_provider.cache', 3600]]
+            - '@oro_product.layout.data_provider.cache'
+            - 3600
+
+    oro_product.layout.segment_products_query_provider:
+        class: Oro\Bundle\ProductBundle\Layout\SegmentProducts\SegmentProductsQueryProvider
+        arguments:
+            - '@security.token_storage'
+            - '@oro_website.manager'
+            - '@oro_segment.segment_manager'
+            - '@oro_product.product.manager'
+            - '@oro_product.layout.segment_products_query_cache'
 
     oro_product.layout.data_provider.featured_products:
-        class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\FeaturedProductsProvider'
-        parent: oro_product.layout.data_provider.abstract_segment_products_provider
+        class: Oro\Bundle\ProductBundle\Layout\DataProvider\FeaturedProductsProvider
+        arguments:
+            - '@oro_product.layout.segment_products_query_provider'
+            - '@oro_product.provider.segment'
+            - '@oro_product.product_list_builder'
+            - '@oro_security.acl_helper'
+            - '@oro_config.manager'
         tags:
             - { name: layout.data_provider, alias: featured_products }
 
-    oro_product.layout.data_provider.featured_products.cache_decorator:
-        parent: oro_product.doctrine.abstract_cached_provider_decorator
-        decorates: oro_product.layout.data_provider.featured_products
-        decoration_priority: 10
+    oro_product.layout.data_provider.new_arrivals:
+        class: Oro\Bundle\ProductBundle\Layout\DataProvider\NewArrivalsProvider
         arguments:
-            - '@oro_product.layout.data_provider.featured_products.cache_decorator.inner'
-            - '@oro.cache.memory_cache_chain'
-            - 'oro_product.layout.data_provider.featured_products'
+            - '@oro_product.layout.segment_products_query_provider'
+            - '@oro_product.provider.segment'
+            - '@oro_product.product_list_builder'
+            - '@oro_security.acl_helper'
+            - '@oro_config.manager'
+        tags:
+            - { name: layout.data_provider, alias: new_arrivals }
+
+    oro_product.layout.data_provider.segment_products:
+        class: Oro\Bundle\ProductBundle\Layout\DataProvider\SegmentProductsProvider
+        arguments:
+            - '@oro_product.layout.segment_products_query_provider'
+            - '@oro_product.product_list_builder'
+            - '@oro_security.acl_helper'
+        tags:
+            - { name: layout.data_provider, alias: segment_products }
 
     oro_product.event_listener.product_image_listener:
         class: 'Oro\Bundle\ProductBundle\EventListener\ProductImageListener'
@@ -986,15 +1024,13 @@ services:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onViewList, priority: -255 }
 
     oro_product.provider.product_variant_availability_provider:
-        public: false
         class: 'Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider'
         arguments:
-            - '@oro_entity.doctrine_helper'
+            - '@doctrine'
             - '@oro_product.provider.custom_field_provider'
             - '@property_accessor'
             - '@event_dispatcher'
             - '@oro_product.product_variant_field.registry.product_variant_field_value_handler_registry'
-            - '@oro_security.acl_helper'
 
     Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider:
         alias: 'oro_product.provider.product_variant_availability_provider'
@@ -1431,26 +1467,6 @@ services:
         tags:
             - { name: layout.data_provider, alias: oro_product_stickers }
 
-    oro_product.layout.data_provider.new_arrivals:
-        class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\NewArrivalsProvider'
-        parent: oro_product.layout.data_provider.abstract_segment_products_provider
-        tags:
-            - { name: layout.data_provider, alias: new_arrivals }
-
-    oro_product.layout.data_provider.segment_products:
-        class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\SegmentProductsProvider'
-        arguments:
-            - '@oro_segment.segment_manager'
-            - '@oro_product.product.manager'
-            - '@doctrine'
-            - '@security.token_storage'
-            - '@oro_security.encoder.default'
-            - '@oro_security.acl_helper'
-        calls:
-            - [setCache, ['@oro_product.layout.data_provider.cache', 3600]]
-        tags:
-            - { name: layout.data_provider, alias: segment_products }
-
     oro_product.layout.data_provider.search_product:
         class: Oro\Bundle\ProductBundle\Layout\DataProvider\SearchProductDataProvider
         arguments:
@@ -1458,15 +1474,6 @@ services:
             - "@translator"
         tags:
             - { name: layout.data_provider, alias: oro_product_search }
-
-    oro_product.layout.data_provider.new_arrivals.cache_decorator:
-        parent: oro_product.doctrine.abstract_cached_provider_decorator
-        decorates: oro_product.layout.data_provider.new_arrivals
-        decoration_priority: 10
-        arguments:
-            - '@oro_product.layout.data_provider.new_arrivals.cache_decorator.inner'
-            - '@oro.cache.memory_cache_chain'
-            - 'oro_product.layout.data_provider.new_arrivals'
 
     oro_product.layout.data_provider.product_filtered_image:
         parent: oro_layout.layout.data_provider.filtered_image.abstract
@@ -1487,10 +1494,6 @@ services:
             - '@oro_segment.segment_manager'
             - '@logger'
             - '@oro_security.token_accessor'
-
-    oro_product.doctrine.abstract_cached_provider_decorator:
-        class: 'Oro\Bundle\ProductBundle\Provider\Cache\Doctrine\CachedProductsProviderDecorator'
-        abstract: true
 
     Oro\Bundle\ProductBundle\Provider\ProductImagesURLsProvider:
         alias: oro_product.provider.product_images_urls
@@ -1776,9 +1779,7 @@ services:
     oro_product.content_widget_type.product_mini_block:
         class: Oro\Bundle\ProductBundle\ContentWidget\ProductMiniBlockContentWidgetType
         arguments:
-            - '@doctrine'
-            - '@security.authorization_checker'
-            - "@oro_config.manager"
+            - '@oro_product.product_list_builder'
         tags:
             - { name: oro_cms.content_widget.type }
 

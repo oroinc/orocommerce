@@ -2,10 +2,11 @@
 
 namespace Oro\Bundle\ShoppingListBundle\EventListener;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
 use Oro\Bundle\ShoppingListBundle\DataProvider\ProductShoppingListsDataProvider;
@@ -15,63 +16,58 @@ use Oro\Bundle\ShoppingListBundle\DataProvider\ProductShoppingListsDataProvider;
  */
 class FrontendProductDatagridListener
 {
-    const COLUMN_LINE_ITEMS = 'shopping_lists';
+    private const COLUMN_SHOPPING_LISTS = 'shopping_lists';
 
-    /** @var ProductShoppingListsDataProvider */
-    private $productShoppingListsDataProvider;
+    private ProductShoppingListsDataProvider $productShoppingListsDataProvider;
+    private ManagerRegistry $doctrine;
 
-    /** @var DoctrineHelper */
-    private $doctrineHelper;
-
-    /**
-     * FrontendProductDatagridListener constructor.
-     */
     public function __construct(
         ProductShoppingListsDataProvider $productShoppingListsDataProvider,
-        DoctrineHelper $doctrineHelper
+        ManagerRegistry $doctrine
     ) {
         $this->productShoppingListsDataProvider = $productShoppingListsDataProvider;
-        $this->doctrineHelper = $doctrineHelper;
+        $this->doctrine = $doctrine;
     }
 
-    public function onPreBuild(PreBuild $event)
+    public function onPreBuild(PreBuild $event): void
     {
         $config = $event->getConfig();
 
         $config->offsetAddToArrayByPath(
             '[properties]',
             [
-                self::COLUMN_LINE_ITEMS => [
+                self::COLUMN_SHOPPING_LISTS => [
                     'type'          => 'field',
-                    'frontend_type' => PropertyInterface::TYPE_ROW_ARRAY,
-                ],
+                    'frontend_type' => PropertyInterface::TYPE_ROW_ARRAY
+                ]
             ]
         );
     }
 
-    public function onResultAfter(SearchResultAfter $event)
+    public function onResultAfter(SearchResultAfter $event): void
     {
         /** @var ResultRecord[] $records */
         $records = $event->getRecords();
-        $products = [];
-        $entityManager = $this->doctrineHelper->getEntityManagerForClass(Product::class);
 
+        $products = [];
+        /** @var EntityManagerInterface $em */
+        $em = $this->doctrine->getManagerForClass(Product::class);
         foreach ($records as $record) {
-            if ($product = $entityManager->getReference(Product::class, $record->getValue('id'))) {
+            $product = $em->getReference(Product::class, $record->getValue('id'));
+            if ($product) {
                 $products[] = $product;
             }
         }
 
         $groupedShoppingLists = $this->productShoppingListsDataProvider->getProductsUnitsQuantity($products);
-
         if (!$groupedShoppingLists) {
             return;
         }
 
         foreach ($records as $record) {
             $productId = $record->getValue('id');
-            if (array_key_exists($productId, $groupedShoppingLists)) {
-                $record->addData([self::COLUMN_LINE_ITEMS => $groupedShoppingLists[$productId]]);
+            if (\array_key_exists($productId, $groupedShoppingLists)) {
+                $record->addData([self::COLUMN_SHOPPING_LISTS => $groupedShoppingLists[$productId]]);
             }
         }
     }

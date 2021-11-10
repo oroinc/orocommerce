@@ -10,9 +10,7 @@ use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
 
 class ProductStickersFrontendDatagridListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ProductStickersFrontendDatagridListener
-     */
+    /** @var ProductStickersFrontendDatagridListener */
     private $listener;
 
     protected function setUp(): void
@@ -22,90 +20,57 @@ class ProductStickersFrontendDatagridListenerTest extends \PHPUnit\Framework\Tes
 
     public function testOnPreBuild()
     {
-        $event = $this->createPreBuildEventMock();
+        $config = $this->createMock(DatagridConfiguration::class);
+        $config->expects(self::once())
+            ->method('offsetAddToArrayByPath')
+            ->with(
+                '[properties]',
+                [
+                    'stickers' => [
+                        'type' => 'field',
+                        'frontend_type' => 'row_array'
+                    ]
+                ]
+            );
 
-        $config = $this->createDatagridConfigurationMock();
-
-        $event->expects(static::once())
+        $event = $this->createMock(PreBuild::class);
+        $event->expects(self::once())
             ->method('getConfig')
             ->willReturn($config);
-
-        $config->expects(static::once())
-            ->method('offsetAddToArrayByPath')
-            ->with('[properties]', [
-                'stickers' => [
-                    'type' => 'field',
-                    'frontend_type' => 'row_array',
-                ],
-            ]);
-
         $this->listener->onPreBuild($event);
     }
 
     public function testOnResultAfter()
     {
-        $event = $this->createSearchResultAfterEventMock();
-
-        $record1 = $this->createResultRecordMock();
-        $record1->method('getValue')
+        $record1 = $this->createMock(ResultRecord::class);
+        $record1->expects(self::once())
+            ->method('getValue')
             ->with('newArrival')
             ->willReturn(false);
-
-        $record1->expects(static::once())
+        $record1->expects(self::once())
             ->method('addData')
             ->with([
-                'stickers' => [],
+                'stickers' => []
             ]);
 
-        $record2 = $this->createResultRecordMock();
-        $record2->method('getValue')
+        $record2 = $this->createMock(ResultRecord::class);
+        $record2->expects(self::once())
+            ->method('getValue')
             ->with('newArrival')
             ->willReturn(true);
-
-        $record2->expects(static::once())
+        $record2->expects(self::once())
             ->method('addData')
             ->with([
                 'stickers' => [
-                    ['type' => 'new_arrival'],
-                ],
+                    ['type' => 'new_arrival']
+                ]
             ]);
 
-        $event->expects(static::once())
+        $event = $this->createMock(SearchResultAfter::class);
+        $event->expects(self::once())
             ->method('getRecords')
             ->willReturn([$record1, $record2]);
 
         $this->listener->onResultAfter($event);
-    }
-
-    /**
-     * @return PreBuild|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function createPreBuildEventMock()
-    {
-        return $this->createMock(PreBuild::class);
-    }
-
-    /**
-     * @return SearchResultAfter|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function createSearchResultAfterEventMock()
-    {
-        return $this->createMock(SearchResultAfter::class);
-    }
-
-    /**
-     * @return DatagridConfiguration|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function createDatagridConfigurationMock()
-    {
-        return $this->createMock(DatagridConfiguration::class);
-    }
-
-    /**
-     * @return ResultRecord|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function createResultRecordMock()
-    {
-        return $this->createMock(ResultRecord::class);
     }
 }

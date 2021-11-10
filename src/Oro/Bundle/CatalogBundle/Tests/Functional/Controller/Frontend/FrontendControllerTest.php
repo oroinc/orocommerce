@@ -5,6 +5,7 @@ namespace Oro\Bundle\CatalogBundle\Tests\Functional\Controller\Frontend;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
@@ -21,6 +22,8 @@ class FrontendControllerTest extends WebTestCase
             LoadCategoryProductData::class,
             LoadProductData::class
         ]);
+        $this->getContainer()->get('oro_website_search.indexer')
+            ->reindex(Product::class);
     }
 
     public function testIndex()
@@ -31,8 +34,8 @@ class FrontendControllerTest extends WebTestCase
         $content = $result->getContent();
 
         $this->assertNotEmpty($content);
-        static::assertStringContainsString('list-slider-component', $content);
-        static::assertStringContainsString('Featured Products', $content);
-        static::assertStringContainsString('Top Selling Items', $content);
+        self::assertStringContainsString('list-slider-component', $content);
+        self::assertStringContainsString('Featured Products', $content);
+        self::assertStringContainsString('Top Selling Items', $content);
     }
 }

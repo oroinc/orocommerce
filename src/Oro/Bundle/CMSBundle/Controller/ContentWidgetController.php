@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CMSBundle\Controller;
 
 use Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetTypeRegistry;
+use Oro\Bundle\CMSBundle\ContentWidget\FrontendEmulator;
 use Oro\Bundle\CMSBundle\Entity\ContentWidget;
 use Oro\Bundle\CMSBundle\Form\Handler\ContentWidgetHandler;
 use Oro\Bundle\CMSBundle\Form\Type\ContentWidgetType;
@@ -49,12 +50,19 @@ class ContentWidgetController extends AbstractController
         $contentWidgetType = $this->get(ContentWidgetTypeRegistry::class)
             ->getWidgetType($contentWidget->getWidgetType());
 
+        $additionalBlocks = [];
+        if (null !== $contentWidgetType) {
+            $twig = $this->get('twig');
+            $frontendEmulator = $this->get(FrontendEmulator::class);
+            $frontendEmulator->startFrontendRequestEmulation();
+            try {
+                $additionalBlocks = $contentWidgetType->getBackOfficeViewSubBlocks($contentWidget, $twig);
+            } finally {
+                $frontendEmulator->stopFrontendRequestEmulation();
+            }
+        }
+
         $translator = $this->get(TranslatorInterface::class);
-
-        $additionalBlocks = $contentWidgetType
-            ? $contentWidgetType->getBackOfficeViewSubBlocks($contentWidget, $this->get('twig'))
-            : [];
-
         foreach ($additionalBlocks as &$additionalBlock) {
             $additionalBlock['title'] = isset($additionalBlock['title'])
                 ? $translator->trans((string) $additionalBlock['title'])
@@ -146,6 +154,7 @@ class ContentWidgetController extends AbstractController
                 TranslatorInterface::class,
                 ContentWidgetTypeRegistry::class,
                 ContentWidgetHandler::class,
+                FrontendEmulator::class
             ]
         );
     }

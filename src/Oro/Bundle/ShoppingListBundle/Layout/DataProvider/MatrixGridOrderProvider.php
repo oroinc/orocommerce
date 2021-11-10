@@ -2,9 +2,12 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Layout\DataProvider;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Model\ProductView;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
@@ -15,46 +18,27 @@ use Oro\Bundle\ShoppingListBundle\Manager\MatrixGridOrderManager;
  */
 class MatrixGridOrderProvider
 {
-    /**
-     * @var MatrixGridOrderManager
-     */
-    private $matrixGridManager;
-
-    /**
-     * @var TotalProcessorProvider
-     */
-    private $totalProvider;
-
-    /**
-     * @var NumberFormatter
-     */
-    private $numberFormatter;
-
-    /**
-     * @var CurrentShoppingListManager
-     */
-    private $currentShoppingListManager;
+    private MatrixGridOrderManager $matrixGridManager;
+    private TotalProcessorProvider $totalProvider;
+    private NumberFormatter $numberFormatter;
+    private CurrentShoppingListManager $currentShoppingListManager;
+    private ManagerRegistry $doctrine;
 
     public function __construct(
         MatrixGridOrderManager $matrixGridManager,
         TotalProcessorProvider $totalProvider,
         NumberFormatter $numberFormatter,
-        CurrentShoppingListManager $currentShoppingListManager
+        CurrentShoppingListManager $currentShoppingListManager,
+        ManagerRegistry $doctrine
     ) {
         $this->matrixGridManager = $matrixGridManager;
         $this->totalProvider = $totalProvider;
         $this->numberFormatter = $numberFormatter;
         $this->currentShoppingListManager = $currentShoppingListManager;
+        $this->doctrine = $doctrine;
     }
 
-    /**
-     * Get total quantities for all columns and per column
-     *
-     * @param Product $product
-     * @param ShoppingList $shoppingList
-     * @return float
-     */
-    public function getTotalQuantity(Product $product, ShoppingList $shoppingList = null)
+    public function getTotalQuantity(Product $product, ShoppingList $shoppingList = null): float|int
     {
         $shoppingList = $shoppingList ?: $this->currentShoppingListManager->getCurrent();
 
@@ -70,12 +54,7 @@ class MatrixGridOrderProvider
         return $totalQuantity;
     }
 
-    /**
-     * @param Product $product
-     * @param ShoppingList $shoppingList
-     * @return string
-     */
-    public function getTotalPriceFormatted(Product $product, ShoppingList $shoppingList = null)
+    public function getTotalPriceFormatted(Product $product, ShoppingList $shoppingList = null): string
     {
         $shoppingList = $shoppingList ?: $this->currentShoppingListManager->getCurrent();
 
@@ -112,23 +91,31 @@ class MatrixGridOrderProvider
     }
 
     /**
-     * @param Product[] $products
-     * @param ShoppingList $shoppingList
+     * @param ProductView[]     $products
+     * @param ShoppingList|null $shoppingList
+     *
      * @return array
      */
-    public function getTotalsQuantityPrice(array $products, ShoppingList $shoppingList = null)
+    public function getTotalsQuantityPrice(array $products, ShoppingList $shoppingList = null): array
     {
         $totals = [];
-
+        $configurableProducts = [];
         foreach ($products as $product) {
-            if ($product->getType() !== Product::TYPE_CONFIGURABLE) {
-                continue;
+            if ($product->get('type') === Product::TYPE_CONFIGURABLE) {
+                $configurableProducts[] = $product;
             }
-
-            $totals[$product->getId()] = [
-                'quantity' => $this->getTotalQuantity($product, $shoppingList),
-                'price' => $this->getTotalPriceFormatted($product, $shoppingList),
-            ];
+        }
+        if ($configurableProducts) {
+            /** @var EntityManagerInterface $em */
+            $em = $this->doctrine->getManagerForClass(Product::class);
+            foreach ($configurableProducts as $product) {
+                $productId = $product->getId();
+                $productEntity = $em->getReference(Product::class, $productId);
+                $totals[$productId] = [
+                    'quantity' => $this->getTotalQuantity($productEntity, $shoppingList),
+                    'price' => $this->getTotalPriceFormatted($productEntity, $shoppingList),
+                ];
+            }
         }
 
         return $totals;

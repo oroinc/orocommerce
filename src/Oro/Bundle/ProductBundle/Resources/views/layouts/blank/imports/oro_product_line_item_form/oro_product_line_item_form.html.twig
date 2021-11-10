@@ -41,7 +41,13 @@
                 {% if product is iterable %}
                     {% set currentProduct = product %}
                 {% else %}
-                    {% set currentProduct = product.jsonSerialize() %}
+                    {% set currentProduct = {
+                        'id': product.id,
+                        'sku': product.sku,
+                        'name': product.name,
+                        'unit': product.unit,
+                        'product_units': product.product_units
+                    } %}
                 {% endif %}
 
                 {% if currentProduct.product_units is not defined or currentProduct.product_units|length > 1 %}

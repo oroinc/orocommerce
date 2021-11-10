@@ -8,24 +8,13 @@ use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatterInterface;
 
 /**
- * Used to create formatted array of ProductPriceInterface variables
+ * Provides a functionality to format product prices.
  */
 class ProductPriceFormatter
 {
-    /**
-     * @var NumberFormatter
-     */
-    protected $numberFormatter;
-
-    /**
-     * @var UnitLabelFormatterInterface
-     */
-    protected $unitLabelFormatter;
-
-    /**
-     * @var UnitValueFormatterInterface
-     */
-    protected $unitValueFormatter;
+    private NumberFormatter $numberFormatter;
+    private UnitLabelFormatterInterface $unitLabelFormatter;
+    private UnitValueFormatterInterface $unitValueFormatter;
 
     public function __construct(
         NumberFormatter $numberFormatter,
@@ -37,25 +26,7 @@ class ProductPriceFormatter
         $this->unitValueFormatter = $unitValueFormatter;
     }
 
-    /**
-     * @param array $productsWithPrices
-     * @return array
-     */
-    public function formatProducts(array $productsWithPrices)
-    {
-        $resultPrices = [];
-        foreach ($productsWithPrices as $productId => $units) {
-            $resultPrices[$productId] = $this->formatProductUnits($units);
-        }
-
-        return $resultPrices;
-    }
-
-    /**
-     * @param ProductPriceInterface $price
-     * @return array
-     */
-    public function formatProductPrice(ProductPriceInterface $price)
+    public function formatProductPrice(ProductPriceInterface $price): array
     {
         $priceValue = $price->getPrice()->getValue();
         $priceCurrency = $price->getPrice()->getCurrency();
@@ -73,10 +44,26 @@ class ProductPriceFormatter
     }
 
     /**
-     * @param array $units
-     * @return array
+     * @param array $productsWithPrices [product id => [unit => [ProductPriceInterface, ...], ...], ...]
+     *
+     * @return array [product id => ['{unit}_{quantity}' => formatted price (array), ...], ...]
      */
-    private function formatProductUnits(array $units)
+    public function formatProducts(array $productsWithPrices): array
+    {
+        $resultPrices = [];
+        foreach ($productsWithPrices as $productId => $units) {
+            $resultPrices[$productId] = $this->formatProductUnits($units);
+        }
+
+        return $resultPrices;
+    }
+
+    /**
+     * @param array $units [unit => [ProductPriceInterface, ...], ...]
+     *
+     * @return array ['{unit}_{quantity}' => formatted price (array), ...]
+     */
+    private function formatProductUnits(array $units): array
     {
         $productData = [];
         foreach ($units as $unit => $prices) {
@@ -86,6 +73,7 @@ class ProductPriceFormatter
                 $productData[$index] = $this->formatProductPrice($price);
             }
         }
+
         return $productData;
     }
 }

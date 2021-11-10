@@ -5,16 +5,15 @@ namespace Oro\Bundle\ProductBundle\Layout\DataProvider;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Provider\ProductNewArrivalStickerTrait;
+use Oro\Bundle\ProductBundle\Model\ProductView;
 
+/**
+ * Provides information about product stickers.
+ * @see \Oro\Bundle\ProductBundle\EventListener\ProductStickersFrontendDatagridListener
+ */
 class ProductStickersProvider
 {
-    use ProductNewArrivalStickerTrait;
-
-    /**
-     * @var ConfigManager
-     */
-    protected $configManager;
+    private ConfigManager $configManager;
 
     public function __construct(ConfigManager $configManager)
     {
@@ -22,42 +21,42 @@ class ProductStickersProvider
     }
 
     /**
-     * @param Product $product
+     * @param Product|ProductView $product
      *
-     * @return array
+     * @return array [sticker data (array), ...]
      */
-    public function getStickers(Product $product)
+    public function getStickers(Product|ProductView $product): array
     {
         $stickers = [];
-        if ($product->isNewArrival()) {
-            $stickers[] = $this->getNewArrivalSticker();
+        $newArrival = $product instanceof ProductView
+            ? $product->get('newArrival')
+            : $product->isNewArrival();
+        if ($newArrival) {
+            $stickers[] = ['type' => 'new_arrival'];
         }
 
         return $stickers;
     }
 
     /**
-     * @param array|Product[] $products
+     * @param ProductView[] $products
      *
-     * @return array
+     * @return array [product id => [sticker data (array), ...]. ...]
      */
-    public function getStickersForProducts(array $products)
+    public function getStickersForProducts(array $products): array
     {
-        $groupedStickers = [];
+        $result = [];
         foreach ($products as $product) {
-            $groupedStickers[$product->getId()] = $this->getStickers($product);
+            $result[$product->getId()] = $this->getStickers($product);
         }
 
-        return $groupedStickers;
+        return $result;
     }
 
-    /**
-     * @return bool
-     */
-    public function isStickersEnabledOnView()
+    public function isStickersEnabledOnView(): bool
     {
-        $configKey = Configuration::getConfigKeyByName(Configuration::PRODUCT_PROMOTION_SHOW_ON_VIEW);
-
-        return $this->configManager->get($configKey);
+        return $this->configManager->get(
+            Configuration::getConfigKeyByName(Configuration::PRODUCT_PROMOTION_SHOW_ON_VIEW)
+        );
     }
 }

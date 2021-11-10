@@ -80,26 +80,6 @@ class ProductTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('localized_name', (string)$product);
     }
 
-    public function testJsonSerialize()
-    {
-        $id = 123;
-        $product = new Product();
-        ReflectionUtil::setId($product, $id);
-
-        $unitPrecision = new ProductUnitPrecision();
-        $unitPrecision->setUnit((new ProductUnit())->setCode('kg'));
-        $unitPrecision->setPrecision(3);
-
-        $product->setPrimaryUnitPrecision($unitPrecision);
-        $product->addName((new ProductName())->setString('1234'));
-        $product->setSku('SKU' . $id);
-
-        $this->assertEquals(
-            '{"id":123,"product_units":{"kg":3},"unit":"kg","name":"1234","sku":"SKU123"}',
-            json_encode($product, JSON_THROW_ON_ERROR)
-        );
-    }
-
     public function testPrePersist()
     {
         $product = new Product();

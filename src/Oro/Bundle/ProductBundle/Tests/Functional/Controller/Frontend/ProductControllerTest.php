@@ -8,7 +8,6 @@ use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserD
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\Client;
 use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists;
-use Oro\Bundle\ProductBundle\Controller\Frontend\ProductController;
 use Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -25,11 +24,13 @@ class ProductControllerTest extends WebTestCase
 {
     use ConfigManagerAwareTestTrait;
 
+    private const PRODUCT_GRID_NAME = 'frontend-product-search-grid';
+
     /** @var Client */
     protected $client;
 
     /** @var Translator */
-    protected $translator;
+    private $translator;
 
     protected function setUp(): void
     {
@@ -51,6 +52,11 @@ class ProductControllerTest extends WebTestCase
         $this->translator = $this->getContainer()->get('translator');
     }
 
+    private function getProduct(string $reference): Product
+    {
+        return $this->getReference($reference);
+    }
+
     public function testIndexAction()
     {
         $this->client->request('GET', $this->getUrl('oro_product_frontend_product_search'));
@@ -58,9 +64,9 @@ class ProductControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $content = $result->getContent();
         $this->assertNotEmpty($content);
-        static::assertStringContainsString(LoadProductData::PRODUCT_1, $content);
-        static::assertStringContainsString(LoadProductData::PRODUCT_2, $content);
-        static::assertStringContainsString(LoadProductData::PRODUCT_3, $content);
+        self::assertStringContainsString(LoadProductData::PRODUCT_1, $content);
+        self::assertStringContainsString(LoadProductData::PRODUCT_2, $content);
+        self::assertStringContainsString(LoadProductData::PRODUCT_3, $content);
     }
 
     public function testSearchAction(): void
@@ -70,16 +76,16 @@ class ProductControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $content = $result->getContent();
         $this->assertNotEmpty($content);
-        static::assertStringContainsString(LoadProductData::PRODUCT_1, $content);
-        static::assertStringContainsString(LoadProductData::PRODUCT_2, $content);
-        static::assertStringContainsString(LoadProductData::PRODUCT_3, $content);
+        self::assertStringContainsString(LoadProductData::PRODUCT_1, $content);
+        self::assertStringContainsString(LoadProductData::PRODUCT_2, $content);
+        self::assertStringContainsString(LoadProductData::PRODUCT_3, $content);
     }
 
     public function testAutocompleteAction(): void
     {
         $key = Configuration::getConfigKeyByName(Configuration::ALLOW_PARTIAL_PRODUCT_SEARCH);
 
-        $configManager = self::getConfigManager('global');
+        $configManager = self::getConfigManager();
         $originalValue = $configManager->get($key);
         $configManager->set($key, true);
         $configManager->flush();
@@ -93,17 +99,17 @@ class ProductControllerTest extends WebTestCase
         $response = $this->client->getResponse();
         $this->assertJsonResponseStatusCodeEquals($response, 200);
 
-        $data = \json_decode($response->getContent(), true);
+        $data = json_decode($response->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
-        static::assertArrayHasKey('total_count', $data);
-        static::assertEquals(2, $data['total_count']);
+        self::assertArrayHasKey('total_count', $data);
+        self::assertEquals(2, $data['total_count']);
 
         $product7 = $this->getReference(LoadProductData::PRODUCT_7);
         $product9 = $this->getReference(LoadProductData::PRODUCT_9);
 
-        static::assertArrayHasKey('products', $data);
-        static::assertArrayHasKey(LoadProductData::PRODUCT_7, $data['products']);
-        static::assertEquals(
+        self::assertArrayHasKey('products', $data);
+        self::assertArrayHasKey(LoadProductData::PRODUCT_7, $data['products']);
+        self::assertEquals(
             [
                 'sku' => LoadProductData::PRODUCT_7,
                 'name' => 'продукт-7.names.default',
@@ -116,8 +122,8 @@ class ProductControllerTest extends WebTestCase
             ],
             $data['products'][LoadProductData::PRODUCT_7]
         );
-        static::assertArrayHasKey(LoadProductData::PRODUCT_9, $data['products']);
-        static::assertEquals(
+        self::assertArrayHasKey(LoadProductData::PRODUCT_9, $data['products']);
+        self::assertEquals(
             [
                 'sku' => LoadProductData::PRODUCT_9,
                 'name' => 'продукт-9.names.default',
@@ -139,10 +145,10 @@ class ProductControllerTest extends WebTestCase
     {
         //Emulate subfolder request
         /** @var RequestContext $requestContext */
-        $requestContext = static::getContainer()->get('router.request_context');
+        $requestContext = self::getContainer()->get('router.request_context');
         $requestContext->setBaseUrl('custom/base/url');
 
-        $this->client->request('GET', static::getUrl('oro_product_frontend_product_index'), [], [], [
+        $this->client->request('GET', $this->getUrl('oro_product_frontend_product_index'), [], [], [
             'SCRIPT_NAME' => '/custom/base/url/index.php',
             'SCRIPT_FILENAME' => 'index.php'
         ]);
@@ -164,12 +170,12 @@ class ProductControllerTest extends WebTestCase
     public function testIndexDatagridViews()
     {
         // default view is DataGridThemeHelper::VIEW_GRID
-        $response = $this->client->requestFrontendGrid(ProductController::GRID_NAME, [], true);
+        $response = $this->client->requestFrontendGrid(self::PRODUCT_GRID_NAME, [], true);
         $result = $this->getJsonResponseContent($response, 200);
         $this->assertArrayHasKey('image', $result['data'][0]);
 
         $response = $this->client->requestFrontendGrid(
-            ProductController::GRID_NAME,
+            self::PRODUCT_GRID_NAME,
             [
                 'frontend-product-search-grid[row-view]' => DataGridThemeHelper::VIEW_LIST,
             ],
@@ -180,7 +186,7 @@ class ProductControllerTest extends WebTestCase
         $this->assertArrayHasKey('image', $result['data'][0]);
 
         $response = $this->client->requestFrontendGrid(
-            ProductController::GRID_NAME,
+            self::PRODUCT_GRID_NAME,
             [
                 'frontend-product-search-grid[row-view]' => DataGridThemeHelper::VIEW_GRID,
             ],
@@ -191,7 +197,7 @@ class ProductControllerTest extends WebTestCase
         $this->assertArrayHasKey('image', $result['data'][0]);
 
         $response = $this->client->requestFrontendGrid(
-            ProductController::GRID_NAME,
+            self::PRODUCT_GRID_NAME,
             [
                 'frontend-product-search-grid[row-view]' => DataGridThemeHelper::VIEW_TILES,
             ],
@@ -202,7 +208,7 @@ class ProductControllerTest extends WebTestCase
         $this->assertArrayHasKey('image', $result['data'][0]);
 
         // view saves to session so current view is DataGridThemeHelper::VIEW_TILES
-        $response = $this->client->requestFrontendGrid(ProductController::GRID_NAME, [], true);
+        $response = $this->client->requestFrontendGrid(self::PRODUCT_GRID_NAME, [], true);
         $result = $this->getJsonResponseContent($response, 200);
         $this->assertArrayHasKey('image', $result['data'][0]);
     }
@@ -228,7 +234,7 @@ class ProductControllerTest extends WebTestCase
     {
         $product = $this->getProduct(LoadProductData::PRODUCT_1);
 
-        $this->assertInstanceOf('Oro\Bundle\ProductBundle\Entity\Product', $product);
+        $this->assertInstanceOf(Product::class, $product);
 
         $this->client->request(
             'GET',
@@ -236,24 +242,12 @@ class ProductControllerTest extends WebTestCase
         );
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        static::assertStringContainsString($product->getSku(), $result->getContent());
-        static::assertStringContainsString($product->getDefaultName()->getString(), $result->getContent());
+        self::assertStringContainsString($product->getSku(), $result->getContent());
+        self::assertStringContainsString($product->getDefaultName()->getString(), $result->getContent());
 
-        static::assertStringContainsString(
-            $this->translator->trans(
-                'oro.frontend.product.view.request_a_quote'
-            ),
+        self::assertStringContainsString(
+            $this->translator->trans('oro.frontend.product.view.request_a_quote'),
             $result->getContent()
         );
-    }
-
-    /**
-     * @param string $reference
-     *
-     * @return Product
-     */
-    protected function getProduct($reference)
-    {
-        return $this->getReference($reference);
     }
 }

@@ -7,28 +7,28 @@ use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\UIBundle\Provider\UserAgentProvider;
 
 /**
- * Provides a set of methods to check matrix form availability for configurable products on data grids.
- * @see \Oro\Bundle\ProductBundle\Layout\DataProvider\ProductFormAvailabilityProvider
+ * Provides a set of methods to check matrix form availability for configurable products
+ * for product grids and product lists.
+ * @see \Oro\Bundle\ProductBundle\Layout\DataProvider\ProductListFormAvailabilityProvider
+ * @see \Oro\Bundle\ProductBundle\Layout\DataProvider\ProductViewFormAvailabilityProvider
  */
 class ProductFormAvailabilityProvider
 {
     private const POPUP_PRODUCT_VIEW = 'gallery-view';
 
-    /** @var ConfigManager */
-    private $configManager;
-
-    /** @var ProductMatrixAvailabilityProvider */
-    private $productMatrixAvailabilityProvider;
-
-    /** @var UserAgentProvider */
-    private $userAgentProvider;
+    private ConfigManager $configManager;
+    private string $matrixFormConfigOptionName;
+    private ProductMatrixAvailabilityProvider $productMatrixAvailabilityProvider;
+    private UserAgentProvider $userAgentProvider;
 
     public function __construct(
         ConfigManager $configManager,
+        string $matrixFormConfigOptionName,
         ProductMatrixAvailabilityProvider $productMatrixAvailabilityProvider,
         UserAgentProvider $userAgentProvider
     ) {
         $this->configManager = $configManager;
+        $this->matrixFormConfigOptionName = $matrixFormConfigOptionName;
         $this->productMatrixAvailabilityProvider = $productMatrixAvailabilityProvider;
         $this->userAgentProvider = $userAgentProvider;
     }
@@ -45,20 +45,17 @@ class ProductFormAvailabilityProvider
             throw new \InvalidArgumentException('The configurable product data must not be empty.');
         }
 
-        $formType = $this->configManager->get(
-            Configuration::getConfigKeyByName(Configuration::MATRIX_FORM_ON_PRODUCT_LISTING)
-        );
-        if (Configuration::MATRIX_FORM_NONE === $formType) {
+        $matrixFormType = $this->configManager->get($this->matrixFormConfigOptionName);
+        if (Configuration::MATRIX_FORM_NONE === $matrixFormType) {
             return [];
         }
 
         $result = [];
-        $matrixAvailability = $this->productMatrixAvailabilityProvider->getMatrixAvailabilityByConfigurableProductData(
-            $configurableProductData
-        );
+        $matrixAvailability = $this->productMatrixAvailabilityProvider
+            ->getMatrixAvailabilityByConfigurableProductData($configurableProductData);
         foreach ($matrixAvailability as $configurableProductId => $isMatrixFormAvailable) {
             if ($isMatrixFormAvailable) {
-                $result[$configurableProductId] = $formType;
+                $result[$configurableProductId] = $matrixFormType;
             }
         }
         if ($result

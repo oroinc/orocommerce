@@ -2,10 +2,12 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Entity\Repository;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Gedmo\Tool\Logging\DBAL\QueryAnalyzer;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class ProductUnitRepositoryTest extends WebTestCase
@@ -15,16 +17,33 @@ class ProductUnitRepositoryTest extends WebTestCase
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
 
-        $this->loadFixtures(['Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions']);
+        $this->loadFixtures([LoadProductUnitPrecisions::class]);
+    }
+
+    private function getRepository(): ProductUnitRepository
+    {
+        return $this->getContainer()->get('doctrine')->getRepository(ProductUnit::class);
+    }
+
+    private function getEntityManager(): EntityManagerInterface
+    {
+        return $this->getContainer()->get('doctrine')->getManagerForClass(ProductUnit::class);
+    }
+
+    private function getProduct(string $reference): Product
+    {
+        return $this->getReference($reference);
+    }
+
+    private function getProductUnit(string $reference): ProductUnit
+    {
+        return $this->getReference($reference);
     }
 
     /**
-     * @param string $productReference
-     * @param string[] $expectedUnitReferences
-     *
-     * @dataProvider productUnitsDataProvider
+     * @dataProvider getProductUnitsDataProvider
      */
-    public function testGetProductUnits($productReference, array $expectedUnitReferences)
+    public function testGetProductUnits(string $productReference, array $expectedUnitReferences)
     {
         $product = $this->getProduct($productReference);
 
@@ -47,66 +66,89 @@ class ProductUnitRepositoryTest extends WebTestCase
         $this->assertEquals($expectedUnits, $units);
     }
 
-    /**
-     * @dataProvider getProductsUnitsDataProvider
-     */
-    public function testGetProductsUnits(array $products, array $expectedData)
-    {
-        $products = array_map(function ($productReference) {
-            return $this->getReference($productReference);
-        }, $products);
-        $productIds = array_map(function (Product $product) {
-            return $product->getId();
-        }, $products);
-        $expectedData = array_combine($productIds, $expectedData);
-        $this->assertEquals($expectedData, $this->getRepository()->getProductsUnits($products));
-    }
-
-    /**
-     * @dataProvider getPrimaryProductsUnits
-     */
-    public function testGetPrimaryProductsUnits(array $products, array $expected)
-    {
-        $products = array_map(function ($productReference) {
-            return $this->getReference($productReference);
-        }, $products);
-        $productIds = array_map(function (Product $product) {
-            return $product->getId();
-        }, $products);
-        $expectedData = array_combine($productIds, $expected);
-        $this->assertEquals($expectedData, $this->getRepository()->getPrimaryProductsUnits($products));
-    }
-
-    /**
-     * @return array
-     */
-    public function getPrimaryProductsUnits()
+    public function getProductUnitsDataProvider(): array
     {
         return [
-            [
-                'products' => [
-                    'product-1',
-                    'product-2',
-                    'product-3',
-                ],
-                'expected' => [
-                    'product-1' => 'milliliter',
-                    'product-2' => 'milliliter',
-                    'product-3' => 'milliliter',
-                ]
-            ]
+            ['product-1', ['product_unit.bottle', 'product_unit.liter', 'product_unit.milliliter']],
+            ['product-2', ['product_unit.bottle', 'product_unit.box', 'product_unit.liter', 'product_unit.milliliter']]
         ];
+    }
+
+    public function testGetProductsUnits()
+    {
+        $product1 = $this->getProduct('product-1');
+        $product2 = $this->getProduct('product-2');
+        $product3 = $this->getProduct('product-3');
+
+        $products = [$product1, $product2, $product3];
+
+        $this->assertEquals(
+            [
+                $product1->getId() => [
+                    'milliliter' => 0,
+                    'bottle' => 2,
+                    'liter' => 3,
+                ],
+                $product2->getId() => [
+                    'milliliter' => 0,
+                    'bottle' => 1,
+                    'box' => 1,
+                    'liter' => 3,
+                ],
+                $product3->getId() => [
+                    'milliliter' => 0,
+                    'liter' => 3,
+                ]
+            ],
+            $this->getRepository()->getProductsUnits($products)
+        );
+    }
+
+    public function testGetPrimaryProductsUnits()
+    {
+        $product1 = $this->getProduct('product-1');
+        $product2 = $this->getProduct('product-2');
+        $product3 = $this->getProduct('product-3');
+
+        $products = [$product1, $product2, $product3];
+
+        $this->assertEquals(
+            [
+                $product1->getId() => 'milliliter',
+                $product2->getId() => 'milliliter',
+                $product3->getId() => 'milliliter'
+            ],
+            $this->getRepository()->getPrimaryProductsUnits($products)
+        );
+    }
+
+    public function testGetProductsUnitsByProductIds()
+    {
+        $product1 = $this->getProduct('product-1');
+        $product2 = $this->getProduct('product-2');
+        $product3 = $this->getProduct('product-3');
+
+        $productIds = [$product1->getId(), $product2->getId(), $product3->getId()];
+
+        $this->assertEquals(
+            [
+                $product1->getId() => ['bottle', 'liter', 'milliliter'],
+                $product2->getId() => ['bottle', 'box', 'liter', 'milliliter'],
+                $product3->getId() => ['liter', 'milliliter']
+            ],
+            $this->getRepository()->getProductsUnitsByProductIds($productIds)
+        );
     }
 
     public function testGetProductsUnitsNoQuery()
     {
-        $em = $this->getContainer()->get('doctrine')->getManagerForClass(ProductUnit::class);
+        $em = $this->getEntityManager();
         $queryAnalyzer = new QueryAnalyzer($em->getConnection()->getDatabasePlatform());
 
         $prevLogger = $em->getConnection()->getConfiguration()->getSQLLogger();
         $em->getConnection()->getConfiguration()->setSQLLogger($queryAnalyzer);
 
-        $this->assertEquals([], $this->getRepository()->getProductsUnits([]));
+        $this->assertSame([], $this->getRepository()->getProductsUnits([]));
 
         $queries = $queryAnalyzer->getExecutedQueries();
         $this->assertCount(0, $queries);
@@ -115,62 +157,26 @@ class ProductUnitRepositoryTest extends WebTestCase
     }
 
     /**
-     * @return array
-     */
-    public function getProductsUnitsDataProvider()
-    {
-        return [
-            [
-                'products' => [
-                    'product-1',
-                    'product-2',
-                    'product-3',
-                ],
-                'expectedData' => [
-                    'product-1' => [
-                        'milliliter' => 0,
-                        'bottle' => 2,
-                        'liter' => 3,
-                    ],
-                    'product-2' => [
-                        'milliliter' => 0,
-                        'bottle' => 1,
-                        'box' => 1,
-                        'liter' => 3,
-                    ],
-                    'product-3' => [
-                        'milliliter' => 0,
-                        'liter' => 3,
-                    ]
-                ],
-            ],
-        ];
-    }
-
-    /**
      * @dataProvider getProductsUnitsByCodesDataProvider
      */
     public function testGetProductsUnitsByCodes(array $products, array $codes, array $expectedData)
     {
         $products = array_map(function ($productReference) {
-            return $this->getReference($productReference);
+            return $this->getProduct($productReference);
         }, $products);
         $units = array_map(function ($unitCode) {
-            return $this->getReference('product_unit.' . $unitCode);
+            return $this->getProductUnit('product_unit.' . $unitCode);
         }, $codes);
 
         $expectedData = array_reduce($expectedData, function (array $result, $unitCode) {
-            $result[$unitCode] = $this->getReference('product_unit.' . $unitCode);
+            $result[$unitCode] = $this->getProductUnit('product_unit.' . $unitCode);
             return $result;
         }, []);
         $actualData = $this->getRepository()->getProductsUnitsByCodes($products, $units);
         $this->assertEquals($expectedData, $actualData);
     }
 
-    /**
-     * @return array
-     */
-    public function getProductsUnitsByCodesDataProvider()
+    public function getProductsUnitsByCodesDataProvider(): array
     {
         return [
             [
@@ -208,13 +214,13 @@ class ProductUnitRepositoryTest extends WebTestCase
 
     public function testGetProductsUnitsByCodesNoQuery()
     {
-        $em = $this->getContainer()->get('doctrine')->getManagerForClass(ProductUnit::class);
+        $em = $this->getEntityManager();
         $queryAnalyzer = new QueryAnalyzer($em->getConnection()->getDatabasePlatform());
 
         $prevLogger = $em->getConnection()->getConfiguration()->getSQLLogger();
         $em->getConnection()->getConfiguration()->setSQLLogger($queryAnalyzer);
 
-        $this->assertEquals([], $this->getRepository()->getProductsUnitsByCodes([], []));
+        $this->assertSame([], $this->getRepository()->getProductsUnitsByCodes([], []));
 
         $queries = $queryAnalyzer->getExecutedQueries();
         $this->assertCount(0, $queries);
@@ -223,7 +229,7 @@ class ProductUnitRepositoryTest extends WebTestCase
     }
 
     /**
-     * @dataProvider getAllUnitsProvider
+     * @dataProvider getAllUnitsDataProvider
      */
     public function testGetAllUnits(array $expectedData)
     {
@@ -240,28 +246,14 @@ class ProductUnitRepositoryTest extends WebTestCase
     }
 
     /**
-     * @dataProvider getAllUnitsProvider
+     * @dataProvider getAllUnitsDataProvider
      */
     public function testGetAllUnitCodes(array $expectedData)
     {
         $this->assertEquals($expectedData, $this->getRepository()->getAllUnitCodes());
     }
 
-    /**
-     * @return array
-     */
-    public function productUnitsDataProvider()
-    {
-        return [
-            ['product-1', ['product_unit.bottle', 'product_unit.liter', 'product_unit.milliliter']],
-            ['product-2', ['product_unit.bottle', 'product_unit.box', 'product_unit.liter', 'product_unit.milliliter']]
-        ];
-    }
-
-    /**
-     * @return array
-     */
-    public function getAllUnitsProvider()
+    public function getAllUnitsDataProvider(): array
     {
         return [
             [
@@ -279,31 +271,5 @@ class ProductUnitRepositoryTest extends WebTestCase
                 ],
             ],
         ];
-    }
-
-    /**
-     * @param string $reference
-     * @return Product
-     */
-    protected function getProduct($reference)
-    {
-        return $this->getReference($reference);
-    }
-
-    /**
-     * @param string $reference
-     * @return ProductUnit
-     */
-    protected function getProductUnit($reference)
-    {
-        return $this->getReference($reference);
-    }
-
-    /**
-     * @return ProductUnitRepository
-     */
-    protected function getRepository()
-    {
-        return $this->getContainer()->get('doctrine')->getRepository(ProductUnit::class);
     }
 }

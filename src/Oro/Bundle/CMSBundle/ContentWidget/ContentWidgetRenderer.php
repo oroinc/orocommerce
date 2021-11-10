@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CMSBundle\ContentWidget;
 
 use Oro\Bundle\CMSBundle\Entity\ContentWidget;
+use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\LayoutBundle\Layout\LayoutManager;
 use Oro\Component\Layout\LayoutBuilderInterface;
 use Oro\Component\Layout\LayoutContext;
@@ -23,6 +24,8 @@ HTML;
     private ContentWidgetProvider $contentWidgetProvider;
     private ContentWidgetTypeRegistry $contentWidgetTypeRegistry;
     private LayoutManager $layoutManager;
+    private FrontendHelper $frontendHelper;
+    private FrontendEmulator $frontendEmulator;
     private LoggerInterface $logger;
     private bool $debug;
 
@@ -30,17 +33,35 @@ HTML;
         ContentWidgetProvider $contentWidgetProvider,
         ContentWidgetTypeRegistry $contentWidgetTypeRegistry,
         LayoutManager $layoutManager,
+        FrontendHelper $frontendHelper,
+        FrontendEmulator $frontendEmulator,
         LoggerInterface $logger,
         bool $debug,
     ) {
         $this->contentWidgetProvider = $contentWidgetProvider;
         $this->contentWidgetTypeRegistry = $contentWidgetTypeRegistry;
         $this->layoutManager = $layoutManager;
+        $this->frontendHelper = $frontendHelper;
+        $this->frontendEmulator = $frontendEmulator;
         $this->logger = $logger;
         $this->debug = $debug;
     }
 
     public function render(string $widgetName): string
+    {
+        if (!$this->frontendHelper->isFrontendRequest()) {
+            $this->frontendEmulator->startFrontendRequestEmulation();
+            try {
+                return $this->renderWidget($widgetName);
+            } finally {
+                $this->frontendEmulator->stopFrontendRequestEmulation();
+            }
+        }
+
+        return $this->renderWidget($widgetName);
+    }
+
+    private function renderWidget(string $widgetName): string
     {
         try {
             $widget = $this->contentWidgetProvider->getContentWidget($widgetName);
@@ -61,7 +82,7 @@ HTML;
         return '';
     }
 
-    protected function getWidgetType(ContentWidget $widget): ?ContentWidgetTypeInterface
+    private function getWidgetType(ContentWidget $widget): ?ContentWidgetTypeInterface
     {
         $type = $this->contentWidgetTypeRegistry->getWidgetType($widget->getWidgetType());
         if (null === $type) {

@@ -2,12 +2,13 @@
 
 namespace Oro\Bundle\ProductBundle\Controller\Frontend;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\EntityConfigBundle\Layout\AttributeRenderRegistry;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\PricingBundle\Form\Extension\PriceAttributesProductFormExtension;
 use Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Layout\DataProvider\ProductFormAvailabilityProvider;
+use Oro\Bundle\ProductBundle\Layout\DataProvider\ProductViewFormAvailabilityProvider;
 use Oro\Bundle\ProductBundle\Provider\PageTemplateProvider;
 use Oro\Bundle\ProductBundle\Provider\ProductAutocompleteProvider;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
@@ -23,8 +24,6 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class ProductController extends AbstractController
 {
-    const GRID_NAME = 'frontend-product-search-grid';
-
     /**
      * View list of products
      *
@@ -109,12 +108,10 @@ class ProductController extends AbstractController
             'chosenProductVariant' => null
         ];
 
-        $ignoreProductVariants = $request->get('ignoreProductVariant', false);
-        $isSimpleFormAvailable = $this
-            ->get('oro_product.layout.data_provider.product_view_form_availability_provider')
-            ->isSimpleFormAvailable($product);
-
-        if (!$ignoreProductVariants && $product->isConfigurable() && $isSimpleFormAvailable) {
+        if (!$request->get('ignoreProductVariant', false)
+            && $product->isConfigurable()
+            && $this->isSimpleFormAvailable($product)
+        ) {
             $productAvailabilityProvider = $this->get(ProductVariantAvailabilityProvider::class);
             $simpleProduct = $productAvailabilityProvider->getSimpleProductByVariantFields($product, [], false);
             $data['chosenProductVariant'] = $this->getChosenProductVariantFromRequest($request, $product);
@@ -124,19 +121,15 @@ class ProductController extends AbstractController
             }
         }
 
+        /** @var Product|null $parentProduct */
         $parentProduct = null;
         $parentProductId = $request->get('parentProductId');
         if ($parentProductId) {
-            /** @var Product $parentProduct */
-            $parentProduct = $this->getDoctrine()
-                ->getManagerForClass('OroProductBundle:Product')
-                ->getRepository('OroProductBundle:Product')
-                ->find($parentProductId);
+            $parentProduct = $this->getDoctrine()->getRepository(Product::class)->find($parentProductId);
         }
 
-        $templateProduct = $parentProduct ? $parentProduct : $product;
         $pageTemplate = $this->get(PageTemplateProvider::class)
-            ->getPageTemplate($templateProduct, 'oro_product_frontend_product_view');
+            ->getPageTemplate($parentProduct ?? $product, 'oro_product_frontend_product_view');
 
         $this->get(AttributeRenderRegistry::class)->setAttributeRendered(
             $product->getAttributeFamily(),
@@ -147,7 +140,7 @@ class ProductController extends AbstractController
             'data' => $data,
             'product_type' => $product->getType(),
             'attribute_family' => $product->getAttributeFamily(),
-            'page_template' => $pageTemplate ? $pageTemplate->getKey() : null
+            'page_template' => $pageTemplate?->getKey()
         ];
     }
 
@@ -162,25 +155,33 @@ class ProductController extends AbstractController
             PageTemplateProvider::class,
             AttributeRenderRegistry::class,
             ProductAutocompleteProvider::class,
-            'oro_product.layout.data_provider.product_view_form_availability_provider'
-                => ProductFormAvailabilityProvider::class,
+            ProductViewFormAvailabilityProvider::class
         ]);
     }
 
     private function getChosenProductVariantFromRequest(Request $request, Product $product): ?Product
     {
+        $variantProduct = null;
         $variantProductId = $request->get('variantProductId');
         if ($variantProductId) {
-            $simpleProducts = $this->get(ProductVariantAvailabilityProvider::class)
-                ->getSimpleProductsByConfigurable([$product]);
-
-            foreach ($simpleProducts as $simpleProduct) {
-                if ($simpleProduct->getId() === (int)$variantProductId) {
-                    return $simpleProduct;
+            /** @var EntityManagerInterface $em */
+            $em = $this->get('doctrine')->getManagerForClass(Product::class);
+            $variantProductId = (int)$variantProductId;
+            $simpleProductIds = $this->get(ProductVariantAvailabilityProvider::class)
+                ->getSimpleProductIdsByConfigurable([$product->getId()]);
+            foreach ($simpleProductIds as $simpleProductId) {
+                if ($simpleProductId === $variantProductId) {
+                    $variantProduct = $em->getReference(Product::class, $simpleProductId);
+                    break;
                 }
             }
         }
 
-        return null;
+        return $variantProduct;
+    }
+
+    private function isSimpleFormAvailable(Product $product): bool
+    {
+        return $this->get(ProductViewFormAvailabilityProvider::class)->isSimpleFormAvailable($product);
     }
 }

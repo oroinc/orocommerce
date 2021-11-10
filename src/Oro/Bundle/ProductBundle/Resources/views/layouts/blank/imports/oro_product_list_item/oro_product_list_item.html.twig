@@ -1,12 +1,12 @@
 {% block __oro_product_list_item__product_widget %}
-    {% set productImage = product.imagesByType('listing').first.image|default(null) %}
-    {% set productImageUrl = product_filtered_image(productImage, 'product_small') %}
-
-    {% set modelAttr = product.jsonSerialize() %}
-    {% set modelAttr = modelAttr|merge({
-        'imageUrl': productImageUrl,
-        'name': product.names|localized_value|e
-    }) %}
+    {% set modelAttr = {
+        'id': product.id,
+        'sku': product.sku,
+        'name': product.name|e,
+        'unit': product.unit,
+        'product_units': product.product_units,
+        'imageUrl': product.image
+    } %}
 
     {% set attr = layout_attr_defaults(attr, {
         'data-page-component-module': 'oroui/js/app/components/view-component',
@@ -61,17 +61,17 @@
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' product-item__preview',
         'href': path('oro_product_frontend_product_view', {id: product.id}),
-        'aria-label': 'oro.product.frontend.index.view_details_prefix'|trans ~ ' ' ~ product.names|localized_value
+        'aria-label': 'oro.product.frontend.index.view_details_prefix'|trans ~ ' ' ~ product.name
     }) %}
 
-    {% if popup_gallery and product.imagesByType('listing')|length > 0 %}
+    {% if popup_gallery and product.image %}
         {% set options = {
             view: 'orofrontend/js/app/components/popup-gallery-widget',
             ajaxMode: true,
             ajaxRoute: 'oro_product_frontend_ajax_images_by_id',
             id: product.id,
             galleryFilter: 'product_gallery_popup',
-            alt: product.names|localized_value,
+            alt: product.name,
             uniqueTriggerToOpenGallery: '[data-role="data-trigger-gallery-open-' ~ __productUniqId ~ '"]'
         } %}
 
@@ -90,7 +90,7 @@
 {% endblock %}
 
 {% block __oro_product_list_item__product_popup_gallery_widget %}
-    {% if product.imagesByType('listing')|length > 0 %}
+    {% if product.hasImage %}
         {% set attr = layout_attr_defaults(attr, {
             '~class': ' view-product-gallery',
             'data-trigger-gallery-open': '',
@@ -114,11 +114,8 @@
         'class': 'product-item__preview-image'
     } %}
 
-    {% set productImage = product.imagesByType('listing').first.image|default(null) %}
-    {% set productImageUrl = product_filtered_image(productImage, product_image_size) %}
-
     <picture {{ block('block_attributes') }}>
-        <img src="{{ productImageUrl }}" {{ UI.attributes(attrImage) }} alt="{{ product.names|localized_value|e }}" itemprop="image" loading="lazy">
+        <img src="{{ product.image }}" {{ UI.attributes(attrImage) }} alt="{{ product.name|e }}" itemprop="image" loading="lazy">
     </picture>
 {% endblock %}
 
@@ -135,14 +132,13 @@
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' product-item__title product-item__title--{{ class_prefix }}'
     }) %}
-    {% set productName = product.names|localized_value %}
     <h3 {{ block('block_attributes') }} itemprop="productID" content="{{ product.id }}">
         <a href="{{ path('oro_product_frontend_product_view', {id: product.id}) }}"
            class="view-product line-clamp"
            itemprop="url"
-           title="{{ productName|e('html_attr') }}"
+           title="{{ product.name|e('html_attr') }}"
            {% if isTargetBlank is defined and isTargetBlank %}target="_blank"{% endif %}
-           ><span itemprop="name">{{ productName }}</span></a>
+           ><span itemprop="name">{{ product.name }}</span></a>
     </h3>
 {% endblock %}
 

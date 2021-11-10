@@ -3,11 +3,14 @@
     {% set productImage = product.imagesByType('listing').first.image|default(null) %}
     {% set productImageUrl = product_filtered_image(productImage, 'product_small') %}
 
-    {% set modelAttr = product.jsonSerialize() %}
-    {% set modelAttr = modelAttr|merge({
-        'imageUrl': productImageUrl,
-        'name': product.names|localized_value|e
-    }) %}
+    {% set modelAttr = {
+        'id': product.id,
+        'sku': product.sku,
+        'name': product.names|localized_value|e,
+        'unit': product.primaryUnitPrecision.productUnitCode,
+        'product_units': product.sellUnitsPrecision,
+        'imageUrl': productImageUrl
+    } %}
 
     {% if parentProduct is not null %}
         {% set modelAttr = modelAttr|merge({parentProduct: parentProduct.id}) %}

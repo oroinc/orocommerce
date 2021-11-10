@@ -148,7 +148,6 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
  */
 class Product extends ExtendProduct implements
     OrganizationAwareInterface,
-    \JsonSerializable,
     AttributeFamilyAwareInterface,
     SluggableInterface,
     DatesAwareInterface,
@@ -969,12 +968,11 @@ class Product extends ExtendProduct implements
     /**
      * Get available units.
      *
-     * @return ProductUnit[]
+     * @return ProductUnit[] [unit code => ProductUnit, ...]
      */
     public function getAvailableUnits()
     {
         $result = [];
-
         foreach ($this->unitPrecisions as $unitPrecision) {
             $result[$unitPrecision->getUnit()->getCode()] = $unitPrecision->getUnit();
         }
@@ -983,12 +981,11 @@ class Product extends ExtendProduct implements
     }
 
     /**
-     * @return array
+     * @return array [unit code => unit precision, ...]
      */
     public function getAvailableUnitsPrecision()
     {
         $result = [];
-
         foreach ($this->unitPrecisions as $unitPrecision) {
             $result[$unitPrecision->getUnit()->getCode()] = $unitPrecision->getPrecision();
         }
@@ -999,12 +996,11 @@ class Product extends ExtendProduct implements
     /**
      * We need to return only precisions with sell=true for frontend.
      *
-     * @return array
+     * @return array [unit code => unit precision, ...]
      */
     public function getSellUnitsPrecision()
     {
         $result = [];
-
         foreach ($this->unitPrecisions as $unitPrecision) {
             if ($unitPrecision->isSell()) {
                 $result[$unitPrecision->getUnit()->getCode()] = $unitPrecision->getPrecision();
@@ -1423,20 +1419,6 @@ class Product extends ExtendProduct implements
             $this->slugPrototypesWithRedirect = new SlugPrototypesWithRedirect($this->slugPrototypes);
             $this->variantFields = [];
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function jsonSerialize()
-    {
-        return [
-            'id' => $this->getId(),
-            'product_units' => $this->getSellUnitsPrecision(),
-            'unit' => $this->getPrimaryUnitPrecision()->getProductUnitCode(),
-            'name' => $this->getDefaultName() ? $this->getDefaultName()->getString() : '',
-            'sku' => $this->getSku(),
-        ];
     }
 
     /**

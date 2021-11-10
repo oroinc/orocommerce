@@ -15,13 +15,11 @@ use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class ProductShoppingListsDataProviderTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
-
     /** @var CurrentShoppingListManager|\PHPUnit\Framework\MockObject\MockObject */
     private $currentShoppingListManager;
 
@@ -57,17 +55,60 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    private function getShoppingList(int $id, string $label, bool $isCurrent): ShoppingList
+    {
+        $shoppingList = new ShoppingList();
+        ReflectionUtil::setId($shoppingList, $id);
+        $shoppingList->setCustomerUser(new CustomerUser());
+        $shoppingList->setLabel($label);
+        $shoppingList->setCurrent($isCurrent);
+
+        return $shoppingList;
+    }
+
+    private function getLineItem(
+        int $id,
+        string $unit,
+        float $quantity,
+        ShoppingList $shoppingList,
+        Product $product,
+        Product $parentProduct = null
+    ): LineItem {
+        $lineItem = new LineItem();
+        ReflectionUtil::setId($lineItem, $id);
+        $lineItem->setUnit($this->getProductUnit($unit));
+        $lineItem->setQuantity($quantity);
+        $lineItem->setShoppingList($shoppingList);
+        $lineItem->setProduct($product);
+        if (null !== $parentProduct) {
+            $lineItem->setParentProduct($parentProduct);
+        }
+
+        return $lineItem;
+    }
+
+    private function getProductUnit(string $code): ProductUnit
+    {
+        $unit = new ProductUnit();
+        $unit->setCode($code);
+
+        return $unit;
+    }
+
+    private function getProduct(int $id): Product
+    {
+        $product = new Product();
+        ReflectionUtil::setId($product, $id);
+
+        return $product;
+    }
+
     /**
      * @dataProvider getProductUnitsQuantityDataProvider
-     *
-     * @param Product|null $product
-     * @param ShoppingList|null $shoppingList
-     * @param array $lineItems
-     * @param array|null $expected
      */
     public function testGetProductUnitsQuantityByCustomerUser(
-        $product,
-        $shoppingList,
+        ?Product $product,
+        ?ShoppingList $shoppingList,
         array $lineItems = [],
         array $expected = null
     ): void {
@@ -85,30 +126,24 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit\Framework\TestCase
             ->with('oro_shopping_list.show_all_in_shopping_list_widget')
             ->willReturn(false);
 
-        $this->currentShoppingListManager
-            ->expects($this->any())
+        $this->currentShoppingListManager->expects($this->any())
             ->method('getCurrent')
             ->willReturn($shoppingList);
 
         $this->lineItemRepository->expects($product && $shoppingList ? $this->once() : $this->never())
             ->method('getProductItemsWithShoppingListNames')
-            ->with($this->aclHelper, [$product], $customerUser)
+            ->with($this->aclHelper, [$product->getId()], $customerUser)
             ->willReturn($lineItems);
 
-        $this->assertEquals($expected, $this->provider->getProductUnitsQuantity($product));
+        $this->assertEquals($expected, $this->provider->getProductUnitsQuantity($product->getId()));
     }
 
     /**
      * @dataProvider getProductUnitsQuantityDataProvider
-     *
-     * @param Product|null $product
-     * @param ShoppingList|null $shoppingList
-     * @param array $lineItems
-     * @param array|null $expected
      */
     public function testGetProductUnitsQuantityWithCustomerUserButAllShoppingLists(
-        $product,
-        $shoppingList,
+        ?Product $product,
+        ?ShoppingList $shoppingList,
         array $lineItems = [],
         array $expected = null
     ): void {
@@ -126,33 +161,26 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit\Framework\TestCase
             ->with('oro_shopping_list.show_all_in_shopping_list_widget')
             ->willReturn(true);
 
-        $this->currentShoppingListManager
-            ->expects($this->any())
+        $this->currentShoppingListManager->expects($this->any())
             ->method('getCurrent')
             ->willReturn($shoppingList);
 
         $this->lineItemRepository->expects($product && $shoppingList ? $this->once() : $this->never())
             ->method('getProductItemsWithShoppingListNames')
-            ->with($this->aclHelper, [$product])
+            ->with($this->aclHelper, [$product->getId()])
             ->willReturn($lineItems);
 
-        $this->assertEquals($expected, $this->provider->getProductUnitsQuantity($product));
+        $this->assertEquals($expected, $this->provider->getProductUnitsQuantity($product->getId()));
     }
 
-    /**
-     * @return array
-     */
-    public function getProductUnitsQuantityDataProvider()
+    public function getProductUnitsQuantityDataProvider(): array
     {
-        /** @var  ShoppingList $activeShoppingList */
-        $activeShoppingList = $this->createShoppingList(1, 'ShoppingList 1', true);
-        /** @var  ShoppingList $activeShoppingListSecond */
-        $activeShoppingListSecond = $this->createShoppingList(1, 'ShoppingList 2', true);
-        /** @var  ShoppingList $otherShoppingList */
-        $otherShoppingList = $this->createShoppingList(2, 'ShoppingList 3', false);
+        $activeShoppingList = $this->getShoppingList(1, 'ShoppingList 1', true);
+        $activeShoppingListSecond = $this->getShoppingList(1, 'ShoppingList 2', true);
+        $otherShoppingList = $this->getShoppingList(2, 'ShoppingList 3', false);
 
-        $product = $this->getEntity(Product::class, ['id' => 1]);
-        $parentProduct = $this->getEntity(Product::class, ['id' => 2]);
+        $product = $this->getProduct(1);
+        $parentProduct = $this->getProduct(2);
 
         return [
             'no_shopping_list' => [
@@ -168,8 +196,8 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit\Framework\TestCase
                 'product' => $product,
                 'shoppingList' => $activeShoppingList,
                 'lineItems' => [
-                    $this->createLineItem(1, 'code1', 42, $activeShoppingList, $product),
-                    $this->createLineItem(2, 'code2', 100, $activeShoppingList, $product)
+                    $this->getLineItem(1, 'code1', 42, $activeShoppingList, $product),
+                    $this->getLineItem(2, 'code2', 100, $activeShoppingList, $product)
                 ],
                 'expected' => [
                     [
@@ -187,9 +215,9 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit\Framework\TestCase
                 'product' => $product,
                 'shoppingList' => $activeShoppingListSecond,
                 'lineItems' => [
-                    $this->createLineItem(1, 'code1', 42, $activeShoppingListSecond, $product),
-                    $this->createLineItem(2, 'code2', 100, $activeShoppingListSecond, $product),
-                    $this->createLineItem(3, 'code3', 30, $otherShoppingList, $product),
+                    $this->getLineItem(1, 'code1', 42, $activeShoppingListSecond, $product),
+                    $this->getLineItem(2, 'code2', 100, $activeShoppingListSecond, $product),
+                    $this->getLineItem(3, 'code3', 30, $otherShoppingList, $product),
                 ],
                 'expected' => [
                     [
@@ -215,8 +243,8 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit\Framework\TestCase
                 'product' => $product,
                 'shoppingList' => $activeShoppingListSecond,
                 'lineItems' => [
-                    $this->createLineItem(1, 'code1', 42, $activeShoppingListSecond, $product),
-                    $this->createLineItem(2, 'code2', 30, $otherShoppingList, $product, $parentProduct),
+                    $this->getLineItem(1, 'code1', 42, $activeShoppingListSecond, $product),
+                    $this->getLineItem(2, 'code2', 30, $otherShoppingList, $product, $parentProduct),
                 ],
                 'expected' => [
                     [
@@ -248,46 +276,47 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit\Framework\TestCase
             ->method('getToken')
             ->willReturn($this->createMock(AnonymousCustomerUserToken::class));
 
-        $this->currentShoppingListManager
-            ->expects($this->any())
+        $this->currentShoppingListManager->expects($this->any())
             ->method('getCurrent')
             ->willReturn($shoppingList);
 
         $this->lineItemRepository->expects($this->never())
             ->method('getProductItemsWithShoppingListNames');
 
-        $this->assertEquals(null, $this->provider->getProductUnitsQuantity(new Product()));
+        $this->assertEquals(null, $this->provider->getProductUnitsQuantity(1));
     }
 
     public function testGetProductsUnitsQuantity()
     {
-        $shoppingList = $this->createShoppingList(1, 'ShoppingList 1', true);
-        $secondShoppingList = $this->createShoppingList(2, 'ShoppingList 2', false);
+        $shoppingList = $this->getShoppingList(1, 'ShoppingList 1', true);
+        $secondShoppingList = $this->getShoppingList(2, 'ShoppingList 2', false);
 
-        $product = $this->getEntity(Product::class, ['id' => 11]);
-        $secondSimpleProduct = $this->getEntity(Product::class, ['id' => 41]);
-        $parentProduct = $this->getEntity(Product::class, ['id' => 21]);
-        $otherProduct = $this->getEntity(Product::class, ['id' => 31]);
+        $product = $this->getProduct(11);
+        $secondSimpleProduct = $this->getProduct(41);
+        $parentProduct = $this->getProduct(21);
+        $otherProduct = $this->getProduct(31);
 
         $this->configManager->expects($this->any())
             ->method('get')
             ->with('oro_shopping_list.show_all_in_shopping_list_widget')
             ->willReturn(true);
 
-        $this->currentShoppingListManager
-            ->expects($this->once())
+        $this->currentShoppingListManager->expects($this->once())
             ->method('getCurrent')
             ->willReturn($shoppingList);
 
         $lineItems = [
-            $this->createLineItem(1, 'each', 10, $shoppingList, $product, $parentProduct),
-            $this->createLineItem(2, 'each', 100, $shoppingList, $secondSimpleProduct, $parentProduct),
-            $this->createLineItem(3, 'each', 1, $secondShoppingList, $otherProduct),
+            $this->getLineItem(1, 'each', 10, $shoppingList, $product, $parentProduct),
+            $this->getLineItem(2, 'each', 100, $shoppingList, $secondSimpleProduct, $parentProduct),
+            $this->getLineItem(3, 'each', 1, $secondShoppingList, $otherProduct),
         ];
 
         $this->lineItemRepository->expects($this->once())
             ->method('getProductItemsWithShoppingListNames')
-            ->with($this->aclHelper, [$product, $parentProduct, $otherProduct, $secondSimpleProduct])
+            ->with(
+                $this->aclHelper,
+                [$product->getId(), $parentProduct->getId(), $otherProduct->getId(), $secondSimpleProduct->getId()]
+            )
             ->willReturn($lineItems);
 
         $expected = [
@@ -336,62 +365,12 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals(
             $expected,
-            $this->provider->getProductsUnitsQuantity(
-                [
-                    $product,
-                    $parentProduct,
-                    $otherProduct,
-                    $secondSimpleProduct
-                ]
-            )
+            $this->provider->getProductsUnitsQuantity([
+                $product->getId(),
+                $parentProduct->getId(),
+                $otherProduct->getId(),
+                $secondSimpleProduct->getId()
+            ])
         );
-    }
-
-    /**
-     * @param int $id
-     * @param string $unit
-     * @param int $quantity
-     * @param ShoppingList $shoppingList
-     * @param object $product
-     * @param object|null $parentProduct
-     * @return object
-     */
-    private function createLineItem($id, $unit, $quantity, $shoppingList, $product, $parentProduct = null)
-    {
-        $productUnit = $this->getEntity(ProductUnit::class, [
-            'code' => $unit,
-        ]);
-
-        $options = [
-            'id' => $id,
-            'unit' => $productUnit,
-            'quantity' => $quantity,
-            'shoppingList' => $shoppingList,
-            'product' => $product
-        ];
-
-        if (null !== $parentProduct) {
-            $options['parentProduct'] = $parentProduct;
-        }
-
-        return $this->getEntity(LineItem::class, $options);
-    }
-
-    /**
-     * @param int $id
-     * @param string $label
-     * @param boolean $isCurrent
-     * @return object
-     */
-    protected function createShoppingList($id, $label, $isCurrent)
-    {
-        /** @var ShoppingList $shoppingList */
-        $shoppingList = $this->getEntity(ShoppingList::class, ['id' => $id, 'customerUser' => new CustomerUser()]);
-
-        $shoppingList
-            ->setLabel($label)
-            ->setCurrent($isCurrent);
-
-        return $shoppingList;
     }
 }

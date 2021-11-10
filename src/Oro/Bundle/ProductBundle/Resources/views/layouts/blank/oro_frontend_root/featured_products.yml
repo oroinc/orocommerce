@@ -25,18 +25,6 @@ layout:
            id: featured_product_line_item_form
            optionName: instance_name
            optionValue: featured_products
-        - '@setOption':
-            id: featured_product_line_item_form_fields
-            optionName: instance_name
-            optionValue: featured_products
-        - '@setOption':
-            id: featured_product_line_item_form_start
-            optionName: instance_name
-            optionValue: featured_products
-        - '@setOption':
-            id: featured_product_line_item_form_end
-            optionName: instance_name
-            optionValue: featured_products
         - '@add':
             id: featured_products_container
             parentId: page_content

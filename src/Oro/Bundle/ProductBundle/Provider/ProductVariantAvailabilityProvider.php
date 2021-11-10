@@ -3,15 +3,13 @@
 namespace Oro\Bundle\ProductBundle\Provider;
 
 use Doctrine\ORM\QueryBuilder;
-use Doctrine\Persistence\Proxy;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Event\RestrictProductVariantEvent;
 use Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantFieldValueHandlerRegistry;
-use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
 /**
  * Get product variants by configurable products.
@@ -19,43 +17,29 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
  */
 class ProductVariantAvailabilityProvider
 {
-    /** @var DoctrineHelper */
-    private $doctrineHelper;
+    private ManagerRegistry $doctrine;
+    private CustomFieldProvider $customFieldProvider;
+    private PropertyAccessorInterface $propertyAccessor;
+    private EventDispatcherInterface $eventDispatcher;
+    private ProductVariantFieldValueHandlerRegistry $fieldValueHandlerRegistry;
 
-    /** @var CustomFieldProvider */
-    private $customFieldProvider;
-
-    /** @var PropertyAccessor */
-    private $propertyAccessor;
-
-    /** @var EventDispatcherInterface */
-    private $eventDispatcher;
-
-    /** @var array */
-    private $customFieldsByEntity = [];
-
-    /** @var ProductVariantFieldValueHandlerRegistry */
-    private $fieldValueHandlerRegistry;
-
-    /** @var AclHelper */
-    private $aclHelper;
-
+    /** @var array [entity class => [field name => field data (array), ...], ...] */
+    private array $customFieldsByEntity = [];
+    /** @var array [cache key => data, ...] */
     private array $productsByVariantFieldsCache = [];
 
     public function __construct(
-        DoctrineHelper $doctrineHelper,
+        ManagerRegistry $doctrine,
         CustomFieldProvider $customFieldProvider,
-        PropertyAccessor $propertyAccessor,
+        PropertyAccessorInterface $propertyAccessor,
         EventDispatcherInterface $eventDispatcher,
-        ProductVariantFieldValueHandlerRegistry $fieldValueHandlerRegistry,
-        AclHelper $aclHelper
+        ProductVariantFieldValueHandlerRegistry $fieldValueHandlerRegistry
     ) {
-        $this->doctrineHelper = $doctrineHelper;
+        $this->doctrine = $doctrine;
         $this->customFieldProvider = $customFieldProvider;
         $this->propertyAccessor = $propertyAccessor;
         $this->eventDispatcher = $eventDispatcher;
         $this->fieldValueHandlerRegistry = $fieldValueHandlerRegistry;
-        $this->aclHelper = $aclHelper;
     }
 
     /**
@@ -124,7 +108,7 @@ class ProductVariantAvailabilityProvider
     {
         $customFields = $this->getCustomFieldsByEntity(Product::class);
 
-        return array_key_exists($fieldName, $customFields) ? $customFields[$fieldName]['type'] : null;
+        return \array_key_exists($fieldName, $customFields) ? $customFields[$fieldName]['type'] : null;
     }
 
     /**
@@ -258,33 +242,31 @@ class ProductVariantAvailabilityProvider
     }
 
     /**
-     * Return array of simple products grouped by configurable product ids by given configurable products.
+     * Returns a list of simple products grouped by configurable product IDs for given configurable products.
      *
-     * @param Product[] $products
+     * @param int[] $configurableProductIds
      *
-     * @return array [configurable product id => [simple product, ...], ...]
+     * @return array [configurable product id => [simple product id, ...], ...]
      */
-    public function getSimpleProductsGroupedByConfigurable(array $products): array
+    public function getSimpleProductIdsGroupedByConfigurable(array $configurableProductIds): array
     {
-        $configurableProducts = $this->filterConfigurableProducts($products);
-        if (!$configurableProducts) {
+        if (!$configurableProductIds) {
+            throw new \InvalidArgumentException('The list of configurable product IDs must not be empty.');
+        }
+
+        $simpleProductIds = $this->getSimpleProductIdsByConfigurable($configurableProductIds);
+        if (!$simpleProductIds) {
             return [];
         }
 
-        $simpleProducts = $this->getSimpleProductsByConfigurable($configurableProducts);
-        if (!$simpleProducts) {
-            return [];
-        }
-
-        $mapping = $this->getProductRepository()->getVariantsMapping($configurableProducts);
+        $mapping = $this->getProductRepository()->getVariantsMapping($configurableProductIds);
         $simpleByConfigurable = [];
-        foreach ($simpleProducts as $simpleProduct) {
-            $id = $simpleProduct->getId();
-            if (empty($mapping[$id])) {
+        foreach ($simpleProductIds as $simpleProductId) {
+            if (empty($mapping[$simpleProductId])) {
                 continue;
             }
-            foreach ($mapping[$id] as $parentId) {
-                $simpleByConfigurable[$parentId][] = $simpleProduct;
+            foreach ($mapping[$simpleProductId] as $parentId) {
+                $simpleByConfigurable[$parentId][] = $simpleProductId;
             }
         }
 
@@ -294,66 +276,18 @@ class ProductVariantAvailabilityProvider
     /**
      * Return array of simple products by given configurable products.
      *
-     * @param array $configurableProducts
+     * @param int[] $configurableProductIds
      *
-     * @return Product[]
+     * @return int[]
      */
-    public function getSimpleProductsByConfigurable(array $configurableProducts): array
+    public function getSimpleProductIdsByConfigurable(array $configurableProductIds): array
     {
-        $qb = $this->getProductRepository()->getSimpleProductIdsByParentProductsQueryBuilder($configurableProducts);
+        $qb = $this->getProductRepository()->getSimpleProductIdsByParentProductsQueryBuilder($configurableProductIds);
         $rows = $this->modifyRestrictProductVariantQueryBuilder($qb)
             ->getQuery()
             ->getArrayResult();
 
-        $result = [];
-        $em = $this->doctrineHelper->getEntityManagerForClass(Product::class);
-        foreach ($rows as $row) {
-            $result[] = $em->getReference(Product::class, $row['id']);
-        }
-
-        return $result;
-    }
-
-    /**
-     * @param Product[] $products
-     *
-     * @return Product[]
-     */
-    public function filterConfigurableProducts(array $products): array
-    {
-        $productsToLoadFromDb = [];
-        $configurableProducts = [];
-        // To not load proxies in loop collect all uninitialized products to load them all later by 1 query
-        foreach ($products as $product) {
-            if (!$product instanceof Proxy || ($product instanceof Proxy && $product->__isInitialized())) {
-                if ($product->isConfigurable()) {
-                    $configurableProducts[] = $product;
-                }
-            } else {
-                $productsToLoadFromDb[] = $product;
-            }
-        }
-
-        // Load information about configurable products from DB for non-initialized proxies
-        if ($productsToLoadFromDb) {
-            $qb = $this->getProductRepository()->getConfigurableProductIdsQueryBuilder($productsToLoadFromDb);
-            $configurableProductIds = array_column($this->aclHelper->apply($qb)->getArrayResult(), 'id');
-            if (!$configurableProductIds) {
-                return $configurableProducts;
-            }
-
-            $configurableProducts = array_merge(
-                $configurableProducts,
-                array_filter(
-                    $productsToLoadFromDb,
-                    static function (Product $product) use ($configurableProductIds) {
-                        return \in_array($product->getId(), $configurableProductIds, true);
-                    }
-                )
-            );
-        }
-
-        return $configurableProducts;
+        return array_column($rows, 'id');
     }
 
     private function getProductsByVariantsCacheKey(int $configurableProductId, array $variantParameters = []): string
@@ -396,7 +330,7 @@ class ProductVariantAvailabilityProvider
      */
     private function getCustomFieldsByEntity($entityName)
     {
-        if (!array_key_exists($entityName, $this->customFieldsByEntity)) {
+        if (!\array_key_exists($entityName, $this->customFieldsByEntity)) {
             $this->customFieldsByEntity[$entityName] = $this->customFieldProvider->getEntityCustomFields($entityName);
         }
 
@@ -413,6 +347,6 @@ class ProductVariantAvailabilityProvider
 
     private function getProductRepository(): ProductRepository
     {
-        return $this->doctrineHelper->getEntityRepositoryForClass(Product::class);
+        return $this->doctrine->getRepository(Product::class);
     }
 }

@@ -8,7 +8,7 @@ use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
 use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
 
 /**
- * Adds highlight upcoming label of the products on the storefront product grid.
+ * Adds information required to highlight upcoming products to storefront product grid.
  */
 class ProductDatagridUpcomingLabelListener
 {

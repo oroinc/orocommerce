@@ -21,18 +21,6 @@ layout:
             id: top_selling_product_line_item_form
             optionName: instance_name
             optionValue: top_selling_products
-        - '@setOption':
-            id: top_selling_product_line_item_form_fields
-            optionName: instance_name
-            optionValue: top_selling_products
-        - '@setOption':
-            id: top_selling_product_line_item_form_start
-            optionName: instance_name
-            optionValue: top_selling_products
-        - '@setOption':
-            id: top_selling_product_line_item_form_end
-            optionName: instance_name
-            optionValue: top_selling_products
         - '@add':
             id: top_selling_items_container
             parentId: page_content

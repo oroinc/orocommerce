@@ -304,17 +304,18 @@ class ProductRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param array $configurableProducts
+     * @param int[] $configurableProductIds
+     *
      * @return QueryBuilder
      */
-    public function getSimpleProductIdsByParentProductsQueryBuilder(array $configurableProducts)
+    public function getSimpleProductIdsByParentProductsQueryBuilder(array $configurableProductIds): QueryBuilder
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->select('p.id')
             ->from($this->getEntityName(), 'p')
             ->innerJoin('p.parentVariantLinks', 'l')
             ->andWhere($qb->expr()->in('l.parentProduct', ':configurableProducts'))
-            ->setParameter('configurableProducts', $configurableProducts);
+            ->setParameter('configurableProducts', $configurableProductIds);
 
         return $qb;
     }
@@ -460,35 +461,17 @@ class ProductRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param array|int[]|Product[] $products
+     * @param int[] $configurableProductIds
      *
-     * @return QueryBuilder
+     * @return array [variant id => [parent Product Id, ...], ...]
      */
-    public function getConfigurableProductIdsQueryBuilder(array $products)
-    {
-        $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb->from($this->getEntityName(), 'p')
-            ->select('p.id')
-            ->where($qb->expr()->in('p', ':products'))
-            ->andWhere($qb->expr()->eq('p.type', ':type'))
-            ->setParameter('products', $products)
-            ->setParameter('type', Product::TYPE_CONFIGURABLE);
-
-        return $qb;
-    }
-
-    /**
-     * @param array $configurableProducts
-     * @return array
-     * [variantId:int => parentProductIds:int[]]
-     */
-    public function getVariantsMapping(array $configurableProducts): array
+    public function getVariantsMapping(array $configurableProductIds): array
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->from(ProductVariantLink::class, 'pvl')
             ->select('IDENTITY(pvl.parentProduct) as parentId', 'IDENTITY(pvl.product) as variantId')
             ->where($qb->expr()->in('pvl.parentProduct', ':parentProduct'))
-            ->setParameter('parentProduct', $configurableProducts);
+            ->setParameter('parentProduct', $configurableProductIds);
 
         $mappingData = $qb->getQuery()->getArrayResult();
         $mapping = [];

@@ -24,18 +24,6 @@ layout:
             optionName: instance_name
             optionValue: two_column_related_products
         - '@setOption':
-            id: two_column_related_product_line_item_form_fields
-            optionName: instance_name
-            optionValue: two_column_related_products
-        - '@setOption':
-            id: two_column_related_product_line_item_form_start
-            optionName: instance_name
-            optionValue: two_column_related_products
-        - '@setOption':
-            id: two_column_related_product_line_item_form_end
-            optionName: instance_name
-            optionValue: two_column_related_products
-        - '@setOption':
             id: two_column_related_product_line_item_form
             optionName: visible
             optionValue: '=data["oro_product_related_products"].isAddButtonVisible()'
@@ -53,3 +41,5 @@ layout:
             blockType: container
             prepend: false
     conditions: '!context["is_mobile"]'
+
+

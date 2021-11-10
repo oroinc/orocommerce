@@ -19,6 +19,7 @@ services:
             - ['setContainer', ['@Psr\Container\ContainerInterface']]
         tags:
             - { name: container.service_subscriber }
+            - { name: container.service_subscriber, id: oro_cms.content_widget.frontend_emulator, key: Oro\Bundle\CMSBundle\ContentWidget\FrontendEmulator }
 
     Oro\Bundle\CMSBundle\Controller\WysiwygContentController:
         calls:
