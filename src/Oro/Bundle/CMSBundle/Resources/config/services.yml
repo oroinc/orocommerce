@@ -248,7 +248,7 @@ services:
         arguments:
             - '@oro_cms.event_listener.wysiwyg_field_twig_listener'
         tags:
-           # Must be called before oro_message_queue.consumption.docrine_clear_identity_map_extension
+           # Must be called before oro_message_queue.consumption.doctrine_clear_identity_map_extension
            - { name: oro_message_queue.consumption.extension }
 
     oro_cms.entity_listener.image_slide:
