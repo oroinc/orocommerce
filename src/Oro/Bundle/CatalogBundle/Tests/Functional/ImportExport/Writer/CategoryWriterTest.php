@@ -15,7 +15,7 @@ class CategoryWriterTest extends EntityWriterTest
     private $treeListener;
 
     /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject */
-    protected $categoryEntityManager;
+    private $categoryEntityManager;
 
     /** @var CategoryRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $categoryRepo;
@@ -35,25 +35,20 @@ class CategoryWriterTest extends EntityWriterTest
     }
 
     /**
-     * @param array $configuration
-     *
      * @dataProvider configurationProvider
      */
-    public function testWrite($configuration): void
+    public function testWrite(array $configuration): void
     {
         $this->mockDoctrineHelper();
 
-        $this->treeListener
-            ->expects($this->exactly(2))
+        $this->treeListener->expects($this->exactly(2))
             ->method('setEnabled')
             ->withConsecutive([false], [true]);
 
-        $this->categoryRepo
-            ->expects($this->once())
+        $this->categoryRepo->expects($this->once())
             ->method('recover');
 
-        $this->categoryEntityManager
-            ->expects($this->once())
+        $this->categoryEntityManager->expects($this->once())
             ->method('flush');
 
         parent::testWrite($configuration);
@@ -61,8 +56,7 @@ class CategoryWriterTest extends EntityWriterTest
 
     public function testWriteException(): void
     {
-        $this->treeListener
-            ->expects($this->exactly(2))
+        $this->treeListener->expects($this->exactly(2))
             ->method('setEnabled')
             ->withConsecutive([false], [true]);
 
@@ -73,8 +67,7 @@ class CategoryWriterTest extends EntityWriterTest
     {
         $this->mockDoctrineHelper();
 
-        $this->treeListener
-            ->expects($this->exactly(2))
+        $this->treeListener->expects($this->exactly(2))
             ->method('setEnabled')
             ->withConsecutive([false], [true]);
 
@@ -86,8 +79,7 @@ class CategoryWriterTest extends EntityWriterTest
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('entityName not resolved');
 
-        $this->treeListener
-            ->expects($this->exactly(2))
+        $this->treeListener->expects($this->exactly(2))
             ->method('setEnabled')
             ->withConsecutive([false], [true]);
 
@@ -98,8 +90,7 @@ class CategoryWriterTest extends EntityWriterTest
     {
         $this->mockDoctrineHelper();
 
-        $this->treeListener
-            ->expects($this->exactly(4))
+        $this->treeListener->expects($this->exactly(4))
             ->method('setEnabled')
             ->withConsecutive([false], [true], [false], [true]);
 
@@ -108,16 +99,16 @@ class CategoryWriterTest extends EntityWriterTest
 
     private function mockDoctrineHelper(): void
     {
-        $this->doctrineHelper
-            ->expects($this->atLeastOnce())
+        $this->categoryEntityManager = $this->createMock(EntityManager::class);
+        $this->categoryRepo = $this->createMock(CategoryRepository::class);
+
+        $this->doctrineHelper->expects($this->atLeastOnce())
             ->method('getEntityManagerForClass')
             ->with(Category::class)
-            ->willReturn($this->categoryEntityManager = $this->createMock(EntityManager::class));
-
-        $this->doctrineHelper
-            ->expects($this->atLeastOnce())
+            ->willReturn($this->categoryEntityManager);
+        $this->doctrineHelper->expects($this->atLeastOnce())
             ->method('getEntityRepositoryForClass')
             ->with(Category::class)
-            ->willReturn($this->categoryRepo = $this->createMock(CategoryRepository::class));
+            ->willReturn($this->categoryRepo);
     }
 }
