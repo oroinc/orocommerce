@@ -6,25 +6,19 @@ use Oro\Bundle\ShoppingListBundle\Action\AddStringSuffixAction;
 use Oro\Component\Action\Exception\InvalidParameterException;
 use Oro\Component\ConfigExpression\ContextAccessor;
 use Oro\Component\ConfigExpression\Tests\Unit\Fixtures;
+use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\PropertyAccess\PropertyPath;
 
 class AddStringSuffixActionTest extends \PHPUnit\Framework\TestCase
 {
     /** @var AddStringSuffixAction */
-    protected $action;
+    private $action;
 
     protected function setUp(): void
     {
-        $this->action = new class(new ContextAccessor()) extends AddStringSuffixAction {
-            public function xgetOptions(): array
-            {
-                return $this->options;
-            }
-        };
-        /** @var EventDispatcherInterface $dispatcher */
-        $dispatcher = $this->getMockBuilder(EventDispatcherInterface::class)->getMock();
-        $this->action->setDispatcher($dispatcher);
+        $this->action = new AddStringSuffixAction(new ContextAccessor());
+        $this->action->setDispatcher($this->createMock(EventDispatcherInterface::class));
     }
 
     public function testInitialize()
@@ -37,31 +31,24 @@ class AddStringSuffixActionTest extends \PHPUnit\Framework\TestCase
         ];
         $this->action->initialize($options);
 
-        static::assertEquals($options, $this->action->xgetOptions());
+        self::assertEquals($options, ReflectionUtil::getPropertyValue($this->action, 'options'));
     }
 
     /**
-     * @param array  $contextData
-     * @param array  $options
-     * @param string $expectedResult
-     *
      * @dataProvider actionDataProvider
      */
-    public function testAction(array $contextData, array $options, $expectedResult)
+    public function testAction(array $contextData, array $options, string $expectedResult)
     {
         $context = new Fixtures\ItemStub();
         foreach ($contextData as $key => $value) {
-            $context->$key = $value;
+            $context->{$key} = $value;
         }
         $this->action->initialize($options);
         $this->action->execute($context);
         $this->assertEquals($expectedResult, $context->attribute);
     }
 
-    /**
-     * @return array
-     */
-    public function actionDataProvider()
+    public function actionDataProvider(): array
     {
         return [
             [
@@ -107,23 +94,16 @@ class AddStringSuffixActionTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param array  $options
-     * @param string $exceptionName
-     * @param string $exceptionMessage
-     *
      * @dataProvider initializeExceptionDataProvider
      */
-    public function testInitializeException(array $options, $exceptionName, $exceptionMessage)
+    public function testInitializeException(array $options, string $exceptionName, string $exceptionMessage)
     {
         $this->expectException($exceptionName);
         $this->expectExceptionMessage($exceptionMessage);
         $this->action->initialize($options);
     }
 
-    /**
-     * @return array
-     */
-    public function initializeExceptionDataProvider()
+    public function initializeExceptionDataProvider(): array
     {
         return [
             'no attribute' => [

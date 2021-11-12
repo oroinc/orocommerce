@@ -42,7 +42,7 @@ Feature: Product attribute import select existing options
     When I click update schema
     Then I should see "Schema updated" flash message
 
-  Scenario: Product select attribiute with duplicate options created correctly
+  Scenario: Product select attribute with duplicate options created correctly
     When I click "Edit" on row "Field2" in grid
     Then I should see values in field "Options":
       | Abc |

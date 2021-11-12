@@ -12,49 +12,32 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Component\Action\Action\ActionInterface;
 use Oro\Component\Action\Exception\InvalidParameterException;
 use Oro\Component\ConfigExpression\ContextAccessor;
-use PHPUnit\Framework\MockObject\MockObject;
+use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\PropertyAccess\PropertyPath;
 
 class CreateOrderTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var ContextAccessor */
-    protected $contextAccessor;
+    /** @var MapperInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $mapper;
 
-    /** @var MapperInterface|MockObject */
-    protected $mapper;
-
-    /** @var EntityPaymentMethodsProvider|MockObject */
-    protected $paymentMethodsProvider;
+    /** @var EntityPaymentMethodsProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $paymentMethodsProvider;
 
     /** @var CreateOrder */
-    protected $action;
+    private $action;
 
     protected function setUp(): void
     {
-        $this->contextAccessor = new ContextAccessor();
         $this->mapper = $this->createMock(MapperInterface::class);
         $this->paymentMethodsProvider = $this->createMock(EntityPaymentMethodsProvider::class);
 
-        /** @var EventDispatcherInterface|MockObject $eventDispatcher */
-        $eventDispatcher = $this->getMockBuilder(EventDispatcherInterface::class)->getMock();
-
-        $this->action = new class(
-            $this->contextAccessor,
+        $this->action = new CreateOrder(
+            new ContextAccessor(),
             $this->mapper,
             $this->paymentMethodsProvider
-        ) extends CreateOrder {
-            public function xgetOptions(): array
-            {
-                return $this->options;
-            }
-        };
-        $this->action->setDispatcher($eventDispatcher);
-    }
-
-    protected function tearDown(): void
-    {
-        unset($this->action);
+        );
+        $this->action->setDispatcher($this->createMock(EventDispatcherInterface::class));
     }
 
     public function testInitialize()
@@ -65,28 +48,21 @@ class CreateOrderTest extends \PHPUnit\Framework\TestCase
             CreateOrder::OPTION_KEY_DATA => ['billingAddress' => new PropertyPath('billingAddress')],
         ];
 
-        static::assertInstanceOf(ActionInterface::class, $this->action->initialize($options));
-        static::assertEquals($options, $this->action->xgetOptions());
+        self::assertInstanceOf(ActionInterface::class, $this->action->initialize($options));
+        self::assertEquals($options, ReflectionUtil::getPropertyValue($this->action, 'options'));
     }
 
     /**
      * @dataProvider initializeExceptionDataProvider
-     *
-     * @param array $options
-     * @param string $exception
-     * @param string $exceptionMessage
      */
-    public function testInitializeException(array $options, $exception, $exceptionMessage)
+    public function testInitializeException(array $options, string $exception, string $exceptionMessage)
     {
         $this->expectException($exception);
         $this->expectExceptionMessage($exceptionMessage);
         $this->action->initialize($options);
     }
 
-    /**
-     * @return array
-     */
-    public function initializeExceptionDataProvider()
+    public function initializeExceptionDataProvider(): array
     {
         return [
             [

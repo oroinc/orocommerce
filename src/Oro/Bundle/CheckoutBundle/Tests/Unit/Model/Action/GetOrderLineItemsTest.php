@@ -11,13 +11,12 @@ use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Component\Action\Action\ActionInterface;
 use Oro\Component\Action\Exception\InvalidParameterException;
 use Oro\Component\ConfigExpression\ContextAccessor;
+use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\PropertyAccess\PropertyPath;
 
 class GetOrderLineItemsTest extends \PHPUnit\Framework\TestCase
 {
-    private ContextAccessor $contextAccessor;
-
     /** @var CheckoutLineItemsManager|\PHPUnit\Framework\MockObject\MockObject */
     private $checkoutLineItemsManager;
 
@@ -26,18 +25,10 @@ class GetOrderLineItemsTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->contextAccessor = new ContextAccessor();
         $this->checkoutLineItemsManager = $this->createMock(CheckoutLineItemsManager::class);
 
-        $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
-
-        $this->action = new class($this->contextAccessor, $this->checkoutLineItemsManager) extends GetOrderLineItems {
-            public function xgetOptions(): array
-            {
-                return $this->options;
-            }
-        };
-        $this->action->setDispatcher($eventDispatcher);
+        $this->action = new GetOrderLineItems(new ContextAccessor(), $this->checkoutLineItemsManager);
+        $this->action->setDispatcher($this->createMock(EventDispatcherInterface::class));
     }
 
     public function testInitialize(): void
@@ -48,17 +39,13 @@ class GetOrderLineItemsTest extends \PHPUnit\Framework\TestCase
         ];
 
         $this->assertInstanceOf(ActionInterface::class, $this->action->initialize($options));
-        $this->assertEquals($options, $this->action->xgetOptions());
+        $this->assertEquals($options, ReflectionUtil::getPropertyValue($this->action, 'options'));
     }
 
     /**
      * @dataProvider initializeExceptionDataProvider
-     *
-     * @param array $options
-     * @param string $exception
-     * @param string $exceptionMessage
      */
-    public function testInitializeException(array $options, $exception, $exceptionMessage): void
+    public function testInitializeException(array $options, string $exception, string $exceptionMessage): void
     {
         $this->expectException($exception);
         $this->expectExceptionMessage($exceptionMessage);
