@@ -24,6 +24,11 @@ class MultiInsertShardQueryExecutor extends AbstractShardQueryExecutor implement
         $this->batchSize = $batchSize;
     }
 
+    public function getBatchSize(): int
+    {
+        return $this->batchSize;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -35,8 +40,12 @@ class MultiInsertShardQueryExecutor extends AbstractShardQueryExecutor implement
         $selectQuery->useQueryCache(false);
         $selectQuery->setHint(PriceShardOutputResultModifier::ORO_PRICING_SHARD_MANAGER, $this->shardManager);
 
-        $iterator = new BufferedIdentityQueryResultIterator($selectQuery);
-        $iterator->setBufferSize($this->batchSize);
+        if ($this->batchSize > 0) {
+            $iterator = new BufferedIdentityQueryResultIterator($selectQuery);
+            $iterator->setBufferSize($this->batchSize);
+        } else {
+            $iterator = $selectQuery->toIterable();
+        }
 
         return $this->executeNativeQueryInBatches(
             $insertToTableName,
@@ -101,7 +110,7 @@ class MultiInsertShardQueryExecutor extends AbstractShardQueryExecutor implement
             $values = array_merge($values, array_values($row));
             $allTypes = array_merge($allTypes, array_values($rowDataTypes));
             $rowsCount++;
-            if ($rowsCount % $this->batchSize === 0) {
+            if ($this->batchSize && $rowsCount % $this->batchSize === 0) {
                 $batchSql = $sql . $this->prepareSqlPlaceholders($columnsCount, $rowsCount);
                 if ($applyOnDuplicateKeyUpdate) {
                     $batchSql = $this->applyOnDuplicateKeyUpdate($className, $batchSql);

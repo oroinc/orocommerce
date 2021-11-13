@@ -9,7 +9,7 @@ trusted_data:
                 alias: true
                 entityName: true
         Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository:
-            insertByProductsRangeForBaseProductPrice:
+            getMinMaxProductIds:
                 priceToProductRelationClass: true
             insertByProductsRangeForBaseProductPriceToTempTable:
                 priceToProductRelationClass: true

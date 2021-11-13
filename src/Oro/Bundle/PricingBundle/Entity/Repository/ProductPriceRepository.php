@@ -436,6 +436,32 @@ class ProductPriceRepository extends BaseProductPriceRepository
         return $qb->getQuery()->getArrayResult();
     }
 
+    public function getMinimalPriceIdsQueryBuilder(array $priceLists): QueryBuilder
+    {
+        $qb = $this->createQueryBuilder('pp');
+
+        $qb
+            ->select('MIN(CAST(mp.id as text)) as id')
+            ->innerJoin(
+                ProductPrice::class,
+                'mp',
+                Join::WITH,
+                $qb->expr()->andX(
+                    $qb->expr()->eq('mp.product', 'pp.product'),
+                    $qb->expr()->eq('mp.unit', 'pp.unit'),
+                    $qb->expr()->eq('mp.quantity', 'pp.quantity'),
+                    $qb->expr()->eq('mp.currency', 'pp.currency')
+                )
+            )
+            ->where($qb->expr()->in('pp.priceList', ':priceLists'))
+            ->andWhere($qb->expr()->in('mp.priceList', ':priceLists'))
+            ->groupBy('pp.product', 'pp.unit', 'pp.quantity', 'pp.currency', 'mp.value')
+            ->having($qb->expr()->eq('mp.value', 'MIN(pp.value)'))
+            ->setParameter('priceLists', $priceLists);
+
+        return $qb;
+    }
+
     /**
      * @param Website $website
      * @param array $products

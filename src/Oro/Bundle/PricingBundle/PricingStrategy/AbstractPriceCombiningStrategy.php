@@ -88,9 +88,6 @@ abstract class AbstractPriceCombiningStrategy implements
         return $this->output !== null && $this->output->getVerbosity() >= OutputInterface::VERBOSITY_VERBOSE;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function combinePrices(CombinedPriceList $combinedPriceList, array $products = [], $startTimestamp = null)
     {
         if (!$products
@@ -117,7 +114,9 @@ abstract class AbstractPriceCombiningStrategy implements
         $combinedPriceRepository = $this->getCombinedProductPriceRepository();
         $combinedPriceRepository->deleteCombinedPrices($combinedPriceList, $products);
 
-        $this->processPriceLists($combinedPriceList, $priceListsRelations, $products, $progressBar);
+        if (count($priceListsRelations) > 0) {
+            $this->processPriceLists($combinedPriceList, $priceListsRelations, $products, $progressBar);
+        }
 
         if (!$products) {
             $combinedPriceList->setPricesCalculated(true);
@@ -136,9 +135,6 @@ abstract class AbstractPriceCombiningStrategy implements
         $this->builtList[$startTimestamp][$combinedPriceList->getId()] = true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function combinePricesUsingPrecalculatedFallback(
         CombinedPriceList $combinedPriceList,
         array $priceLists,
@@ -200,7 +196,7 @@ abstract class AbstractPriceCombiningStrategy implements
 
     /**
      * @param CombinedPriceList $combinedPriceList
-     * @param array|CombinedPriceListToPriceList $priceLists
+     * @param array|CombinedPriceListToPriceList[] $priceLists
      * @param array|Product[] $products
      * @param ProgressBar|null $progressBar
      */
@@ -286,7 +282,7 @@ abstract class AbstractPriceCombiningStrategy implements
     }
 
     /**
-     * {@inheritDoc}
+     * @return ShardQueryExecutorInterface
      */
     public function getInsertSelectExecutor()
     {

@@ -14,6 +14,7 @@ use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\ORM\MultiInsertShardQueryExecutor;
 use Oro\Bundle\PricingBundle\ORM\ShardQueryExecutorInterface;
 use Oro\Bundle\PricingBundle\ORM\TempTableManipulatorInterface;
 use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardOutputResultModifier;
@@ -27,6 +28,7 @@ use Oro\Component\DoctrineUtils\ORM\UnionQueryBuilder;
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.CyclomaticComplexity)
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  */
 class CombinedProductPriceRepository extends BaseProductPriceRepository
@@ -400,6 +402,7 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         return $qb->getQuery()->getArrayResult();
     }
 
+
     /**
      * @param ShardManager $shardManager
      * @param ShardQueryExecutorInterface $insertFromSelectQueryExecutor
@@ -425,6 +428,97 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
             true,
             $products
         );
+    }
+
+    /**
+     * @param ShardQueryExecutorInterface $insertFromSelectQueryExecutor
+     * @param CombinedPriceList $combinedPriceList
+     * @param array|PriceList[] $priceLists
+     * @param array|Product[] $products
+     */
+    public function insertMinimalPricesByPriceLists(
+        ShardQueryExecutorInterface $insertFromSelectQueryExecutor,
+        CombinedPriceList $combinedPriceList,
+        array $priceLists,
+        array $products
+    ): void {
+        $qb = $this->getEntityManager()
+            ->getRepository(ProductPrice::class)
+            ->createQueryBuilder('pp');
+        $qb
+            ->select(
+                'IDENTITY(pp.product)',
+                'IDENTITY(pp.unit)',
+                (string)$qb->expr()->literal($combinedPriceList->getId()),
+                'pp.productSku',
+                'pp.quantity',
+                'pp.value',
+                'pp.currency',
+                sprintf('CAST(%d as boolean)', 1),
+                'pp.id',
+                'UUID()'
+            )
+            ->where($qb->expr()->in('pp.id', ':ids'));
+
+        $minimaPriceIdsQb = $this->getEntityManager()
+            ->getRepository(ProductPrice::class)
+            ->getMinimalPriceIdsQueryBuilder($priceLists);
+        if ($products) {
+            $minimaPriceIdsQb->andWhere($minimaPriceIdsQb->expr()->in('pp.product', ':products'));
+            foreach (array_chunk($products, self::BATCH_SIZE) as $batch) {
+                $minimaPriceIdsQb->setParameter('products', $batch);
+                $this->insertMinimalPricesInBatches($minimaPriceIdsQb, $qb, $insertFromSelectQueryExecutor);
+            }
+        } else {
+            $minimaPriceIdsQb->andWhere($qb->expr()->between('pp.product', ':product_min', ':product_max'));
+            [$minProductId, $maxProductId] = $this->getMinMaxProductIds(PriceListToProduct::class, $priceLists);
+
+            while ($minProductId <= $maxProductId) {
+                $currentMax = $minProductId + self::BATCH_SIZE;
+                if ($currentMax > $maxProductId) {
+                    $currentMax = $maxProductId;
+                }
+                $minimaPriceIdsQb
+                    ->setParameter('product_min', $minProductId)
+                    ->setParameter('product_max', $currentMax);
+                // +1 because between operator includes boundary values
+                $minProductId = $currentMax + 1;
+
+                $this->insertMinimalPricesInBatches($minimaPriceIdsQb, $qb, $insertFromSelectQueryExecutor);
+            }
+        }
+    }
+
+    private function insertMinimalPricesInBatches(
+        QueryBuilder $minimaPriceIdsQb,
+        QueryBuilder $queryBuilder,
+        ShardQueryExecutorInterface $insertFromSelectQueryExecutor
+    ): void {
+        foreach ($this->getMinimalPricesBatchedIds($minimaPriceIdsQb, $insertFromSelectQueryExecutor) as $ids) {
+            $queryBuilder->setParameter('ids', $ids);
+            $this->insertToCombinedPricesFromQb($insertFromSelectQueryExecutor, $queryBuilder);
+        }
+    }
+
+    private function getMinimalPricesBatchedIds(
+        QueryBuilder $minimaPriceIdsQb,
+        ShardQueryExecutorInterface $insertFromSelectQueryExecutor
+    ): \Generator {
+        $result = $minimaPriceIdsQb->getQuery()->getArrayResult();
+
+        if ($insertFromSelectQueryExecutor instanceof MultiInsertShardQueryExecutor) {
+            // Reset MultiInsertShardQueryExecutor batch size for minimal prices to control batches in repository
+            // and avoid extra selects executed by BufferedIdentityQueryResultIterator
+            $originalBatchSize = $insertFromSelectQueryExecutor->getBatchSize();
+            $insertFromSelectQueryExecutor->setBatchSize(0);
+            foreach (array_chunk($result, $originalBatchSize) as $ids) {
+                yield $ids;
+            }
+            // Restore batch size
+            $insertFromSelectQueryExecutor->setBatchSize($originalBatchSize);
+        } else {
+            yield $result;
+        }
     }
 
     public function insertMinimalPricesByCombinedPriceList(
@@ -614,21 +708,12 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         ShardManager $shardManager,
         QueryBuilder $invalidPricesQb,
         PriceList $priceList
-    ) {
-        $minProductId = null;
-        $maxProductId = null;
+    ): void {
         $invalidPricesQb->andWhere(
             $invalidPricesQb->expr()->between('cpp.product', ':product_min', ':product_max')
         );
-        $productPriceQb = $this->getEntityManager()
-            ->createQueryBuilder();
-        $productPriceQb->select('MIN(IDENTITY(ptp.product))')
-            ->from(PriceListToProduct::class, 'ptp')
-            ->where('ptp.priceList = :priceList')
-            ->setParameter('priceList', $priceList);
 
-        $minProductId = $productPriceQb->getQuery()->getSingleScalarResult();
-        $maxProductId = $productPriceQb->select('MAX(IDENTITY(ptp.product))')->getQuery()->getSingleScalarResult();
+        [$minProductId, $maxProductId] = $this->getMinMaxProductIds(PriceListToProduct::class, [$priceList]);
         while ($minProductId <= $maxProductId) {
             $currentMax = $minProductId + self::BATCH_SIZE;
             if ($currentMax > $maxProductId) {
@@ -649,19 +734,12 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
     private function deleteInvalidByRangeByCpl(
         QueryBuilder $invalidPricesQb,
         CombinedPriceList $priceList
-    ) {
+    ): void {
         $invalidPricesQb->andWhere(
             $invalidPricesQb->expr()->between('cpp.product', ':product_min', ':product_max')
         );
-        $productPriceQb = $this->getEntityManager()
-            ->createQueryBuilder();
-        $productPriceQb->select('MIN(IDENTITY(ptp.product))')
-            ->from($this->_entityName, 'ptp')
-            ->where('ptp.priceList = :priceList')
-            ->setParameter('priceList', $priceList);
 
-        $minProductId = $productPriceQb->getQuery()->getSingleScalarResult();
-        $maxProductId = $productPriceQb->select('MAX(IDENTITY(ptp.product))')->getQuery()->getSingleScalarResult();
+        [$minProductId, $maxProductId] = $this->getMinMaxProductIds($this->_entityName, [$priceList]);
         while ($minProductId <= $maxProductId) {
             $currentMax = $minProductId + self::BATCH_SIZE;
             if ($currentMax > $maxProductId) {
@@ -688,7 +766,7 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         QueryBuilder $invalidPricesQb,
         PriceList $priceList,
         array $products
-    ) {
+    ): void {
         $invalidPricesQb->andWhere(
             $invalidPricesQb->expr()->in('cpp.product', ':products')
         );
@@ -708,7 +786,7 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         $this->insertByProductsRangeForBaseProductPrice(
             $insertFromSelectQueryExecutor,
             PriceListToProduct::class,
-            $priceList,
+            [$priceList],
             $qb
         );
     }
@@ -721,47 +799,26 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         $this->insertByProductsRangeForBaseProductPrice(
             $insertFromSelectQueryExecutor,
             CombinedProductPrice::class,
-            $sourceCpl,
+            [$sourceCpl],
             $qb
         );
     }
 
+    /**
+     * @param ShardQueryExecutorInterface $insertFromSelectQueryExecutor
+     * @param string $priceToProductRelationClass
+     * @param array|BasePriceList[] $priceLists
+     * @param QueryBuilder $qb
+     */
     private function insertByProductsRangeForBaseProductPrice(
         ShardQueryExecutorInterface $insertFromSelectQueryExecutor,
         string $priceToProductRelationClass,
-        BasePriceList $priceList,
+        array $priceLists,
         QueryBuilder $qb
     ) {
         $qb->andWhere($qb->expr()->between('pp.product', ':product_min', ':product_max'));
 
-        $productPriceQb = $this->getEntityManager()
-            ->createQueryBuilder();
-        $productPriceQb->select('MIN(IDENTITY(ptp.product))')
-            ->from($priceToProductRelationClass, 'ptp')
-            ->where('ptp.priceList = :priceList')
-            ->setParameter('priceList', $priceList);
-
-        $minProductId = $productPriceQb->getQuery()
-            ->getSingleScalarResult();
-        $maxProductId = $productPriceQb->select('MAX(IDENTITY(ptp.product))')
-            ->getQuery()
-            ->getSingleScalarResult();
-
-        $this->insertByRange($insertFromSelectQueryExecutor, $qb, $minProductId, $maxProductId);
-    }
-
-    /**
-     * @param ShardQueryExecutorInterface $insertFromSelectQueryExecutor
-     * @param QueryBuilder $qb
-     * @param int $minProductId
-     * @param int $maxProductId
-     */
-    private function insertByRange(
-        ShardQueryExecutorInterface $insertFromSelectQueryExecutor,
-        QueryBuilder $qb,
-        $minProductId,
-        $maxProductId
-    ) {
+        [$minProductId, $maxProductId] = $this->getMinMaxProductIds($priceToProductRelationClass, $priceLists);
         while ($minProductId <= $maxProductId) {
             $currentMax = $minProductId + self::BATCH_SIZE;
             if ($currentMax > $maxProductId) {
@@ -774,17 +831,6 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
             // +1 because between operator includes boundary values
             $minProductId = $currentMax + 1;
         }
-    }
-
-    private function insertByProducts(
-        ShardQueryExecutorInterface $insertFromSelectQueryExecutor,
-        QueryBuilder $qb,
-        array $products
-    ) {
-        $qb->andWhere($qb->expr()->in('pp.product', ':products'))
-            ->setParameter('products', $products);
-
-        $this->insertToCombinedPricesFromQb($insertFromSelectQueryExecutor, $qb);
     }
 
     private function getPricesQb(
@@ -846,7 +892,12 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         if (!$products) {
             $this->insertByProductsRange($insertFromSelectQueryExecutor, $priceList, $qb);
         } else {
-            $this->insertByProducts($insertFromSelectQueryExecutor, $qb, $products);
+            $qb->andWhere($qb->expr()->in('pp.product', ':products'));
+            foreach (array_chunk($products, self::BATCH_SIZE) as $productsBatch) {
+                $qb->setParameter('products', $productsBatch);
+
+                $this->insertToCombinedPricesFromQb($insertFromSelectQueryExecutor, $qb);
+            }
         }
     }
 
@@ -904,19 +955,7 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
     ) {
         $qb->andWhere($qb->expr()->between('pp.product', ':product_min', ':product_max'));
 
-        $productPriceQb = $this->getEntityManager()
-            ->createQueryBuilder();
-        $productPriceQb->select('MIN(IDENTITY(ptp.product))')
-            ->from($priceToProductRelationClass, 'ptp')
-            ->where('ptp.priceList = :priceList')
-            ->setParameter('priceList', $priceList);
-
-        $minProductId = $productPriceQb->getQuery()
-            ->getSingleScalarResult();
-        $maxProductId = $productPriceQb->select('MAX(IDENTITY(ptp.product))')
-            ->getQuery()
-            ->getSingleScalarResult();
-
+        [$minProductId, $maxProductId] = $this->getMinMaxProductIds($priceToProductRelationClass, [$priceList]);
         while ($minProductId <= $maxProductId) {
             $currentMax = $minProductId + self::BATCH_SIZE;
             if ($currentMax > $maxProductId) {
@@ -966,5 +1005,30 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
             $applyOnDuplicateKeyUpdate,
             $tempTableAliases
         );
+    }
+
+    /**
+     * @param string $priceToProductRelationClass
+     * @param array $priceLists
+     * @return array [int, int]
+     * @throws \Doctrine\ORM\NoResultException
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    private function getMinMaxProductIds(string $priceToProductRelationClass, array $priceLists): array
+    {
+        $productPriceQb = $this->getEntityManager()
+            ->createQueryBuilder();
+        $productPriceQb->select('MIN(IDENTITY(ptp.product))')
+            ->from($priceToProductRelationClass, 'ptp')
+            ->where($productPriceQb->expr()->in('ptp.priceList', ':priceLists'))
+            ->setParameter('priceLists', $priceLists);
+
+        $minProductId = $productPriceQb->getQuery()
+            ->getSingleScalarResult();
+        $maxProductId = $productPriceQb->select('MAX(IDENTITY(ptp.product))')
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        return [$minProductId, $maxProductId];
     }
 }

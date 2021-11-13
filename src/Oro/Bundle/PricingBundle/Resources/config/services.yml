@@ -171,6 +171,9 @@ services:
             - { name: oro_pricing.price_strategy, alias: merge_by_priority }
 
     oro_pricing.pricing_strategy.minimal_proces_combining_strategy:
+        alias: oro_pricing.pricing_strategy.minimal_prices_combining_strategy
+
+    oro_pricing.pricing_strategy.minimal_prices_combining_strategy:
         class: Oro\Bundle\PricingBundle\PricingStrategy\MinimalPricesCombiningStrategy
         parent: oro_pricing.pricing_strategy.abstract_price_combining_strategy
         arguments:

@@ -483,6 +483,55 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
         $this->assertEquals($expectedPrices, $prices);
     }
 
+    /**
+     * @dataProvider insertMinimalPricesByPriceListDataProvider
+     * @param string $combinedPriceList
+     * @param string $product
+     * @param array $expectedPrices
+     */
+    public function testInsertMinimalPricesByPriceLists($combinedPriceList, $product, array $expectedPrices)
+    {
+        /** @var CombinedPriceList $combinedPriceList */
+        $combinedPriceList = $this->getReference($combinedPriceList);
+        $products = [];
+        if ($product) {
+            /** @var Product $product */
+            $product = $this->getReference($product);
+            $products = [$product];
+        }
+
+        $repository = $this->getCombinedPriceListToPriceListRepository();
+        $combinedPriceListRelations = $repository->getPriceListRelations($combinedPriceList, $products);
+
+        $combinedProductPriceRepository = $this->getCombinedProductPriceRepository();
+
+        $combinedProductPriceRepository->deleteCombinedPrices($combinedPriceList, $products);
+        $prices = $combinedProductPriceRepository->findBy(
+            [
+                'priceList' => $combinedPriceList,
+                'product' => $product,
+            ]
+        );
+        $this->assertEmpty($prices);
+        $combinedProductPriceRepository->insertMinimalPricesByPriceLists(
+            $this->insertFromSelectQueryExecutor,
+            $combinedPriceList,
+            array_map(static function (CombinedPriceListToPriceList $relation) {
+                return $relation->getPriceList();
+            }, $combinedPriceListRelations),
+            $products
+        );
+
+        $prices = $combinedProductPriceRepository->createQueryBuilder('prices')
+            ->select('prices.productSku, prices.quantity, prices.value, prices.currency, IDENTITY(prices.unit) as unit')
+            ->where('prices.priceList = :priceList AND prices.product = :product')
+            ->setParameters(['priceList' => $combinedPriceList, 'product' => $product])
+            ->orderBy('prices.currency, prices.quantity, prices.value')
+            ->getQuery()
+            ->getArrayResult();
+        $this->assertEquals($expectedPrices, $prices);
+    }
+
     public function testDeleteByProductUnit()
     {
         /** @var Product $product1 */
@@ -664,7 +713,7 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
         $this->assertEquals($expected, $prices);
     }
 
-    public function testInsertMinimalPricesByCombinedPriceList()
+    public function testInsertMinimalPricesByCombinedPriceLists()
     {
         $combinedPriceList = $this->getReference('1t_2t_3t');
         $sourceCpl = $this->getReference('2t_3t');

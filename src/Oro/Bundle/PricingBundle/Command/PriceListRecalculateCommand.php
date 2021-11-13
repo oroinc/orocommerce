@@ -230,6 +230,8 @@ HELP
         }
 
         $this->triggerHandler->commit();
+        
+        return 0;
     }
 
     protected function processAllPriceLists(OutputInterface $output): void
