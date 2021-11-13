@@ -74,7 +74,6 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
 
         /** @var EntityManagerInterface $em */
         $em = $this->doctrine->getManagerForClass(CombinedPriceList::class);
-        $em->beginTransaction();
         try {
             $this->triggerHandler->startCollect();
 
@@ -88,9 +87,13 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
             }
 
             $this->combinedPriceListsBuilderFacade->dispatchEvents();
-            $em->commit();
             $this->triggerHandler->commit();
         } catch (\Exception $e) {
+            // Rollback active DB transaction if any
+            if ($em->getConnection()->getTransactionNestingLevel() > 0) {
+                $em->rollback();
+            }
+            $this->triggerHandler->rollback();
             $this->logger->error(
                 'Unexpected exception occurred during Price Lists build.',
                 ['exception' => $e]
@@ -101,11 +104,6 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
             }
 
             return self::REJECT;
-        } finally {
-            if (isset($e)) {
-                $em->rollback();
-                $this->triggerHandler->rollback();
-            }
         }
 
         return self::ACK;

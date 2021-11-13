@@ -231,7 +231,7 @@ HELP
 
         $this->triggerHandler->commit();
         
-        return 0;
+        return self::SUCCESS;
     }
 
     protected function processAllPriceLists(OutputInterface $output): void

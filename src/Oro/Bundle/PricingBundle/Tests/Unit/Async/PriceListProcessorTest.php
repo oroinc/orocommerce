@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Async;
 
-use Doctrine\DBAL\ConnectionException;
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception\DeadlockException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -119,8 +119,13 @@ class PriceListProcessorTest extends \PHPUnit\Framework\TestCase
         $exception = $this->createMock(DeadlockException::class);
 
         $em = $this->createMock(EntityManagerInterface::class);
+        $conn = $this->createMock(Connection::class);
+        $conn->expects($this->once())
+            ->method('getTransactionNestingLevel')
+            ->willReturn(1);
         $em->expects($this->once())
-            ->method('beginTransaction');
+            ->method('getConnection')
+            ->willReturn($conn);
         $em->expects(($this->once()))
             ->method('rollback');
 
@@ -158,8 +163,13 @@ class PriceListProcessorTest extends \PHPUnit\Framework\TestCase
         $exception = new \Exception('Some error');
 
         $em = $this->createMock(EntityManagerInterface::class);
+        $conn = $this->createMock(Connection::class);
+        $conn->expects($this->once())
+            ->method('getTransactionNestingLevel')
+            ->willReturn(1);
         $em->expects($this->once())
-            ->method('beginTransaction');
+            ->method('getConnection')
+            ->willReturn($conn);
         $em->expects(($this->once()))
             ->method('rollback');
 
@@ -200,13 +210,6 @@ class PriceListProcessorTest extends \PHPUnit\Framework\TestCase
         $cpl2 = $this->getEntity(CombinedPriceList::class, ['id' => 20]);
 
         $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects($this->once())
-            ->method('beginTransaction');
-        $em->expects(($this->once()))
-            ->method('commit');
-        $em->expects(($this->never()))
-            ->method('rollback');
-
         $this->doctrine->expects($this->any())
             ->method('getManagerForClass')
             ->willReturn($em);
@@ -251,13 +254,6 @@ class PriceListProcessorTest extends \PHPUnit\Framework\TestCase
         $cpl = $this->getEntity(CombinedPriceList::class, ['id' => 10]);
 
         $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects($this->once())
-            ->method('beginTransaction');
-        $em->expects(($this->once()))
-            ->method('commit');
-        $em->expects(($this->never()))
-            ->method('rollback');
-
         $this->doctrine->expects($this->any())
             ->method('getManagerForClass')
             ->willReturn($em);
@@ -294,19 +290,20 @@ class PriceListProcessorTest extends \PHPUnit\Framework\TestCase
 
     public function testProcessExceptionWithNotActiveTransaction()
     {
-        $this->expectException(ConnectionException::class);
-        $this->expectExceptionMessage('Error connection');
-
         $body = ['product' => [1 => [2]]];
 
         $exception = new \Exception('Some error');
 
         $em = $this->createMock(EntityManagerInterface::class);
+        $conn = $this->createMock(Connection::class);
+        $conn->expects($this->once())
+            ->method('getTransactionNestingLevel')
+            ->willReturn(0);
         $em->expects($this->once())
-            ->method('beginTransaction');
-        $em->expects(($this->once()))
-            ->method('rollback')
-            ->willThrowException(new ConnectionException('Error connection'));
+            ->method('getConnection')
+            ->willReturn($conn);
+        $em->expects(($this->never()))
+            ->method('rollback');
 
         $this->doctrine->expects($this->once())
             ->method('getManagerForClass')

@@ -75,7 +75,7 @@ HELP
                 $storage
             ));
 
-            return 1;
+            return self::FAILURE;
         }
 
         $currentStorage = $this->configManager->get('oro_pricing.price_storage');
@@ -85,7 +85,7 @@ HELP
                 $storage
             ));
 
-            return 0;
+            return self::SUCCESS;
         }
 
         if ($storage === self::STORAGE_FLAT) {
@@ -105,7 +105,7 @@ HELP
             if ($input->isInteractive() && !$this->getHelper('question')->ask($input, $output, $question)) {
                 $output->writeln('<error>Storage switching cancelled!</error>');
 
-                return 1;
+                return self::FAILURE;
             }
 
             $output->write('Reorganizing price lists associations');
@@ -137,7 +137,7 @@ HELP
             ]);
         }
 
-        return 0;
+        return self::SUCCESS;
     }
 
     protected function switchStorage(string $storage): void

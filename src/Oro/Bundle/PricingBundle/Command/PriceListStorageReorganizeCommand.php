@@ -74,7 +74,7 @@ HELP
             foreach ($shardList as $alias => $className) {
                 $output->writeln('<info>' . $alias . ' : ' . $className . '</info>');
             }
-            return 1;
+            return self::FAILURE;
         }
 
         $strategy = $input->getOption('strategy');
@@ -91,7 +91,7 @@ HELP
                 $output->writeln(sprintf("<error>Strategy '%s' not supported</error>", $strategy));
             }
 
-            return 1;
+            return self::FAILURE;
         }
 
         $output->writeln(
@@ -103,6 +103,6 @@ HELP
             $output->writeln('Do not forget change config/parameters.yml enable_price_sharding: true');
         }
 
-        return 0;
+        return self::SUCCESS;
     }
 }

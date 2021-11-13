@@ -161,10 +161,7 @@ class MergePricesCombiningStrategy extends AbstractPriceCombiningStrategy
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function processRelation(
+    private function processRelation(
         CombinedPriceList $combinedPriceList,
         CombinedPriceListToPriceList $priceListRelation,
         array $products = []

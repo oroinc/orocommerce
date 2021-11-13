@@ -87,7 +87,7 @@ HELP
 
         $this->triggerHandler->commit();
 
-        return 0;
+        return self::SUCCESS;
     }
 
     protected function combinePricesForScheduledCPL()
