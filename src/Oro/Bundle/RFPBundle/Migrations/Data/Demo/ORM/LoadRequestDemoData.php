@@ -17,6 +17,9 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Loads new Request entities.
+ */
 class LoadRequestDemoData extends AbstractEntityReferenceFixture implements
     DependentFixtureInterface,
     ContainerAwareInterface
@@ -62,7 +65,7 @@ class LoadRequestDemoData extends AbstractEntityReferenceFixture implements
         $customerUsers = $this->getCustomerUsers($manager);
 
         /** @var User $user */
-        $owner = $manager->getRepository('OroUserBundle:User')->findOneBy([]);
+        $owner = $manager->getRepository('OroUserBundle:User')->findOneBy(['organization' => $organization]);
 
         $locator  = $this->container->get('file_locator');
         $filePath = $locator->locate('@OroRFPBundle/Migrations/Data/Demo/ORM/data/requests.csv');
