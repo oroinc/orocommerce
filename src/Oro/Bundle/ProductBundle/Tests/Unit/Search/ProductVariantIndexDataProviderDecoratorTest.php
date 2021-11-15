@@ -98,21 +98,21 @@ class ProductVariantIndexDataProviderDecoratorTest extends \PHPUnit\Framework\Te
                 ),
                 'first simple product data' => [
                     new ProductIndexDataModel('sku', 'FIRST', [], false, true),
-                    new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_FIELD, 'FIRST', [], false, true),
+                    new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_L10N_FIELD, 'FIRST', [], false, true),
                 ],
                 'second simple product data' => [
                     new ProductIndexDataModel('sku', 'SECOND', [], false, true),
-                    new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_FIELD, 'SECOND', [], false, true),
+                    new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_L10N_FIELD, 'SECOND', [], false, true),
                 ],
                 'configurable product data' => [
                     new ProductIndexDataModel('sku', 'CONFIG', [], false, true),
-                    new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_FIELD, 'CONFIG', [], false, true),
+                    new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_L10N_FIELD, 'CONFIG', [], false, true),
                 ],
                 'expected configurable product data' => [
                     new ProductIndexDataModel('sku', 'CONFIG', [], false, true),
-                    new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_FIELD, 'CONFIG', [], false, true),
-                    new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_FIELD, 'FIRST', [], false, true),
-                    new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_FIELD, 'SECOND', [], false, true),
+                    new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_L10N_FIELD, 'CONFIG', [], false, true),
+                    new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_L10N_FIELD, 'FIRST', [], false, true),
+                    new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_L10N_FIELD, 'SECOND', [], false, true),
                 ],
             ],
             'all text localized' => [

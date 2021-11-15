@@ -10,6 +10,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         -
             name: category_title_LOCALIZATION_ID
             type: text
+            fulltext: false
         -
             name: category_paths.CATEGORY_PATH
             type: integer

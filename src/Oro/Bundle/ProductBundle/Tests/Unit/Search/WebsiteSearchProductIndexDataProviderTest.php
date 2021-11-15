@@ -241,7 +241,7 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit\Framework\TestC
                     ['filterable' => false, 'sortable' => false, 'searchable' => true]
                 ),
                 'expected' => [
-                    new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_FIELD, 'In Stock', [], false, true),
+                    new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_L10N_FIELD, 'In Stock', [], false, true),
                 ],
             ],
             'filterable, sortable, not searchable, not localized' => [
@@ -277,7 +277,7 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit\Framework\TestC
                         false,
                         false
                     ),
-                    new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_FIELD, 'In Stock', [], false, true),
+                    new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_L10N_FIELD, 'In Stock', [], false, true),
                 ],
             ],
             'not filterable, sortable, searchable, not localized' => [
@@ -289,7 +289,7 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit\Framework\TestC
                 ),
                 'expected' => [
                     new ProductIndexDataModel('inventoryStatus_priority', 42, [], false, false),
-                    new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_FIELD, 'In Stock', [], false, true),
+                    new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_L10N_FIELD, 'In Stock', [], false, true),
                 ],
             ],
             'filterable, sortable, searchable, not localized' => [
@@ -306,7 +306,7 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit\Framework\TestC
                         false
                     ),
                     new ProductIndexDataModel('inventoryStatus_priority', 42, [], false, false),
-                    new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_FIELD, 'In Stock', [], false, true),
+                    new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_L10N_FIELD, 'In Stock', [], false, true),
                 ],
             ],
             'filterable equal sortable, not searchable, not localized' => [
@@ -369,7 +369,7 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit\Framework\TestC
                     new ProductIndexDataModel('flags_bestseller', 1, [], false, false),
                     new ProductIndexDataModel('flags_discounts', 1, [], false, false),
                     new ProductIndexDataModel(
-                        IndexDataProvider::ALL_TEXT_FIELD,
+                        IndexDataProvider::ALL_TEXT_L10N_FIELD,
                         'Best Sales New Discounts',
                         [],
                         false,
@@ -393,7 +393,7 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit\Framework\TestC
                         false
                     ),
                     new ProductIndexDataModel('inventoryStatus_priority', 42, [], false, false),
-                    new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_FIELD, 'In Stock', [], false, true),
+                    new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_L10N_FIELD, 'In Stock', [], false, true),
                     new ProductIndexDataModel('inventoryStatus_searchable', 'In Stock', [], false, false),
                 ],
             ],
@@ -413,7 +413,7 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit\Framework\TestC
                         false
                     ),
                     new ProductIndexDataModel('inventoryStatus_priority', 42, [], false, false),
-                    new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_FIELD, 'In Stock', [], false, true),
+                    new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_L10N_FIELD, 'In Stock', [], false, true),
                 ],
             ],
             'filterable, sortable, searchable, not localized, with null boost' => [
@@ -432,7 +432,7 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit\Framework\TestC
                         false
                     ),
                     new ProductIndexDataModel('inventoryStatus_priority', 42, [], false, false),
-                    new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_FIELD, 'In Stock', [], false, true),
+                    new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_L10N_FIELD, 'In Stock', [], false, true),
                 ],
             ],
             'filterable, not sortable, searchable, not localized (multi enum), with boost' => [
@@ -446,7 +446,7 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit\Framework\TestC
                     new ProductIndexDataModel('flags_bestseller', 1, [], false, false),
                     new ProductIndexDataModel('flags_discounts', 1, [], false, false),
                     new ProductIndexDataModel(
-                        IndexDataProvider::ALL_TEXT_FIELD,
+                        IndexDataProvider::ALL_TEXT_L10N_FIELD,
                         'Best Sales New Discounts',
                         [],
                         false,

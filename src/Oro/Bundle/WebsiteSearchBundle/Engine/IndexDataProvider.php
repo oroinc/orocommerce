@@ -24,7 +24,7 @@ class IndexDataProvider
 {
     use ContextTrait;
 
-    const ALL_TEXT_FIELD = 'all_text';
+    const ALL_TEXT_PREFIX = 'all_text';
     const ALL_TEXT_L10N_FIELD = 'all_text_LOCALIZATION_ID';
 
     /** @var array */
@@ -45,6 +45,13 @@ class IndexDataProvider
     /** @var PlaceholderHelper */
     private $placeholderHelper;
 
+    /**
+     * @param EventDispatcherInterface $eventDispatcher
+     * @param EntityAliasResolver $entityAliasResolver
+     * @param PlaceholderInterface $placeholder
+     * @param HtmlTagHelper $htmlTagHelper
+     * @param PlaceholderHelper $placeholderHelper
+     */
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
         EntityAliasResolver $entityAliasResolver,
@@ -104,11 +111,10 @@ class IndexDataProvider
      * @param array $entityConfig
      * @return array Structured and cleared data ready to be saved
      */
-    private function prepareIndexData(array $indexData, array $entityConfig)
+    private function prepareIndexData(array $indexData, array $entityConfig): array
     {
         $preparedIndexData = [];
 
-        $allText = $this->getFieldConfig($entityConfig, self::ALL_TEXT_FIELD, 'name', self::ALL_TEXT_FIELD);
         $allTextL10N = $this->getFieldConfig(
             $entityConfig,
             self::ALL_TEXT_L10N_FIELD,
@@ -123,7 +129,7 @@ class IndexDataProvider
                 $type = $this->getFieldConfig($entityConfig, $fieldName, 'type');
 
                 foreach ($this->toArray($values) as $value) {
-                    $allTextFieldName = $allText;
+                    $allTextFieldName = $allTextL10N;
                     $singleValueFieldName = $fieldName;
                     $addToAllText = $value['all_text'];
                     $value = $value['value'];
@@ -132,7 +138,6 @@ class IndexDataProvider
                     if ($value instanceof PlaceholderValue) {
                         $placeholders = $value->getPlaceholders();
                         $value = $value->getValue();
-                        $allTextFieldName = $allTextL10N;
                     }
 
                     if ($this->isAllTextCollected($type, $addToAllText)) {
@@ -141,22 +146,21 @@ class IndexDataProvider
                         $this->setIndexValue($preparedIndexData, $entityId, $allTextFieldName, $value, $type);
                     }
 
-                    if (!str_starts_with($fieldName, $allText)) {
+                    if (!str_starts_with($fieldName, self::ALL_TEXT_PREFIX)) {
                         $singleValueFieldName = $this->placeholder->replace($singleValueFieldName, $placeholders);
                         $this->setIndexValue($preparedIndexData, $entityId, $singleValueFieldName, $value, $type);
                     }
                 }
             }
 
-            unset($allTextFieldNames[$allText]);
+            unset($allTextFieldNames[$allTextL10N]);
 
-            $allTextValue = $this->getIndexValue($preparedIndexData, $entityId, $allText);
+            $allTextValue = $this->getIndexValue($preparedIndexData, $entityId, $allTextL10N);
             foreach ($allTextFieldNames as $allTextFieldName) {
-                $fieldsValue = $this->getIndexValue($preparedIndexData, $entityId, $allTextFieldName);
-                $this->setIndexValue($preparedIndexData, $entityId, $allText, $fieldsValue);
                 $this->setIndexValue($preparedIndexData, $entityId, $allTextFieldName, $allTextValue);
             }
 
+            unset($preparedIndexData[$entityId][Query::TYPE_TEXT][$allTextL10N]);
             $preparedIndexData[$entityId] = $this->squashAllTextFields($preparedIndexData[$entityId]);
         }
 
@@ -194,7 +198,7 @@ class IndexDataProvider
     {
         if (!empty($fieldsValues[Query::TYPE_TEXT])) {
             foreach ($fieldsValues[Query::TYPE_TEXT] as $fieldName => $fieldValue) {
-                if (str_starts_with($fieldName, self::ALL_TEXT_FIELD)) {
+                if (str_starts_with($fieldName, self::ALL_TEXT_PREFIX)) {
                     $fieldsValues[Query::TYPE_TEXT][$fieldName] = $this->updateAllTextFieldValue($fieldValue);
                 }
             }
@@ -303,7 +307,7 @@ class IndexDataProvider
                 return $default;
             }
 
-            if (in_array($fieldName, [self::ALL_TEXT_FIELD, self::ALL_TEXT_L10N_FIELD], true)) {
+            if ($fieldName === self::ALL_TEXT_L10N_FIELD) {
                 return $configName === 'type' ? Query::TYPE_TEXT : $fieldName;
             }
 
@@ -338,7 +342,7 @@ class IndexDataProvider
             return $value;
         }
 
-        if ($type === Query::TYPE_TEXT && str_starts_with($fieldName, self::ALL_TEXT_FIELD)) {
+        if ($type === Query::TYPE_TEXT && str_starts_with($fieldName, self::ALL_TEXT_PREFIX)) {
             $value = $this->htmlTagHelper->stripTags((string)$value);
             $value = $this->htmlTagHelper->stripLongWords($value);
         }
