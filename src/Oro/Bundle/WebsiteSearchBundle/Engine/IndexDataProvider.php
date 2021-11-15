@@ -45,6 +45,9 @@ class IndexDataProvider
     /** @var PlaceholderHelper */
     private $placeholderHelper;
 
+    /** @var array */
+    private $engineParameters;
+
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
         EntityAliasResolver $entityAliasResolver,
@@ -57,6 +60,14 @@ class IndexDataProvider
         $this->placeholder = $placeholder;
         $this->htmlTagHelper = $htmlTagHelper;
         $this->placeholderHelper = $placeholderHelper;
+    }
+
+    /**
+     * @param array $engineParameters
+     */
+    public function setEngineParameters(array $engineParameters)
+    {
+        $this->engineParameters = $engineParameters;
     }
 
     /**
@@ -104,17 +115,21 @@ class IndexDataProvider
      * @param array $entityConfig
      * @return array Structured and cleared data ready to be saved
      */
-    private function prepareIndexData(array $indexData, array $entityConfig)
+    private function prepareIndexData(array $indexData, array $entityConfig): array
     {
         $preparedIndexData = [];
 
-        $allText = $this->getFieldConfig($entityConfig, self::ALL_TEXT_FIELD, 'name', self::ALL_TEXT_FIELD);
         $allTextL10N = $this->getFieldConfig(
             $entityConfig,
             self::ALL_TEXT_L10N_FIELD,
             'name',
             self::ALL_TEXT_L10N_FIELD
         );
+        $allText = $allTextL10N;
+
+        if ($this->isAllTextEnabled()) {
+            $allText = $this->getFieldConfig($entityConfig, self::ALL_TEXT_FIELD, 'name', self::ALL_TEXT_FIELD);
+        }
 
         foreach ($indexData as $entityId => $fieldsValues) {
             $allTextFieldNames = [];
@@ -141,7 +156,7 @@ class IndexDataProvider
                         $this->setIndexValue($preparedIndexData, $entityId, $allTextFieldName, $value, $type);
                     }
 
-                    if (strpos($fieldName, $allText) !== 0) {
+                    if (strpos($fieldName, self::ALL_TEXT_FIELD) !== 0) {
                         $singleValueFieldName = $this->placeholder->replace($singleValueFieldName, $placeholders);
                         $this->setIndexValue($preparedIndexData, $entityId, $singleValueFieldName, $value, $type);
                     }
@@ -149,16 +164,45 @@ class IndexDataProvider
             }
 
             unset($allTextFieldNames[$allText]);
+            $preparedIndexData = $this->processAllTextFields(
+                $allTextFieldNames,
+                $preparedIndexData,
+                $entityId,
+                $allText
+            );
+        }
 
-            $allTextValue = $this->getIndexValue($preparedIndexData, $entityId, $allText);
-            foreach ($allTextFieldNames as $allTextFieldName) {
+        return $preparedIndexData;
+    }
+
+    /**
+     * @param array $allTextFieldNames
+     * @param array $preparedIndexData
+     * @param int $entityId
+     * @param string $allText
+     * @return array
+     */
+    private function processAllTextFields(
+        array $allTextFieldNames,
+        array $preparedIndexData,
+        int $entityId,
+        string $allText
+    ): array {
+        $allTextValue = $this->getIndexValue($preparedIndexData, $entityId, $allText);
+
+        foreach ($allTextFieldNames as $allTextFieldName) {
+            if ($this->isAllTextEnabled()) {
                 $fieldsValue = $this->getIndexValue($preparedIndexData, $entityId, $allTextFieldName);
                 $this->setIndexValue($preparedIndexData, $entityId, $allText, $fieldsValue);
-                $this->setIndexValue($preparedIndexData, $entityId, $allTextFieldName, $allTextValue);
             }
-
-            $preparedIndexData[$entityId] = $this->squashAllTextFields($preparedIndexData[$entityId]);
+            $this->setIndexValue($preparedIndexData, $entityId, $allTextFieldName, $allTextValue);
         }
+
+        if (!$this->isAllTextEnabled()) {
+            $preparedIndexData[$entityId] = $this->removeField($preparedIndexData[$entityId], $allText);
+        }
+
+        $preparedIndexData[$entityId] = $this->squashAllTextFields($preparedIndexData[$entityId]);
 
         return $preparedIndexData;
     }
@@ -198,6 +242,20 @@ class IndexDataProvider
                     $fieldsValues[Query::TYPE_TEXT][$fieldName] = $this->updateAllTextFieldValue($fieldValue);
                 }
             }
+        }
+
+        return $fieldsValues;
+    }
+
+    /**
+     * @param array $fieldsValues
+     * @param string $fieldName
+     * @return array
+     */
+    private function removeField(array $fieldsValues, string $fieldName)
+    {
+        if (isset($fieldsValues[Query::TYPE_TEXT][$fieldName])) {
+            unset($fieldsValues[Query::TYPE_TEXT][$fieldName]);
         }
 
         return $fieldsValues;
@@ -395,5 +453,17 @@ class IndexDataProvider
         }
 
         return $field;
+    }
+
+    /**
+     * @return bool
+     */
+    private function isAllTextEnabled()
+    {
+        if (isset($this->engineParameters['enable_all_text'])) {
+            return $this->engineParameters['enable_all_text'];
+        }
+
+        return true;
     }
 }

@@ -491,6 +491,121 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
+    /**
+     * @dataProvider entitiesDataProviderWithAllTextDisabled
+     * @param array $entityConfig
+     * @param array $indexData
+     * @param array $expected
+     */
+    public function testGetEntitiesDataWithAllTextDisabled(array $entityConfig, array $indexData, array $expected)
+    {
+        $this->indexDataProvider->setEngineParameters(['enable_all_text' => false]);
+
+        $this->aliasResolver->expects($this->once())->method('getAlias')->with(\stdClass::class)->willReturn('std');
+        $this->tagHelper->expects($this->any())->method('stripTags')->willReturnCallback(
+            function ($value) {
+                return trim(strip_tags($value));
+            }
+        );
+        $this->tagHelper->expects($this->any())
+            ->method('stripLongWords')
+            ->willReturnCallback(
+                function ($value) {
+                    $words = preg_split('/\s+/', $value);
+
+                    $words = array_filter(
+                        $words,
+                        function ($item) {
+                            return \strlen($item) <= HtmlTagHelper::MAX_STRING_LENGTH;
+                        }
+                    );
+
+                    return implode(' ', $words);
+                }
+            );
+        $this->placeholder->expects($this->any())->method('replace')->willReturnCallback(
+            function ($string, array $values) {
+                return str_replace(array_keys($values), array_values($values), $string);
+            }
+        );
+
+        $this->eventDispatcher->expects($this->at(0))->method('dispatch')
+            ->with($this->isInstanceOf(IndexEntityEvent::class), IndexEntityEvent::NAME)
+            ->willReturnCallback(
+                function (IndexEntityEvent $event, $name) use ($indexData) {
+                    foreach ($indexData as $data) {
+                        $method = count($data) === 4 ? 'addField' : 'addPlaceholderField';
+                        call_user_func_array([$event, $method], $data);
+                    }
+                }
+            );
+
+        $this->eventDispatcher->expects($this->at(1))->method('dispatch')
+            ->with($this->isInstanceOf(IndexEntityEvent::class), IndexEntityEvent::NAME.'.std');
+
+        $this->assertEquals(
+            $expected,
+            $this->indexDataProvider->getEntitiesData(\stdClass::class, [], ['CONTEXT_ID' => 9], $entityConfig)
+        );
+    }
+
+    /**
+     * @return array
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
+    public function entitiesDataProviderWithAllTextDisabled()
+    {
+        return [
+            'copy non localized field (mark as add to fulltext) to all_text_localization fields, remove all_text' => [
+                'entityConfig' => [
+                    'fields' => [
+                        [
+                            'name' => 'title_WEBSITE_ID',
+                            'type' => Query::TYPE_TEXT,
+                        ]
+                    ],
+                ],
+                'indexData' => [
+                    [1, 'title_WEBSITE_ID', 'SKU-01', ['WEBSITE_ID' => 1], true],
+                    [1, 'title_WEBSITE_ID', 'SKU-01-us', ['WEBSITE_ID' => 1, 'LOCALIZATION_ID' => 5], true],
+                    [1, 'title_WEBSITE_ID', 'SKU-01-gb', ['WEBSITE_ID' => 1, 'LOCALIZATION_ID' => 6], true],
+                ],
+                'expected' => [
+                    1 => [
+                        'text' => [
+                            'title_1' => 'SKU-01 SKU-01-us SKU-01-gb',
+                            'all_text_5' => 'SKU-01-us SKU-01',
+                            'all_text_6' => 'SKU-01-gb SKU-01',
+                        ]
+                    ],
+                ],
+            ],
+            'copy all_text to all_text_localization fields, remove all_text' => [
+                'entityConfig' => [
+                    'fields' => [
+                        [
+                            'name' => 'all_text_LOCALIZATION_ID',
+                            'type' => Query::TYPE_TEXT,
+                        ],
+                    ],
+                ],
+                'indexData' => [
+                    [1, 'all_text', 'for_all_text', true],
+                    [1, 'all_text_LOCALIZATION_ID', 'title5 descr5 keywords5', ['LOCALIZATION_ID' => 5], true],
+                    [1, 'all_text_LOCALIZATION_ID', 'title6 descr6 keywords6', ['LOCALIZATION_ID' => 6], true],
+                ],
+                'expected' => [
+                    1 => [
+                        'text' => [
+                            'all_text_5' => 'title5 descr5 keywords5 for_all_text',
+                            'all_text_6' => 'title6 descr6 keywords6 for_all_text',
+                        ],
+                    ],
+                ],
+            ],
+        ];
+    }
+
     public function testGetEntitiesDataConfigMissing()
     {
         $this->expectException(\Symfony\Component\Config\Definition\Exception\InvalidConfigurationException::class);
