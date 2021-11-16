@@ -5,8 +5,10 @@
     {% set toolbarPosition = attr['data-grid-toolbar'] %}
 
     <div{{ block('block_attributes') }}>
-        {% for child in block if child.vars.visible -%}
-            {{ block_widget(child, {attr: {'data-grid-toolbar': toolbarPosition}}) }}
+        {% for child in block -%}
+            {% if child.vars.visible %}
+                {{ block_widget(child, {attr: {'data-grid-toolbar': toolbarPosition}}) }}
+            {% endif %}
         {%- endfor %}
     </div>
 {% endblock %}

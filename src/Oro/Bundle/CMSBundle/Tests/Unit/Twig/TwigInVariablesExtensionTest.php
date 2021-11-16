@@ -6,6 +6,7 @@ use Oro\Bundle\CMSBundle\Twig\TwigInVariablesExtension;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 use Psr\Log\LoggerInterface;
 use Twig\Environment;
+use Twig\TemplateWrapper;
 
 class TwigInVariablesExtensionTest extends \PHPUnit\Framework\TestCase
 {
@@ -43,7 +44,7 @@ class TwigInVariablesExtensionTest extends \PHPUnit\Framework\TestCase
             ->willReturn($renderedString);
         $this->cmsTwigRenderer->expects($this->once())
             ->method('createTemplate')
-            ->willReturn($template);
+            ->willReturn(new TemplateWrapper($this->cmsTwigRenderer, $template));
 
         $this->logger->expects($this->never())
             ->method($this->anything());
@@ -81,7 +82,7 @@ class TwigInVariablesExtensionTest extends \PHPUnit\Framework\TestCase
             ->willThrowException($exception);
         $this->cmsTwigRenderer->expects($this->once())
             ->method('createTemplate')
-            ->willReturn($template);
+            ->willReturn(new TemplateWrapper($this->cmsTwigRenderer, $template));
 
         $this->logger->expects($this->once())
             ->method('error')

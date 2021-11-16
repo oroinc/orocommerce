@@ -5,9 +5,9 @@
 
     <div {{ block('block_attributes') }}>
         {% if styles|length -%}
-            {%- spaceless -%}
+            {%- apply spaceless -%}
                 <style type="text/css">{{ styles|render_content }}</style>
-            {%- endspaceless -%}
+            {%- endapply -%}
         {%- endif %}
         {{ value|render_content }}
     </div>

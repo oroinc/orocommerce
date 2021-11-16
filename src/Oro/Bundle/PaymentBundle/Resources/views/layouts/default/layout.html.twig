@@ -15,19 +15,21 @@
             <div {{ block('block_attributes') }} role="group" aria-labelledby="{{ uniqueId }}">
                 {% if views|length > 0 %}
                     <span id="{{ uniqueId }}" class="label label--full">{{ 'oro.payment.methods.select_method'|trans }}<sup class="checkout-form__asterix" aria-hidden="true">*</sup></span>
-                    {% for name, view in views if views is defined and view is iterable %}
-                        {% set selected = currentPaymentMethod == name %}
-                        <div class="{{ class_prefix }}-form__radio" data-item-container>
-                            <label class="custom-radio {% if selected %}checked{% endif %}" data-radio>
-                                <input class="custom-radio__control" type="radio" name="paymentMethod" data-choice="{{ name }}" value="{{ name }}" {% if selected%}checked="checked"{% endif %} />
-                                <span class="custom-radio__text">{{ view.label }}</span>
-                            </label>
-                            <div class="{{ class_prefix }}-form__payment-container" data-form-container {% if not selected %} style="display: none;" {% endif %}>
-                                {% if block(view.block) is defined %}
-                                    {{ block(view.block) }}
-                                {% endif %}
+                    {% for name, view in views %}
+                        {% if views is defined and view is iterable %}
+                            {% set selected = currentPaymentMethod == name %}
+                            <div class="{{ class_prefix }}-form__radio" data-item-container>
+                                <label class="custom-radio {% if selected %}checked{% endif %}" data-radio>
+                                    <input class="custom-radio__control" type="radio" name="paymentMethod" data-choice="{{ name }}" value="{{ name }}" {% if selected%}checked="checked"{% endif %} />
+                                    <span class="custom-radio__text">{{ view.label }}</span>
+                                </label>
+                                <div class="{{ class_prefix }}-form__payment-container" data-form-container {% if not selected %} style="display: none;" {% endif %}>
+                                    {% if block(view.block) is defined %}
+                                        {{ block(view.block) }}
+                                    {% endif %}
+                                </div>
                             </div>
-                        </div>
+                        {% endif %}
                     {% endfor %}
                 {% else %}
                     <div class="notification notification--alert" role="alert">

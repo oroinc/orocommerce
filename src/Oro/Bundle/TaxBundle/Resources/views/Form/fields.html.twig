@@ -1,7 +1,7 @@
 {% block oro_tax_zip_code_collection_type_widget %}
     {% import _self as fields %}
 
-    {% spaceless %}
+    {% apply spaceless %}
         {% set widgetContainerAttributes = block('widget_container_attributes') %}
         {% if prototype is defined %}
             {% set prototype_html = fields.oro_tax_zip_code_collection_prototype(form, widgetContainerAttributes) %}
@@ -43,7 +43,7 @@
                 <a class="btn add-list-item" data-container=".oro-item-collection tbody" href="#">{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</a>
             {% endif %}
         </div>
-    {% endspaceless %}
+    {% endapply %}
 {% endblock %}
 
 {% macro oro_tax_zip_code_collection_prototype(widget, attributes) %}
@@ -128,7 +128,7 @@
 {% block _tax_calculation_oro_tax___use_as_base_exclusions_value_widget %}
     {% import _self as fields %}
 
-    {% spaceless %}
+    {% apply spaceless %}
         {% if prototype is defined %}
             {% set prototype_html = fields.oro_collection_item_prototype(form) %}
         {% endif %}
@@ -153,7 +153,7 @@
                 </a>
             {% endif %}
         </div>
-    {% endspaceless %}
+    {% endapply %}
 {% endblock %}
 
 {% macro tax_address_block(form, disabled) %}

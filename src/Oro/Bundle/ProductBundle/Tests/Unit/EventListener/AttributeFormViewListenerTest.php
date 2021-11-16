@@ -64,7 +64,7 @@ class AttributeFormViewListenerTest extends \PHPUnit\Framework\TestCase
         $this->entityConfigProvider = $this->createMock(ConfigProvider::class);
         $this->entityConfigProvider->expects($this->any())
             ->method('getConfig')
-            ->will($this->returnValueMap([
+            ->willReturnMap([
                 [
                     Product::class,
                     'wysiwyg',
@@ -89,16 +89,16 @@ class AttributeFormViewListenerTest extends \PHPUnit\Framework\TestCase
                         ['label' => 'multiImage field label']
                     )
                 ],
-            ]));
+            ]);
 
         $this->translator = $this->createMock(TranslatorInterface::class);
         $this->translator->expects($this->any())
             ->method('trans')
-            ->will($this->returnValueMap([
+            ->willReturnMap([
                 ['wysiwyg field label', [], null, null, 'translated wysiwyg field label'],
                 ['multiFile field label', [], null, null, 'translated multiFile field label'],
                 ['multiImage field label', [], null, null, 'translated multiImage field label'],
-            ]));
+            ]);
 
         $this->listener = new AttributeFormViewListener(
             $this->attributeManager,
@@ -196,7 +196,7 @@ class AttributeFormViewListenerTest extends \PHPUnit\Framework\TestCase
                         ],
                     ],
                 ],
-                'templateHtml' => false,
+                'templateHtml' => '',
                 'expectedData' => [
                     ScrollData::DATA_BLOCKS => [
                         'existingGroup' => [
@@ -234,7 +234,7 @@ class AttributeFormViewListenerTest extends \PHPUnit\Framework\TestCase
                         ],
                     ],
                 ],
-                'templateHtml' => false,
+                'templateHtml' => '',
                 'expectedData' => [
                     ScrollData::DATA_BLOCKS => [
                         'existingGroup' => [
@@ -272,7 +272,7 @@ class AttributeFormViewListenerTest extends \PHPUnit\Framework\TestCase
                         ],
                     ],
                 ],
-                'templateHtml' => false,
+                'templateHtml' => '',
                 'expectedData' => [
                     ScrollData::DATA_BLOCKS => [
                         'existingGroup' => [
@@ -310,7 +310,7 @@ class AttributeFormViewListenerTest extends \PHPUnit\Framework\TestCase
                         ],
                     ],
                 ],
-                'templateHtml' => false,
+                'templateHtml' => '',
                 'expectedData' => [
                     ScrollData::DATA_BLOCKS => [
                         'existingGroup' => [
@@ -348,7 +348,7 @@ class AttributeFormViewListenerTest extends \PHPUnit\Framework\TestCase
                         ],
                     ],
                 ],
-                'templateHtml' => false,
+                'templateHtml' => '',
                 'expectedData' => [
                     ScrollData::DATA_BLOCKS => [
                         'existingGroup' => [
@@ -386,7 +386,7 @@ class AttributeFormViewListenerTest extends \PHPUnit\Framework\TestCase
                         ],
                     ],
                 ],
-                'templateHtml' => false,
+                'templateHtml' => '',
                 'expectedData' => [
                     ScrollData::DATA_BLOCKS => [
                         'existingGroup' => [
@@ -704,7 +704,7 @@ class AttributeFormViewListenerTest extends \PHPUnit\Framework\TestCase
                     ],
                 ],
                 'fieldName' => 'inventory_status',
-                'templateHtml' => false,
+                'templateHtml' => '',
                 'expectedData' => [
                     ScrollData::DATA_BLOCKS => [
                         'existingGroup' => [
@@ -743,7 +743,7 @@ class AttributeFormViewListenerTest extends \PHPUnit\Framework\TestCase
                     ],
                 ],
                 'fieldName' => 'images',
-                'templateHtml' => false,
+                'templateHtml' => '',
                 'expectedData' => [
                     ScrollData::DATA_BLOCKS => [
                         'existingGroup' => [
@@ -782,7 +782,7 @@ class AttributeFormViewListenerTest extends \PHPUnit\Framework\TestCase
                     ],
                 ],
                 'fieldName' => 'productPriceAttributesPrices',
-                'templateHtml' => false,
+                'templateHtml' => '',
                 'expectedData' => [
                     ScrollData::DATA_BLOCKS => [
                         'existingGroup' => [
@@ -821,7 +821,7 @@ class AttributeFormViewListenerTest extends \PHPUnit\Framework\TestCase
                     ],
                 ],
                 'fieldName' => 'someField',
-                'templateHtml' => false,
+                'templateHtml' => '',
                 'expectedData' => [
                     ScrollData::DATA_BLOCKS => [
                         'existingGroup' => [

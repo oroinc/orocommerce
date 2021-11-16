@@ -42,15 +42,15 @@
                     <li class="oro-toolbar__list-item currency-switcher__item currency-switcher__item--{{ currency|lower }}">
                         {% if selected_currency == currency %}
                             <span class="oro-toolbar__link oro-toolbar__link--active">
-                                {%- spaceless -%}
+                                {%- apply spaceless -%}
                                 <b class="oro-toolbar__currency">{{ oro_currency_symbol(currency) }}</b>({{- oro_currency_name(currency) -}})
-                                {%- endspaceless -%}
+                                {%- endapply -%}
                             </span>
                         {% else %}
                             <a class="oro-toolbar__link" href="#" data-currency="{{ currency }}">
-                                {%- spaceless -%}
+                                {%- apply spaceless -%}
                                 <b class="oro-toolbar__currency">{{ oro_currency_symbol(currency) }}</b>({{- oro_currency_name(currency) -}})
-                                {%- endspaceless -%}
+                                {%- endapply -%}
                             </a>
                         {% endif %}
                     </li>

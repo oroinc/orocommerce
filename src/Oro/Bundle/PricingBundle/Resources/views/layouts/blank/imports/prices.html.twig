@@ -101,7 +101,7 @@
         <span class="product-price__main-box">
             <span class="product-price__value" data-name="price-value" itemscope="itemscope"
                   itemtype="http://schema.org/Offer" itemprop="offers">
-                {% spaceless %}
+                {% apply spaceless %}
                     {% if firstPrice %}
                     {% set priceFormatOptions = {
                         attributes: {
@@ -112,7 +112,7 @@
                     <meta itemprop="price" content="{{ firstPrice.price|number_format(priceFormatOptions.attributes.fraction_digits, '.', '') }}"/>
                     {{- firstPrice.formatted_price -}}
                     {% endif %}
-                {% endspaceless %}
+                {% endapply %}
             </span>
             <span> / </span>
             <span class="product-price__unit" data-name="unit">

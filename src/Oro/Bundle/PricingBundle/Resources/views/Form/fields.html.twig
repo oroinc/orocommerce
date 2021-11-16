@@ -1,5 +1,5 @@
 {% block oro_pricing_product_price_widget %}
-    {% spaceless %}
+    {% apply spaceless %}
     <div data-page-component-view="oropricing/js/app/views/price-list-currency-limitations-view"
          {% if form.vars.value is not empty %}data-validation-ignore{# item is only validated once it got changed #}{% endif %}>
         <div class="form-layout">
@@ -54,7 +54,7 @@
             </div>
         </div>
     </div>
-    {% endspaceless %}
+    {% endapply %}
 {% endblock %}
 
 {% block oro_pricing_product_price_collection_widget %}
@@ -103,7 +103,7 @@
 {% endmacro %}
 
 {% block oro_pricing_price_list_select_with_priority_widget %}
-    {% spaceless %}
+    {% apply spaceless %}
         <td>{{ form_widget(form.priceList) }} {{ form_errors(form.priceList) }}</td>
         <td class="price-list-grid-form__option-cell">
             {% if form.mergeAllowed is defined %}
@@ -123,7 +123,7 @@
                 <span class="fa-trash-o" aria-hidden="true"></span>
             </button>
         </td>
-    {% endspaceless %}
+    {% endapply %}
 {% endblock %}
 
 {# --------------------------- Product Price Attributes ------------------------------------------------------ #}
@@ -148,8 +148,10 @@
                             <tr>
                                 <td><span>{{ unitLabel|trans }}</span></td>
                                 {% set childrenByCurrency = [] %}
-                                {% for child in form.children if child.vars.value.unit.code == unit %}
-                                    {% set childrenByCurrency = childrenByCurrency|merge({(child.vars.value.price.currency): child}) %}
+                                {% for child in form.children %}
+                                    {% if child.vars.value.unit.code == unit %}
+                                        {% set childrenByCurrency = childrenByCurrency|merge({(child.vars.value.price.currency): child}) %}
+                                    {% endif %}
                                 {% endfor %}
                                 {% for currency in form.vars.currencies %}
                                     <td>
@@ -169,7 +171,7 @@
 
 {# --------------------------- Price Rules ------------------------------------------------------ #}
 {% macro oro_pricing_price_rule_widget_prototype(widget) %}
-    {% spaceless %}
+    {% apply spaceless %}
         {% if 'collection' in widget.vars.block_prefixes %}
             {% set form = widget.vars.prototype %}
             {% set name = widget.vars.full_name ~ '[' ~ widget.vars.prototype.vars.name ~ ']' %}
@@ -301,12 +303,12 @@
             <div class="price_rule__priority">{{ form_row(form.priority) }}</div>
 
         </div>
-    {% endspaceless %}
+    {% endapply %}
 {% endmacro %}
 
 {% block _oro_pricing_price_list_priceRules_widget %}
     {% import _self as fields %}
-    {% spaceless %}
+    {% apply spaceless %}
         {% if prototype is defined %}
             {% set prototype_html = fields.oro_pricing_price_rule_widget_prototype(form) %}
         {% endif %}
@@ -335,5 +337,5 @@
         {% if handle_primary and (prototype is not defined or prototype.primary is defined) %}
             {{ fields.oro_collection_validate_primary_js(_context) }}
         {% endif %}
-    {% endspaceless %}
+    {% endapply %}
 {% endblock %}

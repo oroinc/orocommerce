@@ -105,7 +105,7 @@
 
 {% block oro_sale_quote_product_demand_collection_widget %}
     {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'grid-container customer-line-items' }) %}
-    {% spaceless %}
+    {% apply spaceless %}
         <div {{ block('widget_container_attributes') }}>
             <table class="oro-grid-table customer-line-items__table">
                 <thead class="grid-header hide-on-mobile-landscape">
@@ -127,7 +127,7 @@
             {{ form_rest(form) }}
             {{ form_errors(form) }}
         </div>
-    {% endspaceless %}
+    {% endapply %}
 {% endblock %}
 
 {% block oro_sale_quote_product_demand_offer_choice_widget %}

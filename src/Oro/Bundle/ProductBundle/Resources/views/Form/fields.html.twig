@@ -40,7 +40,7 @@
 
 {% block oro_product_unit_precision_widget %}
     {% set name = form.vars.full_name %}
-        {% spaceless %}
+        {% apply spaceless %}
             <tr data-content="{{ name }}" data-validation-optional-group class="oro-multiselect-holder grid-row">
                 <td>{{ form_widget(form.unit) }}{% if form.unit_disabled is defined %}{{ form_widget(form.unit_disabled) }}{% endif %}</td>
                 <td class="unit-precision">{{ form_widget(form.precision, { 'attr': {'class': 'precision'} }) }}</td>
@@ -54,7 +54,7 @@
                     <td class="action-cell"><button class="removeLineItem btn btn-icon btn-square-lighter" type="button" data-related="{{ name }}" aria-label="{{ 'Remove row'|trans }}"><span class="fa-trash-o" aria-hidden="true"></span></button></td>
                 {% endif %}
             </tr>
-        {% endspaceless %}
+        {% endapply %}
 {% endblock %}
 
 {% macro oro_collection_item_prototype(widget) %}
@@ -114,7 +114,7 @@
 
 {% block oro_product_precision_collection_widget %}
     {% import _self as fields %}
-    {% spaceless %}
+    {% apply spaceless %}
         {% if prototype is defined %}
             {% set prototype_html = fields.oro_collection_item_prototype(form) %}
         {% endif %}
@@ -150,7 +150,7 @@
                 <a class="btn add-list-item" href="#">{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</a>
             {% endif %}
         </div>
-    {% endspaceless %}
+    {% endapply %}
 {% endblock %}
 
 {% block oro_product_unit_precision_collection_widget %}
@@ -197,7 +197,7 @@
 
 {% block oro_product_image_collection_widget %}
     {% import _self as fields %}
-    {% spaceless %}
+    {% apply spaceless %}
         {% set widgetContainerAttributes = block('widget_container_attributes') %}
         {% if prototype is defined %}
             {% set prototype_html = fields.oro_product_image_collection_item_prototype(form, widgetContainerAttributes) %}
@@ -245,7 +245,7 @@
             </div>
         </div>
 
-    {% endspaceless %}
+    {% endapply %}
 {% endblock %}
 
 {% block oro_product_image_widget %}

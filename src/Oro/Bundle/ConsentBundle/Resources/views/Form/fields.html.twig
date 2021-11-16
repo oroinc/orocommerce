@@ -10,7 +10,7 @@
 {% endblock %}
 
 {% block oro_consent_select_with_priority_widget %}
-    {% spaceless %}
+    {% apply spaceless %}
         <td>
             {{ form_widget(form.consent, {'disabled': false}) }}
             {{ form_errors(form.consent) }}
@@ -24,5 +24,5 @@
                 <span class="fa-close"></span>
             </button>
         </td>
-    {% endspaceless %}
+    {% endapply %}
 {% endblock %}

@@ -13,14 +13,16 @@
         {% set currentStepNum = 0 %}
         {% set break = false %}
 
-        {% for step in steps if not break %}
-            {% set currentStepNum = currentStepNum + 1 %}
-            {% if (currentStep.name == step.name) %}
-                {% set currentStepName = step.label %}
-                {% set break = true %}
+        {% for step in steps %}
+            {% if not break %}
+                {% set currentStepNum = currentStepNum + 1 %}
+                {% if (currentStep.name == step.name) %}
+                    {% set currentStepName = step.label %}
+                    {% set break = true %}
+                {% endif %}
             {% endif %}
         {% endfor %}
-        
+
         <nav aria-label="{{ 'oro.checkout.navigation_sidebar.list.aria_label'|trans({
             '%current_step_name%': currentStepName|trans({},'workflows'),
             '%current_step_num%': currentStepNum,
@@ -30,53 +32,55 @@
             <ol class="checkout-navigation">
             {% set isComplete = true %}
             {% set stepNum = 0 %}
-            {% for key, step in steps if step.final == false and step.name not in excludedSteps %}
-                {% set stepNum = stepNum + 1 %}
-                {% set isCurrent = currentStep.name == step.name %}
-                {% if isCurrent %}
-                    {% set isComplete = false %}
-                {% endif %}
-                    <li class="checkout-navigation__step {{ isComplete ? 'checkout-navigation__step--past' : '' }}"
-                        data-role="transition-trigger-container" {{ isCurrent ? 'aria-current="step"' : '' }}
-                        aria-label="{{ 'oro.checkout.navigation_sidebar.item.aria_label'|trans({
-                            '%step_name%': step.label|trans({},'workflows'),
-                            '%step_num%': stepNum,
-                            '%count_steps%': steps|length - 1,
-                            '%step_status%': (isComplete ? 'oro.checkout.navigation_sidebar.status.completed' : 'oro.checkout.navigation_sidebar.status.not_completed')|trans
-                        }) }}"
-                    >
-                    {% set badgeClass = '' %}
-                    {% if isComplete %}
-                        {% set badgeClass = 'checkout-navigation__icon--complete' %}
-                    {% elseif isCurrent %}
-                        {% set badgeClass = 'checkout-navigation__icon--current' %}
+            {% for key, step in steps %}
+                {% if step.final == false and step.name not in excludedSteps %}
+                    {% set stepNum = stepNum + 1 %}
+                    {% set isCurrent = currentStep.name == step.name %}
+                    {% if isCurrent %}
+                        {% set isComplete = false %}
                     {% endif %}
-                    <span class="checkout-navigation__icon {{ badgeClass }}" data-role="transition-trigger" aria-hidden="true">
+                        <li class="checkout-navigation__step {{ isComplete ? 'checkout-navigation__step--past' : '' }}"
+                            data-role="transition-trigger-container" {{ isCurrent ? 'aria-current="step"' : '' }}
+                            aria-label="{{ 'oro.checkout.navigation_sidebar.item.aria_label'|trans({
+                                '%step_name%': step.label|trans({},'workflows'),
+                                '%step_num%': stepNum,
+                                '%count_steps%': steps|length - 1,
+                                '%step_status%': (isComplete ? 'oro.checkout.navigation_sidebar.status.completed' : 'oro.checkout.navigation_sidebar.status.not_completed')|trans
+                            }) }}"
+                        >
+                        {% set badgeClass = '' %}
                         {% if isComplete %}
-                            <span class="fa-check"></span>
-                        {% else %}
-                            {{ stepNum }}
+                            {% set badgeClass = 'checkout-navigation__icon--complete' %}
+                        {% elseif isCurrent %}
+                            {% set badgeClass = 'checkout-navigation__icon--current' %}
                         {% endif %}
-                    </span>
-                    <h3 class="checkout-navigation__title">
-                        <span data-role="transition-trigger">{{ step.label|trans({},'workflows') }}</span>
-                        {% if isComplete and editTransitions[step.name] is defined and block.step_edit_button is defined %}
-                            {% set editTransitionData = editTransitions[step.name] %}
-                            {{ block_widget(block.step_edit_button,
-                                {
-                                    'transitionData': editTransitionData,
-                                    'checkout': checkout
-                                }
-                            ) }}
+                        <span class="checkout-navigation__icon {{ badgeClass }}" data-role="transition-trigger" aria-hidden="true">
+                            {% if isComplete %}
+                                <span class="fa-check"></span>
+                            {% else %}
+                                {{ stepNum }}
+                            {% endif %}
+                        </span>
+                        <h3 class="checkout-navigation__title">
+                            <span data-role="transition-trigger">{{ step.label|trans({},'workflows') }}</span>
+                            {% if isComplete and editTransitions[step.name] is defined and block.step_edit_button is defined %}
+                                {% set editTransitionData = editTransitions[step.name] %}
+                                {{ block_widget(block.step_edit_button,
+                                    {
+                                        'transitionData': editTransitionData,
+                                        'checkout': checkout
+                                    }
+                                ) }}
+                            {% endif %}
+                        </h3>
+                        {% set informationBlockId = step.name ~ '_information' %}
+                        {% if isComplete and block[informationBlockId] is defined %}
+                            <div class="checkout-navigation__content" aria-hidden="true">
+                                {{ block_widget(block.offsetGet(informationBlockId), {'checkout': checkout}) }}
+                            </div>
                         {% endif %}
-                    </h3>
-                    {% set informationBlockId = step.name ~ '_information' %}
-                    {% if isComplete and block[informationBlockId] is defined %}
-                        <div class="checkout-navigation__content" aria-hidden="true">
-                            {{ block_widget(block.offsetGet(informationBlockId), {'checkout': checkout}) }}
-                        </div>
-                    {% endif %}
-                </li>
+                    </li>
+                {% endif %}
             {% endfor %}
             </ol>
         </nav>

@@ -15,9 +15,9 @@
         }) %}
     {% endif %}
 
-    {% spaceless %}
+    {% apply spaceless %}
         <style{{ block('block_attributes') }}>
             {{ content|render_content }}
         </style>
-    {% endspaceless %}
+    {% endapply %}
 {% endblock %}

@@ -6,6 +6,7 @@ use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\SEOBundle\EventListener\PageFormViewListener;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
+use Symfony\Component\Form\FormView;
 
 class PageFormViewListenerTest extends BaseFormViewListenerTestCase
 {
@@ -45,7 +46,7 @@ class PageFormViewListenerTest extends BaseFormViewListenerTestCase
         $env = $this->getEnvironmentForEdit();
         $scrollData = new ScrollData();
 
-        $event = new BeforeListRenderEvent($env, $scrollData, $page);
+        $event = new BeforeListRenderEvent($env, $scrollData, $page, new FormView());
 
         $this->listener->onPageEdit($event);
     }

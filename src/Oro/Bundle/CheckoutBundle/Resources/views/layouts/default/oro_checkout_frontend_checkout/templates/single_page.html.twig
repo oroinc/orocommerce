@@ -53,13 +53,13 @@
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' single-page-checkout-view__sticky-titles'
     }) %}
-    {% spaceless %}
+    {% apply spaceless %}
     <div {{ block('block_attributes') }}>
         <div class="single-page-checkout-view__sticky-titles-inner">
             {{ block_widget(block) }}
         </div>
     </div>
-    {% endspaceless %}
+    {% endapply %}
 {% endblock %}
 
 {% block _single_page_checkout_sticky_billing_widget %}

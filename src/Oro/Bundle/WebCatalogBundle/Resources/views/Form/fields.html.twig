@@ -44,7 +44,7 @@
 {% macro oro_web_catalog_content_variant_collection_item_prototype(form, name, disabled, expanded) %}
     {% import _self as fields %}
 
-    {% spaceless %}
+    {% apply spaceless %}
     {% set expanded = expanded|default(false) %}
     <div data-content="{{ name }}"
          data-role="content-variant-item"
@@ -86,7 +86,7 @@
 
         <button class="btn-remove-variant btn btn-icon btn-square-light" type="button" data-related="{{ name }}" data-action="remove" aria-label="{{ 'Remove row'|trans }}"><span class="fa-trash-o" aria-hidden="true"></span></button>
     </div>
-    {% endspaceless %}
+    {% endapply %}
 {% endmacro %}
 
 {% macro oro_web_catalog_content_variant_prototype_attributes(form) %}
@@ -143,7 +143,7 @@
 {% block oro_web_catalog_content_variant_collection_widget %}
     {% import _self as fields %}
 
-    {% spaceless %}
+    {% apply spaceless %}
         {% set prototype_name = form.vars.prototype_name %}
         {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-content-variant-collection' }) %}
         <div {{ block('widget_container_attributes') }}
@@ -185,7 +185,7 @@
             </div>
         </div>
         {{ fields.content_vriant_default_js(_context) }}
-    {% endspaceless %}
+    {% endapply %}
 {% endblock %}
 
 {% macro content_vriant_default_js(context) %}

@@ -56,7 +56,7 @@
                 '%shoppinglist%': shoppingList.label
             })
         }}) }}
-        {%- spaceless -%}
+        {%- apply spaceless -%}
         <div class="shopping-lists-modify">
             <span class="shopping-lists-modify__edit">
                 <button class="btn btn--info btn--size-xs"
@@ -79,7 +79,7 @@
                 </button>
             </span>
         </div>
-        {%- endspaceless -%}
+        {%- endapply -%}
     </form>
 {% endblock %}
 

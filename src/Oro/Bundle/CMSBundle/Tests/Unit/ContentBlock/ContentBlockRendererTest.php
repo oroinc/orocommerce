@@ -9,7 +9,6 @@ use Oro\Bundle\CMSBundle\Layout\DataProvider\ContentBlockDataProvider;
 use Oro\Bundle\TestFrameworkBundle\Test\Logger\LoggerAwareTraitTestTrait;
 use Psr\Log\LoggerInterface;
 use Twig\Environment;
-use Twig\Template;
 
 class ContentBlockRendererTest extends \PHPUnit\Framework\TestCase
 {
@@ -60,8 +59,11 @@ class ContentBlockRendererTest extends \PHPUnit\Framework\TestCase
             ->willReturn($blockView);
 
         $this->twig->expects($this->once())
-            ->method('loadTemplate')
-            ->with($this->isType('string'))
+            ->method('render')
+            ->with(
+                $this->isType('string'),
+                ['contentBlock' => $blockView]
+            )
             ->willThrowException(new \Exception());
 
         $this->assertLoggerErrorMethodCalled();
@@ -77,21 +79,15 @@ class ContentBlockRendererTest extends \PHPUnit\Framework\TestCase
             ->with('sample-block')
             ->willReturn($blockView);
 
-        /** @var Template|\PHPUnit\Framework\MockObject\MockObject $template */
-        $template = $this->createMock(Template::class);
-        $template->expects($this->once())
+
+        $this->twig->expects($this->once())
             ->method('render')
-            ->with(['contentBlock' => $blockView])
+            ->with('@OroCMS/ContentBlock/widget.html.twig', ['contentBlock' => $blockView])
             ->willReturnCallback(
                 function () {
                     return $this->renderer->render('sample-block');
                 }
             );
-
-        $this->twig->expects($this->once())
-            ->method('loadTemplate')
-            ->with($this->isType('string'))
-            ->willReturn($template);
 
         $this->assertLoggerErrorMethodCalled();
         $this->assertEquals('', $this->renderer->render('sample-block'));
@@ -104,12 +100,8 @@ class ContentBlockRendererTest extends \PHPUnit\Framework\TestCase
             ->with('sample-block')
             ->willReturn(null);
 
-        $template = $this->createMock(Template::class);
-        $template->expects($this->never())
-            ->method('render');
-
         $this->twig->expects($this->never())
-            ->method('loadTemplate');
+            ->method('render');
 
         $this->assertLoggerErrorMethodCalled();
         $this->assertEquals('', $this->renderer->render('sample-block'));
@@ -124,17 +116,10 @@ class ContentBlockRendererTest extends \PHPUnit\Framework\TestCase
             ->with('sample-block')
             ->willReturn($blockView);
 
-        /** @var Template|\PHPUnit\Framework\MockObject\MockObject $template */
-        $template = $this->createMock(Template::class);
-        $template->expects($this->once())
-            ->method('render')
-            ->with(['contentBlock' => $blockView])
-            ->willReturn('sample-result');
-
         $this->twig->expects($this->once())
-            ->method('loadTemplate')
-            ->with($this->isType('string'))
-            ->willReturn($template);
+            ->method('render')
+            ->with('@OroCMS/ContentBlock/widget.html.twig', ['contentBlock' => $blockView])
+            ->willReturn('sample-result');
 
         $this->assertLoggerNotCalled();
         $this->assertEquals('sample-result', $this->renderer->render('sample-block'));

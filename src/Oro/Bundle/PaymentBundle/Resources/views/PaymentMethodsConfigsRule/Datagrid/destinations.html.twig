@@ -1,4 +1,4 @@
-{% spaceless %}
+{% apply spaceless %}
     {% set destinations = record.getValue('destinations').toArray() %}
 
     {% set escapedDestinations={} %}
@@ -7,4 +7,4 @@
     {% endfor %}
 
     {{ escapedDestinations|join('</br>')|raw }}
-{% endspaceless %}
+{% endapply %}

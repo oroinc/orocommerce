@@ -30,7 +30,7 @@
              itemLinkSelector: '[data-role="slide-item-link"]',
              processClick: '[data-role="slide-content"]'
          })|json_encode }}">
-        {% spaceless %}
+        {% apply spaceless %}
             {% for imageSlide in imageSlides %}
                 {% set windowTarget = imageSlide.displayInSameWindow ? '_self' : '_blank' %}
                 <div class="promo-slider__item promo-slider__item--fraction-{{ pageComponentOptions.slidesToShow }}">
@@ -57,6 +57,6 @@
                     {% endif %}
                 </div>
             {%- endfor -%}
-        {% endspaceless %}
+        {% endapply %}
     </div>
 {% endblock %}

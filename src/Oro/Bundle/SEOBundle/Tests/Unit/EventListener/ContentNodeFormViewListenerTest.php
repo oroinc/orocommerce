@@ -6,6 +6,7 @@ use Oro\Bundle\SEOBundle\EventListener\ContentNodeFormViewListener;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
+use Symfony\Component\Form\FormView;
 use Twig\Environment;
 
 class ContentNodeFormViewListenerTest extends BaseFormViewListenerTestCase
@@ -42,7 +43,7 @@ class ContentNodeFormViewListenerTest extends BaseFormViewListenerTestCase
     {
         $env = $this->getEnvironmentForEdit();
         $page = new ContentNode();
-        $event = new BeforeListRenderEvent($env, new ScrollData(), $page);
+        $event = new BeforeListRenderEvent($env, new ScrollData(), $page, new FormView());
 
         $this->listener->onContentNodeEdit($event);
     }

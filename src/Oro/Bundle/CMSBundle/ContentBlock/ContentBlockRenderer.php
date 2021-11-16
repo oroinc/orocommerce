@@ -17,6 +17,8 @@ class ContentBlockRenderer implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
+    private const TEMPLATE = '@OroCMS/ContentBlock/widget.html.twig';
+
     /** @var ContentBlockDataProvider */
     private $contentBlockDataProvider;
 
@@ -56,7 +58,7 @@ class ContentBlockRenderer implements LoggerAwareInterface
             }
 
             $this->aliases[$blockAlias] = true;
-            $content = $this->getTemplate()->render(['contentBlock' => $contentBlockView]);
+            $content = $this->twig->render(self::TEMPLATE, ['contentBlock' => $contentBlockView]);
         } catch (\Exception $exception) {
             $this->logger->error(
                 sprintf('Error occurred while rendering content block %s', $blockAlias),
@@ -67,14 +69,5 @@ class ContentBlockRenderer implements LoggerAwareInterface
         unset($this->aliases[$blockAlias]);
 
         return $content;
-    }
-
-    private function getTemplate(): Template
-    {
-        if (!$this->template) {
-            $this->template = $this->twig->loadTemplate('@OroCMS/ContentBlock/widget.html.twig');
-        }
-
-        return $this->template;
     }
 }

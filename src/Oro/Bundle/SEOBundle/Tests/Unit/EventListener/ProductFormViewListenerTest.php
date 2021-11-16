@@ -6,6 +6,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SEOBundle\EventListener\ProductFormViewListener;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
+use Symfony\Component\Form\FormView;
 use Twig\Environment;
 
 class ProductFormViewListenerTest extends BaseFormViewListenerTestCase
@@ -46,7 +47,7 @@ class ProductFormViewListenerTest extends BaseFormViewListenerTestCase
         $env = $this->getEnvironmentForEdit();
         $scrollData = new ScrollData();
 
-        $event = new BeforeListRenderEvent($env, $scrollData, $product);
+        $event = new BeforeListRenderEvent($env, $scrollData, $product, new FormView());
 
         $this->listener->onProductEdit($event);
     }

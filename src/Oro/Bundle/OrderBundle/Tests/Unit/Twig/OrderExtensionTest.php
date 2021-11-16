@@ -8,6 +8,7 @@ use Oro\Bundle\OrderBundle\Twig\OrderExtension;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 use Twig\Environment;
 use Twig\Template;
+use Twig\TemplateWrapper;
 
 class OrderExtensionTest extends \PHPUnit\Framework\TestCase
 {
@@ -53,7 +54,7 @@ class OrderExtensionTest extends \PHPUnit\Framework\TestCase
         $this->environment->expects($this->once())
             ->method('resolveTemplate')
             ->with($templateName)
-            ->willReturn($template);
+            ->willReturn(new TemplateWrapper($this->environment, $template));
 
         $this->assertEquals(
             $content,

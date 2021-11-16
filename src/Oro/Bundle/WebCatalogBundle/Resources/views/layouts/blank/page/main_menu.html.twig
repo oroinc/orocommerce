@@ -22,11 +22,13 @@
             }) %}
         {% endif  %}
         {% do block|merge_context({'category': category}) %}
-        {% for child in block if child.vars.visible -%}
-            {% if (child.vars.use_for is not empty and category.identifier in child.vars.use_for|keys) or
-                (child.vars.not_use_for is not empty and category.identifier not in child.vars.not_use_for|keys) %}
-                    {{ block_widget(child, {attr: categoryAttr}) }}
-            {%- endif %}
+        {% for child in block -%}
+            {% if child.vars.visible %}
+                {% if (child.vars.use_for is not empty and category.identifier in child.vars.use_for|keys) or
+                    (child.vars.not_use_for is not empty and category.identifier not in child.vars.not_use_for|keys) %}
+                        {{ block_widget(child, {attr: categoryAttr}) }}
+                {%- endif %}
+            {% endif %}
         {%- endfor %}
     {%- endfor %}
 {% endblock %}

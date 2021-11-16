@@ -129,9 +129,9 @@
     <div {{ block('block_attributes') }}>
         <div class="collapse-view__container cms-typography" data-collapse-container>
             {%- if translated_value.wysiwygStyle|length -%}
-                {%- spaceless -%}
+                {%- apply spaceless -%}
                     <style type="text/css">{{ translated_value.wysiwygStyle|render_content }}</style>
-                {%- endspaceless -%}
+                {%- endapply -%}
             {%- endif -%}
             {{ description|render_content }}
         </div>
@@ -382,9 +382,9 @@
 
 {% block attribute_localized_fallback_widget %}
     {%- if translated_value.wysiwygStyle is defined and translated_value.wysiwygStyle|length -%}
-        {%- spaceless -%}
+        {%- apply spaceless -%}
             <style type="text/css">{{ translated_value.wysiwygStyle|render_content }}</style>
-        {%- endspaceless -%}
+        {%- endapply -%}
     {%- endif -%}
 
     {% set valueIsWysiwyg = translated_value.wysiwyg is defined and translated_value.wysiwyg != null %}

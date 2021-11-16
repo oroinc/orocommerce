@@ -1,6 +1,6 @@
 {%- if contentBlock.contentStyle|length -%}
-    {%- spaceless -%}
+    {%- apply spaceless -%}
         <style type="text/css">{{- contentBlock.contentStyle|render_content -}}</style>
-    {%- endspaceless -%}
+    {%- endapply -%}
 {%- endif -%}
 <div>{{- contentBlock.content|render_content -}}</div>

@@ -37,6 +37,29 @@ abstract class BaseFormViewListenerTestCase extends \PHPUnit\Framework\TestCase
 
         $env->expects($this->exactly(3))
             ->method('render')
+            ->withConsecutive(
+                [
+                    '@OroSEO/SEO/title_view.html.twig',
+                    [
+                        'entity' => $entityObject,
+                        'labelPrefix' => $labelPrefix
+                    ]
+                ],
+                [
+                    '@OroSEO/SEO/description_view.html.twig',
+                    [
+                        'entity' => $entityObject,
+                        'labelPrefix' => $labelPrefix
+                    ]
+                ],
+                [
+                    '@OroSEO/SEO/keywords_view.html.twig',
+                    [
+                        'entity' => $entityObject,
+                        'labelPrefix' => $labelPrefix
+                    ]
+                ]
+            )
             ->willReturnMap([
                 [
                     '@OroSEO/SEO/title_view.html.twig',
@@ -76,11 +99,12 @@ abstract class BaseFormViewListenerTestCase extends \PHPUnit\Framework\TestCase
 
         $env->expects($this->exactly(3))
             ->method('render')
-            ->willReturnMap([
-                ['@OroSEO/SEO/title_update.html.twig', ['form' => new FormView()], ''],
-                ['@OroSEO/SEO/description_update.html.twig', ['form' => new FormView()], ''],
-                ['@OroSEO/SEO/keywords_update.html.twig', ['form' => new FormView()], ''],
-            ]);
+            ->withConsecutive(
+                ['@OroSEO/SEO/title_update.html.twig', ['form' => new FormView()]],
+                ['@OroSEO/SEO/description_update.html.twig', ['form' => new FormView()]],
+                ['@OroSEO/SEO/keywords_update.html.twig', ['form' => new FormView()]],
+            )
+            ->will($this->onConsecutiveCalls('', '', ''));
 
         return $env;
     }

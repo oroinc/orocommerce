@@ -1,5 +1,5 @@
 {% macro transitionAttributes(transitionData, checkout, componentOptions) %}
-{% spaceless %}
+{% apply spaceless %}
     {% import '@OroUI/macros.html.twig' as UI %}
     {# Simplified transitions handler specific for checkout logic #}
     {% set transition = transitionData.transition %}
@@ -24,7 +24,7 @@
             )
         })
     }) }}
-{% endspaceless %}
+{% endapply %}
 {% endmacro %}
 
 {% macro conditionMessages(transitionData) %}
@@ -40,14 +40,14 @@
 {% endmacro %}
 
 {% macro transitionConditionMessages(transitionData) %}
-    {%- spaceless -%}
+    {%- apply spaceless -%}
         <div>{{ 'oro.checkout.workflow.unavailable_transition.message'|trans }}</div>
         <ul>
             {% for error in transitionData.errors %}
                 <li>{{ error.message|trans(error.parameters)|nl2br }}</li>
             {% endfor %}
         </ul>
-    {%- endspaceless -%}
+    {%- endapply -%}
 {% endmacro %}
 
 {% block checkout_transition_back_widget %}

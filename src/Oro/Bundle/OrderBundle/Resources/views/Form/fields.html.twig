@@ -66,7 +66,7 @@
 {% block oro_order_line_items_collection_widget %}
     {% import _self as fields %}
 
-    {% spaceless %}
+    {% apply spaceless %}
         {% set widgetContainerAttributes %}
             {% with {'id': '', 'attr': []} %}{{ block('widget_container_attributes') }}{% endwith %}
         {% endset %}
@@ -113,7 +113,7 @@
                 <a class="btn add-list-item" data-container=".oro-item-collection tbody" href="#">{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</a>
             {% endif %}
         </div>
-    {% endspaceless %}
+    {% endapply %}
 {% endblock %}
 
 {% block oro_order_line_item_widget %}
@@ -175,8 +175,10 @@
                             </div>
                         {% endfor %}
                     </div>
-                    {% for subSectionName, subSection in sections.data if subSectionName in form|keys %}
-                        {{ form_errors(form[subSectionName]) }}
+                    {% for subSectionName, subSection in sections.data %}
+                        {% if subSectionName in form|keys %}
+                            {{ form_errors(form[subSectionName]) }}
+                        {% endif %}
                     {% endfor %}
                 {% endif %}
 
@@ -226,7 +228,7 @@
     {% import _self as fields %}
     {% import '@OroUI/macros.html.twig' as UI %}
 
-    {% spaceless %}
+    {% apply spaceless %}
         {% if prototype is defined %}
             {% set prototype_html = fields.oro_order_shipping_tracking_collection_item_prototype(form) %}
         {% endif %}
@@ -265,7 +267,7 @@
                 <a class="btn add-list-item" href="#">{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</a>
             {% endif %}
         </div>
-    {% endspaceless %}
+    {% endapply %}
 {% endblock %}
 
 {% block oro_order_shipping_tracking_widget %}

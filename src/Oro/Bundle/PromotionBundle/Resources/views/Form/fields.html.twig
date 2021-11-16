@@ -92,10 +92,10 @@
 {% endblock %}
 
 {% block oro_promotion_coupon_dashes_sequence_widget %}
-    {% spaceless %}
+    {% apply spaceless %}
         <label class="dashes-sequence-suffix-label">{{ 'oro.promotion.coupon.generation.dashesSequence.suffix.label'|trans }}</label>
         {{ form_widget(form) }}
-    {% endspaceless %}
+    {% endapply %}
 {% endblock %}
 
 {% block oro_promotion_applied_promotion_widget %}

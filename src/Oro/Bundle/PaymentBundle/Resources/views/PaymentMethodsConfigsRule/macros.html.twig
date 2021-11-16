@@ -1,5 +1,5 @@
 {% macro renderPaymentMethodsConfigs(methodConfigs, currency) %}
-    {%- spaceless -%}
+    {%- apply spaceless -%}
         <ol>
             {%- for methodConfig in methodConfigs -%}
                 <li>
@@ -14,5 +14,5 @@
                 </li>
             {%- endfor -%}
         </ol>
-    {%- endspaceless -%}
+    {%- endapply -%}
 {% endmacro %}

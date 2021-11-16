@@ -4,9 +4,9 @@
     {% set currentShippingMethodType = currentShippingMethodType|default(null) %}
 
     {% set shippingMethodsTemplate %}
-        {% spaceless %}
+        {% apply spaceless %}
             {{ block_widget(block) }}
-        {% endspaceless %}
+        {% endapply %}
     {% endset %}
 
     {% set attr = layout_attr_defaults(attr, {

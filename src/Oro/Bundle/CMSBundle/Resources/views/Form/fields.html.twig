@@ -13,7 +13,7 @@
     {% set variantCollectionId = 'content-variant-collection-'|uniqid %}
     {% set variantCollectionItemParams = {variantCollectionId: variantCollectionId} %}
 
-    {% spaceless %}
+    {% apply spaceless %}
         {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-content-variant-collection' }) %}
         <div {{ block('widget_container_attributes') }}
                 data-role="content-variant-collection"
@@ -62,7 +62,7 @@
                 view: 'orocms/js/app/views/variants-collection-view'
             }
         }) }}></div>
-    {% endspaceless %}
+    {% endapply %}
 {% endblock %}
 
 {% block text_content_variant_widget %}
@@ -85,7 +85,7 @@
 
 {% block image_slide_collection_row %}
         {% import _self as formFields %}
-        {% spaceless %}
+        {% apply spaceless %}
             {% if prototype is defined %}
                 {% set prototype_html = formFields.image_slide_collection_item_prototype(form) %}
             {% endif %}
@@ -111,7 +111,7 @@
                     <a class="btn add-list-item" href="#" role="button">{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</a>
                 {% endif %}
             </div>
-        {% endspaceless %}
+        {% endapply %}
 {% endblock %}
 
 {% macro image_slide_collection_item_prototype(widget) %}
@@ -159,7 +159,7 @@
 
 {% macro oro_cms_content_variant_collection_item(form, name, disabled, expanded, params = {}) %}
     {% set parentID = params.variantCollectionId|default('') %}
-    {% spaceless %}
+    {% apply spaceless %}
         {% set expanded = expanded|default(false) %}
         {% set scopes %}
             {{ form_widget(form.scopes) }}
@@ -212,7 +212,7 @@
 
             <button class="btn-remove-variant btn btn-icon btn-square-light" type="button" data-related="{{ name }}" data-action="remove" aria-label="{{ 'Remove row'|trans }}"><span class="fa-trash-o" aria-hidden="true"></span></button>
         </div>
-    {% endspaceless %}
+    {% endapply %}
 {% endmacro %}
 
 {% macro oro_cms_content_variant_attributes(form, variantCollectionItemParams = {}) %}

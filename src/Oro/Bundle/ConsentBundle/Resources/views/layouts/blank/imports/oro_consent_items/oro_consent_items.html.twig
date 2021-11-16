@@ -49,12 +49,12 @@
     }) %}
 
     <label {{ block('block_attributes') }}>
-        {% spaceless %}
+        {% apply spaceless %}
             {{ parent_block_widget(block) }}
             {% if consent.required %}
                 <em class="consent-item__asterisk" aria-hidden="true">*</em>
             {% endif %}
-        {% endspaceless %}
+        {% endapply %}
     </label>
 {% endblock %}
 

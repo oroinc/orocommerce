@@ -22,13 +22,15 @@
         <table class="grid table table-condensed table-bordered tax-result-grid unit-table">
             {{ taxMacros._renderItemsHead() }}
             <tbody>
-            {% for type, data in result if data.includingTax is defined %}
-                <tr>
-                    <td class="renderable">{{ 'oro.tax.result.%s'|format(type)|trans }}</td>
-                    <td class="renderable">{{ data.includingTax|oro_format_currency({currency: data.currency}) }}</td>
-                    <td class="renderable">{{ data.excludingTax|oro_format_currency({currency: data.currency}) }}</td>
-                    <td class="renderable">{{ data.taxAmount|oro_format_currency({currency: data.currency}) }}</td>
-                </tr>
+            {% for type, data in result %}
+                {% if data.includingTax is defined %}
+                    <tr>
+                        <td class="renderable">{{ 'oro.tax.result.%s'|format(type)|trans }}</td>
+                        <td class="renderable">{{ data.includingTax|oro_format_currency({currency: data.currency}) }}</td>
+                        <td class="renderable">{{ data.excludingTax|oro_format_currency({currency: data.currency}) }}</td>
+                        <td class="renderable">{{ data.taxAmount|oro_format_currency({currency: data.currency}) }}</td>
+                    </tr>
+                {% endif %}
             {% endfor %}
             </tbody>
         </table>

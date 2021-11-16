@@ -1,8 +1,8 @@
 {% block content_block_widget %}
     {% if contentBlock.contentStyle|length -%}
-        {%- spaceless -%}
+        {%- apply spaceless -%}
             <style type="text/css">{{ contentBlock.contentStyle|render_content }}</style>
-        {%- endspaceless -%}
+        {%- endapply -%}
     {%- endif %}
 
     {%- set content -%}

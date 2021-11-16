@@ -1,5 +1,5 @@
 {% macro renderShippingMethodsConfigs(methodConfigs, currency) %}
-    {%- spaceless -%}
+    {%- apply spaceless -%}
         <ol>
             {%- for methodConfig in methodConfigs -%}
                 {%- set typeConfigData = [] -%}
@@ -21,7 +21,7 @@
                 } -%}
             {%- endfor -%}
         </ol>
-    {%- endspaceless -%}
+    {%- endapply -%}
 {% endmacro %}
 
 {% macro renderShippingMethodDisabledFlag(identifier) %}
