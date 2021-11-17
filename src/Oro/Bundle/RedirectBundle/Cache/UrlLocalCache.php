@@ -2,21 +2,21 @@
 
 namespace Oro\Bundle\RedirectBundle\Cache;
 
-use Doctrine\Common\Cache\Cache;
 use Doctrine\Common\Cache\ClearableCache;
+use Psr\Cache\CacheItemPoolInterface;
 
 /**
- * Url local cache may be used to store URLs on per request basis and may be used in pair with database URL provider
+ * Url local cache may be used to store URLs on per-request basis and may be used in pair with database URL provider
  * to always fetch Semantic URLs from DB without being saved in persistent cache
  */
 class UrlLocalCache implements UrlCacheInterface, ClearableCache
 {
     /**
-     * @var Cache
+     * @var CacheItemPoolInterface
      */
     protected $localCache;
 
-    public function __construct(Cache $localCache)
+    public function __construct(CacheItemPoolInterface $localCache)
     {
         $this->localCache = $localCache;
     }
@@ -26,7 +26,7 @@ class UrlLocalCache implements UrlCacheInterface, ClearableCache
      */
     public function has($routeName, $routeParameters, $localizationId = null): bool
     {
-        return $this->localCache->contains($this->getCacheKey($routeName, $routeParameters, $localizationId));
+        return $this->localCache->hasItem($this->getCacheKey($routeName, $routeParameters, $localizationId));
     }
 
     /**
@@ -37,9 +37,12 @@ class UrlLocalCache implements UrlCacheInterface, ClearableCache
      */
     public function getUrl($routeName, $routeParameters, $localizationId = null)
     {
-        $data = $this->localCache->fetch($this->getCacheKey($routeName, $routeParameters, $localizationId));
-        if ($data && array_key_exists(self::URL_KEY, $data)) {
-            return $data[self::URL_KEY];
+        $dataItem = $this->localCache->getItem($this->getCacheKey($routeName, $routeParameters, $localizationId));
+        if ($dataItem->isHit()) {
+            $data = $dataItem->get();
+            if (array_key_exists(self::URL_KEY, $data)) {
+                return $data[self::URL_KEY];
+            }
         }
 
         return false;
@@ -53,9 +56,12 @@ class UrlLocalCache implements UrlCacheInterface, ClearableCache
      */
     public function getSlug($routeName, $routeParameters, $localizationId = null)
     {
-        $data = $this->localCache->fetch($this->getCacheKey($routeName, $routeParameters, $localizationId));
-        if (!empty($data[self::SLUG_KEY])) {
-            return $data[self::SLUG_KEY];
+        $dataItem = $this->localCache->getItem($this->getCacheKey($routeName, $routeParameters, $localizationId));
+        if ($dataItem->isHit()) {
+            $data = $dataItem->get();
+            if (!empty($data[self::SLUG_KEY])) {
+                return $data[self::SLUG_KEY];
+            }
         }
 
         return false;
@@ -72,13 +78,12 @@ class UrlLocalCache implements UrlCacheInterface, ClearableCache
      */
     public function setUrl($routeName, $routeParameters, $url, $slug = null, $localizationId = null)
     {
-        $this->localCache->save(
-            $this->getCacheKey($routeName, $routeParameters, $localizationId),
-            [
-                self::URL_KEY => $url,
-                self::SLUG_KEY => $slug
-            ]
-        );
+        $item = $this->localCache->getItem($this->getCacheKey($routeName, $routeParameters, $localizationId));
+        $item->set([
+            self::URL_KEY => $url,
+            self::SLUG_KEY => $slug
+        ]);
+        $this->localCache->save($item);
     }
 
     /**
@@ -88,7 +93,7 @@ class UrlLocalCache implements UrlCacheInterface, ClearableCache
      */
     public function removeUrl($routeName, $routeParameters, $localizationId = null)
     {
-        $this->localCache->delete($this->getCacheKey($routeName, $routeParameters, $localizationId));
+        $this->localCache->deleteItem($this->getCacheKey($routeName, $routeParameters, $localizationId));
     }
 
     /**
@@ -96,9 +101,7 @@ class UrlLocalCache implements UrlCacheInterface, ClearableCache
      */
     public function deleteAll()
     {
-        if ($this->localCache instanceof ClearableCache) {
-            $this->localCache->deleteAll();
-        }
+        $this->localCache->clear();
     }
 
     /**

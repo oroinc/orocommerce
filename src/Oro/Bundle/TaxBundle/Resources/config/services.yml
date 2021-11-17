@@ -607,8 +607,8 @@ services:
             - '@oro_entity.doctrine_helper'
 
     oro_tax.tax_codes.cache:
+        parent: oro_cache.array_cache
         public: false
-        class: Doctrine\Common\Cache\ArrayCache
         calls:
             - [ setNamespace, [ 'oro_tax_tax_codes' ] ]
 
@@ -628,7 +628,7 @@ services:
             - { name: kernel.event_subscriber }
 
     oro_tax.taxation_provider.cache:
-        class: Doctrine\Common\Cache\ArrayCache
+        parent: oro_cache.array_cache
         public: false
         calls:
             - [ setNamespace, [ 'oro_taxation_settings_provider' ] ]

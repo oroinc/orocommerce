@@ -2,11 +2,12 @@
 
 namespace Oro\Bundle\ProductBundle\Provider;
 
-use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\Common\Cache\CacheProvider;
+use Doctrine\Common\Cache\Psr6\DoctrineProvider;
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
 
 /**
  * Provides ability to get list of the custom extended fields of the entity.
@@ -37,7 +38,7 @@ class CustomFieldProvider
     {
         $this->extendConfigProvider = $extendConfigProvider;
         $this->entityConfigProvider = $entityConfigProvider;
-        $this->cache = new ArrayCache();
+        $this->cache = DoctrineProvider::wrap(new ArrayAdapter(0, false));
     }
 
     public function setCache(CacheProvider $cache, int $lifeTime = 0): void

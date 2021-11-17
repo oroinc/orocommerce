@@ -17,6 +17,7 @@ use Oro\Bundle\ProductBundle\Tests\Functional\Stub\ProductCollectionSegmentHelpe
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\SegmentBundle\Entity\SegmentType;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 
@@ -71,6 +72,7 @@ class ProductCollectionVariantReindexMessageSendListenerTest extends WebTestCase
         $this->assertEmpty($messageCollector->getTopicSentMessages(Topics::REINDEX_PRODUCT_COLLECTION_BY_SEGMENT));
         $em = $this->getEntityManager();
         $em->remove($contentVariant);
+        $this->setTestContentVariantMetadata(ContentVariant::class);
         $em->flush();
 
         $expectedMessages = [
@@ -85,6 +87,7 @@ class ProductCollectionVariantReindexMessageSendListenerTest extends WebTestCase
                 ]
             ]
         ];
+
         $this->assertEquals(
             $expectedMessages,
             $messageCollector->getTopicSentMessages(Topics::REINDEX_PRODUCT_COLLECTION_BY_SEGMENT)
@@ -135,7 +138,7 @@ class ProductCollectionVariantReindexMessageSendListenerTest extends WebTestCase
     {
         $this->loadFixtures([LoadContentVariantSegmentsWithRelationsData::class]);
         $this->setWebCatalog();
-        $this->setTestContentVariantMetadata();
+        $this->setTestContentVariantMetadata(TestContentVariant::class);
 
         /** @var Segment $segment */
         $segment = $this->getReference(LoadSegmentsWithRelationsData::FIRST_SEGMENT);
@@ -171,7 +174,7 @@ class ProductCollectionVariantReindexMessageSendListenerTest extends WebTestCase
      */
     private function createNewContentVariantWithSegment()
     {
-        $this->setTestContentVariantMetadata();
+        $this->setTestContentVariantMetadata(TestContentVariant::class);
         $entityManager = $this->getEntityManager();
 
         $segment = new Segment();
@@ -207,11 +210,11 @@ class ProductCollectionVariantReindexMessageSendListenerTest extends WebTestCase
         return $repository->find(SegmentType::TYPE_STATIC);
     }
 
-    private function setTestContentVariantMetadata()
+    private function setTestContentVariantMetadata(string $name)
     {
         $entityManager = $this->getEntityManager();
         $metadata = $entityManager->getClassMetadata(ContentVariantInterface::class);
-        $metadata->name = TestContentVariant::class;
+        $metadata->name = $name;
     }
 
     private function setWebCatalog()

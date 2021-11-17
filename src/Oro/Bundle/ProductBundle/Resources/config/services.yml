@@ -1151,10 +1151,10 @@ services:
             - { name: oro_entity_config.layout.attribute_block_type_mapper }
 
     oro_product.virtual_fields.decorator_cache:
-        class: Doctrine\Common\Cache\ArrayCache
+        parent: oro_cache.array_cache
         public: false
         calls:
-        - [ setNamespace, [ 'virtual_fields_decorator_cache' ] ]
+            - [ setNamespace, [ 'virtual_fields_decorator_cache' ] ]
 
     oro_product.virtual_fields.decorator_factory:
         class: 'Oro\Bundle\ProductBundle\VirtualFields\VirtualFieldsProductDecoratorFactory'

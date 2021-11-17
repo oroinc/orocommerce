@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\ProductVariant\VariantFieldValueHandler;
 
-use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\Common\Cache\CacheProvider;
+use Doctrine\Common\Cache\Psr6\DoctrineProvider;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
@@ -13,6 +13,7 @@ use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantFieldValueHandlerInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
 
 /**
  * Provides easy way to work with the extended Enum fields of the Product entity.
@@ -59,7 +60,7 @@ class EnumVariantFieldValueHandler implements ProductVariantFieldValueHandlerInt
         $this->configManager = $configManager;
         $this->localizationHelper = $localizationHelper;
         $this->localeSettings = $localeSettings;
-        $this->cache = new ArrayCache();
+        $this->cache = DoctrineProvider::wrap(new ArrayAdapter(0, false));
     }
 
     public function setCache(CacheProvider $cache, int $lifeTime = 0): void

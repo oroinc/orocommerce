@@ -25,7 +25,8 @@ services:
             - [addProvider, ['@oro_product.provider.product_image_placeholder.default']]
 
     oro_product.provider.product_image_placeholder.cache:
-        class: Doctrine\Common\Cache\ArrayCache
+        parent: oro_cache.array_cache
+        public: false
 
     oro_product.provider.product_image_placeholder.cache_decorator:
         parent: oro_layout.provider.image_placeholder.cache.abstract

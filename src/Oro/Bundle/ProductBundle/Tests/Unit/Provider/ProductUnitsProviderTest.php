@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Provider;
 
-use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
@@ -10,10 +9,13 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
+use Oro\Component\Testing\Unit\Cache\CacheTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class ProductUnitsProviderTest extends \PHPUnit\Framework\TestCase
 {
+    use CacheTrait;
+
     private const UNITS = [
         [
             'code' => 'each',
@@ -74,7 +76,11 @@ class ProductUnitsProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->formatter = $this->createMock(UnitLabelFormatterInterface::class);
 
-        $this->productUnitsProvider = new ProductUnitsProvider($managerRegistry, $this->formatter, new ArrayCache());
+        $this->productUnitsProvider = new ProductUnitsProvider(
+            $managerRegistry,
+            $this->formatter,
+            $this->getArrayCache()
+        );
     }
 
     public function testGetAvailableProductUnits()

@@ -381,13 +381,13 @@ services:
             - '@oro_promotion.provider.shipping_promotion_discounts_provider'
 
     oro_promotion.promotion_executor.cache:
-        class: Doctrine\Common\Cache\ArrayCache
+        parent: oro_cache.array_cache
         calls:
             - [ setNamespace, [ 'oro_promotion_executor' ] ]
 
     oro_promotion.matching_products.cache:
+        parent: oro_cache.array_cache
         public: false
-        class: Doctrine\Common\Cache\ArrayCache
         calls:
             - [setNamespace, ['oro_promotion_matching_products']]
 

@@ -16,7 +16,7 @@ services:
         parent: oro.cache.provider.memory_cache
 
     oro_checkout.product_availability.cache:
-        class: Doctrine\Common\Cache\ArrayCache
+        parent: oro_cache.array_cache
         calls:
             - [ setNamespace, [ 'oro_product_availability' ] ]
 
