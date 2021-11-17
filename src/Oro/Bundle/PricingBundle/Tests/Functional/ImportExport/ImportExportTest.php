@@ -400,7 +400,7 @@ class ImportExportTest extends AbstractImportExportTestCase
 
         $sentMessages = $this->getSentMessages();
         foreach ($sentMessages as $messageData) {
-            if (Topics::SEND_NOTIFICATION_EMAIL === $messageData['topic']) {
+            if (Topics::SEND_NOTIFICATION_EMAIL_TEMPLATE === $messageData['topic']) {
                 break;
             }
         }

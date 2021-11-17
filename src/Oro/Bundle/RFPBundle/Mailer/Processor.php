@@ -61,17 +61,16 @@ class Processor implements LoggerAwareInterface
      */
     private function send(Request $request, UserInterface $user, $template): int
     {
-        try {
-            return $this->userTemplateEmailSender->sendUserTemplateEmail($user, $template, ['entity' => $request]);
-        } catch (\Swift_SwiftException $exception) {
+        $sent = $this->userTemplateEmailSender->sendUserTemplateEmail($user, $template, ['entity' => $request]);
+
+        if (!$sent) {
             $this->logger->error('Unable to send email', [
                 'template' => $template,
                 'username' => $user->getUsername(),
                 'request' => (string) $request,
-                'exception' => $exception,
             ]);
         }
 
-        return 0;
+        return $sent;
     }
 }

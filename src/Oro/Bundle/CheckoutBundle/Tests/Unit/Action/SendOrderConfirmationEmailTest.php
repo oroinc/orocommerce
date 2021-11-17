@@ -5,61 +5,48 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Action;
 use Doctrine\ORM\EntityNotFoundException;
 use Oro\Bundle\CheckoutBundle\Action\SendOrderConfirmationEmail;
 use Oro\Bundle\EmailBundle\Exception\EmailTemplateCompilationException;
-use Oro\Bundle\EmailBundle\Mailer\Processor;
 use Oro\Bundle\EmailBundle\Model\EmailTemplateCriteria;
 use Oro\Bundle\EmailBundle\Tools\AggregatedEmailTemplatesSender;
 use Oro\Bundle\EmailBundle\Tools\EmailAddressHelper;
 use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
+use Oro\Bundle\TestFrameworkBundle\Test\Logger\LoggerAwareTraitTestTrait;
 use Oro\Component\ConfigExpression\ContextAccessor;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Twig\Error\RuntimeError;
 
 class SendOrderConfirmationEmailTest extends \PHPUnit\Framework\TestCase
 {
-    private ContextAccessor|\PHPUnit\Framework\MockObject\MockObject $contextAccessor;
+    use LoggerAwareTraitTestTrait;
 
-    private Processor|\PHPUnit\Framework\MockObject\MockObject $emailProcessor;
-
-    private EntityNameResolver|\PHPUnit\Framework\MockObject\MockObject $entityNameResolver;
-
-    private ValidatorInterface|\PHPUnit\Framework\MockObject\MockObject $validator;
-
-    private AggregatedEmailTemplatesSender|\PHPUnit\Framework\MockObject\MockObject $sender;
-
-    private LoggerInterface|\PHPUnit\Framework\MockObject\MockObject $logger;
-
-    protected EventDispatcher|\PHPUnit\Framework\MockObject\MockObject $dispatcher;
+    private AggregatedEmailTemplatesSender|\PHPUnit\Framework\MockObject\MockObject $aggregatedEmailTemplatesSender;
 
     private SendOrderConfirmationEmail $action;
 
     protected function setUp(): void
     {
-        $this->contextAccessor = $this->createMock(ContextAccessor::class);
-        $this->contextAccessor->expects(self::any())
+        $contextAccessor = $this->createMock(ContextAccessor::class);
+        $contextAccessor->expects(self::any())
             ->method('getValue')
             ->willReturnArgument(1);
 
-        $this->emailProcessor = $this->createMock(Processor::class);
-        $this->entityNameResolver = $this->createMock(EntityNameResolver::class);
-        $this->validator = $this->createMock(ValidatorInterface::class);
-        $this->sender = $this->createMock(AggregatedEmailTemplatesSender::class);
+        $entityNameResolver = $this->createMock(EntityNameResolver::class);
+        $validator = $this->createMock(ValidatorInterface::class);
+        $this->aggregatedEmailTemplatesSender = $this->createMock(AggregatedEmailTemplatesSender::class);
 
-        $this->logger = $this->createMock(LoggerInterface::class);
-        $this->dispatcher = $this->createMock(EventDispatcher::class);
+        $dispatcher = $this->createMock(EventDispatcher::class);
 
         $this->action = new SendOrderConfirmationEmail(
-            $this->contextAccessor,
-            $this->emailProcessor,
+            $contextAccessor,
+            $validator,
             new EmailAddressHelper(),
-            $this->entityNameResolver,
-            $this->validator,
-            $this->sender
+            $entityNameResolver,
+            $this->aggregatedEmailTemplatesSender
         );
 
-        $this->action->setLogger($this->logger);
-        $this->action->setDispatcher($this->dispatcher);
+        $this->action->setDispatcher($dispatcher);
+
+        $this->setUpLoggerMock($this->action);
     }
 
     /**
@@ -67,13 +54,13 @@ class SendOrderConfirmationEmailTest extends \PHPUnit\Framework\TestCase
      */
     public function testExecuteIgnoresExceptions(\Throwable $exception, string $logMessage): void
     {
-        $this->sender->expects(self::once())
+        $this->aggregatedEmailTemplatesSender->expects(self::once())
             ->method('send')
             ->willThrowException($exception);
 
-        $this->logger->expects(self::once())
+        $this->loggerMock->expects(self::once())
             ->method('error')
-            ->with($logMessage);
+            ->with($logMessage, ['exception' => $exception]);
 
         $this->action->initialize(
             [

@@ -69,9 +69,10 @@ services:
         arguments:
             - '@doctrine'
             - '@oro_email.email.model.builder'
-            - '@oro_email.mailer.processor'
+            - '@oro_email.sender.email_model_sender'
             - '@oro_featuretoggle.checker.feature_checker'
         calls:
+            - [ setLogger, [ '@logger' ] ]
             - [ setQuoteClassName, [ 'Oro\Bundle\SaleBundle\Entity\Quote' ] ]
             - [ setEmailTemplateClassName, [ 'Oro\Bundle\EmailBundle\Entity\EmailTemplate' ] ]
 

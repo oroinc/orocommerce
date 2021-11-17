@@ -8,47 +8,46 @@ use Doctrine\Persistence\ObjectRepository;
 use Oro\Bundle\EmailBundle\Builder\EmailModelBuilder;
 use Oro\Bundle\EmailBundle\Entity\EmailTemplate;
 use Oro\Bundle\EmailBundle\Form\Model\Email;
-use Oro\Bundle\EmailBundle\Mailer\Processor;
+use Oro\Bundle\EmailBundle\Sender\EmailModelSender;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\SaleBundle\Entity\Quote;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\NullLogger;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
  * This helper contains useful methods common for working with quote emails.
  */
-class NotificationHelper
+class NotificationHelper implements LoggerAwareInterface
 {
-    /** @var ManagerRegistry */
-    protected $registry;
+    use LoggerAwareTrait;
 
-    /** @var EmailModelBuilder */
-    protected $emailModelBuilder;
+    private ManagerRegistry $registry;
 
-    /** @var Processor */
-    protected $emailProcessor;
+    private EmailModelBuilder $emailModelBuilder;
 
-    /** @var FeatureChecker */
-    protected $featureChecker;
+    private EmailModelSender $emailModelSender;
 
-    /** @var string */
-    protected $quoteClassName;
+    private FeatureChecker $featureChecker;
 
-    /** @var string */
-    protected $emailTemplateClassName;
+    private ?string $quoteClassName = null;
 
-    /** @var bool */
-    protected $enabled = true;
+    private ?string $emailTemplateClassName = null;
+
+    private bool $enabled = true;
 
     public function __construct(
         ManagerRegistry $registry,
         EmailModelBuilder $emailModelBuilder,
-        Processor $emailProcessor,
+        EmailModelSender $emailModelSender,
         FeatureChecker $featureChecker
     ) {
         $this->registry = $registry;
         $this->emailModelBuilder = $emailModelBuilder;
-        $this->emailProcessor = $emailProcessor;
+        $this->emailModelSender = $emailModelSender;
         $this->featureChecker = $featureChecker;
+        $this->logger = new NullLogger();
     }
 
     public function setEnabled(bool $enabled): void
@@ -93,7 +92,18 @@ class NotificationHelper
             return;
         }
 
-        $this->emailProcessor->process($emailModel);
+        try {
+            $this->emailModelSender->send($emailModel);
+        } catch (\RuntimeException $exception) {
+            $this->logger->error(
+                sprintf(
+                    'Failed to send email model to %s: %s',
+                    implode(', ', $emailModel->getTo()),
+                    $exception->getMessage()
+                ),
+                ['exception' => $exception, 'emailModel' => $emailModel]
+            );
+        }
     }
 
     /**
