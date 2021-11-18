@@ -104,7 +104,7 @@ class PriceRuleRelationExpressionsValidator extends ConstraintValidator
 
             return null;
         } catch (SyntaxError $e) {
-            // OroRuleBundle:ExpressionLanguageSyntaxValidator should handle this case
+            // {@see Oro\Bundle\RuleBundle\Validator\Constraints\ExpressionLanguageSyntax} should handle this case.
             return null;
         }
     }

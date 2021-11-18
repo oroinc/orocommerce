@@ -91,7 +91,8 @@ class ExpressionLanguageRuleFiltrationServiceTest extends \PHPUnit\Framework\Tes
         $this->logger->expects(self::once())
             ->method('error')
             ->with(
-                'Rule condition evaluation error: Unexpected token "operator" of value "%" around position 5.',
+                'Rule condition evaluation error: Unexpected token "operator" of value "%" around position 5 '
+                . 'for expression `t = %`.',
                 [
                     'expression' => $exceptionOwner->getRule()->getExpression(),
                     'values' => $context,

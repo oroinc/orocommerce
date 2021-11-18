@@ -1,0 +1,3 @@
+oro:
+    rule:
+        expression_language_syntax: '{{ syntax_error }}'

@@ -140,11 +140,11 @@ Feature: Rule Editor with Autocomplete in Price List
       | Calculate As | pricelist[1].prices.  |
       | Condition    | pricelist[12].prices. |
     And I save form
-    Then I should see "Unexpected end of expression around position 14."
-    And I should not see "Unexpected end of expression around position 14.; Unexpected end of expression around position 14."
-    And I should see "Unexpected end of expression around position 15."
-    And I should not see "Unexpected end of expression around position 15.; Unexpected end of expression around position 15."
-    And I should see "Unexpected end of expression around position 21."
-    And I should not see "Unexpected end of expression around position 21.; Unexpected end of expression around position 21."
-    And I should see "Unexpected end of expression around position 22."
-    And I should not see "Unexpected end of expression around position 22.; Unexpected end of expression around position 22."
+    Then I should see "Unexpected end of expression around position 14 for expression `pricelist[1].`."
+    And I should not see "Unexpected end of expression around position 14 for expression `pricelist[1].`.; Unexpected end of expression around position 14 for expression `pricelist[1].`."
+    And I should see "Unexpected end of expression around position 15 for expression `pricelist[12].`."
+    And I should not see "Unexpected end of expression around position 15 for expression `pricelist[12].`.; Unexpected end of expression around position 15 for expression `pricelist[12].`."
+    And I should see "Unexpected end of expression around position 21 for expression `pricelist[1].prices.`."
+    And I should not see "Unexpected end of expression around position 21 for expression `pricelist[1].prices.`.; Unexpected end of expression around position 21 for expression `pricelist[1].prices.`."
+    And I should see "Unexpected end of expression around position 22 for expression `pricelist[12].prices.`."
+    And I should not see "Unexpected end of expression around position 22 for expression `pricelist[12].prices.`.; Unexpected end of expression around position 22 for expression `pricelist[12].prices.`."

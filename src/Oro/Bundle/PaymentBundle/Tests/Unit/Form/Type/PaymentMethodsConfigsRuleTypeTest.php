@@ -25,11 +25,11 @@ use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
 use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\RuleBundle\Form\Type\RuleType;
 use Oro\Bundle\RuleBundle\Validator\Constraints\ExpressionLanguageSyntax;
-use Oro\Bundle\RuleBundle\Validator\Constraints\ExpressionLanguageSyntaxValidator;
 use Oro\Component\Testing\Unit\AddressFormExtensionTestCase;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Validator\Constraints\ExpressionLanguageSyntaxValidator;
 
 class PaymentMethodsConfigsRuleTypeTest extends AddressFormExtensionTestCase
 {

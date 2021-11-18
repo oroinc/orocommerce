@@ -3,77 +3,89 @@
 namespace Oro\Bundle\RuleBundle\Tests\Unit\Validator\Constraints;
 
 use Oro\Bundle\RuleBundle\Validator\Constraints\ExpressionLanguageSyntaxValidator;
-use Oro\Component\ExpressionLanguage\BasicExpressionLanguageValidator;
-use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Constraints\ExpressionLanguageSyntaxValidator as SymfonyExpressionLanguageValidator;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class ExpressionLanguageSyntaxValidatorTest extends ConstraintValidatorTestCase
 {
-    /** @var BasicExpressionLanguageValidator|\PHPUnit\Framework\MockObject\MockObject */
-    private $basicExpressionLanguageValidator;
+    private SymfonyExpressionLanguageValidator|\PHPUnit\Framework\MockObject\MockObject $innerValidator;
 
     protected function setUp(): void
     {
-        $this->basicExpressionLanguageValidator = $this->createMock(BasicExpressionLanguageValidator::class);
+        $this->innerValidator = $this->createMock(SymfonyExpressionLanguageValidator::class);
+
         parent::setUp();
     }
 
-    protected function createValidator()
+    protected function createValidator(): ExpressionLanguageSyntaxValidator
     {
-        return new ExpressionLanguageSyntaxValidator($this->basicExpressionLanguageValidator);
+        return new ExpressionLanguageSyntaxValidator($this->innerValidator);
     }
 
-    public function testWithoutExpression()
+    public function testValidateDoesNothingWhenNoExpression(): void
     {
-        $this->basicExpressionLanguageValidator->expects(self::never())
+        $this->innerValidator
+            ->expects(self::never())
             ->method('validate');
 
-        $constraint = $this->createMock(Constraint::class);
-        $this->validator->validate('', $constraint);
+        $this->validator->validate('', $this->constraint);
 
         $this->assertNoViolation();
     }
 
-    /**
-     * @dataProvider expressionsProvider
-     */
-    public function testValidate(string $expression, string $message)
+    public function testValidateDoesNothingWhenNoExpressionAndSpaces(): void
     {
-        $this->basicExpressionLanguageValidator->expects(self::once())
-            ->method('validate')
-            ->with($expression)
-            ->willReturn($message);
+        $this->innerValidator
+            ->expects(self::never())
+            ->method('validate');
 
-        $constraint = $this->createMock(Constraint::class);
-        $this->validator->validate($expression, $constraint);
+        $this->validator->validate('  ', $this->constraint);
 
-        if ($message) {
-            $this->buildViolation($message)
-                ->assertRaised();
-        } else {
-            $this->assertNoViolation();
-        }
+        $this->assertNoViolation();
     }
 
-    public function expressionsProvider(): array
+    public function testValidateWhenNumericExpression(): void
     {
-        return [
-            'non valid 1' => [
-                '=true',
-                'Unexpected character "=" around position 0.',
-            ],
-            'non valid 2' => [
-                'some()',
-                'The function "some" does not exist around position 1.',
-            ],
-            'non valid 3' => [
-                'd=-=b',
-                'Unexpected token "operator" of value "=" around position 4.',
-            ],
-            'valid' => [
-                'currency != "USD"',
-                '',
-            ],
-        ];
+        $this->innerValidator
+            ->expects(self::once())
+            ->method('validate')
+            ->with('42');
+
+        $this->validator->validate(42, $this->constraint);
+
+        $this->assertNoViolation();
+    }
+
+    public function testValidateWhenExpressionHasExtraSpaces(): void
+    {
+        $this->innerValidator
+            ->expects(self::once())
+            ->method('validate')
+            ->with('with extra spaces');
+
+        $this->validator->validate('  with extra spaces  ', $this->constraint);
+
+        $this->assertNoViolation();
+    }
+
+    public function testValidateWhenNullExpression(): void
+    {
+        $this->innerValidator
+            ->expects(self::never())
+            ->method('validate');
+
+        $this->validator->validate(null, $this->constraint);
+
+        $this->assertNoViolation();
+    }
+
+    public function testValidate(): void
+    {
+        $this->innerValidator
+            ->expects(self::once())
+            ->method('validate')
+            ->with('42+21');
+
+        $this->validator->validate('42+21', $this->constraint);
     }
 }

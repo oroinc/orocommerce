@@ -8,6 +8,9 @@ use Symfony\Component\ExpressionLanguage\SyntaxError;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
+/**
+ * Validates if logical expression is allowed and is valid.
+ */
 class LogicalExpressionValidator extends ConstraintValidator
 {
     /**
@@ -47,7 +50,7 @@ class LogicalExpressionValidator extends ConstraintValidator
                 }
             }
         } catch (SyntaxError $ex) {
-            // OroRuleBundle:ExpressionLanguageSyntaxValidator should handle this case
+            // {@see Oro\Bundle\RuleBundle\Validator\Constraints\ExpressionLanguageSyntax} should handle this case.
             return;
         }
     }

@@ -1,17 +1,14 @@
 services:
     oro_rule.expression_language:
         class: 'Oro\Component\ExpressionLanguage\ExpressionLanguage'
-        public: false
-
-    oro_rule.basic_expression_language_validator:
-        class: 'Oro\Component\ExpressionLanguage\BasicExpressionLanguageValidator'
-        arguments:
-            - '@oro_rule.expression_language'
 
     oro_rule.validator_constraints.expression_language_syntax_validator:
-        class: 'Oro\Bundle\RuleBundle\Validator\Constraints\ExpressionLanguageSyntaxValidator'
+        class: Oro\Bundle\RuleBundle\Validator\Constraints\ExpressionLanguageSyntaxValidator
         arguments:
-            - '@oro_rule.basic_expression_language_validator'
+            - !service
+                class: Symfony\Component\Validator\Constraints\ExpressionLanguageSyntaxValidator
+                arguments:
+                    - '@oro_rule.expression_language'
         tags:
             - { name: validator.constraint_validator, alias: oro_rule.validator_constraints.expression_language_syntax_validator }
 
