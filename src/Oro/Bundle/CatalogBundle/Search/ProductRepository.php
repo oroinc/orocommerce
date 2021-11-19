@@ -110,7 +110,7 @@ class ProductRepository extends WebsiteSearchRepository
         );
 
         foreach ($counts as $path => $count) {
-            $path = str_replace($rootCategoryPath, '', $path);
+            $path = preg_replace("/^$rootCategoryPath/", '', $path);
             $pathParts = explode('_', $path);
             $mainCategoryId = reset($pathParts);
 

@@ -79,6 +79,7 @@ class ProductRepositoryTest extends \PHPUnit\Framework\TestCase
                     '2' => 20,
                     '6' => 30,
                     '10' => 12,
+                    '21' => 6
                 ]
             ],
             'with sub category' => [
@@ -128,6 +129,8 @@ class ProductRepositoryTest extends \PHPUnit\Framework\TestCase
                             '1_6_7_8_9' => 20,
                             '1_10_11' => 7,
                             '1_10_12' => 5,
+                            '1_21' => 4,
+                            '1_21_31' => 2
                         ]
                     ]
                 )
