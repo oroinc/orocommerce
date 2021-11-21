@@ -11,16 +11,5 @@ use Symfony\Component\Validator\Constraint;
  */
 class UrlSafeSlugPrototype extends Constraint
 {
-    const ALIAS = 'oro_redirect_url_safe_slug_prototype_validator';
-
-    /** @var bool */
-    public $allowSlashes = false;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function validatedBy()
-    {
-        return 'oro_redirect_url_safe_slug_prototype_validator';
-    }
+    public bool $allowSlashes = false;
 }

@@ -446,11 +446,11 @@ services:
             - { name: kernel.event_listener, event: kernel.exception }
 
     oro_redirect.validator.url_safe_slug_prototype:
-        class: Oro\Bundle\RedirectBundle\Validator\UrlSafeSlugPrototypeValidator
+        class: Oro\Bundle\RedirectBundle\Validator\Constraints\UrlSafeSlugPrototypeValidator
         arguments:
             - "@validator"
         tags:
-            - { name: validator.constraint_validator, alias: oro_redirect_url_safe_slug_prototype_validator }
+            - { name: validator.constraint_validator }
 
     oro_redirect.provider.slug_source_entity_provider_registry:
         class: Oro\Bundle\RedirectBundle\Provider\SlugSourceEntityProviderRegistry

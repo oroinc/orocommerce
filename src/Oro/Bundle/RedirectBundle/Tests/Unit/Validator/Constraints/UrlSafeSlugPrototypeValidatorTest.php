@@ -1,12 +1,11 @@
 <?php
 
-namespace Oro\Bundle\RedirectBundle\Tests\Unit\Validator;
+namespace Oro\Bundle\RedirectBundle\Tests\Unit\Validator\Constraints;
 
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\RedirectBundle\Validator\Constraints\UrlSafeSlugPrototype;
-use Oro\Bundle\RedirectBundle\Validator\UrlSafeSlugPrototypeValidator;
+use Oro\Bundle\RedirectBundle\Validator\Constraints\UrlSafeSlugPrototypeValidator;
 use Oro\Bundle\ValidationBundle\Validator\Constraints\UrlSafe;
-use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
@@ -16,9 +15,7 @@ class UrlSafeSlugPrototypeValidatorTest extends ConstraintValidatorTestCase
 {
     private const ERROR_MESSAGE = 'This value should contain only latin letters, numbers and symbols "-._~".';
 
-    /**
-     * @var ValidatorInterface|MockObject
-     */
+    /** @var ValidatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $externalValidator;
 
     protected function setUp(): void

@@ -1,9 +1,8 @@
 <?php
 
-namespace Oro\Bundle\RedirectBundle\Validator;
+namespace Oro\Bundle\RedirectBundle\Validator\Constraints;
 
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
-use Oro\Bundle\RedirectBundle\Validator\Constraints\UrlSafeSlugPrototype;
 use Oro\Bundle\ValidationBundle\Validator\Constraints\UrlSafe;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
