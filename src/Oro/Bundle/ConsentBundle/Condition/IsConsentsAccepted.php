@@ -72,16 +72,17 @@ class IsConsentsAccepted extends AbstractCondition implements ContextAccessorAwa
     protected function isConditionAllowed($context)
     {
         if ($this->featureChecker->isFeatureEnabled(FeatureVoter::FEATURE_NAME)) {
-            if ($this->isCustomerUser()) {
-                $consentAcceptances = $this->consentAcceptanceProvider->getCustomerConsentAcceptances();
-            } else {
-                $consentAcceptances = $this->resolveValue($context, $this->acceptedConsents);
-                if ($consentAcceptances instanceof ArrayCollection) {
-                    $consentAcceptances = $consentAcceptances->toArray();
-                }
-            }
+            $customerConsentAcceptances = $this->isCustomerUser()
+                ? $this->consentAcceptanceProvider->getCustomerConsentAcceptances()
+                : [];
 
-            return !$this->enabledConsentProvider->getUnacceptedRequiredConsents((array) $consentAcceptances);
+            $consentAcceptances = $this->resolveValue($context, $this->acceptedConsents);
+            if ($consentAcceptances instanceof ArrayCollection) {
+                $consentAcceptances = $consentAcceptances->toArray();
+            }
+            $consentAcceptances = array_merge($customerConsentAcceptances, (array)$consentAcceptances);
+
+            return !$this->enabledConsentProvider->getUnacceptedRequiredConsents($consentAcceptances);
         }
 
         return true;

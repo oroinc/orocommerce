@@ -65,8 +65,6 @@ workflows:
                                 - '@is_consents_accepted':
                                     acceptedConsents: $customerConsents
                         parameters: [$consents_available, true]
-                    - '@save_accepted_consents':
-                        acceptedConsents: $customerConsents
                     - '@assign_value':
                         conditions:
                             '@not_empty': $late_registration.email

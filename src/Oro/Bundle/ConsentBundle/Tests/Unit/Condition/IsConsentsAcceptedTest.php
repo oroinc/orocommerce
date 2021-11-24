@@ -16,23 +16,17 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class IsConsentsAcceptedTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var IsConsentsAccepted */
-    private $condition;
+    private IsConsentsAccepted $condition;
 
-    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
-    private $featureChecker;
+    private FeatureChecker|\PHPUnit\Framework\MockObject\MockObject $featureChecker;
 
-    /** @var EnabledConsentProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $enabledConsentsProvider;
+    private EnabledConsentProvider|\PHPUnit\Framework\MockObject\MockObject $enabledConsentsProvider;
 
-    /** @var ConsentAcceptanceProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $consentAcceptanceProvider;
+    private ConsentAcceptanceProvider|\PHPUnit\Framework\MockObject\MockObject $consentAcceptanceProvider;
 
-    /** @var TokenStorageInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $tokenStorage;
+    private TokenStorageInterface|\PHPUnit\Framework\MockObject\MockObject $tokenStorage;
 
-    /** @var ContextAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $contextAccessor;
+    private ContextAccessorInterface|\PHPUnit\Framework\MockObject\MockObject $contextAccessor;
 
     /**
      * {@inheritdoc}
@@ -55,146 +49,163 @@ class IsConsentsAcceptedTest extends \PHPUnit\Framework\TestCase
         $this->condition->setContextAccessor($this->contextAccessor);
     }
 
-    public function testGetName()
+    public function testGetName(): void
     {
-        $this->assertEquals(IsConsentsAccepted::NAME, $this->condition->getName());
+        self::assertEquals(IsConsentsAccepted::NAME, $this->condition->getName());
     }
 
-    public function testInitializeArrayInOptions()
+    public function testInitializeArrayInOptions(): void
     {
-        $this->assertInstanceOf(IsConsentsAccepted::class, $this->condition->initialize([]));
+        self::assertInstanceOf(IsConsentsAccepted::class, $this->condition->initialize([]));
     }
 
     /**
      * @dataProvider evaluateProvider
-     *
-     * @param array $consents
-     * @param bool $expected
      */
-    public function testEvaluateCustomerUser(array $consents, $expected)
-    {
-        $consentAcceptances = [new ConsentAcceptance(), new ConsentAcceptance()];
+    public function testEvaluateCustomerUser(
+        array $consents,
+        array $options,
+        array $consentAcceptances,
+        bool $expected
+    ): void {
+        $customerConsentAcceptances = [new ConsentAcceptance(), new ConsentAcceptance()];
 
         $this->featureChecker
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('isFeatureEnabled')
             ->with('consents')
             ->willReturn(true);
 
         $this->enabledConsentsProvider
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('getUnacceptedRequiredConsents')
-            ->with($consentAcceptances)
+            ->with(array_merge($customerConsentAcceptances, $consentAcceptances))
             ->willReturn($consents);
 
         $token = $this->createMock(TokenInterface::class);
-        $token->expects($this->once())
+        $token->expects(self::once())
             ->method('getUser')
             ->willReturn(new CustomerUser());
         $this->tokenStorage
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('getToken')
             ->willReturn($token);
 
         $this->consentAcceptanceProvider
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('getCustomerConsentAcceptances')
-            ->willReturn($consentAcceptances);
+            ->willReturn($customerConsentAcceptances);
 
         $this->contextAccessor
-            ->expects($this->never())
-            ->method('hasValue');
-
-        $this->contextAccessor
-            ->expects($this->never())
-            ->method('getValue');
-
-        $this->condition->initialize([]);
-        $this->assertEquals($expected, $this->condition->evaluate([]));
-    }
-
-    /**
-     * @dataProvider evaluateProvider
-     *
-     * @param array $consents
-     * @param bool $expected
-     */
-    public function testEvaluateIsGuest(array $consents, $expected)
-    {
-        $consentAcceptances = [new ConsentAcceptance(), new ConsentAcceptance()];
-
-        $this->featureChecker
-            ->expects($this->once())
-            ->method('isFeatureEnabled')
-            ->with('consents')
-            ->willReturn(true);
-
-        $this->enabledConsentsProvider
-            ->expects($this->once())
-            ->method('getUnacceptedRequiredConsents')
-            ->with($consentAcceptances)
-            ->willReturn($consents);
-
-        $token = $this->createMock(TokenInterface::class);
-        $token->expects($this->once())
-            ->method('getUser')
-            ->willReturn(null);
-        $this->tokenStorage
-            ->expects($this->once())
-            ->method('getToken')
-            ->willReturn($token);
-
-        $this->consentAcceptanceProvider
-            ->expects($this->never())
-            ->method('getCustomerConsentAcceptances');
-
-        $this->contextAccessor
-            ->expects($this->any())
+            ->expects(self::any())
             ->method('hasValue')
             ->willReturn(true);
 
         $this->contextAccessor
-            ->expects($this->any())
+            ->expects(self::any())
             ->method('getValue')
             ->willReturn($consentAcceptances);
 
-        $propertyPath = new PropertyPath('acceptedConsents');
-        $this->condition->initialize(['acceptedConsents' => $propertyPath]);
-        $this->assertEquals($expected, $this->condition->evaluate([]));
+        $this->condition->initialize($options);
+        self::assertEquals($expected, $this->condition->evaluate([]));
     }
 
-    public function testEvaluateFeatureDisabled()
+    /**
+     * @dataProvider evaluateProvider
+     */
+    public function testEvaluateIsGuest(
+        array $consents,
+        array $options,
+        array $consentAcceptances,
+        bool $expected
+    ): void {
+        $this->featureChecker
+            ->expects(self::once())
+            ->method('isFeatureEnabled')
+            ->with('consents')
+            ->willReturn(true);
+
+        $this->enabledConsentsProvider
+            ->expects(self::once())
+            ->method('getUnacceptedRequiredConsents')
+            ->with($consentAcceptances)
+            ->willReturn($consents);
+
+        $token = $this->createMock(TokenInterface::class);
+        $token->expects(self::once())
+            ->method('getUser')
+            ->willReturn(null);
+        $this->tokenStorage
+            ->expects(self::once())
+            ->method('getToken')
+            ->willReturn($token);
+
+        $this->consentAcceptanceProvider
+            ->expects(self::never())
+            ->method('getCustomerConsentAcceptances');
+
+        $this->contextAccessor
+            ->expects(self::any())
+            ->method('hasValue')
+            ->willReturn(true);
+
+        $this->contextAccessor
+            ->expects(self::any())
+            ->method('getValue')
+            ->willReturn($consentAcceptances);
+
+        $this->condition->initialize($options);
+        self::assertEquals($expected, $this->condition->evaluate([]));
+    }
+
+    public function testEvaluateFeatureDisabled(): void
     {
         $this->featureChecker
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('isFeatureEnabled')
             ->with('consents')
             ->willReturn(false);
 
         $this->enabledConsentsProvider
-            ->expects($this->never())
+            ->expects(self::never())
             ->method('getUnacceptedRequiredConsents');
 
         $this->tokenStorage
-            ->expects($this->never())
+            ->expects(self::never())
             ->method('getToken');
 
         $this->condition->initialize([]);
-        $this->assertTrue($this->condition->evaluate([]));
+        self::assertTrue($this->condition->evaluate([]));
     }
 
-    /**
-     * @return array
-     */
-    public function evaluateProvider()
+    public function evaluateProvider(): array
     {
+        $propertyPath = new PropertyPath('acceptedConsents');
+        $options = ['acceptedConsents' => $propertyPath];
+
         return [
+            'has unaccepted consents w/o options' => [
+                'consents' => [new Consent(), new Consent()],
+                'options' => [],
+                'consentAcceptances' => [],
+                'expected' => false,
+            ],
             'has unaccepted consents' => [
                 'consents' => [new Consent(), new Consent()],
+                'options' => $options,
+                'consentAcceptances' => [new ConsentAcceptance(), new ConsentAcceptance()],
                 'expected' => false,
+            ],
+            'all consents was accepted w/o options' => [
+                'consents' => [],
+                'options' => [],
+                'consentAcceptances' => [],
+                'expected' => true,
             ],
             'all consents was accepted' => [
                 'consents' => [],
+                'options' => $options,
+                'consentAcceptances' => [new ConsentAcceptance(), new ConsentAcceptance()],
                 'expected' => true,
             ],
         ];

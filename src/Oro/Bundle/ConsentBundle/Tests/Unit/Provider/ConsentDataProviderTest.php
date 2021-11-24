@@ -9,27 +9,17 @@ use Oro\Bundle\ConsentBundle\Filter\RequiredConsentFilter;
 use Oro\Bundle\ConsentBundle\Model\ConsentData;
 use Oro\Bundle\ConsentBundle\Provider\ConsentDataProvider;
 use Oro\Bundle\ConsentBundle\Provider\EnabledConsentProvider;
-use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class ConsentDataProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var EnabledConsentProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $enabledConsentProvider;
+    private EnabledConsentProvider|\PHPUnit\Framework\MockObject\MockObject $enabledConsentProvider;
 
-    /**
-     * @var ConsentDataBuilder|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $consentDataBuilder;
+    private ConsentDataBuilder|\PHPUnit\Framework\MockObject\MockObject $consentDataBuilder;
 
-    /**
-     * @var ConsentDataProvider
-     */
-    private $provider;
+    private ConsentDataProvider $provider;
 
     /**
      * {@inheritdoc}
@@ -45,34 +35,71 @@ class ConsentDataProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetAllConsentData()
+    public function testGetAllConsentData(): void
     {
-        $customerUser = new CustomerUser();
         $consent = new Consent();
         $consentData = new ConsentData($consent);
 
-        $this->enabledConsentProvider->expects($this->once())
+        $this->enabledConsentProvider->expects(self::once())
             ->method('getConsents')
             ->with([FrontendConsentContentNodeValidFilter::NAME])
             ->willReturn([$consent]);
 
-        $this->consentDataBuilder->expects($this->once())
+        $this->consentDataBuilder->expects(self::once())
             ->method('build')
             ->with($consent)
             ->willReturn($consentData);
 
-        $this->assertEquals([$consentData], $this->provider->getAllConsentData($customerUser));
+        self::assertEquals([$consentData], $this->provider->getAllConsentData());
     }
 
-    public function testGetNotAcceptedRequiredConsentData()
+    public function testGetNotAcceptedRequiredConsentData(): void
     {
-        $customerUser = new CustomerUser();
         $consentAccepted = new Consent();
         $consentNotAccepted = new Consent();
         $consentDataAccepted = (new ConsentData($consentAccepted))->setAccepted(true);
         $consentDataNotAccepted = (new ConsentData($consentNotAccepted))->setAccepted(false);
 
-        $this->enabledConsentProvider->expects($this->once())
+        $this->mockFilteredConsents(
+            $consentAccepted,
+            $consentNotAccepted,
+            $consentDataAccepted,
+            $consentDataNotAccepted
+        );
+
+        self::assertEquals(
+            [$consentDataNotAccepted],
+            $this->provider->getNotAcceptedRequiredConsentData()
+        );
+    }
+
+    public function testGetRequiredConsentData(): void
+    {
+        $consentAccepted = new Consent();
+        $consentNotAccepted = new Consent();
+        $consentDataAccepted = (new ConsentData($consentAccepted))->setAccepted(true);
+        $consentDataNotAccepted = (new ConsentData($consentNotAccepted))->setAccepted(false);
+
+        $this->mockFilteredConsents(
+            $consentAccepted,
+            $consentNotAccepted,
+            $consentDataAccepted,
+            $consentDataNotAccepted
+        );
+
+        self::assertEquals(
+            [$consentDataAccepted, $consentDataNotAccepted],
+            $this->provider->getRequiredConsentData()
+        );
+    }
+
+    private function mockFilteredConsents(
+        Consent $consentAccepted,
+        Consent $consentNotAccepted,
+        ConsentData $consentDataAccepted,
+        ConsentData $consentDataNotAccepted
+    ): void {
+        $this->enabledConsentProvider->expects(self::once())
             ->method('getConsents')
             ->with([
                 FrontendConsentContentNodeValidFilter::NAME,
@@ -80,14 +107,9 @@ class ConsentDataProviderTest extends \PHPUnit\Framework\TestCase
             ])
             ->willReturn([$consentAccepted, $consentNotAccepted]);
 
-        $this->consentDataBuilder->expects($this->exactly(2))
+        $this->consentDataBuilder->expects(self::exactly(2))
             ->method('build')
             ->withConsecutive([$consentAccepted], [$consentNotAccepted])
             ->willReturnOnConsecutiveCalls($consentDataAccepted, $consentDataNotAccepted);
-
-        $this->assertEquals(
-            [$consentDataNotAccepted],
-            $this->provider->getNotAcceptedRequiredConsentData($customerUser)
-        );
     }
 }

@@ -421,8 +421,7 @@
         'role': 'alert'
     }) %}
 
-    {% set requiredConsents = allConsents|default([])|filter(v => v.required) %}
-    {% set acceptedRequiredConsents = requiredConsents|filter(v => v.accepted) %}
+    {% set acceptedRequiredConsents = requiredConsents.getAcceptedRequiredConsentData() %}
 
     {% if consents is empty %}
         <div {{ block('block_attributes') }}>
@@ -438,7 +437,7 @@
                 <span class="fa-check" aria-hidden="true"></span>
                 {{ 'oro.consent.frontend.single_page_checkout.form.messages.some_of_all_agreements_accepted'|trans({
                     '%some%': acceptedRequiredConsents|length,
-                    '%all%': requiredConsents|length
+                    '%all%': requiredConsents.getRequiredConsentsNumber()
                 }) }}
             </div>
             <ul class="notification__list">

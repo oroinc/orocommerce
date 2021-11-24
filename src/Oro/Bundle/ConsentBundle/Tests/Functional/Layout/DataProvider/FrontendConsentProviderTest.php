@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ConsentBundle\Tests\Functional\Layout\DataProvider;
 
+use Oro\Bundle\ConsentBundle\Entity\ConsentAcceptance;
 use Oro\Bundle\ConsentBundle\Layout\DataProvider\FrontendConsentProvider;
 use Oro\Bundle\ConsentBundle\Model\ConsentData;
 use Oro\Bundle\ConsentBundle\Tests\Functional\DataFixtures\LoadConsentConfigData;
@@ -23,17 +24,14 @@ class FrontendConsentProviderTest extends WebTestCase
 {
     use ConsentFeatureTrait;
 
-    /**
-     * @var FrontendConsentProvider
-     */
-    private $provider;
+    private FrontendConsentProvider $provider;
 
     /**
      * {@inheritdoc}
      */
     protected function setUp(): void
     {
-        $this->initClient([], $this->generateBasicAuthHeader());
+        $this->initClient([], self::generateBasicAuthHeader());
 
         $this->loadFixtures([
             LoadConsentConfigData::class
@@ -56,7 +54,7 @@ class FrontendConsentProviderTest extends WebTestCase
     /**
      * @dataProvider getAllConsentDataProvider
      */
-    public function testGetAllConsentData(string $customerUserReference, array $expectedConsentReferences)
+    public function testGetAllConsentData(string $customerUserReference, array $expectedConsentReferences): void
     {
         /** @var CustomerUser $customerUserData */
         $customerUserData = $this->getReference($customerUserReference);
@@ -68,10 +66,7 @@ class FrontendConsentProviderTest extends WebTestCase
         $this->assertExpectedConsents($consentData, $expectedConsentReferences);
     }
 
-    /**
-     * @return array
-     */
-    public function getAllConsentDataProvider()
+    public function getAllConsentDataProvider(): array
     {
         return [
             'Customer with consent acceptances' => [
@@ -105,7 +100,7 @@ class FrontendConsentProviderTest extends WebTestCase
     public function testGetNotAcceptedRequiredConsentData(
         string $customerUserReference,
         array $expectedConsentReferences
-    ) {
+    ): void {
         /** @var CustomerUser $customerUserData */
         $customerUserData = $this->getReference($customerUserReference);
 
@@ -116,10 +111,95 @@ class FrontendConsentProviderTest extends WebTestCase
         $this->assertExpectedConsents($consentData, $expectedConsentReferences);
     }
 
+    public function getNotAcceptedRequiredConsentDataProvider(): array
+    {
+        return [
+            'Customer with consent acceptances' => [
+                'customerUserReference' => LoadCustomerUserData::EMAIL,
+                'expectedConsentReferences' => []
+            ],
+            'Customer without consent acceptances' => [
+                'customerUserReference' => LoadCustomerUserData::LEVEL_1_EMAIL,
+                'expectedConsentReferences' => [
+                    LoadConsentsData::CONSENT_REQUIRED_NODE1_WITH_CMS,
+                    LoadConsentsData::CONSENT_REQUIRED_WITHOUT_NODE
+                ]
+            ],
+        ];
+    }
+
     /**
-     * @return array
+     * @dataProvider getAcceptedRequiredConsentDataProvider
      */
-    public function getNotAcceptedRequiredConsentDataProvider()
+    public function testGetAcceptedRequiredConsentData(
+        string $customerUserReference,
+        array $expectedConsentReferences,
+        int $expectedRequiredConsentsNumber
+    ): void {
+        /** @var CustomerUser $customerUserData */
+        $customerUserData = $this->getReference($customerUserReference);
+
+        $this->getContainer()->get('security.token_storage')
+            ->setToken(new UsernamePasswordToken($customerUserData, LoadCustomerUserData::PASSWORD, 'key'));
+
+        $consentAcceptance = new ConsentAcceptance();
+        $consentAcceptance->setConsent($this->getReference(LoadConsentsData::CONSENT_REQUIRED_WITHOUT_NODE));
+        $consentAcceptance->setCustomerUser($customerUserData);
+
+        $requiredConsentData = $this->provider->getAcceptedRequiredConsentData([$consentAcceptance]);
+
+        self::assertEquals($expectedRequiredConsentsNumber, $requiredConsentData->getRequiredConsentsNumber());
+        $this->assertExpectedConsents(
+            $requiredConsentData->getAcceptedRequiredConsentData(),
+            $expectedConsentReferences
+        );
+    }
+
+    public function getAcceptedRequiredConsentDataProvider(): array
+    {
+        return [
+            'Customer without consent acceptances' => [
+                'customerUserReference' => LoadCustomerUserData::EMAIL,
+                'expectedConsentReferences' => [
+                    LoadConsentsData::CONSENT_REQUIRED_NODE1_WITH_CMS,
+                    LoadConsentsData::CONSENT_REQUIRED_NODE1_WITH_SYSTEM,
+                    LoadConsentsData::CONSENT_REQUIRED_NODE2_WITH_CMS,
+                    LoadConsentsData::CONSENT_REQUIRED_WITHOUT_NODE,
+                ],
+                'expectedRequiredConsentsNumber' => 4,
+            ],
+            'Customer with consent acceptances' => [
+                'customerUserReference' => LoadCustomerUserData::LEVEL_1_EMAIL,
+                'expectedConsentReferences' => [
+                    LoadConsentsData::CONSENT_REQUIRED_WITHOUT_NODE,
+                ],
+                'expectedRequiredConsentsNumber' => 2,
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider getConsentDataProvider
+     */
+    public function testGetConsentData(
+        string $customerUserReference,
+        array $expectedConsentReferences
+    ): void {
+        /** @var CustomerUser $customerUserData */
+        $customerUserData = $this->getReference($customerUserReference);
+
+        $this->getContainer()->get('security.token_storage')
+            ->setToken(new UsernamePasswordToken($customerUserData, LoadCustomerUserData::PASSWORD, 'key'));
+
+        $consentAcceptance = new ConsentAcceptance();
+        $consentAcceptance->setConsent($this->getReference(LoadConsentsData::CONSENT_REQUIRED_WITHOUT_NODE));
+        $consentAcceptance->setCustomerUser($customerUserData);
+
+        $consentData = $this->provider->getConsentData([$consentAcceptance]);
+        $this->assertExpectedConsents($consentData, $expectedConsentReferences);
+    }
+
+    public function getConsentDataProvider(): array
     {
         return [
             'Customer with consent acceptances' => [
@@ -140,23 +220,25 @@ class FrontendConsentProviderTest extends WebTestCase
      * @param ConsentData[] $consentData
      * @param array $expectedConsentReferences
      */
-    private function assertExpectedConsents(array $consentData, array $expectedConsentReferences)
+    private function assertExpectedConsents(array $consentData, array $expectedConsentReferences): void
     {
-        $expectedConsentIds = array_map(function ($consentReference) {
-            return $this->getReference($consentReference)->getId();
-        }, $expectedConsentReferences);
+        $expectedConsentIds = array_map(
+            fn ($consentReference) => $this->getReference($consentReference)->getId(),
+            $expectedConsentReferences
+        );
 
-        $consentIds = array_map(function (ConsentData $consent) {
-            return $consent->getId();
-        }, $consentData);
+        $consentIds = array_map(
+            static fn (ConsentData $consent) => $consent->getId(),
+            $consentData
+        );
 
-        $this->assertSame($expectedConsentIds, $consentIds);
+        self::assertSame($expectedConsentIds, $consentIds);
     }
 
     /**
      * Prepare and set request object to the request stack
      */
-    private function initFrontendRequest()
+    private function initFrontendRequest(): void
     {
         $request = Request::create('');
         $request->attributes = new ParameterBag(

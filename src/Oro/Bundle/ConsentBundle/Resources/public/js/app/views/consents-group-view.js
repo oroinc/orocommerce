@@ -44,12 +44,12 @@ define(function(require) {
         /**
          * @property {String}
          */
-        confirmModalOkButtonClass: 'btn ok',
+        confirmModalOkButtonClass: 'btn ok btn--info',
 
         /**
          * @property {String}
          */
-        confirmModalCancelButtonClass: 'btn cancel btn--info',
+        confirmModalCancelButtonClass: 'btn cancel',
 
         /**
          * @inheritdoc

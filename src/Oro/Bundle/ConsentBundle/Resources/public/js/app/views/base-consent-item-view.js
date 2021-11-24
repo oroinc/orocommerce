@@ -106,6 +106,7 @@ define(function(require) {
 
             const handleFirst = state => {
                 this.changeCheckboxState(state);
+                this.$valueField.trigger('change');
                 this.stopListening(this.subview('popup'));
             };
             this.listenToOnce(this.subview('popup'), {
@@ -143,6 +144,7 @@ define(function(require) {
             // Disable consent if user just uncheck checkbox
             if (!$(event.target).is(':checked') || !this.cmsPageData) {
                 this._updateFormElementToField($(event.target).is(':checked'));
+                this.$valueField.trigger('change');
             }
         },
 
@@ -185,7 +187,6 @@ define(function(require) {
             }
 
             this.$valueField.val(JSON.stringify(_.toArray(value)));
-            this.$valueField.trigger('change');
         },
 
         /**

@@ -1,4 +1,5 @@
 @feature-BB-15731
+@ticket-BB-17191
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-OroProductBundle:gdpr_refactor.yml
@@ -155,19 +156,42 @@ Feature: Single page checkout with consents
     Given I click "Submit Order"
     Then I should see that "Required Consent" contains "This agreement is required"
 
-  Scenario: Logged User accepts consents and submits order
+  Scenario: Logged User accepts consents
     Given I should not see "Receive notifications"
-    And I click on "Consent Link" with title "Collecting and storing personal data"
+    And the "I Agree with Email Newsletters" checkbox should be unchecked
+    And the "I Agree with Collecting and storing personal data" checkbox should be unchecked
+    When I click on "Consent Link" with title "Collecting and storing personal data"
     And I scroll modal window to bottom
     And click "Agree"
-    And I should see "1 of 2 mandatory consents were accepted."
+    Then I should see "1 of 2 mandatory consents were accepted."
     And I should see "Collecting and storing personal data"
-    And fill form with:
+    When fill form with:
       | I Agree with Email Newsletters | true |
     And I reload the page
-    And I should see "All mandatory consents were accepted."
-    And I should not see "Email Newsletters"
-    And I should not see "Collecting and storing personal data"
+    Then I should see "All mandatory consents were accepted."
+    And I should see "Email Newsletters"
+    And I should see "Collecting and storing personal data"
+    And the "I Agree with Email Newsletters" checkbox should be checked
+    And the "I Agree with Collecting and storing personal data" checkbox should be checked
+
+  Scenario: Admin check that consent acceptance doesn't save yet
+    Given I proceed as the Admin
+    When I go to Customers/Customer Users
+    And I click view AmandaRCole@example.org in grid
+    Then I should see Customer User with:
+     | Email Newsletters                    | No |
+     | Collecting and storing personal data | No |
+
+  Scenario: Logged User accepts consents and submits order
+    Given I proceed as the User
+    When fill form with:
+      | I Agree with Email Newsletters | false |
+    Then I should see "1 of 2 mandatory consents were accepted."
+    When I click "Submit Order"
+    Then I should see that "Required Consent" contains "This agreement is required"
+    When fill form with:
+      | I Agree with Email Newsletters | true |
+    Then I should see "All mandatory consents were accepted."
     When I click "Submit Order"
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
 
@@ -205,6 +229,7 @@ Feature: Single page checkout with consents
     Then I should see "New mandatory consent has been added and requires your attention. Please, review and accept it to proceed."
     And I should see 1 elements "Required Consent"
     And I should see "New Mandatory Consent"
+    And I should see "2 of 3 mandatory consents were accepted."
     When fill form with:
       | New Mandatory Consent | true |
     Then I should not see a "Consent Popup" element

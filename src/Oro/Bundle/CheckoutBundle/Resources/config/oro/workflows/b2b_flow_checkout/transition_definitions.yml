@@ -48,6 +48,13 @@ workflows:
                 actions:
                     - '@save_accepted_consents':
                         acceptedConsents: $customerConsents
+                    - '@tree':
+                          conditions:
+                              '@and': #For logged customer user only
+                                  - '@not_empty': $checkout.customerUser
+                                  - '@equal': [$checkout.customerUser.isGuest, false]
+                          actions:
+                              - '@assign_value': [$customerConsents, null]
                     - '@generate_uuid': $state_token
 
             verify_customer_consents_definition:
@@ -141,6 +148,14 @@ workflows:
 
                     - '@save_accepted_consents':
                         acceptedConsents: $customerConsents
+
+                    - '@tree':
+                          conditions:
+                              '@and': #For logged customer user only
+                                  - '@not_empty': $checkout.customerUser
+                                  - '@equal': [$checkout.customerUser.isGuest, false]
+                          actions:
+                              - '@assign_value': [$customerConsents, null]
 
                     - '@generate_uuid': $state_token
 

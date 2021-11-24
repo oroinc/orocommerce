@@ -276,6 +276,11 @@ layout:
             optionName: appliedConsents
             optionValue: '=data["workflowItem"].getData().get("customerConsents") ? data["workflowItem"].getData().get("customerConsents").toArray() : []'
 
+        - '@setOption':
+              id: checkout_consent_wrapper
+              optionName: consents
+              optionValue: '=data["oro_frontend_consent_provider"].getConsentData(appliedConsents)'
+
         - '@add':
             id: checkout_consent_subtree
             blockType: layout_subtree_update
@@ -300,7 +305,7 @@ layout:
             options:
                 appliedConsents: '=data["workflowItem"].getData().get("customerConsents") ? data["workflowItem"].getData().get("customerConsents").toArray() : []'
                 vars:
-                    allConsents: '=data["oro_frontend_consent_provider"].getAllConsentData()'
+                    requiredConsents: '=data["oro_frontend_consent_provider"].getAcceptedRequiredConsentData(appliedConsents)'
 
         - '@setOption':
             id: coupon_form_container

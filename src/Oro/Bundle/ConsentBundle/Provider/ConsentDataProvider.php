@@ -45,16 +45,26 @@ class ConsentDataProvider
      */
     public function getNotAcceptedRequiredConsentData()
     {
-        $consents = $this->getFilteredConsents([
-            FrontendConsentContentNodeValidFilter::NAME,
-            RequiredConsentFilter::NAME
-        ]);
+        $consents = $this->getRequiredConsentData();
 
         $filteredConsents =  array_filter($consents, function (ConsentData $consent) {
             return false === $consent->isAccepted();
         });
 
         return array_values($filteredConsents);
+    }
+
+    /**
+     * @return ConsentData[]
+     */
+    public function getRequiredConsentData()
+    {
+        $consents = $this->getFilteredConsents([
+            FrontendConsentContentNodeValidFilter::NAME,
+            RequiredConsentFilter::NAME
+        ]);
+
+        return array_values($consents);
     }
 
     /**
