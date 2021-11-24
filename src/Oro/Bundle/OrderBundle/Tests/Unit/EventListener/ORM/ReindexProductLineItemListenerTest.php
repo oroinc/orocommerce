@@ -53,7 +53,7 @@ class ReindexProductLineItemListenerTest extends \PHPUnit\Framework\TestCase
         $this->lineItem = $this->createMock(OrderLineItem::class);
         $this->featureChecker = $this->createMock(FeatureChecker::class);
 
-        $this->website = $this->getEntity(Website::class, [ 'id' => self:: WEBSITE_ID ]);
+        $this->website = $this->getEntity(Website::class, [ 'id' => self::WEBSITE_ID ]);
 
         $this->order = $this->getEntity(OrderStub::class);
         $this->order->setInternalStatus(new TestEnumValue(

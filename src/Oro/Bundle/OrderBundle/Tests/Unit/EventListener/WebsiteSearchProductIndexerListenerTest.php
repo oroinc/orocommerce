@@ -50,7 +50,7 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
     protected function setUp(): void
     {
         $this->websiteContextManager = $this->createMock(WebsiteContextManager::class);
-        $this->website = $this->getEntity(Website::class, [ 'id' => self:: WEBSITE_ID ]);
+        $this->website = $this->getEntity(Website::class, [ 'id' => self::WEBSITE_ID ]);
         $this->infoProvider = $this->createMock(LatestOrderedProductsInfoProvider::class);
         $this->featureChecker = $this->createMock(FeatureChecker::class);
         $this->event = $this->createMock(IndexEntityEvent::class);
