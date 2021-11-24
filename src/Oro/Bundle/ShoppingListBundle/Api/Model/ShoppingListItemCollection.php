@@ -16,7 +16,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * The collection of shopping list items that is used to implement "add to cart" functionality,
- * that means that if a product is added to a shopping list and this product ia already associated
+ * that means that if a product is added to a shopping list and this product is already associated
  * with an existing shopping list item, the quantity of this item will be a sum of submitted and existing quantities.
  */
 class ShoppingListItemCollection extends ArrayCollection
