@@ -23,7 +23,7 @@ The created record is returned in the response.
 {@inheritdoc}
 
 **Note:** When an item is added to the default shopping list by using the string `default` as the shopping list ID
-and there ia no a shopping list, it will be created automatically.
+and there is no a shopping list, it will be created automatically.
 
 {@request:json_api}
 Example:

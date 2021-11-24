@@ -141,7 +141,7 @@ In case an item already exists in the shopping list, the quantity of the product
 the result quantity will be the sum of the existing quantity and the quantity specified in the request.
 
 **Note:** When an item is added to the default shopping list by using the string `default` as the shopping list ID
-and there ia no a shopping list, it will be created automatically.
+and there is no a shopping list, it will be created automatically.
 
 The all added and updated records are returned in the response.
 
