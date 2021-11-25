@@ -1543,7 +1543,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
             ->getPage()
             ->find(
                 'xpath',
-                sprintf('//img[contains(@class, "lg-image")][contains(@src, "%s")]', $imageId)
+                sprintf('//img[contains(@class, "images-list__item")][contains(@src, "%s")]', $imageId)
             );
 
         self::assertNotNull($largeImage, 'Large image not visible');
