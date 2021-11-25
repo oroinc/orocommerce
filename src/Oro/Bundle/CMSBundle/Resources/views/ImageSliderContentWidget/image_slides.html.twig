@@ -29,7 +29,7 @@
                     {{ imageSlide.title }}
                 </td>
                 <td>
-                    {{ imageSlide.text|oro_html_sanitize|default('oro.ui.empty'|trans)|raw }}
+                    {{ imageSlide.text|oro_html_sanitize|default('oro.ui.empty'|trans) }}
                 </td>
                 <td>
                     {{ ('oro.cms.imageslide.text_alignment.value.' ~ imageSlide.textAlignment)|trans }}

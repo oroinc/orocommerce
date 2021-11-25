@@ -32,7 +32,7 @@ oro:
                 confirm_content:  '{1}Selected item will be deleted|[2,Inf[Selected items will be deleted.'
                 confirm_ok:       'Yes, Delete'
                 confirm_title:    'Delete Items'
-                selected_message: 'You have selected {{ selected }} item.<br/> Are you sure you want to delete it?|You have selected {{ selected }} items.<br/> Are you sure you want to delete them?'
+                selected_message: 'You have selected {{ selected }} item.<br> Are you sure you want to delete it?|You have selected {{ selected }} items.<br> Are you sure you want to delete them?'
         create_order_confirmation:
             title: 'Confirmation'
             message: 'This shopping list contains configurable products with no variations. Proceed to checkout without these products?'

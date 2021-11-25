@@ -12,10 +12,10 @@
         <ul class="dropdown-menu" data-name="unit" role="menu" aria-labelledby="<%- togglerId %>">
             <% _.each(choices, function (option) { %>
             <li<% if (selectedChoice == option.value) { %> class="active"<% } %>>
-                <a class="dropdown-item choice-value" href="#" data-value="<%= option.value %>"><%- option.label %></a>
+                <a class="dropdown-item choice-value" href="#" data-value="<%- option.value %>"><%- option.label %></a>
             </li>
             <% }); %>
         </ul>
-        <input type="hidden" name="unit" id="unit" value="<%= selectedChoice %>"/>
+        <input type="hidden" name="unit" id="unit" value="<%- selectedChoice %>"/>
     </div>
 </div>

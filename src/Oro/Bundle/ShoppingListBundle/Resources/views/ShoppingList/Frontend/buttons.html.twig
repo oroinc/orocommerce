@@ -33,8 +33,8 @@
     {% import _self as buttons %}
     {{ utils.underscoreRaw(buttons.addToCurrentButton({
         shoppingList: {
-            id: '<%= id %>',
-            label: '<%= _.escape(label) %>'
+            id: '<%- id %>',
+            label: '<%- label %>'
         }
     }|merge(options))) }}
 {% endmacro %}

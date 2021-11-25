@@ -8,7 +8,7 @@
                     aria-label="<%- choiceAriaLabel %>"
                 >
                 <% _.each(choices, function (option) { %>
-                    <option value="<%= option.value %>"
+                    <option value="<%- option.value %>"
                         <% if (option.value == selectedChoice) { %>
                             selected="selected"
                         <% } %>
