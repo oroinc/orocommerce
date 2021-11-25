@@ -3,12 +3,9 @@
 namespace Oro\Bundle\PricingBundle\Controller;
 
 use Oro\Bundle\FormBundle\Model\UpdateHandler;
-use Oro\Bundle\PricingBundle\Async\NotificationMessages;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListType;
-use Oro\Bundle\PricingBundle\NotificationMessage\Messenger;
-use Oro\Bundle\PricingBundle\NotificationMessage\Renderer\RendererInterface;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -38,14 +35,6 @@ class PriceListController extends AbstractController
      */
     public function viewAction(PriceList $priceList, Request $request)
     {
-        if (!$priceList->isActual()) {
-            $request->getSession()->getFlashBag()->add(
-                'warning',
-                $this->get(TranslatorInterface::class)->trans('oro.pricing.pricelist.not_actual.recalculation')
-            );
-        }
-        $this->renderNotificationMessages(NotificationMessages::CHANNEL_PRICE_LIST, $priceList);
-
         return [
             'entity' => $priceList,
             'product_price_entity_class' => ProductPrice::class
@@ -142,34 +131,13 @@ class PriceListController extends AbstractController
         );
     }
 
-    /**
-     * @param string|array $channel
-     * @param PriceList $priceList
-     */
-    protected function renderNotificationMessages($channel, PriceList $priceList)
-    {
-        $messages = $this
-            ->get(Messenger::class)
-            ->receive($channel, PriceList::class, $priceList->getId());
-
-        $messageRenderer = $this->get(RendererInterface::class);
-        foreach ($messages as $message) {
-            $messageRenderer->render($message);
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedServices()
     {
         return array_merge(
             parent::getSubscribedServices(),
             [
                 TranslatorInterface::class,
-                UpdateHandler::class,
-                Messenger::class,
-                RendererInterface::class,
+                UpdateHandler::class
             ]
         );
     }

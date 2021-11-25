@@ -5,60 +5,44 @@ namespace Oro\Bundle\PricingBundle\Async;
 use Doctrine\DBAL\Exception\RetryableException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\NotificationBundle\NotificationAlert\NotificationAlertManager;
 use Oro\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
-use Oro\Bundle\PricingBundle\NotificationMessage\Message;
-use Oro\Bundle\PricingBundle\NotificationMessage\Messenger;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\MessageQueue\Util\JSON;
 use Psr\Log\LoggerInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Updates combined price lists in case of price list product assigned rule is changed.
  */
 class PriceListAssignedProductsProcessor implements MessageProcessorInterface, TopicSubscriberInterface
 {
-    /** @var LoggerInterface */
-    private $logger;
-
-    /** @var PriceListProductAssignmentBuilder */
-    private $assignmentBuilder;
-
-    /** @var Messenger */
-    private $messenger;
-
-    /** @var TranslatorInterface */
-    private $translator;
-
-    /** @var ManagerRegistry */
-    private $doctrine;
-
-    /** @var PriceListTriggerHandler */
-    private $triggerHandler;
+    private LoggerInterface $logger;
+    private PriceListProductAssignmentBuilder $assignmentBuilder;
+    private ManagerRegistry $doctrine;
+    private NotificationAlertManager $notificationAlertManager;
+    private PriceListTriggerHandler $triggerHandler;
 
     public function __construct(
         ManagerRegistry $doctrine,
         LoggerInterface $logger,
         PriceListProductAssignmentBuilder $assignmentBuilder,
-        Messenger $messenger,
-        TranslatorInterface $translator,
+        NotificationAlertManager $notificationAlertManager,
         PriceListTriggerHandler $triggerHandler
     ) {
         $this->doctrine = $doctrine;
         $this->logger = $logger;
         $this->assignmentBuilder = $assignmentBuilder;
-        $this->messenger = $messenger;
-        $this->translator = $translator;
+        $this->notificationAlertManager = $notificationAlertManager;
         $this->triggerHandler = $triggerHandler;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public static function getSubscribedTopics()
     {
@@ -66,7 +50,7 @@ class PriceListAssignedProductsProcessor implements MessageProcessorInterface, T
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function process(MessageInterface $message, SessionInterface $session)
     {
@@ -93,7 +77,13 @@ class PriceListAssignedProductsProcessor implements MessageProcessorInterface, T
 
             $em->beginTransaction();
             try {
-                $this->processPriceList($priceList, $productIds);
+                $this->notificationAlertManager->resolveNotificationAlertByOperationAndItemIdForCurrentUser(
+                    PriceListCalculationNotificationAlert::OPERATION_ASSIGNED_PRODUCTS_BUILD,
+                    $priceList->getId()
+                );
+
+                $this->assignmentBuilder->buildByPriceList($priceList, $productIds);
+
                 $em->commit();
             } catch (\Exception $e) {
                 $em->rollback();
@@ -116,7 +106,12 @@ class PriceListAssignedProductsProcessor implements MessageProcessorInterface, T
                         $productIds
                     );
                 } else {
-                    $this->onFailedPriceListId($priceList->getId());
+                    $this->notificationAlertManager->addNotificationAlert(
+                        PriceListCalculationNotificationAlert::createForAssignedProductsBuildError(
+                            $priceListId,
+                            $e->getMessage()
+                        )
+                    );
                     if ($priceListsCount === 1) {
                         return self::REJECT;
                     }
@@ -125,33 +120,5 @@ class PriceListAssignedProductsProcessor implements MessageProcessorInterface, T
         }
 
         return self::ACK;
-    }
-
-    /**
-     * @param PriceList $priceList
-     * @param int[] $productIds
-     */
-    private function processPriceList(PriceList $priceList, array $productIds): void
-    {
-        $this->messenger->remove(
-            NotificationMessages::CHANNEL_PRICE_LIST,
-            NotificationMessages::TOPIC_ASSIGNED_PRODUCTS_BUILD,
-            PriceList::class,
-            $priceList->getId()
-        );
-
-        $this->assignmentBuilder->buildByPriceList($priceList, $productIds);
-    }
-
-    private function onFailedPriceListId(int $priceListId): void
-    {
-        $this->messenger->send(
-            NotificationMessages::CHANNEL_PRICE_LIST,
-            NotificationMessages::TOPIC_ASSIGNED_PRODUCTS_BUILD,
-            Message::STATUS_ERROR,
-            $this->translator->trans('oro.pricing.notification.price_list.error.product_assignment_build'),
-            PriceList::class,
-            $priceListId
-        );
     }
 }

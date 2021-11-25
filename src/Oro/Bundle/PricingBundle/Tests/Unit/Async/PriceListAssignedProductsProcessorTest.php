@@ -5,21 +5,19 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Async;
 use Doctrine\DBAL\Exception\DeadlockException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
-use Oro\Bundle\PricingBundle\Async\NotificationMessages;
+use Oro\Bundle\NotificationBundle\NotificationAlert\NotificationAlertManager;
 use Oro\Bundle\PricingBundle\Async\PriceListAssignedProductsProcessor;
+use Oro\Bundle\PricingBundle\Async\PriceListCalculationNotificationAlert;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
-use Oro\Bundle\PricingBundle\NotificationMessage\Message;
-use Oro\Bundle\PricingBundle\NotificationMessage\Messenger;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\MessageQueue\Util\JSON;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Psr\Log\LoggerInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PriceListAssignedProductsProcessorTest extends \PHPUnit\Framework\TestCase
 {
@@ -34,11 +32,8 @@ class PriceListAssignedProductsProcessorTest extends \PHPUnit\Framework\TestCase
     /** @var PriceListProductAssignmentBuilder|\PHPUnit\Framework\MockObject\MockObject */
     private $assignmentBuilder;
 
-    /** @var Messenger|\PHPUnit\Framework\MockObject\MockObject */
-    private $messenger;
-
-    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $translator;
+    /** @var NotificationAlertManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $notificationAlertManager;
 
     /** @var PriceListTriggerHandler|\PHPUnit\Framework\MockObject\MockObject */
     private $triggerHandler;
@@ -51,16 +46,14 @@ class PriceListAssignedProductsProcessorTest extends \PHPUnit\Framework\TestCase
         $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->assignmentBuilder = $this->createMock(PriceListProductAssignmentBuilder::class);
-        $this->messenger = $this->createMock(Messenger::class);
-        $this->translator = $this->createMock(TranslatorInterface::class);
+        $this->notificationAlertManager = $this->createMock(NotificationAlertManager::class);
         $this->triggerHandler = $this->createMock(PriceListTriggerHandler::class);
 
         $this->processor = new PriceListAssignedProductsProcessor(
             $this->doctrine,
             $this->logger,
             $this->assignmentBuilder,
-            $this->messenger,
-            $this->translator,
+            $this->notificationAlertManager,
             $this->triggerHandler
         );
     }
@@ -73,7 +66,7 @@ class PriceListAssignedProductsProcessorTest extends \PHPUnit\Framework\TestCase
     private function getMessage($body): MessageInterface
     {
         $message = $this->createMock(MessageInterface::class);
-        $message->expects($this->once())
+        $message->expects(self::once())
             ->method('getBody')
             ->willReturn(JSON::encode($body));
 
@@ -95,7 +88,7 @@ class PriceListAssignedProductsProcessorTest extends \PHPUnit\Framework\TestCase
 
     public function testProcessWithInvalidMessage()
     {
-        $this->logger->expects($this->once())
+        $this->logger->expects(self::once())
             ->method('critical')
             ->with('Got invalid message.');
 
@@ -107,7 +100,7 @@ class PriceListAssignedProductsProcessorTest extends \PHPUnit\Framework\TestCase
 
     public function testProcessWithEmptyMessage()
     {
-        $this->logger->expects($this->once())
+        $this->logger->expects(self::once())
             ->method('critical')
             ->with('Got invalid message.');
 
@@ -123,22 +116,22 @@ class PriceListAssignedProductsProcessorTest extends \PHPUnit\Framework\TestCase
         $body = ['product' => [$priceListId => [2]]];
 
         $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects($this->never())
+        $em->expects(self::never())
             ->method('beginTransaction');
-        $em->expects(($this->never()))
+        $em->expects((self::never()))
             ->method('rollback');
 
-        $this->doctrine->expects($this->once())
+        $this->doctrine->expects(self::once())
             ->method('getManagerForClass')
             ->with(PriceList::class)
             ->willReturn($em);
 
-        $em->expects($this->once())
+        $em->expects(self::once())
             ->method('find')
             ->with(PriceList::class, $priceListId)
             ->willReturn(null);
 
-        $this->logger->expects($this->once())
+        $this->logger->expects(self::once())
             ->method('warning')
             ->with('PriceList entity with identifier 1 not found.');
 
@@ -158,19 +151,19 @@ class PriceListAssignedProductsProcessorTest extends \PHPUnit\Framework\TestCase
         $body = ['product' => [$priceListId1 => $productIds, $priceListId2 => $productIds]];
 
         $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects($this->once())
+        $em->expects(self::once())
             ->method('beginTransaction');
-        $em->expects(($this->never()))
+        $em->expects((self::never()))
             ->method('rollback');
-        $em->expects(($this->once()))
+        $em->expects((self::once()))
             ->method('commit');
 
-        $this->doctrine->expects($this->once())
+        $this->doctrine->expects(self::once())
             ->method('getManagerForClass')
             ->with(PriceList::class)
             ->willReturn($em);
 
-        $em->expects($this->exactly(2))
+        $em->expects(self::exactly(2))
             ->method('find')
             ->withConsecutive(
                 [PriceList::class, $priceListId1],
@@ -181,11 +174,11 @@ class PriceListAssignedProductsProcessorTest extends \PHPUnit\Framework\TestCase
                 $priceList2
             );
 
-        $this->assignmentBuilder->expects($this->once())
+        $this->assignmentBuilder->expects(self::once())
             ->method('buildByPriceList')
             ->with($priceList2, $productIds);
 
-        $this->logger->expects($this->once())
+        $this->logger->expects(self::once())
             ->method('warning')
             ->with('PriceList entity with identifier 1 not found.');
 
@@ -207,48 +200,36 @@ class PriceListAssignedProductsProcessorTest extends \PHPUnit\Framework\TestCase
         $priceList = $this->getEntity(PriceList::class, ['id' => $priceListId]);
 
         $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects($this->once())
+        $em->expects(self::once())
             ->method('beginTransaction');
-        $em->expects(($this->once()))
+        $em->expects((self::once()))
             ->method('rollback');
 
-        $this->doctrine->expects($this->once())
+        $this->doctrine->expects(self::once())
             ->method('getManagerForClass')
             ->with(PriceList::class)
             ->willReturn($em);
 
-        $em->expects($this->once())
+        $em->expects(self::once())
             ->method('find')
             ->with(PriceList::class, $priceListId)
             ->willReturn($priceList);
 
-        $this->assignmentBuilder->expects($this->once())
+        $this->assignmentBuilder->expects(self::once())
             ->method('buildByPriceList')
             ->with($priceList, $productIds)
             ->willThrowException($exception);
 
-        $this->logger->expects($this->once())
+        $this->logger->expects(self::once())
             ->method('error')
             ->with(
                 'Unexpected exception occurred during Price List Assigned Products build.',
                 ['exception' => $exception]
             );
 
-        $this->translator->expects($this->once())
-            ->method('trans')
-            ->with('oro.pricing.notification.price_list.error.product_assignment_build')
-            ->willReturn('Error occurred during price list product assignments build');
-
-        $this->messenger->expects($this->once())
-            ->method('send')
-            ->with(
-                NotificationMessages::CHANNEL_PRICE_LIST,
-                NotificationMessages::TOPIC_ASSIGNED_PRODUCTS_BUILD,
-                Message::STATUS_ERROR,
-                'Error occurred during price list product assignments build',
-                PriceList::class,
-                $priceListId
-            );
+        $this->notificationAlertManager->expects(self::once())
+            ->method('addNotificationAlert')
+            ->with(self::isInstanceOf(PriceListCalculationNotificationAlert::class));
 
         $this->assertEquals(
             MessageProcessorInterface::REJECT,
@@ -269,19 +250,19 @@ class PriceListAssignedProductsProcessorTest extends \PHPUnit\Framework\TestCase
         $exception = new \Exception('Some error');
 
         $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects($this->exactly(2))
+        $em->expects(self::exactly(2))
             ->method('beginTransaction');
-        $em->expects(($this->once()))
+        $em->expects((self::once()))
             ->method('rollback');
-        $em->expects(($this->once()))
+        $em->expects((self::once()))
             ->method('commit');
 
-        $this->doctrine->expects($this->once())
+        $this->doctrine->expects(self::once())
             ->method('getManagerForClass')
             ->with(PriceList::class)
             ->willReturn($em);
 
-        $em->expects($this->exactly(2))
+        $em->expects(self::exactly(2))
             ->method('find')
             ->withConsecutive(
                 [PriceList::class, $priceListId1],
@@ -289,23 +270,20 @@ class PriceListAssignedProductsProcessorTest extends \PHPUnit\Framework\TestCase
             )
             ->willReturnOnConsecutiveCalls($priceList1, $priceList2);
 
-        $this->messenger->expects($this->exactly(2))
-            ->method('remove')
+        $this->notificationAlertManager->expects(self::exactly(2))
+            ->method('resolveNotificationAlertByOperationAndItemIdForCurrentUser')
             ->withConsecutive(
                 [
-                    NotificationMessages::CHANNEL_PRICE_LIST,
-                    NotificationMessages::TOPIC_ASSIGNED_PRODUCTS_BUILD,
-                    PriceList::class,
+                    PriceListCalculationNotificationAlert::OPERATION_ASSIGNED_PRODUCTS_BUILD,
                     $priceListId1
                 ],
                 [
-                    NotificationMessages::CHANNEL_PRICE_LIST,
-                    NotificationMessages::TOPIC_ASSIGNED_PRODUCTS_BUILD,
-                    PriceList::class,
+                    PriceListCalculationNotificationAlert::OPERATION_ASSIGNED_PRODUCTS_BUILD,
                     $priceListId2
                 ]
-            );
-        $this->assignmentBuilder->expects($this->exactly(2))
+            )
+        ;
+        $this->assignmentBuilder->expects(self::exactly(2))
             ->method('buildByPriceList')
             ->withConsecutive(
                 [$priceList1, $productIds],
@@ -319,30 +297,18 @@ class PriceListAssignedProductsProcessorTest extends \PHPUnit\Framework\TestCase
                 }
             );
 
-        $this->logger->expects($this->once())
+        $this->logger->expects(self::once())
             ->method('error')
             ->with(
                 'Unexpected exception occurred during Price List Assigned Products build.',
                 ['exception' => $exception]
             );
 
-        $messageText = 'oro.pricing.notification.price_list.error.product_assignment_build TRANS';
-        $this->translator->expects($this->once())
-            ->method('trans')
-            ->with('oro.pricing.notification.price_list.error.product_assignment_build')
-            ->willReturn($messageText);
-        $this->messenger->expects($this->once())
-            ->method('send')
-            ->with(
-                NotificationMessages::CHANNEL_PRICE_LIST,
-                NotificationMessages::TOPIC_ASSIGNED_PRODUCTS_BUILD,
-                Message::STATUS_ERROR,
-                $messageText,
-                PriceList::class,
-                $priceListId1
-            );
+        $this->notificationAlertManager->expects(self::once())
+            ->method('addNotificationAlert')
+            ->with(self::isInstanceOf(PriceListCalculationNotificationAlert::class));
 
-        $this->triggerHandler->expects($this->never())
+        $this->triggerHandler->expects(self::never())
             ->method('handlePriceListTopic');
 
         $this->assertEquals(
@@ -364,19 +330,19 @@ class PriceListAssignedProductsProcessorTest extends \PHPUnit\Framework\TestCase
         $exception = $this->createMock(DeadlockException::class);
 
         $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects($this->exactly(2))
+        $em->expects(self::exactly(2))
             ->method('beginTransaction');
-        $em->expects(($this->once()))
+        $em->expects((self::once()))
             ->method('rollback');
-        $em->expects(($this->once()))
+        $em->expects((self::once()))
             ->method('commit');
 
-        $this->doctrine->expects($this->once())
+        $this->doctrine->expects(self::once())
             ->method('getManagerForClass')
             ->with(PriceList::class)
             ->willReturn($em);
 
-        $em->expects($this->exactly(2))
+        $em->expects(self::exactly(2))
             ->method('find')
             ->withConsecutive(
                 [PriceList::class, $priceListId1],
@@ -384,23 +350,19 @@ class PriceListAssignedProductsProcessorTest extends \PHPUnit\Framework\TestCase
             )
             ->willReturnOnConsecutiveCalls($priceList1, $priceList2);
 
-        $this->messenger->expects($this->exactly(2))
-            ->method('remove')
+        $this->notificationAlertManager->expects(self::exactly(2))
+            ->method('resolveNotificationAlertByOperationAndItemIdForCurrentUser')
             ->withConsecutive(
                 [
-                    NotificationMessages::CHANNEL_PRICE_LIST,
-                    NotificationMessages::TOPIC_ASSIGNED_PRODUCTS_BUILD,
-                    PriceList::class,
+                    PriceListCalculationNotificationAlert::OPERATION_ASSIGNED_PRODUCTS_BUILD,
                     $priceListId1
                 ],
                 [
-                    NotificationMessages::CHANNEL_PRICE_LIST,
-                    NotificationMessages::TOPIC_ASSIGNED_PRODUCTS_BUILD,
-                    PriceList::class,
+                    PriceListCalculationNotificationAlert::OPERATION_ASSIGNED_PRODUCTS_BUILD,
                     $priceListId2
                 ]
             );
-        $this->assignmentBuilder->expects($this->exactly(2))
+        $this->assignmentBuilder->expects(self::exactly(2))
             ->method('buildByPriceList')
             ->withConsecutive(
                 [$priceList1, $productIds],
@@ -414,16 +376,17 @@ class PriceListAssignedProductsProcessorTest extends \PHPUnit\Framework\TestCase
                 }
             );
 
-        $this->logger->expects($this->once())
+        $this->logger->expects(self::once())
             ->method('error')
             ->with(
                 'Unexpected exception occurred during Price List Assigned Products build.',
                 ['exception' => $exception]
             );
-        $this->messenger->expects($this->never())
-            ->method('send');
 
-        $this->triggerHandler->expects($this->once())
+        $this->notificationAlertManager->expects(self::never())
+            ->method('addNotificationAlert');
+
+        $this->triggerHandler->expects(self::once())
             ->method('handlePriceListTopic')
             ->with(
                 Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS,
@@ -447,9 +410,9 @@ class PriceListAssignedProductsProcessorTest extends \PHPUnit\Framework\TestCase
         $priceList = $this->getEntity(PriceList::class, ['id' => $priceListId]);
 
         $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects($this->once())
+        $em->expects(self::once())
             ->method('beginTransaction');
-        $em->expects(($this->once()))
+        $em->expects((self::once()))
             ->method('commit');
 
         $this->doctrine->expects($this->any())
@@ -457,21 +420,19 @@ class PriceListAssignedProductsProcessorTest extends \PHPUnit\Framework\TestCase
             ->with(PriceList::class)
             ->willReturn($em);
 
-        $em->expects($this->once())
+        $em->expects(self::once())
             ->method('find')
             ->with(PriceList::class, $priceListId)
             ->willReturn($priceList);
 
-        $this->assignmentBuilder->expects($this->once())
+        $this->assignmentBuilder->expects(self::once())
             ->method('buildByPriceList')
             ->with($priceList, $productIds);
 
-        $this->messenger->expects($this->once())
-            ->method('remove')
+        $this->notificationAlertManager->expects(self::once())
+            ->method('resolveNotificationAlertByOperationAndItemIdForCurrentUser')
             ->with(
-                NotificationMessages::CHANNEL_PRICE_LIST,
-                NotificationMessages::TOPIC_ASSIGNED_PRODUCTS_BUILD,
-                PriceList::class,
+                PriceListCalculationNotificationAlert::OPERATION_ASSIGNED_PRODUCTS_BUILD,
                 $priceListId
             );
 

@@ -5,56 +5,40 @@ namespace Oro\Bundle\PricingBundle\Async;
 use Doctrine\DBAL\Exception\RetryableException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\NotificationBundle\NotificationAlert\NotificationAlertManager;
 use Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
-use Oro\Bundle\PricingBundle\NotificationMessage\Message;
-use Oro\Bundle\PricingBundle\NotificationMessage\Messenger;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\MessageQueue\Util\JSON;
 use Psr\Log\LoggerInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Resolves price lists rules and updates actuality of price lists.
  */
 class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberInterface
 {
-    /** @var ManagerRegistry */
-    private $doctrine;
-
-    /** @var LoggerInterface */
-    private $logger;
-
-    /** @var ProductPriceBuilder */
-    private $priceBuilder;
-
-    /** @var Messenger */
-    private $messenger;
-
-    /** @var TranslatorInterface */
-    private $translator;
-
-    /** @var PriceListTriggerHandler */
-    private $triggerHandler;
+    private ManagerRegistry $doctrine;
+    private LoggerInterface $logger;
+    private ProductPriceBuilder $priceBuilder;
+    private NotificationAlertManager $notificationAlertManager;
+    private PriceListTriggerHandler $triggerHandler;
 
     public function __construct(
         ManagerRegistry $doctrine,
         LoggerInterface $logger,
         ProductPriceBuilder $priceBuilder,
-        Messenger $messenger,
-        TranslatorInterface $translator,
+        NotificationAlertManager $notificationAlertManager,
         PriceListTriggerHandler $triggerHandler
     ) {
         $this->doctrine = $doctrine;
         $this->logger = $logger;
         $this->priceBuilder = $priceBuilder;
-        $this->messenger = $messenger;
-        $this->translator = $translator;
+        $this->notificationAlertManager = $notificationAlertManager;
         $this->triggerHandler = $triggerHandler;
     }
 
@@ -94,7 +78,13 @@ class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberIn
 
             $em->beginTransaction();
             try {
+                $this->notificationAlertManager->resolveNotificationAlertByOperationAndItemIdForCurrentUser(
+                    PriceListCalculationNotificationAlert::OPERATION_PRICE_RULES_BUILD,
+                    $priceList->getId()
+                );
+
                 $this->processPriceList($em, $priceList, $productIds);
+
                 $em->commit();
             } catch (\Exception $e) {
                 $em->rollback();
@@ -117,7 +107,12 @@ class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberIn
                         $productIds
                     );
                 } else {
-                    $this->onFailedPriceListId($priceList->getId());
+                    $this->notificationAlertManager->addNotificationAlert(
+                        PriceListCalculationNotificationAlert::createForPriceRulesBuildError(
+                            $priceListId,
+                            $e->getMessage()
+                        )
+                    );
                     if ($priceListsCount === 1) {
                         return self::REJECT;
                     }
@@ -135,28 +130,9 @@ class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberIn
      */
     private function processPriceList(EntityManagerInterface $em, PriceList $priceList, array $productIds): void
     {
-        $this->messenger->remove(
-            NotificationMessages::CHANNEL_PRICE_LIST,
-            NotificationMessages::TOPIC_PRICE_RULES_BUILD,
-            PriceList::class,
-            $priceList->getId()
-        );
-
         $startTime = $priceList->getUpdatedAt();
         $this->priceBuilder->buildByPriceList($priceList, $productIds);
         $this->updatePriceListActuality($em, $priceList, $startTime);
-    }
-
-    private function onFailedPriceListId(int $priceListId): void
-    {
-        $this->messenger->send(
-            NotificationMessages::CHANNEL_PRICE_LIST,
-            NotificationMessages::TOPIC_PRICE_RULES_BUILD,
-            Message::STATUS_ERROR,
-            $this->translator->trans('oro.pricing.notification.price_list.error.price_rule_build'),
-            PriceList::class,
-            $priceListId
-        );
     }
 
     private function updatePriceListActuality(

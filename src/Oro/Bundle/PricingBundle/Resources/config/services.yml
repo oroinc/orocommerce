@@ -1114,8 +1114,7 @@ services:
             - '@doctrine'
             - '@logger'
             - '@oro_pricing.builder.product_price_builder'
-            - '@oro_pricing.notification_message.messenger'
-            - '@translator'
+            - '@oro_pricing.notification_alert_manager'
             - '@oro_pricing.price_list_trigger_handler'
         tags:
             - { name: oro_message_queue.client.message_processor }
@@ -1126,8 +1125,7 @@ services:
             - '@doctrine'
             - '@logger'
             - '@oro_pricing.builder.price_list_product_assignment_builder'
-            - '@oro_pricing.notification_message.messenger'
-            - '@translator'
+            - '@oro_pricing.notification_alert_manager'
             - '@oro_pricing.price_list_trigger_handler'
         tags:
             - { name: oro_message_queue.client.message_processor }
@@ -1562,3 +1560,20 @@ services:
         tags:
             - { name: kernel.event_listener, event: Oro\Bundle\ProductBundle\Event\CollectAutocompleteFieldsEvent, method: onCollectAutocompleteFields }
             - { name: kernel.event_listener, event: Oro\Bundle\ProductBundle\Event\ProcessAutocompleteDataEvent, method: onProcessAutocompleteData }
+
+    oro_pricing.event_listener.price_list_view:
+        class: Oro\Bundle\PricingBundle\EventListener\PriceListViewListener
+        arguments:
+            - '@oro_pricing.notification_alert_manager'
+            - '@session.flash_bag'
+            - '@translator'
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.price-list-view, method: onPriceListView }
+
+    oro_pricing.notification_alert_manager:
+        class: Oro\Bundle\NotificationBundle\NotificationAlert\NotificationAlertManager
+        arguments:
+            - 'Pricing'
+            - 'PriceList'
+            - '@doctrine'
+            - '@oro_security.token_accessor'

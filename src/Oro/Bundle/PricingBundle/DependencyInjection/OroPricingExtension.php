@@ -27,7 +27,6 @@ class OroPricingExtension extends Extension
         $loader->load('importexport.yml');
         $loader->load('layout.yml');
         $loader->load('block_types.yml');
-        $loader->load('notification_message.yml');
         $loader->load('commands.yml');
         $loader->load('controllers.yml');
 

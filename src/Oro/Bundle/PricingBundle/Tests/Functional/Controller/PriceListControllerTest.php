@@ -11,10 +11,9 @@ use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;
 use Oro\Bundle\DataGridBundle\Extension\Sorter\OrmSorterExtension;
-use Oro\Bundle\PricingBundle\Async\NotificationMessages;
+use Oro\Bundle\PricingBundle\Async\PriceListCalculationNotificationAlert;
 use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
-use Oro\Bundle\PricingBundle\NotificationMessage\Message;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListSchedules;
@@ -193,16 +192,11 @@ class PriceListControllerTest extends WebTestCase
         $em->persist($priceList);
         $em->flush();
 
-        // Create notification message for price list
-        $expectedErrorMessage = 'Test error notification message';
-        $this->getContainer()->get('oro_pricing.notification_message.messenger')->send(
-            NotificationMessages::CHANNEL_PRICE_LIST,
-            NotificationMessages::TOPIC_ASSIGNED_PRODUCTS_BUILD,
-            Message::STATUS_ERROR,
-            $expectedErrorMessage,
-            PriceList::class,
-            $priceList->getId()
+        // Create notification alert for price list
+        $this->getContainer()->get('oro_pricing.notification_alert_manager')->addNotificationAlert(
+            PriceListCalculationNotificationAlert::createForPriceRulesBuildError($priceList->getId())
         );
+        $expectedErrorMessage = 'Error occurred during price rule build';
 
         $crawler = $this->client->request(
             'GET',
