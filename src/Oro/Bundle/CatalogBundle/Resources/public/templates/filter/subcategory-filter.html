@@ -26,7 +26,7 @@
     </button>
     <select multiple data-skip-input-widgets>
         <% _.each(options, function (option) { %>
-        <option value="<%= option.value %>"
+        <option value="<%- option.value %>"
                 title="<%- option.label %>"
         <% var isSelected = false; %>
         <% if (_.isArray(selected.value)) { %>

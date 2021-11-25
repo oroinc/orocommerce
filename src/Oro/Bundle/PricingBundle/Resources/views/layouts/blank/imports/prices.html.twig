@@ -145,7 +145,7 @@
         {% endfor %}
         {% for price in pricesPerUnits %}
             <span class="product-price__listed-box"
-                  title="{{ 'oro.pricing.productprice.applicable_from'|trans({'%amount%': price.quantity})|raw }}">
+                  title="{{ 'oro.pricing.productprice.applicable_from'|trans({'%amount%': price.quantity})|e('html_attr') }}">
                 <span class="product-price__listed-value">{{ price.formatted_price }}</span>
                 <span> / </span>
                 <span class="product-price__unit">

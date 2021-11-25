@@ -16,11 +16,11 @@
                 <td class="shopping-lists-popup__list">
                     <% if (_.isString(list.href)) { %>
                         <a class="shopping-lists-popup__link" href="<%- list.href %>">
-                            <%= _.escape(list.label) %>
+                            <%- list.label %>
                         </a>
                     <% } else { %>
                         <span class="shopping-lists-popup__link">
-                            <%= _.escape(list.label) %>
+                            <%- list.label %>
                         </span>
                     <% } %>
                 </td>
@@ -110,7 +110,7 @@
                                                type="number"
                                                min="1"
                                                value="<%- lineItem.quantity %>"
-                                               data-precision="<%= productUnitPrecisions[lineItem.unit] %>"
+                                               data-precision="<%- productUnitPrecisions[lineItem.unit] %>"
                                                name="quantity"
                                                data-role="field__quantity"
                                                disabled="disabled"
@@ -123,7 +123,7 @@
                                     </div>
                                     <div class="shopping-lists-modify__select">
                                         <% if (applySingleUnitMode && isProductApplySingleUnitMode([lineItem.unit])) { %>
-                                            <input type="hidden" name="unit" value="<%= lineItem.unit %>" data-role="field__unit" required />
+                                            <input type="hidden" name="unit" value="<%- lineItem.unit %>" data-role="field__unit" required />
 
                                             <% if (singleUnitModeCodeVisible) { %>
                                                 <%= lineItem.unit %>
@@ -136,9 +136,9 @@
                                             >
                                                 <% _.each(productUnits, function(label, unit) { %>
                                                     <% if (unit === lineItem.unit) { %>
-                                                        <option value="<%= unit %>" selected="selected"><%= label %></option>
+                                                        <option value="<%- unit %>" selected="selected"><%= label %></option>
                                                     <% } else { %>
-                                                        <option value="<%= unit %>"><%= label %></option>
+                                                        <option value="<%- unit %>"><%= label %></option>
                                                     <% } %>
                                                 <% }); %>
                                             </select>
@@ -185,7 +185,7 @@
                         <option value="0">{{ 'oro.shoppinglist.actions.choose_list'|trans }}</option>
                         <% if (!_.isEmpty(shoppingListsCollection)) { %>
                         <% shoppingListsCollection.each(function(list) { %>
-                        <option value="<%= list.get('id') %>"><%= _.escape(list.get('label')) %></option>
+                        <option value="<%- list.get('id') %>"><%- list.get('label') %></option>
                         <% }); %>
                         <% } %>
                     </select>
@@ -199,14 +199,14 @@
                                        type="number"
                                        min="1"
                                        value="1"
-                                       data-precision="<%= productUnitPrecisions[unit] %>"
+                                       data-precision="<%- productUnitPrecisions[unit] %>"
                                        name="oro_product_frontend_line_item[quantity]"
                                        data-role="add-form-qty"
                                        aria-label="{{ 'oro.product.lineitem.quantity.enter'|trans }}">
                             </div>
                             <div class="shopping-lists-modify__select">
                                 <% if (singleUnitMode && applySingleUnitMode) { %>
-                                    <input type="hidden" name="oro_product_frontend_line_item[unit]" value="<%= unit %>" data-role="add-form-unit"/>
+                                    <input type="hidden" name="oro_product_frontend_line_item[unit]" value="<%- unit %>" data-role="add-form-unit"/>
 
                                     <% if (singleUnitModeCodeVisible) { %>
                                         <%= unit %>
@@ -217,7 +217,7 @@
                                             data-role="add-form-unit"
                                     >
                                         <% _.each(productUnits, function(label, unit) { %>
-                                        <option value="<%= unit %>"><%= label %></option>
+                                        <option value="<%- unit %>"><%= label %></option>
                                         <% }); %>
                                     </select>
                                 <% } %>
