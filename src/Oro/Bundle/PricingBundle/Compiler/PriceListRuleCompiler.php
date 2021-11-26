@@ -82,6 +82,12 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
      */
     public function compile(PriceRule $rule, array $products = [])
     {
+        if (!$rule->getId()) {
+            throw new \InvalidArgumentException(
+                sprintf('Cannot compile price list rule: %s was expected to have id', PriceRule::class)
+            );
+        }
+
         $cacheKey = 'pr_' . $rule->getId();
         $qb = $this->cache->fetch($cacheKey);
         if (!$qb) {
@@ -173,13 +179,13 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
         if ($rule->getCurrencyExpression()) {
             $currencyValue = (string)$this->getValueByExpression($qb, $rule->getCurrencyExpression(), $params);
         } else {
-            $currencyValue = (string)$qb->expr()->literal($rule->getCurrency());
+            $currencyValue = (string)$qb->expr()->literal((string)$rule->getCurrency());
         }
 
         if ($rule->getQuantityExpression()) {
             $quantityValue = (string)$this->getValueByExpression($qb, $rule->getQuantityExpression(), $params);
         } else {
-            $quantityValue = (string)$qb->expr()->literal($rule->getQuantity());
+            $quantityValue = (string)$qb->expr()->literal((float)$rule->getQuantity());
         }
 
         if ($rule->getProductUnitExpression()) {
@@ -199,11 +205,11 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
             'id' => 'UUID()',
             'product' => $rootAlias . '.id',
             'productSku' => $rootAlias . '.sku',
-            'priceList' => (string)$qb->expr()->literal($rule->getPriceList()->getId()),
+            'priceList' => (string)$qb->expr()->literal((int)$rule->getPriceList()->getId()),
             'unit' => $unitValue,
             'currency' => $currencyValue,
             'quantity' => $quantityValue,
-            'priceRule' => (string)$qb->expr()->literal($rule->getId()),
+            'priceRule' => (string)$qb->expr()->literal((int)$rule->getId()),
             'value' => $priceValue,
         ];
         $this->addSelectInOrder($qb, $this->qbSelectPart);

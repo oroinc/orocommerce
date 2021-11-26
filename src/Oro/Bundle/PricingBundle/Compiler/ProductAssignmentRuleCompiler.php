@@ -29,6 +29,12 @@ class ProductAssignmentRuleCompiler extends AbstractRuleCompiler
      */
     public function compile(PriceList $priceList, array $products = [])
     {
+        if (!$priceList->getId()) {
+            throw new \InvalidArgumentException(
+                sprintf('Cannot compile product assignment rule: %s was expected to have id', PriceList::class)
+            );
+        }
+
         if (!$priceList->getProductAssignmentRule()) {
             return null;
         }
@@ -92,7 +98,7 @@ class ProductAssignmentRuleCompiler extends AbstractRuleCompiler
             [
                 'id' => 'UUID()',
                 'product' => $rootAlias . '.id',
-                'priceList' => (string)$qb->expr()->literal($priceList->getId()),
+                'priceList' => (string)$qb->expr()->literal((int)$priceList->getId()),
                 'manual' => 'CAST(0 as boolean)'
             ]
         );
