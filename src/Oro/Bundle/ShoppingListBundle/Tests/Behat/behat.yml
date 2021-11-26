@@ -79,9 +79,6 @@ oro_behat_extension:
       class: Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\ProductTableRow
       selector: '.grid-row'
 
-    ShoppingListProductTableRowSuccess:
-      selector: '.grid-row.success'
-
     Shopping List Label Input:
       selector: '#title-inline-editable .inline-view-editor__input-wrap > input'
 

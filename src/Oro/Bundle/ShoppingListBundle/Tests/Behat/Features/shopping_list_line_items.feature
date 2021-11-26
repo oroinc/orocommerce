@@ -25,7 +25,6 @@ Feature: Shopping List Line Items
       | Quantity | 3    |
       | Unit     | item |
     And I click on "Shopping List Line Item 1 Save Changes Button"
-    Then I should see "ShoppingListProductTableRowSuccess" element inside "Frontend Shopping List Edit Grid" element
     And I should see following grid:
       | SKU | Qty Update All |
       | AA1 | 5 item         |
