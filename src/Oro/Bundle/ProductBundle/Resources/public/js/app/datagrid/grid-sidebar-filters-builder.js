@@ -4,6 +4,7 @@ import FilterItemsHintView from 'oroproduct/js/app/views/sidebar-filters/filter-
 import FilterExtraHintView from 'oroproduct/js/app/views/sidebar-filters/filter-extra-hint-view';
 import FilterApplierComponent from 'oroproduct/js/app/components/sidebar-filters/filter-applier-component';
 import filtersContainerTemplate from 'tpl-loader!oroproduct/templates/sidebar-filters/filters-container.html';
+import viewportManager from 'oroui/js/viewport-manager';
 
 export default {
     processDatagridOptions(deferred, options) {
@@ -22,7 +23,7 @@ export default {
 
         options.metadata.filters.forEach(filter => {
             filter.outerHintContainer = `[data-hint-container="${options.gridName}"]`;
-            filter.initiallyOpened = true;
+            filter.initiallyOpened = viewportManager.isApplicable({minScreenType: 'desktop'});
             filter.autoClose = false;
             filter.labelPrefix = '';
             filter.animationDuration = 300;

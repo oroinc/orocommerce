@@ -43,6 +43,10 @@
         margin: $filter-collapse-mode-filter-item-offset;
         padding: $filter-collapse-mode-filter-item-inner-offset;
     }
+
+    .dropdown-menu {
+        position: absolute !important;
+    }
 }
 
 @include breakpoint('tablet-small') {
