@@ -4,6 +4,10 @@ The current file describes significant changes in the code that may affect the u
 
 ## 5.0.0
 
+### Added
+#### CMSBundle
+* Created `optimized` layout theme with `landing` extra js build utilized on oro_cms_frontend_page_view page, see article [How to Create Extra JS Build for a Landing Page](https://doc.oroinc.com/master/frontend/storefront/how-to/how-to-create-extra-js-build-for-landing-page/).  
+
 ### Removed
 #### ApplicationBundle
 * Removed all deprecated code intended to run multiple Symfony applications on the same codebase.

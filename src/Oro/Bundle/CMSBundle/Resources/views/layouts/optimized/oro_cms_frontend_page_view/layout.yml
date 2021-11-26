@@ -1,0 +1,10 @@
+layout:
+    actions:
+        - '@setOption':
+              id: layout_js_modules_config
+              optionName: publicPath
+              optionValue: '="build/" ~ context["theme"] ~ "-landing/"'
+        - '@setOption':
+              id: layout_js_build_scripts
+              optionName: src
+              optionValue: '="build/" ~ context["theme"] ~ "-landing/app.js"'
