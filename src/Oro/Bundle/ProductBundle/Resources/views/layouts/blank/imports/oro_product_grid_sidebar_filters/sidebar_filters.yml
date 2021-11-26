@@ -15,4 +15,3 @@ layout:
                 __root:
                     __sidebar_filters_root:
                         __sidebar_filters_container: ~
-    conditions: '!context["is_mobile"]'

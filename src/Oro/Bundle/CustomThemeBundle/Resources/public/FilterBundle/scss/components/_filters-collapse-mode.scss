@@ -45,7 +45,7 @@
     }
 }
 
-@include breakpoint('tablet-small') {
+@include breakpoint('tablet') {
     .collapse-mode {
         .filter-item {
             width: $filter-collapse-mode-filter-item-tablet-small-width;

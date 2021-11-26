@@ -16,3 +16,9 @@
         margin-top: $product-filters-sidebar-not-first-child-offset-top;
     }
 }
+
+@include breakpoint('tablet') {
+    .product-filters-sidebar {
+        display: none;
+    }
+}

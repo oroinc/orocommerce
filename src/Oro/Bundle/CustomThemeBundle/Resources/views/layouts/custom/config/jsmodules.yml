@@ -8,5 +8,6 @@ map:
         oro/filter-settings: orocustomtheme/FilterBundle/js/filters/filter-settings
         orofilter/js/plugins/filters-toggle-plugin: orocustomtheme/FilterBundle/js/datagrid/plugins/frontend-filters-plugin
         orofilter/templates/filters-container.html: orocustomtheme/FilterBundle/templates/filters/filters-container.html
+        oroproduct/templates/sidebar-filters/filters-container.html: orocustomtheme/FilterBundle/templates/filters//sidebar-filters/filters-container.html
     orocustomtheme/FilterBundle/js/datagrid/plugins/frontend-filters-plugin:
         orofilter/js/plugins/filters-toggle-plugin: orofilter/js/plugins/filters-toggle-plugin

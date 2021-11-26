@@ -15,6 +15,8 @@ const FilterExtraHintView = BaseView.extend({
 
     filter: null,
 
+    keepElement: true,
+
     /**
      * @inheritdoc
      */
@@ -40,6 +42,10 @@ const FilterExtraHintView = BaseView.extend({
             throw new Error('Required option filter not found.');
         }
 
+        this.listenTo(this.filter, {
+            update: this.updateHintContent,
+            rendered: this.render
+        });
         this.setElement(this.getHintContainer());
         FilterExtraHintView.__super__.initialize.call(this, options);
     },
@@ -47,17 +53,8 @@ const FilterExtraHintView = BaseView.extend({
     /**
      * @inheritdoc
      */
-    delegateEvents: function() {
-        FilterExtraHintView.__super__.delegateEvents.call(this);
-
-        this.listenTo(this.filter, 'update', this.updateHintContent);
-        return this;
-    },
-
-    /**
-     * @inheritdoc
-     */
     render() {
+        this.$el.empty();
         this.$el.attr(this.attributes);
         this.updateHintContent();
         return this;
@@ -98,8 +95,11 @@ const FilterExtraHintView = BaseView.extend({
             return;
         }
 
-        this.el.removeAttribute('title');
-
+        this.$el
+            .removeAttr('title class')
+            .addClass(
+                this.hintContainerSelector.substring(1)
+            );
         delete this.filter;
         FilterExtraHintView.__super__.dispose.call(this);
     }

@@ -1,16 +1,10 @@
 define(function(require) {
     'use strict';
 
-    const _ = require('underscore');
-    const FullScreenFiltersAction = require('orofrontend/js/app/datafilter/actions/fullscreen-filters-action');
+    const __ = require('orotranslation/js/translator');
     const FrontendFiltersTogglePlugin = require('orofrontend/js/app/datafilter/plugins/frontend-filters-plugin');
-    const viewportManager = require('oroui/js/viewport-manager');
-
-    function isApplicableWithViewport() {
-        return viewportManager.isApplicable({
-            screenType: 'mobile-landscape'
-        });
-    }
+    const CustomFiltersAction = require('orocustomtheme/FilterBundle/js/datagrid/actions/custom-filters-action').default;
+    const CollapsesFilters = require('orocustomtheme/FilterBundle/js/datagrid/collapsed-filters').default;
 
     const FrontendCustomFiltersTogglePlugin = FrontendFiltersTogglePlugin.extend({
         /**
@@ -20,36 +14,58 @@ define(function(require) {
             FrontendCustomFiltersTogglePlugin.__super__.constructor.call(this, main, options);
         },
 
-        /**
-         * @inheritdoc
-         */
-        initialize: function(main, options) {
-            if (this.changeBehavior()) {
-                this.filtersActions = {
-                    'mobile-landscape': FullScreenFiltersAction
-                };
-            }
+        initialize(options) {
+            this.collapseFilters = new CollapsesFilters({datagrid: this.main});
 
-            FrontendFiltersTogglePlugin.__super__.initialize.call(this, options);
+            this.listenToOnce(this.main, 'filterManager:connected', () => {
+                this.collapseFilters.onceFilterManagerConnected();
+            });
+            FrontendCustomFiltersTogglePlugin.__super__.initialize.call(this, options);
         },
 
-        /**
-         * @inheritdoc
-         */
-        enable: function() {
-            if (!this.changeBehavior() || isApplicableWithViewport()) {
-                FrontendFiltersTogglePlugin.__super__.enable.call(this);
+        addAction(toolbarOptions) {
+            if (this.changeBehavior()) {
+                this.addCustomAction(toolbarOptions);
             } else {
-                this.disable();
+                FrontendCustomFiltersTogglePlugin.__super__.addAction.call(this, toolbarOptions);
             }
+        },
+
+        addCustomAction(toolbarOptions) {
+            const options = {
+                datagrid: this.main,
+                launcherOptions: {
+                    className: 'toggle-filters-action btn btn--default btn--size-s',
+                    iconHideText: true,
+                    icon: 'filter',
+                    label: __('oro.filter.datagrid-toolbar.filters'),
+                    ariaLabel: __('oro.filter.datagrid-toolbar.aria_label')
+                },
+                order: 650,
+                fullscreenFilters: this.fullscreenFilters,
+                collapseFilters: this.collapseFilters
+            };
+
+            toolbarOptions.addToolbarAction(new CustomFiltersAction(options));
         },
 
         changeBehavior: function() {
-            return !_.isUndefined(this.main.$el.parent().attr('data-server-render'));
-        }
-    }, {
-        isApplicable: function(options) {
-            return options.metadata.options.frontend !== true || isApplicableWithViewport();
+            return this.main.$el.parent().attr('data-server-render') !== void 0;
+        },
+
+        dispose() {
+            if (this.disposed) {
+                return;
+            }
+
+            this.disable();
+
+            if (this.collapseFilters && !this.collapseFilters.disposed) {
+                this.collapseFilters.dispose();
+                delete this.collapseFilters;
+            }
+
+            FrontendCustomFiltersTogglePlugin.__super__.dispose.call(this);
         }
     });
     return FrontendCustomFiltersTogglePlugin;

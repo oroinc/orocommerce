@@ -19,18 +19,6 @@ const FilterApplierComponent = BaseComponent.extend({
         this.filterManager = options.filterManager;
         this._changedFiltersState = {};
 
-        this.filterManager._updateView = _.wrap(this.filterManager._updateView, (original, ...rest) => {
-            if (!this._wasResetAction) {
-                this.applyChangedState();
-                delete this._wasResetAction;
-            }
-            return original.apply(this.filterManager, rest);
-        });
-
-        if (!this.filterManager.collection.length) {
-            this.filterManager.$el.show();
-        }
-
         this.renderButton();
     },
 
@@ -38,7 +26,7 @@ const FilterApplierComponent = BaseComponent.extend({
      * @inheritdoc
      */
     dispose() {
-        if (!this.disposed) {
+        if (this.disposed) {
             return;
         }
 
@@ -59,7 +47,7 @@ const FilterApplierComponent = BaseComponent.extend({
     delegateListeners: function() {
         FilterApplierComponent.__super__.delegateListeners.call(this);
 
-        _.each(this.filterManager.filters, filter => {
+        for (const filter of Object.values(this.filterManager.filters)) {
             this.listenTo(filter, {
                 change: this.onFilterChanged.bind(this, filter),
                 update: this.onFilterUpdate.bind(this, filter),
@@ -67,8 +55,15 @@ const FilterApplierComponent = BaseComponent.extend({
                 hideCriteria: this.onFilterHidden.bind(this, filter),
                 showCriteria: this.onFilterShown.bind(this, filter)
             });
+        }
+        this.listenTo(this.filterManager, {
+            'update-view:before-fetch': () => {
+                if (!this._wasResetAction) {
+                    this.applyChangedState();
+                    delete this._wasResetAction;
+                }
+            }
         });
-
         this.listenTo(this.filterManager.collection, 'beforeFetch', this.onBeforeFetch.bind(this));
         this.listenTo(this.button, 'apply-changes', this.applyAllChangedFilters);
         this.listenTo(mediator, 'grid_load:complete', collection => {

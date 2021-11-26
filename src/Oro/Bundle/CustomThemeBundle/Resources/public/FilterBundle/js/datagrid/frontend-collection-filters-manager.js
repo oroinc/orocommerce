@@ -3,7 +3,6 @@ define(function(require, exports, module) {
 
     const _ = require('underscore');
     const CollectionFiltersManager = require('orofrontend/js/app/datafilter/frontend-collection-filters-manager');
-    const viewportManager = require('oroui/js/viewport-manager');
     let config = require('module-config').default(module.id);
     config = _.extend({
         enableMultiselectWidget: true
@@ -15,21 +14,9 @@ define(function(require, exports, module) {
          */
         enableMultiselectWidget: config.enableMultiselectWidget,
 
-        /**
-         * @inheritdoc
-         */
-        _updateRenderMode: function() {
-            if (viewportManager.isApplicable({
-                screenType: ['strict-tablet', 'strict-tablet-small']
-            })) {
-                this.renderMode = 'collapse-mode';
-            }
-
-            if (viewportManager.isApplicable({
-                screenType: 'mobile-landscape'
-            })) {
-                this.renderMode = 'toggle-mode';
-            }
+        preinitialize(options) {
+            // Launcher might be hidden by default so by default Filter Manager should be open
+            options.defaultFiltersViewMode = CollectionFiltersManager.MANAGE_VIEW_MODE;
         },
 
         /**

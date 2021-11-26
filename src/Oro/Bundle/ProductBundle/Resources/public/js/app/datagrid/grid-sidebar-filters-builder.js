@@ -3,10 +3,21 @@ import $ from 'jquery';
 import FilterItemsHintView from 'oroproduct/js/app/views/sidebar-filters/filter-items-hint-view';
 import FilterExtraHintView from 'oroproduct/js/app/views/sidebar-filters/filter-extra-hint-view';
 import FilterApplierComponent from 'oroproduct/js/app/components/sidebar-filters/filter-applier-component';
+import FiltersManager from 'orofilter/js/filters-manager';
+import SidebarToggleFiltersAction from 'oroproduct/js/app/datagrid/actions/sidebar-toggle-filters-action';
 import filtersContainerTemplate from 'tpl-loader!oroproduct/templates/sidebar-filters/filters-container.html';
+import filtersContainerFullscreenTemplate from 'tpl-loader!orofilter/templates/filters-container.html';
 
 export default {
     processDatagridOptions(deferred, options) {
+        if (!options.metadata.options.toolbarOptions) {
+            options.metadata.options.toolbarOptions = {};
+        }
+        options.metadata.options.toolbarOptions.customAction = {
+            constructor: SidebarToggleFiltersAction
+        };
+
+        options.filtersStateElement = `[data-filters-state-container="${options.gridName}"]`;
         options.filterContainerSelector = '[data-role="sidebar-filter-container"]';
         options.metadata.options.enableFiltersNavigation = false;
         if (!options.metadata.options.filtersManager) {
@@ -17,9 +28,10 @@ export default {
             renderMode: 'toggle-mode',
             autoClose: false,
             enableMultiselectWidget: true,
-            template: filtersContainerTemplate
+            template: filtersContainerTemplate,
+            fullscreenTemplate: filtersContainerFullscreenTemplate,
+            defaultFiltersViewMode: FiltersManager.MANAGE_VIEW_MODE
         });
-
         options.metadata.filters.forEach(filter => {
             filter.outerHintContainer = `[data-hint-container="${options.gridName}"]`;
             filter.initiallyOpened = true;
@@ -41,19 +53,61 @@ export default {
 
     init(deferred, options) {
         options.gridPromise.done(grid => {
-            grid.once('filters:beforeRender', () => {
-                const topToolbar = grid.toolbars.top;
+            let applyFilterComponent;
+            let filterItemsHintView;
+            const topToolbar = grid.toolbars.top;
+            const $stateContainer = $('<div></div>', {
+                'data-filters-state-container': grid.name
+            });
+            const initExtraHits = filters => {
+                for (const filter of filters) {
+                    filter.subview('sidebar-filters:extra-hint', new FilterExtraHintView({
+                        filter: filter,
+                        autoRender: true
+                    }));
+                }
+            };
+            const disposeExtraHits = filters => {
+                for (const filter of filters) {
+                    filter.removeSubview('sidebar-filters:extra-hint');
+                }
+            };
+            const disposeApplyFilter = () => {
+                if (applyFilterComponent && !applyFilterComponent.disposed) {
+                    applyFilterComponent.dispose();
+                }
+            };
 
+            $stateContainer.insertAfter(topToolbar.el);
+            grid.once('filters:beforeRender', () => {
                 if (topToolbar && !topToolbar.disposed) {
-                    const filterItemsHintView = new FilterItemsHintView({
+                    filterItemsHintView = new FilterItemsHintView({
                         renderMode: options.metadata.options.filtersManager.renderMode,
                         gridName: grid.name
                     });
 
                     $(topToolbar.el).after(filterItemsHintView.render().el);
                 }
-            });
 
+                const filterManager = grid.filterManager;
+
+                filterManager.on('filters-render-mode-changed', ({isAsInitial}) => {
+                    disposeApplyFilter();
+                    disposeExtraHits(Object.values(filterManager.filters));
+
+                    if (isAsInitial) {
+                        applyFilterComponent = new FilterApplierComponent({filterManager});
+                        initExtraHits(Object.values(filterManager.filters));
+                    }
+                });
+
+                filterItemsHintView.listenTo(filterManager, 'visibility-change', () => {
+                    // show en extra container for hints only if filters have rendered in sidebar
+                    const toShow = filterManager.$el.is(':visible') &&
+                        filterManager.$el.parents(options.filterContainerSelector).length;
+                    filterItemsHintView.$el[toShow ? 'show' : 'hide']();
+                });
+            });
             grid.once('filterManager:connected', () => {
                 const filterManager = grid.filterManager;
 
@@ -61,18 +115,21 @@ export default {
                     return;
                 }
 
-                _.each(filterManager.filters, filter => {
-                    filter.subview('sidebar-filters:extra-hint', new FilterExtraHintView({
-                        filter: filter,
-                        autoRender: true
-                    }));
-                });
+                initExtraHits(Object.values(filterManager.filters));
 
-                const applyFilterComponent = new FilterApplierComponent({
-                    filterManager: filterManager
-                });
+                applyFilterComponent = new FilterApplierComponent({filterManager});
 
-                filterManager.subview('sidebar-filters:apply-filter-component', applyFilterComponent);
+                filterManager.on('rendered', () => {
+                    filterManager.$el.one('remove', () => disposeApplyFilter());
+                });
+            });
+            grid.once('dispose', () => {
+                disposeApplyFilter();
+                if (filterItemsHintView && !filterItemsHintView.disposed) {
+                    filterItemsHintView.dispose();
+                }
+
+                $stateContainer.remove();
             });
         });
         return deferred.resolve();

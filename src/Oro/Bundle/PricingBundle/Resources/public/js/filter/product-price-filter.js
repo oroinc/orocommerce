@@ -220,6 +220,10 @@ define([
          * @private
          */
         _appendUnitFilter: function($filter) {
+            if ($filter === '') {
+                return this;
+            }
+
             const $unitFilter = $(this.unitTemplate(this.getUnitTemplateData()));
 
             $filter.addClass('product-price-filter-criteria');
