@@ -226,6 +226,12 @@ class ContentNode extends ExtendContentNode implements
     protected $localizedUrls;
 
     /**
+     * Property used by {@see \Gedmo\Tree\Entity\Repository\NestedTreeRepository::__call}
+     * @var self|null
+     */
+    public $sibling;
+
+    /**
      * ContentNode Constructor
      */
     public function __construct()

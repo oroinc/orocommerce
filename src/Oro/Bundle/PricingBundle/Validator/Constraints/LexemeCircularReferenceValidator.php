@@ -9,11 +9,13 @@ use Oro\Component\Expression\ExpressionParser;
 use Oro\Component\Expression\Node\NameNode;
 use Oro\Component\Expression\Node\NodeInterface;
 use Oro\Component\Expression\Node\RelationNode;
-use Symfony\Component\PropertyAccess\PropertyAccess;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
+/**
+ * Validator to prevent circular reference for tested entity by its symfony expressions populated fields.
+ */
 class LexemeCircularReferenceValidator extends ConstraintValidator
 {
     /**
@@ -32,7 +34,7 @@ class LexemeCircularReferenceValidator extends ConstraintValidator
     protected $container;
 
     /**
-     * @var PropertyAccessor
+     * @var PropertyAccessorInterface
      */
     protected $accessor;
 
@@ -50,12 +52,12 @@ class LexemeCircularReferenceValidator extends ConstraintValidator
 
     public function __construct(
         ExpressionParser $expressionParser,
-        ManagerRegistry $doctrine
+        ManagerRegistry $doctrine,
+        PropertyAccessorInterface $accessor
     ) {
         $this->expressionParser = $expressionParser;
         $this->doctrine = $doctrine;
-
-        $this->accessor = PropertyAccess::createPropertyAccessor();
+        $this->accessor = $accessor;
     }
 
     /**

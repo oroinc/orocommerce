@@ -1054,6 +1054,7 @@ services:
         arguments:
             - '@oro_product.expression.parser'
             - '@doctrine'
+            - '@property_accessor'
         tags:
             - { name: validator.constraint_validator, alias: oro_pricing.validator_constraints.lexeme_circular_reference_validator }
 

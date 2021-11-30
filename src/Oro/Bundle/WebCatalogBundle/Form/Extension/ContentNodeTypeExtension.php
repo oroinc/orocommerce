@@ -15,8 +15,7 @@ use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\PropertyAccess\PropertyAccess;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\Security\Acl\Util\ClassUtils;
 
 /**
@@ -30,16 +29,18 @@ class ContentNodeTypeExtension extends AbstractTypeExtension
 
     private DoctrineHelper $doctrineHelper;
 
-    private ?PropertyAccessor $propertyAccessor = null;
+    private PropertyAccessorInterface $propertyAccessor;
 
     public function __construct(
         ContentVariantTypeRegistry $typeRegistry,
         OwnershipMetadataProviderInterface $metadataProvider,
-        DoctrineHelper $doctrineHelper
+        DoctrineHelper $doctrineHelper,
+        PropertyAccessorInterface $propertyAccessor
     ) {
         $this->typeRegistry = $typeRegistry;
         $this->metadataProvider = $metadataProvider;
         $this->doctrineHelper = $doctrineHelper;
+        $this->propertyAccessor = $propertyAccessor;
     }
 
     /**
@@ -119,10 +120,6 @@ class ContentNodeTypeExtension extends AbstractTypeExtension
      */
     private function setEntityValue($object, $property, $value): void
     {
-        if (!$this->propertyAccessor) {
-            $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
-        }
-
         if ($this->propertyAccessor->isWritable($object, $property)) {
             $this->propertyAccessor->setValue($object, $property, $value);
         }

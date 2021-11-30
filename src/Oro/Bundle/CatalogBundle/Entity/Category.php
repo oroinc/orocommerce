@@ -410,6 +410,12 @@ class Category extends ExtendCategory implements
     protected $organization;
 
     /**
+     * Property used by {@see \Gedmo\Tree\Entity\Repository\NestedTreeRepository::__call}
+     * @var self|null
+     */
+    public $sibling;
+
+    /**
      * Constructor
      */
     public function __construct()

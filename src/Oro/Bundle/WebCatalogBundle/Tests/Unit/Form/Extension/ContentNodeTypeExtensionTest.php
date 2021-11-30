@@ -62,7 +62,8 @@ class ContentNodeTypeExtensionTest extends FormIntegrationTestCase
         $this->extension = new ContentNodeTypeExtension(
             $this->typeRegistry,
             $this->metadataProvider,
-            $this->doctrineHelper
+            $this->doctrineHelper,
+            new PropertyAccessor()
         );
 
         parent::setUp();
