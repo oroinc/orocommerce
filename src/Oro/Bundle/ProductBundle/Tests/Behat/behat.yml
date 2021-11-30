@@ -365,6 +365,14 @@ oro_behat_extension:
             type: 'css'
             locator: '[id^="oro_product_MultiColor"]'
             element: GroupChoiceField
+          MultiSelectField1:
+            type: 'css'
+            locator: '[id^="oro_product_multi_select_attribute_1"]'
+            element: GroupChoiceField
+          MultiSelectField2:
+            type: 'css'
+            locator: '[id^="oro_product_multi_select_attribute_2"]'
+            element: GroupChoiceField
           Owner:
             locator: '//*[@name="oro_product[owner]"]'
             type: xpath
