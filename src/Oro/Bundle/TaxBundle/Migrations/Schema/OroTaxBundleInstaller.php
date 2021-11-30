@@ -3,6 +3,7 @@
 namespace Oro\Bundle\TaxBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
+use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
 use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManager;
@@ -326,7 +327,7 @@ class OroTaxBundleInstaller implements Installation, ExtendExtensionAwareInterfa
                     'nullable' => true,
                 ],
                 'datagrid' => [
-                    'is_visible' => false
+                    'is_visible' => DatagridScope::IS_VISIBLE_FALSE
                 ],
                 'form' => [
                     'is_enabled' => false
@@ -352,7 +353,7 @@ class OroTaxBundleInstaller implements Installation, ExtendExtensionAwareInterfa
                     'nullable' => true,
                 ],
                 'datagrid' => [
-                    'is_visible' => false
+                    'is_visible' => DatagridScope::IS_VISIBLE_FALSE
                 ],
                 'form' => [
                     'is_enabled' => false
@@ -378,7 +379,7 @@ class OroTaxBundleInstaller implements Installation, ExtendExtensionAwareInterfa
                     'nullable' => true,
                 ],
                 'datagrid' => [
-                    'is_visible' => false
+                    'is_visible' => DatagridScope::IS_VISIBLE_FALSE
                 ],
                 'form' => [
                     'is_enabled' => false

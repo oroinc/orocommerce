@@ -10,15 +10,13 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\SaleBundle\Model\ExtendQuoteAddress;
 
 /**
+ * Quote address entity
  * @ORM\Table("oro_quote_address")
  * @ORM\HasLifecycleCallbacks()
  * @Config(
  *       defaultValues={
  *          "entity"={
  *              "icon"="fa-map-marker"
- *          },
- *          "note"={
- *              "immutable"=true
  *          },
  *          "activity"={
  *              "immutable"=true

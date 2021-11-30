@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Migrations\Schema\v1_11;
 
 use Doctrine\DBAL\Schema\Schema;
+use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
@@ -57,7 +58,7 @@ class OroProductBundle implements Migration, ExtendExtensionAwareInterface
                         'on_delete' => 'CASCADE',
                     ],
                     'datagrid' => [
-                        'is_visible' => false
+                        'is_visible' => DatagridScope::IS_VISIBLE_FALSE
                     ],
                     'form' => [
                         'is_enabled' => false

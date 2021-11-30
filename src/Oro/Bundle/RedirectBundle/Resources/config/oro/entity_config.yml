@@ -5,5 +5,4 @@ entity_config:
             items:
                 source:
                     options:
-                        default_value: null
                         indexed: true

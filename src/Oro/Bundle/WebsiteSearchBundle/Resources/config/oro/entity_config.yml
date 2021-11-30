@@ -15,5 +15,5 @@ entity_config:
                             tooltip: 'oro.website_search.entity_config.search_boost.tooltip'
                             constraints:
                                 - Range:
-                                    min: 0
+                                      min: 0
                                 - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~

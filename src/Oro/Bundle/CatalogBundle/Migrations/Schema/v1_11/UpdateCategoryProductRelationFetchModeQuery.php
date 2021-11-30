@@ -5,6 +5,8 @@ namespace Oro\Bundle\CatalogBundle\Migrations\Schema\v1_11;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
+use Oro\Bundle\EntityConfigBundle\EntityConfig\ConfigurationHandler;
+use Oro\Bundle\EntityConfigBundle\Migration\ConfigurationHandlerAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Migration\UpdateEntityConfigFieldValueQuery;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
 use Psr\Log\LoggerInterface;
@@ -12,14 +14,25 @@ use Psr\Log\LoggerInterface;
 /**
  * Change value to `extra_lazy` for `fetch` option of relation settings between Category and Product entities.
  */
-class UpdateCategoryProductRelationFetchModeQuery extends ParametrizedMigrationQuery
+class UpdateCategoryProductRelationFetchModeQuery extends ParametrizedMigrationQuery implements
+    ConfigurationHandlerAwareInterface
 {
+    protected ConfigurationHandler $configurationHandler;
+
     /**
      * {@inheritdoc}
      */
     public function getDescription()
     {
         return 'Add fetch mode `extra_lazy` to OneToMany relation between Category and Product entities';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setConfigurationHandler(ConfigurationHandler $configurationHandler): void
+    {
+        $this->configurationHandler = $configurationHandler;
     }
 
     /**
@@ -61,6 +74,7 @@ class UpdateCategoryProductRelationFetchModeQuery extends ParametrizedMigrationQ
                 'extra_lazy'
             );
 
+            $query->setConfigurationHandler($this->configurationHandler);
             $query->setConnection($this->connection);
             $query->execute($logger);
 

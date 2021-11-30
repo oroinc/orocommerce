@@ -8,6 +8,7 @@ use Oro\Bundle\CatalogBundle\Fallback\Provider\CategoryFallbackProvider;
 use Oro\Bundle\CatalogBundle\Fallback\Provider\ParentCategoryFallbackProvider;
 use Oro\Bundle\CatalogBundle\Migrations\Schema\OroCatalogBundleInstaller;
 use Oro\Bundle\ConfigBundle\Migration\RenameConfigSectionQuery;
+use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
 use Oro\Bundle\EntityBundle\Fallback\EntityFallbackResolver;
 use Oro\Bundle\EntityBundle\Fallback\Provider\SystemConfigFallbackProvider;
 use Oro\Bundle\EntityBundle\Migration\AddFallbackRelationTrait;
@@ -705,7 +706,7 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
                         'owner' => ExtendScope::OWNER_CUSTOM,
                         'is_extend' => true,
                     ],
-                    'datagrid' => ['is_visible' => false],
+                    'datagrid' => ['is_visible' => DatagridScope::IS_VISIBLE_FALSE],
                     'form' => ['is_enabled' => false,],
                     'view' => ['is_displayable' => false],
                     'merge' => ['display' => false],
@@ -731,7 +732,7 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
                         'owner' => ExtendScope::OWNER_CUSTOM,
                         'is_extend' => true,
                     ],
-                    'datagrid' => ['is_visible' => false],
+                    'datagrid' => ['is_visible' => DatagridScope::IS_VISIBLE_FALSE],
                     'form' => ['is_enabled' => false,],
                     'view' => ['is_displayable' => false],
                     'merge' => ['display' => false],

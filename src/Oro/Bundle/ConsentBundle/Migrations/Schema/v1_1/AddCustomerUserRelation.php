@@ -4,6 +4,7 @@ namespace Oro\Bundle\ConsentBundle\Migrations\Schema\v1_1;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
+use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
 use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManager;
@@ -67,7 +68,7 @@ class AddCustomerUserRelation implements Migration, ExtendExtensionAwareInterfac
                     'without_default' => true,
                     'on_delete' => 'CASCADE',
                 ],
-                'datagrid' => ['is_visible' => false],
+                'datagrid' => ['is_visible' => DatagridScope::IS_VISIBLE_FALSE],
                 'form' => ['is_enabled' => false],
                 'view' => ['is_displayable' => false],
                 'merge' => ['display' => false]
@@ -94,7 +95,7 @@ class AddCustomerUserRelation implements Migration, ExtendExtensionAwareInterfac
                     'orphanRemoval' => true,
                     'fetch' => ClassMetadataInfo::FETCH_LAZY
                 ],
-                'datagrid' => ['is_visible' => false],
+                'datagrid' => ['is_visible' => DatagridScope::IS_VISIBLE_FALSE],
                 'form' => ['is_enabled' => false],
                 'view' => ['is_displayable' => false],
                 'merge' => ['display' => false]
