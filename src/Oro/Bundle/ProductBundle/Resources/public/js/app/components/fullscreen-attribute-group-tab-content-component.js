@@ -1,6 +1,7 @@
 define(function(require) {
     'use strict';
 
+    const mediator = require('oroui/js/mediator');
     const AttributeGroupTabContentComponent = require('oroentityconfig/js/attribute-group-tab-content-component');
     const FullscreenPopupView = require('orofrontend/blank/js/app/views/fullscreen-popup-view');
     const viewportManager = require('oroui/js/viewport-manager');
@@ -17,23 +18,17 @@ define(function(require) {
          * @param {Object} options
          */
         initialize: function(options) {
+            FullscreenAttributeGroupTabContentComponent.__super__.initialize.call(this, options);
             this.viewport = options.viewport || {};
-            return FullscreenAttributeGroupTabContentComponent.__super__.initialize.call(this, options);
+            this.listenTo(mediator, 'entity-config:attribute-group:click', this.onGroupClick);
         },
 
-        onGroupChange: function(model, initialize) {
-            FullscreenAttributeGroupTabContentComponent.__super__.onGroupChange.call(this, model);
-
+        onGroupClick: function(model, initialize) {
             if (initialize || this.id !== model.get('id') || !viewportManager.isApplicable(this.viewport)) {
                 return;
             }
 
-            if (!model.get('active')) {
-                if (this.fullscreenView) {
-                    this.fullscreenView.dispose();
-                    delete this.fullscreenView;
-                }
-            } else if (!this.fullscreenView) {
+            if (!this.fullscreenView) {
                 this.fullscreenView = new FullscreenPopupView({
                     disposeOnClose: true,
                     contentElement: this.el
