@@ -135,6 +135,12 @@ class DirectUrlMessageFactoryTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(SluggableEntityStub::class, $this->factory->getEntityClassFromMessage($message));
     }
 
+    public function testGetEntityClassFromEmptyMessage()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->factory->getEntityClassFromMessage(null);
+    }
+
     /**
      * @dataProvider invalidMessagesDataProvider
      */

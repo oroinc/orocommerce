@@ -3,10 +3,11 @@
 namespace Oro\Bundle\RedirectBundle\Tests\Unit\Generator;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
+use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManagerInterface;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\RedirectBundle\Cache\Dumper\SluggableUrlDumper;
 use Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
@@ -39,15 +40,8 @@ class SlugEntityGeneratorTest extends \PHPUnit\Framework\TestCase
      */
     private $redirectGenerator;
 
-    /**
-     * @var UrlCacheInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $urlStorageCache;
-
-    /**
-     * @var UserLocalizationManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $userLocalizationManager;
+    /** @var SluggableUrlDumper|\PHPUnit\Framework\MockObject\MockObject */
+    private $dumper;
 
     /**
      * @var SlugEntityGenerator
@@ -59,32 +53,23 @@ class SlugEntityGeneratorTest extends \PHPUnit\Framework\TestCase
         $this->routingInformationProvider = $this->createMock(RoutingInformationProviderInterface::class);
         $this->slugResolver = $this->createMock(UniqueSlugResolver::class);
         $this->redirectGenerator = $this->createMock(RedirectGenerator::class);
-        $this->urlStorageCache = $this->createMock(UrlCacheInterface::class);
-        $this->userLocalizationManager = $this->createMock(UserLocalizationManager::class);
+        $this->dumper = $this->createMock(SluggableUrlDumper::class);
 
         $this->generator = new SlugEntityGenerator(
             $this->routingInformationProvider,
             $this->slugResolver,
             $this->redirectGenerator,
-            $this->urlStorageCache,
-            $this->userLocalizationManager
+            $this->createMock(UrlCacheInterface::class),
+            $this->createMock(UserLocalizationManagerInterface::class)
         );
+        $this->generator->setUrlCacheDumper($this->dumper);
     }
 
     /**
      * @dataProvider generationDataProvider
      */
-    public function testGenerate(SluggableInterface $entity, SluggableInterface $expected)
+    public function testGenerate(SluggableInterface $entity, SluggableInterface $expected, array $expectedCacheSet)
     {
-        $localizations = [
-            $this->getEntity(Localization::class, ['id' => 1001])
-        ];
-
-        $this->userLocalizationManager
-            ->expects(self::any())
-            ->method('getEnabledLocalizations')
-            ->willReturn($localizations);
-
         $this->routingInformationProvider->expects($this->any())
             ->method('getRouteData')
             ->willReturn(new RouteData('some_route', ['id' => 42]));
@@ -93,18 +78,20 @@ class SlugEntityGeneratorTest extends \PHPUnit\Framework\TestCase
             ->method('getUrlPrefix')
             ->willReturn('/test');
 
-        /** @var Slug[] $expectedSlugs */
-        $expectedSlugs = array_values($expected->getSlugs()->toArray());
-        foreach ($expectedSlugs as $key => $slug) {
-            $this->slugResolver->expects($this->at($key))
-                ->method('resolve')
-                ->willReturn($slug->getUrl());
-        }
+        $expectedSlugs = $expected->getSlugs()->toArray();
+        $this->slugResolver->expects($this->exactly(count($expectedSlugs)))
+            ->method('resolve')
+            ->willReturnOnConsecutiveCalls(...array_map(
+                static function (Slug $slug) {
+                    return $slug->getUrl();
+                },
+                $expectedSlugs
+            ));
 
-        $this->urlStorageCache
+        $this->dumper
             ->expects(self::once())
-            ->method('removeUrl')
-            ->with('some_route', ['id' => 42], 1001);
+            ->method('dumpByEntity')
+            ->with($entity);
 
         $this->generator->generate($entity);
         $this->assertEquals($expected, $entity);
@@ -115,9 +102,11 @@ class SlugEntityGeneratorTest extends \PHPUnit\Framework\TestCase
      *
      * @return array
      */
-    public function generationDataProvider()
+    public function generationDataProvider(): \Generator
     {
+        /** @var Localization $localizationOne */
         $localizationOne = $this->getEntity(Localization::class, ['id' => 1]);
+        /** @var Localization $localizationTwo */
         $localizationTwo = $this->getEntity(Localization::class, ['id' => 2]);
 
         $emptyStringValue = new LocalizedFallbackValue();
@@ -155,104 +144,128 @@ class SlugEntityGeneratorTest extends \PHPUnit\Framework\TestCase
         $slugTwoWithOrganization = clone $slugTwo;
         $slugTwoWithOrganization->setOrganization($organization);
 
-        return [
-            'no slugs' => [
-                (new SluggableEntityStub())
-                    ->addSlugPrototype($valueOne),
-                (new SluggableEntityStub())
-                    ->addSlugPrototype($valueOne)
-                    ->addSlug($defaultSlug)
-            ],
-            'one existing one added' => [
-                (new SluggableEntityStub())
-                    ->addSlugPrototype($valueOne)
-                    ->addSlugPrototype($valueTwo)
-                    ->addSlug($defaultSlug),
-                (new SluggableEntityStub())
-                    ->addSlugPrototype($valueOne)
-                    ->addSlugPrototype($valueTwo)
-                    ->addSlug($defaultSlug)
-                    ->addSlug($slugTwo)
-            ],
-            'existing removed one added' => [
-                (new SluggableEntityStub())
-                    ->addSlugPrototype($valueTwo)
-                    ->addSlug($defaultSlug),
-                (new SluggableEntityStub())
-                    ->addSlugPrototype($valueTwo)
-                    ->addSlug($defaultSlug)
-                    ->addSlug($slugTwo)
-                    ->removeSlug($defaultSlug)
-            ],
-            'added for different locale' => [
-                (new SluggableEntityStub())
-                    ->addSlugPrototype($valueOne)
-                    ->addSlugPrototype($valueTwo)
-                    ->addSlugPrototype($valueFour)
-                    ->addSlug($defaultSlug),
-                (new SluggableEntityStub())
-                    ->addSlugPrototype($valueOne)
-                    ->addSlugPrototype($valueTwo)
-                    ->addSlugPrototype($valueFour)
-                    ->addSlug($defaultSlug)
-                    ->addSlug($slugTwo)
-                    ->addSlug(
-                        (new Slug())
-                            ->setUrl('/test/test4')
-                            ->setSlugPrototype('test4')
-                            ->setLocalization($localizationTwo)
-                            ->setRouteName('some_route')
-                            ->setRouteParameters(['id' => 42])
-                    )
-            ],
-            'updated by locale' => [
-                (new SluggableEntityStub())
-                    ->addSlugPrototype($valueTwo)
-                    ->addSlugPrototype($valueThree)
-                    ->addSlug($slugTwo),
-                (new SluggableEntityStub())
-                    ->addSlugPrototype($valueTwo)
-                    ->addSlugPrototype($valueThree)
-                    ->addSlug(
-                        (new Slug())
-                            ->setUrl('/test/test3')
-                            ->setSlugPrototype('test3')
-                            ->setLocalization($localizationOne)
-                            ->setRouteName('some_route')
-                            ->setRouteParameters(['id' => 42])
-                    )
-            ],
-            'added empty' => [
-                (new SluggableEntityStub())
-                    ->addSlugPrototype($emptyStringValue),
-                (new SluggableEntityStub())
-                    ->addSlugPrototype($emptyStringValue)
-            ],
-            'existing changed to empty' => [
-                (new SluggableEntityStub())
-                    ->addSlugPrototype($emptyStringValue)
-                    ->addSlug($defaultSlug),
-                (new SluggableEntityStub())
-                    ->addSlugPrototype($emptyStringValue)
-            ],
-            'added with organization' => [
-                (new SluggableEntityWithOrganizationStub())
-                    ->setOrganization($organization)
-                    ->addSlugPrototype($valueOne)
-                    ->addSlugPrototype($valueTwo)
-                    ->addSlug($defaultSlug),
-                (new SluggableEntityWithOrganizationStub())
-                    ->setOrganization($organization)
-                    ->addSlugPrototype($valueOne)
-                    ->addSlugPrototype($valueTwo)
-                    ->addSlug($defaultSlug)
-                    ->addSlug($slugTwoWithOrganization)
-            ],
+        yield 'no slugs' => [
+            (new SluggableEntityStub())
+                ->addSlugPrototype($valueOne),
+            (new SluggableEntityStub())
+                ->addSlugPrototype($valueOne)
+                ->addSlug($defaultSlug),
+            [['some_route', ['id' => 42], '/test/test1', 'test1', 1001]]
+        ];
+
+        yield 'one existing one added' => [
+            (new SluggableEntityStub())
+                ->addSlugPrototype($valueOne)
+                ->addSlugPrototype($valueTwo)
+                ->addSlug($defaultSlug),
+            (new SluggableEntityStub())
+                ->addSlugPrototype($valueOne)
+                ->addSlugPrototype($valueTwo)
+                ->addSlug($defaultSlug)
+                ->addSlug($slugTwo),
+            [
+                ['some_route', ['id' => 42], '/test/test2', 'test2', 1],
+                ['some_route', ['id' => 42], '/test/test1', 'test1', 1001]
+            ]
+        ];
+
+        yield 'existing removed one added' => [
+            (new SluggableEntityStub())
+                ->addSlugPrototype($valueTwo)
+                ->addSlug($defaultSlug),
+            (new SluggableEntityStub())
+                ->addSlugPrototype($valueTwo)
+                ->addSlug($defaultSlug)
+                ->addSlug($slugTwo)
+                ->removeSlug($defaultSlug),
+            [['some_route', ['id' => 42], '/test/test2', 'test2', 1]]
+        ];
+
+        yield 'added for different locale' => [
+            (new SluggableEntityStub())
+                ->addSlugPrototype($valueOne)
+                ->addSlugPrototype($valueTwo)
+                ->addSlugPrototype($valueFour)
+                ->addSlug($defaultSlug),
+            (new SluggableEntityStub())
+                ->addSlugPrototype($valueOne)
+                ->addSlugPrototype($valueTwo)
+                ->addSlugPrototype($valueFour)
+                ->addSlug($defaultSlug)
+                ->addSlug($slugTwo)
+                ->addSlug(
+                    (new Slug())
+                        ->setUrl('/test/test4')
+                        ->setSlugPrototype('test4')
+                        ->setLocalization($localizationTwo)
+                        ->setRouteName('some_route')
+                        ->setRouteParameters(['id' => 42])
+                ),
+            [
+                ['some_route', ['id' => 42], '/test/test2', 'test2', 1],
+                ['some_route', ['id' => 42], '/test/test4', 'test4', 2],
+                ['some_route', ['id' => 42], '/test/test1', 'test1', 1001]
+            ]
+        ];
+
+        yield 'updated by locale' => [
+            (new SluggableEntityStub())
+                ->addSlugPrototype($valueTwo)
+                ->addSlugPrototype($valueThree)
+                ->addSlug($slugTwo),
+            (new SluggableEntityStub())
+                ->addSlugPrototype($valueTwo)
+                ->addSlugPrototype($valueThree)
+                ->addSlug(
+                    (new Slug())
+                        ->setUrl('/test/test3')
+                        ->setSlugPrototype('test3')
+                        ->setLocalization($localizationOne)
+                        ->setRouteName('some_route')
+                        ->setRouteParameters(['id' => 42])
+                ),
+            [['some_route', ['id' => 42], '/test/test3', 'test3', 1]]
+        ];
+
+        yield 'added empty' => [
+            (new SluggableEntityStub())
+                ->addSlugPrototype($emptyStringValue),
+            (new SluggableEntityStub())
+                ->addSlugPrototype($emptyStringValue),
+            []
+        ];
+
+        yield 'existing changed to empty' => [
+            (new SluggableEntityStub())
+                ->addSlugPrototype($emptyStringValue)
+                ->addSlug($defaultSlug),
+            (new SluggableEntityStub())
+                ->addSlugPrototype($emptyStringValue),
+            []
+        ];
+
+        yield 'added with organization' => [
+            (new SluggableEntityWithOrganizationStub())
+                ->setOrganization($organization)
+                ->addSlugPrototype($valueOne)
+                ->addSlugPrototype($valueTwo)
+                ->addSlug($defaultSlug),
+            (new SluggableEntityWithOrganizationStub())
+                ->setOrganization($organization)
+                ->addSlugPrototype($valueOne)
+                ->addSlugPrototype($valueTwo)
+                ->addSlug($defaultSlug)
+                ->addSlug($slugTwoWithOrganization),
+            [
+                ['some_route', ['id' => 42], '/test/test2', 'test2', 1],
+                ['some_route', ['id' => 42], '/test/test1', 'test1', 1001]
+            ]
         ];
     }
 
     public function testGenerateWithRedirects()
     {
+        /** @var Localization $localization */
         $localization = $this->getEntity(Localization::class, ['id' => 1]);
 
         $valueOne = new LocalizedFallbackValue();
@@ -291,13 +304,9 @@ class SlugEntityGeneratorTest extends \PHPUnit\Framework\TestCase
             ->method('getUrlPrefix')
             ->willReturn('/test');
 
-        $this->slugResolver->expects($this->at(0))
+        $this->slugResolver->expects($this->exactly(2))
             ->method('resolve')
-            ->willReturn('/test/test1');
-
-        $this->slugResolver->expects($this->at(1))
-            ->method('resolve')
-            ->willReturn('/test/test2');
+            ->willReturnOnConsecutiveCalls('/test/test1', '/test/test2');
 
         $this->redirectGenerator->expects($this->once())
             ->method('updateRedirects');
@@ -305,10 +314,10 @@ class SlugEntityGeneratorTest extends \PHPUnit\Framework\TestCase
         $this->redirectGenerator->expects($this->once())
             ->method('generateForSlug');
 
-        $this->userLocalizationManager
-            ->expects(self::any())
-            ->method('getEnabledLocalizations')
-            ->willReturn([]);
+        $this->dumper
+            ->expects(self::once())
+            ->method('dumpByEntity')
+            ->with($entity);
 
         $this->generator->generate($entity, true);
         $this->assertEquals($expected, $entity);
@@ -326,8 +335,7 @@ class SlugEntityGeneratorTest extends \PHPUnit\Framework\TestCase
             ->willReturn('/some-prefix/something-1');
 
         $routeData = new RouteData('someRoute');
-        $this->routingInformationProvider
-            ->expects($this->at(3))
+        $this->routingInformationProvider->expects($this->atLeastOnce())
             ->method('getRouteData')
             ->with($entity)
             ->willReturn($routeData);
@@ -336,10 +344,10 @@ class SlugEntityGeneratorTest extends \PHPUnit\Framework\TestCase
             $this->getEntity(LocalizedFallbackValue::class, ['string' => 'some-prefix/something-1'])
         ]);
 
-        $this->userLocalizationManager
-            ->expects(self::any())
-            ->method('getEnabledLocalizations')
-            ->willReturn([]);
+        $this->dumper
+            ->expects(self::once())
+            ->method('dumpByEntity')
+            ->with($entity);
 
         $this->generator->generate($entity);
         $this->assertEquals($expectedSlugPrototypes, $entity->getSlugPrototypes());

@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManagerInterface;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
+use Oro\Bundle\RedirectBundle\Cache\Dumper\SluggableUrlDumper;
 use Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface;
 use Oro\Bundle\RedirectBundle\Entity\LocalizedSlugPrototypeAwareInterface;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
@@ -46,6 +47,11 @@ class SlugEntityGenerator
      */
     private $userLocalizationManager;
 
+    /**
+     * @var SluggableUrlDumper
+     */
+    private $urlCacheDumper;
+
     public function __construct(
         RoutingInformationProviderInterface $routingInformationProvider,
         UniqueSlugResolver $slugResolver,
@@ -60,22 +66,17 @@ class SlugEntityGenerator
         $this->userLocalizationManager = $userLocalizationManager;
     }
 
+    public function setUrlCacheDumper(SluggableUrlDumper $dumper)
+    {
+        $this->urlCacheDumper = $dumper;
+    }
+
     /**
      * @param SluggableInterface $entity
      * @param bool $generateRedirects
      */
     public function generate(SluggableInterface $entity, $generateRedirects = false)
     {
-        $localizations = $this->userLocalizationManager->getEnabledLocalizations();
-        $routeData = $this->routingInformationProvider->getRouteData($entity);
-        foreach ($localizations as $localization) {
-            $this->urlCache->removeUrl(
-                $routeData->getRoute(),
-                $routeData->getRouteParameters(),
-                $this->getLocalizationId($localization)
-            );
-        }
-
         $slugUrls = $this->getResolvedSlugUrls($entity);
 
         /** @var Slug[] $toRemove */
@@ -83,28 +84,9 @@ class SlugEntityGenerator
         foreach ($entity->getSlugs() as $slug) {
             $localizationId = $this->getLocalizationId($slug->getLocalization());
 
-            // Update existing
             if ($slugUrls->containsKey($localizationId)) {
-                $slugUrl = $slugUrls->get($localizationId);
-
-                $previousSlug = clone $slug;
-                $updatedUrl = $slugUrl->getUrl();
-                $slug->setUrl($updatedUrl);
-                $slug->setSlugPrototype($slugUrl->getSlug());
-
-                $this->redirectGenerator->updateRedirects($previousSlug->getUrl(), $slug);
-
-                if ($generateRedirects) {
-                    $this->redirectGenerator->generateForSlug($previousSlug, $slug);
-                }
-
-                $this->urlCache->setUrl(
-                    $slug->getRouteName(),
-                    $slug->getRouteParameters(),
-                    $slug->getUrl(),
-                    $slug->getSlugPrototype(),
-                    $this->getLocalizationId($slug->getLocalization())
-                );
+                // Update existing
+                $this->updateExistingSlug($slugUrls, $localizationId, $slug, $generateRedirects);
             } else {
                 $toRemove[] = $slug;
             }
@@ -116,27 +98,10 @@ class SlugEntityGenerator
         }
 
         // Add new
-        foreach ($slugUrls as $slugUrl) {
-            if ($this->getExistingSlugs($slugUrl, $entity->getSlugs())->isEmpty()) {
-                $routeData = $this->routingInformationProvider->getRouteData($entity);
-                $slug = $this->createSlug($routeData, $slugUrl);
-                if ($entity instanceof OrganizationAwareInterface) {
-                    $slug->setOrganization($entity->getOrganization());
-                }
-
-                $entity->addSlug($slug);
-
-                $this->urlCache->setUrl(
-                    $slug->getRouteName(),
-                    $slug->getRouteParameters(),
-                    $slug->getUrl(),
-                    $slug->getSlugPrototype(),
-                    $this->getLocalizationId($slug->getLocalization())
-                );
-            }
-        }
-
+        $this->addNewSlugs($entity, $slugUrls);
         $this->updateSlugPrototypes($entity, $slugUrls);
+
+        $this->urlCacheDumper->dumpByEntity($entity);
     }
 
     /**
@@ -181,7 +146,7 @@ class SlugEntityGenerator
     /**
      * @param SlugUrl $slugUrl
      * @param Collection $slugs
-     * @return Collection|null|Slug[]
+     * @return Collection|Slug[]
      */
     protected function getExistingSlugs(SlugUrl $slugUrl, Collection $slugs)
     {
@@ -306,5 +271,40 @@ class SlugEntityGenerator
             preg_quote(trim($this->routingInformationProvider->getUrlPrefix($entity), Slug::DELIMITER), '~'),
             Slug::DELIMITER
         );
+    }
+
+    private function addNewSlugs(SluggableInterface $entity, Collection $slugUrls): void
+    {
+        foreach ($slugUrls as $slugUrl) {
+            if ($this->getExistingSlugs($slugUrl, $entity->getSlugs())->isEmpty()) {
+                $routeData = $this->routingInformationProvider->getRouteData($entity);
+                $slug = $this->createSlug($routeData, $slugUrl);
+                if ($entity instanceof OrganizationAwareInterface) {
+                    $slug->setOrganization($entity->getOrganization());
+                }
+
+                $entity->addSlug($slug);
+            }
+        }
+    }
+
+    private function updateExistingSlug(
+        Collection $slugUrls,
+        int $localizationId,
+        Slug $slug,
+        bool $generateRedirects
+    ): void {
+        $slugUrl = $slugUrls->get($localizationId);
+
+        $previousSlug = clone $slug;
+        $updatedUrl = $slugUrl->getUrl();
+        $slug->setUrl($updatedUrl);
+        $slug->setSlugPrototype($slugUrl->getSlug());
+
+        $this->redirectGenerator->updateRedirects($previousSlug->getUrl(), $slug);
+
+        if ($generateRedirects) {
+            $this->redirectGenerator->generateForSlug($previousSlug, $slug);
+        }
     }
 }

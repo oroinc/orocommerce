@@ -12,9 +12,13 @@ use Oro\Bundle\RedirectBundle\Model\Exception\InvalidArgumentException;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Message factory for interaction with Direct URL related MQ message data.
+ */
 class DirectUrlMessageFactory implements MessageFactoryInterface
 {
     const ID = 'id';
+    const JOB_ID = 'jobId';
     const ENTITY_CLASS_NAME = 'class';
     const CREATE_REDIRECT = 'createRedirect';
 
@@ -128,6 +132,7 @@ class DirectUrlMessageFactory implements MessageFactoryInterface
             );
 
             $resolver->setDefault(self::CREATE_REDIRECT, true);
+            $resolver->setDefined(self::JOB_ID);
 
             $resolver->setAllowedTypes(self::ID, ['int', 'array']);
             $resolver->setAllowedTypes(self::ENTITY_CLASS_NAME, 'string');
@@ -169,7 +174,10 @@ class DirectUrlMessageFactory implements MessageFactoryInterface
     protected function getResolvedData($data)
     {
         try {
-            // BC layer for old message format support where ClassName was passed as message
+            if (!$data) {
+                throw new InvalidArgumentException('Messages is empty');
+            }
+            // BC for old message format support where ClassName was passed as message
             if (is_string($data)) {
                 $data = [self::ENTITY_CLASS_NAME => $data, self::ID => []];
             }

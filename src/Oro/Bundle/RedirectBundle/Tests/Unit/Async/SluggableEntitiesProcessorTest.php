@@ -9,9 +9,10 @@ use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\RedirectBundle\Async\SluggableEntitiesProcessor;
-use Oro\Bundle\RedirectBundle\Async\Topics;
 use Oro\Bundle\RedirectBundle\Model\DirectUrlMessageFactory;
+use Oro\Bundle\RedirectBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\RedirectBundle\Model\MessageFactoryInterface;
+use Oro\Component\MessageQueue\Client\Config as MessageQueueConfig;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Job\Job;
 use Oro\Component\MessageQueue\Job\JobRunner;
@@ -69,14 +70,7 @@ class SluggableEntitiesProcessorTest extends \PHPUnit\Framework\TestCase
             $this->logger,
             $this->messageFactory
         );
-    }
-
-    public function testGetSubscribedTopics()
-    {
-        $this->assertEquals(
-            [Topics::REGENERATE_DIRECT_URL_FOR_ENTITY_TYPE],
-            SluggableEntitiesProcessor::getSubscribedTopics()
-        );
+        $this->processor->addTopicMapping('test_topic_mass', 'test_topic');
     }
 
     /**
@@ -99,9 +93,9 @@ class SluggableEntitiesProcessorTest extends \PHPUnit\Framework\TestCase
     {
         return [
             'correct value' => [1, 1],
-            'negative value' => [-1, SluggableEntitiesProcessor::BATCH_SIZE],
-            'zero value' => [0, SluggableEntitiesProcessor::BATCH_SIZE],
-            'float incorrect value' => [-10.5, SluggableEntitiesProcessor::BATCH_SIZE],
+            'negative value' => [-1, 1000],
+            'zero value' => [0, 1000],
+            'float incorrect value' => [-10.5, 1000],
             'float correct value' => [10.8, 10],
         ];
     }
@@ -112,11 +106,7 @@ class SluggableEntitiesProcessorTest extends \PHPUnit\Framework\TestCase
         $createRedirect = true;
 
         $message = $this->assertMessageDataCalls($class, $createRedirect);
-        $message->expects($this->once())
-            ->method('getMessageId')
-            ->willReturn('mid-42');
-
-        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session * */
         $session = $this->createMock(SessionInterface::class);
 
         $this->doctrine->expects($this->once())
@@ -128,20 +118,46 @@ class SluggableEntitiesProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('error')
             ->with(sprintf('Entity manager is not defined for class: "%s"', $class));
 
-        /** @var Job|\PHPUnit\Framework\MockObject\MockObject $job */
-        $job = $this->getMockBuilder(Job::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->jobRunner->expects($this->once())
-            ->method('runUnique')
-            ->willReturnCallback(
-                function ($ownerId, $name, $closure) use ($class, $job) {
-                    $this->assertEquals('mid-42', $ownerId);
-                    $this->assertEquals(Topics::REGENERATE_DIRECT_URL_FOR_ENTITY_TYPE . ':' . $class, $name);
+        $this->jobRunner->expects($this->never())
+            ->method('runUnique');
 
-                    return $closure($this->jobRunner, $job);
-                }
+        $this->assertEquals(SluggableEntitiesProcessor::REJECT, $this->processor->process($message, $session));
+    }
+
+    public function testProcessInvalidMessage()
+    {
+        $message = $this->createMock(MessageInterface::class);
+        $message->expects($this->once())
+            ->method('getProperty')
+            ->with(MessageQueueConfig::PARAMETER_TOPIC_NAME)
+            ->willReturn('test_topic_mass');
+        $messageData = null;
+        $messageBody = json_encode($messageData);
+
+        $e = new InvalidArgumentException('Invalid message');
+        $this->messageFactory->expects($this->any())
+            ->method('getEntityClassFromMessage')
+            ->with($messageData)
+            ->willThrowException($e);
+
+        $message->expects($this->any())
+            ->method('getBody')
+            ->willReturn($messageBody);
+
+        $session = $this->createMock(SessionInterface::class);
+
+        $this->logger->expects($this->once())
+            ->method('error')
+            ->with(
+                'Queue Message is invalid',
+                [
+                    'topic' => 'test_topic_mass',
+                    'exception' => $e
+                ]
             );
+
+        $this->jobRunner->expects($this->never())
+            ->method('runUnique');
 
         $this->assertEquals(SluggableEntitiesProcessor::REJECT, $this->processor->process($message, $session));
     }
@@ -155,8 +171,12 @@ class SluggableEntitiesProcessorTest extends \PHPUnit\Framework\TestCase
         $message->expects($this->once())
             ->method('getMessageId')
             ->willReturn('mid-42');
+        $message->expects($this->once())
+            ->method('getProperty')
+            ->with(MessageQueueConfig::PARAMETER_TOPIC_NAME)
+            ->willReturn('test_topic_mass');
 
-        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session * */
         $session = $this->createMock(SessionInterface::class);
 
         $countQb = $this->assertCountQueryCalled();
@@ -177,7 +197,7 @@ class SluggableEntitiesProcessorTest extends \PHPUnit\Framework\TestCase
         $this->producer->expects($this->once())
             ->method('send')
             ->with(
-                Topics::JOB_GENERATE_DIRECT_URL_FOR_ENTITIES,
+                'test_topic',
                 ['className' => $class, 'id' => [42], 'jobId' => 123]
             );
 
@@ -197,7 +217,7 @@ class SluggableEntitiesProcessorTest extends \PHPUnit\Framework\TestCase
             ->willReturnCallback(
                 function ($ownerId, $name, $closure) use ($class, $job) {
                     $this->assertEquals('mid-42', $ownerId);
-                    $this->assertEquals(Topics::REGENERATE_DIRECT_URL_FOR_ENTITY_TYPE . ':' . $class, $name);
+                    $this->assertEquals('test_topic_mass:' . $class, $name);
 
                     return $closure($this->jobRunner, $job);
                 }
@@ -207,7 +227,7 @@ class SluggableEntitiesProcessorTest extends \PHPUnit\Framework\TestCase
             ->willReturnCallback(
                 function ($name, $closure) use ($class, $childJob) {
                     $this->assertEquals(
-                        sprintf('%s:%s:%s', Topics::JOB_GENERATE_DIRECT_URL_FOR_ENTITIES, $class, 0),
+                        sprintf('test_topic_mass:%s:%s', $class, 0),
                         $name
                     );
 
@@ -223,8 +243,12 @@ class SluggableEntitiesProcessorTest extends \PHPUnit\Framework\TestCase
         $class = \stdClass::class;
         $createRedirect = true;
         $message = $this->assertMessageDataCalls($class, $createRedirect);
+        $message->expects($this->once())
+            ->method('getProperty')
+            ->with(MessageQueueConfig::PARAMETER_TOPIC_NAME)
+            ->willReturn('test_topic_mass');
 
-        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session * */
         $session = $this->createMock(SessionInterface::class);
 
         $countQb = $this->assertCountQueryCalled(5);
@@ -287,11 +311,11 @@ class SluggableEntitiesProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('send')
             ->withConsecutive(
                 [
-                    Topics::JOB_GENERATE_DIRECT_URL_FOR_ENTITIES,
+                    'test_topic',
                     ['className' => $class, 'id' => [1, 2, 3], 'jobId' => null]
                 ],
                 [
-                    Topics::JOB_GENERATE_DIRECT_URL_FOR_ENTITIES,
+                    'test_topic',
                     ['className' => $class, 'id' => [4, 5], 'jobId' => null]
                 ]
             );
@@ -303,6 +327,7 @@ class SluggableEntitiesProcessorTest extends \PHPUnit\Framework\TestCase
             $this->logger,
             $this->messageFactory
         );
+        $this->processor->addTopicMapping('test_topic_mass', 'test_topic');
 
         $this->processor->setBatchSize(3);
         $this->assertEquals(SluggableEntitiesProcessor::ACK, $this->processor->process($message, $session));
@@ -362,7 +387,7 @@ class SluggableEntitiesProcessorTest extends \PHPUnit\Framework\TestCase
             ->willReturnSelf();
         $idsQb->expects($this->any())
             ->method('setMaxResults')
-            ->with(SluggableEntitiesProcessor::BATCH_SIZE)
+            ->with(1000)
             ->willReturnSelf();
         $idsQb->expects($this->any())
             ->method('orderBy')
@@ -391,11 +416,11 @@ class SluggableEntitiesProcessorTest extends \PHPUnit\Framework\TestCase
 
         $messageBody = json_encode($messageData);
 
-        $this->messageFactory->expects($this->once())
+        $this->messageFactory->expects($this->any())
             ->method('getEntityClassFromMessage')
             ->with($messageData)
             ->willReturn($class);
-        $this->messageFactory->expects($this->once())
+        $this->messageFactory->expects($this->any())
             ->method('getCreateRedirectFromMessage')
             ->with($messageData)
             ->willReturn($createRedirect);

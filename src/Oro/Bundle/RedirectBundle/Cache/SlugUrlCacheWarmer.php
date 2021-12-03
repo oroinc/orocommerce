@@ -6,6 +6,9 @@ use Oro\Bundle\RedirectBundle\Async\Topics;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
 
+/**
+ * Schedules Slug Url cache warming.
+ */
 class SlugUrlCacheWarmer implements CacheWarmerInterface
 {
     /**

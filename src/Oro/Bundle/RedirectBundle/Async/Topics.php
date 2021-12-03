@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\RedirectBundle\Async;
 
+/**
+ * Redirect bundle MQ Topics holder.
+ */
 class Topics
 {
     const GENERATE_DIRECT_URL_FOR_ENTITIES = 'oro.redirect.generate_direct_url.entity';

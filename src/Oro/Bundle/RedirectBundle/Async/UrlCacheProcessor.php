@@ -3,17 +3,31 @@
 namespace Oro\Bundle\RedirectBundle\Async;
 
 use Oro\Bundle\RedirectBundle\Cache\Dumper\SluggableUrlDumper;
+use Oro\Bundle\RedirectBundle\Model\MessageFactoryInterface;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
+use Oro\Component\MessageQueue\Job\JobRunner;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\MessageQueue\Util\JSON;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\OptionsResolver\Exception\InvalidArgumentException;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Fill Slug URL caches with data received for a given set of entities.
+ */
 class UrlCacheProcessor implements MessageProcessorInterface, TopicSubscriberInterface
 {
+    /**
+     * @var JobRunner
+     */
+    private $jobRunner;
+
+    /**
+     * @var MessageFactoryInterface
+     */
+    private $messageFactory;
+
     /**
      * @var SluggableUrlDumper
      */
@@ -32,20 +46,41 @@ class UrlCacheProcessor implements MessageProcessorInterface, TopicSubscriberInt
         $this->logger = $logger;
     }
 
+    public function setJobRunner(JobRunner $jobRunner)
+    {
+        $this->jobRunner = $jobRunner;
+    }
+
+    public function setMessageFactory(MessageFactoryInterface $messageFactory)
+    {
+        $this->messageFactory = $messageFactory;
+    }
+
     /**
      * {@inheritdoc}
      */
     public function process(MessageInterface $message, SessionInterface $session)
     {
         try {
-            $data = $this->getResolvedMessageData(JSON::decode($message->getBody()));
-            $this->dumper->dump($data['route_name'], $data['entity_ids']);
+            $messageData = JSON::decode($message->getBody());
+            $entities = $this->messageFactory->getEntitiesFromMessage($messageData);
 
-            return self::ACK;
+            $result = $this->jobRunner->runDelayed($messageData['jobId'], function () use ($entities) {
+                foreach ($entities as $entity) {
+                    $this->dumper->dumpByEntity($entity);
+                }
+
+                return true;
+            });
+
+            return $result ? self::ACK : self::REJECT;
         } catch (InvalidArgumentException $e) {
             $this->logger->error(
                 'Queue Message is invalid',
-                ['exception' => $e]
+                [
+                    'message' => $message,
+                    'exception' => $e
+                ]
             );
 
             return self::REJECT;
@@ -62,24 +97,6 @@ class UrlCacheProcessor implements MessageProcessorInterface, TopicSubscriberInt
         }
     }
 
-    /**
-     * @param array $message
-     * @return array
-     */
-    private function getResolvedMessageData(array $message)
-    {
-        $optionsResolver = new OptionsResolver();
-        $optionsResolver->setRequired(['route_name', 'entity_ids']);
-
-        $optionsResolver->setAllowedTypes('route_name', 'string');
-        $optionsResolver->setAllowedTypes('entity_ids', 'array');
-
-        return $optionsResolver->resolve($message);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedTopics()
     {
         return [Topics::PROCESS_CALCULATE_URL_CACHE];

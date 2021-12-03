@@ -147,6 +147,8 @@ services:
             - '@oro_redirect.generator.redirect'
             - '@oro_redirect.url_cache'
             - '@oro_frontend_localization.manager.user_localization'
+        calls:
+            - ['setUrlCacheDumper', ['@oro_redirect.cache.dumper.sluggable_url_dumper']]
 
     Oro\Bundle\RedirectBundle\Generator\SlugEntityGenerator:
         alias: oro_redirect.generator.slug_entity
@@ -210,11 +212,14 @@ services:
     oro_redirect.async.sluggable_entities_processor:
         class: Oro\Bundle\RedirectBundle\Async\SluggableEntitiesProcessor
         arguments:
-           - '@doctrine'
-           - '@oro_message_queue.job.runner'
-           - '@oro_message_queue.client.message_producer'
-           - '@monolog.logger'
-           - '@oro_redirect.direct_url_message_factory'
+            - '@doctrine'
+            - '@oro_message_queue.job.runner'
+            - '@oro_message_queue.client.message_producer'
+            - '@monolog.logger'
+            - '@oro_redirect.direct_url_message_factory'
+        calls:
+            - ['addTopicMapping', ['oro.redirect.regenerate_direct_url.entity_type', 'oro.redirect.job.generate_direct_url.entity']]
+            - ['addTopicMapping', ['oro.redirect.calculate_cache.process_job', 'oro.redirect.calculate_cache']]
         tags:
             - { name: 'oro_message_queue.client.message_processor' }
 
@@ -238,29 +243,34 @@ services:
     oro_redirect.async.url_cache_mass_job_processor:
         class: Oro\Bundle\RedirectBundle\Async\UrlCacheMassJobProcessor
         arguments:
-           - '@oro_message_queue.job.runner'
-           - '@oro_message_queue.client.message_producer'
-           - '@doctrine'
-           - '@monolog.logger'
-           - '@oro_redirect.url_cache'
+            - '@oro_message_queue.job.runner'
+            - '@oro_message_queue.client.message_producer'
+            - '@doctrine'
+            - '@monolog.logger'
+            - '@oro_redirect.url_cache'
+        calls:
+            - ['setRoutingInformationProvider', ['@oro_redirect.provider.routing_information_provider']]
+            - ['setMessageFactory', ['@oro_redirect.direct_url_message_factory']]
         tags:
             - { name: 'oro_message_queue.client.message_processor' }
 
     oro_redirect.async.url_cache_job_processor:
         class: Oro\Bundle\RedirectBundle\Async\UrlCacheProcessor
         arguments:
-           - '@oro_redirect.cache.dumper.sluggable_url_dumper'
-           - '@monolog.logger'
+            - '@oro_redirect.cache.dumper.sluggable_url_dumper'
+            - '@monolog.logger'
+        calls:
+            - ['setJobRunner', ['@oro_message_queue.job.runner']]
+            - ['setMessageFactory', ['@oro_redirect.direct_url_message_factory']]
         tags:
             - { name: 'oro_message_queue.client.message_processor' }
 
     oro_redirect.async.url_cache_job_processor.job_runner:
+        deprecated: 'Service %service_id% is deprecated. Slug Cache mass messages now processed by oro_redirect.async.sluggable_entities_processor'
         class: Oro\Component\MessageQueue\Job\DelayedJobRunnerDecoratingProcessor
         arguments:
             - '@oro_message_queue.job.runner'
             - '@oro_redirect.async.url_cache_job_processor'
-        tags:
-            - { name: 'oro_message_queue.client.message_processor', topicName: 'oro.redirect.calculate_cache.process_job' }
 
     oro_redirect.config.event_listener.enable_direct_url_change:
         class: Oro\Bundle\RedirectBundle\EventListener\ConfigEnableDirectUrlListener
@@ -301,6 +311,10 @@ services:
         arguments:
             - '@doctrine'
             - '@oro_redirect.url_cache'
+        calls:
+            - ['setRoutingInformationProvider', ['@oro_redirect.provider.routing_information_provider']]
+            - ['setConfigManager', ['@oro_config.manager']]
+            - ['setWebsiteProvider', ['@oro_website.website.provider']]
 
     oro_redirect.routing.sluggable_url_generator:
         class: 'Oro\Bundle\RedirectBundle\Routing\SluggableUrlGenerator'
@@ -412,6 +426,13 @@ services:
     oro_redirect.url_cache:
         class: Oro\Bundle\RedirectBundle\Cache\UrlStorageCache
         factory: ['@oro_redirect.url_cache.factory', 'get']
+
+    oro_redirect.cache.slug_url_cache_clearer:
+        class: Oro\Bundle\RedirectBundle\Cache\SlugUrlCacheClearer
+        arguments:
+            - '@oro_redirect.url_cache'
+        tags:
+            - { name: 'kernel.cache_clearer' }
 
     oro_redirect.cache.slug_url_cache_warmer:
         class: Oro\Bundle\RedirectBundle\Cache\SlugUrlCacheWarmer
