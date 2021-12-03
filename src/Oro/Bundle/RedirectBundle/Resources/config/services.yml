@@ -138,8 +138,7 @@ services:
             - '@oro_redirect.provider.routing_information_provider'
             - '@oro_redirect.generator.unique_slug_resolver'
             - '@oro_redirect.generator.redirect'
-            - '@oro_redirect.url_cache'
-            - '@oro_frontend_localization.manager.user_localization'
+            - '@oro_redirect.cache.dumper.sluggable_url_dumper'
 
     Oro\Bundle\RedirectBundle\Generator\SlugEntityGenerator:
         alias: oro_redirect.generator.slug_entity
@@ -200,16 +199,29 @@ services:
         tags:
             - { name: 'oro_message_queue.client.message_processor', topicName: 'oro.redirect.job.generate_direct_url.entity' }
 
-    oro_redirect.async.sluggable_entities_processor:
+    oro_redirect.async.batch_sluggable_entities_processor_abstract:
+        abstract: true
         class: Oro\Bundle\RedirectBundle\Async\SluggableEntitiesProcessor
         arguments:
-           - '@doctrine'
-           - '@oro_message_queue.job.runner'
-           - '@oro_message_queue.client.message_producer'
-           - '@monolog.logger'
-           - '@oro_redirect.direct_url_message_factory'
+            - '@doctrine'
+            - '@oro_message_queue.job.runner'
+            - '@oro_message_queue.client.message_producer'
+            - '@monolog.logger'
+            - '@oro_redirect.direct_url_message_factory'
+
+    oro_redirect.async.sluggable_entities_processor:
+        parent: oro_redirect.async.batch_sluggable_entities_processor_abstract
+        arguments:
+           - 'oro.redirect.job.generate_direct_url.entity'
         tags:
-            - { name: 'oro_message_queue.client.message_processor' }
+            - { name: 'oro_message_queue.client.message_processor', topicName: 'oro.redirect.regenerate_direct_url.entity_type' }
+
+    oro_redirect.async.url_cache_mass_job_processor:
+        parent: oro_redirect.async.batch_sluggable_entities_processor_abstract
+        arguments:
+            - 'oro.redirect.calculate_cache'
+        tags:
+            - { name: 'oro_message_queue.client.message_processor', topicName: 'oro.redirect.calculate_cache.mass' }
 
     oro_redirect.async.sync_slug_redirects_processor:
         class: Oro\Bundle\RedirectBundle\Async\SyncSlugRedirectsProcessor
@@ -228,22 +240,13 @@ services:
         tags:
             - { name: 'oro_message_queue.client.message_processor' }
 
-    oro_redirect.async.url_cache_mass_job_processor:
-        class: Oro\Bundle\RedirectBundle\Async\UrlCacheMassJobProcessor
-        arguments:
-           - '@oro_message_queue.job.runner'
-           - '@oro_message_queue.client.message_producer'
-           - '@doctrine'
-           - '@monolog.logger'
-           - '@oro_redirect.url_cache'
-        tags:
-            - { name: 'oro_message_queue.client.message_processor' }
-
     oro_redirect.async.url_cache_job_processor:
         class: Oro\Bundle\RedirectBundle\Async\UrlCacheProcessor
         arguments:
-           - '@oro_redirect.cache.dumper.sluggable_url_dumper'
-           - '@monolog.logger'
+            - '@oro_message_queue.job.runner'
+            - '@oro_redirect.direct_url_message_factory'
+            - '@oro_redirect.cache.dumper.sluggable_url_dumper'
+            - '@monolog.logger'
         tags:
             - { name: 'oro_message_queue.client.message_processor' }
 
@@ -291,8 +294,10 @@ services:
         class: Oro\Bundle\RedirectBundle\Cache\Dumper\SluggableUrlDumper
         public: false
         arguments:
-            - '@doctrine'
             - '@oro_redirect.url_cache'
+            - '@oro_redirect.provider.routing_information_provider'
+            - '@oro_config.manager'
+            - '@oro_website.website.provider'
 
     oro_redirect.routing.sluggable_url_generator:
         class: Oro\Bundle\RedirectBundle\Routing\SluggableUrlGenerator
@@ -418,10 +423,19 @@ services:
         class: Oro\Bundle\RedirectBundle\Cache\UrlStorageCache
         factory: ['@oro_redirect.url_cache.factory', 'get']
 
+    oro_redirect.cache.slug_url_cache_clearer:
+        class: Oro\Bundle\RedirectBundle\Cache\SlugUrlCacheClearer
+        arguments:
+            - '@oro_redirect.url_cache'
+        tags:
+            - { name: 'kernel.cache_clearer' }
+
     oro_redirect.cache.slug_url_cache_warmer:
         class: Oro\Bundle\RedirectBundle\Cache\SlugUrlCacheWarmer
         arguments:
             - '@oro_message_queue.client.message_producer'
+            - '@oro_redirect.provider.routing_information_provider'
+            - '@oro_redirect.direct_url_message_factory'
         tags:
             - { name: 'kernel.cache_warmer' }
 

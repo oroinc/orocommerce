@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\RedirectBundle\Provider;
 
+use Doctrine\Common\Util\ClassUtils;
 use Oro\Bundle\RedirectBundle\Exception\UnsupportedEntityException;
 use Psr\Container\ContainerInterface;
 
@@ -16,8 +17,11 @@ class RoutingInformationProvider implements RoutingInformationProviderInterface
     /** @var ContainerInterface */
     private $providers;
 
+    /** @var array */
+    private $providerByClass = [];
+
     /**
-     * @param string[]           $entityClasses
+     * @param string[] $entityClasses
      * @param ContainerInterface $providers
      */
     public function __construct(array $entityClasses, ContainerInterface $providers)
@@ -78,9 +82,16 @@ class RoutingInformationProvider implements RoutingInformationProviderInterface
      */
     private function getProviderForEntity($entity): ?RoutingInformationProviderInterface
     {
+        $entityClass = ClassUtils::getClass($entity);
+        if (array_key_exists($entityClass, $this->providerByClass)) {
+            return $this->providerByClass[$entityClass];
+        }
+
         foreach ($this->entityClasses as $entityClass) {
             $provider = $this->getProvider($entityClass);
             if ($provider->isSupported($entity)) {
+                $this->providerByClass[$entityClass] = $provider;
+
                 return $provider;
             }
         }
