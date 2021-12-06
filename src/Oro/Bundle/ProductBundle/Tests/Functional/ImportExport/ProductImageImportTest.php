@@ -3,12 +3,12 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\ImportExport;
 
 use Doctrine\ORM\EntityRepository;
+use Oro\Bundle\ImportExportBundle\Configuration\ImportExportConfigurationInterface;
 use Oro\Bundle\ImportExportBundle\Tests\Functional\AbstractImportExportTestCase as TestCase;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
-use Oro\Component\MessageQueue\Transport\Message;
 use Symfony\Component\Finder\Finder;
 
 /**
@@ -67,7 +67,7 @@ class ProductImageImportTest extends TestCase
             ->getRepository(Product::class);
 
         /** @var Product $product */
-        $product = $productRepo->findOneById($this->getReference(LoadProductData::PRODUCT_1));
+        $product = $productRepo->find($this->getReference(LoadProductData::PRODUCT_1)->getId());
 
         $this->assertCount(4, $product->getImages());
 
@@ -99,38 +99,18 @@ class ProductImageImportTest extends TestCase
         $this->assertEquals(array_combine($expected, $expected), $types);
     }
 
-    /**
-     * @param array $messageData
-     *
-     * @return Message
-     */
-    private function createMessage(array $messageData)
-    {
-        $message = new Message();
-
-        $message->setMessageId('abc');
-        $message->setBody(json_encode($messageData));
-
-        return $message;
-    }
-
     private function assertImportedDataValid()
     {
         /** @var EntityRepository $productRepo */
-        $productRepo = self::getContainer()
-            ->get('doctrine')
-            ->getManagerForClass(Product::class)
-            ->getRepository(Product::class);
+        $productRepo = self::getContainer()->get('doctrine')->getRepository(Product::class);
 
         /** @var Product $product */
-        $product = $productRepo->findOneById(
-            $this->getReference(LoadProductData::PRODUCT_1)
-        );
+        $product = $productRepo->find($this->getReference(LoadProductData::PRODUCT_1)->getId());
 
         $this->assertCount(2, $product->getImages());
     }
 
-    private function getExportImportConfiguration()
+    private function getExportImportConfiguration(): ImportExportConfigurationInterface
     {
         return $this->getContainer()->get('oro_product.importexport.configuration_provider.product_images')->get();
     }

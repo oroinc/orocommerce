@@ -23,12 +23,7 @@ class PriceAttributeProductPriceExportTest extends AbstractImportExportTestCase
     protected function setUp(): void
     {
         parent::setUp();
-
-        $this->loadFixtures(
-            [
-                LoadPriceAttributeProductPrices::class,
-            ]
-        );
+        $this->loadFixtures([LoadPriceAttributeProductPrices::class]);
     }
 
     public function testExportTemplate()
@@ -56,7 +51,7 @@ class PriceAttributeProductPriceExportTest extends AbstractImportExportTestCase
 
         $this->assertImportedDataValid();
 
-        static::assertCount(
+        self::assertCount(
             14,
             $this->getPriceAttributeProductPriceRepository()->findAll()
         );
@@ -80,7 +75,7 @@ class PriceAttributeProductPriceExportTest extends AbstractImportExportTestCase
 
         $this->assertResetAndAddValid();
 
-        static::assertCount(
+        self::assertCount(
             5,
             $this->getPriceAttributeProductPriceRepository()->findAll()
         );
@@ -124,7 +119,7 @@ class PriceAttributeProductPriceExportTest extends AbstractImportExportTestCase
 
     private function assertImportedDataValid()
     {
-        static::assertNull(
+        self::assertNull(
             $this->getPriceByUniqueKey(
                 $this->getReference(LoadProductData::PRODUCT_1),
                 $this->getReference(LoadPriceAttributePriceLists::PRICE_ATTRIBUTE_PRICE_LIST_1),
@@ -139,7 +134,7 @@ class PriceAttributeProductPriceExportTest extends AbstractImportExportTestCase
             $this->getReference(LoadProductUnits::LITER),
             'EUR'
         );
-        static::assertNull(
+        self::assertNull(
             $this->getPriceByUniqueKey(
                 $this->getReference(LoadProductData::PRODUCT_1),
                 $this->getReference(LoadPriceAttributePriceLists::PRICE_ATTRIBUTE_PRICE_LIST_1),
@@ -175,7 +170,7 @@ class PriceAttributeProductPriceExportTest extends AbstractImportExportTestCase
             $this->getReference(LoadProductUnits::LITER),
             'CAD'
         );
-        static::assertNull(
+        self::assertNull(
             $this->getPriceByUniqueKey(
                 $this->getReference(LoadProductData::PRODUCT_3),
                 $this->getReference(LoadPriceAttributePriceLists::PRICE_ATTRIBUTE_PRICE_LIST_4),
@@ -203,20 +198,12 @@ class PriceAttributeProductPriceExportTest extends AbstractImportExportTestCase
         self::assertSame($assertedPrice, $price->getPrice()->getValue());
     }
 
-    /**
-     * @param Product                 $product
-     * @param PriceAttributePriceList $priceList
-     * @param ProductUnit             $unit
-     * @param string                  $currency
-     *
-     * @return PriceAttributeProductPrice|object|null
-     */
     private function getPriceByUniqueKey(
         Product $product,
         PriceAttributePriceList $priceList,
         ProductUnit $unit,
         string $currency
-    ) {
+    ): ?PriceAttributeProductPrice {
         return $this->getPriceAttributeProductPriceRepository()
             ->findOneBy(
                 [
@@ -230,15 +217,12 @@ class PriceAttributeProductPriceExportTest extends AbstractImportExportTestCase
 
     private function getPriceAttributeProductPriceRepository(): PriceAttributeProductPriceRepository
     {
-        return static::getContainer()
-            ->get('doctrine')
-            ->getManagerForClass(PriceAttributeProductPrice::class)
-            ->getRepository(PriceAttributeProductPrice::class);
+        return self::getContainer()->get('doctrine')->getRepository(PriceAttributeProductPrice::class);
     }
 
     private function getPriceAttributeProductPriceConfiguration(): ImportExportConfigurationInterface
     {
-        return static::getContainer()
+        return self::getContainer()
             ->get('oro_pricing.importexport.configuration_provider.price_attribute_product_price')
             ->get();
     }
