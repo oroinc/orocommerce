@@ -1,5 +1,6 @@
 @regression
 @ticket-BB-19141
+@feature-BAP-19790
 @fixture-OroShoppingListBundle:MyShoppingListsFixture.yml
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroCheckoutBundle:Shipping.yml
@@ -635,6 +636,7 @@ Feature: My Shopping List
     Given I reset grid
     When I filter SKU as is equal "BB04"
     And I should not see an "Popup Gallery Widget" element
+    And I should see product picture in the "Product Item Preview"
     And I click "Product Item Gallery Trigger"
     Then I should see an "Popup Gallery Widget" element
     And I should see gallery image with alt "Configurable Product 1"

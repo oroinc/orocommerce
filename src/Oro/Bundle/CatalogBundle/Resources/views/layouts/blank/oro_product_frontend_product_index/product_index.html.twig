@@ -6,13 +6,13 @@
     }) %}
 
     {% if category.largeImage %}
-        {% set attr = layout_attr_defaults(attr, {
-            src: filtered_image_url(category.largeImage, 'product_original')
-        }) %}
-
         <div class="category-picture" itemprop="hasOfferCatalog" itemscope itemtype="http://schema.org/OfferCatalog">
             <div itemprop="name" content="{{ category.defaultTitle }}">
-                <img {{ block('block_attributes') }}>
+                {% include '@OroAttachment/Twig/picture.html.twig' with {
+                    file: category.largeImage,
+                    filter: 'product_original',
+                    img_attrs: attr|default({})
+                } %}
             </div>
         </div>
     {% endif %}

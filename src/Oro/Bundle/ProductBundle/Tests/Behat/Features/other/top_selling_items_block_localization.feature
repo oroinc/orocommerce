@@ -1,5 +1,6 @@
 @ticket-BB-13978
 @ticket-BB-16275
+@feature-BAP-19790
 @fixture-OroProductBundle:top_selling_items_block_localization.yml
 @regression
 
@@ -41,8 +42,10 @@ Feature: Top Selling Items Block Localization
   Scenario: Check that alt attributes contain proper product name
     Given I open product gallery for "SKU1" product
     Then I should see gallery image with alt "Product1`\"'&йёщ®&reg;>"
+    And I should see picture "Popup Gallery Widget Picture" element
     When I click "Popup Gallery Widget Close"
     Then I should see preview image with alt "Product1`\"'&йёщ®&reg;>" for "SKU1" product
+    And I should see picture for "SKU1" product in the "Top Selling Items Block"
 
   Scenario: Check that product name is displayed properly in shopping lists widget
     When click "Add to Shopping List" for "SKU1" product

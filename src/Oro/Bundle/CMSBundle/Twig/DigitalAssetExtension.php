@@ -36,23 +36,18 @@ class DigitalAssetExtension extends AbstractExtension implements ServiceSubscrib
         ];
     }
 
-    /**
-     * @param int $digitalAssetId This param is used on frontend
-     * @param string $fileUuid
-     * @param string $filterName
-     * @param int $referenceType
-     * @return string
-     */
     public function getWysiwygImageUrl(
         int $digitalAssetId,
         string $fileUuid,
         string $filterName = 'wysiwyg_original',
+        string $format = '',
         int $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH
     ): string {
         try {
             return $this->getFileUrlByUuidProvider()->getFilteredImageUrl(
                 $fileUuid,
                 $filterName,
+                $format,
                 $referenceType
             );
         } catch (FileNotFoundException $e) {
@@ -80,7 +75,7 @@ class DigitalAssetExtension extends AbstractExtension implements ServiceSubscrib
     /**
      * {@inheritDoc}
      */
-    public static function getSubscribedServices()
+    public static function getSubscribedServices(): array
     {
         return [
             FileUrlByUuidProvider::class,

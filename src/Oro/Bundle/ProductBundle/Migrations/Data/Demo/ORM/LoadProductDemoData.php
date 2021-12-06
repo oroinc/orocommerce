@@ -7,9 +7,6 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ObjectManager;
-use Gaufrette\Adapter\Local;
-use Gaufrette\File;
-use Gaufrette\Filesystem;
 use Oro\Bundle\AttachmentBundle\Entity\File as AttachmentFile;
 use Oro\Bundle\DigitalAssetBundle\Entity\DigitalAsset;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
@@ -57,17 +54,12 @@ class LoadProductDemoData extends AbstractFixture implements
     protected $productUnits = [];
 
     /**
-     * @var array|Filesystem[]
-     */
-    protected $filesystems = [];
-
-    /**
      * {@inheritDoc}
      */
     public function getDependencies()
     {
         return [
-            'Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadBrandDemoData',
+            LoadBrandDemoData::class,
         ];
     }
 
@@ -104,8 +96,6 @@ class LoadProductDemoData extends AbstractFixture implements
 
         $allImageTypes = $this->getImageTypes();
         $defaultAttributeFamily = $this->getDefaultAttributeFamily($manager);
-
-        $this->container->get('oro_layout.loader.image_filter')->load();
 
         $slugGenerator = $this->container->get('oro_entity_config.slug.generator');
         $loadedProducts = [];
@@ -271,8 +261,6 @@ class LoadProductDemoData extends AbstractFixture implements
             $manager->persist($image);
             $manager->flush();
 
-            $this->writeFilteredDigitalAssets($file, $locator, $sku, $name);
-
             $productImage = new ProductImage();
             $productImage->setImage($image);
             foreach ($types as $type) {
@@ -336,56 +324,9 @@ class LoadProductDemoData extends AbstractFixture implements
         $name,
         $allImageTypes
     ) {
-        $resizedImagePathProvider = $this->container->get('oro_attachment.provider.resized_image_path');
-        $publicMediaCacheManager = $this->container->get('oro_attachment.manager.public_mediacache');
-
         $productImage = $this->getProductImageForProductSku($manager, $locator, $sku, $name, $allImageTypes);
-        $imageDimensionsProvider = $this->container->get('oro_product.provider.product_images_dimensions');
         if ($productImage) {
             $product->addImage($productImage);
-
-            foreach ($imageDimensionsProvider->getDimensionsForProductImage($productImage) as $dimension) {
-                $filterName = $dimension->getName();
-                $filesystem = $this->getFilesystem($locator, $filterName);
-
-                $filteredImage = $this->getResizedProductImageFile($filesystem, $sku, $name);
-                if (!$filteredImage) {
-                    continue;
-                }
-
-                $storagePath = $resizedImagePathProvider
-                    ->getPathForFilteredImage($productImage->getImage(), $filterName);
-                $publicMediaCacheManager->writeToStorage($filteredImage->getContent(), $storagePath);
-            }
-        }
-    }
-
-    /**
-     * @param AttachmentFile $file
-     * @param FileLocator $locator
-     * @param string $sku
-     * @param string $name
-     */
-    private function writeFilteredDigitalAssets(AttachmentFile $file, $locator, $sku, $name): void
-    {
-        $resizedImagePathProvider = $this->container->get('oro_attachment.provider.resized_image_path');
-        $cacheManager = $this->container->get('oro_attachment.manager.protected_mediacache');
-        $filters = array_keys($this->container->getParameter('liip_imagine.filter_sets'));
-
-        foreach ($filters as $filter) {
-            if (!str_starts_with($filter, 'digital_asset_')) {
-                continue;
-            }
-
-            $filesystem = $this->getFilesystem($locator, $filter);
-
-            $filteredImage = $this->getResizedProductImageFile($filesystem, $sku, $name);
-            if (!$filteredImage) {
-                continue;
-            }
-
-            $storagePath = $resizedImagePathProvider->getPathForFilteredImage($file, $filter);
-            $cacheManager->writeToStorage($filteredImage->getContent(), $storagePath);
         }
     }
 
@@ -404,47 +345,6 @@ class LoadProductDemoData extends AbstractFixture implements
         }
 
         return $this;
-    }
-
-    /**
-     * @param Filesystem $filesystem
-     * @param string $sku
-     * @param string $name
-     * @return null|File
-     */
-    protected function getResizedProductImageFile(Filesystem $filesystem, $sku, $name)
-    {
-        $file = null;
-
-        try {
-            $file = $filesystem->get(sprintf('%s.jpeg', $this->getImageFileName($sku, $name)));
-        } catch (\Exception $e) {
-            //image not found
-        }
-
-        return $file;
-    }
-
-    /**
-     * @param FileLocator $locator
-     * @param string $filterName
-     * @return Filesystem
-     */
-    protected function getFilesystem(FileLocator $locator, $filterName)
-    {
-        if (!array_key_exists($filterName, $this->filesystems)) {
-            $rootPath = $locator->locate(
-                sprintf('@OroProductBundle/Migrations/Data/Demo/ORM/images/resized/%s', $filterName)
-            );
-
-            if (is_array($rootPath)) {
-                $rootPath = current($rootPath);
-            }
-
-            $this->filesystems[$filterName] = new Filesystem(new Local($rootPath, false, 0600));
-        }
-
-        return $this->filesystems[$filterName];
     }
 
     /**

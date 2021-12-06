@@ -15,6 +15,9 @@
          }) %>"
     >
         <picture class="product-item__preview-picture" data-object-fit="">
+            <% if (obj.srcWebp) { %>
+                <source srcset="<%- srcWebp %>" type="image/webp">
+            <% } %>
             <img src="<%- src %>"
                  title="<%- title %>"
                  alt="<%- alt %>"

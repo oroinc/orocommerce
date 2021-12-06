@@ -5,8 +5,6 @@ namespace Oro\Bundle\CMSBundle\Migrations\Data\ORM;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
-use Gaufrette\Adapter\Local;
-use Gaufrette\Filesystem;
 use Oro\Bundle\AttachmentBundle\Entity\File as AttachmentFile;
 use Oro\Bundle\CMSBundle\ContentWidget\ImageSliderContentWidgetType;
 use Oro\Bundle\CMSBundle\Entity\ContentBlock;
@@ -18,7 +16,6 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadAdminUserData;
-use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
@@ -200,26 +197,6 @@ class LoadImageSlider extends AbstractFixture implements DependentFixtureInterfa
         $manager->persist($image);
         $manager->flush();
 
-        $this->writeDigitalAssets($file, $locator, $filename, 'original');
-
         return $image;
-    }
-
-    private function writeDigitalAssets(AttachmentFile $file, FileLocator $locator, $filename, $filter): void
-    {
-        $storagePath = $this->container->get('oro_attachment.provider.resized_image_path')
-            ->getPathForFilteredImage($file, $filter);
-
-        $rootPath = $locator->locate('@OroCMSBundle/Migrations/Data/ORM/data/promo-slider');
-        if (is_array($rootPath)) {
-            $rootPath = current($rootPath);
-        }
-
-        $filesystem = new Filesystem(new Local($rootPath, false, 0600));
-
-        $file = $filesystem->get(sprintf('%s.jpg', $filename));
-
-        $this->container->get('oro_attachment.manager.protected_mediacache')
-            ->writeToStorage($file->getContent(), $storagePath);
     }
 }

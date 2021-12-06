@@ -489,3 +489,10 @@ services:
             - '@doctrine'
         tags:
             - { name: oro.requirements_provider }
+
+    oro_cms.twig.image_slider_extension:
+        class: 'Oro\Bundle\CMSBundle\Twig\ImageSliderExtension'
+        arguments:
+            - '@oro_platform.twig.service_locator'
+        tags:
+            - { name: twig.extension }

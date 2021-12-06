@@ -36,16 +36,20 @@
                 <div class="promo-slider__item promo-slider__item--fraction-{{ pageComponentOptions.slidesToShow }}">
                     <a href="{{ imageSlide.url|strip_dangerous_protocols }}" target="{{ windowTarget }}" data-role="slide-item-link">
                         <div class="promo-slider__picture">
-                            <picture>
-                                <source srcset="{{ imageSlide.smallImage ? filtered_image_url(imageSlide.smallImage, 'original') : filtered_image_url(imageSlide.mainImage, 'max_width_414') }}"
-                                        media="(max-width: 414px)">
-                                <source srcset="{{ imageSlide.mediumImage ? filtered_image_url(imageSlide.mediumImage, 'original') : filtered_image_url(imageSlide.mainImage, 'max_width_992') }}"
-                                        media="(max-width: 992px)">
-                                <img src="{{ filtered_image_url(imageSlide.mainImage, 'original') }}"
-                                     class="promo-slider__img"
-                                     alt="{{ imageSlide.title }}"
-                                >
-                            </picture>
+                            {% set imageVariantSettings = {
+                                smallImage: { filter: 'original', fallback_filter: 'max_width_414', media: '(max-width: 414px)' },
+                                mediumImage: { filter: 'original', fallback_filter: 'max_width_992', media: '(max-width: 992px)' },
+                                mainImage: { filter: 'original' },
+                            } %}
+                            {% include '@OroAttachment/Twig/picture.html.twig' with {
+                                sources: oro_cms_image_slide_sources(imageSlide, imageVariantSettings),
+                                img_attrs: {
+                                    src: product_filtered_image(imageSlide.mainImage, 'original'),
+                                    alt: imageSlide.title,
+                                    loading: 'eager',
+                                    class: 'promo-slider__img'
+                                }
+                            } %}
                         </div>
                     </a>
                     {% if imageSlide.text %}

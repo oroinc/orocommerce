@@ -59,7 +59,7 @@ class ResizeProductImageMessageProcessor implements MessageProcessorInterface, T
         }
 
         foreach ($this->getApplicableFilters($productImage, $data['dimensions']) as $filterName) {
-            $this->imageResizeManager->applyFilter($image, $filterName, $data['force']);
+            $this->imageResizeManager->applyFilter($image, $filterName, '', $data['force']);
         }
 
         return self::ACK;

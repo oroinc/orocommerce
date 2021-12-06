@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Provider;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Helper\ProductImageHelper;
@@ -16,35 +16,27 @@ class ProductImagesURLsProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @internal
-     */
-    const PRODUCT_ID = 1;
+    private const PRODUCT_ID = 1;
 
-    /**
-     * @var ProductImagesURLsProvider
-     */
-    private $productImagesURLsProvider;
+    private AttachmentManager|\PHPUnit\Framework\MockObject\MockObject $attachmentManager;
 
-    /**
-     * @var AttachmentManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $attachmentManager;
+    private ProductImagesURLsProvider $productImagesURLsProvider;
 
-    /**
-     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $doctrineHelper;
+    private ProductRepository|\PHPUnit\Framework\MockObject\MockObject $productRepository;
 
-    /**
-     * {@inheritDoc}
-     */
     protected function setUp(): void
     {
-        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $managerRegistry = $this->createMock(ManagerRegistry::class);
+        $this->productRepository = $this->createMock(ProductRepository::class);
+        $managerRegistry
+            ->expects(self::any())
+            ->method('getRepository')
+            ->with(Product::class)
+            ->willReturn($this->productRepository);
+
         $this->attachmentManager = $this->createMock(AttachmentManager::class);
         $this->productImagesURLsProvider =
-            new ProductImagesURLsProvider($this->doctrineHelper, $this->attachmentManager, new ProductImageHelper());
+            new ProductImagesURLsProvider($managerRegistry, $this->attachmentManager, new ProductImageHelper());
     }
 
     /**
@@ -55,38 +47,35 @@ class ProductImagesURLsProviderTest extends \PHPUnit\Framework\TestCase
         array $imageFiles,
         array $filtersNames,
         array $expectedImages
-    ) {
-        $this->doctrineHelper
-            ->expects(static::once())
-            ->method('getEntityRepositoryForClass')
-            ->with(Product::class)
-            ->willReturn($productRepository = $this->createMock(ProductRepository::class));
-
-        $productRepository
-            ->expects(static::once())
+    ): void {
+        $this->productRepository
+            ->expects(self::once())
             ->method('find')
             ->with(self::PRODUCT_ID)
             ->willReturn($product);
 
         $this->attachmentManager
-            ->expects(static::any())
+            ->expects(self::any())
             ->method('getFilteredImageUrl')
-            ->with($this->isInstanceOf(File::class), $this->callback(function ($filterName) use ($filtersNames) {
-                return in_array($filterName, $filtersNames, true);
-            }))
+            ->with(
+                self::isInstanceOf(File::class),
+                self::callback(function ($filterName) use ($filtersNames) {
+                    return in_array($filterName, $filtersNames, true);
+                })
+            )
             ->willReturnCallback(function ($imageFile, $filterName) use ($imageFiles) {
                 return '/' . $filterName . array_search($imageFile, $imageFiles, true);
             });
 
         $images = $this->productImagesURLsProvider->getFilteredImagesByProductId(self::PRODUCT_ID, $filtersNames);
 
-        static::assertSame($expectedImages, $images);
+        self::assertSame($expectedImages, $images);
     }
 
     /**
      * @return array
      */
-    public function getFilteredImagesByProductIdDataProvider()
+    public function getFilteredImagesByProductIdDataProvider(): array
     {
         $imageUrl1 = '/image-url-1.jpg';
         $imageUrl2 = '/image-url-2.jpg';
@@ -114,14 +103,34 @@ class ProductImagesURLsProviderTest extends \PHPUnit\Framework\TestCase
                 'filtersNames' => [$filterName1, $filterName2],
                 'expectedImages' => [
                     [
-                        'filter_name_1' => '/filter_name_1/image-url-1.jpg',
-                        'filter_name_2' => '/filter_name_2/image-url-1.jpg',
-                        'isInitial'     => true
+                        'filter_name_1' => [
+                            [
+                                'srcset' => '/filter_name_1/image-url-1.jpg',
+                                'type' => null,
+                            ],
+                        ],
+                        'filter_name_2' => [
+                            [
+                                'srcset' => '/filter_name_2/image-url-1.jpg',
+                                'type' => null,
+                            ],
+                        ],
+                        'isInitial' => true,
                     ],
                     [
-                        'filter_name_1' => '/filter_name_1/image-url-2.jpg',
-                        'filter_name_2' => '/filter_name_2/image-url-2.jpg',
-                        'isInitial'     => false
+                        'filter_name_1' => [
+                            [
+                                'srcset' => '/filter_name_1/image-url-2.jpg',
+                                'type' => null,
+                            ],
+                        ],
+                        'filter_name_2' => [
+                            [
+                                'srcset' => '/filter_name_2/image-url-2.jpg',
+                                'type' => null,
+                            ],
+                        ],
+                        'isInitial' => false,
                     ],
                 ],
             ],
@@ -135,9 +144,9 @@ class ProductImagesURLsProviderTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testGetFilteredImagesByProductIdWhenNoFiltersNames()
+    public function testGetFilteredImagesByProductIdWhenNoFiltersNames(): void
     {
         $images = $this->productImagesURLsProvider->getFilteredImagesByProductId(self::PRODUCT_ID, []);
-        static::assertSame([], $images);
+        self::assertSame([], $images);
     }
 }

@@ -14,6 +14,7 @@ oro_behat_extension:
                 - Oro\Bundle\NavigationBundle\Tests\Behat\Context\FeatureContext
                 - Oro\Bundle\UIBundle\Tests\Behat\Context\TypeaheadContext
                 - Oro\Bundle\ProductBundle\Tests\Behat\Context\FeatureContext
+                - Oro\Bundle\AttachmentBundle\Tests\Behat\Context\AttachmentImageContext
                 - Oro\Bundle\LocaleBundle\Tests\Behat\Context\LocalizationContext
                 - Oro\Bundle\FrontendLocalizationBundle\Tests\Behat\Context\LocalizationSwitcherContext
                 - Oro\Bundle\ProductBundle\Tests\Behat\Context\QuickOrderFormContext

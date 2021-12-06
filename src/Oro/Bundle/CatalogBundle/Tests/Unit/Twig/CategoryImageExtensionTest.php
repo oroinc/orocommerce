@@ -12,79 +12,226 @@ class CategoryImageExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use TwigExtensionTestCaseTrait;
 
-    /** @var AttachmentManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $attachmentManager;
+    private const PLACEHOLDER = 'placeholder/image.png';
 
-    /** @var ImagePlaceholderProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $imagePlaceholderProvider;
+    private AttachmentManager|\PHPUnit\Framework\MockObject\MockObject $attachmentManager;
 
-    /** @var CategoryImageExtension */
-    private $extension;
+    private CategoryImageExtension $extension;
 
     protected function setUp(): void
     {
         $this->attachmentManager = $this->createMock(AttachmentManager::class);
-        $this->imagePlaceholderProvider = $this->createMock(ImagePlaceholderProviderInterface::class);
+        $imagePlaceholderProvider = $this->createMock(ImagePlaceholderProviderInterface::class);
 
         $container = self::getContainerBuilder()
             ->add(AttachmentManager::class, $this->attachmentManager)
-            ->add('oro_catalog.provider.category_image_placeholder', $this->imagePlaceholderProvider)
+            ->add('oro_catalog.provider.category_image_placeholder', $imagePlaceholderProvider)
             ->getContainer($this);
 
         $this->extension = new CategoryImageExtension($container);
+
+        $this->attachmentManager
+            ->expects(self::any())
+            ->method('getFilteredImageUrl')
+            ->willReturnCallback(static function (File $file, string $filter, string $format) {
+                return '/' . $filter . '/' . $file->getFilename() . ($format ? '.' . $format : '');
+            });
+
+        $imagePlaceholderProvider
+            ->expects(self::any())
+            ->method('getPath')
+            ->willReturnCallback(static function (string $filter, string $format) {
+                return '/' . $filter . '/' . self::PLACEHOLDER . ($format ? '.' . $format : '');
+            });
     }
 
     public function testGetCategoryFilteredImage(): void
     {
         $file = new File();
-        $filter = 'category_medium';
+        $file->setFilename('image.png');
 
-        $this->attachmentManager->expects($this->once())
-            ->method('getFilteredImageUrl')
-            ->with($file, $filter)
-            ->willReturn('/path/to/filtered/image');
+        self::assertEquals(
+            '/category_medium/image.png',
+            self::callTwigFunction($this->extension, 'category_filtered_image', [$file, 'category_medium'])
+        );
+    }
 
-        $this->imagePlaceholderProvider->expects($this->never())
-            ->method('getPath');
+    public function testGetCategoryFilteredImageWithFormat(): void
+    {
+        $file = new File();
+        $file->setFilename('image.png');
 
-        $this->assertEquals(
-            '/path/to/filtered/image',
-            self::callTwigFunction($this->extension, 'category_filtered_image', [$file, $filter])
+        self::assertEquals(
+            '/category_medium/image.png.webp',
+            self::callTwigFunction($this->extension, 'category_filtered_image', [$file, 'category_medium', 'webp'])
         );
     }
 
     public function testGetCategoryFilteredImageWithoutFile(): void
     {
-        $filter = 'category_medium';
-        $path = '/some/test/path.npg';
+        self::assertEquals(
+            '/category_medium/placeholder/image.png',
+            self::callTwigFunction($this->extension, 'category_filtered_image', [null, 'category_medium'])
+        );
+    }
 
-        $this->attachmentManager->expects($this->never())
-            ->method('getFilteredImageUrl');
-
-        $this->imagePlaceholderProvider->expects($this->once())
-            ->method('getPath')
-            ->with($filter)
-            ->willReturn($path);
-
-        $this->assertEquals(
-            $path,
-            self::callTwigFunction($this->extension, 'category_filtered_image', [null, $filter])
+    public function testGetCategoryFilteredImageWithoutFileWithFormat(): void
+    {
+        self::assertEquals(
+            '/category_medium/placeholder/image.png.webp',
+            self::callTwigFunction($this->extension, 'category_filtered_image', [null, 'category_medium', 'webp'])
         );
     }
 
     public function testGetCategoryImagePlaceholder(): void
     {
-        $filter = 'category_medium';
-        $path = '/some/test/path.npg';
-
-        $this->imagePlaceholderProvider->expects($this->once())
-            ->method('getPath')
-            ->with($filter)
-            ->willReturn($path);
-
-        $this->assertEquals(
-            $path,
-            self::callTwigFunction($this->extension, 'category_image_placeholder', [$filter])
+        self::assertEquals(
+            '/category_medium/placeholder/image.png',
+            self::callTwigFunction($this->extension, 'category_image_placeholder', ['category_medium'])
         );
+    }
+
+    public function testGetCategoryImagePlaceholderWithFormat(): void
+    {
+        self::assertEquals(
+            '/category_medium/placeholder/image.png.webp',
+            self::callTwigFunction($this->extension, 'category_image_placeholder', ['category_medium', 'webp'])
+        );
+    }
+
+    /**
+     * @dataProvider getCategoryFilteredPictureSourcesReturnsPlaceholderSourcesWhenFileIsNullDataProvider
+     *
+     * @param bool $isWebpEnabledIfSupported
+     * @param array $expected
+     */
+    public function testGetCategoryFilteredPictureSourcesReturnsPlaceholderSourcesWhenFileIsNull(
+        bool $isWebpEnabledIfSupported,
+        array $expected
+    ): void {
+        $this->attachmentManager
+            ->expects(self::any())
+            ->method('isWebpEnabledIfSupported')
+            ->willReturn($isWebpEnabledIfSupported);
+
+        $result = self::callTwigFunction(
+            $this->extension,
+            'category_filtered_picture_sources',
+            [null]
+        );
+
+        self::assertEquals($expected, $result);
+    }
+
+    public function getCategoryFilteredPictureSourcesReturnsPlaceholderSourcesWhenFileIsNullDataProvider(): array
+    {
+        return [
+            'returns regular source when webp is not enabled is supported' => [
+                'isWebpEnabledIfSupported' => false,
+                'expected' => [['srcset' => '/original/placeholder/image.png']],
+            ],
+            'returns regular and webp source when webp is enabled is supported' => [
+                'isWebpEnabledIfSupported' => true,
+                'expected' => [
+                    ['srcset' => '/original/placeholder/image.png.webp', 'type' => 'image/webp'],
+                    ['srcset' => '/original/placeholder/image.png'],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider getCategoryFilteredPictureSourcesDataProvider
+     *
+     * @param string $fileExtension
+     * @param bool $isWebpEnabledIfSupported
+     * @param array $expected
+     */
+    public function testGetCategoryFilteredPictureSources(
+        string $fileExtension,
+        bool $isWebpEnabledIfSupported,
+        array $attrs,
+        array $expected
+    ): void {
+        $file = new File();
+        $file->setFilename('image.' . $fileExtension);
+        $file->setExtension($fileExtension);
+        $file->setMimeType('image/mime');
+        $filterName = 'sample_filter';
+
+        $this->attachmentManager
+            ->expects(self::any())
+            ->method('isWebpEnabledIfSupported')
+            ->willReturn($isWebpEnabledIfSupported);
+
+        $result = self::callTwigFunction(
+            $this->extension,
+            'category_filtered_picture_sources',
+            [$file, $filterName, $attrs]
+        );
+
+        self::assertEquals($expected, $result);
+    }
+
+    public function getCategoryFilteredPictureSourcesDataProvider(): array
+    {
+        return [
+            'returns sources without webp if webp is not enabled if supported' => [
+                'fileExtension' => 'png',
+                'isWebpEnabledIfSupported' => false,
+                'attrs' => ['sample_key' => 'sample_value'],
+                'expected' => [
+                    [
+                        'srcset' => '/sample_filter/image.png',
+                        'type' => 'image/mime',
+                        'sample_key' => 'sample_value',
+                    ],
+                ],
+            ],
+            'returns sources with webp if webp is enabled if supported' => [
+                'fileExtension' => 'png',
+                'isWebpEnabledIfSupported' => true,
+                'attrs' => ['sample_key' => 'sample_value'],
+                'expected' => [
+                    [
+                        'srcset' => '/sample_filter/image.png.webp',
+                        'type' => 'image/webp',
+                        'sample_key' => 'sample_value',
+                    ],
+                    [
+                        'srcset' => '/sample_filter/image.png',
+                        'type' => 'image/mime',
+                        'sample_key' => 'sample_value',
+                    ],
+                ],
+            ],
+            'returns sources without webp if webp is enabled if supported but file is already webp' => [
+                'fileExtension' => 'webp',
+                'isWebpEnabledIfSupported' => true,
+                'attrs' => ['sample_key' => 'sample_value'],
+                'expected' => [
+                    [
+                        'srcset' => '/sample_filter/image.webp',
+                        'type' => 'image/mime',
+                        'sample_key' => 'sample_value',
+                    ],
+                ],
+            ],
+            'attrs take precedence over srcset and type' => [
+                'fileExtension' => 'png',
+                'isWebpEnabledIfSupported' => true,
+                'attrs' => ['srcset' => 'sample_value', 'type' => 'sample/type'],
+                'expected' => [
+                    [
+                        'srcset' => 'sample_value',
+                        'type' => 'sample/type',
+                    ],
+                    [
+                        'srcset' => 'sample_value',
+                        'type' => 'sample/type',
+                    ],
+                ],
+            ],
+        ];
     }
 }

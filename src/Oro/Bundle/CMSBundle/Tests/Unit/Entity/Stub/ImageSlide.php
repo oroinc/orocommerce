@@ -7,24 +7,17 @@ use Oro\Bundle\CMSBundle\Entity\ImageSlide as BaseImageSlide;
 
 class ImageSlide extends BaseImageSlide
 {
-    /** @var File */
-    private $mainImage;
+    private ?File $mainImage = null;
 
-    /** @var File */
-    private $mediumImage;
+    private ?File $mediumImage = null;
 
-    /** @var File */
-    private $smallImage;
+    private ?File $smallImage = null;
 
     public function getMainImage(): ?File
     {
         return $this->mainImage;
     }
 
-    /**
-     * @param File $mainImage
-     * @return $this
-     */
     public function setMainImage(File $mainImage): self
     {
         $this->mainImage = $mainImage;
@@ -37,11 +30,7 @@ class ImageSlide extends BaseImageSlide
         return $this->mediumImage;
     }
 
-    /**
-     * @param File $mediumImage
-     * @return $this
-     */
-    public function setMediumImage(File $mediumImage): self
+    public function setMediumImage(?File $mediumImage): self
     {
         $this->mediumImage = $mediumImage;
 
@@ -53,11 +42,7 @@ class ImageSlide extends BaseImageSlide
         return $this->smallImage;
     }
 
-    /**
-     * @param File $smallImage
-     * @return $this
-     */
-    public function setSmallImage(File $smallImage): self
+    public function setSmallImage(?File $smallImage): self
     {
         $this->smallImage = $smallImage;
 

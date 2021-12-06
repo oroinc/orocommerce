@@ -187,6 +187,9 @@ oro_behat_extension:
         First Image Slide:
             selector: 'div.promo-slider .slick-track div:nth-child(1)'
 
+        First Image Slide Picture:
+            selector: 'div.promo-slider div:nth-child(1) a div.promo-slider__picture picture'
+
         Second Dot On Image Slider:
             selector: 'div.promo-slider .slick-dots li:nth-child(2) button'
 

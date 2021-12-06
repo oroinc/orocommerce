@@ -23,7 +23,7 @@ class PreviewMetadataProvider implements PreviewMetadataProviderInterface
     private $mimeTypeChecker;
 
     public function __construct(
-        InnerPreviewMetadataProvider $innerPreviewMetadataProvider,
+        PreviewMetadataProviderInterface $innerPreviewMetadataProvider,
         FileUrlProviderInterface $fileUrlProvider,
         MimeTypeChecker $mimeTypeChecker
     ) {

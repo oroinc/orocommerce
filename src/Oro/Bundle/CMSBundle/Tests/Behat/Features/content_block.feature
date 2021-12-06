@@ -1,4 +1,5 @@
 @ticket-BB-19056
+@feature-BAP-19790
 @fixture-OroCMSBundle:CustomerUserFixture.yml
 @fixture-OroCMSBundle:WysiwygRoleFixture.yml
 Feature: Content Block
@@ -52,10 +53,11 @@ Feature: Content Block
     And I save and close form
     Then I should see "Content block has been saved" flash message
     When I proceed as the Buyer
-    When I am on homepage
+    And I am on homepage
     Then I should not see "LOREM IPSUM"
-    And I signed in as AmandaRCole@example.org on the store frontend
+    When I signed in as AmandaRCole@example.org on the store frontend
     Then I should see "LOREM IPSUM"
+    And I should see picture "First Image Slide Picture" element
 
   Scenario: Block for different customers
     Given I proceed as the Admin

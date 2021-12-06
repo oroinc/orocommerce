@@ -2,8 +2,7 @@
     {% if
         product is defined and
         product.stickers is defined and
-        product.stickers|length
-    %}
+        product.stickers|length %}
         {% set stickers = product.stickers %}
     {% endif %}
     {{ block_widget(block, {'stickers' : stickers|default({})}) }}
@@ -13,8 +12,7 @@
     {% if
         product is defined and
         product.stickers is defined and
-        product.stickers|length
-    %}
+        product.stickers|length %}
         {% set stickers = product.stickers %}
     {% endif %}
     {{ block_widget(block, {'stickers' : stickers|default({})}) }}
@@ -119,23 +117,28 @@
 {% endblock %}
 
 {% block __oro_product_grid__product_view_image_widget %}
-    {% import '@OroUI/macros.html.twig' as UI %}
-
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' product-item__preview-picture',
         'data-object-fit': ''
     }) %}
 
-    {% set attrImage = {
-        'class': ' product-item__preview-image',
-        'itemprop': 'image'
+    {% if product.imageWebp is defined and product.imageWebp %}
+        {% set sources = [{
+            srcset: asset(product.imageWebp|trim('/')),
+            type: 'image/webp'
+        }] %}
+    {% endif %}
+
+    {% include '@OroAttachment/Twig/picture.html.twig' with {
+        sources: sources|default([]),
+        img_attrs: {
+            src: asset(product.image|trim('/')),
+            alt: product.name,
+            class: 'product-item__preview-image',
+            itemprop: 'image'
+        },
+        picture_attrs: attr
     } %}
-
-    {% set image = product.image is defined ? asset(product.image|trim('/')) : product_image_placeholder('product_large') %}
-
-    <picture {{ block('block_attributes') }}>
-        <img src="{{ image }}" {{ UI.attributes(attrImage) }} alt="{{ product.name }}" loading="lazy">
-    </picture>
 {% endblock %}
 
 {% block __oro_product_grid__product_title_widget %}
@@ -156,7 +159,7 @@
 
 {% block __oro_product_grid__product_details_widget %}
     {% set attr = layout_attr_defaults(attr, {
-    '~class': " product__view-details-link product__view-details-link--{{ class_prefix }}"
+        '~class': " product__view-details-link product__view-details-link--{{ class_prefix }}"
     }) %}
     <div {{ block('block_attributes') }}>
         <a href="{{ product.view_link }}" class="link view-product">

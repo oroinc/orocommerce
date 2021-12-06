@@ -22,7 +22,10 @@
         {% if entity.logoImage %}
             {% set logoImageContent %}
                 <div class="control-label html-content">
-                    <img src="{{ filtered_image_url(entity.logoImage, "login_page") }}">
+                    {% include '@OroAttachment/Twig/picture.html.twig' with {
+                        file: entity.logoImage,
+                        filter: 'login_page'
+                    } %}
                 </div>
             {% endset %}
             {{ UI.renderAttribute('oro.cms.loginpage.logo_image.label'|trans, logoImageContent) }}
@@ -35,7 +38,10 @@
         {% if entity.backgroundImage %}
             {% set backgroupImageContent %}
                 <div class="control-label html-content">
-                    <img src="{{ filtered_image_url(entity.backgroundImage, "login_page") }}">
+                    {% include '@OroAttachment/Twig/picture.html.twig' with {
+                        file: entity.backgroundImage,
+                        filter: 'login_page'
+                    } %}
                 </div>
             {% endset %}
             {{ UI.renderAttribute('oro.cms.loginpage.background_image.label'|trans, backgroupImageContent) }}

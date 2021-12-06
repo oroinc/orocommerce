@@ -1,5 +1,6 @@
 @ticket-BB-13978
 @ticket-BB-16275
+@feature-BAP-19790
 @fixture-OroProductBundle:featured_products_block_localization.yml
 @regression
 
@@ -41,8 +42,17 @@ Feature: Featured Products Block Localization
   Scenario: Check that alt attributes contain proper product name
     Given I open product gallery for "SKU1" product
     Then I should see gallery image with alt "Product1`\"'&йёщ®&reg;>"
+    And I should see picture "Popup Gallery Widget Picture" element
     When I click "Popup Gallery Widget Close"
     Then I should see preview image with alt "Product1`\"'&йёщ®&reg;>" for "SKU1" product
+    And I should see picture for "SKU1" product in the "Featured Products Block"
+
+  Scenario: Check the search autocomplete when products found
+    When I type "SKU1" in "search"
+    Then I should see an "Search Autocomplete" element
+    And I should see "SKU1" in the "Search Autocomplete Highlight" element
+    And I should see an "Search Autocomplete Product Image" element
+    And I should see picture "Search Autocomplete Product Picture" element
 
   Scenario: Check that product name is displayed properly in shopping lists widget
     Given click "Add to Shopping List" for "SKU1" product

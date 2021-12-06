@@ -458,6 +458,7 @@ datagrids:
             variantId: ~
             name: ~
             image: ~
+            imageWebp: ~
             notes: ~
             initialSubtotal: ~
             discount: ~

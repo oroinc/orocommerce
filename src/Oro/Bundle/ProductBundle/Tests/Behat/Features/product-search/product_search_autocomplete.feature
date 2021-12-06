@@ -1,10 +1,11 @@
 @regression
 @ticket-BB-20073
+@feature-BAP-19790
 @fixture-OroCustomerBundle:CustomerUserAmandaRCole.yml
 @fixture-OroProductBundle:product_search/products.yml
 
 Feature: Product search autocomplete
-  In order to be able to search for products on frontstore
+  In order to be able to search for products on storefront
   As a Buyer
   I search for products through the main product search functionality
 
@@ -25,6 +26,7 @@ Feature: Product search autocomplete
     Then I should see an "Search Autocomplete" element
     And I should see "Product" in the "Search Autocomplete Highlight" element
     And I should see an "Search Autocomplete Product Image" element
+    And I should see picture "Search Autocomplete Product Picture" element
     And I should see "In Stock" in the "Search Autocomplete Inventory Status" element
     And I should see "$10.00" in the "Search Autocomplete Product" element
     And I should see an "Search Autocomplete Submit" element

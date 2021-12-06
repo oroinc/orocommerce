@@ -1,6 +1,7 @@
 @regression
 @ticket-BB-16135
 @ticket-BB-16669
+@feature-BAP-19790
 @fixture-OroProductBundle:highlighting_new_products.yml
 Feature: Product Image Placeholder in system configuration
   In order to manage product images
@@ -17,11 +18,13 @@ Feature: Product Image Placeholder in system configuration
     And I signed in as AmandaRCole@example.org on the store frontend
     When click "NewCategory"
     Then should see "Empty Product Image" for "PSKU1" product
+    And I should see picture for "PSKU1" product in the "ProductFrontendGrid"
     And should not see "Uploaded Product Image" for "PSKU1" product
 
   Scenario: Check no image on the view page
     When I click "View Details" for "PSKU1" product
     Then should see an "Empty Product Image" element
+    And I should see product picture in the "Product View Media Gallery"
     And should not see an "Uploaded Product Image" element
 
   Scenario: Check no image on the shopping list page
@@ -51,11 +54,13 @@ Feature: Product Image Placeholder in system configuration
     Given I proceed as the Buyer
     When click "NewCategory"
     Then should see "Uploaded Product Image" for "PSKU1" product
+    And I should see picture for "PSKU1" product in the "ProductFrontendGrid"
     And should not see "Empty Product Image" for "PSKU1" product
 
   Scenario: Check the product image placeholder on the view page
     When I click "View Details" for "PSKU1" product
     Then should see an "Uploaded Product Image" element
+    And I should see product picture in the "Product View Media Gallery"
     And should not see an "Empty Product Image" element
 
   Scenario: Check the product image placeholder on the shopping list page

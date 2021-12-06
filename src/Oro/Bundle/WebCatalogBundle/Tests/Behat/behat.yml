@@ -211,6 +211,7 @@ oro_behat_extension:
                 - Oro\Bundle\SecurityBundle\Tests\Behat\Context\ACLContext
                 - Oro\Bundle\ApplicationBundle\Tests\Behat\Context\CommerceMainContext
                 - Oro\Bundle\ProductBundle\Tests\Behat\Context\FeatureContext
+                - Oro\Bundle\AttachmentBundle\Tests\Behat\Context\AttachmentImageContext
                 - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
                 - Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext
                 - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext

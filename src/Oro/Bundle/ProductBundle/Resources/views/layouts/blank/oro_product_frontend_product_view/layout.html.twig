@@ -273,10 +273,8 @@
     {% set collection = value %}
     {% set galleryImages = [] %}
     {% for item in collection %}
-        {% set galleryImages = galleryImages|merge([{
-            src: product_filtered_image(item.file, 'product_gallery_popup'),
-            alt: ''
-        }]) %}
+        {% set sources = product_filtered_picture_sources(item.file, 'product_gallery_popup') %}
+        {% set galleryImages = galleryImages|merge([{src: (sources|last).srcset, sources: sources|slice(0, -1)}]) %}
     {% endfor %}
 
     {% set popupGalleryAttr = {
@@ -295,7 +293,12 @@
         <div class="product-view__attribute-images-container show-less" data-role="items-container" {{ UI.attributes(popupGalleryAttr) }}>
             {%- for item in collection -%}
             <div class="product-view__attribute-images-item" data-trigger-gallery-open data-gallery-image-index="{{ loop.index0 }}">
-                <img class="product-view__attribute-image" src="{{ product_filtered_image(item.file, 'product_small') }}"/>
+                {% include '@OroAttachment/Twig/picture.html.twig' with {
+                    sources: product_filtered_picture_sources(item.file, 'product_small'),
+                    img_attrs: {
+                        class: 'product-view__attribute-image',
+                    }
+                } %}
             </div>
             {%- endfor -%}
         </div>
@@ -310,13 +313,15 @@
 {% block product_view_attribute_image_widget %}
     {% import '@OroUI/macros.html.twig' as UI %}
 
+    {% set sources = product_filtered_picture_sources(value, 'product_gallery_popup') %}
     {% set popupGalleryAttr = {
         'data-page-component-view': {
             view: 'oroproduct/js/app/widget/product-popup-gallery-widget',
             bindWithSlider: false,
             galleryImages: [{
-                src: product_filtered_image(value, 'product_gallery_popup'),
-            }]
+                src: (sources|last).srcset,
+                sources: sources|slice(0, -1)
+            }],
         }|json_encode
     } %}
 
@@ -325,7 +330,12 @@
             <span class="product-view-attribute">{{ label|trans }}:</span>
         {% endif %}
         <span class="product-view__attribute-images-item" data-trigger-gallery-open>
-            <img class="product-view__attribute-image" src="{{ product_filtered_image(value, 'product_small') }}"/>
+            {% include '@OroAttachment/Twig/picture.html.twig' with {
+                sources: product_filtered_picture_sources(value, 'product_small'),
+                img_attrs: {
+                    class: 'product-view__attribute-image',
+                }
+            } %}
         </span>
     </div>
 {% endblock %}

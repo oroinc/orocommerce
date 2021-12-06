@@ -12,6 +12,7 @@ oro_behat_extension:
         - Oro\Bundle\WebCatalogBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\ProductBundle\Tests\Behat\Context\QuickOrderFormContext
         - Oro\Bundle\ProductBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\AttachmentBundle\Tests\Behat\Context\AttachmentImageContext
         - Oro\Bundle\CheckoutBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\CMSBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\RedirectBundle\Tests\Behat\Context\SlugPrototypesContext
