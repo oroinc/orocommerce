@@ -88,7 +88,7 @@ class TaxValueManager
         }
 
         // Save taxValues to cache only with entity IDs
-        if ($entityId) {
+        if ($entityId && $taxValue->getId()) {
             $key = $this->getTaxValueCacheKey($entityClass, $entityId);
             $this->taxValues[$key] = $taxValue;
         }
