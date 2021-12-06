@@ -50,7 +50,7 @@ class TaxValueManagerTest extends \PHPUnit\Framework\TestCase
     {
         $class = self::TAX_VALUE_CLASS;
         $id = 1;
-        $taxValue = new TaxValue();
+        $taxValue = $this->getEntity(TaxValue::class, ['id' => 1]);
 
         $repository = $this->createMock(ObjectRepository::class);
         $repository->expects(static::once())
@@ -77,7 +77,7 @@ class TaxValueManagerTest extends \PHPUnit\Framework\TestCase
         $id = 1;
 
         $repository = $this->createMock(ObjectRepository::class);
-        $repository->expects(static::once())
+        $repository->expects(static::exactly(2))
             ->method('findOneBy')
             ->with(
                 static::logicalAnd(
@@ -87,13 +87,19 @@ class TaxValueManagerTest extends \PHPUnit\Framework\TestCase
                 )
             )
             ->willReturn(null);
-        $this->doctrineHelper->expects($this->once())->method('getEntityRepositoryForClass')->willReturn($repository);
+
+        $this->doctrineHelper
+            ->expects(static::exactly(2))
+            ->method('getEntityRepositoryForClass')
+            ->willReturn($repository);
 
         $taxValue = $this->manager->getTaxValue($class, $id);
         $this->assertInstanceOf(self::TAX_VALUE_CLASS, $taxValue);
 
-        // cache
-        $this->assertSame($taxValue, $this->manager->getTaxValue($class, $id));
+        // Since taxes can be different with each request for their creation and not managed in UoW, we cannot
+        // guarantee that cache of taxes will be relevant for every request to get tax values. In this case, it makes
+        // not sense to cache tax values. Actual taxes are taxes that have been flashed and have identifier value.
+        $this->manager->getTaxValue($class, $id);
     }
 
     /**
@@ -207,8 +213,8 @@ class TaxValueManagerTest extends \PHPUnit\Framework\TestCase
     {
         $class = 'stdClass';
         $id = 1;
-        $cachedTaxValue = new TaxValue();
-        $notCachedTaxValue = new TaxValue();
+        $cachedTaxValue = $this->getEntity(TaxValue::class, ['id' => 1]);
+        $notCachedTaxValue = $this->getEntity(TaxValue::class, ['id' => 2]);
 
         $repository = $this->createMock(ObjectRepository::class);
 
@@ -293,9 +299,9 @@ class TaxValueManagerTest extends \PHPUnit\Framework\TestCase
     public function testPreloadTaxValues()
     {
         $entityClass = 'SomeClass';
-        $entityIds = [1, 2, 5];
-        $taxValue1 = $this->getEntity(TaxValue::class, ['entityId' => 1]);
-        $taxValue2 = $this->getEntity(TaxValue::class, ['entityId' => 5]);
+        $entityIds = [1, 2];
+        $taxValue1 = $this->getEntity(TaxValue::class, ['id' => 1, 'entityId' => 1]);
+        $taxValue2 = $this->getEntity(TaxValue::class, ['id' => 2, 'entityId' => 2]);
         $taxValues = [$taxValue1, $taxValue2];
 
         $repository = $this->createMock(ObjectRepository::class);
@@ -314,8 +320,8 @@ class TaxValueManagerTest extends \PHPUnit\Framework\TestCase
         $this->manager->preloadTaxValues($entityClass, $entityIds);
 
         $this->assertEquals($taxValue1, $this->manager->getTaxValue($entityClass, 1));
-        $this->assertEquals($taxValue2, $this->manager->getTaxValue($entityClass, 5));
+        $this->assertEquals($taxValue2, $this->manager->getTaxValue($entityClass, 2));
 
-        $this->manager->preloadTaxValues($entityClass, $entityIds); // Check cache
+        $this->manager->preloadTaxValues($entityClass, $entityIds);
     }
 }
