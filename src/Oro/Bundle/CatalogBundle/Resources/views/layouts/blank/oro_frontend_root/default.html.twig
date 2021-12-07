@@ -71,7 +71,9 @@
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' featured-category__image',
         alt: category.title,
-        loading: 'lazy'
+        loading: 'lazy',
+        width: 315,
+        height: 260
     }) %}
 
     {% include '@OroAttachment/Twig/picture.html.twig' with {

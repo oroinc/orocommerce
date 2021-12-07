@@ -77,7 +77,8 @@
             <a class="main-menu-column__link" href="#">
                 <img class="main-menu-column__image"
                      alt="Sale banner 1"
-                     src="{{- asset('bundles/orowebcatalog/images/onsale_3.jpg') -}}">
+                     src="{{- asset('bundles/orowebcatalog/images/onsale_3.jpg') -}}"
+                     loading="lazy">
             </a>
         </li>
     {% endset %}
@@ -91,15 +92,10 @@
             <a class="main-menu-column__link" href="#">
                 <img class="main-menu-column__image"
                      alt="Sale banner 2"
-                     src="{{- asset('bundles/orowebcatalog/images/onsale_1.jpg') -}}">
+                     src="{{- asset('bundles/orowebcatalog/images/onsale_1.jpg') -}}"
+                     loading="lazy">
             </a>
         </li>
-        {#<li class="main-menu-column__item">#}
-            {#<a class="main-menu-column__link" href="#">#}
-                {#<img class="main-menu-column__image"
-                       src="{{- asset('bundles/orowebcatalog/images/onsale_2.jpg') -}}">#}
-            {#</a>#}
-        {#</li>#}
     {% endset %}
     {{ block('_web_catalog_menu_second_level_column') }}
 {% endblock %}

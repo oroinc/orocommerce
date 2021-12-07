@@ -4,6 +4,7 @@
 
 .embedded-products {
     display: flex;
+    margin: 0 $embedded-products-btn-arrow-width;
 
     &__item {
         width: math.div(100%, $embedded-products-item-count-desktop);
@@ -39,6 +40,10 @@
     .embedded-products {
         &__item {
             width: math.div(100%, $embedded-products-item-width-count-tablet-small);
+
+            &:not(.slick-slide) {
+                min-width: math.div(100%, $embedded-products-item-width-count-tablet-small);
+            }
         }
     }
 }
@@ -47,6 +52,10 @@
     .embedded-products {
         &__item {
             width: math.div(100%, $embedded-products-item-count-mobile-landscape);
+
+            &:not(.slick-slide) {
+                min-width: math.div(100%, $embedded-products-item-count-mobile-landscape);
+            }
         }
     }
 }
@@ -55,6 +64,10 @@
     .embedded-products {
         &__item {
             width: math.div(100%, $embedded-products-item-count-mobile);
+
+            &:not(.slick-slide) {
+                min-width: math.div(100%, $embedded-products-item-count-mobile);
+            }
         }
     }
 }
