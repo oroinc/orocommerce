@@ -1,0 +1,37 @@
+api:
+    entities:
+        Oro\Bundle\ShippingBundle\Entity\LengthUnit:
+            documentation_resource: '@OroShippingBundle/Resources/doc/api/product_shipping_options.md'
+        Oro\Bundle\ShippingBundle\Entity\FreightClass:
+            documentation_resource: '@OroShippingBundle/Resources/doc/api/product_shipping_options.md'
+            actions:
+                update: false
+        Oro\Bundle\ShippingBundle\Entity\WeightUnit:
+            documentation_resource: '@OroShippingBundle/Resources/doc/api/product_shipping_options.md'
+        Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions:
+            documentation_resource: '@OroShippingBundle/Resources/doc/api/product_shipping_options.md'
+            fields:
+                weightValue:
+                    form_options:
+                        mapped: false
+                weightUnit:
+                    form_options:
+                        mapped: false
+                dimensionsLength:
+                    form_options:
+                        mapped: false
+                dimensionsWidth:
+                    form_options:
+                        mapped: false
+                dimensionsHeight:
+                    form_options:
+                        mapped: false
+                dimensionsUnit:
+                    form_options:
+                        mapped: false
+        Oro\Bundle\ProductBundle\Entity\Product:
+            documentation_resource: '@OroShippingBundle/Resources/doc/api/product.md'
+            fields:
+                productShippingOptions:
+                    data_type: unidirectionalAssociation:product
+                    target_class: Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions
