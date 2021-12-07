@@ -1,0 +1,14 @@
+data:
+    id: '<toString(@product_shipping_options.1->id)>'
+    type: 'productshippingoptions'
+    attributes:
+        weightValue: 6.6
+    relationships:
+        product:
+            data:
+                id: '<toString(@product-1->id)>'
+                type: 'products'
+        productUnit:
+            data:
+                id: '<toString(@product_unit.bottle->code)>'
+                type: 'productunits'
