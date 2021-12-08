@@ -298,6 +298,7 @@ datagrids:
                 template: '@OroShoppingList/Datagrid/Column/shopping_list_select_radio.html.twig'
                 manageable: false
                 order: 0
+                cellClassName: ' skip-row-click'
 
     frontend-customer-user-shopping-lists-grid:
         extends: frontend-customer-user-shopping-lists-base-grid
@@ -520,6 +521,7 @@ datagrids:
                 type: twig
                 frontend_type: html
                 template: '@OroShoppingList/Datagrid/Column/customer_user_owner_radio.html.twig'
+                cellClassName: ' skip-row-click'
                 manageable: false
             firstName:
                 label: oro.customer.customeruser.first_name.label
