@@ -97,6 +97,12 @@ define(function(require) {
             SinglePageCheckoutFormView.__super__.initialize.call(this, options);
         },
 
+        render() {
+            SinglePageCheckoutFormView.__super__.render.call(this);
+
+            mediator.trigger('single-page-checkout:rendered');
+        },
+
         /**
          * @inheritdoc
          */
@@ -127,6 +133,8 @@ define(function(require) {
                 return;
             }
 
+            mediator.trigger('single-page-checkout:before-change');
+
             this._toggleShipTo();
             this._disableShippingAddress();
 
@@ -134,12 +142,14 @@ define(function(require) {
             this._changePaymentMethod();
 
             this.afterCheck($(event.target), false);
+            mediator.trigger('single-page-checkout:after-change');
         },
 
         /**
          * @param {jQuery.Event} event
          */
         onForceChange: function(event) {
+            mediator.trigger('single-page-checkout:before-force-change');
             this._toggleShipTo();
             this._disableShippingAddress();
 
@@ -147,6 +157,7 @@ define(function(require) {
             this._changePaymentMethod();
 
             this.afterCheck($(event.target), true);
+            mediator.trigger('single-page-checkout:after-force-change');
         },
 
         onBeforeSaveState: function() {

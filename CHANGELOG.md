@@ -6,6 +6,29 @@ The current file describes significant changes in the code that may affect the u
 
 ### Added
 
+#### CheckoutBundle
+* Added a few mediator's events for Single Page Checkout
+
+##### orocheckout/js/app/components/single-page-checkout-component
+
+`single-page-checkout:before-layout-subtree-content-loading` - triggered before Layout Subtrees will update
+
+`single-page-checkout:after-layout-subtree-content-loading` - triggered after Layout Subtrees will updated
+
+`single-page-checkout:layout-subtree-content-loading-fail` - triggered when something wrong and response was fail
+
+##### orocheckout/js/app/views/single-page-checkout-form-view
+
+`single-page-checkout:rendered` - triggered when form has rendered
+
+`single-page-checkout:before-change` - triggered when before form will change
+
+`single-page-checkout:after-change` - triggered after form changed
+
+`single-page-checkout:before-force-change` - triggered when before form will force change
+
+`single-page-checkout:after-force-change` - triggered after form force changed
+
 ### Changed
 #### WebsiteSearchBundle
 * Changed `oro_website_search.event_listener.orm.fulltext_index_listener` to use `doctrine.dbal.search_connection`
