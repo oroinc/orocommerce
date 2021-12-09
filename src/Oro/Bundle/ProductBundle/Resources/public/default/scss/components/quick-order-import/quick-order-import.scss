@@ -36,6 +36,11 @@
   &__content {
     margin-bottom: $offset-y-m;
   }
+  
+  &__btn {
+    width: $quick-order-import-button-width;
+    max-width: 100%;
+  }
 
   .filename {
     display: none;
