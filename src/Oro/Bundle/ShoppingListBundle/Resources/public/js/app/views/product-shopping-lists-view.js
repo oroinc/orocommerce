@@ -107,6 +107,7 @@ define(function(require) {
                 shoppingListsCount: modelShoppingLists && modelShoppingLists.length || 0
             }));
 
+            this.$el.toggleClass('product-item-shopping-lists', $el.length > 0);
             this.$el.html($el);
             this.delegateEvents();
         },

@@ -60,16 +60,16 @@
                                     <div class="product-item__placeholder-label" data-role="unit-label">
                                         {{- currentProduct.unit|oro_format_product_unit_label -}}
                                     </div>
-                                    <div class="hidden">
-                                        {{ form_widget(form.unit, {attr: unitAttr}) }}
-                                    </div>
+                                    {% set unitAttr = layout_attr_defaults(unitAttr, {
+                                        'data-skip-input-widgets': '',
+                                        'class': 'hidden'
+                                    }) %}
+                                    {{ form_widget(form.unit, {attr: unitAttr}) }}
                                 {% else %}
                                     {{ form_widget(form.unit, {attr: unitAttr}) }}
                                 {% endif %}
                             {% else %}
-                                <div class="hidden">
                                     {{ form_widget(form.unit, {attr: unitAttr}) }}
-                                </div>
                             {% endif %}
                         {% endif %}
                     {% else %}
@@ -81,17 +81,17 @@
                             {{- currentProduct.unit|oro_format_product_unit_label -}}
                         </div>
                     {% endif %}
-                    <div class="hidden">
-                        {{ form_widget(form.unit, {attr: unitAttr}) }}
-                    </div>
+                    {% set unitAttr = layout_attr_defaults(unitAttr, {
+                        'data-skip-input-widgets': '',
+                        'class': 'hidden'
+                    }) %}
+                    {{ form_widget(form.unit, {attr: unitAttr}) }}
                 {% endif %}
             </div>
-            <div class="hidden">
-                {{ form_widget(form._token) }}
-                {% if render_rest %}
-                    {{ form_rest(form) }}
-                {% endif %}
-            </div>
+            {{ form_widget(form._token) }}
+            {% if render_rest %}
+                {{ form_rest(form) }}
+            {% endif %}
         </div>
     {% endif %}
 {% endblock %}
