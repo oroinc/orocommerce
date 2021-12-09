@@ -220,14 +220,18 @@ define(function(require) {
          */
         _prepareLayoutSubTreeViews: function(layoutBlockIds) {
             this.layoutSubTreeViews = {};
-            _.each(layoutBlockIds, (function(blockId) {
+
+            _.each(layoutBlockIds, blockId => {
                 if (blockId in LayoutSubtreeManager.viewsCollection) {
-                    this.layoutSubTreeViews[blockId] = LayoutSubtreeManager.viewsCollection[blockId];
+                    const view = LayoutSubtreeManager.viewsCollection[blockId];
+                    this.listenTo(view, 'dispose', () => (delete this.layoutSubTreeViews[blockId]));
+                    this.layoutSubTreeViews[blockId] = view;
                 }
-            }).bind(this));
+            });
         },
 
         _beforeLayoutSubTreeViewContentLoading: function() {
+            mediator.trigger('single-page-checkout:before-layout-subtree-content-loading');
             _.each(this.layoutSubTreeViews, (function(view) {
                 view.beforeContentLoading();
             }));
@@ -248,15 +252,19 @@ define(function(require) {
         },
 
         _afterLayoutSubTreeViewContentLoading: function() {
-            _.each(this.layoutSubTreeViews, (function(view) {
+            mediator.trigger('single-page-checkout:after-layout-subtree-content-loading');
+            _.each(this.layoutSubTreeViews, view => {
                 view.afterContentLoading();
-            }));
+                this.stopListening(view);
+            });
         },
 
         _contentLayoutSubTreeViewContentLoadingFail: function() {
-            _.each(this.layoutSubTreeViews, (function(view) {
+            mediator.trigger('single-page-checkout:layout-subtree-content-loading-fail');
+            _.each(this.layoutSubTreeViews, view => {
                 view.contentLoadingFail();
-            }));
+                this.stopListening(view);
+            });
         },
 
         /**
