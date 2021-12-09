@@ -35,3 +35,7 @@ layout:
             optionName: items_data.matrixFormType
             optionValue:
                 '=data["product_list_form_availability_provider"].getAvailableMatrixFormTypes(items)'
+        - '@setOption':
+            id: __product_details
+            optionName: visible
+            optionValue: false

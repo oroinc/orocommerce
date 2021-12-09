@@ -82,7 +82,7 @@
             }
 
             .main-menu__link {
-                padding: 8px 15px 7px 30px;
+                padding: 8px 0 7px 30px;
             }
         }
     }
@@ -90,13 +90,6 @@
 
 @include breakpoint('desktop') {
     .main-menu {
-        .mobile-version & {
-            &__button-arrow {
-                display: block;
-                margin-left: -15px;
-            }
-        }
-
         &__item {
             display: flex;
             flex-wrap: wrap;
@@ -120,15 +113,6 @@
                     border-width: 0;
                 }
             }
-        }
-
-        &__taptick {
-            display: none;
-        }
-
-        &__button-arrow {
-            display: block;
-            margin-left: -15px;
         }
     }
 }

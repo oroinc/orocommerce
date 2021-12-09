@@ -157,11 +157,6 @@
            {% endif %}
         >
             <span class="main-menu__text">{{ category.label }}</span>
-            {% if hasSublist %}
-                <span class="main-menu__taptick" aria-hidden="true">
-                    <span class="fa-angle-down fa--no-offset"></span>
-                </span>
-            {% endif %}
         </a>
         {% if hasSublist %}
             {% set menuButtonId = 'button-'|uniqid %}
@@ -169,13 +164,12 @@
                     data-toggle="dropdown"
                     data-popper="false"
                     data-go-to="next"
+                    data-ignore-navigation=""
                     id="{{ menuButtonId }}"
                     aria-haspopup="true"
                     aria-expanded="false"
                     aria-label="{{ category.label }}"
-            >
-                <span class="fa-angle-down fa--no-offset" aria-hidden="true"></span>
-            </button>
+            ></button>
             {% set togglerId = menuLinkId  ~ ' ' ~ menuButtonId%}
             {% do block|merge_context({'togglerId': togglerId}) %}
             {{ block(sub_block) }}

@@ -25,11 +25,6 @@
     <a href="{{ path('oro_product_frontend_product_index', {'categoryId': category.id, 'includeSubcategories': true}) }}"
        class="main-menu__link">
         <span class="main-menu__text">{{ category.title }} </span>
-        {% if category.hasSublist %}
-            <span class="main-menu__taptick">
-                <span class="fa-angle-down fa--no-offset" aria-hidden="true"></span>
-            </span>
-        {% endif %}
     </a>
     {% if category.hasSublist %}
         {% set togglerId = 'dropdown-'|uniqid %}
@@ -38,11 +33,10 @@
                 data-toggle="dropdown"
                 data-popper="false"
                 data-go-to="next"
+                data-ignore-navigation=""
                 aria-haspopup="true"
                 aria-expanded="false"
-                aria-label="{{ category.title }}">
-            <span class="fa-angle-down fa--no-offset" aria-hidden="true"></span>
-        </button>
+                aria-label="{{ category.title }}"></button>
         {# START TOP NAVIGATION SUBLIST #}
         <div class="main-menu__sublist-container"
              data-header-row-toggle
