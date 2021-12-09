@@ -18,17 +18,17 @@
                 <div class="form-layout__part is-label short">
                     {{ form_label(form.quantity) }}
                 </div>
-                <div class="form-layout__part is-fields fields-row">
-                    <div class="form-layout__part is-group">
-                        <div class="form-layout__part form-layout__part length-28">
-                            {{ form_widget(form.quantity, { 'attr': {'class': 'quantity'} }) }}
-                        </div>
-                        <div class="form-layout__part length-72">
-                            {{ form_widget(form.unit, { 'attr': {'class': 'unit'} }) }}
-                        </div>
+                <div class="form-layout__part is-fields fields-row is-group">
+                    <div class="is-group__col-start">
+                        {{ form_widget(form.quantity, { 'attr': {'class': 'quantity'} }) }}
                     </div>
                     <div class="fields-row-error">
                         {{ form_errors(form.quantity) }}
+                    </div>
+                    <div class="is-group__col-end">
+                        {{ form_widget(form.unit, { 'attr': {'class': 'unit'} }) }}
+                    </div>
+                    <div class="fields-row-error">
                         {{ form_errors(form.unit) }}
                     </div>
                 </div>
@@ -37,17 +37,17 @@
                 <div class="form-layout__part is-label short">
                     {{ form_label(form.price.value) }}
                 </div>
-                <div class="form-layout__part is-fields fields-row">
-                    <div class="form-layout__part is-group">
-                        <div class="form-layout__part form-layout__part length-28">
-                            {{ form_widget(form.price.value, { 'attr': {'class': 'price-value'} }) }}
-                        </div>
-                        <div class="form-layout__part length-72">
-                            {{ form_widget(form.price.currency, { 'attr': {'class': 'price-currency'} }) }}
-                        </div>
+                <div class="form-layout__part is-fields fields-row is-group">
+                    <div class="is-group__col-start">
+                        {{ form_widget(form.price.value, { 'attr': {'class': 'price-value'} }) }}
                     </div>
                     <div class="fields-row-error">
                         {{ form_errors(form.price.value) }}
+                    </div>                      
+                    <div class="is-group__col-end">
+                        {{ form_widget(form.price.currency, { 'attr': {'class': 'price-currency'} }) }}
+                    </div>
+                    <div class="fields-row-error">
                         {{ form_errors(form.price.currency) }}
                     </div>
                 </div>
