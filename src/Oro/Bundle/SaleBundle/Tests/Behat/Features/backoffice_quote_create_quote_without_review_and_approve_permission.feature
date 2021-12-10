@@ -34,8 +34,9 @@ Feature: Backoffice quote create quote without review and approve permission
     And I save and close form
     And agree that shipping cost may have changed
     Then I should see "Quote has been saved" flash message
-    And "Send to Customer" button is disabled
-    And "Submit for Review" button is not disabled
+    And "Send to Customer" button is not disabled
+    And I should not see following buttons:
+      | Submit for Review |
     And I should see "AA1 Product1 1 item or more $2.00"
 
   Scenario: Create quote with non-default price
@@ -77,13 +78,13 @@ Feature: Backoffice quote create quote without review and approve permission
     When I go to Sales/Quotes
     And I click "Create Quote"
     And I fill "Quote Form" with:
-      | Customer        | first customer |
+      | Customer | first customer |
     And I click "Free-form"
     And I click "Add Offer"
     And I fill "Quote Form" with:
-      | LineItemPrice            | 10  |
-      | LineItemFreeFormSku      | AA1 |
-      | LineItemFreeFormProduct  | AA1 |
+      | LineItemPrice           | 10  |
+      | LineItemFreeFormSku     | AA1 |
+      | LineItemFreeFormProduct | AA1 |
     And I save and close form
     And agree that shipping cost may have changed
     Then I should see "Quote has been saved" flash message
