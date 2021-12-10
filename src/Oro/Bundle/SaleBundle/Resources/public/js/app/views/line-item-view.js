@@ -306,7 +306,7 @@ define(function(require) {
                 this.updateContent(true);
             }
 
-            this.updateSkuLabel();
+            this.updateSkuLabelAndValue();
 
             const $quantitySelector = this.$el.find(this.options.offersQuantitySelector);
             $quantitySelector.trigger('change');
@@ -493,13 +493,14 @@ define(function(require) {
                 $priceValue.addClass('matched-price');
             });
 
-            this.updateSkuLabel();
+            this.updateSkuLabelAndValue();
         },
 
-        updateSkuLabel: function() {
+        updateSkuLabelAndValue: function() {
             const productData = this.$el.find(this.options.productSelect).inputWidget('data') || {};
 
             this.$el.find(this.options.productSkuLabel).text(productData.sku || '');
+            this.$el.find(this.options.productSkuInput).val(productData.sku || '');
         },
 
         /**
