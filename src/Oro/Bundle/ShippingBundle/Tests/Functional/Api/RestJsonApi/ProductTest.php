@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ShippingBundle\Tests\Functional\RestJsonApi;
+namespace Oro\Bundle\ShippingBundle\Tests\Functional\Api\RestJsonApi;
 
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -14,16 +14,20 @@ use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadProductShippingO
  */
 class ProductTest extends RestJsonApiTestCase
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         parent::setUp();
         $this->loadFixtures([LoadProductUnitPrecisions::class, LoadProductShippingOptions::class]);
     }
 
-    public function testGetShouldReturnShippingOptionsField()
+    private function findProductShippingOptionsByProduct(Product $product): ?ProductShippingOptions
+    {
+        return $this->getEntityManager()
+            ->getRepository(ProductShippingOptions::class)
+            ->findOneBy(['product' => $product]);
+    }
+
+    public function testGetShouldReturnShippingOptions()
     {
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_1);
@@ -57,7 +61,7 @@ class ProductTest extends RestJsonApiTestCase
         );
     }
 
-    public function testGetListShouldReturnShippingOptionsField()
+    public function testGetListShouldReturnShippingOptions()
     {
         $response = $this->cget(
             ['entity' => 'products'],
@@ -138,10 +142,8 @@ class ProductTest extends RestJsonApiTestCase
             $response
         );
 
-        $updatedShippingOption = $this->getEntityManager()
-            ->getRepository(ProductShippingOptions::class)
-            ->findOneByProduct($product);
-        self::assertEquals($shippingOption->getId(), $updatedShippingOption->getId());
+        $updatedShippingOptions = $this->findProductShippingOptionsByProduct($product);
+        self::assertEquals($shippingOption->getId(), $updatedShippingOptions->getId());
     }
 
     public function testUpdateShouldSetProductShippingOptionsToNull()
@@ -179,12 +181,10 @@ class ProductTest extends RestJsonApiTestCase
             $response
         );
 
-        self::assertNull(
-            $this->getEntityManager()->getRepository(ProductShippingOptions::class)->findOneByProduct($product)
-        );
+        self::assertNull($this->findProductShippingOptionsByProduct($product));
     }
 
-    public function testCreateShouldSetShippingOptsForNewProduct()
+    public function testCreateShouldSetShippingOptionsForNewProduct()
     {
         $response = $this->post(
             ['entity' => 'products'],
@@ -211,31 +211,27 @@ class ProductTest extends RestJsonApiTestCase
         );
 
         $product = $this->getEntityManager()->getReference(Product::class, $this->getResourceId($response));
-        $category = $this->getEntityManager()->getRepository(ProductShippingOptions::class)
-            ->findOneByProduct($product);
-        self::assertEquals(
-            $this->getReferenceRepository()
-                ->getReference(LoadProductShippingOptions::PRODUCT_SHIPPING_OPTIONS_1)
-                ->getId(),
-            $category->getId()
+        $shippingOptions = $this->findProductShippingOptionsByProduct($product);
+        self::assertSame(
+            $this->getReference(LoadProductShippingOptions::PRODUCT_SHIPPING_OPTIONS_1)->getId(),
+            $shippingOptions->getId()
         );
     }
 
-    public function testShouldDeleteProductFromShippingOptsWhenProductIsDeleted()
+    public function testShouldDeleteProductShippingOptionsWhenProductIsDeleted()
     {
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_1);
-        $optRepository = $this->getEntityManager()->getRepository(ProductShippingOptions::class);
 
-        // guard - the deleting product should be assigned to a category
-        $this->assertInstanceOf(ProductShippingOptions::class, $optRepository->findOneByProduct($product));
+        // guard - the deleting product should have shipping options
+        $this->assertInstanceOf(ProductShippingOptions::class, $this->findProductShippingOptionsByProduct($product));
 
         $this->delete(['entity' => 'products', 'id' => $product->getId()]);
 
-        $this->assertNull($optRepository->findOneByProduct($product));
+        $this->assertNull($this->findProductShippingOptionsByProduct($product));
     }
 
-    public function testGetSubresourceForShippingOptsShouldReturnProductShippingOpts()
+    public function testGetSubresourceForShippingOptionsShouldReturnProductShippingOptions()
     {
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_1);
@@ -277,7 +273,7 @@ class ProductTest extends RestJsonApiTestCase
         );
     }
 
-    public function testGetRelationshipForShippingOptsShouldReturnProductShippingOpts()
+    public function testGetRelationshipForShippingOptionsShouldReturnProductShippingOptions()
     {
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_1);
@@ -303,7 +299,7 @@ class ProductTest extends RestJsonApiTestCase
         );
     }
 
-    public function testUpdateRelationshipForShippingOptsShouldChangeProductShippingOpts()
+    public function testUpdateRelationshipForShippingOptionsShouldChangeProductShippingOptions()
     {
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_2);
@@ -322,9 +318,7 @@ class ProductTest extends RestJsonApiTestCase
             ]
         );
 
-        $updatedShippingOpts = $this->getEntityManager()
-            ->getRepository(ProductShippingOptions::class)
-            ->findOneByProduct($product);
-        self::assertEquals($shippingOption->getId(), $updatedShippingOpts->getId());
+        $updatedShippingOptions = $this->findProductShippingOptionsByProduct($product);
+        self::assertEquals($shippingOption->getId(), $updatedShippingOptions->getId());
     }
 }

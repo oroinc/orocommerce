@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ShippingBundle\Tests\Functional\RestJsonApi;
+namespace Oro\Bundle\ShippingBundle\Tests\Functional\Api\RestJsonApi;
 
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
@@ -10,17 +10,19 @@ use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadProductShippingO
 
 /**
  * @dbIsolationPerTest
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
 class ProductShippingOptionsTest extends RestJsonApiTestCase
 {
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->loadFixtures([LoadProductShippingOptions::class]);
     }
 
-    public function testGetList(): void
+    public function testGetList()
     {
         $response = $this->cget(
             ['entity' => 'productshippingoptions'],
@@ -260,28 +262,126 @@ class ProductShippingOptionsTest extends RestJsonApiTestCase
         );
     }
 
-    public function testGetSubResources()
+    public function testGetSubresourceForProduct()
     {
         /** @var ProductShippingOptions $option */
         $option = $this->getReference(LoadProductShippingOptions::PRODUCT_SHIPPING_OPTIONS_1);
 
-        $this->assertGetSubResource($option->getId(), 'product', $option->getProduct()->getId());
-        $this->assertGetSubResource($option->getId(), 'productUnit', $option->getProductUnit()->getCode());
-        $this->assertGetSubResource($option->getId(), 'weightUnit', $option->getWeight()->getUnit()->getCode());
-        $this->assertGetSubResource($option->getId(), 'dimensionsUnit', $option->getDimensions()->getUnit()->getCode());
-        $this->assertGetSubResource($option->getId(), 'freightClass', $option->getFreightClass()->getCode());
+        $response = $this->getSubresource(
+            ['entity' => 'productshippingoptions', 'id' => $option->getId(), 'association' => 'product']
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    'type'       => 'products',
+                    'id'         => (string)$option->getProduct()->getId(),
+                    'attributes' => [
+                        'sku' => $option->getProduct()->getSku()
+                    ]
+                ]
+            ],
+            $response
+        );
     }
 
-    public function testGetRelationships()
+    public function testGetSubresourceForProductUnit()
     {
         /** @var ProductShippingOptions $option */
         $option = $this->getReference(LoadProductShippingOptions::PRODUCT_SHIPPING_OPTIONS_1);
 
-        $response = $this->getRelationship([
-            'entity'      => 'productshippingoptions',
-            'id'          => $option->getId(),
-            'association' => 'product'
-        ]);
+        $response = $this->getSubresource(
+            ['entity' => 'productshippingoptions', 'id' => $option->getId(), 'association' => 'productUnit']
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    'type'       => 'productunits',
+                    'id'         => $option->getProductUnit()->getCode(),
+                    'attributes' => [
+                        'defaultPrecision' => $option->getProductUnit()->getDefaultPrecision()
+                    ]
+                ]
+            ],
+            $response
+        );
+    }
+
+    public function testGetSubresourceForWeightUnit()
+    {
+        /** @var ProductShippingOptions $option */
+        $option = $this->getReference(LoadProductShippingOptions::PRODUCT_SHIPPING_OPTIONS_1);
+
+        $response = $this->getSubresource(
+            ['entity' => 'productshippingoptions', 'id' => $option->getId(), 'association' => 'weightUnit']
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    'type'       => 'weightunits',
+                    'id'         => $option->getWeight()->getUnit()->getCode(),
+                    'attributes' => [
+                        'conversionRates' => $option->getWeight()->getUnit()->getConversionRates()
+                    ]
+                ]
+            ],
+            $response
+        );
+    }
+
+    public function testGetSubresourceForDimensionsUnit()
+    {
+        /** @var ProductShippingOptions $option */
+        $option = $this->getReference(LoadProductShippingOptions::PRODUCT_SHIPPING_OPTIONS_1);
+
+        $response = $this->getSubresource(
+            ['entity' => 'productshippingoptions', 'id' => $option->getId(), 'association' => 'dimensionsUnit']
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    'type'       => 'lengthunits',
+                    'id'         => $option->getDimensions()->getUnit()->getCode(),
+                    'attributes' => [
+                        'conversionRates' => $option->getDimensions()->getUnit()->getConversionRates()
+                    ]
+                ]
+            ],
+            $response
+        );
+    }
+
+    public function testGetSubresourceForFreightClass()
+    {
+        /** @var ProductShippingOptions $option */
+        $option = $this->getReference(LoadProductShippingOptions::PRODUCT_SHIPPING_OPTIONS_1);
+
+        $response = $this->getSubresource(
+            ['entity' => 'productshippingoptions', 'id' => $option->getId(), 'association' => 'freightClass']
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    'type' => 'freightclasses',
+                    'id'   => $option->getFreightClass()->getCode()
+                ]
+            ],
+            $response
+        );
+    }
+
+    public function testGetRelationshipForProduct()
+    {
+        /** @var ProductShippingOptions $option */
+        $option = $this->getReference(LoadProductShippingOptions::PRODUCT_SHIPPING_OPTIONS_1);
+
+        $response = $this->getRelationship(
+            ['entity' => 'productshippingoptions', 'id' => $option->getId(), 'association' => 'product']
+        );
 
         $this->assertResponseContains(
             [
@@ -292,97 +392,95 @@ class ProductShippingOptionsTest extends RestJsonApiTestCase
             ],
             $response
         );
+    }
 
-        $response = $this->getRelationship([
-            'entity'      => 'productshippingoptions',
-            'id'          => $option->getId(),
-            'association' => 'productUnit'
-        ]);
+    public function testGetRelationshipForProductUnit()
+    {
+        /** @var ProductShippingOptions $option */
+        $option = $this->getReference(LoadProductShippingOptions::PRODUCT_SHIPPING_OPTIONS_1);
+
+        $response = $this->getRelationship(
+            ['entity' => 'productshippingoptions', 'id' => $option->getId(), 'association' => 'productUnit']
+        );
 
         $this->assertResponseContains(
             [
                 'data' => [
                     'type' => 'productunits',
-                    'id'   => (string)$option->getProductUnitCode()
-                ]
-            ],
-            $response
-        );
-
-        $response = $this->getRelationship([
-            'entity'      => 'productshippingoptions',
-            'id'          => $option->getId(),
-            'association' => 'weightUnit'
-        ]);
-
-        $this->assertResponseContains(
-            [
-                'data' => [
-                    'type' => 'weightunits',
-                    'id'   => (string)$option->getWeight()->getUnit()->getCode()
-                ]
-            ],
-            $response
-        );
-
-        $response = $this->getRelationship([
-            'entity'      => 'productshippingoptions',
-            'id'          => $option->getId(),
-            'association' => 'dimensionsUnit'
-        ]);
-
-        $this->assertResponseContains(
-            [
-                'data' => [
-                    'type' => 'lengthunits',
-                    'id'   => (string)$option->getDimensions()->getUnit()->getCode()
-                ]
-            ],
-            $response
-        );
-
-        $response = $this->getRelationship([
-            'entity'      => 'productshippingoptions',
-            'id'          => $option->getId(),
-            'association' => 'freightClass'
-        ]);
-
-        $this->assertResponseContains(
-            [
-                'data' => [
-                    'type' => 'freightclasses',
-                    'id'   => (string)$option->getFreightClass()->getCode()
+                    'id'   => $option->getProductUnit()->getCode()
                 ]
             ],
             $response
         );
     }
 
-    public function testPatchRelationships()
+    public function testGetRelationshipForWeightUnit()
+    {
+        /** @var ProductShippingOptions $option */
+        $option = $this->getReference(LoadProductShippingOptions::PRODUCT_SHIPPING_OPTIONS_1);
+
+        $response = $this->getRelationship(
+            ['entity' => 'productshippingoptions', 'id' => $option->getId(), 'association' => 'weightUnit']
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    'type' => 'weightunits',
+                    'id'   => $option->getWeight()->getUnit()->getCode()
+                ]
+            ],
+            $response
+        );
+    }
+
+    public function testGetRelationshipForDimensionsUnit()
+    {
+        /** @var ProductShippingOptions $option */
+        $option = $this->getReference(LoadProductShippingOptions::PRODUCT_SHIPPING_OPTIONS_1);
+
+        $response = $this->getRelationship(
+            ['entity' => 'productshippingoptions', 'id' => $option->getId(), 'association' => 'dimensionsUnit']
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    'type' => 'lengthunits',
+                    'id'   => $option->getDimensions()->getUnit()->getCode()
+                ]
+            ],
+            $response
+        );
+    }
+
+    public function testGetRelationshipForFreightClass()
+    {
+        /** @var ProductShippingOptions $option */
+        $option = $this->getReference(LoadProductShippingOptions::PRODUCT_SHIPPING_OPTIONS_1);
+
+        $response = $this->getRelationship(
+            ['entity' => 'productshippingoptions', 'id' => $option->getId(), 'association' => 'freightClass']
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    'type' => 'freightclasses',
+                    'id'   => $option->getFreightClass()->getCode()
+                ]
+            ],
+            $response
+        );
+    }
+
+    public function testUpdateRelationshipForProduct()
     {
         /** @var ProductShippingOptions $option */
         $option = $this->getReference(LoadProductShippingOptions::PRODUCT_SHIPPING_OPTIONS_1);
 
         $this->patchRelationship(
-            [
-                'entity'      => 'productshippingoptions',
-                'id'          => $option->getId(),
-                'association' => 'productUnit'
-            ],
-            [
-                'data' => [
-                    'type' => 'productunits',
-                    'id'   => (string)$this->getReference('product_unit.milliliter')->getCode()
-                ]
-            ]
-        );
-
-        $this->patchRelationship(
-            [
-                'entity'      => 'productshippingoptions',
-                'id'          => $option->getId(),
-                'association' => 'product'
-            ],
+            ['entity' => 'productshippingoptions', 'id' => $option->getId(), 'association' => 'product'],
             [
                 'data' => [
                     'type' => 'products',
@@ -391,12 +489,46 @@ class ProductShippingOptionsTest extends RestJsonApiTestCase
             ]
         );
 
+        $updatedOption = $this->getEntityManager()
+            ->getRepository(ProductShippingOptions::class)
+            ->find($option->getId());
+        self::assertEquals(
+            $this->getReference('product-4')->getId(),
+            $updatedOption->getProduct()->getId()
+        );
+    }
+
+    public function testUpdateRelationshipForProductUnit()
+    {
+        /** @var ProductShippingOptions $option */
+        $option = $this->getReference(LoadProductShippingOptions::PRODUCT_SHIPPING_OPTIONS_1);
+
         $this->patchRelationship(
+            ['entity' => 'productshippingoptions', 'id' => $option->getId(), 'association' => 'productUnit'],
             [
-                'entity'      => 'productshippingoptions',
-                'id'          => $option->getId(),
-                'association' => 'weightUnit'
-            ],
+                'data' => [
+                    'type' => 'productunits',
+                    'id'   => (string)$this->getReference('product_unit.milliliter')->getCode()
+                ]
+            ]
+        );
+
+        $updatedOption = $this->getEntityManager()
+            ->getRepository(ProductShippingOptions::class)
+            ->find($option->getId());
+        self::assertEquals(
+            $this->getReference('product_unit.milliliter'),
+            $updatedOption->getProductUnit()
+        );
+    }
+
+    public function testUpdateRelationshipForWeightUnit()
+    {
+        /** @var ProductShippingOptions $option */
+        $option = $this->getReference(LoadProductShippingOptions::PRODUCT_SHIPPING_OPTIONS_1);
+
+        $this->patchRelationship(
+            ['entity' => 'productshippingoptions', 'id' => $option->getId(), 'association' => 'weightUnit'],
             [
                 'data' => [
                     'type' => 'weightunits',
@@ -405,12 +537,22 @@ class ProductShippingOptionsTest extends RestJsonApiTestCase
             ]
         );
 
+        $updatedOption = $this->getEntityManager()
+            ->getRepository(ProductShippingOptions::class)
+            ->find($option->getId());
+        self::assertEquals(
+            $this->getReference('weight_unit.pound')->getCode(),
+            $updatedOption->getWeight()->getUnit()->getCode()
+        );
+    }
+
+    public function testUpdateRelationshipForDimensionsUnit()
+    {
+        /** @var ProductShippingOptions $option */
+        $option = $this->getReference(LoadProductShippingOptions::PRODUCT_SHIPPING_OPTIONS_1);
+
         $this->patchRelationship(
-            [
-                'entity'      => 'productshippingoptions',
-                'id'          => $option->getId(),
-                'association' => 'dimensionsUnit'
-            ],
+            ['entity' => 'productshippingoptions', 'id' => $option->getId(), 'association' => 'dimensionsUnit'],
             [
                 'data' => [
                     'type' => 'lengthunits',
@@ -422,38 +564,9 @@ class ProductShippingOptionsTest extends RestJsonApiTestCase
         $updatedOption = $this->getEntityManager()
             ->getRepository(ProductShippingOptions::class)
             ->find($option->getId());
-
-        self::assertEquals(
-            $this->getReference('product_unit.milliliter'),
-            $updatedOption->getProductUnit()
-        );
-
-        self::assertEquals(
-            $this->getReference('product-4'),
-            $updatedOption->getProduct()
-        );
-
-        self::assertEquals(
-            $this->getReference('weight_unit.pound')->getCode(),
-            $updatedOption->getWeight()->getUnit()->getCode()
-        );
-
         self::assertEquals(
             $this->getReference('length_unit.meter')->getCode(),
             $updatedOption->getDimensions()->getUnit()->getCode()
         );
-    }
-
-    private function assertGetSubResource(int $entityId, string $associationName, string $associationId)
-    {
-        $response = $this->getSubresource([
-            'entity'      => 'productshippingoptions',
-            'id'          => $entityId,
-            'association' => $associationName
-        ]);
-
-        $result = json_decode($response->getContent(), true);
-
-        self::assertEquals($associationId, $result['data']['id']);
     }
 }
