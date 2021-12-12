@@ -3,15 +3,14 @@
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Api\Processor;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ApiBundle\Processor\CustomizeFormData\CustomizeFormDataContext;
 use Oro\Bundle\ApiBundle\Tests\Unit\Processor\CustomizeFormData\CustomizeFormDataProcessorTestCase;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ShippingBundle\Api\Processor\UpdateDimensionsByValueAndUnit;
 use Oro\Bundle\ShippingBundle\Entity\LengthUnit;
 use Oro\Bundle\ShippingBundle\Model\Dimensions;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Api\Stub\ProductShippingOptionsStub;
 use Oro\Component\Testing\Unit\EntityTrait;
-use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
@@ -21,23 +20,21 @@ class UpdateDimensionsByValueAndUnitTest extends CustomizeFormDataProcessorTestC
 {
     use EntityTrait;
 
-    private UpdateDimensionsByValueAndUnit $processor;
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrine;
 
-    private DoctrineHelper|MockObject $doctrineHelper;
+    /** @var UpdateDimensionsByValueAndUnit */
+    private $processor;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
 
-        $this->processor = new UpdateDimensionsByValueAndUnit($this->doctrineHelper);
+        $this->processor = new UpdateDimensionsByValueAndUnit($this->doctrine);
     }
 
-    /**
-     * @param Dimensions|null $dimensions
-     * @return ProductShippingOptionsStub
-     */
     private function getStubEntity(Dimensions $dimensions = null): ProductShippingOptionsStub
     {
         $entity = new ProductShippingOptionsStub();
@@ -46,9 +43,6 @@ class UpdateDimensionsByValueAndUnitTest extends CustomizeFormDataProcessorTestC
         return $entity;
     }
 
-    /**
-     * @return FormInterface
-     */
     private function getForm(): FormInterface
     {
         return $this->createFormBuilder()
@@ -71,16 +65,12 @@ class UpdateDimensionsByValueAndUnitTest extends CustomizeFormDataProcessorTestC
         $form = $this->getForm();
         $form->setData($entity);
 
-        $this->context->setEvent(CustomizeFormDataContext::EVENT_PRE_SUBMIT);
-        $this->context->setData($data);
-        $this->context->setForm($form);
-
         if (isset($data['dimensionsUnit']['id'])) {
             $expectedLengthUnit = $this->getEntity(LengthUnit::class, ['code' => $data['dimensionsUnit']['id']]);
             $repository = $this->createMock(EntityRepository::class);
 
-            $this->doctrineHelper->expects(self::once())
-                ->method('getEntityRepository')
+            $this->doctrine->expects(self::once())
+                ->method('getRepository')
                 ->with(LengthUnit::class)
                 ->willReturn($repository);
             $repository->expects(self::once())
@@ -89,14 +79,14 @@ class UpdateDimensionsByValueAndUnitTest extends CustomizeFormDataProcessorTestC
                 ->willReturn($expectedLengthUnit);
         }
 
+        $this->context->setEvent(CustomizeFormDataContext::EVENT_PRE_SUBMIT);
+        $this->context->setData($data);
+        $this->context->setForm($form);
         $this->processor->process($this->context);
 
         self::assertEquals($expectedEntity, $entity);
     }
 
-    /**
-     * @return array[]
-     */
     public function requestDataProvider(): array
     {
         /** @var LengthUnit $lengthUnit */

@@ -2,13 +2,14 @@
 
 namespace Oro\Bundle\ShippingBundle\Api\Processor;
 
-use Oro\Bundle\ApiBundle\Processor\AbstractUpdateNestedModel;
+use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\ApiBundle\Form\FormUtil;
 use Oro\Bundle\ApiBundle\Processor\CustomizeFormData\CustomizeFormDataContext;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ShippingBundle\Entity\LengthUnit;
 use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
-use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptionsInterface;
 use Oro\Bundle\ShippingBundle\Model\Dimensions;
+use Oro\Component\ChainProcessor\ContextInterface;
+use Oro\Component\ChainProcessor\ProcessorInterface;
 
 /**
  * Sets dimensions based on "dimensionsLength", "dimensionsWidth", "dimensionsHeight"
@@ -16,69 +17,108 @@ use Oro\Bundle\ShippingBundle\Model\Dimensions;
  * It is expected that an entity for which this processor is used
  * has "getDimensions()" and "setDimensions(Dimensions $dimensions)" methods.
  */
-class UpdateDimensionsByValueAndUnit extends AbstractUpdateNestedModel
+class UpdateDimensionsByValueAndUnit implements ProcessorInterface
 {
-    protected DoctrineHelper $doctrineHelper;
+    private ManagerRegistry $doctrine;
 
-    public function __construct(DoctrineHelper $doctrineHelper)
+    public function __construct(ManagerRegistry $doctrine)
     {
-        $this->doctrineHelper = $doctrineHelper;
-        $this->modelPropertyPath = "dimensions";
+        $this->doctrine = $doctrine;
     }
 
-    protected function processPreSubmit(CustomizeFormDataContext $context): void
+    /**
+     * {@inheritdoc}
+     */
+    public function process(ContextInterface $context): void
+    {
+        /** @var CustomizeFormDataContext $context */
+
+        switch ($context->getEvent()) {
+            case CustomizeFormDataContext::EVENT_PRE_SUBMIT:
+                $this->processPreSubmit($context);
+                break;
+            case CustomizeFormDataContext::EVENT_POST_VALIDATE:
+                FormUtil::fixValidationErrorPropertyPathForExpandedProperty($context->getForm(), 'dimensions');
+                break;
+        }
+    }
+
+    /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     */
+    private function processPreSubmit(CustomizeFormDataContext $context): void
     {
         /** @var array $data */
         $data = $context->getData();
-        /** @var ProductShippingOptions $entity */
-        $entity = $context->getForm()->getData();
 
-        $dimensionsFields = ['length', 'width', 'height', 'unit'];
-        $dimensions = [];
-        $isSubmitted = false;
-        foreach ($dimensionsFields as $dimension) {
-            $fieldName = $context->findFormFieldName('dimensions' . ucfirst($dimension));
+        [$length, $isLengthSubmitted] = $this->getSubmittedValue(
+            $data,
+            $context->findFormFieldName('dimensionsLength')
+        );
+        [$width, $isWidthSubmitted] = $this->getSubmittedValue(
+            $data,
+            $context->findFormFieldName('dimensionsWidth')
+        );
+        [$height, $isHeightSubmitted] = $this->getSubmittedValue(
+            $data,
+            $context->findFormFieldName('dimensionsHeight')
+        );
+        [$unit, $isUnitSubmitted] = $this->getSubmittedUnit(
+            $data,
+            $context->findFormFieldName('dimensionsUnit')
+        );
 
-            if (null !== $fieldName && array_key_exists($fieldName, $data)) {
-                $isSubmitted = true;
-                $dimensions[$dimension] = $data[$fieldName];
-
-                if ($dimension === 'unit' && array_key_exists('id', $data[$fieldName])) {
-                    $repository = $this->doctrineHelper->getEntityRepository(LengthUnit::class);
-                    $dimensions[$dimension] = $repository->find(strtolower($dimensions[$dimension]['id']));
+        if ($isLengthSubmitted || $isWidthSubmitted || $isHeightSubmitted || $isUnitSubmitted) {
+            /** @var ProductShippingOptions $entity */
+            $entity = $context->getForm()->getData();
+            $entityDimensions = $entity->getDimensions();
+            if (null !== $entityDimensions) {
+                $entityDimensionsValue = $entityDimensions->getValue();
+                if (null !== $entityDimensionsValue) {
+                    if (!$isLengthSubmitted) {
+                        $length = $entityDimensionsValue->getLength();
+                    }
+                    if (!$isWidthSubmitted) {
+                        $width = $entityDimensionsValue->getWidth();
+                    }
+                    if (!$isHeightSubmitted) {
+                        $height = $entityDimensionsValue->getHeight();
+                    }
                 }
-            } else {
-                // false here means field isn't submitted
-                $dimensions[$dimension] = false;
+                $entityDimensionsUnit = $entityDimensions->getUnit();
+                if (null !== $entityDimensionsUnit && !$isUnitSubmitted) {
+                    $unit = $entityDimensionsUnit;
+                }
             }
-        }
-
-        if ($isSubmitted) {
-            $dimensions = $this->getDimensionsDefaultValues($dimensions, $entity);
-
-            $entity->setDimensions(Dimensions::create(
-                $dimensions['length'],
-                $dimensions['width'],
-                $dimensions['height'],
-                (empty($dimensions['unit']) ? null : $dimensions['unit'])
-            ));
+            $entity->setDimensions(Dimensions::create($length, $width, $height, $unit));
         }
     }
 
-    private function getDimensionsDefaultValues(array $dimensions, ProductShippingOptionsInterface $entity): array
+    private function getSubmittedValue(array $data, ?string $formFieldName): array
     {
-        foreach ($dimensions as $key => $value) {
-            if ($value === false) {
-                if ($key === 'unit') {
-                    $dimensions[$key] = null !== $entity->getDimensions() ? $entity->getDimensions()->getUnit() : null;
-                } elseif ($entity->getDimensions()) {
-                    $method = 'get' . ucfirst($key);
-                    $dimensions[$key] = $entity->getDimensions()->getValue()
-                        ? $entity->getDimensions()->getValue()->$method() : null;
-                }
-            }
+        $value = null;
+        $isValueSubmitted = false;
+        if (null !== $formFieldName && \array_key_exists($formFieldName, $data)) {
+            $value = $data[$formFieldName];
+            $isValueSubmitted = true;
         }
 
-        return $dimensions;
+        return [$value, $isValueSubmitted];
+    }
+
+    private function getSubmittedUnit(array $data, ?string $formFieldName): array
+    {
+        $unit = null;
+        $isUnitSubmitted = false;
+        if (null !== $formFieldName
+            && \array_key_exists($formFieldName, $data)
+            && \array_key_exists('id', $data[$formFieldName])
+        ) {
+            $unit = $this->doctrine->getRepository(LengthUnit::class)
+                ->find(strtolower($data[$formFieldName]['id']));
+            $isUnitSubmitted = true;
+        }
+
+        return [$unit, $isUnitSubmitted];
     }
 }

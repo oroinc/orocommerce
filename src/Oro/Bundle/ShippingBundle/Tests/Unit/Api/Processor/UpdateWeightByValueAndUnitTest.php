@@ -3,15 +3,14 @@
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Api\Processor;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ApiBundle\Processor\CustomizeFormData\CustomizeFormDataContext;
 use Oro\Bundle\ApiBundle\Tests\Unit\Processor\CustomizeFormData\CustomizeFormDataProcessorTestCase;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ShippingBundle\Api\Processor\UpdateWeightByValueAndUnit;
 use Oro\Bundle\ShippingBundle\Entity\WeightUnit;
 use Oro\Bundle\ShippingBundle\Model\Weight;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Api\Stub\ProductShippingOptionsStub;
 use Oro\Component\Testing\Unit\EntityTrait;
-use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
@@ -21,23 +20,21 @@ class UpdateWeightByValueAndUnitTest extends CustomizeFormDataProcessorTestCase
 {
     use EntityTrait;
 
-    private UpdateWeightByValueAndUnit $processor;
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrine;
 
-    private DoctrineHelper|MockObject $doctrineHelper;
+    /** @var UpdateWeightByValueAndUnit */
+    private $processor;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
 
-        $this->processor = new UpdateWeightByValueAndUnit($this->doctrineHelper);
+        $this->processor = new UpdateWeightByValueAndUnit($this->doctrine);
     }
 
-    /**
-     * @param Weight|null $weight
-     * @return ProductShippingOptionsStub
-     */
     private function getStubEntity(Weight $weight = null): ProductShippingOptionsStub
     {
         $entity = new ProductShippingOptionsStub();
@@ -46,9 +43,6 @@ class UpdateWeightByValueAndUnitTest extends CustomizeFormDataProcessorTestCase
         return $entity;
     }
 
-    /**
-     * @return FormInterface
-     */
     private function getForm(): FormInterface
     {
         return $this->createFormBuilder()
@@ -69,16 +63,12 @@ class UpdateWeightByValueAndUnitTest extends CustomizeFormDataProcessorTestCase
         $form = $this->getForm();
         $form->setData($entity);
 
-        $this->context->setEvent(CustomizeFormDataContext::EVENT_PRE_SUBMIT);
-        $this->context->setData($data);
-        $this->context->setForm($form);
-
         if (isset($data['weightUnit']['id'])) {
             $expectedWeightUnit = $this->getEntity(WeightUnit::class, ['code' => $data['weightUnit']['id']]);
             $repository = $this->createMock(EntityRepository::class);
 
-            $this->doctrineHelper->expects(self::once())
-                ->method('getEntityRepository')
+            $this->doctrine->expects(self::once())
+                ->method('getRepository')
                 ->with(WeightUnit::class)
                 ->willReturn($repository);
             $repository->expects(self::once())
@@ -87,14 +77,14 @@ class UpdateWeightByValueAndUnitTest extends CustomizeFormDataProcessorTestCase
                 ->willReturn($expectedWeightUnit);
         }
 
+        $this->context->setEvent(CustomizeFormDataContext::EVENT_PRE_SUBMIT);
+        $this->context->setData($data);
+        $this->context->setForm($form);
         $this->processor->process($this->context);
 
         self::assertEquals($expectedEntity, $entity);
     }
 
-    /**
-     * @return array[]
-     */
     public function requestDataProvider(): array
     {
         /** @var WeightUnit $weightUnit */

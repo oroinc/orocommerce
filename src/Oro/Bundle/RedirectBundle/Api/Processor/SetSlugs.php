@@ -13,9 +13,7 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
  */
 class SetSlugs implements ProcessorInterface
 {
-    /**
-     * @var SlugifyEntityHelper
-     */
+    /** @var SlugifyEntityHelper */
     private $slugifyEntityHelper;
 
     public function __construct(SlugifyEntityHelper $slugifyEntityHelper)
@@ -24,10 +22,12 @@ class SetSlugs implements ProcessorInterface
     }
 
     /**
-     * @param ContextInterface|CustomizeFormDataContext $context
+     * {@inheritdoc}
      */
     public function process(ContextInterface $context): void
     {
+        /** @var CustomizeFormDataContext $context */
+
         $entity = $context->getData();
         if ($entity instanceof SluggableInterface) {
             $this->slugifyEntityHelper->fill($entity);
