@@ -10,10 +10,14 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\ImportExport\Strategy\ProductPriceImportStrategy;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPricesWithRules;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+/**
+ * @dbIsolationPerTest
+ */
 class ProductPriceImportStrategyTest extends WebTestCase
 {
     private const VERSION = 100;
@@ -37,12 +41,6 @@ class ProductPriceImportStrategyTest extends WebTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
-
-        $this->loadFixtures(
-            [
-                LoadProductPrices::class
-            ]
-        );
 
         $container = $this->getContainer();
 
@@ -71,6 +69,8 @@ class ProductPriceImportStrategyTest extends WebTestCase
 
     public function testProcessLoadPriceAndProduct()
     {
+        $this->loadFixtures([LoadProductPrices::class]);
+
         $productPrice = new ProductPrice();
         $productPrice->setQuantity(555);
         $this->setValue($productPrice, 'value', 1.2);
@@ -92,14 +92,51 @@ class ProductPriceImportStrategyTest extends WebTestCase
         $productPrice->setUnit($unit);
         $productPrice->setPriceList($priceList);
 
-        $this->strategy->process($productPrice);
+        $importedProductPrice = $this->strategy->process($productPrice);
 
-        $this->assertNotEmpty($productPrice->getPrice());
-        $this->assertEquals('USD', $productPrice->getPrice()->getCurrency());
-        $this->assertEquals(1.2, $productPrice->getPrice()->getValue());
-        $this->assertNotEmpty($productPrice->getProduct());
-        $this->assertEquals($product->getSku(), $productPrice->getProduct()->getSku());
-        $this->assertEquals(self::VERSION, $productPrice->getVersion());
+        $this->assertNotEmpty($importedProductPrice->getPrice());
+        $this->assertEquals('USD', $importedProductPrice->getPrice()->getCurrency());
+        $this->assertEquals(1.2, $importedProductPrice->getPrice()->getValue());
+        $this->assertNotEmpty($importedProductPrice->getProduct());
+        $this->assertEquals($product->getSku(), $importedProductPrice->getProduct()->getSku());
+        $this->assertEquals(self::VERSION, $importedProductPrice->getVersion());
+        $this->assertNull($importedProductPrice->getPriceRule());
+    }
+
+    public function testProcesLoadPriceAndProductWithPriceRule()
+    {
+        $this->loadFixtures([LoadProductPricesWithRules::class]);
+
+        $productPrice = new ProductPrice();
+        $productPrice->setQuantity(5);
+        $this->setValue($productPrice, 'value', 1.2);
+        $this->setValue($productPrice, 'currency', 'USD');
+
+        /** @var ProductUnit $unit */
+        $unit = $this->getReference('product_unit.liter');
+
+        /** @var Product $product */
+        $product = $this->getReference('product-1');
+
+        /** @var PriceList $priceList */
+        $priceList = $this->getReference('price_list_1');
+
+        $productObject = new Product();
+        $productObject->setSku($product->getSku());
+
+        $productPrice->setProduct($product);
+        $productPrice->setUnit($unit);
+        $productPrice->setPriceList($priceList);
+
+        $importedProductPrice = $this->strategy->process($productPrice);
+
+        $this->assertNotEmpty($importedProductPrice->getPrice());
+        $this->assertEquals('USD', $importedProductPrice->getPrice()->getCurrency());
+        $this->assertEquals(1.2, $importedProductPrice->getPrice()->getValue());
+        $this->assertNotEmpty($importedProductPrice->getProduct());
+        $this->assertEquals($product->getSku(), $importedProductPrice->getProduct()->getSku());
+        $this->assertEquals(self::VERSION, $importedProductPrice->getVersion());
+        $this->assertNull($importedProductPrice->getPriceRule());
     }
 
     /**
