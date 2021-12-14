@@ -4,10 +4,11 @@ $search-autocomplete-position: absolute !default;
 $search-autocomplete-display: block !default;
 $search-autocomplete-width: 100% !default;
 $search-autocomplete-z-index: z('dropdown') + 1 !default;
+$search-autocomplete-selected-box-shadow: $focus-visible-style !default;
 
 $search-autocomplete-content-min-width: 385px !default;
 $search-autocomplete-content-display: block !default;
-$search-autocomplete-content-inner-offset: $offset-y-s $offset-x !default;
+$search-autocomplete-content-inner-offset: $offset-y-s $offset-x-s !default;
 $search-autocomplete-content-float: none !default;
 $search-autocomplete-content-position: static !default;
 
@@ -16,16 +17,16 @@ $search-autocomplete-item-border-bottom: 1px solid get-color('additional', 'ligh
 $search-autocomplete-highlight-background: get-color('ui', 'warning') !default;
 $search-autocomplete-highlight-text-decoration: underline !default;
 
-$search-autocomplete-footer-inner-offset: #{$offset-y-m + $offset-y-s} 0 !default;
+$search-autocomplete-footer-inner-offset: #{$offset-y-m + $offset-y-s} !default;
 
 $search-autocomplete-submit-line-height: $base-line-height !default;
 $search-autocomplete-submit-border: none !default;
 
-$search-autocomplete-no-found-inner-offset: #{$offset-y-m + $offset-y-s} 0 !default;
+$search-autocomplete-no-found-inner-offset: #{$offset-y-m + $offset-y-s} !default;
 
 $search-autocomplete-product-text-decoration: none !default;
 $search-autocomplete-product-display: flex !default;
-$search-autocomplete-product-offset: 0 -#{$offset-y-m + $offset-y-s} !default;
+$search-autocomplete-product-offset: 0 !default;
 $search-autocomplete-product-inner-offset: #{$offset-y-m + $offset-y-s} #{$offset-y-m + $offset-y-s} !default;
 $search-autocomplete-product-hover-text-decoration: none !default;
 

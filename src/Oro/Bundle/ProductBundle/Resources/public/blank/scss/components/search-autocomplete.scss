@@ -16,6 +16,10 @@
 
     &__item {
         border-bottom: $search-autocomplete-item-border-bottom;
+
+        &[aria-selected='true'] {
+            box-shadow: $search-autocomplete-selected-box-shadow;
+        }
     }
 
     &__highlight {
@@ -25,6 +29,10 @@
 
     &__footer {
         padding: $search-autocomplete-footer-inner-offset;
+
+        &[aria-selected='true'] {
+            box-shadow: $search-autocomplete-selected-box-shadow;
+        }
     }
 
     &__submit {

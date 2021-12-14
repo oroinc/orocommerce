@@ -743,6 +743,9 @@ oro_behat_extension:
     Search Autocomplete Item:
       selector: '.search-autocomplete .search-autocomplete__item'
 
+    Search Autocomplete Item Selected:
+      selector: '.search-autocomplete [aria-selected="true"]'
+
     Search Autocomplete Product:
       selector: '.search-autocomplete .search-autocomplete-product'
 

@@ -12,11 +12,11 @@ function highlightWords(inputString, value) {
 %>
 
 <div class="search-autocomplete">
-    <div class="search-autocomplete__content dropdown-menu">
+    <div class="search-autocomplete__content dropdown-menu" id="<%- comboboxId %>" role="listbox">
         <% if (total_count > 0) { %>
-            <ul class="search-autocomplete__list">
+            <ul class="search-autocomplete__list" role="presentation">
                 <%_.each(products, function(product) { %>
-                    <li class="search-autocomplete__item">
+                    <li class="search-autocomplete__item" role="option">
                         <a href="<%- product.url %>" class="search-autocomplete-product" title="<%- product.name %>">
                             <div class="search-autocomplete-product__image">
                                 <img src="<%- product.image %>" alt="<%- product.name %>">
@@ -37,7 +37,7 @@ function highlightWords(inputString, value) {
                     </li>
                 <% }) %>
             </ul>
-            <div class="search-autocomplete__footer">
+            <div class="search-autocomplete__footer" role="option">
                 <button class="btn btn--link btn--no-offset search-autocomplete__submit" type="submit"><%- _.__('oro.product.autocomplete.popup.button.all.label', { productCount: total_count }, total_count)  %> <span class="fa-angle-right" aria-hidden="true"></span></button>
             </div>
         <% } else { %>
