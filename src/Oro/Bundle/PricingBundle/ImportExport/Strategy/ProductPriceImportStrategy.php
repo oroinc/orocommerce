@@ -61,6 +61,8 @@ class ProductPriceImportStrategy extends ConfigurableAddOrReplaceStrategy
             $entity->setVersion($version);
         }
 
+        $entity->setPriceRule(null);
+
         return parent::afterProcessEntity($entity);
     }
 
