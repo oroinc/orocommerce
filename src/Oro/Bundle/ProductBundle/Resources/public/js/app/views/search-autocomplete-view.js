@@ -4,6 +4,7 @@ import _ from 'underscore';
 import BaseView from 'oroui/js/app/views/base/view';
 import routing from 'routing';
 import template from 'tpl-loader!oroproduct/templates/search-autocomplete.html';
+import 'jquery-ui/tabbable';
 
 const SearchAutocompleteView = BaseView.extend({
     optionNames: BaseView.prototype.optionNames.concat([
@@ -41,29 +42,62 @@ const SearchAutocompleteView = BaseView.extend({
     events: {
         change: '_onInputChange',
         keyup: '_onInputChange',
-        focus: '_onInputRefresh'
+        focus: '_onInputRefresh',
+        keydown: '_onKeyDown'
     },
 
     previousValue: '',
+
+    autocompleteItems: '[role="option"]',
 
     /**
      * @inheritdoc
      */
     constructor: function SearchAutocompleteView(options) {
+        this.renderSuggestions = _.debounce(this.renderSuggestions.bind(this), this.delay);
         SearchAutocompleteView.__super__.constructor.call(this, options);
+    },
+
+    preinitialize() {
+        this.comboboxId = `combobox-${this.cid}`;
     },
 
     /**
      * @inheritdoc
      */
     initialize(options) {
-        this.$el.attr('autocomplete', 'off');
+        this.$el.attr({
+            'role': 'combobox',
+            'autocomplete': 'off',
+            'aria-haspopup': true,
+            'aria-expanded': false,
+            'aria-autocomplete': 'list',
+            'aria-controls': this.comboboxId
+        });
 
-        this.renderSuggestions = _.debounce(this.renderSuggestions.bind(this), this.delay);
+        SearchAutocompleteView.__super__.initialize.call(this, options);
+    },
+
+    /**
+     * @inheritdoc
+     */
+    delegateEvents: function() {
+        SearchAutocompleteView.__super__.delegateEvents.call(this);
 
         $('body').on(`click${this.eventNamespace()}`, this._onOutsideAction.bind(this));
 
-        SearchAutocompleteView.__super__.initialize.call(this, options);
+        return this;
+    },
+
+    /**
+     * @inheritdoc
+     */
+    undelegateEvents: function() {
+        SearchAutocompleteView.__super__.undelegateEvents.call(this);
+
+        $('body').off(this.eventNamespace());
+
+        return this;
     },
 
     getInputString() {
@@ -75,7 +109,8 @@ const SearchAutocompleteView = BaseView.extend({
      */
     getTemplateData: function(data = {}) {
         return Object.assign(data, {
-            inputString: this.getInputString()
+            inputString: this.getInputString(),
+            comboboxId: this.comboboxId
         });
     },
 
@@ -86,20 +121,109 @@ const SearchAutocompleteView = BaseView.extend({
         if (this.disposed) {
             return;
         }
-        this.close();
+        this.closeCombobox();
 
-        $('body').off(this.eventNamespace());
+        this.$el.attr('aria-expanded', null);
 
         SearchAutocompleteView.__super__.dispose.call(this);
     },
 
-    close() {
+    closeCombobox() {
         if (!this.$popup) {
             return;
         }
 
         this.$popup.remove();
         this.$popup = null;
+        this.$el.attr({
+            'aria-expanded': false,
+            'aria-activedescendant': null
+        });
+        this.undoFocusStyle();
+    },
+
+    hideCombobox() {
+        if (!this.$popup) {
+            return;
+        }
+
+        this.$el.attr({
+            'aria-expanded': false,
+            'aria-activedescendant': null
+        });
+        this.$popup.hide();
+        this.gerSelectedOption().removeAttr('aria-selected');
+        this.undoFocusStyle();
+    },
+
+    showCombobox() {
+        if (!this.$popup) {
+            return;
+        }
+
+        this.$popup.show();
+    },
+
+    hasSelectedOption() {
+        return this.gerSelectedOption().length > 0;
+    },
+
+    getAutocompleteItems() {
+        return this.$el.next().find(this.autocompleteItems);
+    },
+
+    gerSelectedOption() {
+        return this.getAutocompleteItems().filter((i, el) => $(el).attr('aria-selected') === 'true');
+    },
+
+    getNextOption() {
+        const $options = this.getAutocompleteItems();
+        const $activeOption = this.gerSelectedOption();
+
+        if (
+            $activeOption.length === 0 ||
+            ($options.length - 1 === $options.index($activeOption))
+        ) {
+            return $options.first();
+        }
+
+        return $options.eq($options.index($activeOption) + 1);
+    },
+
+    getPreviousOption() {
+        const $options = this.getAutocompleteItems();
+        const $activeOption = this.gerSelectedOption();
+
+        if (
+            $activeOption.length === 0 ||
+            $options.index($activeOption) === 0
+        ) {
+            return $options.last();
+        }
+
+        return $options.eq($options.index($activeOption) - 1);
+    },
+
+    /**
+     * @param {string} direction
+     */
+    goToOption(direction = 'down') {
+        const $options = this.getAutocompleteItems();
+        const $activeOption = direction === 'down'
+            ? this.getNextOption()
+            : this.getPreviousOption()
+        ;
+
+        this.showCombobox();
+        $options.attr('aria-selected', false);
+        $activeOption.attr('aria-selected', true);
+        this.$el.attr('aria-activedescendant', $activeOption.attr('id'));
+    },
+
+    executeSelectedOption() {
+        if (this.hasSelectedOption()) {
+            this.gerSelectedOption().find(':first-child')[0].click();
+        }
     },
 
     _getSearchXHR(inputString) {
@@ -117,11 +241,19 @@ const SearchAutocompleteView = BaseView.extend({
      * @inheritdoc
      */
     render(suggestions) {
-        this.close();
+        this.closeCombobox();
 
         if (this.getInputString().length) {
             this.$popup = $(this.template(this.getTemplateData(suggestions)));
             this.$el.after(this.$popup);
+            this.$el.attr('aria-expanded', true);
+
+            this.getAutocompleteItems().each((i, el) => {
+                $(el).attr({
+                    'id': _.uniqueId('item-'),
+                    'aria-selected': false
+                }).find(':tabbable').attr('tabindex', -1);
+            });
         }
 
         return this;
@@ -148,6 +280,35 @@ const SearchAutocompleteView = BaseView.extend({
         ;
     },
 
+    _onKeyDown(event) {
+        switch (event.key) {
+            case 'Tab':
+            case 'Escape':
+                this.hideCombobox();
+                break;
+            case 'ArrowUp':
+                event.preventDefault();
+                this.goToOption('up');
+                break;
+            case 'ArrowDown':
+                event.preventDefault();
+                this.goToOption('down');
+                break;
+            case 'Enter':
+            case ' ':
+                this.executeSelectedOption();
+                break;
+            default:
+                break;
+        }
+
+        this.undoFocusStyle();
+    },
+
+    undoFocusStyle() {
+        this.$el.toggleClass('undo-focus', this.hasSelectedOption());
+    },
+
     _onInputChange(event) {
         const inputString = this.getInputString();
         if (inputString === this.previousValue) {
@@ -156,7 +317,7 @@ const SearchAutocompleteView = BaseView.extend({
 
         this._shouldShowPopup(inputString)
             ? this.renderSuggestions(inputString)
-            : this.close();
+            : this.closeCombobox();
 
         this.previousValue = inputString;
     },
@@ -166,16 +327,16 @@ const SearchAutocompleteView = BaseView.extend({
 
         if (!inputString.length && this.searchXHR) {
             this.searchXHR.abort();
-        };
+        }
 
         this._shouldShowPopup(inputString)
             ? this.renderSuggestions(inputString)
-            : this.close();
+            : this.closeCombobox();
     },
 
     _onOutsideAction(event) {
         if (!((event.target === this.el) || (this.$popup && $.contains(this.$popup[0], event.target)))) {
-            this.close();
+            this.closeCombobox();
         }
     }
 });
