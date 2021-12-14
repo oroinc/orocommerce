@@ -2,8 +2,6 @@
 
 .search-autocomplete {
     position: $search-autocomplete-position;
-    display: $search-autocomplete-display;
-    width: $search-autocomplete-width;
     z-index: $search-autocomplete-z-index;
 
     &__content {
@@ -15,16 +13,21 @@
     }
 
     &__item {
+        margin: $search-autocomplete-item-offset;
+        padding: $search-autocomplete-item-inner-offset;
         border-bottom: $search-autocomplete-item-border-bottom;
+
+        &:last-child {
+            border-bottom-width: 0;
+        }
+
+        &[aria-selected='true'] {
+            box-shadow: $search-autocomplete-selected-box-shadow;
+        }
     }
 
     &__highlight {
         background: $search-autocomplete-highlight-background;
-        text-decoration: $search-autocomplete-highlight-text-decoration;
-    }
-
-    &__footer {
-        padding: $search-autocomplete-footer-inner-offset;
     }
 
     &__submit {
@@ -40,8 +43,6 @@
 .search-autocomplete-product {
     text-decoration: $search-autocomplete-product-text-decoration;
     display: $search-autocomplete-product-display;
-    margin: $search-autocomplete-product-offset;
-    padding: $search-autocomplete-product-inner-offset;
 
     &:hover {
         text-decoration: $search-autocomplete-product-hover-text-decoration;
