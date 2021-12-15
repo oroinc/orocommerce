@@ -21,7 +21,7 @@ interface SearchAttributeTypeInterface extends AttributeTypeInterface
     public const VALUE_MAIN = 'main';
     public const VALUE_AGGREGATE = 'aggregate';
 
-    public const SEARCHABLE_PREFIX = 'searchable';
+    public const SEARCHABLE_SUFFIX = 'searchable';
 
     /**
      * @param FieldConfigModel $attribute

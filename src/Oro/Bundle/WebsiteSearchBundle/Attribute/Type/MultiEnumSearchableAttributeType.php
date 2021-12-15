@@ -64,6 +64,6 @@ class MultiEnumSearchableAttributeType extends AbstractSearchableAttributeType
      */
     public function getSearchableFieldName(FieldConfigModel $attribute): string
     {
-        return $attribute->getFieldName() . '_' . self::SEARCHABLE_PREFIX;
+        return $attribute->getFieldName() . '_' . self::SEARCHABLE_SUFFIX;
     }
 }

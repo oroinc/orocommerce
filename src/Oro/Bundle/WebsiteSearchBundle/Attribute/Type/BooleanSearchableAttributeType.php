@@ -31,7 +31,7 @@ class BooleanSearchableAttributeType extends AbstractSearchableAttributeType
      */
     public function getFilterType(FieldConfigModel $attribute): string
     {
-        return 'boolean';
+        return self::FILTER_TYPE_BOOLEAN;
     }
 
     /**
