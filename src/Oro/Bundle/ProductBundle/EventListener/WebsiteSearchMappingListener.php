@@ -93,7 +93,7 @@ class WebsiteSearchMappingListener
 
                 $fields[$name] = [
                     'name' => $name,
-                    'type' => $attributeType->getSorterStorageFieldType(),
+                    'type' => $attributeType->getSorterStorageFieldType($attribute),
                     'organization_id' => $organizationId,
                     'fulltext' => false,
                 ];
@@ -131,7 +131,7 @@ class WebsiteSearchMappingListener
         ?int $organizationId
     ): array {
         $names = $attributeType->getFilterableFieldNames($attribute);
-        $types = $attributeType->getFilterStorageFieldTypes();
+        $types = $attributeType->getFilterStorageFieldTypes($attribute);
 
         foreach ($names as $key => $scalarName) {
             $field = [

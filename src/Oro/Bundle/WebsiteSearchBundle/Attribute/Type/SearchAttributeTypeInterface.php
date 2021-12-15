@@ -16,6 +16,7 @@ interface SearchAttributeTypeInterface extends AttributeTypeInterface
     public const FILTER_TYPE_MULTI_ENUM = 'multi-enum';
     public const FILTER_TYPE_PERCENT = 'percent';
     public const FILTER_TYPE_ENTITY = 'entity';
+    public const FILTER_TYPE_BOOLEAN = 'boolean';
 
     public const VALUE_MAIN = 'main';
     public const VALUE_AGGREGATE = 'aggregate';
@@ -23,6 +24,7 @@ interface SearchAttributeTypeInterface extends AttributeTypeInterface
     public const SEARCHABLE_PREFIX = 'searchable';
 
     /**
+     * @param FieldConfigModel $attribute
      * @return array
      * Must return an array of field types used in filtering. Out of the box possible keys could be:
      *  - "main" (mandatory)
@@ -35,21 +37,23 @@ interface SearchAttributeTypeInterface extends AttributeTypeInterface
      *  ]
      * Can contain 'integer', 'decimal', 'text', 'datetime'.
      */
-    public function getFilterStorageFieldTypes(): array;
+    public function getFilterStorageFieldTypes(FieldConfigModel $attribute): array;
 
     /**
+     * @param FieldConfigModel $attribute
      * @return string
      *
      * Can be 'integer', 'decimal', 'text' or 'datetime'
      */
-    public function getSorterStorageFieldType(): string;
+    public function getSorterStorageFieldType(FieldConfigModel $attribute): string;
 
     /**
+     * @param FieldConfigModel $attribute
      * @return string
      *
-     * Can be 'number', 'number-range', 'string' or 'enum'
+     * Returns filter type that supports filtering in search index
      */
-    public function getFilterType(): string;
+    public function getFilterType(FieldConfigModel $attribute): string;
 
     public function isLocalizable(FieldConfigModel $attribute): bool;
 

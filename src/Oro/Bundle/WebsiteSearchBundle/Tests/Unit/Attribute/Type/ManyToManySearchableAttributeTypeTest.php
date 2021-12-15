@@ -21,7 +21,7 @@ class ManyToManySearchableAttributeTypeTest extends SearchableAttributeTypeTestC
     {
         $this->assertSame(
             [SearchAttributeTypeInterface::VALUE_MAIN => Query::TYPE_TEXT],
-            $this->getSearchableAttributeType()->getFilterStorageFieldTypes()
+            $this->getSearchableAttributeType()->getFilterStorageFieldTypes($this->attribute)
         );
     }
 
@@ -29,7 +29,7 @@ class ManyToManySearchableAttributeTypeTest extends SearchableAttributeTypeTestC
     {
         $this->assertSame(
             Query::TYPE_TEXT,
-            $this->getSearchableAttributeType()->getSorterStorageFieldType()
+            $this->getSearchableAttributeType()->getSorterStorageFieldType($this->attribute)
         );
     }
 
@@ -37,7 +37,7 @@ class ManyToManySearchableAttributeTypeTest extends SearchableAttributeTypeTestC
     {
         $this->assertSame(
             SearchAttributeTypeInterface::FILTER_TYPE_STRING,
-            $this->getSearchableAttributeType()->getFilterType()
+            $this->getSearchableAttributeType()->getFilterType($this->attribute)
         );
     }
 
