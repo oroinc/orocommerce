@@ -23,7 +23,7 @@ abstract class AbstractSearchableAttributeType implements SearchAttributeTypeInt
     /**
      * {@inheritdoc}
      */
-    public function isSearchable(FieldConfigModel $attribute = null)
+    public function isSearchable(FieldConfigModel $attribute)
     {
         return $this->attributeType->isSearchable($attribute);
     }
@@ -31,7 +31,7 @@ abstract class AbstractSearchableAttributeType implements SearchAttributeTypeInt
     /**
      * {@inheritdoc}
      */
-    public function isFilterable(FieldConfigModel $attribute = null)
+    public function isFilterable(FieldConfigModel $attribute)
     {
         return $this->attributeType->isFilterable($attribute);
     }
@@ -39,7 +39,7 @@ abstract class AbstractSearchableAttributeType implements SearchAttributeTypeInt
     /**
      * {@inheritdoc}
      */
-    public function isSortable(FieldConfigModel $attribute = null)
+    public function isSortable(FieldConfigModel $attribute)
     {
         return $this->attributeType->isSortable($attribute);
     }

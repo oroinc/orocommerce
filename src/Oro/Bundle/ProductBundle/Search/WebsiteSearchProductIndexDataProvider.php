@@ -199,6 +199,6 @@ class WebsiteSearchProductIndexDataProvider implements ProductIndexDataProviderI
 
     private function isBoostable(FieldConfigModel $attribute, SearchAttributeTypeInterface $type): bool
     {
-        return $type->isSearchable() && $this->searchableProvider->getAttributeSearchBoost($attribute);
+        return $type->isSearchable($attribute) && $this->searchableProvider->getAttributeSearchBoost($attribute);
     }
 }
