@@ -1464,13 +1464,9 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
             $imageType
         ));
 
-        $image = $element->find(
-            'xpath',
-            sprintf(
-                '//img[contains(@src, "%s")]',
-                $rememberedImageId
-            )
-        );
+        $imageXPath = sprintf('//img[contains(@src, "%s")]', $rememberedImageId);
+        $image = $this->spin(static fn (MinkAwareContext $context) => $element->find('xpath', $imageXPath), 5);
+
         self::assertNotEmpty($image, sprintf(
             'No image with id "%s" found in "%s"',
             $rememberedImageId,
