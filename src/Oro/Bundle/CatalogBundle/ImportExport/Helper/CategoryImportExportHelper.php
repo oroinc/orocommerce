@@ -13,6 +13,8 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
  */
 class CategoryImportExportHelper
 {
+    private const CATEGORY_PATH_DELIMITER = ' / ';
+
     /** @var ManagerRegistry */
     private $doctrine;
 
@@ -25,7 +27,7 @@ class CategoryImportExportHelper
     public function __construct(ManagerRegistry $doctrine)
     {
         $this->doctrine = $doctrine;
-        $this->unescapedDelimiter = trim(Category::CATEGORY_PATH_DELIMITER);
+        $this->unescapedDelimiter = trim(self::CATEGORY_PATH_DELIMITER);
         $this->escapedDelimiter = $this->unescapedDelimiter.$this->unescapedDelimiter;
     }
 
@@ -39,14 +41,14 @@ class CategoryImportExportHelper
             array_unshift($categoryPath, $title);
         }
 
-        return implode(Category::CATEGORY_PATH_DELIMITER, $categoryPath);
+        return implode(self::CATEGORY_PATH_DELIMITER, $categoryPath);
     }
 
     public function getPersistedCategoryPath(Category $category): string
     {
         $categoryPath = array_map([$this, 'escapeTitle'], $this->getRepository()->getCategoryPath($category));
 
-        return implode(Category::CATEGORY_PATH_DELIMITER, $categoryPath);
+        return implode(self::CATEGORY_PATH_DELIMITER, $categoryPath);
     }
 
     /**
@@ -59,7 +61,7 @@ class CategoryImportExportHelper
     {
         $foundCategory = null;
         $categoryRepo = $this->getRepository();
-        $categoryPathParts = explode(Category::CATEGORY_PATH_DELIMITER, $categoryPath);
+        $categoryPathParts = explode(self::CATEGORY_PATH_DELIMITER, $categoryPath);
         $categoryPathStack = [];
         // Goes through the path in reverse order, i.e. gets "Cat 2" from path "All / Cat1 / Cat2" at first.
         while ($categoryTitle = array_pop($categoryPathParts)) {
