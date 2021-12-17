@@ -294,7 +294,7 @@ Example:
 
 #### get_subresource
 
-Retrieve a records of discount assigned to a specific order record.
+Retrieve records of discount assigned to a specific order record.
 
 #### get_relationship
 
