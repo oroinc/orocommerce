@@ -14,6 +14,12 @@ Retrieve a collection of product tax code records.
 
 {@inheritdoc}
 
+## FIELDS
+
+### taxCode
+
+Tax code.
+
 ## SUBRESOURCES
 
 ### taxCode
