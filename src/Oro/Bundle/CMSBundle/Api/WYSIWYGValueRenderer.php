@@ -9,7 +9,7 @@ use Twig\Environment;
  */
 class WYSIWYGValueRenderer
 {
-    private const TWIG_TEMPLATE      = '@OroApi/Field/render_content.html.twig';
+    private const TWIG_TEMPLATE = '@OroCMS/Api/Field/render_content.html.twig';
     private const CSS_STYLE_TEMPLATE = '<style type="text/css">%s</style>';
 
     /** @var Environment */
