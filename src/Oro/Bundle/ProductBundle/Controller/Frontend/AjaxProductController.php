@@ -4,10 +4,12 @@ namespace Oro\Bundle\ProductBundle\Controller\Frontend;
 
 use Doctrine\Common\Collections\Criteria;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Manager\UserProductFiltersSidebarStateManager;
 use Oro\Bundle\ProductBundle\Provider\ProductImagesURLsProvider;
 use Oro\Bundle\ProductBundle\Search\ProductRepository;
 use Oro\Bundle\SearchBundle\Query\Result;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -80,6 +82,25 @@ class AjaxProductController extends AbstractController
     }
 
     /**
+     * @Route(
+     *     "/set-product-filters-sidebar-state",
+     *     name="oro_product_frontend_ajax_set_product_filters_sidebar_state",
+     *     methods={"POST"}
+     * )
+     * @CsrfProtection()
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function setProductFiltersSidebarStateAction(Request $request)
+    {
+        $this->get(UserProductFiltersSidebarStateManager::class)
+            ->setCurrentProductFiltersSidebarState($request->get('sidebarExpanded', false));
+
+        return new JsonResponse();
+    }
+
+    /**
      * @param Request $request
      *
      * @return array
@@ -117,6 +138,7 @@ class AjaxProductController extends AbstractController
             [
                 ProductRepository::class,
                 ProductImagesURLsProvider::class,
+                UserProductFiltersSidebarStateManager::class,
             ]
         );
     }

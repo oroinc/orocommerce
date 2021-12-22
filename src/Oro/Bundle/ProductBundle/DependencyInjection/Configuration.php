@@ -10,6 +10,9 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
+/**
+ * This is the class that validates and merges configuration from your app/config files
+ */
 class Configuration implements ConfigurationInterface
 {
     const ROOT_NODE = OroProductExtension::ALIAS;
@@ -67,6 +70,7 @@ class Configuration implements ConfigurationInterface
     const DISPLAY_SIMPLE_VARIATIONS_HIDE_CATALOG = 'hide_catalog';
     const LIMIT_FILTERS_SORTERS_ON_PRODUCT_LISTING = 'limit_filters_sorters_on_product_listing';
     const DISABLE_FILTERS_ON_PRODUCT_LISTING = 'disable_filters_on_product_listing';
+    const FILTERS_DISPLAY_SETTINGS_STATE = 'filters_display_settings_state';
     const FILTERS_DISPLAY_SETTINGS_STATE_COLLAPSED = 'collapsed';
     const FILTERS_DISPLAY_SETTINGS_STATE_EXPANDED = 'expanded';
     const ORIGINAL_FILE_NAMES_ENABLED = 'original_file_names_enabled';
@@ -172,7 +176,7 @@ class Configuration implements ConfigurationInterface
                     'value' => true,
                 ],
                 static::DISABLE_FILTERS_ON_PRODUCT_LISTING => ['type' => 'boolean', 'value' => true],
-                'filters_display_settings_state' => [
+                static::FILTERS_DISPLAY_SETTINGS_STATE => [
                     'type' => 'string',
                     'value' => static::FILTERS_DISPLAY_SETTINGS_STATE_COLLAPSED
                 ],
