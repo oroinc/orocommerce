@@ -19,9 +19,6 @@
 {% endblock %}
 
 {% block _product_view_media_widget %}
-    {% import '@OroUI/macros.html.twig' as UI %}
-    {% import '@OroProduct/image_macros.html.twig' as Image %}
-
     {% set productImages = collect_product_images_by_types(product, ['main', 'additional']) %}
 
     {% if productImages|length == 0 %}
@@ -80,9 +77,13 @@
     {% if productImages|length > 0 %}
         {% set galleryImages = [] %}
         {% for productImage in productImages %}
+            {% set sources = product_filtered_picture_sources(productImage.image, 'product_gallery_popup') %}
+            {% set thumbSources = product_filtered_picture_sources(productImage.image, 'product_small') %}
             {% set galleryImages = galleryImages|merge([{
-                src: product_filtered_image(productImage.image, 'product_gallery_popup'),
-                thumb: product_filtered_image(productImage.image, 'product_small'),
+                src: (sources|last).srcset,
+                sources: sources|slice(0, -1),
+                thumb: (thumbSources|last).srcset,
+                thumbSources: thumbSources|slice(0, -1),
                 alt: product.names|localized_value
             }]) %}
         {% endfor %}
@@ -102,18 +103,28 @@
             <div class="product-view-media-gallery" {{ UI.attributes(slideImageAttr) }}>
                 {% for productImage in productImages %}
                     <div class="product-view-media-gallery__image-item" data-trigger-gallery-open tabindex="0">
-                        <img class="product-view-media-gallery__image"
-                             alt="{{ product.names|localized_value|e }}"
-                             data-zoom-image="{{ product_filtered_image(productImage.image, 'product_original') }}"
-                                {% if loop.first %}
-                                    src="{{ product_filtered_image(productImage.image, 'product_gallery_main') }}"
-                                    data-page-component-module="oroui/js/app/components/viewport-component"
-                                    data-page-component-options="{{ zoomOptions|json_encode }}"
-                                    itemprop="image"
-                                {% else %}
-                                    data-lazy="{{ product_filtered_image(productImage.image, 'product_gallery_main') }}"
-                                {% endif %}
-                        />
+                        {% set img_attrs = {
+                            class: 'product-view-media-gallery__image',
+                            alt: product.names|localized_value,
+                            'data-zoom-image': product_filtered_image(productImage.image, 'product_original'),
+                        } %}
+
+                        {% if loop.first %}
+                            {% set img_attrs = img_attrs|merge({
+                                'data-page-component-module': 'oroui/js/app/components/viewport-component',
+                                'data-page-component-options': zoomOptions|json_encode,
+                                itemprop: 'image'
+                            }) %}
+                        {% else %}
+                            {% set img_attrs = img_attrs|merge({
+                                'data-lazy': product_filtered_image(productImage.image, 'product_gallery_main')
+                            }) %}
+                        {% endif %}
+
+                        {% include '@OroAttachment/Twig/picture.html.twig' with {
+                            sources: product_filtered_picture_sources(productImage.image, 'product_gallery_main'),
+                            img_attrs: img_attrs
+                        } %}
                     </div>
                 {% endfor %}
             </div>
@@ -122,13 +133,16 @@
     {% else %}
         <div class="product-view-media-gallery" itemprop="productID" content="{{ product.id}}">
             <div class="product-view-media-gallery__image-item">
-                <img class="product-view-media-gallery__image"
-                     src="{{ product_image_placeholder('product_gallery_main') }}"
-                     alt="{{ product.names|localized_value|e }}"
-                     width="378"
-                     height="378"
-                     itemprop="image"
-                />
+                {% include '@OroAttachment/Twig/picture.html.twig' with {
+                    sources: product_filtered_picture_sources(null, 'product_gallery_main'),
+                    img_attrs: {
+                        class: 'product-view-media-gallery__image',
+                        alt: product.names|localized_value,
+                        width: 378,
+                        height: 378,
+                        itemprop: 'image'
+                    }
+                } %}
             </div>
         </div>
     {% endif %}
@@ -137,7 +151,16 @@
         <div class="product-view-media-gallery__nav loading slides-to-show-{{ navListOptions.slidesToShow }}" {{ UI.attributes(slideNavAttr) }}>
             {% for productImage in productImages %}
                 <div class="product-view-media-gallery__nav__item">
-                    <img class="product-view-media-gallery__nav__image" src="{{ product_filtered_image(productImage.image, 'product_small') }}"/>
+                    {% include '@OroAttachment/Twig/picture.html.twig' with {
+                        sources: product_filtered_picture_sources(productImage.image, 'product_small'),
+                        img_attrs: {
+                            class: 'product-view-media-gallery__nav__image',
+                            alt: product.names|localized_value,
+                            width: 378,
+                            height: 378,
+                            itemprop: 'image'
+                        }
+                    } %}
                 </div>
             {% endfor %}
         </div>
@@ -165,24 +188,38 @@
     <div class="product-view-media-slider" {{ UI.attributes(slideImageAttr) }}>
         {% if productImages|length == 0 %}
             <div class="product-view-media-slider__image-item">
-                <img class="product-view-media-slider__image"
-                     src="{{ product_image_placeholder('product_gallery_main') }}"
-                     alt="{{ product.names|localized_value|e }}"
-                     width="378"
-                     height="378"
-                />
+                {% include '@OroAttachment/Twig/picture.html.twig' with {
+                    sources: product_filtered_picture_sources(null, 'product_gallery_main'),
+                    img_attrs: {
+                        class: 'product-view-media-slider__image',
+                        alt: product.names|localized_value,
+                        width: 378,
+                        height: 378,
+                    }
+                } %}
             </div>
         {% else %}
             {% for productImage in productImages %}
                 <div class="product-view-media-slider__image-item">
-                    <img class="product-view-media-slider__image"
-                         alt="{{ product.names|localized_value|e }}"
-                            {% if loop.first %}
-                                src="{{ product_filtered_image(productImage.image, 'product_gallery_main') }}"
-                            {% else %}
-                                data-lazy="{{ product_filtered_image(productImage.image, 'product_gallery_main') }}"
-                            {% endif %}
-                    />
+                    {% set img_attrs = {
+                        class: 'product-view-media-slider__image',
+                        alt: product.names|localized_value|e
+                    } %}
+
+                    {% if loop.first %}
+                        {% set img_attrs = {
+                            src: product_filtered_image(productImage.image, 'product_gallery_main'),
+                        }|merge(img_attrs) %}
+                    {% else %}
+                        {% set img_attrs = {
+                            'data-lazy': product_filtered_image(productImage.image, 'product_gallery_main'),
+                        }|merge(img_attrs) %}
+                    {% endif %}
+
+                    {% include '@OroAttachment/Twig/picture.html.twig' with {
+                        sources: product_filtered_picture_sources(productImage.image, 'product_gallery_main'),
+                        img_attrs: img_attrs
+                    } %}
                 </div>
             {% endfor %}
         {% endif %}

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\EventListener;
 
+use Oro\Bundle\AttachmentBundle\Tools\WebpConfiguration;
 use Oro\Bundle\LayoutBundle\Provider\Image\ImagePlaceholderProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Event\BuildQueryProductListEvent;
@@ -14,9 +15,14 @@ class ProductListEventListener
 {
     private ImagePlaceholderProviderInterface $imagePlaceholderProvider;
 
-    public function __construct(ImagePlaceholderProviderInterface $imagePlaceholderProvider)
-    {
+    private WebpConfiguration $webpConfiguration;
+
+    public function __construct(
+        ImagePlaceholderProviderInterface $imagePlaceholderProvider,
+        WebpConfiguration $webpConfiguration
+    ) {
         $this->imagePlaceholderProvider = $imagePlaceholderProvider;
+        $this->webpConfiguration = $webpConfiguration;
     }
 
     public function onBuildQuery(BuildQueryProductListEvent $event): void
@@ -30,6 +36,10 @@ class ProductListEventListener
             ->addSelect('text.product_units')
             ->addSelect('integer.newArrival')
             ->addSelect('integer.variant_fields_count');
+
+        if ($this->webpConfiguration->isEnabledIfSupported()) {
+            $event->getQuery()->addSelect('text.image_product_large_webp as imageWebp');
+        }
     }
 
     public function onBuildResult(BuildResultProductListEvent $event): void
@@ -53,6 +63,9 @@ class ProductListEventListener
             $productView->set('name', $data['name']);
             $productView->set('hasImage', $hasProductImage);
             $productView->set('image', $productImageUrl);
+            if (isset($data['imageWebp'])) {
+                $productView->set('imageWebp', $data['imageWebp']);
+            }
             $productView->set('unit', $data['unit']);
             $productView->set(
                 'product_units',

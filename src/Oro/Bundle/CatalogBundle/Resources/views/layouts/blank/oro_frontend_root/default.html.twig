@@ -70,12 +70,17 @@
 {% block _featured_category_image_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' featured-category__image',
-        src: category_filtered_image(category.small_image, 'category_medium'),
         alt: category.title,
-        loading: 'lazy'
+        loading: 'lazy',
+        width: 315,
+        height: 260
     }) %}
 
-    <img {{ block('block_attributes') }}>
+    {% include '@OroAttachment/Twig/picture.html.twig' with {
+        sources: category_filtered_picture_sources(category.small_image, 'category_medium'),
+        filter: 'category_medium',
+        img_attrs: attr
+    } %}
 {% endblock %}
 
 {% block _featured_category_desc_widget %}

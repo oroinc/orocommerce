@@ -1,0 +1,14 @@
+services:
+    oro_pricing.api.update_weight_by_value_and_unit:
+        class: Oro\Bundle\ShippingBundle\Api\Processor\UpdateWeightByValueAndUnit
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: pre_submit|post_validate, class: Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions }
+
+    oro_pricing.api.update_dimensions_length_width_height_unit:
+        class: Oro\Bundle\ShippingBundle\Api\Processor\UpdateDimensionsByValueAndUnit
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: pre_submit|post_validate, class: Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions }

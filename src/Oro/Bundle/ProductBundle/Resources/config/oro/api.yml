@@ -83,15 +83,15 @@ api:
             documentation_resource: '@OroProductBundle/Resources/doc/api/related_product.md'
             actions:
                 get:
-                    description: 'Get Related Product Relationship'
+                    description: Get Related Product Relationship
                 delete:
-                    description: 'Delete Related Product Relationship'
+                    description: Delete Related Product Relationship
                 get_list:
-                    description: 'Get Related Product Relationships'
+                    description: Get Related Product Relationships
                 delete_list:
-                    description: 'Delete Related Product Relationships'
+                    description: Delete Related Product Relationships
                 create:
-                    description: 'Create Related Product Relationships'
+                    description: Create Related Product Relationships
                     fields:
                         product:
                             form_options:

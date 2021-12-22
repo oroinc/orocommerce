@@ -2,11 +2,40 @@ The upgrade instructions are available at [Oro documentation website](https://do
 
 The current file describes significant changes in the code that may affect the upgrade of your customizations.
 
+## 5.0.0-rc (2021-12-07)
+[Show detailed list of changes](incompatibilities-5-0-rc.md)
+
+## 5.0.0-beta.2 (2021-09-30)
+[Show detailed list of changes](incompatibilities-5-0-beta-2.md)
 
 ## 5.0.0-beta.1 (2021-07-30)
 [Show detailed list of changes](incompatibilities-5-0-beta-1.md)
 
 ### Added
+
+#### CheckoutBundle
+* Added a few mediator events for the Single Page Checkout
+
+##### orocheckout/js/app/components/single-page-checkout-component
+
+`single-page-checkout:before-layout-subtree-content-loading` - triggered before the update of Layout Subtrees
+
+`single-page-checkout:after-layout-subtree-content-loading` - triggered after the update of Layout Subtrees
+
+`single-page-checkout:layout-subtree-content-loading-fail` - triggered when there was an error and the response failed
+
+##### orocheckout/js/app/views/single-page-checkout-form-view
+
+`single-page-checkout:rendered` - triggered when the form has rendered
+
+`single-page-checkout:before-change` - triggered when the form changes
+
+`single-page-checkout:after-change` - triggered after the form changes
+
+`single-page-checkout:before-force-change` - triggered before the forced form change
+
+`single-page-checkout:after-force-change` - triggered after the forced form change
+
 #### CMSBundle
 * Created `optimized` layout theme with `landing` extra js build utilized on oro_cms_frontend_page_view page, see article [How to Create Extra JS Build for a Landing Page](https://doc.oroinc.com/master/frontend/storefront/how-to/how-to-create-extra-js-build-for-landing-page/).  
 

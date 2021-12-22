@@ -175,9 +175,9 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
         $this->attachmentManager->expects($this->exactly(3))
             ->method('getFilteredImageUrl')
             ->willReturnMap([
-                [$image, 'product_large', UrlGeneratorInterface::ABSOLUTE_PATH, '/large/image'],
-                [$image, 'product_medium', UrlGeneratorInterface::ABSOLUTE_PATH, '/medium/image'],
-                [$image, 'product_small', UrlGeneratorInterface::ABSOLUTE_PATH, '/small/image']
+                [$image, 'product_large', '', UrlGeneratorInterface::ABSOLUTE_PATH, '/large/image'],
+                [$image, 'product_medium', '', UrlGeneratorInterface::ABSOLUTE_PATH, '/medium/image'],
+                [$image, 'product_small', '', UrlGeneratorInterface::ABSOLUTE_PATH, '/small/image']
             ]);
 
         $this->attributeManager->expects($this->once())

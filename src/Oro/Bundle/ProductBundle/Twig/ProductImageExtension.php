@@ -15,11 +15,7 @@ use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
 /**
- * Provides Twig functions to get image placeholder and type images for a product entity:
- *   - collect_product_images_by_types
- *   - sort_product_images
- *   - product_filtered_image
- *   - product_image_placeholder
+ * Provides Twig functions to get images and image types for a {@see Product} entity.
  */
 class ProductImageExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
@@ -36,13 +32,14 @@ class ProductImageExtension extends AbstractExtension implements ServiceSubscrib
     /**
      * {@inheritdoc}
      */
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             new TwigFunction('collect_product_images_by_types', [$this, 'collectProductImagesByTypes']),
             new TwigFunction('sort_product_images', [$this, 'sortProductImages']),
             new TwigFunction('product_filtered_image', [$this, 'getProductFilteredImage']),
-            new TwigFunction('product_image_placeholder', [$this, 'getProductImagePlaceholder'])
+            new TwigFunction('product_image_placeholder', [$this, 'getProductImagePlaceholder']),
+            new TwigFunction('product_filtered_picture_sources', [$this, 'getProductFilteredPictureSources']),
         ];
     }
 
@@ -78,24 +75,75 @@ class ProductImageExtension extends AbstractExtension implements ServiceSubscrib
         return $this->getProductImageHelper()->sortImages($productImages->toArray());
     }
 
-    public function getProductFilteredImage(?File $file, string $filter): string
+    public function getProductFilteredImage(?File $file, string $filter, string $format = ''): string
     {
         if ($file) {
-            return $this->getAttachmentManager()->getFilteredImageUrl($file, $filter);
+            return $this->getAttachmentManager()->getFilteredImageUrl($file, $filter, $format);
         }
 
-        return $this->getProductImagePlaceholder($filter);
+        return $this->getProductImagePlaceholder($filter, $format);
     }
 
-    public function getProductImagePlaceholder(string $filter): string
+    public function getProductImagePlaceholder(string $filter, string $format = ''): string
     {
-        return $this->getImagePlaceholderProvider()->getPath($filter);
+        return $this->getImagePlaceholderProvider()->getPath($filter, $format);
+    }
+
+    /**
+     * Returns sources array that can be used in <picture> tag.
+     * Adds WebP image variants is current oro_attachment.webp_strategy is "if_supported".
+     *
+     * @param File|null $file
+     * @param string $filterName
+     * @param array $attrs Extra attributes to add to <source> tags
+     *
+     * @return array
+     *  [
+     *      [
+     *          'srcset' => '/url/for/image.png',
+     *          'type' => 'image/png',
+     *      ],
+     *      // ...
+     *  ]
+     */
+    public function getProductFilteredPictureSources(
+        ?File $file,
+        string $filterName = 'original',
+        array $attrs = []
+    ): array {
+        $sources = [];
+        $isWebpEnabledIfSupported = $this->getAttachmentManager()->isWebpEnabledIfSupported();
+        if ($file) {
+            if ($isWebpEnabledIfSupported && $file->getExtension() !== 'webp') {
+                $sources[] = $attrs + [
+                        'srcset' => $this->getAttachmentManager()->getFilteredImageUrl($file, $filterName, 'webp'),
+                        'type' => 'image/webp',
+                    ];
+            }
+            $sources[] = $attrs + [
+                    'srcset' => $this->getAttachmentManager()->getFilteredImageUrl($file, $filterName),
+                    'type' => $file?->getMimeType(),
+                ];
+        } else {
+            if ($isWebpEnabledIfSupported) {
+                $sources[] = $attrs + [
+                        'srcset' => $this->getProductImagePlaceholder($filterName, 'webp'),
+                        'type' => 'image/webp',
+                    ];
+            }
+
+            $sources[] = $attrs + [
+                    'srcset' => $this->getProductImagePlaceholder($filterName),
+                ];
+        }
+
+        return $sources;
     }
 
     /**
      * {@inheritdoc}
      */
-    public static function getSubscribedServices()
+    public static function getSubscribedServices(): array
     {
         return [
             AttachmentManager::class,

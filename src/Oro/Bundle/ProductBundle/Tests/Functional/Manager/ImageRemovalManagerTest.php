@@ -60,7 +60,7 @@ class ImageRemovalManagerTest extends WebTestCase
         $this->applyImageFilter($file, 'product_medium');
 
         $fileNames = $this->getImageFileNames($file);
-        self::assertCount(2, $fileNames);
+        self::assertCount(4, $fileNames);
 
         $this->removeFiles($file);
         $this->assertFilesDoNotExist($file, $fileNames);
@@ -75,10 +75,14 @@ class ImageRemovalManagerTest extends WebTestCase
         $this->applyImageFilter($file, 'product_medium');
 
         $fileNames = $this->getImageFileNames($file);
-        self::assertCount(2, $fileNames);
+        self::assertCount(4, $fileNames);
         foreach ($fileNames as $fileName) {
             if (str_starts_with($fileName, 'attachment/filter/')) {
-                self::assertStringEndsWith('-original_attachment.jpg', $fileName);
+                if (str_ends_with($fileName, '.jpg')) {
+                    self::assertStringEndsWith('-original_attachment.jpg', $fileName);
+                } else {
+                    self::assertStringEndsWith('-original_attachment.jpg.webp', $fileName);
+                }
             }
         }
 
@@ -100,7 +104,7 @@ class ImageRemovalManagerTest extends WebTestCase
         $this->applyImageFilter($file, 'product_medium');
 
         $fileNames = array_unique(array_merge($fileNames, $this->getImageFileNames($file)));
-        self::assertCount(4, $fileNames);
+        self::assertCount(8, $fileNames);
 
         $this->removeFiles($file);
         $this->assertFilesDoNotExist($file, $fileNames);
@@ -120,7 +124,7 @@ class ImageRemovalManagerTest extends WebTestCase
         $this->applyImageFilter($file, 'product_medium');
 
         $fileNames = array_unique(array_merge($fileNames, $this->getImageFileNames($file)));
-        self::assertCount(4, $fileNames);
+        self::assertCount(8, $fileNames);
 
         $this->removeFiles($file);
         $this->assertFilesDoNotExist($file, $fileNames);

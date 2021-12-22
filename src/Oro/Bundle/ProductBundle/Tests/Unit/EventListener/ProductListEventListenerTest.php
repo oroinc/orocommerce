@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
+use Oro\Bundle\AttachmentBundle\Tools\WebpConfiguration;
 use Oro\Bundle\LayoutBundle\Provider\Image\ImagePlaceholderProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Event\BuildQueryProductListEvent;
@@ -15,14 +16,18 @@ class ProductListEventListenerTest extends \PHPUnit\Framework\TestCase
     /** @var ImagePlaceholderProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $imagePlaceholderProvider;
 
+    /** @var WebpConfiguration|\PHPUnit\Framework\MockObject\MockObject */
+    private $webpConfiguration;
+
     /** @var ProductListEventListener */
     private $listener;
 
     protected function setUp(): void
     {
         $this->imagePlaceholderProvider = $this->createMock(ImagePlaceholderProviderInterface::class);
+        $this->webpConfiguration = $this->createMock(WebpConfiguration::class);
 
-        $this->listener = new ProductListEventListener($this->imagePlaceholderProvider);
+        $this->listener = new ProductListEventListener($this->imagePlaceholderProvider, $this->webpConfiguration);
     }
 
     public function testOnBuildQuery(): void
@@ -42,6 +47,32 @@ class ProductListEventListenerTest extends \PHPUnit\Framework\TestCase
                 ['integer.variant_fields_count']
             )
             ->willReturnSelf();
+
+        $this->listener->onBuildQuery(new BuildQueryProductListEvent('test_list', $query));
+    }
+
+    public function testOnBuildQueryWebpSupported(): void
+    {
+        $query = $this->createMock(SearchQueryInterface::class);
+
+        $query->expects(self::exactly(9))
+            ->method('addSelect')
+            ->withConsecutive(
+                ['text.type'],
+                ['text.sku'],
+                ['text.names_LOCALIZATION_ID as name'],
+                ['text.image_product_large as image'],
+                ['text.primary_unit as unit'],
+                ['text.product_units'],
+                ['integer.newArrival'],
+                ['integer.variant_fields_count'],
+                ['text.image_product_large_webp as imageWebp']
+            )
+            ->willReturnSelf();
+
+        $this->webpConfiguration->expects(self::once())
+            ->method('isEnabledIfSupported')
+            ->willReturn(true);
 
         $this->listener->onBuildQuery(new BuildQueryProductListEvent('test_list', $query));
     }
@@ -108,6 +139,39 @@ class ProductListEventListenerTest extends \PHPUnit\Framework\TestCase
             ->method('getPath')
             ->with('product_large')
             ->willReturn($noImagePath);
+
+        $this->listener->onBuildResult(new BuildResultProductListEvent('test_list', $productData, $productViews));
+    }
+
+    public function testOnBuildResultWebpSupported(): void
+    {
+        $productData = [
+            1 => [
+                'id'                   => 1,
+                'type'                 => Product::TYPE_CONFIGURABLE,
+                'sku'                  => 'p1',
+                'name'                 => 'product 1',
+                'image'                => 'http://product1',
+                'imageWebp'            => 'http://product1/webp',
+                'unit'                 => 'items',
+                'product_units'        => serialize(['items' => 0, 'set' => 2]),
+                'newArrival'           => 1,
+                'variant_fields_count' => 3
+            ],
+        ];
+        $productView1 = $this->createMock(ProductView::class);
+        $productViews = [1 => $productView1];
+
+        $productView1->expects(self::exactly(10))
+            ->method('set')
+            ->withConsecutive(
+                ['type', self::identicalTo(Product::TYPE_CONFIGURABLE)],
+                ['sku', self::identicalTo('p1')],
+                ['name', self::identicalTo('product 1')],
+                ['hasImage', self::identicalTo(true)],
+                ['image', self::identicalTo('http://product1')],
+                ['imageWebp', self::identicalTo('http://product1/webp')],
+            );
 
         $this->listener->onBuildResult(new BuildResultProductListEvent('test_list', $productData, $productViews));
     }

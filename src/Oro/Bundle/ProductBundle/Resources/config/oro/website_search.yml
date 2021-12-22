@@ -60,6 +60,18 @@ Oro\Bundle\ProductBundle\Entity\Product:
             name: variant_fields_count
             type: integer
             fulltext: false
+        -
+            name: image_product_large_webp
+            type: text
+            fulltext: false
+        -
+            name: image_product_medium_webp
+            type: text
+            fulltext: false
+        -
+            name: image_product_small_webp
+            type: text
+            fulltext: false
 
 Oro\Bundle\ProductBundle\Entity\Brand:
     alias: oro_brand_WEBSITE_ID

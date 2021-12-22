@@ -8,6 +8,7 @@ use Behat\Mink\Element\NodeElement;
 use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\MinkExtension\Context\MinkAwareContext;
 use Doctrine\Persistence\ObjectRepository;
+use Oro\Bundle\AttachmentBundle\Tests\Behat\Context\AttachmentImageContext;
 use Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext as ConfigContext;
 use Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext;
 use Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid;
@@ -54,6 +55,8 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
 
     private ?FormContext $formContext = null;
 
+    private ?AttachmentImageContext $attachmentImageContext = null;
+
     private array $rememberedData = [];
 
     /**
@@ -66,6 +69,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
         $this->gridContext = $environment->getContext(GridContext::class);
         $this->configContext = $environment->getContext(ConfigContext::class);
         $this->formContext = $environment->getContext(FormContext::class);
+        $this->attachmentImageContext = $environment->getContext(AttachmentImageContext::class);
     }
 
     /**
@@ -1439,6 +1443,8 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
                 $content
             )
         );
+
+        $this->attachmentImageContext->iShouldSeePictureElement($image->getParent());
     }
 
     /**
@@ -1458,13 +1464,9 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
             $imageType
         ));
 
-        $image = $element->find(
-            'xpath',
-            sprintf(
-                '//img[contains(@src, "%s")]',
-                $rememberedImageId
-            )
-        );
+        $imageXPath = sprintf('//img[contains(@src, "%s")]', $rememberedImageId);
+        $image = $this->spin(static fn (MinkAwareContext $context) => $element->find('xpath', $imageXPath), 5);
+
         self::assertNotEmpty($image, sprintf(
             'No image with id "%s" found in "%s"',
             $rememberedImageId,
@@ -1608,6 +1610,31 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
             $image->getAttribute('alt'),
             sprintf('Preview image with alt "%s" not found for product "%s"', $alt, $SKU)
         );
+    }
+
+    /**
+     * Example: I should see picture for "SKU" product in the "New Arrivals Block"
+     *
+     * @Then /^(?:|I )should see picture for "(?P<SKU>[^"]*)" product in the "(?P<blockName>[^"]+)"$/
+     * @Then /^(?:|I )should see product picture in the "(?P<blockName>[^"]+)"$/
+     *
+     * @param string $blockName
+     * @param string|null $SKU
+     */
+    public function iShouldSeePictureForProductInBlock($blockName, $SKU = null): void
+    {
+        $block = $this->createElement($blockName);
+
+        self::assertTrue($block->isValid(), sprintf('Embedded block "%s" was not found', $blockName));
+
+        if ($SKU) {
+            $productItem = $this->findProductItem($SKU, $block);
+            $picture = $this->createElement('Product Preview Picture', $productItem);
+        } else {
+            $picture = $this->createElement('Product View Picture', $block);
+        }
+
+        $this->attachmentImageContext->iShouldSeePictureElement($picture);
     }
 
     /**

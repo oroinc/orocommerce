@@ -1,0 +1,143 @@
+<?php
+
+namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
+
+use Oro\Bundle\AttachmentBundle\Tools\WebpConfiguration;
+use Oro\Bundle\LayoutBundle\Provider\Image\ImagePlaceholderProviderInterface;
+use Oro\Bundle\ProductBundle\Event\CollectAutocompleteFieldsEvent;
+use Oro\Bundle\ProductBundle\Event\ProcessAutocompleteDataEvent;
+use Oro\Bundle\ProductBundle\EventListener\WebpAwareProductAutocompleteListener;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
+
+class WebpAwareProductAutocompleteListenerTest extends \PHPUnit\Framework\TestCase
+{
+    private WebpConfiguration|\PHPUnit\Framework\MockObject\MockObject $webpConfiguration;
+
+    private ImagePlaceholderProviderInterface|\PHPUnit\Framework\MockObject\MockObject $imagePlaceholderProvider;
+
+    protected function setUp(): void
+    {
+        $this->webpConfiguration = $this->createMock(WebpConfiguration::class);
+        $this->imagePlaceholderProvider = $this->createMock(ImagePlaceholderProviderInterface::class);
+    }
+
+    /**
+     * @dataProvider getOnCollectAutocompleteFieldsDataProvider
+     */
+    public function testOnCollectAutocompleteFields(bool $webpSupported, array $expectedFields): void
+    {
+        $event = new CollectAutocompleteFieldsEvent([]);
+
+        $this->webpConfiguration->expects(self::once())
+            ->method('isEnabledIfSupported')
+            ->willReturn($webpSupported);
+
+        $listener = new WebpAwareProductAutocompleteListener(
+            new RequestStack(),
+            $this->webpConfiguration,
+            $this->imagePlaceholderProvider
+        );
+        $listener->onCollectAutocompleteFields($event);
+
+        self::assertEquals(
+            $expectedFields,
+            $event->getFields()
+        );
+    }
+
+    public function getOnCollectAutocompleteFieldsDataProvider(): array
+    {
+        return [
+            [
+                'webpSupported' => false,
+                'expectedFields' => [],
+            ],
+            [
+                'webpSupported' => true,
+                'expectedFields' => ['text.image_product_small_webp as imageWebp'],
+            ],
+        ];
+    }
+
+    public function testOnProcessAutocompleteDataNoRequest(): void
+    {
+        $data = [
+            'SKU1' => [],
+            'SKU2' => ['imageWebp' => '/image/webp'],
+        ];
+        $event = new ProcessAutocompleteDataEvent($data);
+
+        $this->imagePlaceholderProvider->expects(self::once())
+            ->method('getPath')
+            ->with('product_small', 'webp')
+            ->willReturn('/product_small_webp/no_image');
+
+        $requestStack = new RequestStack();
+        $listener = new WebpAwareProductAutocompleteListener(
+            $requestStack,
+            $this->webpConfiguration,
+            $this->imagePlaceholderProvider
+        );
+        $listener->onProcessAutocompleteData($event);
+
+        self::assertEquals($data, $event->getData());
+    }
+
+    public function testOnProcessAutocompleteDataDefaultImage(): void
+    {
+        $data = [
+            'SKU1' => [],
+            'SKU2' => ['imageWebp' => ''],
+        ];
+        $event = new ProcessAutocompleteDataEvent($data);
+
+        $requestStack = new RequestStack();
+        $request = Request::create('https://localhost/');
+        $requestStack->push($request);
+
+        $defaultImageUrl = '/product_small_webp/no_image';
+        $this->imagePlaceholderProvider->expects(self::once())
+            ->method('getPath')
+            ->with('product_small', 'webp')
+            ->willReturn($defaultImageUrl);
+
+        $listener = new WebpAwareProductAutocompleteListener(
+            $requestStack,
+            $this->webpConfiguration,
+            $this->imagePlaceholderProvider
+        );
+        $listener->onProcessAutocompleteData($event);
+
+        $expectedData = $data;
+        $expectedData['SKU2']['imageWebp'] = $defaultImageUrl;
+
+        self::assertEquals($expectedData, $event->getData());
+    }
+
+    public function testOnProcessAutocompleteData(): void
+    {
+        $imageUrl = '/image/webp';
+        $data = [
+            'SKU1' => [],
+            'SKU2' => ['imageWebp' => $imageUrl],
+        ];
+        $event = new ProcessAutocompleteDataEvent($data);
+
+        $requestStack = new RequestStack();
+        $request = Request::create('https://localhost/');
+        $requestStack->push($request);
+
+        $listener = new WebpAwareProductAutocompleteListener(
+            $requestStack,
+            $this->webpConfiguration,
+            $this->imagePlaceholderProvider
+        );
+        $listener->onProcessAutocompleteData($event);
+
+        $expectedData = $data;
+        $expectedData['SKU2']['imageWebp'] = 'https://localhost' . $imageUrl;
+
+        self::assertEquals($expectedData, $event->getData());
+    }
+}

@@ -656,6 +656,17 @@ services:
         arguments:
             - '@oro_product.datagrid_theme_helper'
             - '@oro_product.provider.product_image_placeholder'
+            - '@oro_attachment.tools.webp_configuration'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
+            - { name: kernel.event_listener, event: oro_datagrid.search_datasource.result.after.frontend-product-search-grid, method: onResultAfter }
+
+    oro_product.event_listener.frontend_product_search_datagrid.webp_aware:
+        class: 'Oro\Bundle\ProductBundle\EventListener\WebpAwareFrontendProductDatagridListener'
+        arguments:
+            - '@oro_product.datagrid_theme_helper'
+            - '@oro_product.provider.product_image_placeholder'
+            - '@oro_attachment.tools.webp_configuration'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
             - { name: kernel.event_listener, event: oro_datagrid.search_datasource.result.after.frontend-product-search-grid, method: onResultAfter }
@@ -711,6 +722,7 @@ services:
         class: Oro\Bundle\ProductBundle\EventListener\ProductListEventListener
         arguments:
             - '@oro_product.provider.product_image_placeholder'
+            - '@oro_attachment.tools.webp_configuration'
         tags:
             - { name: kernel.event_listener, event: oro_product.product_list.build_query, method: onBuildQuery, priority: 10 }
             - { name: kernel.event_listener, event: oro_product.product_list.build_result, method: onBuildResult, priority: 10 }
@@ -800,6 +812,16 @@ services:
             - '@oro_attachment.manager'
             - '@oro_entity_config.manager.attribute_manager'
             - '@oro_product.provider.website_search_index_data'
+            - '@oro_attachment.tools.webp_configuration'
+        tags:
+            - { name: kernel.event_listener, event: oro_website_search.event.index_entity.product, method: onWebsiteSearchIndex, priority: -255 }
+
+    oro_product.event_listener.website_search_index.webp_aware:
+        class: 'Oro\Bundle\ProductBundle\EventListener\WebpAwareWebsiteSearchProductIndexerListener'
+        arguments:
+            - '@doctrine'
+            - '@oro_attachment.manager'
+            - '@oro_website_search.manager.website_context_manager'
         tags:
             - { name: kernel.event_listener, event: oro_website_search.event.index_entity.product, method: onWebsiteSearchIndex, priority: -255 }
 
@@ -1501,11 +1523,15 @@ services:
 
     oro_product.provider.product_images_urls:
         class: 'Oro\Bundle\ProductBundle\Provider\ProductImagesURLsProvider'
-        public: true
         arguments:
-            - '@oro_entity.doctrine_helper'
+            - '@doctrine'
             - '@oro_attachment.manager'
             - '@oro_product.helper.product_image_helper'
+
+    oro_product.provider.product_images_urls.webp_aware:
+        class: 'Oro\Bundle\ProductBundle\Provider\WebpAwareProductImagesURLsProvider'
+        parent: oro_product.provider.product_images_urls
+        decorates: oro_product.provider.product_images_urls
 
     oro_product.provider.product_images_dimensions:
         class: 'Oro\Bundle\ProductBundle\Provider\ProductImagesDimensionsProvider'
@@ -1879,6 +1905,16 @@ services:
             - '@oro_security.token_accessor'
         tags:
             - { name: kernel.event_listener, event: kernel.exception, method: onKernelException}
+
+    oro_product.event_listener.product_autocomplete.webp_aware:
+        class: Oro\Bundle\ProductBundle\EventListener\WebpAwareProductAutocompleteListener
+        arguments:
+            - '@request_stack'
+            - '@oro_attachment.tools.webp_configuration'
+            - '@oro_product.provider.product_image_placeholder'
+        tags:
+            - { name: kernel.event_listener, event: Oro\Bundle\ProductBundle\Event\CollectAutocompleteFieldsEvent, method: onCollectAutocompleteFields }
+            - { name: kernel.event_listener, event: Oro\Bundle\ProductBundle\Event\ProcessAutocompleteDataEvent, method: onProcessAutocompleteData }
 
     oro_product.manager.user_product_filters_sidebar_state_manager:
         class: Oro\Bundle\ProductBundle\Manager\UserProductFiltersSidebarStateManager

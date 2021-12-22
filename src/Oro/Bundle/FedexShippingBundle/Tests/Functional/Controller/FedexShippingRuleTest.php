@@ -19,14 +19,14 @@ class FedexShippingRuleTest extends WebTestCase
 
     protected function setUp(): void
     {
-        $this->initClient([], static::generateBasicAuthHeader());
+        $this->initClient([], self::generateBasicAuthHeader());
 
         $this->createFedexIntegrationSettings();
     }
 
     public function testCreate()
     {
-        static::getContainer()->get('doctrine')->getManager()->clear();
+        self::getContainer()->get('doctrine')->getManager()->clear();
 
         $methodIdentifier = $this->getMethodIdentifier();
 
@@ -43,10 +43,10 @@ class FedexShippingRuleTest extends WebTestCase
 
         $response = $this->client->getResponse();
 
-        static::assertStringContainsString('fedex-logo.png', $response->getContent());
-        static::assertStringContainsString('FedEx Europe First International Priority', $response->getContent());
-        static::assertStringContainsString('FedEx 2 Day', $response->getContent());
-        static::assertStringContainsString('FedEx 2 Day Freight', $response->getContent());
+        self::assertStringContainsString('fedex-logo.png', $response->getContent());
+        self::assertStringContainsString('FedEx Europe First International Priority', $response->getContent());
+        self::assertStringContainsString('FedEx 2 Day', $response->getContent());
+        self::assertStringContainsString('FedEx 2 Day Freight', $response->getContent());
 
         $form = $crawler->selectButton('Save and Close')->form();
 
@@ -100,8 +100,8 @@ class FedexShippingRuleTest extends WebTestCase
             $this->getUrl('oro_shipping_methods_configs_rule_create'),
             $this->createFormValues($form, $configData)
         );
-        static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        static::assertStringContainsString('Shipping rule has been saved', $this->client->getResponse()->getContent());
+        self::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+        self::assertStringContainsString('Shipping rule has been saved', $this->client->getResponse()->getContent());
 
         $config = $this->getMethodConfig($methodIdentifier);
 
@@ -114,9 +114,9 @@ class FedexShippingRuleTest extends WebTestCase
 
         $crawler = $this->client->request('GET', $this->getUrl('oro_shipping_methods_configs_rule_index'));
 
-        static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        static::assertStringContainsString('shipping-methods-configs-rule-grid', $crawler->html());
-        static::assertStringContainsString('fedex', $crawler->html());
+        self::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+        self::assertStringContainsString('shipping-methods-configs-rule-grid', $crawler->html());
+        self::assertStringContainsString('fedex', $crawler->html());
     }
 
     private function createFormValues(Form $form, array $configData): array
@@ -129,22 +129,22 @@ class FedexShippingRuleTest extends WebTestCase
         return $formValues;
     }
 
-    private function assertMethodConfigCorrect(ShippingMethodConfig $config, array $configData)
+    private function assertMethodConfigCorrect(ShippingMethodConfig $config, array $configData): void
     {
-        static::assertSame($configData['methodConfigs'][0]['method'], $config->getMethod());
-        static::assertSame($configData['rule']['name'], $config->getMethodConfigsRule()->getRule()->getName());
-        static::assertSame(
+        self::assertSame($configData['methodConfigs'][0]['method'], $config->getMethod());
+        self::assertSame($configData['rule']['name'], $config->getMethodConfigsRule()->getRule()->getName());
+        self::assertSame(
             (int) $configData['rule']['sortOrder'],
             $config->getMethodConfigsRule()->getRule()->getSortOrder()
         );
-        static::assertSame(
+        self::assertSame(
             $configData['rule']['expression'],
             $config->getMethodConfigsRule()->getRule()->getExpression()
         );
-        static::assertSame($configData['currency'], $config->getMethodConfigsRule()->getCurrency());
-        static::assertEquals($configData['methodConfigs'][0]['options'], $config->getOptions());
+        self::assertSame($configData['currency'], $config->getMethodConfigsRule()->getCurrency());
+        self::assertEquals($configData['methodConfigs'][0]['options'], $config->getOptions());
 
-        static::assertCount(count($configData['methodConfigs'][0]['typeConfigs']), $config->getTypeConfigs());
+        self::assertCount(count($configData['methodConfigs'][0]['typeConfigs']), $config->getTypeConfigs());
 
         foreach ($configData['methodConfigs'][0]['typeConfigs'] as $typeConfig) {
             $this->assertMethodTypeConfigCreated(
@@ -155,13 +155,13 @@ class FedexShippingRuleTest extends WebTestCase
         }
     }
 
-    private function assertMethodTypeConfigCreated(string $type, array $options, bool $enabled)
+    private function assertMethodTypeConfigCreated(string $type, array $options, bool $enabled): void
     {
-        static::assertNotNull(
-            static::getContainer()
+        self::assertNotNull(
+            self::getContainer()
                 ->get('doctrine')
                 ->getManager()
-                ->getRepository('OroShippingBundle:ShippingMethodTypeConfig')
+                ->getRepository(ShippingMethodTypeConfig::class)
                 ->findBy([
                     'type' => $type,
                     'options' => $options,
@@ -201,21 +201,17 @@ class FedexShippingRuleTest extends WebTestCase
             ->setMethod($this->getMethodIdentifier())
             ->addTypeConfig($type);
 
-        static::getContainer()->get('doctrine')->getManager()->persist($configRule);
-        static::getContainer()->get('doctrine')->getManager()->persist($config);
-        static::getContainer()->get('doctrine')->getManager()->flush();
+        self::getContainer()->get('doctrine')->getManager()->persist($configRule);
+        self::getContainer()->get('doctrine')->getManager()->persist($config);
+        self::getContainer()->get('doctrine')->getManager()->flush();
     }
 
-    /**
-     * @param string $methodIdentifier
-     * @return ShippingMethodConfig|null
-     */
-    private function getMethodConfig(string $methodIdentifier)
+    private function getMethodConfig(string $methodIdentifier): ?ShippingMethodConfig
     {
-        $config = static::getContainer()
+        $config = self::getContainer()
             ->get('doctrine')
             ->getManager()
-            ->getRepository('OroShippingBundle:ShippingMethodConfig')
+            ->getRepository(ShippingMethodConfig::class)
             ->findByMethod($methodIdentifier);
 
         if (empty($config)) {
@@ -228,7 +224,7 @@ class FedexShippingRuleTest extends WebTestCase
     private function getMethodIdentifier(): string
     {
         /** @var IntegrationIdentifierGeneratorInterface $methodIdGenerator */
-        $methodIdGenerator = static::getContainer()->get('oro_fedex_shipping.integration.identifier_generator');
+        $methodIdGenerator = self::getContainer()->get('oro_fedex_shipping.integration.identifier_generator');
 
         return $methodIdGenerator->generateIdentifier($this->getFedexIntegrationSettings()->getChannel());
     }

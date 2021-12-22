@@ -1,6 +1,7 @@
 @feature-BB-8715
 @ticket-BB-13978
 @ticket-BB-16275
+@feature-BAP-19790
 @fixture-OroProductBundle:showing_related_items_products.yml
 @fixture-OroProductBundle:related_items_system_users.yml
 @fixture-OroProductBundle:related_items_customer_users.yml
@@ -157,8 +158,10 @@ Feature: Showing upsell products
   Scenario: Check that alt attributes are localized and displayed properly
     Given I open product gallery for "PSKU2" product
     Then I should see gallery image with alt "Product2Localization1`\"'&йёщ®&reg;>"
+    And I should see picture "Popup Gallery Widget Picture" element
     When I click "Popup Gallery Widget Close"
     Then I should see preview image with alt "Product2Localization1`\"'&йёщ®&reg;>" for "PSKU2" product
+    And I should see picture for "PSKU2" product in the "Upsell Products Block"
 
   Scenario: Check that product name is localized and displayed properly in shopping lists widget
     When I click "Add to Shopping List" for "PSKU2" product

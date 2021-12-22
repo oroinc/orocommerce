@@ -1,5 +1,6 @@
 @ticket-BB-13978
 @ticket-BB-16275
+@ticket-BAP-19790
 @fixture-OroProductBundle:new_arrivals_block.yml
 @regression
 
@@ -277,8 +278,10 @@ Feature: New Arrivals Block
   Scenario: Check that alt attributes contain proper product name
     Given I open product gallery for "SKU6" product
     Then I should see gallery image with alt "Product6`\"'&йёщ®&reg;>"
+    And I should see picture "Popup Gallery Widget Picture" element
     When I click "Popup Gallery Widget Close"
     Then I should see preview image with alt "Product6`\"'&йёщ®&reg;>" for "SKU6" product
+    And I should see picture for "SKU6" product in the "New Arrivals Block"
 
   Scenario: Check that product name is localized in shopping lists widget
     When I click "Add to Shopping List" for "SKU6" product

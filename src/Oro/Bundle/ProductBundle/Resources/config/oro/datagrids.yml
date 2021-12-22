@@ -838,6 +838,8 @@ datagrids:
                     - text.type as type
                     - text.image_product_medium as image_product_medium
                     - text.image_product_large as image_product_large
+                    - text.image_product_medium_webp as image_product_medium_webp
+                    - text.image_product_large_webp as image_product_large_webp
                     - text.product_units as product_units
                     - text.primary_unit as unit
                     - integer.variant_fields_count as variant_fields_count

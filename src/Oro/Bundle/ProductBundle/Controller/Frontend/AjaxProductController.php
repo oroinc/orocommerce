@@ -72,7 +72,7 @@ class AjaxProductController extends AbstractController
      *
      * @return JsonResponse
      */
-    public function productImagesByIdAction(Request $request, $id)
+    public function productImagesByIdAction(Request $request, int $id)
     {
         $productImagesURLsProvider = $this->get(ProductImagesURLsProvider::class);
         $filtersNames = $this->getFiltersNames($request);

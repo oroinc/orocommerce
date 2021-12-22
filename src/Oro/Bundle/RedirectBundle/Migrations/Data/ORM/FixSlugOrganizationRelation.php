@@ -35,6 +35,9 @@ class FixSlugOrganizationRelation extends AbstractFixture implements ContainerAw
             $entitiesWithoutOrgInSlug = $this->fixSlugsWithoutOrgWithSameUrl($manager, $slug);
 
             $entity = $this->getEntityBySlug($slug);
+            if (!$entity) {
+                continue;
+            }
             $this->updateEntitySlugs($entity);
 
             array_shift($entitiesWithoutOrgInSlug);
@@ -113,14 +116,12 @@ class FixSlugOrganizationRelation extends AbstractFixture implements ContainerAw
      * @param EntityManagerInterface $manager
      * @param ClassMetadata $metadata
      * @param null|mixed $entityId
-     * @throws \Doctrine\DBAL\Exception
-     * @throws \Doctrine\ORM\Mapping\MappingException
      */
     private function updateSlugOrganization(
         EntityManagerInterface $manager,
         ClassMetadata $metadata,
         $entityId = null
-    ) {
+    ): void {
         $relationMapping = $metadata->getAssociationMapping('slugs');
         $relationTable = $relationMapping['joinTable']['name'];
         $entityRelation = $relationMapping['joinTable']['joinColumns'][0]['name'];
@@ -164,18 +165,14 @@ class FixSlugOrganizationRelation extends AbstractFixture implements ContainerAw
         $updateQB->execute();
     }
 
-    /**
-     * @param Slug $slug
-     * @return SlugAwareInterface
-     */
-    private function getEntityBySlug(Slug $slug)
+    private function getEntityBySlug(Slug $slug): ?SlugAwareInterface
     {
         return $this->container
             ->get('oro_redirect.provider.slug_source_entity_provider_registry')
             ->getSourceEntityBySlug($slug);
     }
 
-    private function updateEntitySlugs(SlugAwareInterface $entity)
+    private function updateEntitySlugs(SlugAwareInterface $entity): void
     {
         if (!$entity instanceof SluggableInterface) {
             return;
@@ -184,10 +181,6 @@ class FixSlugOrganizationRelation extends AbstractFixture implements ContainerAw
         $this->container->get('oro_redirect.generator.slug_entity')->generate($entity, false);
     }
 
-    /**
-     * @throws \Doctrine\DBAL\Exception
-     * @throws \Doctrine\ORM\Mapping\MappingException
-     */
     protected function fixSlugsWithoutOrgWithSameUrl($manager, $slug): array
     {
         $entitiesWithoutOrgInSlug = [];

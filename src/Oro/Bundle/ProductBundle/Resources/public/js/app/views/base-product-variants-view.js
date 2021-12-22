@@ -19,6 +19,10 @@ define(function(require) {
 
         elementsEvents: {},
 
+        events: {
+            submit: 'onSubmit'
+        },
+
         /**
          * @inheritdoc
          */
@@ -41,6 +45,11 @@ define(function(require) {
             if (options.productModel) {
                 this.model = options.productModel;
             }
+        },
+
+        onSubmit: function(e) {
+            // Prevent default submit form when Select 2 dropdown is detached
+            e.preventDefault();
         },
 
         /**

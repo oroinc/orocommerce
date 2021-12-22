@@ -106,12 +106,17 @@ oro_behat_extension:
     Uploaded Featured Category Image:
       selector:
         type: xpath
-        locator: '//a[contains(@class,"featured-category")]/img[contains (@src,"/media/cache/attachment")]'
+        locator: '//a[contains(@class,"featured-category")]/picture/img[contains (@src,"/media/cache/attachment")]'
+
+    Uploaded Featured Category Picture:
+      selector:
+        type: xpath
+        locator: '//a[contains(@class,"featured-category")]/picture'
 
     Empty Featured Category Image:
       selector:
         type: xpath
-        locator: '//a[contains(@class,"featured-category")]/img[contains (@src,"no_image.png")]'
+        locator: '//a[contains(@class,"featured-category")]/picture/img[contains (@src,"no_image.png")]'
 
     Category Image Placeholder Config:
       selector: 'form[name="theme"]'

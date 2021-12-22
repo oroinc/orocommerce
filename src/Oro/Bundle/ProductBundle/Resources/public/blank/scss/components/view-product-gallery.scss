@@ -23,8 +23,7 @@
     height: $view-product-gallery-height;
 
     border-radius: $view-product-gallery-border-radius;
-
-    @extend %base-transition;
+    transition: $view-product-gallery-transition;
 
     &:not(:disabled) {
         cursor: $btn-cursor;

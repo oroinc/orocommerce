@@ -10,8 +10,13 @@ use Oro\Bundle\ImportExportBundle\Tests\Functional\AbstractImportExportTestCase;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\NotificationBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListToProductWithoutPrices;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
+use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\Message;
-use Symfony\Component\DomCrawler\Form;
+use Oro\Component\MessageQueue\Transport\SessionInterface;
+use Oro\Component\MessageQueue\Util\JSON;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -21,25 +26,19 @@ class ImportExportTest extends AbstractImportExportTestCase
 {
     use MessageQueueExtension;
 
-    /**
-     * @var string
-     */
-    protected $file;
+    /** @var string */
+    private $file;
 
-    /**
-     * @var PriceList
-     */
-    protected $priceList;
+    /** @var PriceList */
+    private $priceList;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->loadFixtures(
-            [
-                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices',
-                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListToProductWithoutPrices'
-            ]
-        );
+        $this->loadFixtures([
+            LoadProductPrices::class,
+            LoadPriceListToProductWithoutPrices::class
+        ]);
 
         $this->priceList = $this->getReference('price_list_1');
     }
@@ -125,12 +124,9 @@ class ImportExportTest extends AbstractImportExportTestCase
     }
 
     /**
-     * @param string $strategy
-     * @param int $expectedAdd
-     * @param int $expectedUpdate
      * @dataProvider strategyDataProvider
      */
-    public function testImportProcess($strategy, $expectedAdd, $expectedUpdate)
+    public function testImportProcess(string $strategy, int $expectedAdd, int $expectedUpdate)
     {
         $this->markTestSkipped(
             'This test will be completely removed and replaced with a set of smaller functional tests (see BAP-13063)'
@@ -146,10 +142,9 @@ class ImportExportTest extends AbstractImportExportTestCase
     }
 
     /**
-     * @param string $strategy
      * @dataProvider strategyDataProvider
      */
-    public function testDuplicateRowsImport($strategy)
+    public function testDuplicateRowsImport(string $strategy)
     {
         $this->markTestSkipped(
             'This test will be completely removed and replaced with a set of smaller functional tests (see BAP-13063)'
@@ -163,10 +158,9 @@ class ImportExportTest extends AbstractImportExportTestCase
     }
 
     /**
-     * @param string $strategy
      * @dataProvider strategyDataProvider
      */
-    public function testInvalidCurrencyPriceListImport($strategy)
+    public function testInvalidCurrencyPriceListImport(string $strategy)
     {
         $this->markTestSkipped(
             'This test will be completely removed and replaced with a set of smaller functional tests (see BAP-13063)'
@@ -179,10 +173,9 @@ class ImportExportTest extends AbstractImportExportTestCase
     }
 
     /**
-     * @param string $strategy
      * @dataProvider strategyDataProvider
      */
-    public function testInvalidProductUnit($strategy)
+    public function testInvalidProductUnit(string $strategy)
     {
         $this->markTestSkipped(
             'This test will be completely removed and replaced with a set of smaller functional tests (see BAP-13063)'
@@ -195,10 +188,9 @@ class ImportExportTest extends AbstractImportExportTestCase
     }
 
     /**
-     * @param string $strategy
      * @dataProvider strategyDataProvider
      */
-    public function testUnavailableProductUnit($strategy)
+    public function testUnavailableProductUnit(string $strategy)
     {
         $this->markTestSkipped(
             'This test will be completely removed and replaced with a set of smaller functional tests (see BAP-13063)'
@@ -211,10 +203,9 @@ class ImportExportTest extends AbstractImportExportTestCase
     }
 
     /**
-     * @param string $strategy
      * @dataProvider strategyDataProvider
      */
-    public function testUnavailableProduct($strategy)
+    public function testUnavailableProduct(string $strategy)
     {
         $this->markTestSkipped(
             'This test will be completely removed and replaced with a set of smaller functional tests (see BAP-13063)'
@@ -227,10 +218,9 @@ class ImportExportTest extends AbstractImportExportTestCase
     }
 
     /**
-     * @param string $strategy
      * @dataProvider strategyDataProvider
      */
-    public function testNegativePriceValue($strategy)
+    public function testNegativePriceValue(string $strategy)
     {
         $this->markTestSkipped(
             'This test will be completely removed and replaced with a set of smaller functional tests (see BAP-13063)'
@@ -242,10 +232,7 @@ class ImportExportTest extends AbstractImportExportTestCase
         );
     }
 
-    /**
-     * @return array
-     */
-    public function strategyDataProvider()
+    public function strategyDataProvider(): array
     {
         return [
             'add or replace' => ['oro_pricing_product_price.add_or_replace', 0, 8],
@@ -253,12 +240,7 @@ class ImportExportTest extends AbstractImportExportTestCase
         ];
     }
 
-    /**
-     * @param string $strategy
-     * @param string $path
-     * @param string $errorMessage
-     */
-    protected function assertErrors($strategy, $path, $errorMessage)
+    private function assertErrors(string $strategy, string $path, string $errorMessage): void
     {
         $locator = $this->getContainer()->get('file_locator');
         $this->file = $locator->locate($path);
@@ -268,17 +250,14 @@ class ImportExportTest extends AbstractImportExportTestCase
         static::assertStringContainsString($errorMessage, $crawler->filter('.import-errors')->html());
     }
 
-    /**
-     * @param string $strategy
-     */
-    protected function validateImportFile($strategy)
+    private function validateImportFile(string $strategy): void
     {
         $crawler = $this->client->request(
             'GET',
             $this->getUrl(
                 'oro_importexport_import_form',
                 [
-                    'entity' => 'Oro\Bundle\PricingBundle\Entity\ProductPrice',
+                    'entity' => ProductPrice::class,
                     '_widgetContainer' => 'dialog',
                     'options[price_list_id]' => $this->priceList->getId(),
                     'importJob' => 'price_list_product_prices_entity_import_from_csv',
@@ -293,7 +272,6 @@ class ImportExportTest extends AbstractImportExportTestCase
 
         $this->assertFileExists($this->file);
 
-        /** @var Form $form */
         $form = $crawler->selectButton('Submit')->form();
 
         $optionsPriceList = '&options[price_list_id]='. $this->priceList->getId() .
@@ -317,12 +295,7 @@ class ImportExportTest extends AbstractImportExportTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
     }
 
-    /**
-     * @param string $strategy
-     * @param int $expectedAdd
-     * @param int $expectedUpdate
-     */
-    protected function doImport($strategy, $expectedAdd, $expectedUpdate)
+    private function doImport(string $strategy, int $expectedAdd, int $expectedUpdate): void
     {
         // test import
         $this->client->followRedirects(false);
@@ -356,10 +329,7 @@ class ImportExportTest extends AbstractImportExportTestCase
         );
     }
 
-    /**
-     * @return string
-     */
-    protected function getExportFile()
+    private function getExportFile(): string
     {
         $result = $this
             ->getContainer()
@@ -373,7 +343,7 @@ class ImportExportTest extends AbstractImportExportTestCase
                 ['price_list_id' => $this->priceList->getId()]
             );
 
-        $result = json_decode($result->getContent(), true);
+        $result = json_decode($result->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         return $this
             ->getContainer()
@@ -381,22 +351,19 @@ class ImportExportTest extends AbstractImportExportTestCase
             ->writeToTmpLocalStorage($result['file']);
     }
 
-    /**
-     * @return string
-     */
-    protected function processExportMessage()
+    private function processExportMessage(): string
     {
         $sentMessage = $this->getSentMessage(ImportExportTopics::PRE_EXPORT);
 
         $message = new Message();
         $message->setMessageId('abc');
-        $message->setBody(json_encode($sentMessage));
+        $message->setBody(JSON::encode($sentMessage));
 
         /** @var ExportMessageProcessor $processor */
         $processor = $this->getContainer()->get('oro_importexport.async.pre_export');
-        $processorResult = $processor->process($message, $this->createSessionInterfaceMock());
+        $processorResult = $processor->process($message, $this->createMock(SessionInterface::class));
 
-        $this->assertEquals(ExportMessageProcessor::ACK, $processorResult);
+        $this->assertEquals(MessageProcessorInterface::ACK, $processorResult);
 
         $sentMessages = $this->getSentMessages();
         foreach ($sentMessages as $messageData) {

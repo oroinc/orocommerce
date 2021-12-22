@@ -35,6 +35,7 @@ oro_behat_extension:
         - Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext
         - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
         - Oro\Bundle\ProductBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\AttachmentBundle\Tests\Behat\Context\AttachmentImageContext
         - Oro\Bundle\ShoppingListBundle\Tests\Behat\Context\ShoppingListContext
         - Oro\Bundle\ActivityListBundle\Tests\Behat\Context\ActivityContext
       paths:

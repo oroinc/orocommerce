@@ -14,6 +14,7 @@ oro_behat_extension:
         - Oro\Bundle\LocaleBundle\Tests\Behat\Context\LocalizationContext
         - Oro\Bundle\FrontendLocalizationBundle\Tests\Behat\Context\LocalizationSwitcherContext
         - Oro\Bundle\ProductBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\AttachmentBundle\Tests\Behat\Context\AttachmentImageContext
         - Oro\Bundle\ShoppingListBundle\Tests\Behat\Context\ShoppingListContext
         - Oro\Bundle\CheckoutBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\TaxBundle\Tests\Behat\Context\FeatureContext

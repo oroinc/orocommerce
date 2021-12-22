@@ -33,16 +33,17 @@ class ProductImageFileNameProvider implements FileNameProviderInterface
     /**
      * {@inheritDoc}
      */
-    public function getFileName(File $file): string
+    public function getFileName(File $file, string $format = ''): string
     {
         if (!$this->isApplicable($file)) {
-            return $this->innerProvider->getFileName($file);
+            return $this->innerProvider->getFileName($file, $format);
         }
 
         $hash = str_replace('.' . $file->getExtension(), '', $file->getFilename());
+        $extension = $format && $file->getExtension() !== $format ? '.' . $format : '';
 
         return FilenameSanitizer::sanitizeFilename(
-            $hash . self::ORIGINAL_FILE_NAME_SEPARATOR . $file->getOriginalFilename()
+            $hash . self::ORIGINAL_FILE_NAME_SEPARATOR . $file->getOriginalFilename() . $extension
         );
     }
 

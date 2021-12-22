@@ -103,20 +103,28 @@
 {% endblock %}
 
 {% block __oro_product_list_item__product_view_image_widget %}
-    {% import '@OroUI/macros.html.twig' as UI %}
-
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' product-item__preview-picture',
         'data-object-fit': ''
     }) %}
 
-    {% set attrImage = {
-        'class': 'product-item__preview-image'
-    } %}
+    {% if product.imageWebp is defined and product.imageWebp %}
+        {% set sources = [{
+            srcset: asset(product.imageWebp|trim('/')),
+            type: 'image/webp'
+        }] %}
+    {% endif %}
 
-    <picture {{ block('block_attributes') }}>
-        <img src="{{ product.image }}" {{ UI.attributes(attrImage) }} alt="{{ product.name|e }}" itemprop="image" loading="lazy">
-    </picture>
+    {% include '@OroAttachment/Twig/picture.html.twig' with {
+        sources: sources|default([]),
+        img_attrs: {
+            src: asset(product.image|trim('/')),
+            alt: product.name,
+            class: 'product-item__preview-image',
+            itemprop: 'image'
+        },
+        picture_attrs: attr
+    } %}
 {% endblock %}
 
 {% block __oro_product_list_item__product_quick_view_widget %}

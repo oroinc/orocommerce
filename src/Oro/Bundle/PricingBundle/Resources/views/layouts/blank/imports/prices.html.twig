@@ -66,15 +66,13 @@
 
 {% block product_price_hint_trigger %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' btn btn--link btn--size-xs',
+        '~class': ' product-price-hint-btn btn btn--link btn--size-xs',
         'type': 'button',
         'title': 'oro.pricing.view_all_prices'|trans,
         'aria-label': 'oro.pricing.view_all_prices'|trans,
         'data-name': 'prices-hint-trigger'
     }) %}
-    <button {{ block('block_attributes') }}>
-        <span class="fa-info-circle fa--no-offset" aria-hidden="true"></span>
-    </button>
+    <button {{ block('block_attributes') }}></button>
 {% endblock %}
 
 {% block product_prices %}

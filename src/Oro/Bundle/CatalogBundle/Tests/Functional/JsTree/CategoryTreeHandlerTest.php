@@ -14,29 +14,26 @@ class CategoryTreeHandlerTest extends AbstractTreeHandlerTestCase
     /**
      * {@inheritdoc}
      */
-    protected function getFixtures()
+    protected function getFixtures(): array
     {
-        return LoadCategoryData::class;
+        return [LoadCategoryData::class];
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function getHandlerId()
+    protected function getHandlerId(): string
     {
         return 'oro_catalog.category_tree_handler';
     }
 
     /**
      * @dataProvider createDataProvider
-     * @param string|null $entityReference
-     * @param bool $includeRoot
-     * @param array $expectedData
      */
-    public function testCreateTree($entityReference, $includeRoot, array $expectedData)
+    public function testCreateTree(?string $entityReference, bool $includeRoot, array $expectedData)
     {
         $entity = null;
-        if ($entityReference !== null) {
+        if (null !== $entityReference) {
             /** @var Category $entity */
             $entity = $this->getReference($entityReference);
         }
@@ -57,10 +54,7 @@ class CategoryTreeHandlerTest extends AbstractTreeHandlerTestCase
         $this->assertTreeCreated($expectedData, $entity, $includeRoot);
     }
 
-    /**
-     * @return array
-     */
-    public function createDataProvider()
+    public function createDataProvider(): array
     {
         return [
             [
@@ -212,14 +206,14 @@ class CategoryTreeHandlerTest extends AbstractTreeHandlerTestCase
 
     /**
      * @dataProvider moveDataProvider
-     * @param string $entityReference
-     * @param string $parent
-     * @param int $position
-     * @param array $expectedStatus
-     * @param array $expectedData
      */
-    public function testMove($entityReference, $parent, $position, array $expectedStatus, array $expectedData)
-    {
+    public function testMove(
+        string $entityReference,
+        string $parent,
+        int $position,
+        array $expectedStatus,
+        array $expectedData
+    ) {
         $entityId = $this->getReference($entityReference)->getId();
         if ($parent !== AbstractTreeHandler::ROOT_PARENT_VALUE) {
             $parent = $this->getReference($parent)->getId();
@@ -228,10 +222,7 @@ class CategoryTreeHandlerTest extends AbstractTreeHandlerTestCase
         $this->assertNodeMove($expectedStatus, $expectedData, $entityId, $parent, $position);
     }
 
-    /**
-     * @return array
-     */
-    public function moveDataProvider()
+    public function moveDataProvider(): array
     {
         return [
             [
@@ -270,7 +261,7 @@ class CategoryTreeHandlerTest extends AbstractTreeHandlerTestCase
     /**
      * {@inheritdoc}
      */
-    protected function getActualNodeHierarchy($entityId, $parentId, $position)
+    protected function getActualNodeHierarchy(int $entityId, int $parentId, int $position): array
     {
         $entities = $this->getContainer()->get('doctrine')->getManagerForClass('OroCatalogBundle:Category')
             ->getRepository('OroCatalogBundle:Category')->findBy([], ['level' => 'DESC', 'left' => 'DESC']);

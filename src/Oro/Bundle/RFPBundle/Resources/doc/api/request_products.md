@@ -204,7 +204,7 @@ Example:
 
 #### get_subresource
 
-Retrieve a records of request product item assigned to a specific request product record.
+Retrieve records of a request product item assigned to a specific request product record.
 
 #### get_relationship
 

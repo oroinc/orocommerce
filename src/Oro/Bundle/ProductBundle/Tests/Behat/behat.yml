@@ -743,11 +743,17 @@ oro_behat_extension:
     Search Autocomplete Item:
       selector: '.search-autocomplete .search-autocomplete__item'
 
+    Search Autocomplete Item Selected:
+      selector: '.search-autocomplete [aria-selected="true"]'
+
     Search Autocomplete Product:
       selector: '.search-autocomplete .search-autocomplete-product'
 
     Search Autocomplete Product Image:
       selector: '.search-autocomplete .search-autocomplete-product__image img'
+
+    Search Autocomplete Product Picture:
+      selector: '.search-autocomplete .search-autocomplete-product__image picture'
 
     Search Autocomplete Inventory Status:
       selector: '.search-autocomplete .search-autocomplete-product__status'
@@ -831,7 +837,7 @@ oro_behat_extension:
       selector: '.product-list .product-item.grid-row'
 
     ProductFrontendRowSku:
-      selector: '.product-item__primary-content .product-item__number span'
+      selector: '.product-item__primary-content .product-item__sku-value'
 
     Galery View Button:
       selector:
@@ -1233,6 +1239,16 @@ oro_behat_extension:
         type: xpath
         locator: '//img[contains(@class, "product-item__preview-image")]'
 
+    Product Preview Picture:
+      selector:
+        type: xpath
+        locator: '//picture[contains(@class, "product-item__preview-picture")]'
+
+    Product View Picture:
+      selector:
+        type: xpath
+        locator: '//picture'
+
     Grid Settings SelectField:
       selector:
         type: xpath
@@ -1390,6 +1406,9 @@ oro_behat_extension:
     Multi Images Gallery Trigger:
       selector: 'div[class*="product-view__multipleimages"] [data-trigger-gallery-open]'
 
+    Product View Media Gallery:
+      selector: 'div.product-view-media-gallery'
+
   pages:
     Product View:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Page\ProductView
@@ -1451,6 +1470,7 @@ oro_behat_extension:
         - Oro\Bundle\FrontendLocalizationBundle\Tests\Behat\Context\LocalizationSwitcherContext
         - Oro\Bundle\EmailBundle\Tests\Behat\Context\EmailContext
         - Oro\Bundle\ImportExportBundle\Tests\Behat\Context\ImportExportContext
+        - Oro\Bundle\AttachmentBundle\Tests\Behat\Context\AttachmentImageContext
       paths:
         - '@OroProductBundle/Tests/Behat/Features/related-items'
     OroProductBundleOther:
@@ -1484,5 +1504,6 @@ oro_behat_extension:
         - Oro\Bundle\NavigationBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\CMSBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\ProductBundle\Tests\Behat\Context\FrontendProductGridContext
+        - Oro\Bundle\AttachmentBundle\Tests\Behat\Context\AttachmentImageContext
       paths:
         - '@OroProductBundle/Tests/Behat/Features/other'

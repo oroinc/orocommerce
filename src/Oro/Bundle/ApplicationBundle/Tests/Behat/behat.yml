@@ -13,6 +13,7 @@ oro_behat_extension:
         - Oro\Bundle\ProductBundle\Tests\Behat\Context\QuickOrderFormContext
         - Oro\Bundle\SecurityBundle\Tests\Behat\Context\ACLContext
         - Oro\Bundle\ProductBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\AttachmentBundle\Tests\Behat\Context\AttachmentImageContext
         - Oro\Bundle\ProductBundle\Tests\Behat\Context\FrontendProductGridContext
         - Oro\Bundle\ShoppingListBundle\Tests\Behat\Context\ShoppingListContext
       paths:

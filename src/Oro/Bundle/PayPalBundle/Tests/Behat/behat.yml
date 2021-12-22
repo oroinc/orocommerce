@@ -47,6 +47,7 @@ oro_behat_extension:
         - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
         - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\ProductBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\AttachmentBundle\Tests\Behat\Context\AttachmentImageContext
         - Oro\Bundle\PayPalBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\CheckoutBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\ShoppingListBundle\Tests\Behat\Context\ShoppingListContext

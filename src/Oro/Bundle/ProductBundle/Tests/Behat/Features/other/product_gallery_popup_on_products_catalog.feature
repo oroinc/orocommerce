@@ -1,5 +1,6 @@
 @ticket-BB-13978
 @ticket-BB-16275
+@feature-BAP-19790
 @fixture-OroProductBundle:product_listing_images.yml
 
 Feature: Product Gallery Popup On Products Catalog
@@ -45,6 +46,7 @@ Feature: Product Gallery Popup On Products Catalog
     When I am on the homepage
     And I click "NewCategory"
     And I should see preview image with alt "Product1`\"'&йёщ®&reg;>" for "PSKU1" product
+    And I should see picture for "PSKU1" product in the "ProductFrontendGrid"
     And I hover on "Product Item Preview"
     When I click "Product Item Gallery Trigger"
     Then I should see gallery image with alt "Product1`\"'&йёщ®&reg;>"
@@ -61,7 +63,7 @@ Feature: Product Gallery Popup On Products Catalog
 
   Scenario: "Enable Image Preview On Product Listing" is Off
     Given I proceed as the Admin
-    And go to System/ Configuration
+    When go to System/ Configuration
     And I follow "Commerce/Product/Product Images" on configuration sidebar
     And fill "Product Images Form" with:
     | Product Images Default |false |
@@ -69,5 +71,6 @@ Feature: Product Gallery Popup On Products Catalog
     And submit form
     And I proceed as the User
     And I reload the page
+    Then I should see picture for "PSKU1" product in the "ProductFrontendGrid"
     When I hover on "Product Item Preview"
     Then I should not see an "Product Item Gallery Trigger" element
