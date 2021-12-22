@@ -9,4 +9,6 @@ layout:
         - '@setOption':
             id: product_datagrid
             optionName: grid_render_parameters.extra_jsmodules
-            optionValue: '=data["system_config_provider"].getValue("oro_product.filters_position") === "sidebar" ? ["oroproduct/js/app/datagrid/grid-sidebar-filters-builder"] : []'
+            optionValue: ['oroproduct/js/app/datagrid/grid-sidebar-filters-builder']
+
+    conditions: 'context["filters_position"] == "sidebar"'
