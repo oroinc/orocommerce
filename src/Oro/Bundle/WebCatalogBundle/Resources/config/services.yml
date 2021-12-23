@@ -12,7 +12,7 @@ services:
         decorates: 'oro_web_catalog.provider.web_catalog_usage_provider'
         decoration_priority: -255 # the cacheable provider should be at the top of the decoration chain
         arguments:
-            - '@oro_web_catalog.cacheable_web_catalog_usage_provider.inner'
+            - '@.inner'
 
     oro_web_catalog.web_catalog_usage_listener:
         class: Oro\Bundle\WebCatalogBundle\EventListener\WebCatalogUsageListener
@@ -273,7 +273,7 @@ services:
         class: Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeResolver
         decorates: oro_web_catalog.content_node_tree_resolver
         arguments:
-            - '@oro_web_catalog.cacheable_content_node_tree_resolver.inner'
+            - '@.inner'
             - '@oro_web_catalog.content_node_tree_cache'
 
     oro_web_catalog.content_node_tree_resolver:

@@ -27,7 +27,7 @@ services:
         decorates: oro_promotion.rule_filtration.service
         decoration_priority: 0
         arguments:
-            - '@oro_promotion.rule_filtration.enabled_decorator.inner'
+            - '@.inner'
 
     oro_promotion.rule_filtration.duplicate_decorator:
         class: Oro\Bundle\PromotionBundle\RuleFiltration\DuplicateFiltrationService
@@ -35,7 +35,7 @@ services:
         decorates: oro_promotion.rule_filtration.service
         decoration_priority: 20
         arguments:
-            - '@oro_promotion.rule_filtration.duplicate_decorator.inner'
+            - '@.inner'
 
     oro_promotion.rule_filtration.scope_decorator:
         class: Oro\Bundle\PromotionBundle\RuleFiltration\ScopeFiltrationService
@@ -43,7 +43,7 @@ services:
         decoration_priority: 50
         public: false
         arguments:
-            - '@oro_promotion.rule_filtration.scope_decorator.inner'
+            - '@.inner'
             - '@oro_scope.scope_manager'
 
     oro_promotion.rule_filtration.expression_language_decorator:
@@ -53,7 +53,7 @@ services:
         decoration_priority: 100
         arguments:
             - '@oro_rule.expression_language'
-            - '@oro_promotion.rule_filtration.expression_language_decorator.inner'
+            - '@.inner'
             - '@logger'
 
     oro_promotion.rule_filtration.currency_decorator:
@@ -62,7 +62,7 @@ services:
         decoration_priority: 150
         public: false
         arguments:
-            - '@oro_promotion.rule_filtration.currency_decorator.inner'
+            - '@.inner'
 
     oro_promotion.rule_filtration.schedule_decorator:
         class: Oro\Bundle\PromotionBundle\RuleFiltration\ScheduleFiltrationService
@@ -70,7 +70,7 @@ services:
         decoration_priority: 200
         public: false
         arguments:
-            - '@oro_promotion.rule_filtration.schedule_decorator.inner'
+            - '@.inner'
             - '@oro_cron.checker.schedule_interval_checker'
 
     oro_promotion.rule_filtration.coupon_decorator:
@@ -79,7 +79,7 @@ services:
         decoration_priority: 250
         public: false
         arguments:
-            - '@oro_promotion.rule_filtration.coupon_decorator.inner'
+            - '@.inner'
             - '@doctrine'
 
     oro_promotion.rule_filtration.matching_items:
@@ -88,7 +88,7 @@ services:
         decorates: oro_promotion.rule_filtration.service
         decoration_priority: 300
         arguments:
-            - '@oro_promotion.rule_filtration.matching_items.inner'
+            - '@.inner'
             - '@oro_promotion.provider.matching_products_provider'
 
     oro_promotion.rule_filtration.shipping_decorator:
@@ -97,7 +97,7 @@ services:
         decoration_priority: 350
         public: false
         arguments:
-            - '@oro_promotion.rule_filtration.shipping_decorator.inner'
+            - '@.inner'
 
     oro_promotion.rule_filtration.stop_processing_decorator:
         class: Oro\Bundle\RuleBundle\RuleFiltration\StopProcessingRuleFiltrationServiceDecorator
@@ -105,7 +105,7 @@ services:
         decorates: oro_promotion.rule_filtration.service
         decoration_priority: 400
         arguments:
-            - '@oro_promotion.rule_filtration.stop_processing_decorator.inner'
+            - '@.inner'
 
     oro_promotion.promotion_provider:
         class: Oro\Bundle\PromotionBundle\Provider\PromotionProvider
@@ -765,14 +765,14 @@ services:
         public: false
         decorates: oro_promotion.provider.promotion_discounts_provider
         arguments:
-            - '@oro_promotion.provider.disabled_promotion_discounts_provider_decorator.inner'
+            - '@.inner'
 
     oro_promotion.provider.order_promotion_discounts_provider_decorator:
         class: Oro\Bundle\PromotionBundle\Provider\OrderPromotionDiscountsProviderDecorator
         public: false
         decorates: oro_promotion.provider.promotion_discounts_provider
         arguments:
-            - '@oro_promotion.provider.order_promotion_discounts_provider_decorator.inner'
+            - '@.inner'
 
     oro_promotion.event_listener.order_applied_promotion_event_listener:
         class: Oro\Bundle\PromotionBundle\EventListener\OrderAppliedPromotionEventListener
@@ -797,7 +797,7 @@ services:
         public: false
         decorates: oro_checkout.mapper.order_mapper
         arguments:
-            - '@oro_promotion.mapper.order_mapper_decorator.inner'
+            - '@.inner'
 
     oro_promotion.datagrid.extension.frontend_segment_datagrid:
         class: Oro\Bundle\PromotionBundle\Datagrid\Extension\FrontendSegmentDatagridExtension
@@ -821,7 +821,7 @@ services:
         # applying discounts.
         decorates: oro_pricing.event_listener.datagrid_line_items_data.pricing
         arguments:
-            - '@oro_promotion.event_listener.datagrid_line_items_data.promotions.inner'
+            - '@.inner'
             - '@oro_promotion.promotion_executor'
             - '@oro_pricing.user_currency_manager'
             - '@oro_locale.formatter.number'
@@ -835,7 +835,7 @@ services:
         class: Oro\Bundle\PromotionBundle\OrderTax\Mapper\OrderAfterDiscountsMapper
         decorates: oro_tax.order_tax.mapper.order_mapper
         arguments:
-            - '@oro_promotion.order_tax.mapper.order_after_discounts_mapper.inner'
+            - '@.inner'
             - '@oro_tax.provider.taxation_settings_provider'
             - '@oro_promotion.promotion_executor'
 
@@ -843,7 +843,7 @@ services:
         class: Oro\Bundle\PromotionBundle\OrderTax\Mapper\OrderLineItemAfterDiscountsMapper
         decorates: oro_tax.order_tax.mapper.order_line_item_mapper
         arguments:
-            - '@oro_promotion.order_tax.mapper.order_line_item_after_discounts_mapper.inner'
+            - '@.inner'
             - '@oro_tax.provider.taxation_settings_provider'
             - '@oro_promotion.promotion_executor'
 

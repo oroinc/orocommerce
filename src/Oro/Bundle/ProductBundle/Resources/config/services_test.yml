@@ -15,13 +15,13 @@ services:
         parent: oro_product.helper.product_collection_segment
         public: true
         arguments:
-            index_1: '@oro_product.tests.helper.product_collection_segment.inner'
+            index_1: '@.inner'
 
     oro_product.tests.api.skipped_entity_provider:
         class: Oro\Bundle\ApiBundle\Tests\Functional\Environment\SkippedEntityProvider
         decorates: oro_api.tests.skipped_entity_provider
         arguments:
-            - '@oro_product.tests.api.skipped_entity_provider.inner'
+            - '@.inner'
         calls:
             - [addSkippedEntity, ['Oro\Bundle\ProductBundle\Entity\Brand', ['create']]]
 
@@ -29,5 +29,5 @@ services:
         class: Oro\Bundle\GaufretteBundle\Tests\Functional\Environment\SkippedGaufretteFileSystemProvider
         decorates: oro_gaufrette.tests.skipped_file_systems
         arguments:
-            - '@oro_product.tests.skipped_file_systems.inner'
+            - '@.inner'
             - ['import_product_images']

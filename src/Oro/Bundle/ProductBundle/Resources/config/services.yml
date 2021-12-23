@@ -1129,7 +1129,7 @@ services:
         decorates: oro_product.visibility.product_unit_fields_settings
         decoration_priority: 10
         arguments:
-            - "@oro_product.visibility.single_unit_mode_product_unit_fields_settings_decorator.inner"
+            - "@.inner"
             - "@oro_product.service.single_unit_mode"
             - "@oro_entity.doctrine_helper"
 
@@ -1142,7 +1142,7 @@ services:
         decorates: oro_product.visibility.unit
         decoration_priority: 10
         arguments:
-            - "@oro_product.visibility.single_unit_mode_unit.inner"
+            - "@.inner"
             - "@oro_product.service.single_unit_mode"
 
     oro_product.event_listener.unit_visibility.datagrid_basic:
@@ -1542,14 +1542,14 @@ services:
         class: Oro\Bundle\ProductBundle\Provider\ProductImageFileNameProvider
         decorates: oro_attachment.provider.file_name
         arguments:
-            - '@oro_product.provider.product_image_file_name.inner'
+            - '@.inner'
             - '@oro_config.manager'
 
     oro_product.provider.product_image_file_names:
         class: Oro\Bundle\ProductBundle\Provider\ProductImageFileNamesProvider
         decorates: oro_attachment.provider.image_file_names
         arguments:
-            - '@oro_product.provider.product_image_file_names.inner'
+            - '@.inner'
             - '@oro_config.manager'
 
     oro_product.event_listener.attribute_changes:

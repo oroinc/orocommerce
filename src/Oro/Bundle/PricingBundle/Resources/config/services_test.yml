@@ -12,7 +12,7 @@ services:
         class: Oro\Bundle\ApiBundle\Tests\Functional\Environment\SkippedEntityProvider
         decorates: oro_api.tests.skipped_entity_provider
         arguments:
-            - '@oro_pricing.tests.api.skipped_entity_provider.inner'
+            - '@.inner'
         calls:
             - [addSkippedEntity, ['Oro\Bundle\PricingBundle\Entity\ProductPrice']]
             - [addSkippedEntity, ['Oro\Bundle\PricingBundle\Entity\PriceListSchedule', ['create']]]
