@@ -134,7 +134,7 @@ class CustomerUserForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTes
         $guestCustomerUserId = (int)$this->getResourceId($response);
 
         $response = $this->cget(['entity' => 'customerusers']);
-        self::assertResponseContains(
+        $this->assertResponseContains(
             [
                 'data' => [
                     [
@@ -153,7 +153,7 @@ class CustomerUserForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTes
         $guestCustomerUserId = (int)$this->getResourceId($response);
 
         $response = $this->get(['entity' => 'customerusers', 'id' => (string)$guestCustomerUserId]);
-        self::assertResponseContains(
+        $this->assertResponseContains(
             [
                 'data' => [
                     'type' => 'customerusers',
@@ -204,7 +204,7 @@ class CustomerUserForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTes
         $expectedContent['data']['relationships']['userRoles']['data'] = [
             ['type' => 'customeruserroles', 'id' => (string)$roleId]
         ];
-        self::assertResponseContains($expectedContent, $response);
+        $this->assertResponseContains($expectedContent, $response);
 
         $customerUser = $this->getEntityManager()->find(CustomerUser::class, $customerUserId);
         $customerUserData = $responseContent['data'];
@@ -227,7 +227,7 @@ class CustomerUserForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTes
         self::assertSame($ownerId, $customerUser->getOwner()->getId());
         self::assertNotEmpty($customerUser->getPassword());
 
-        self::assertGuestCustomer($customerUser);
+        $this->assertGuestCustomer($customerUser);
 
         $currentVisitor = $this->getCurrentVisitor();
         $visitor = $this->getEntityManager()->find(CustomerVisitor::class, $currentVisitor->getId());
@@ -264,7 +264,7 @@ class CustomerUserForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTes
         $expectedContent['data']['relationships']['userRoles']['data'] = [
             ['type' => 'customeruserroles', 'id' => (string)$roleId]
         ];
-        self::assertResponseContains($expectedContent, $response);
+        $this->assertResponseContains($expectedContent, $response);
 
         $customerUser = $this->getEntityManager()->find(CustomerUser::class, $customerUserId);
         $customerUserData = $responseContent['data'];
@@ -288,7 +288,7 @@ class CustomerUserForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTes
         self::assertSame($ownerId, $customerUser->getOwner()->getId());
         self::assertNotEmpty($customerUser->getPassword());
 
-        self::assertGuestCustomer($customerUser);
+        $this->assertGuestCustomer($customerUser);
         $address = $this->getEntityManager()->find(CustomerUserAddress::class, $addressId);
         $addressData = $responseContent['included'][0];
         self::assertEquals($addressData['attributes']['organization'], $address->getOrganization());
@@ -321,12 +321,12 @@ class CustomerUserForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTes
         $expectedContent = $data;
         $expectedContent['data']['id'] = (string)$customerUserId;
         $expectedContent['data']['relationships']['customer']['data'] = ['type' => 'customers'];
-        self::assertResponseContains($expectedContent, $response);
+        $this->assertResponseContains($expectedContent, $response);
 
         $customerUser = $this->getEntityManager()->find(CustomerUser::class, $customerUserId);
         self::assertNotNull($customerUser->getCustomer());
         self::assertNotSame($submittedCustomerId, $customerUser->getCustomer()->getId());
-        self::assertGuestCustomer($customerUser);
+        $this->assertGuestCustomer($customerUser);
     }
 
     public function testTryToCreateWithRoles(): void
@@ -345,7 +345,7 @@ class CustomerUserForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTes
         $expectedContent['data']['relationships']['userRoles']['data'] = [
             ['type' => 'customeruserroles', 'id' => (string)$roleId]
         ];
-        self::assertResponseContains($expectedContent, $response);
+        $this->assertResponseContains($expectedContent, $response);
 
         $customerUser = $this->getEntityManager()->find(CustomerUser::class, $customerUserId);
         self::assertNotNull($customerUser->getCustomer());
@@ -364,7 +364,7 @@ class CustomerUserForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTes
         $expectedContent['data']['id'] = (string)$customerUserId;
         $expectedContent['data']['attributes']['enabled'] = false;
         $expectedContent['data']['attributes']['confirmed'] = false;
-        self::assertResponseContains($expectedContent, $response);
+        $this->assertResponseContains($expectedContent, $response);
 
         $customerUser = $this->getEntityManager()->find(CustomerUser::class, $customerUserId);
         self::assertFalse($customerUser->isEnabled());
@@ -389,7 +389,7 @@ class CustomerUserForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTes
             [],
             false
         );
-        self::assertResponseValidationError(
+        $this->assertResponseValidationError(
             [
                 'title'  => 'access denied exception',
                 'detail' => 'No access to this type of entities.'
@@ -409,7 +409,7 @@ class CustomerUserForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTes
             [],
             false
         );
-        self::assertResponseValidationError(
+        $this->assertResponseValidationError(
             [
                 'title'  => 'access denied exception',
                 'detail' => 'No access to this type of entities.'
@@ -427,7 +427,7 @@ class CustomerUserForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTes
             [],
             false
         );
-        self::assertResponseValidationError(
+        $this->assertResponseValidationError(
             [
                 'title'  => 'access denied exception',
                 'detail' => 'No access to this type of entities.'

@@ -106,7 +106,7 @@ class ValidateCustomerUserRelatedOrderTest extends RestJsonApiTestCase
             false
         );
 
-        self::assertResponseValidationError(
+        $this->assertResponseValidationError(
             [
                 'title'  => 'customer related entities constraint',
                 'detail' => 'Can\'t change customer because you don\'t have permissions for updating'

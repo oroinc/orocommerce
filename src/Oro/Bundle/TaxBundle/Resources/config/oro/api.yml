@@ -4,7 +4,6 @@ api:
             documentation_resource: '@OroTaxBundle/Resources/doc/api/product_tax_code.md'
             fields:
                 taxCode:
-                    description: Tax code
                     data_type: association:manyToOne
                 organization:
                     exclude: true
