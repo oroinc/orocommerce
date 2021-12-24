@@ -21,6 +21,11 @@ const ShoppingListImagePopoverView = BaseView.extend({
     title: null,
 
     /**
+     * Sources array that can be used in <picture> tag of popover image
+     */
+    popover_image_sources: [],
+
+    /**
      * @inheritdoc
      */
     constructor: function ShoppingListImagePopoverView(options) {
@@ -31,7 +36,7 @@ const ShoppingListImagePopoverView = BaseView.extend({
      * @inheritdoc
      */
     initialize(options) {
-        Object.assign(this, _.pick(options, 'src', 'title'));
+        Object.assign(this, _.pick(options, 'src', 'title', 'popover_image_sources'));
         ShoppingListImagePopoverView.__super__.initialize.call(this, options);
     },
 
@@ -51,7 +56,8 @@ const ShoppingListImagePopoverView = BaseView.extend({
             'offset': '0, 2',
             'content': template({
                 src: this.src,
-                title: this.title
+                title: this.title,
+                popover_image_sources: this.popover_image_sources
             })
         }, true);
 

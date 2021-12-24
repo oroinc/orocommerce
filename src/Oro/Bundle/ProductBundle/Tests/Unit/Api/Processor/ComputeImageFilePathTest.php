@@ -41,7 +41,7 @@ class ComputeImageFilePathTest extends CustomizeLoadedDataProcessorTestCase
         $this->typeProvider = $this->createMock(ImageTypeProvider::class);
         $this->repo = $this->createMock(EntityRepository::class);
 
-        $this->doctrineHelper->expects($this->any())
+        $this->doctrineHelper->expects(self::any())
             ->method('getEntityRepository')
             ->willReturn($this->repo);
 
@@ -60,25 +60,25 @@ class ComputeImageFilePathTest extends CustomizeLoadedDataProcessorTestCase
         bool $isImageType,
         ?ProductImage $productImage,
         array $expectedResults
-    ) {
+    ): void {
         $type1 = $this->createMock(ThemeImageType::class);
-        $type1->expects($this->any())
+        $type1->expects(self::any())
             ->method('getDimensions')
             ->willReturn(['testDimension' => [1, 2, 3]]);
 
         $allTypes = ['type1' => $type1];
-        $this->typeProvider->expects($this->any())
+        $this->typeProvider->expects(self::any())
             ->method('getImageTypes')
             ->willReturn($allTypes);
 
-        $this->attachmentManager->expects($this->any())
+        $this->attachmentManager->expects(self::any())
             ->method('getFilteredImageUrl')
             ->willReturn('testUrl');
-        $this->attachmentManager->expects($this->any())
+        $this->attachmentManager->expects(self::any())
             ->method('isImageType')
             ->willReturn($isImageType);
 
-        $this->repo->expects($this->any())
+        $this->repo->expects(self::any())
             ->method('findOneBy')
             ->with(['image' => $initialResults['id']])
             ->willReturn($productImage);
@@ -95,19 +95,19 @@ class ComputeImageFilePathTest extends CustomizeLoadedDataProcessorTestCase
         self::assertEquals($expectedResults, $this->context->getResult());
     }
 
-    public function getTestProcessShouldHandlePathsCorrectlyProvider()
+    public function getTestProcessShouldHandlePathsCorrectlyProvider(): array
     {
         $basicInitialResults = ['id' => 1, 'content' => 'testContent', 'mimeType' => 'testMime'];
         $productImageType = $this->createMock(ProductImageType::class);
-        $productImageType->expects($this->any())
+        $productImageType->expects(self::any())
             ->method('getType')
             ->willReturn('type1');
         $productImage = $this->createMock(ProductImageStub::class);
-        $productImage->expects($this->any())
+        $productImage->expects(self::any())
             ->method('getTypes')
             ->willReturn([$productImageType]);
         $imageFile = $this->createMock(File::class);
-        $productImage->expects($this->any())
+        $productImage->expects(self::any())
             ->method('getImage')
             ->willReturn($imageFile);
 
@@ -122,7 +122,17 @@ class ComputeImageFilePathTest extends CustomizeLoadedDataProcessorTestCase
                 'initialResults'  => $basicInitialResults,
                 'isImageType'     => true,
                 'productImage'    => $productImage,
-                'expectedResults' => array_merge($basicInitialResults, ['filePath' => ['testDimension' => 'testUrl']]),
+                'expectedResults' => array_merge(
+                    $basicInitialResults,
+                    [
+                        'filePath' => [
+                            [
+                                'url' => 'testUrl',
+                                'dimension' => 'testDimension'
+                            ],
+                        ]
+                    ]
+                ),
             ],
         ];
     }
