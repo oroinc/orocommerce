@@ -380,7 +380,7 @@ services:
         class: 'Oro\Bundle\CheckoutBundle\Action\DefaultShippingMethodSetterDecorator'
         decorates: oro_checkout.action.default_shipping_method_setter
         arguments:
-            - '@oro_checkout.action.default_shipping_method_setter_decorator.inner'
+            - '@.inner'
 
     oro_checkout.factory.shipping_context_factory:
         class: 'Oro\Bundle\CheckoutBundle\Factory\CheckoutShippingContextFactory'

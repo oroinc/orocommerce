@@ -27,7 +27,7 @@ services:
         decorates: oro_rule.rule_filtration.service
         decoration_priority: 0
         arguments:
-            - '@oro_rule.rule_filtration.enabled_decorator.inner'
+            - '@.inner'
 
     oro_rule.rule_filtration.stop_processing_decorator:
         class: 'Oro\Bundle\RuleBundle\RuleFiltration\StopProcessingRuleFiltrationServiceDecorator'
@@ -35,7 +35,7 @@ services:
         decorates: oro_rule.rule_filtration.service
         decoration_priority: 500
         arguments:
-            - '@oro_rule.rule_filtration.stop_processing_decorator.inner'
+            - '@.inner'
 
     oro_rule.rule_filtration.expression_language_decorator:
         class: 'Oro\Bundle\RuleBundle\RuleFiltration\ExpressionLanguageRuleFiltrationServiceDecorator'
@@ -44,7 +44,7 @@ services:
         decoration_priority: 250
         arguments:
             - '@oro_rule.expression_language'
-            - '@oro_rule.rule_filtration.expression_language_decorator.inner'
+            - '@.inner'
             - '@logger'
 
     oro_rule.enabled_rule_filtration.service:
@@ -56,7 +56,7 @@ services:
         public: false
         decorates: oro_rule.enabled_rule_filtration.service
         arguments:
-            - '@oro_rule.enabled_rule_filtration.enabled_decorator.inner'
+            - '@.inner'
 
     oro_rule.action.visibility_provider:
         class: 'Oro\Bundle\RuleBundle\Datagrid\RuleActionsVisibilityProvider'

@@ -25,7 +25,7 @@ services:
         class: Oro\Bundle\CMSBundle\Api\LocalizedFallbackValueExtractor
         decorates: oro_frontend.api.localized_fallback_value_extractor
         arguments:
-            - '@oro_cms.api.frontend.localized_fallback_value_extractor.inner'
+            - '@.inner'
             - '@oro_cms.api.wysiwyg_value_renderer'
             - '@oro_api.form_property_accessor'
 

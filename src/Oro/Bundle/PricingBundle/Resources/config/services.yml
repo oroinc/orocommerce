@@ -1488,7 +1488,7 @@ services:
         decorates: oro_locale.settings
         decoration_priority: -20
         arguments:
-            - '@oro_pricing.locale_settings.inner'
+            - '@.inner'
             - '@oro_frontend.request.frontend_helper'
             - '@oro_frontend_localization.manager.user_localization'
             - '@oro_pricing.user_currency_manager'

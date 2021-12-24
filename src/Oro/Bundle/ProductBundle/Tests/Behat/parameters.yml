@@ -3,4 +3,4 @@ services:
         decorates: oro_datagrid.configuration.provider
         class: Oro\Bundle\ProductBundle\Tests\Behat\Mock\Provider\ConfigurationProviderDecorator
         arguments:
-            - '@oro_datagrid.configuration.provider.decorator.inner'
+            - '@.inner'

@@ -438,7 +438,7 @@ services:
         decorates: oro_digital_asset.provider.preview_metadata
         class: Oro\Bundle\CMSBundle\Provider\PreviewMetadataProvider
         arguments:
-            - '@oro_cms.provider.preview_metadata.inner'
+            - '@.inner'
             - '@oro_attachment.provider.file_url'
             - '@oro_attachment.tools.mime_type_checker'
 
@@ -447,7 +447,7 @@ services:
         class: Oro\Bundle\CMSBundle\Provider\AttachmentEntityConfigProvider
         arguments:
             - '@doctrine'
-            - '@oro_cms.provider.attachment_entity_config.inner'
+            - '@.inner'
 
     oro_cms.provider.draftable_fields_exclusion:
         class: Oro\Bundle\CMSBundle\Provider\DraftableFieldsExclusionProvider
