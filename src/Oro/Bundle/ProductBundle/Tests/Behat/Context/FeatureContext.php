@@ -1385,7 +1385,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      */
     public function iWaitPopupWidgetIsInitialized()
     {
-        $this->getSession()->getDriver()->wait(5000, "0 !== $('div.slick-track').length");
+        $this->getSession()->getDriver()->wait(5000, "0 !== $('.slick-track .slick-active img[src]').length");
     }
 
     /**

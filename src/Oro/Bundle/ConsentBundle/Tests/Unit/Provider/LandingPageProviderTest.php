@@ -80,15 +80,6 @@ class LandingPageProviderTest extends \PHPUnit\Framework\TestCase
                 ->will($this->returnCallback(function (Collection $collection) {
                     return $collection->first()->getString();
                 }));
-            $this->translator->expects($this->any())
-                ->method('trans')
-                ->with('oro.consent.content_source.none')
-                ->willReturn('N/A');
-        } else {
-            $this->translator->expects($this->once())
-                ->method('trans')
-                ->with('oro.consent.content_source.none')
-                ->willReturn('N/A');
         }
 
         $result = $this->provider->getLandingPages($actualIds);
@@ -113,7 +104,7 @@ class LandingPageProviderTest extends \PHPUnit\Framework\TestCase
         yield 'empty string' => [
             'actualIds' => '',
             'foundVariants' => null,
-            'expected' => 'N/A'
+            'expected' => ''
         ];
 
         yield 'variants without cms pages' => [
@@ -122,7 +113,7 @@ class LandingPageProviderTest extends \PHPUnit\Framework\TestCase
                 $this->createVariant('', 'product_collection'),
                 $this->createVariant('', 'product_collection')
             ],
-            'expected' => 'N/A'
+            'expected' => ''
         ];
     }
 

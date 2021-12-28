@@ -1,4 +1,5 @@
 {% import 'OroUIBundle::macros.html.twig' as UI %}
+{% import '@OroDataGrid/macros.html.twig' as dataGrid %}
 
 {% set addAndEditLinkSettings = {
     'widget': {
@@ -67,7 +68,7 @@
                         {% if discount.description %}
                             {{ discount.description }}
                         {% else %}
-                            <span class="not-available">{{ 'N/A'|trans }}</span>
+                            {{ dataGrid.renderBlankCellValue() }}
                         {% endif %}
                     </td>
                     <td class="discount direction-ltr">

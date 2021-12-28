@@ -139,10 +139,10 @@ Feature: Consent management via Management Console UI
     When go to System/ Consent Management
     Then I should see following grid:
       | Name                                 | Type      | Content Node           | Content Source  |
-      | Without Landing Page                 | Optional  | Page to remove         | Page to remove |
-      | Receive notifications                | Optional  | N/A                    | N/A             |
+      | Without Landing Page                 | Optional  | Page to remove         | Page to remove  |
+      | Receive notifications                | Optional  |                        |                 |
       | Collecting and storing personal data | Mandatory | Store and Process Node | Consent Landing |
-      | Email Newsletters                    | Optional  | N/A                    | N/A             |
+      | Email Newsletters                    | Optional  |                        |                 |
       | Presenting Personal Data             | Mandatory | Store and Process Node | Consent Landing |
 
   Scenario: Admin User is able to enable/disable consents functionality on System/Website level
