@@ -1,4 +1,5 @@
 {% import '@OroUI/macros.html.twig' as UI %}
+{% import '@OroDataGrid/macros.html.twig' as dataGrid %}
 
 {% if collection|length %}
     <table class="grid table-hover table table-bordered table-condensed">
@@ -38,7 +39,7 @@
                         {% if item.couponCode %}
                             <span dir="ltr">{{ item.couponCode }}</span>
                         {% else %}
-                            <span class="not-available">{{ 'N/A'|trans }}</span>
+                            {{ dataGrid.renderBlankCellValue() }}
                         {% endif %}
                     </td>
                     <td>{{ item.promotionName }}</td>
