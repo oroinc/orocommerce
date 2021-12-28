@@ -35,7 +35,7 @@ Feature: Promotions with coupons on Order view page
     When click "Apply" in modal window
     Then I should see next rows in "Promotions" table
       | Code   | Promotion                    | Type            | Status | Discount |
-      | N/A    | Order Promotion              | Order Total     | Active | -$7.00   |
+      |        | Order Promotion              | Order Total     | Active | -$7.00   |
       | test-1 | Line Item Discount Promotion | Order Line Item | Active | -$10.00  |
     And I see next subtotals for "Backend Order":
       | Subtotal | Amount  |

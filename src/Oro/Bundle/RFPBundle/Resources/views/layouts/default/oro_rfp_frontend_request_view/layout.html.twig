@@ -138,6 +138,7 @@
 
 {% block _rfp_request_view_line_items_widget %}
     {% import '@OroUI/macros.html.twig' as UI %}
+    {% import '@OroDataGrid/macros.html.twig' as dataGrid %}
     <div class="customer-line-items">
         <h2 class="customer-line-items__title">
             {{- 'oro.frontend.rfp.request.sections.request_products.label'|trans -}}
@@ -192,7 +193,7 @@
                             {% if requestProductItem.price %}
                                 {{ requestProductItem.price|oro_format_price }}
                             {% else %}
-                                <span class="blank-value">{{ 'oro.datagrid.cell.blank.placeholder'|trans }}</span>
+                                {{ dataGrid.renderBlankCellValue() }}
                             {% endif %}
                         </td>
                     </tr>
