@@ -66,7 +66,7 @@ services:
         class: Oro\Bundle\RedirectBundle\Security\RememberMeSlugRequestFactory
         decorates: oro_redirect.security.slug_request_factory
         arguments:
-            - '@oro_redirect.security.slug_request_factory.rememberme.inner'
+            - '@.inner'
 
 
     oro_redirect.access_rule.frontend_organization_for_slug:

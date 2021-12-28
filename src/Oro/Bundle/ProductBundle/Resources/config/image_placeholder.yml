@@ -32,5 +32,5 @@ services:
         parent: oro_layout.provider.image_placeholder.cache.abstract
         decorates: oro_product.provider.product_image_placeholder
         arguments:
-            - '@oro_product.provider.product_image_placeholder.cache_decorator.inner'
+            - '@.inner'
             - '@oro_product.provider.product_image_placeholder.cache'

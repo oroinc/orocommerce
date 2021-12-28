@@ -42,5 +42,5 @@ services:
         class: Oro\Bundle\FrontendLocalizationBundle\Formatter\DateTimeFormatterDecorator
         decorates: oro_locale.formatter.date_time
         arguments:
-            - '@oro_locale.formatter.date_time.decorator.inner'
+            - '@.inner'
             - '@oro_frontend.request.frontend_helper'
