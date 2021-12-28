@@ -98,10 +98,13 @@ class ComputeImageFilePath implements ProcessorInterface
 
         $result = [];
         foreach (array_keys($dimensions) as $dimension) {
-            $result[$dimension] = $this->attachmentManager->getFilteredImageUrl(
-                $productImage->getImage(),
-                $dimension
-            );
+            $result[] = [
+                'url' => $this->attachmentManager->getFilteredImageUrl(
+                    $productImage->getImage(),
+                    $dimension
+                ),
+                'dimension' => $dimension,
+            ];
         }
 
         return $result;

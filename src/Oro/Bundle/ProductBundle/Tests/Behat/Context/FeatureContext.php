@@ -1322,12 +1322,12 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
         $this->waitForImagesToLoad();
         $element = $this->createElement($elementName);
         $images = $element->findAll('xpath', '//img');
-        $pattern = '/\/media\/cache\/attachment[\/\w]+\/(.+)\.\w+/';
+        $pattern = '/\/media\/cache\/attachment[\/\w]+\/(.+?)(?:\.\w+)+/';
         $attributeToParse = 'src';
 
         if (!$images) {
             $images = $element->findAll('xpath', '//a');
-            $pattern = '/\/attachment\/download\/\d+\/(.+)\.\w+/';
+            $pattern = '/\/attachment\/download\/\d+\/(.+?)(?:\.\w+)+/';
             $attributeToParse = 'href';
         }
 
@@ -1549,6 +1549,8 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
             );
 
         self::assertNotNull($largeImage, 'Large image not visible');
+
+        $this->attachmentImageContext->iShouldSeePictureElement($largeImage->getParent());
     }
 
     /**

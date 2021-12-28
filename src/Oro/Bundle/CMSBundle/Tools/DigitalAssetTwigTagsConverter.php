@@ -19,19 +19,35 @@ class DigitalAssetTwigTagsConverter
 
     private FileUrlProviderInterface $fileUrlProvider;
 
-    public function __construct(ManagerRegistry $managerRegistry, FileUrlProviderInterface $fileUrlProvider)
-    {
+    private string $defaultImageFilter;
+
+    public function __construct(
+        ManagerRegistry $managerRegistry,
+        FileUrlProviderInterface $fileUrlProvider,
+        string $defaultImageFilter = 'wysiwyg_original'
+    ) {
         $this->managerRegistry = $managerRegistry;
         $this->fileUrlProvider = $fileUrlProvider;
+        $this->defaultImageFilter = $defaultImageFilter;
     }
 
     public function convertToUrls(string $data): string
     {
         return preg_replace_callback(
-            '/\{\{\s*(?P<function>wysiwyg_(?:image|file))\s*\('
-            . '\s*["\']?(?P<digitalAssetId>\d+?)["\']?\s*,'
-            . '\s*["\']?(?P<uuid>[^"\'\)]+?)["\']?\s*'
-            . '\)\s*\}\}/is',
+            [
+                '/\{\{\s*(?P<function>wysiwyg_file)\s*\('
+                . '\s*["\']?(?P<digitalAssetId>\d+?)["\']?\s*'
+                . ',\s*["\']?(?P<uuid>[^"\'\)]+?)["\']?\s*'
+                . '\)\s*\}\}/is',
+                '/\{\{\s*(?P<function>wysiwyg_image)\s*\('
+                . '\s*["\']?(?P<digitalAssetId>\d+?)["\']?\s*'
+                . ',\s*["\']?(?P<uuid>[^"\'\)]+?)["\']?\s*'
+                . '(?:'
+                . ',\s*["\']?(?P<filterName>[a-z0-9_-]*?)["\']?\s*'
+                . '(?:,\s*["\']?(?P<format>[a-z0-9-]*?)["\']?\s*)?'
+                . ')?'
+                . '\)\s*\}\}/is',
+            ],
             [$this, 'replaceToUrl'],
             $data
         );
@@ -42,8 +58,9 @@ class DigitalAssetTwigTagsConverter
         return preg_replace_callback_array(
             [
                 '/(?P<schema>https?:\/\/|\/\/)?(?:[a-z0-9_~:\.\/-]+?)?'
-                . '\/media\/cache\/attachment\/(?:resize|filter)\/[a-z0-9\/_-]+'
-                . '\/(?P<fileId>\d+?)\/[a-z0-9]+?\.[a-z0-9-]+/is' => [$this, 'replaceImageUrlToTwigTag'],
+                . '\/media\/cache\/attachment\/(?:resize|filter)\/(?P<filterName>[a-z0-9_-]+)\/[0-9a-f]{32}'
+                . '\/(?P<fileId>\d+?)\/[a-z0-9]+?\.(?P<extension>[a-z0-9-]+)'
+                . '(?:\.(?P<extraExtension>[a-z0-9-]+))?/is' => [$this, 'replaceImageUrlToTwigTag'],
                 '/(?P<schema>https?:\/\/|\/\/)?(?:[a-z0-9_~:\.\/-]+?)?'
                 . '\/attachment\/(?:get|download)'
                 . '\/(?P<fileId>\d+?)\/[a-z0-9]+?\.[a-z0-9-]+/is' => [$this, 'replaceFileUrlToTwigTag'],
@@ -57,6 +74,8 @@ class DigitalAssetTwigTagsConverter
         $function = $matches['function'] ?? '';
         $digitalAssetId = $matches['digitalAssetId'] ?? '';
         $uuid = $matches['uuid'] ?? '';
+        $filterName = $matches['filterName'] ?? '';
+        $format = $matches['format'] ?? '';
         if ($function && $digitalAssetId && $uuid) {
             $file = $this->getFileByUuid($uuid);
             if (!$file) {
@@ -71,7 +90,11 @@ class DigitalAssetTwigTagsConverter
                 if ($function === 'wysiwyg_file') {
                     $url = $this->fileUrlProvider->getFileUrl($file, FileUrlProviderInterface::FILE_ACTION_DOWNLOAD);
                 } else {
-                    $url = $this->fileUrlProvider->getFilteredImageUrl($file, 'wysiwyg_original');
+                    $url = $this->fileUrlProvider->getFilteredImageUrl(
+                        $file,
+                        $filterName ?: $this->defaultImageFilter,
+                        $format !== $file->getExtension() ? $format : ''
+                    );
                 }
 
                 return $url;
@@ -116,6 +139,8 @@ class DigitalAssetTwigTagsConverter
         }
 
         $fileId = $matches['fileId'] ?? '';
+        $filterName = $matches['filterName'] ?? '';
+        $extraExtension = $matches['extraExtension'] ?? '';
         if ($fileId) {
             /** @var EntityManager $entityManager */
             $entityManager = $this->managerRegistry->getManagerForClass(DigitalAsset::class);
@@ -131,7 +156,16 @@ class DigitalAssetTwigTagsConverter
                     return $matches[0];
                 }
 
-                return sprintf('{{ %s(\'%d\',\'%s\') }}', $function, $digitalAssetId, $uuid);
+                return match ($function) {
+                    'wysiwyg_file' => sprintf('{{ wysiwyg_file(\'%d\',\'%s\') }}', $digitalAssetId, $uuid),
+                    'wysiwyg_image' => sprintf(
+                        '{{ wysiwyg_image(\'%d\',\'%s\',\'%s\',\'%s\') }}',
+                        $digitalAssetId,
+                        $uuid,
+                        $filterName ?: $this->defaultImageFilter,
+                        $extraExtension
+                    )
+                };
             }
         }
 

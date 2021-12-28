@@ -23,6 +23,7 @@ macros('oroshoppinglist', {
      * @param {string} data.name
      * @param {string} data.link
      * @param {string?} data.popover_image_src
+     * @param {array} data.popover_image_sources
      */
     renderProductItemName: require('tpl-loader!oroshoppinglist/templates/macros/product-item__name.html'),
 

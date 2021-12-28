@@ -12,11 +12,12 @@
                 <% return oroshoppinglist.routing.generate('oro_product_frontend_product_view', variantId ? {id: productId, variantProductId: variantId} : {id: productId} ) %>
             <% } %>
             <div class="grid-line-items__row-item">
+                <% var popover_image_sources = [{srcset: obj.imageWebp, type: 'image/webp'}]; %>
                 <% if (name.length <= clipLength) { %>
-                    <%= oroshoppinglist.renderProductItemName({link: productId ? productUrl(productId, variantId) : null, name: name, popover_image_src: obj.image}) %>
+                    <%= oroshoppinglist.renderProductItemName({link: productId ? productUrl(productId, variantId) : null, name: name, popover_image_src: obj.image, popover_image_sources: popover_image_sources}) %>
                 <% } else { %>
                 <div class="grid-line-items__clip-container">
-                    <%= oroshoppinglist.renderProductItemName({clip: true, link: productId ? productUrl(productId, variantId) : null, name: name, popover_image_src: obj.image}) %>
+                    <%= oroshoppinglist.renderProductItemName({clip: true, link: productId ? productUrl(productId, variantId) : null, name: name, popover_image_src: obj.image, popover_image_sources: popover_image_sources}) %>
                 </div>
                 <% } %>
             </div>
