@@ -6,6 +6,10 @@ entity_config:
                 search_boost:
                     options:
                         value_type: 'decimal'
+                    constraints:
+                        - Range:
+                              min: 0
+                        - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
                     form:
                         type: 'Symfony\Component\Form\Extension\Core\Type\NumberType'
                         options:
@@ -13,7 +17,3 @@ entity_config:
                             required: false
                             label: 'oro.website_search.entity_config.search_boost.label'
                             tooltip: 'oro.website_search.entity_config.search_boost.tooltip'
-                            constraints:
-                                - Range:
-                                    min: 0
-                                - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
