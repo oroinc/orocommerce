@@ -240,7 +240,7 @@ services:
         decorates: oro_shipping.shipping_price.provider
         decoration_priority: 255
         arguments:
-             - '@oro_shipping.shipping_price.provider_enabled_methods_decorator.inner'
+             - '@.inner'
              - '@oro_shipping.shipping_method_provider'
 
     oro_shipping.shipping_price.provider.memory_cache:
@@ -417,7 +417,7 @@ services:
          decoration_priority: 255
          arguments:
              - '@oro_shipping.shipping_method_provider'
-             - '@oro_shipping.shipping_methods_choices_provider.enabled_methods_decorator.inner'
+             - '@.inner'
 
     oro_shipping.checker.shipping_method_enabled:
         class: 'Oro\Bundle\ShippingBundle\Checker\ShippingMethodEnabledByIdentifierChecker'
@@ -439,7 +439,7 @@ services:
         decoration_priority: 255
         public: false
         arguments:
-            - '@oro_shipping.method_disable_handler.decorator.inner'
+            - '@.inner'
             - '@oro_shipping.repository.shipping_methods_configs_rule'
             - '@oro_shipping.shipping_method_provider'
 
@@ -481,7 +481,7 @@ services:
         public: false
         decorates: oro_shipping.method_validator.main
         arguments:
-            - '@oro_shipping.method_validator.decorator.basic_enabled_shipping_methods_by_rules.inner'
+            - '@.inner'
             - '@oro_shipping.method_validator.result_error_factory_common_parameter_bag'
             - '@oro_shipping.method.provider.type.non_deletable.shipping_rules_method_type_identifier_provider'
             - '@oro_shipping.method.provider.type.label.provider'

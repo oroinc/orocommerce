@@ -3,5 +3,5 @@ services:
         class: Oro\Bundle\GaufretteBundle\Tests\Functional\Environment\SkippedGaufretteFileSystemProvider
         decorates: oro_gaufrette.tests.skipped_file_systems
         arguments:
-            - '@oro_seo.tests.skipped_file_systems.inner'
+            - '@.inner'
             - [ 'sitemaps_tmp_data' ]

@@ -105,7 +105,7 @@ services:
         class: 'Oro\Bundle\WebsiteSearchBundle\Query\Factory\CompositeQueryFactory'
         public: false
         arguments:
-            - '@oro_website_search.query_factory.composite.inner'
+            - '@.inner'
             - '@oro_website_search.query_factory'
 
     oro_website_search.website_reindexation_on_create_delete_listener:
@@ -313,7 +313,7 @@ services:
         class: Oro\Bundle\WebsiteSearchBundle\Datagrid\Extension\NoDataMessagesExtension
         decorates: oro_datagrid.extension.no_data_messages
         arguments:
-            - '@oro_website_search.extension.no_data_messages.inner'
+            - '@.inner'
             - '@oro_frontend.request.frontend_helper'
             - '@oro_website_search.provider.search_mapping'
 

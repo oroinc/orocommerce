@@ -265,7 +265,7 @@ services:
         class: Oro\Bundle\ProductBundle\ImportExport\Normalizer\ProductImageAwareFileNormalizerDecorator
         decorates: oro_attachment.serializer.file_normalizer
         arguments:
-            - '@oro_product.importexport.normalizer.product_image_aware_file_normalizer_decorator.inner'
+            - '@.inner'
             - '@oro_product.importexport.file_manager.product_images'
 
     oro_product.importexport.frontend.configuration_provider.product:

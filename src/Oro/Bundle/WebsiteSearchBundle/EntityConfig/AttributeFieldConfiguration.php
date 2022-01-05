@@ -21,6 +21,9 @@ class AttributeFieldConfiguration implements FieldConfigInterface
             ->scalarNode('search_boost')
                 ->info('`integer` enables you to influence the relevancy ranking of the search results by the ' .
                 'value of the attributes.')
+                ->validate()
+                    ->ifTrue(static fn ($value) => $value !== null && (!is_numeric($value) || $value < 0))
+                    ->thenInvalid('must be a valid positive number, got %s.')
             ->end()
         ;
     }
