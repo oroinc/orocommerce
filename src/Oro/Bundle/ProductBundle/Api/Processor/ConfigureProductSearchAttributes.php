@@ -80,7 +80,7 @@ class ConfigureProductSearchAttributes implements ProcessorInterface
                 $sorters->addField($fieldName)
                     ->setPropertyPath(sprintf(
                         '%s.%s',
-                        $attributeType->getSorterStorageFieldType(),
+                        $attributeType->getSorterStorageFieldType($attribute),
                         $attributeType->getSortableFieldName($attribute)
                     ));
             }

@@ -20,7 +20,7 @@ class BooleanSearchableAttributeTypeTest extends SearchableAttributeTypeTestCase
     {
         $this->assertSame(
             [SearchAttributeTypeInterface::VALUE_MAIN => Query::TYPE_INTEGER],
-            $this->getSearchableAttributeType()->getFilterStorageFieldTypes()
+            $this->getSearchableAttributeType()->getFilterStorageFieldTypes($this->attribute)
         );
     }
 
@@ -28,15 +28,15 @@ class BooleanSearchableAttributeTypeTest extends SearchableAttributeTypeTestCase
     {
         $this->assertSame(
             Query::TYPE_INTEGER,
-            $this->getSearchableAttributeType()->getSorterStorageFieldType()
+            $this->getSearchableAttributeType()->getSorterStorageFieldType($this->attribute)
         );
     }
 
     public function testGetFilterTypeException()
     {
         $this->assertSame(
-            'boolean',
-            $this->getSearchableAttributeType()->getFilterType()
+            SearchAttributeTypeInterface::FILTER_TYPE_BOOLEAN,
+            $this->getSearchableAttributeType()->getFilterType($this->attribute)
         );
     }
 

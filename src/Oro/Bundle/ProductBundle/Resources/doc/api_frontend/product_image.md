@@ -36,7 +36,13 @@ Each element of the array is an object with the following properties:
 
 **types** is an array of types to which the image belongs to.
 
-Example of data: **\[{"url": "/path/to/image.jpeg", "maxWidth": 610, "maxHeight": "auto", "dimension": "product_gallery_popup", "types": \["main"\]}\]**
+**url_webp** is a string that contains URL of the image in WebP format.
+
+Example of data:
+
+- "disabled" or "for_all" WebP strategy is enabled: **\[{"url": "/path/to/image.jpeg", "maxWidth": 610, "maxHeight": "auto", "dimension": "product_gallery_popup", "types": \["main"\]}\]**
+
+- "if_supported" WebP strategy is enabled: **\[{"url": "/path/to/image.jpeg", "maxWidth": 610, "maxHeight": "auto", "dimension": "product_gallery_popup", "types": \["main"\], "url_webp": "/path/to/image.jpeg.webp"}\]**
 
 ### product
 

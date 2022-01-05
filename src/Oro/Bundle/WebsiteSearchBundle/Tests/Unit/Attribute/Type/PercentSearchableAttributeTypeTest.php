@@ -19,7 +19,7 @@ class PercentSearchableAttributeTypeTest extends DecimalSearchableAttributeTypeT
     {
         $this->assertSame(
             SearchAttributeTypeInterface::FILTER_TYPE_PERCENT,
-            $this->getSearchableAttributeType()->getFilterType()
+            $this->getSearchableAttributeType()->getFilterType($this->attribute)
         );
     }
 }

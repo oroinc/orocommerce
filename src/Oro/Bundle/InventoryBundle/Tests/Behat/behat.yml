@@ -14,5 +14,6 @@ oro_behat_extension:
         - Oro\Bundle\PromotionBundle\Tests\Behat\Context\PromotionContext
         - Oro\Bundle\EmailBundle\Tests\Behat\Context\EmailContext
         - Oro\Bundle\ImportExportBundle\Tests\Behat\Context\ImportExportContext
+        - Oro\Bundle\NavigationBundle\Tests\Behat\Context\ScrollspyContext
       paths:
         - '@OroInventoryBundle/Tests/Behat/Features'

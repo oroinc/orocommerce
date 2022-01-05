@@ -132,6 +132,6 @@ class ProductVariantIndexDataProviderDecorator implements ProductIndexDataProvid
 
     private function getSearchableName(FieldConfigModel $attribute): string
     {
-        return sprintf('%s_%s', $attribute->getFieldName(), SearchAttributeTypeInterface::SEARCHABLE_PREFIX);
+        return sprintf('%s_%s', $attribute->getFieldName(), SearchAttributeTypeInterface::SEARCHABLE_SUFFIX);
     }
 }

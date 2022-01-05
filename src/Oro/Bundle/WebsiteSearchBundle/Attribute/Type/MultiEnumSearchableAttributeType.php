@@ -14,7 +14,7 @@ class MultiEnumSearchableAttributeType extends AbstractSearchableAttributeType
     /**
      * {@inheritdoc}
      */
-    protected function getFilterStorageFieldTypeMain(): string
+    protected function getFilterStorageFieldTypeMain(FieldConfigModel $attribute): string
     {
         return Query::TYPE_INTEGER;
     }
@@ -22,7 +22,7 @@ class MultiEnumSearchableAttributeType extends AbstractSearchableAttributeType
     /**
      * {@inheritdoc}
      */
-    public function getSorterStorageFieldType(): string
+    public function getSorterStorageFieldType(FieldConfigModel $attribute): string
     {
         throw new \RuntimeException('Not supported');
     }
@@ -30,7 +30,7 @@ class MultiEnumSearchableAttributeType extends AbstractSearchableAttributeType
     /**
      * {@inheritdoc}
      */
-    public function getFilterType(): string
+    public function getFilterType(FieldConfigModel $attribute): string
     {
         return self::FILTER_TYPE_MULTI_ENUM;
     }
@@ -64,6 +64,6 @@ class MultiEnumSearchableAttributeType extends AbstractSearchableAttributeType
      */
     public function getSearchableFieldName(FieldConfigModel $attribute): string
     {
-        return $attribute->getFieldName() . '_' . self::SEARCHABLE_PREFIX;
+        return $attribute->getFieldName() . '_' . self::SEARCHABLE_SUFFIX;
     }
 }

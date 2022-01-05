@@ -13,7 +13,7 @@ class DateSearchableAttributeType extends AbstractSearchableAttributeType
     /**
      * {@inheritdoc}
      */
-    public function getFilterStorageFieldTypes(): array
+    public function getFilterStorageFieldTypes(FieldConfigModel $attribute): array
     {
         throw new \RuntimeException('Not supported');
     }
@@ -21,7 +21,7 @@ class DateSearchableAttributeType extends AbstractSearchableAttributeType
     /**
      * {@inheritdoc}
      */
-    public function getSorterStorageFieldType(): string
+    public function getSorterStorageFieldType(FieldConfigModel $attribute): string
     {
         return Query::TYPE_DATETIME;
     }
@@ -29,7 +29,7 @@ class DateSearchableAttributeType extends AbstractSearchableAttributeType
     /**
      * {@inheritdoc}
      */
-    public function getFilterType(): string
+    public function getFilterType(FieldConfigModel $attribute): string
     {
         throw new \RuntimeException('Not supported');
     }

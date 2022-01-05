@@ -47,7 +47,7 @@ class LandingPageProvider
     public function getLandingPages(string $variantIds = null)
     {
         if (!$variantIds) {
-            return $this->translator->trans('oro.consent.content_source.none');
+            return '';
         }
 
         $pages = [];
@@ -65,6 +65,6 @@ class LandingPageProvider
         }
 
         $pagesValue = implode(', ', $pages);
-        return !empty($pagesValue) ? $pagesValue : $this->translator->trans('oro.consent.content_source.none');
+        return !empty($pagesValue) ? $pagesValue : '';
     }
 }

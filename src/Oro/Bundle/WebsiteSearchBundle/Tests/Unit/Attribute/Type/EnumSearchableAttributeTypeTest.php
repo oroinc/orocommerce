@@ -21,7 +21,7 @@ class EnumSearchableAttributeTypeTest extends SearchableAttributeTypeTestCase
     {
         $this->assertSame(
             [SearchAttributeTypeInterface::VALUE_MAIN => Query::TYPE_INTEGER],
-            $this->getSearchableAttributeType()->getFilterStorageFieldTypes()
+            $this->getSearchableAttributeType()->getFilterStorageFieldTypes($this->attribute)
         );
     }
 
@@ -29,7 +29,7 @@ class EnumSearchableAttributeTypeTest extends SearchableAttributeTypeTestCase
     {
         $this->assertSame(
             Query::TYPE_INTEGER,
-            $this->getSearchableAttributeType()->getSorterStorageFieldType()
+            $this->getSearchableAttributeType()->getSorterStorageFieldType($this->attribute)
         );
     }
 
@@ -37,7 +37,7 @@ class EnumSearchableAttributeTypeTest extends SearchableAttributeTypeTestCase
     {
         $this->assertSame(
             SearchAttributeTypeInterface::FILTER_TYPE_MULTI_ENUM,
-            $this->getSearchableAttributeType()->getFilterType()
+            $this->getSearchableAttributeType()->getFilterType($this->attribute)
         );
     }
 

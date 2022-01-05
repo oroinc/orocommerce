@@ -12,7 +12,7 @@ class TextSearchableAttributeType extends StringSearchableAttributeType
     /**
      * {@inheritdoc}
      */
-    public function getSorterStorageFieldType(): string
+    public function getSorterStorageFieldType(FieldConfigModel $attribute): string
     {
         throw new \RuntimeException('Not supported');
     }

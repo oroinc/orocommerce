@@ -163,10 +163,10 @@ class FrontendProductGridEventListener
     ) {
         $name = $attributeType->getFilterableFieldNames($attribute)[SearchAttributeTypeInterface::VALUE_MAIN] ?? '';
         $alias = $this->clearName($name);
-        $type = $attributeType->getFilterStorageFieldTypes()[SearchAttributeTypeInterface::VALUE_MAIN] ?? '';
+        $type = $attributeType->getFilterStorageFieldTypes($attribute)[SearchAttributeTypeInterface::VALUE_MAIN] ?? '';
 
         $params = [
-            'type' => $attributeType->getFilterType(),
+            'type' => $attributeType->getFilterType($attribute),
             'data_name' => sprintf('%s.%s', $type, $name),
             'label' => $label
         ];
@@ -204,7 +204,8 @@ class FrontendProductGridEventListener
         SearchAttributeTypeInterface $attributeType,
         array $params
     ) {
-        $fieldType = $attributeType->getFilterStorageFieldTypes()[SearchAttributeTypeInterface::VALUE_MAIN] ?? '';
+        $fieldType = $attributeType
+                ->getFilterStorageFieldTypes($attribute)[SearchAttributeTypeInterface::VALUE_MAIN] ?? '';
 
         $entityFilterTypes = [
             SearchAttributeTypeInterface::FILTER_TYPE_ENUM,
@@ -212,7 +213,7 @@ class FrontendProductGridEventListener
             SearchAttributeTypeInterface::FILTER_TYPE_ENTITY,
         ];
 
-        if (\in_array($attributeType->getFilterType(), $entityFilterTypes, true)) {
+        if (\in_array($attributeType->getFilterType($attribute), $entityFilterTypes, true)) {
             $params['class'] = $this->getEntityClass($attribute);
         } elseif ($fieldType === Query::TYPE_TEXT) {
             $params['max_length'] = 255;
@@ -243,7 +244,7 @@ class FrontendProductGridEventListener
         $config->addSorter(
             $alias,
             [
-                'data_name' => sprintf('%s.%s', $attributeType->getSorterStorageFieldType(), $name),
+                'data_name' => sprintf('%s.%s', $attributeType->getSorterStorageFieldType($attribute), $name),
             ]
         );
 

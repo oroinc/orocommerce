@@ -172,7 +172,10 @@ class QuantityToOrderValidatorService
         if (0 == $maxLimit) {
             return $this->translator->trans(
                 'oro.inventory.product.error.quantity_limit_is_zero',
-                ['%limit%' => $maxLimit]
+                [
+                    '%sku%' => $product->getSku(),
+                    '%product_name%' => $product->getDenormalizedDefaultName()
+                ]
             );
         }
 

@@ -45,5 +45,5 @@ services:
         class: 'Oro\Bundle\UPSBundle\TimeInTransit\CacheableTimeInTransitProvider'
         decorates: oro_ups.provider.time_in_transit
         arguments:
-            - '@oro_ups.provider.cacheable_time_in_transit.inner'
+            - '@.inner'
             - '@oro_ups.time_in_transit.cache_provider.factory'

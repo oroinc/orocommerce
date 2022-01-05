@@ -20,7 +20,7 @@ class WYSIWYGSearchableAttributeTypeTest extends SearchableAttributeTypeTestCase
     {
         $this->assertSame(
             [SearchAttributeTypeInterface::VALUE_MAIN => Query::TYPE_TEXT],
-            $this->getSearchableAttributeType()->getFilterStorageFieldTypes()
+            $this->getSearchableAttributeType()->getFilterStorageFieldTypes($this->attribute)
         );
     }
 
@@ -29,14 +29,14 @@ class WYSIWYGSearchableAttributeTypeTest extends SearchableAttributeTypeTestCase
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Not supported');
 
-        $this->getSearchableAttributeType()->getSorterStorageFieldType();
+        $this->getSearchableAttributeType()->getSorterStorageFieldType($this->attribute);
     }
 
     public function testGetFilterType()
     {
         $this->assertSame(
             SearchAttributeTypeInterface::FILTER_TYPE_STRING,
-            $this->getSearchableAttributeType()->getFilterType()
+            $this->getSearchableAttributeType()->getFilterType($this->attribute)
         );
     }
 

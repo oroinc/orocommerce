@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CMSBundle\Tests\Unit\Tools;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\NoResultException;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Entity\Repository\FileRepository;
@@ -19,14 +20,11 @@ class DigitalAssetTwigTagsConverterTest extends \PHPUnit\Framework\TestCase
 
     private static array $fixturesData = [];
 
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    private $managerRegistry;
+    private ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject $managerRegistry;
 
-    /** @var FileUrlProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $fileUrlProvider;
+    private FileUrlProviderInterface|\PHPUnit\Framework\MockObject\MockObject $fileUrlProvider;
 
-    /** @var DigitalAssetTwigTagsConverter */
-    private $converter;
+    private DigitalAssetTwigTagsConverter $converter;
 
     protected function setUp(): void
     {
@@ -39,7 +37,7 @@ class DigitalAssetTwigTagsConverterTest extends \PHPUnit\Framework\TestCase
             ->getMock();
 
         $this->converter
-            ->expects($this->any())
+            ->expects(self::any())
             ->method('generateUuid')
             ->willReturnCallback(static fn () => self::NEW_UUID);
     }
@@ -64,21 +62,23 @@ class DigitalAssetTwigTagsConverterTest extends \PHPUnit\Framework\TestCase
     public function testConvertToUrls(string $contentWithTwigTags, string $expected): void
     {
         $this->fileUrlProvider
-            ->expects($this->any())
+            ->expects(self::any())
             ->method('getFilteredImageUrl')
             ->willReturnCallback(
-                function (File $file, string $filterName) {
+                function (File $file, string $filterName, string $format) {
                     $this->assertEquals('wysiwyg_original', $filterName);
 
                     return sprintf(
-                        '/media/cache/attachment/resize/wysiwyg_original/filterMd5/%1$d/file%1$d.jpg',
-                        $file->getId()
+                        '/media/cache/attachment/resize/wysiwyg_original/%1$s/%2$d/file%2$d.jpg%3$s',
+                        md5('filterMd5'),
+                        $file->getId(),
+                        $format ? '.' . $format : ''
                     );
                 }
             );
 
         $this->fileUrlProvider
-            ->expects($this->any())
+            ->expects(self::any())
             ->method('getFileUrl')
             ->willReturnCallback(
                 function (File $file, string $actionName) {
@@ -90,7 +90,7 @@ class DigitalAssetTwigTagsConverterTest extends \PHPUnit\Framework\TestCase
 
         $entityManager = $this->createMock(EntityManagerInterface::class);
         $this->managerRegistry
-            ->expects($this->any())
+            ->expects(self::any())
             ->method('getManagerForClass')
             ->willReturn($entityManager);
 
@@ -98,7 +98,7 @@ class DigitalAssetTwigTagsConverterTest extends \PHPUnit\Framework\TestCase
 
         $digitalAssetRepository = $this->createMock(DigitalAssetRepository::class);
         $entityManager
-            ->expects($this->any())
+            ->expects(self::any())
             ->method('getRepository')
             ->willReturnMap(
                 [
@@ -108,7 +108,7 @@ class DigitalAssetTwigTagsConverterTest extends \PHPUnit\Framework\TestCase
             );
 
         $fileRepository
-            ->expects($this->any())
+            ->expects(self::any())
             ->method('findOneBy')
             ->willReturnCallback(
                 static function (array $criteria) {
@@ -124,7 +124,7 @@ class DigitalAssetTwigTagsConverterTest extends \PHPUnit\Framework\TestCase
             );
 
         $digitalAssetRepository
-            ->expects($this->any())
+            ->expects(self::any())
             ->method('findSourceFile')
             ->willReturnCallback(
                 static function (int $digitalAssetId) {
@@ -137,7 +137,7 @@ class DigitalAssetTwigTagsConverterTest extends \PHPUnit\Framework\TestCase
                 }
             );
 
-        $this->assertEquals($expected, $this->converter->convertToUrls($contentWithTwigTags));
+        self::assertEquals($expected, $this->converter->convertToUrls($contentWithTwigTags));
     }
 
     public function convertToUrlsDataProvider(): array
@@ -159,21 +159,23 @@ class DigitalAssetTwigTagsConverterTest extends \PHPUnit\Framework\TestCase
     public function testConvertToUrlsWhenDatabaseException(string $contentWithTwigTags, string $expected): void
     {
         $this->fileUrlProvider
-            ->expects($this->any())
+            ->expects(self::any())
             ->method('getFilteredImageUrl')
             ->willReturnCallback(
-                function (File $file, string $filterName) {
+                function (File $file, string $filterName, string $format) {
                     $this->assertEquals('wysiwyg_original', $filterName);
 
                     return sprintf(
-                        '/media/cache/attachment/resize/wysiwyg_original/filterMd5/%1$d/file%1$d.jpg',
-                        $file->getId()
+                        '/media/cache/attachment/resize/wysiwyg_original/%1$s/%2$d/file%2$d.jpg%3$s',
+                        md5('filterMd5'),
+                        $file->getId(),
+                        $format ? '.' . $format : ''
                     );
                 }
             );
 
         $this->fileUrlProvider
-            ->expects($this->any())
+            ->expects(self::any())
             ->method('getFileUrl')
             ->willReturnCallback(
                 function (File $file, string $actionName) {
@@ -185,7 +187,7 @@ class DigitalAssetTwigTagsConverterTest extends \PHPUnit\Framework\TestCase
 
         $entityManager = $this->createMock(EntityManagerInterface::class);
         $this->managerRegistry
-            ->expects($this->any())
+            ->expects(self::any())
             ->method('getManagerForClass')
             ->willReturn($entityManager);
 
@@ -193,7 +195,7 @@ class DigitalAssetTwigTagsConverterTest extends \PHPUnit\Framework\TestCase
 
         $digitalAssetRepository = $this->createMock(DigitalAssetRepository::class);
         $entityManager
-            ->expects($this->any())
+            ->expects(self::any())
             ->method('getRepository')
             ->willReturnMap(
                 [
@@ -203,12 +205,12 @@ class DigitalAssetTwigTagsConverterTest extends \PHPUnit\Framework\TestCase
             );
 
         $fileRepository
-            ->expects($this->any())
+            ->expects(self::any())
             ->method('findOneBy')
             ->willThrowException(new \Exception());
 
         $digitalAssetRepository
-            ->expects($this->any())
+            ->expects(self::any())
             ->method('findSourceFile')
             ->willReturnCallback(
                 static function (int $digitalAssetId) {
@@ -221,7 +223,7 @@ class DigitalAssetTwigTagsConverterTest extends \PHPUnit\Framework\TestCase
                 }
             );
 
-        $this->assertEquals($expected, $this->converter->convertToUrls($contentWithTwigTags));
+        self::assertEquals($expected, $this->converter->convertToUrls($contentWithTwigTags));
     }
 
     public function convertToUrlsWithExceptionDataProvider(): array
@@ -236,19 +238,19 @@ class DigitalAssetTwigTagsConverterTest extends \PHPUnit\Framework\TestCase
     {
         $entityManager = $this->createMock(EntityManagerInterface::class);
         $this->managerRegistry
-            ->expects($this->any())
+            ->expects(self::any())
             ->method('getManagerForClass')
             ->willReturn($entityManager);
 
         $digitalAssetRepository = $this->createMock(DigitalAssetRepository::class);
         $entityManager
-            ->expects($this->any())
+            ->expects(self::any())
             ->method('getRepository')
             ->with(DigitalAsset::class)
             ->willReturn($digitalAssetRepository);
 
         $digitalAssetRepository
-            ->expects($this->any())
+            ->expects(self::any())
             ->method('getFileDataForTwigTag')
             ->willReturnCallback(
                 static function (int $fileId) {
@@ -282,7 +284,7 @@ class DigitalAssetTwigTagsConverterTest extends \PHPUnit\Framework\TestCase
                 }
             );
 
-        $this->assertEquals($expected, $this->converter->convertToTwigTags($contentWithUrls));
+        self::assertEquals($expected, $this->converter->convertToTwigTags($contentWithUrls));
     }
 
     public function convertToTwigTagsDataProvider(): array

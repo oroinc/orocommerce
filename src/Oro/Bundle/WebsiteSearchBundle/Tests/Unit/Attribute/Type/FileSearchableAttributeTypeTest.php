@@ -19,7 +19,7 @@ class FileSearchableAttributeTypeTest extends SearchableAttributeTypeTestCase
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Not supported');
 
-        $this->getSearchableAttributeType()->getFilterStorageFieldTypes();
+        $this->getSearchableAttributeType()->getFilterStorageFieldTypes($this->attribute);
     }
 
     public function testGetSorterStorageFieldType()
@@ -27,7 +27,7 @@ class FileSearchableAttributeTypeTest extends SearchableAttributeTypeTestCase
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Not supported');
 
-        $this->getSearchableAttributeType()->getSorterStorageFieldType();
+        $this->getSearchableAttributeType()->getSorterStorageFieldType($this->attribute);
     }
 
     public function testGetFilterTypeException()
@@ -35,7 +35,7 @@ class FileSearchableAttributeTypeTest extends SearchableAttributeTypeTestCase
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Not supported');
 
-        $this->getSearchableAttributeType()->getFilterType();
+        $this->getSearchableAttributeType()->getFilterType($this->attribute);
     }
 
     public function testIsLocalizable()

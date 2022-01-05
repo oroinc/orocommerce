@@ -74,8 +74,8 @@ Feature: Configurable image slider
     Then I should see "Content widget has been saved" flash message
     And I should see next rows in "Slides" table
       | SLIDE ORDER | URL      | TITLE   | TEXT         | TEXT ALIGNMENT | TARGET WINDOW | MAIN IMAGE | MEDIUM IMAGE | SMALL IMAGE |
-      | 1           | /product | Slide 1 | Slide text 1 | Center         | Same Window   | cat1.jpg   | cat1.jpg     | N/A         |
-      | 2           | /about   | Slide 2 | Slide text 2 | Center         | New Window    | cat2.jpg   | N/A          | cat2.jpg    |
+      | 1           | /product | Slide 1 | Slide text 1 | Center         | Same Window   | cat1.jpg   | cat1.jpg     |             |
+      | 2           | /about   | Slide 2 | Slide text 2 | Center         | New Window    | cat2.jpg   |              | cat2.jpg    |
 
   Scenario: Edit user roles
     Given I go to System/User Management/Users

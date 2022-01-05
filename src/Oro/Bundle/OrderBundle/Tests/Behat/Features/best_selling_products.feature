@@ -144,7 +144,13 @@ Feature: Best Selling Products
     Then there are 10 records in grid
     And I should see following grid containing rows:
       | Time Period | SKU   | QTY Sold |
+      | 12-2016     |       |          |
+      | 10-2016     |       |          |
+      | 11-2016     |       |          |
+      | 3-2016      |       |          |
+      | 4-2016      |       |          |
+      | 7-2016      |       |          |
+      | 8-2016      |       |          |
+      | 9-2016      |       |          |
       | 1-2016      | 9OL25 | 46 Items |
       | 1-2016      | 9OL25 | 40 Sets  |
-    And I should see following records in grid:
-      | N/A |

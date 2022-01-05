@@ -21,7 +21,7 @@ class MultiEnumSearchableAttributeTypeTest extends SearchableAttributeTypeTestCa
     {
         $this->assertSame(
             [SearchAttributeTypeInterface::VALUE_MAIN => Query::TYPE_INTEGER],
-            $this->getSearchableAttributeType()->getFilterStorageFieldTypes()
+            $this->getSearchableAttributeType()->getFilterStorageFieldTypes($this->attribute)
         );
     }
 
@@ -30,14 +30,14 @@ class MultiEnumSearchableAttributeTypeTest extends SearchableAttributeTypeTestCa
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Not supported');
 
-        $this->getSearchableAttributeType()->getSorterStorageFieldType();
+        $this->getSearchableAttributeType()->getSorterStorageFieldType($this->attribute);
     }
 
     public function testGetFilterType()
     {
         $this->assertSame(
             SearchAttributeTypeInterface::FILTER_TYPE_MULTI_ENUM,
-            $this->getSearchableAttributeType()->getFilterType()
+            $this->getSearchableAttributeType()->getFilterType($this->attribute)
         );
     }
 

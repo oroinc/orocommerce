@@ -23,7 +23,7 @@ abstract class AbstractSearchableAttributeType implements SearchAttributeTypeInt
     /**
      * {@inheritdoc}
      */
-    public function isSearchable(FieldConfigModel $attribute = null)
+    public function isSearchable(FieldConfigModel $attribute)
     {
         return $this->attributeType->isSearchable($attribute);
     }
@@ -31,7 +31,7 @@ abstract class AbstractSearchableAttributeType implements SearchAttributeTypeInt
     /**
      * {@inheritdoc}
      */
-    public function isFilterable(FieldConfigModel $attribute = null)
+    public function isFilterable(FieldConfigModel $attribute)
     {
         return $this->attributeType->isFilterable($attribute);
     }
@@ -39,7 +39,7 @@ abstract class AbstractSearchableAttributeType implements SearchAttributeTypeInt
     /**
      * {@inheritdoc}
      */
-    public function isSortable(FieldConfigModel $attribute = null)
+    public function isSortable(FieldConfigModel $attribute)
     {
         return $this->attributeType->isSortable($attribute);
     }
@@ -109,11 +109,11 @@ abstract class AbstractSearchableAttributeType implements SearchAttributeTypeInt
     /**
      * {@inheritdoc}
      */
-    public function getFilterStorageFieldTypes(): array
+    public function getFilterStorageFieldTypes(FieldConfigModel $attribute): array
     {
         $types = array_filter([
-            static::VALUE_MAIN => $this->getFilterStorageFieldTypeMain(),
-            static::VALUE_AGGREGATE => $this->getFilterStorageFieldTypeAggregate(),
+            static::VALUE_MAIN => $this->getFilterStorageFieldTypeMain($attribute),
+            static::VALUE_AGGREGATE => $this->getFilterStorageFieldTypeAggregate($attribute),
         ]);
 
         if (!$types) {
@@ -130,7 +130,7 @@ abstract class AbstractSearchableAttributeType implements SearchAttributeTypeInt
     /**
      * Returns main filter storage field type which is used for filtering.
      */
-    protected function getFilterStorageFieldTypeMain(): string
+    protected function getFilterStorageFieldTypeMain(FieldConfigModel $attribute): string
     {
         throw new \LogicException('Not implemented');
     }
@@ -139,7 +139,7 @@ abstract class AbstractSearchableAttributeType implements SearchAttributeTypeInt
      * Returns aggregate filter storage field type which is used for aggregation.
      * Empty by default, which means aggregation is not supported by default.
      */
-    protected function getFilterStorageFieldTypeAggregate(): string
+    protected function getFilterStorageFieldTypeAggregate(FieldConfigModel $attribute): string
     {
         return '';
     }
