@@ -2,8 +2,22 @@ import BaseView from 'oroui/js/app/views/base/view';
 import _ from 'underscore';
 import mediator from 'oroui/js/mediator';
 import template from 'tpl-loader!oroproduct/templates/sidebar-filters/filter-items-hint.html';
+import filterSettings from 'oro/filter-settings';
+
+import moduleConfig from 'module-config';
+
+const config = {
+    toggleBlock: true,
+    ...moduleConfig(module.id)
+};
 
 const FilterItemsHintView = BaseView.extend({
+    optionNames: BaseView.prototype.optionNames.concat([
+        'toggleBlock'
+    ]),
+
+    toggleBlock: config.toggleBlock,
+
     /**
      * Specific datagrid name
      * @property {string}
@@ -26,6 +40,10 @@ const FilterItemsHintView = BaseView.extend({
      */
     events: {
         'click .reset-filter-button': 'resetAllFilters'
+    },
+
+    listen: {
+        'viewport:change mediator': 'doToggleBlock'
     },
 
     /**
@@ -73,7 +91,16 @@ const FilterItemsHintView = BaseView.extend({
         FilterItemsHintView.__super__.render.call(this);
         this.$el.addClass(this.renderMode);
         this.$el.attr('data-hint-container', this.gridName);
+        this.doToggleBlock();
         return this;
+    },
+
+    doToggleBlock() {
+        if (this.toggleBlock === false) {
+            return;
+        }
+
+        filterSettings.isFullScreen() ? this.$el.hide() : this.$el.show();
     }
 });
 

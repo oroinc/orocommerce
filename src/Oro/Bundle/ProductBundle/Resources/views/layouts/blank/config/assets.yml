@@ -22,9 +22,11 @@ styles:
         - 'bundles/oroproduct/blank/scss/variables/product-filters-root-config.scss'
         - 'bundles/oroproduct/blank/scss/variables/search-autocomplete-config.scss'
         - 'bundles/oroproduct/blank/scss/variables/elevatezoom-config.scss'
+        - 'bundles/oroproduct/blank/scss/variables/toggle-sidebar-btn-config.scss'
 
         - 'bundles/oroproduct/blank/scss/components/product.scss'
         - 'bundles/oroproduct/blank/scss/components/product-item.scss'
         - 'bundles/oroproduct/blank/scss/components/product-list.scss'
         - 'bundles/oroproduct/blank/scss/components/product-filters-root.scss'
+        - 'bundles/oroproduct/blank/scss/components/toggle-sidebar-btn.scss'
         - 'bundles/oroproduct/blank/scss/styles.scss'
