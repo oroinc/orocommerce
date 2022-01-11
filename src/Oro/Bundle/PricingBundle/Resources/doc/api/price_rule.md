@@ -225,3 +225,16 @@ Get product unit code for a specific price rule.
 #### update_relationship
 
 Update product unit for a specific price rule.
+
+{@request:json_api}
+Example:
+
+```JSON
+{
+  "data": {
+    "type": "productunits",
+    "id": "item"
+  }
+}
+```
+{@/request}

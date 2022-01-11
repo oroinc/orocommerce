@@ -306,6 +306,21 @@ Example:
 
 Remove the types of a specific product image record.
 
+{@request:json_api}
+Example:
+
+```JSON
+{
+  "data": [
+    {
+      "type": "productimagetypes",
+      "id": "1"
+    }
+  ]
+}
+```
+{@/request}
+
 ### image
 
 #### get_subresource
