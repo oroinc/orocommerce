@@ -22,9 +22,7 @@ class OrderAddressDocumentationTest extends FrontendRestJsonApiTestCase
         $this->warmUpDocumentationCache();
         $docs = $this->getEntityDocsForAction('orderaddresses', ApiAction::CREATE);
 
-        $data = $this->getSimpleFormatter()->format($docs);
-        $resourceData = reset($data);
-        $resourceData = reset($resourceData);
+        $resourceData = $this->getResourceData($this->getSimpleFormatter()->format($docs));
         self::assertEquals(
             [
                 Response::HTTP_FORBIDDEN => ['Returned always']
