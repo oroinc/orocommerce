@@ -51,7 +51,7 @@ class OroCMSBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_10';
+        return 'v1_11';
     }
 
     /**
@@ -610,7 +610,7 @@ class OroCMSBundleInstaller implements
                 OroOptions::KEY => [
                     ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_READONLY,
                     'extend' => ['is_extend' => true, 'owner' => ExtendScope::OWNER_SYSTEM],
-                    'dataaudit' => ['auditable' => false],
+                    'dataaudit' => ['auditable' => true],
                     'importexport' => ['excluded' => false],
                 ],
             ]

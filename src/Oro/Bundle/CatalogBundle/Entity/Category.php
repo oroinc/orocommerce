@@ -191,9 +191,6 @@ class Category extends ExtendCategory implements
      * @ORM\OneToMany(targetEntity="CategoryShortDescription", mappedBy="category", cascade={"ALL"}, orphanRemoval=true)
      * @ConfigField(
      *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
      *          "importexport"={
      *              "order"=50,
      *              "full"=true,
@@ -210,9 +207,6 @@ class Category extends ExtendCategory implements
      * @ORM\OneToMany(targetEntity="CategoryLongDescription", mappedBy="category", cascade={"ALL"}, orphanRemoval=true)
      * @ConfigField(
      *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
      *          "importexport"={
      *              "order"=60,
      *              "full"=true,
