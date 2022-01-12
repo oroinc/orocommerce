@@ -35,7 +35,7 @@ oro_behat_extension:
             locator: '#product-visibility-customer-group tr:contains(first) .grid-body-cell-visibility select'
             type: css
 
-    Short Description Localization 1 fallback selector:
+    Short Description English (United States) fallback selector:
       selector: 'select[name="oro_catalog_category[shortDescriptions][values][localizations][1][fallback]"]'
 
     Visibility Settings Form:

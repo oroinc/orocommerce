@@ -409,9 +409,6 @@ class Product extends ExtendProduct implements
      * )
      * @ConfigField(
      *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
      *          "importexport"={
      *              "order"=60,
      *              "full"=true,
@@ -487,9 +484,6 @@ class Product extends ExtendProduct implements
      * )
      * @ConfigField(
      *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
      *          "importexport"={
      *              "order"=50,
      *              "full"=true,

@@ -17,7 +17,7 @@ use Oro\Bundle\LocaleBundle\Entity\AbstractLocalizedFallbackValue;
  *      }
  * )
  * @ORM\Entity
- * @Config
+ * @Config()
  */
 class CategoryLongDescription extends AbstractLocalizedFallbackValue
 {

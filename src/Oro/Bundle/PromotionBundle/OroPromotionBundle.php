@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PromotionBundle;
 
-use Oro\Bundle\LocaleBundle\DependencyInjection\Compiler\DefaultFallbackExtensionPass;
+use Oro\Bundle\LocaleBundle\DependencyInjection\Compiler\EntityFallbackFieldsStoragePass;
 use Oro\Bundle\PromotionBundle\DependencyInjection\Compiler\PromotionProductsGridCompilerPass;
 use Oro\Bundle\PromotionBundle\DependencyInjection\Compiler\TwigSandboxConfigurationPass;
 use Oro\Bundle\PromotionBundle\DependencyInjection\OroPromotionExtension;
@@ -32,7 +32,7 @@ class OroPromotionBundle extends Bundle
      */
     public function build(ContainerBuilder $container)
     {
-        $container->addCompilerPass(new DefaultFallbackExtensionPass([
+        $container->addCompilerPass(new EntityFallbackFieldsStoragePass([
             'Oro\Bundle\PromotionBundle\Entity\Promotion' => [
                 'label' => 'labels',
                 'description' => 'descriptions'
