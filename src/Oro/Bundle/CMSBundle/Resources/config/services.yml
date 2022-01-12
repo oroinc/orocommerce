@@ -505,3 +505,9 @@ services:
             - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }
+
+    oro_cms.decorator.wysiwyg_entity_audit_strategy:
+        class: 'Oro\Bundle\CMSBundle\DataAudit\Strategy\WYSIWYGAuditStrategyProcessor'
+        decorates: oro_dataaudit.strategy_processor.entity_audit_strategy_delegate
+        arguments:
+            - '@oro_cms.decorator.wysiwyg_entity_audit_strategy.inner'

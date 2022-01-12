@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\SEOBundle;
 
-use Oro\Bundle\LocaleBundle\DependencyInjection\Compiler\DefaultFallbackExtensionPass;
+use Oro\Bundle\LocaleBundle\DependencyInjection\Compiler\EntityFallbackFieldsStoragePass;
 use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\ContentNodeFieldsChangesCompilerPass;
 use Oro\Bundle\SEOBundle\DependencyInjection\Compiler\FullListUrlProvidersCompilerPass;
 use Oro\Bundle\SEOBundle\DependencyInjection\Compiler\MigrateFileStorageCommandCompilerPass;
@@ -28,7 +28,7 @@ class OroSEOBundle extends Bundle
             'metaKeyword' => 'metaKeywords'
         ];
 
-        $container->addCompilerPass(new DefaultFallbackExtensionPass([
+        $container->addCompilerPass(new EntityFallbackFieldsStoragePass([
             'Oro\Bundle\ProductBundle\Entity\Product' => $fields,
             'Oro\Bundle\CatalogBundle\Entity\Category' => $fields,
             'Oro\Bundle\CMSBundle\Entity\Page' => $fields,

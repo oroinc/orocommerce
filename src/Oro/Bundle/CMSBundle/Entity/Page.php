@@ -145,7 +145,7 @@ class Page extends ExtendPage implements
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
-     *              "auditable"=true
+     *              "auditable"=false
      *          },
      *          "attachment"={
      *              "acl_protected"=false,
