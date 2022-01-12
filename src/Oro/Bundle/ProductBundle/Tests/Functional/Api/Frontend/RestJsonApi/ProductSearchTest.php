@@ -62,7 +62,9 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
      */
     private function getSearchEngine()
     {
-        return self::getContainer()->getParameter('oro_search.engine');
+        return self::getContainer()
+            ->get('oro_website_search.engine.parameters')
+            ->getEngineName();
     }
 
     public function testNoSearchQueryFilter()

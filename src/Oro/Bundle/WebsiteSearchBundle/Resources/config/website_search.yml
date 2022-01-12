@@ -1,0 +1,54 @@
+services:
+    oro_website_search.engine.parameters:
+        class: Oro\Bundle\SearchBundle\Engine\EngineParameters
+        public: true
+        arguments:
+            - '%oro_website_search.engine_dsn%'
+
+    oro_website_search.engine:
+        class: 'Oro\Bundle\SearchBundle\Engine\EngineInterface'
+        arguments:
+            - !tagged_locator { tag: 'oro_website_search.engine', index_by: 'engine_name' }
+            - '@oro_website_search.engine.parameters'
+        factory: [ 'Oro\Bundle\SearchBundle\Engine\SearchEngineFactory', 'create' ]
+
+    oro_website_search.indexer:
+        class: 'Oro\Bundle\SearchBundle\Engine\IndexerInterface'
+        arguments:
+            - !tagged_locator { tag: 'oro_website_search.engine.indexer', index_by: 'engine_name' }
+            - '@oro_website_search.engine.parameters'
+        factory: [ 'Oro\Bundle\SearchBundle\Engine\SearchEngineIndexerFactory', 'create' ]
+
+    # Website search ORM engine related services definition
+    oro_website_search.orm.indexer:
+        class: 'Oro\Bundle\WebsiteSearchBundle\Engine\ORM\OrmIndexer'
+        parent: 'oro_website_search.search.indexer'
+        calls:
+            - [setDriver, ['@oro_website_search.engine.orm.driver']]
+        tags:
+            - { name: 'oro_website_search.engine.indexer', engine_name: 'orm' }
+
+    oro_website_search.orm.engine:
+        class: 'Oro\Bundle\WebsiteSearchBundle\Engine\ORM\OrmEngine'
+        parent: 'oro_website_search.search.engine'
+        calls:
+            - [setDriver, ['@oro_website_search.engine.orm.driver']]
+            - [setMapper, ['@oro_website_search.engine.mapper']]
+        tags:
+            - { name: 'oro_website_search.engine', engine_name: 'orm' }
+
+    oro_website_search.engine.orm.driver:
+        class: 'Oro\Bundle\WebsiteSearchBundle\Engine\ORM\Driver\DriverDecorator'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+        calls:
+            - [addDriver, ['@oro_website_search.engine.orm.driver.mysql']]
+            - [addDriver, ['@oro_website_search.engine.orm.driver.pgsql']]
+
+    oro_website_search.engine.orm.driver.mysql:
+        class: 'Oro\Bundle\WebsiteSearchBundle\Engine\ORM\Driver\PdoMysql'
+        public: false
+
+    oro_website_search.engine.orm.driver.pgsql:
+        class: 'Oro\Bundle\WebsiteSearchBundle\Engine\ORM\Driver\PdoPgsql'
+        public: false

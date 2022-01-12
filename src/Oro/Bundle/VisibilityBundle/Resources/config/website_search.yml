@@ -1,0 +1,17 @@
+services:
+    oro_website_search.driver.customer_partial_update_driver:
+        class: 'Oro\Bundle\VisibilityBundle\Driver\CustomerPartialUpdateDriverInterface'
+        arguments:
+            - !tagged_locator { tag: 'oro_website_search.customer_partial_update_driver', index_by: 'engine_name' }
+            - '@oro_website_search.engine.parameters'
+        factory: [ 'Oro\Bundle\VisibilityBundle\Driver\CustomerPartialUpdateDriverFactory', 'create' ]
+
+    oro_website_search.driver.customer_partial_update_driver.orm:
+        class: 'Oro\Bundle\VisibilityBundle\Driver\OrmCustomerPartialUpdateDriver'
+        arguments:
+            - '@oro_website_search.provider.placeholder_provider'
+            - '@oro_visibility.visibility.provider.product_visibility_provider'
+            - '@oro_entity.doctrine_helper'
+            - '@oro_entity.orm.insert_from_select_query_executor'
+        tags:
+            - { name: 'oro_website_search.customer_partial_update_driver', engine_name: 'orm' }
