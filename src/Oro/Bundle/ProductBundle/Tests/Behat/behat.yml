@@ -1189,6 +1189,9 @@ oro_behat_extension:
       selector: 'div.datagrid-tool div[data-grid-sorting] select'
       class: Oro\Bundle\FormBundle\Tests\Behat\Element\Select
 
+    Frontend Product Grid Sorter Action:
+      selector: 'div.datagrid-tool div[data-grid-sorting] .select2-choice'
+
     Shirt_101 Matrix Grid Order Form:
       selector: 'form[name="matrix_collection"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
