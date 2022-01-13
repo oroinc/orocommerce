@@ -111,9 +111,14 @@ const BaseTypeBuilder = BaseClass.extend({
             const content = this.template ? this.template(this.getButtonTemplateData()) : {type: this.componentType};
 
             const panelBtn = this.editor.BlockManager.get(this.componentType);
+            const {options = {}} = this.button;
             panelBtn
                 ? panelBtn.set({content, ...this.button})
-                : this.editor.BlockManager.add(this.componentType, {...this.button, content});
+                : this.editor.BlockManager.getAll().add({
+                    id: this.componentType,
+                    ...this.button,
+                    content
+                }, options);
         }
     },
 

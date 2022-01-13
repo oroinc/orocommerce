@@ -7,7 +7,8 @@ const ImageTypeBuilder = BaseTypeBuilder.extend({
 
     modelMixin: {
         defaults: {
-            tagName: 'img'
+            tagName: 'img',
+            previewMetadata: {}
         }
     },
 
@@ -30,7 +31,11 @@ const ImageTypeBuilder = BaseTypeBuilder.extend({
                     title: __('oro.cms.wysiwyg.digital_asset.image.title'),
                     routeName: 'oro_digital_asset_widget_choose_image',
                     onSelect: function(digitalAssetModel) {
-                        const {url, title} = digitalAssetModel.get('previewMetadata');
+                        digitalAssetImageComponentModel.set(
+                            'previewMetadata',
+                            digitalAssetModel.get('previewMetadata')
+                        );
+                        const {url, title} = digitalAssetImageComponentModel.get('previewMetadata');
 
                         digitalAssetImageComponentModel.set('src', url).addAttributes({
                             alt: title || ''
@@ -50,14 +55,7 @@ const ImageTypeBuilder = BaseTypeBuilder.extend({
     },
 
     createPanelButton() {
-        if (this.editor.ComponentRestriction.isAllow(['img'])) {
-            this.editor.BlockManager.add(this.componentType, {
-                label: __('oro.cms.wysiwyg.component.digital_asset.image'),
-                attributes: {
-                    'class': 'fa fa-picture-o'
-                }
-            });
-        }
+        this.editor.BlockManager.remove(this.componentType);
     },
 
     registerEditorCommands() {
