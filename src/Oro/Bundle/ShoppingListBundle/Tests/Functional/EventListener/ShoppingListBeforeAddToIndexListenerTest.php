@@ -10,7 +10,7 @@ use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerVisitors
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\WebsiteManagerTrait;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
-use Oro\Bundle\SearchBundle\Async\Topics;
+use Oro\Bundle\SearchBundle\Async\Topic\IndexEntitiesByIdTopic;
 use Oro\Bundle\SearchBundle\Transformer\MessageTransformerInterface;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\GuestShoppingListManager;
@@ -63,7 +63,7 @@ class ShoppingListBeforeAddToIndexListenerTest extends FrontendWebTestCase
         $shoppingList = $this->editShoppingList($shoppingList); // anonymous shopping list can't be edited.
         $expectedMessages[] = $this->getExpectedMessage($shoppingList);
 
-        $messages = self::getSentMessagesByTopic(Topics::INDEX_ENTITIES, false);
+        $messages = self::getSentMessagesByTopic(IndexEntitiesByIdTopic::getName(), false);
 
         $this->assertNotEquals($expectedMessages, $messages);
     }
@@ -80,7 +80,7 @@ class ShoppingListBeforeAddToIndexListenerTest extends FrontendWebTestCase
         $shoppingList = $this->editShoppingList($shoppingList);
         $expectedMessages[] = $this->getExpectedMessage($shoppingList);
 
-        $messages = self::getSentMessagesByTopic(Topics::INDEX_ENTITIES, false);
+        $messages = self::getSentMessagesByTopic(IndexEntitiesByIdTopic::getName(), false);
 
         $this->assertEquals($expectedMessages, $messages);
     }

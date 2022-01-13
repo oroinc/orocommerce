@@ -15,7 +15,6 @@ use Oro\Component\MessageQueue\Test\JobRunner;
 use Oro\Component\MessageQueue\Transport\Message;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Component\MessageQueue\Util\JSON;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -196,7 +195,7 @@ class ReindexProductsByAttributesProcessorTest extends \PHPUnit\Framework\TestCa
     private function getMessage(array $body = []): MessageInterface
     {
         $message = new Message();
-        $message->setBody(JSON::encode($body));
+        $message->setBody($body);
         $message->setMessageId('msg-1');
 
         return $message;

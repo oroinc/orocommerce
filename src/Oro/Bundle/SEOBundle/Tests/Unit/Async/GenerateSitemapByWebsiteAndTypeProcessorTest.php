@@ -14,7 +14,6 @@ use Oro\Component\MessageQueue\Job\JobRunner;
 use Oro\Component\MessageQueue\Transport\Message;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Component\MessageQueue\Util\JSON;
 use Oro\Component\SEO\Provider\UrlItemsProviderInterface;
 use Oro\Component\SEO\Tools\SitemapDumperInterface;
 use Psr\Log\LoggerInterface;
@@ -69,7 +68,7 @@ class GenerateSitemapByWebsiteAndTypeProcessorTest extends \PHPUnit\Framework\Te
     private function getMessage(array $body): MessageInterface
     {
         $message = new Message();
-        $message->setBody(JSON::encode($body));
+        $message->setBody($body);
 
         return $message;
     }

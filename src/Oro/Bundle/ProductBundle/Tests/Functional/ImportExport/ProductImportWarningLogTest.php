@@ -174,7 +174,7 @@ class ProductImportWarningLogTest extends WebTestCase
         $message = new Message();
 
         $message->setMessageId('abc');
-        $message->setBody(json_encode($messageData));
+        $message->setBody($messageData);
 
         return $message;
     }
