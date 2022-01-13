@@ -8,8 +8,8 @@ import CONSTANTS from 'orocms/js/app/grapesjs/constants';
 const ISOLATION_SCOPE = `${CONSTANTS.ISOLATION_PREFIX}-`;
 const TEST_ID = `${ISOLATION_SCOPE}UUID__`;
 
-const ROOT_ATTR = '[id*="isolation"]';
-const SCOPE_ATTR = '[id*="scope"]';
+const ROOT_ATTR = `#${TEST_ID}[id*="isolation"]`;
+const SCOPE_ATTR = `#${TEST_ID}[id*="scope"]`;
 
 const cssLines = {
     '.test{color: red;}': `#${TEST_ID} .test{color: red;}`,
