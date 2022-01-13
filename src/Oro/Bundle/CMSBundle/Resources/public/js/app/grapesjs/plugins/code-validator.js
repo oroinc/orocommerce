@@ -2,7 +2,7 @@ import __ from 'orotranslation/js/translator';
 import BaseClass from 'oroui/js/base-class';
 import Modal from 'oroui/js/modal';
 import HTMLValidator from 'orocms/js/app/grapesjs/validation';
-import {escapeWrapper, escapeCss} from 'orocms/js/app/grapesjs/plugins/grapesjs-style-isolation';
+import {escapeWrapper, escapeCss} from 'orocms/js/app/grapesjs/plugins/components/content-isolation';
 
 const CodeValidator = BaseClass.extend({
     validation: {
