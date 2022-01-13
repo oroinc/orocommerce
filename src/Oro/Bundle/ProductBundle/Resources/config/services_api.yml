@@ -134,13 +134,6 @@ services:
         tags:
             - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, collection: true, class: Oro\Bundle\ProductBundle\Entity\ProductImage }
 
-    oro_product.api.compute_product_image.webp_aware:
-        class: Oro\Bundle\ProductBundle\Api\Processor\ComputeWebpAwareProductImageFields
-        arguments:
-            - '@oro_attachment.manager'
-        tags: # should be executed after `oro_product.api.compute_product_image` processor, cause current processor extends data that is computed in `oro_product.api.compute_product_image` processor
-            - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, collection: true, class: Oro\Bundle\ProductBundle\Entity\ProductImage, priority: -10 }
-
     oro_product.api.handle_variants_filter:
         class: Oro\Bundle\ProductBundle\Api\Processor\HandleVariantsFilter
         arguments:
@@ -473,11 +466,3 @@ services:
             - '@oro_layout.provider.image_type'
         tags:
             - { name: oro.api.processor, action: customize_loaded_data, class: Oro\Bundle\AttachmentBundle\Entity\File }
-
-    oro_product.api.compute_image_file_path.webp_aware:
-        class: Oro\Bundle\ProductBundle\Api\Processor\ComputeWebpAwareImageFilePath
-        arguments:
-            - '@oro_attachment.manager'
-            - '@oro_api.doctrine_helper'
-        tags: # should be executed after `oro_product.api.compute_image_file_path` processor, cause current processor extends data that is computed in `oro_product.api.compute_image_file_path` processor
-            - { name: oro.api.processor, action: customize_loaded_data, class: Oro\Bundle\AttachmentBundle\Entity\File, priority: -10 }

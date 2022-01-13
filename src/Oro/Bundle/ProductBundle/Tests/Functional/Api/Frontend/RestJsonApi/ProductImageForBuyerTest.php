@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\Api\Frontend\RestJsonApi;
 
 use Oro\Bundle\CustomerBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadBuyerCustomerUserData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\Api\FrontendRestJsonApiTestCase;
+use Oro\Bundle\ProductBundle\Entity\ProductImage;
 
 class ProductImageForBuyerTest extends FrontendRestJsonApiTestCase
 {
@@ -14,6 +15,20 @@ class ProductImageForBuyerTest extends FrontendRestJsonApiTestCase
             LoadBuyerCustomerUserData::class,
             '@OroProductBundle/Tests/Functional/Api/Frontend/DataFixtures/product.yml'
         ]);
+    }
+
+    private static function updateExpectedData(array $expectedData, array $replace): array
+    {
+        array_walk_recursive(
+            $expectedData,
+            function (&$val) use ($replace) {
+                if (is_string($val)) {
+                    $val = strtr($val, $replace);
+                }
+            }
+        );
+
+        return self::processTemplateData($expectedData);
     }
 
     public function testGetList()
@@ -39,11 +54,19 @@ class ProductImageForBuyerTest extends FrontendRestJsonApiTestCase
 
     public function testGet()
     {
+        /** @var ProductImage $productImage */
+        $productImage = $this->getReference('product1_image1');
+        $fileId = $productImage->getImage()->getId();
+
         $response = $this->get(
-            ['entity' => 'productimages', 'id' => '<toString(@product1_image1->id)>']
+            ['entity' => 'productimages', 'id' => (string)$productImage->getId()]
         );
 
-        $this->assertResponseContains('get_product_image.yml', $response);
+        $expectedData = self::updateExpectedData(
+            $this->getResponseData('get_product_image.yml'),
+            ['{fileId}' => (string)$fileId]
+        );
+        $this->assertResponseContains($expectedData, $response);
     }
 
     public function testTryToUpdate()

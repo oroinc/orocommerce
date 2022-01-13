@@ -6,7 +6,7 @@ use Oro\Bundle\ApiBundle\Processor\CustomizeLoadedData\CustomizeLoadedDataContex
 use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
-use Oro\Bundle\ProductBundle\Entity\ProductImage;
+use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
@@ -15,14 +15,9 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
  */
 class ComputeImageFilePath implements ProcessorInterface
 {
-    /** @var AttachmentManager */
-    private $attachmentManager;
-
-    /** @var DoctrineHelper */
-    private $doctrineHelper;
-
-    /** @var ImageTypeProvider */
-    private $typeProvider;
+    private AttachmentManager $attachmentManager;
+    private DoctrineHelper $doctrineHelper;
+    private ImageTypeProvider $typeProvider;
 
     public function __construct(
         AttachmentManager $attachmentManager,
@@ -36,7 +31,6 @@ class ComputeImageFilePath implements ProcessorInterface
 
     /**
      * {@inheritdoc}
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function process(ContextInterface $context)
     {
@@ -59,54 +53,91 @@ class ComputeImageFilePath implements ProcessorInterface
             return;
         }
 
-        $filePaths = $this->getFilePaths($data[$mimeTypeFieldName], $data[$fileIdFieldName]);
+        $fileNameFieldName = $context->getResultFieldName('filename');
+        if (!$fileNameFieldName || empty($data[$fileNameFieldName])) {
+            return;
+        }
+
+        $filePaths = $this->getFilePaths(
+            $data[$mimeTypeFieldName],
+            $data[$fileIdFieldName],
+            $data[$fileNameFieldName]
+        );
         if (null !== $filePaths) {
             $data[$filePathFieldName] = $filePaths;
             $context->setData($data);
         }
     }
 
-    /**
-     * @param string $mimeType
-     * @param int    $fileId
-     *
-     * @return string[]|null [dimension => path, ...]
-     */
-    private function getFilePaths($mimeType, $fileId)
+    private function getFilePaths(string $mimeType, int $fileId, string $fileName): ?array
     {
         if (!$this->attachmentManager->isImageType($mimeType)) {
             return null;
         }
 
-        /** @var ProductImage $productImage */
-        $productImage = $this->doctrineHelper->getEntityRepository(ProductImage::class)
-            ->findOneBy(['image' => $fileId]);
-        if (null === $productImage) {
-            return null;
-        }
-        $imageTypes = $productImage->getTypes();
-        if (empty($imageTypes)) {
+        $imageTypes = $this->getImageTypes($fileId);
+        if (!$imageTypes) {
             return null;
         }
 
         $allTypes = $this->typeProvider->getImageTypes();
-
-        $dimensions = [];
-        foreach ($imageTypes as $imageType) {
-            $dimensions = array_merge($dimensions, $allTypes[$imageType->getType()]->getDimensions());
-        }
+        $isWebpEnabled = $this->attachmentManager->isWebpEnabledIfSupported();
 
         $result = [];
-        foreach (array_keys($dimensions) as $dimension) {
-            $result[] = [
-                'url' => $this->attachmentManager->getFilteredImageUrl(
-                    $productImage->getImage(),
-                    $dimension
-                ),
-                'dimension' => $dimension,
-            ];
+        foreach ($imageTypes as $imageType) {
+            $typeDimensions = $allTypes[$imageType]->getDimensions();
+            foreach ($typeDimensions as $dimensionName => $dimensionConfig) {
+                if (!\array_key_exists($dimensionName, $result)) {
+                    $result[$dimensionName] = $this->getFilePath(
+                        $fileId,
+                        $fileName,
+                        $dimensionName,
+                        $isWebpEnabled
+                    );
+                }
+            }
+        }
+
+        return array_values($result);
+    }
+
+    private function getFilePath(
+        int $fileId,
+        string $fileName,
+        string $dimensionName,
+        bool $isWebpEnabled
+    ): array {
+        $result = [
+            'url'       => $this->attachmentManager->getFilteredImageUrlByIdAndFilename(
+                $fileId,
+                $fileName,
+                $dimensionName
+            ),
+            'dimension' => $dimensionName
+        ];
+        if ($isWebpEnabled) {
+            $result['url_webp'] = $this->attachmentManager->getFilteredImageUrlByIdAndFilename(
+                $fileId,
+                $fileName,
+                $dimensionName,
+                'webp'
+            );
         }
 
         return $result;
+    }
+
+    private function getImageTypes(int $fileId): array
+    {
+        $imageTypes = $this->doctrineHelper
+            ->createQueryBuilder(ProductImageType::class, 'imageType')
+            ->select('imageType.type')
+            ->innerJoin('imageType.productImage', 'image')
+            ->where('image.image = :fileId')
+            ->setParameter('fileId', $fileId)
+            ->getQuery()
+            ->getArrayResult();
+
+        return array_column($imageTypes, 'type');
     }
 }
