@@ -12,7 +12,6 @@ use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\Message;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Component\MessageQueue\Util\JSON;
 use Oro\Component\SEO\Tools\SitemapDumperInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
@@ -59,7 +58,7 @@ class GenerateSitemapIndexProcessorTest extends \PHPUnit\Framework\TestCase
     {
         $message = new Message();
         $message->setMessageId($messageId);
-        $message->setBody(JSON::encode($body));
+        $message->setBody($body);
 
         return $message;
     }

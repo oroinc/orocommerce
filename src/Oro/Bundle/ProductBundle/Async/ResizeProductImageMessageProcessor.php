@@ -79,7 +79,7 @@ class ResizeProductImageMessageProcessor implements MessageProcessorInterface, T
             $body = JSON::decode($message->getBody());
 
             return $this->getOptionsResolver()->resolve((array)$body);
-        } catch (OptionsResolverInvalidArgumentException|\InvalidArgumentException $e) {
+        } catch (OptionsResolverInvalidArgumentException|\JsonException $e) {
             throw new MessageQueueInvalidArgumentException($e->getMessage(), $e->getCode());
         }
     }

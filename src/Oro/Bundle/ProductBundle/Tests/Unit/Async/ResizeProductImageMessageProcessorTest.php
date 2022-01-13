@@ -15,7 +15,6 @@ use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Exception\InvalidArgumentException as MessageQueueInvalidArgumentException;
 use Oro\Component\MessageQueue\Transport\Message;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Component\MessageQueue\Util\JSON;
 
 class ResizeProductImageMessageProcessorTest extends \PHPUnit\Framework\TestCase
 {
@@ -95,7 +94,7 @@ class ResizeProductImageMessageProcessorTest extends \PHPUnit\Framework\TestCase
         $this->expectException(MessageQueueInvalidArgumentException::class);
 
         $message = new Message();
-        $message->setBody(JSON::encode(['abc']));
+        $message->setBody(['abc']);
 
         $this->processor->process($message, $this->createMock(SessionInterface::class));
     }
@@ -103,10 +102,10 @@ class ResizeProductImageMessageProcessorTest extends \PHPUnit\Framework\TestCase
     public function testProcessProductImageNotFound()
     {
         $message = new Message();
-        $message->setBody(JSON::encode([
+        $message->setBody([
             'productImageId' => self::PRODUCT_IMAGE_ID,
             'force'          => self::FORCE_OPTION
-        ]));
+        ]);
 
         $this->em->expects(self::once())
             ->method('find')
@@ -122,10 +121,10 @@ class ResizeProductImageMessageProcessorTest extends \PHPUnit\Framework\TestCase
     public function testProcessProductImageFileNotFound()
     {
         $message = new Message();
-        $message->setBody(JSON::encode([
+        $message->setBody([
             'productImageId' => self::PRODUCT_IMAGE_ID,
             'force'          => self::FORCE_OPTION
-        ]));
+        ]);
 
         $this->em->expects(self::once())
             ->method('find')
@@ -141,10 +140,10 @@ class ResizeProductImageMessageProcessorTest extends \PHPUnit\Framework\TestCase
     public function testResizeValidDataWithoutPassedDimensions()
     {
         $message = new Message();
-        $message->setBody(JSON::encode([
+        $message->setBody([
             'productImageId' => self::PRODUCT_IMAGE_ID,
             'force'          => self::FORCE_OPTION
-        ]));
+        ]);
 
         $image = $this->getImageFile();
         $this->imageResizeManager->expects(self::exactly(3))
@@ -164,11 +163,11 @@ class ResizeProductImageMessageProcessorTest extends \PHPUnit\Framework\TestCase
     public function testResizeValidDataWithPassedNullDimensions()
     {
         $message = new Message();
-        $message->setBody(JSON::encode([
+        $message->setBody([
             'productImageId' => self::PRODUCT_IMAGE_ID,
             'force'          => self::FORCE_OPTION,
             'dimensions'     => null
-        ]));
+        ]);
 
         $image = $this->getImageFile();
         $this->imageResizeManager->expects(self::exactly(3))
@@ -185,11 +184,11 @@ class ResizeProductImageMessageProcessorTest extends \PHPUnit\Framework\TestCase
     public function testResizeValidDataWithPassedDimensions()
     {
         $message = new Message();
-        $message->setBody(JSON::encode([
+        $message->setBody([
             'productImageId' => self::PRODUCT_IMAGE_ID,
             'force'          => self::FORCE_OPTION,
             'dimensions'     => [self::ORIGINAL, self::SMALL]
-        ]));
+        ]);
 
         $image = $this->getImageFile();
         $this->imageResizeManager->expects(self::exactly(2))

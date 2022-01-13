@@ -8,7 +8,7 @@ use Oro\Bundle\ImportExportBundle\Configuration\ImportExportConfiguration;
 use Oro\Bundle\ImportExportBundle\Processor\ProcessorRegistry;
 use Oro\Bundle\ImportExportBundle\Tests\Functional\AbstractImportExportTestCase;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
-use Oro\Bundle\NotificationBundle\Async\Topics;
+use Oro\Bundle\NotificationBundle\Async\Topic\SendEmailNotificationTemplateTopic;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListToProductWithoutPrices;
@@ -16,7 +16,6 @@ use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\Message;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Component\MessageQueue\Util\JSON;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -357,7 +356,7 @@ class ImportExportTest extends AbstractImportExportTestCase
 
         $message = new Message();
         $message->setMessageId('abc');
-        $message->setBody(JSON::encode($sentMessage));
+        $message->setBody($sentMessage);
 
         /** @var ExportMessageProcessor $processor */
         $processor = $this->getContainer()->get('oro_importexport.async.pre_export');
@@ -367,7 +366,7 @@ class ImportExportTest extends AbstractImportExportTestCase
 
         $sentMessages = $this->getSentMessages();
         foreach ($sentMessages as $messageData) {
-            if (Topics::SEND_NOTIFICATION_EMAIL_TEMPLATE === $messageData['topic']) {
+            if (SendEmailNotificationTemplateTopic::getName() === $messageData['topic']) {
                 break;
             }
         }

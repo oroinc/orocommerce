@@ -15,7 +15,6 @@ use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\Message;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Component\MessageQueue\Util\JSON;
 
 class ResizeProductImageMessageProcessorTest extends WebTestCase
 {
@@ -44,7 +43,7 @@ class ResizeProductImageMessageProcessorTest extends WebTestCase
     private function getMessage(array $body): MessageInterface
     {
         $message = new Message();
-        $message->setBody(JSON::encode($body));
+        $message->setBody($body);
 
         return $message;
     }
