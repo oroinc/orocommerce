@@ -81,7 +81,7 @@ Feature: CRUD operations for Coupons codes
     Given click view "12345" in grid
     Then I should see coupon with:
       |Code              | 12345                 |
-      |Promotion         |                       |
+      |Promotion         | N/A                   |
       |Uses per Coupon   | 10                    |
       |Uses per Person   | 1                     |
       |Valid Until       | Jul 1, 2018, 12:00 AM |
