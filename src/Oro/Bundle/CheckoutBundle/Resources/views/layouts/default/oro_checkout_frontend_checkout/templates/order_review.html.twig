@@ -3,6 +3,7 @@
         '~class': " order-review-options__wrapper"
     }) %}
     <div {{ block('block_attributes') }}>
+        <h4 class="heading-bottom-offset">{{ "oro.checkout.workflow.order_options.label"|trans }}</h4>
         <div class="order-review-options">
             <div class="grid__row grid__row--offset-none">
                 {% set shippingDateId= 'shipping-date-uid-'|uniqid %}
