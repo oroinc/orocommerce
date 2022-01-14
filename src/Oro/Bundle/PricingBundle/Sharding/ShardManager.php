@@ -23,7 +23,7 @@ use Oro\Component\PropertyAccess\PropertyAccessor;
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class ShardManager implements \Serializable
+class ShardManager
 {
     /**
      * @var ManagerRegistry
@@ -394,21 +394,14 @@ class ShardManager implements \Serializable
         return $metadata->getSingleAssociationJoinColumnName($fieldName);
     }
 
-    /**
-     * @return string
-     */
-    public function serialize()
+    public function __serialize(): array
     {
-        return serialize($this->shardList);
+        return $this->shardList;
     }
 
-    /**
-     * @param string $serialized
-     */
-    public function unserialize($serialized)
+    public function __unserialize(array $serialized): void
     {
-        $shardList = unserialize($serialized);
-        $this->shardList = $shardList;
+        $this->shardList = $serialized;
     }
 
     public function setRegistry(ManagerRegistry $registry)

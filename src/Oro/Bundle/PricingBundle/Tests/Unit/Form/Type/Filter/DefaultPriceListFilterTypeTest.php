@@ -139,6 +139,13 @@ class DefaultPriceListFilterTypeTest extends AbstractTypeTestCase
      */
     public function bindDataProvider()
     {
-        return [];
+        return [
+            'defaultOptions' =>  [
+                'bindData' => [],
+                'formData' => [],
+                'viewData' => [],
+                'customOptions' => []
+            ]
+        ];
     }
 }
