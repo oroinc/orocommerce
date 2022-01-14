@@ -79,7 +79,12 @@ class OrderRequiredTaxRecalculationSpecification implements SpecificationInterfa
             return true;
         }
 
-        return $this->isOrderAddressChanged($order->getBillingAddress(), $originalOrderData['billingAddress']);
+        if ($this->isOrderAddressChanged($order->getBillingAddress(), $originalOrderData['billingAddress'])) {
+            return true;
+        }
+
+        // Users can overwrite shipping cost manually and this needs tax recalculation.
+        return ($order->getOverriddenShippingCostAmount() !== $originalOrderData['overriddenShippingCostAmount']);
     }
 
     /**
