@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\TaxBundle\Model;
 
+/**
+ * Base class for Tax result element
+ */
 abstract class AbstractResultElement extends AbstractResult
 {
     const CURRENCY = 'currency';
@@ -10,7 +13,7 @@ abstract class AbstractResultElement extends AbstractResult
      * @param string $index
      * @param string $value
      */
-    public function offsetSet($index, $value)
+    public function offsetSet($index, $value): void
     {
         parent::offsetSet((string)$index, (string)$value);
     }

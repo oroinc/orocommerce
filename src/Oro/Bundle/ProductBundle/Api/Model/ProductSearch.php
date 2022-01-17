@@ -18,7 +18,7 @@ class ProductSearch implements \ArrayAccess
     /**
      * {@inheritdoc}
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return array_key_exists($offset, $this->properties);
     }
@@ -26,7 +26,7 @@ class ProductSearch implements \ArrayAccess
     /**
      * {@inheritdoc}
      */
-    public function offsetGet($offset)
+    public function offsetGet($offset): mixed
     {
         if (!array_key_exists($offset, $this->properties)) {
             throw new \InvalidArgumentException(sprintf('The "%s" property does not exist.', $offset));
@@ -38,7 +38,7 @@ class ProductSearch implements \ArrayAccess
     /**
      * {@inheritdoc}
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         $this->properties[$offset] = $value;
     }
@@ -46,7 +46,7 @@ class ProductSearch implements \ArrayAccess
     /**
      * {@inheritdoc}
      */
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         unset($this->properties[$offset]);
     }

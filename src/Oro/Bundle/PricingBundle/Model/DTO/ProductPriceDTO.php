@@ -142,7 +142,7 @@ class ProductPriceDTO implements \JsonSerializable, ProductPriceInterface
     /**
      * {@inheritdoc}
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }
