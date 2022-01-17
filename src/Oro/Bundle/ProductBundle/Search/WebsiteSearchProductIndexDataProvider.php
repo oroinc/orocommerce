@@ -48,7 +48,7 @@ class WebsiteSearchProductIndexDataProvider implements ProductIndexDataProviderI
         if ($attributeType) {
             $attributeType->isLocalizable($attribute) ?
                 $this->getLocalizedFields($product, $attribute, $attributeType, $localizations, $data) :
-                $this->buildFields($product, $attribute, $attributeType, null, $data);
+                $this->buildFields($product, $attribute, $attributeType, $data);
         }
     }
 
@@ -60,7 +60,7 @@ class WebsiteSearchProductIndexDataProvider implements ProductIndexDataProviderI
         \ArrayIterator $data
     ): void {
         array_map(
-            fn (Localization $localization) => $this->buildFields($product, $attribute, $type, $localization, $data),
+            fn (Localization $localization) => $this->buildFields($product, $attribute, $type, $data, $localization),
             $localizations
         );
     }
@@ -69,8 +69,8 @@ class WebsiteSearchProductIndexDataProvider implements ProductIndexDataProviderI
         Product $product,
         FieldConfigModel $attribute,
         SearchAttributeTypeInterface $attributeType,
-        ?Localization $localization = null,
-        \ArrayIterator $data
+        \ArrayIterator $data,
+        ?Localization $localization = null
     ): void {
         $originalValue = $this->propertyAccessor->getValue($product, $attribute->getFieldName());
 

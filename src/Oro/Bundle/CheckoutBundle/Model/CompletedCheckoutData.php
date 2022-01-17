@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\CheckoutBundle\Model;
 
+/**
+ * Holds completed checkout data
+ */
 final class CompletedCheckoutData extends \ArrayObject implements \JsonSerializable
 {
     const CURRENCY = 'currency';
@@ -34,7 +37,7 @@ final class CompletedCheckoutData extends \ArrayObject implements \JsonSerializa
     /**
      * {@inheritdoc}
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->getArrayCopy();
     }

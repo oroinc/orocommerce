@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\RedirectBundle\Cache;
 
+/**
+ * Stores localized slugs and URLs
+ */
 class UrlDataStorage implements \JsonSerializable
 {
     const PREFIX_KEY = 'p';
@@ -147,7 +150,7 @@ class UrlDataStorage implements \JsonSerializable
     /**
      * {@inheritdoc}
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->data;
     }

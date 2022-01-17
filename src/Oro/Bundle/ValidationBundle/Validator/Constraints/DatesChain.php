@@ -4,6 +4,9 @@ namespace Oro\Bundle\ValidationBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
+/**
+ * Dates chain validator constraint
+ */
 class DatesChain extends Constraint implements \JsonSerializable
 {
     /**
@@ -27,7 +30,7 @@ class DatesChain extends Constraint implements \JsonSerializable
     /**
      * {@inheritdoc}
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return [
             'message' => $this->message,
