@@ -195,6 +195,8 @@ const ShoppingListInlineEditingPlugin = InlineEditingPlugin.extend({
     },
 
     enterEditMode(cell, event) {
+        cell.trigger('before-enter-edit-mode');
+
         const existingEditorComponent = this.getOpenedEditor(cell);
         if (existingEditorComponent) {
             return;
