@@ -10,7 +10,6 @@ use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListActivationRuleRe
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListScheduleRepository;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListSchedules;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @dbIsolationPerTest
@@ -29,7 +28,7 @@ class PriceListScheduleTest extends RestJsonApiTestCase
     /**
      * {@inheritdoc}
      */
-    protected function getRequestDataFolderName()
+    protected function getRequestDataFolderName(): string
     {
         return parent::getRequestDataFolderName() . DIRECTORY_SEPARATOR . 'price_list_schedule';
     }
@@ -37,7 +36,7 @@ class PriceListScheduleTest extends RestJsonApiTestCase
     /**
      * {@inheritdoc}
      */
-    protected function getResponseDataFolderName()
+    protected function getResponseDataFolderName(): string
     {
         return parent::getResponseDataFolderName() . DIRECTORY_SEPARATOR . 'price_list_schedule';
     }
@@ -61,8 +60,8 @@ class PriceListScheduleTest extends RestJsonApiTestCase
         \DateTime $activateAt,
         \DateTime $deactivateAt,
         PriceList $priceList
-    ): Response {
-        return $this->post(
+    ): void {
+        $this->post(
             ['entity' => 'pricelistschedules'],
             [
                 'data' => [
@@ -88,8 +87,8 @@ class PriceListScheduleTest extends RestJsonApiTestCase
         PriceListSchedule $schedule,
         \DateTime $activateAt,
         \DateTime $deactivateAt
-    ): Response {
-        return $this->patch(
+    ): void {
+        $this->patch(
             ['entity' => 'pricelistschedules', 'id' => $schedule->getId()],
             [
                 'data' =>
