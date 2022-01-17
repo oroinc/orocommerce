@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\Api\Processor;
 
 use Oro\Bundle\ApiBundle\Processor\CustomizeLoadedData\CustomizeLoadedDataContext;
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
+use Oro\Bundle\LayoutBundle\Model\ThemeImageTypeDimension;
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
@@ -14,13 +15,10 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
 class ComputeProductImageFields implements ProcessorInterface
 {
     private const TYPES_FIELD = 'types';
-    private const FILES_FIELD  = 'files';
+    private const FILES_FIELD = 'files';
 
-    /** @var AttachmentManager */
-    private $attachmentManager;
-
-    /** @var ImageTypeProvider*/
-    private $typeProvider;
+    private AttachmentManager $attachmentManager;
+    private ImageTypeProvider $typeProvider;
 
     public function __construct(AttachmentManager $attachmentManager, ImageTypeProvider $typeProvider)
     {
@@ -37,60 +35,92 @@ class ComputeProductImageFields implements ProcessorInterface
 
         $data = $context->getData();
 
-        if (!$context->isFieldRequestedForCollection(self::TYPES_FIELD, $data)
-            && !$context->isFieldRequestedForCollection(self::FILES_FIELD, $data)
-        ) {
+        $isTypesFieldRequested = $context->isFieldRequestedForCollection(self::TYPES_FIELD, $data);
+        $isFilesFieldRequested = $context->isFieldRequestedForCollection(self::FILES_FIELD, $data);
+        if (!$isTypesFieldRequested && !$isFilesFieldRequested) {
             return;
         }
 
-        $typePathFieldName = $context->getResultFieldName(self::TYPES_FIELD);
-        $filesFieldName = $context->getResultFieldName(self::FILES_FIELD);
+        $entityTypesFieldName = $context->getResultFieldName(self::TYPES_FIELD);
+        $isWebpEnabled = $this->attachmentManager->isWebpEnabledIfSupported();
 
         foreach ($data as $key => $item) {
             $types = [];
-            foreach ($item[$typePathFieldName] as $type) {
+            foreach ($item[$entityTypesFieldName] as $type) {
                 $types[] = $type['type'];
             }
 
-            if ($context->isFieldRequestedForCollection(self::TYPES_FIELD, $data)) {
+            if ($isTypesFieldRequested) {
                 $data[$key][self::TYPES_FIELD] = $types;
             }
-            if ($context->isFieldRequestedForCollection($filesFieldName, $data)) {
+            if ($isFilesFieldRequested) {
                 $image = $item['image'];
-                $data[$key][$filesFieldName] = $this->getImageUrls($image['id'], $image['filename'], $types);
+                $data[$key][self::FILES_FIELD] = $this->getImageUrls(
+                    $image['id'],
+                    $image['filename'],
+                    $types,
+                    $isWebpEnabled
+                );
             }
         }
 
         $context->setData($data);
     }
 
-    private function getImageUrls(int $imageId, string $filename, array $imageTypes): array
+    private function getImageUrls(int $imageId, string $fileName, array $imageTypes, bool $isWebpEnabled): array
     {
         if (empty($imageTypes)) {
             return [];
         }
 
         $allTypes = $this->typeProvider->getImageTypes();
+
         $result = [];
         foreach ($imageTypes as $imageType) {
             $typeDimensions = $allTypes[$imageType]->getDimensions();
             foreach ($typeDimensions as $dimensionName => $dimensionConfig) {
-                if (!array_key_exists($dimensionName, $result)) {
-                    $result[$dimensionName] = [
-                        'url' => $this->attachmentManager->getFilteredImageUrlByIdAndFilename(
-                            $imageId,
-                            $filename,
-                            $dimensionName
-                        ),
-                        'maxWidth' => $dimensionConfig->getWidth(),
-                        'maxHeight' => $dimensionConfig->getHeight(),
-                        'dimension' => $dimensionName
-                    ];
+                if (!\array_key_exists($dimensionName, $result)) {
+                    $result[$dimensionName] = $this->getImageUrl(
+                        $imageId,
+                        $fileName,
+                        $dimensionName,
+                        $dimensionConfig,
+                        $isWebpEnabled
+                    );
                 }
                 $result[$dimensionName]['types'][] = $imageType;
             }
         }
 
         return array_values($result);
+    }
+
+    private function getImageUrl(
+        int $imageId,
+        string $fileName,
+        string $dimensionName,
+        ThemeImageTypeDimension $dimensionConfig,
+        bool $isWebpEnabled
+    ): array {
+        $result = [
+            'url'       => $this->attachmentManager->getFilteredImageUrlByIdAndFilename(
+                $imageId,
+                $fileName,
+                $dimensionName
+            ),
+            'maxWidth'  => $dimensionConfig->getWidth(),
+            'maxHeight' => $dimensionConfig->getHeight(),
+            'dimension' => $dimensionName
+        ];
+        if ($isWebpEnabled) {
+            $result['url_webp'] = $this->attachmentManager->getFilteredImageUrlByIdAndFilename(
+                $imageId,
+                $fileName,
+                $dimensionName,
+                'webp'
+            );
+        }
+
+        return $result;
     }
 }

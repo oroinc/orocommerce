@@ -12,14 +12,14 @@ class OrmCustomerPartialUpdateDriverTest extends AbstractCustomerPartialUpdateDr
     /**
      * {@inheritdoc}
      */
-    protected function isTestSkipped()
+    protected function checkTestToBeSkipped()
     {
-        if ($this->getContainer()->getParameter('oro_website_search.engine') !== Orm::ENGINE_NAME) {
+        $searchEngineName = $this->getContainer()
+            ->get('oro_website_search.engine.parameters')
+            ->getEngineName();
+
+        if ($searchEngineName !== Orm::ENGINE_NAME) {
             $this->markTestSkipped('Should be tested only with ORM search engine');
-
-            return true;
         }
-
-        return false;
     }
 }

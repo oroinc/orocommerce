@@ -1,4 +1,5 @@
 @regression
+@elasticsearch
 @ticket-BB-20073
 @feature-BAP-19790
 @fixture-OroCustomerBundle:CustomerUserAmandaRCole.yml

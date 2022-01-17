@@ -43,7 +43,10 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
 
     public static function checkSearchEngine(WebTestCase $webTestCase)
     {
-        if ($webTestCase->getContainer()->getParameter('oro_website_search.engine') !== 'orm') {
+        $engine = $webTestCase->getContainer()
+            ->get('oro_website_search.engine.parameters')
+            ->getEngineName();
+        if ($engine !== 'orm') {
             $webTestCase->markTestSkipped('Should be tested only with ORM engine');
         }
     }

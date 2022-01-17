@@ -75,7 +75,7 @@ class ProductView implements \IteratorAggregate
     /**
      * {@inheritDoc}
      */
-    public function getIterator()
+    public function getIterator(): \Traversable
     {
         return new \ArrayIterator($this->attributes);
     }

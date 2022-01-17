@@ -17,6 +17,7 @@ use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityScopedData;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Traits\DefaultWebsiteIdTestTrait;
+use PHPUnit\Framework\SyntheticError;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -45,20 +46,19 @@ abstract class AbstractCustomerPartialUpdateDriverTest extends WebTestCase
         $this->initClient();
         $this->getContainer()->get('request_stack')->push(Request::create(''));
 
-        if (!$this->isTestSkipped()) {
-            $this->loadFixtures([LoadProductVisibilityScopedData::class]);
+        $this->checkTestToBeSkipped();
 
-            $this->configManager = self::getConfigManager('global');
+        $this->loadFixtures([LoadProductVisibilityScopedData::class]);
 
-            $this->driver = $this->getContainer()->get('oro_website_search.driver.customer_partial_update_driver');
-            $this->getContainer()->get('oro_visibility.visibility.cache.product.cache_builder')->buildCache();
-        }
+        $this->configManager = self::getConfigManager('global');
+        $this->driver = $this->getContainer()->get('oro_website_search.driver.customer_partial_update_driver');
+        $this->getContainer()->get('oro_visibility.visibility.cache.product.cache_builder')->buildCache();
     }
 
     /**
-     * @return bool
+     * @throws SyntheticError
      */
-    abstract protected function isTestSkipped();
+    abstract protected function checkTestToBeSkipped();
 
     /**
      * @param Customer $customer

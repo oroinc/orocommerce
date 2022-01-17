@@ -13,7 +13,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Event\DatagridLineItemsDataEvent;
 use Oro\Bundle\ProductBundle\EventListener\DatagridLineItemsDataListener;
 use Oro\Bundle\ProductBundle\Layout\DataProvider\ConfigurableProductProvider;
-use Oro\Bundle\ProductBundle\Tests\Unit\Api\Processor\Stub\ProductImageStub;
+use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductImageStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductLineItemStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
 

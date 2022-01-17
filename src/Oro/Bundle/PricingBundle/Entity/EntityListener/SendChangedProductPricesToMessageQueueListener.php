@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Entity\EntityListener;
 
 use Doctrine\ORM\EntityManager;
-use Oro\Bundle\DataAuditBundle\Async\Topics;
+use Oro\Bundle\DataAuditBundle\Async\Topic\AuditChangedEntitiesTopic;
 use Oro\Bundle\DataAuditBundle\Provider\AuditConfigProvider;
 use Oro\Bundle\DataAuditBundle\Provider\AuditMessageBodyProvider;
 use Oro\Bundle\DataAuditBundle\Service\EntityToEntityChangeArrayConverter;
@@ -206,7 +206,7 @@ class SendChangedProductPricesToMessageQueueListener implements OptionalListener
 
                 if (!empty($body)) {
                     $this->messageProducer->send(
-                        Topics::ENTITIES_CHANGED,
+                        AuditChangedEntitiesTopic::getName(),
                         new Message($body, MessagePriority::VERY_LOW)
                     );
                 }

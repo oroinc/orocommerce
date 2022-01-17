@@ -65,8 +65,8 @@ define(function(require) {
                     .on('adoptedFormSubmitClick', this.submitAction.bind(this, widget));
 
                 instance._title = title => {
-                    if (this.options.title) {
-                        title.html(this.options.title);
+                    if (instance.options.title) {
+                        title.html(instance.options.title);
                     } else {
                         title.html('&#160;');
                     }

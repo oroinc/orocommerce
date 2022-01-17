@@ -4,7 +4,7 @@ namespace Oro\Bundle\ProductBundle\Api\Processor;
 
 use Oro\Bundle\ApiBundle\Processor\CustomizeFormData\CustomizeFormDataContext;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
-use Oro\Bundle\TranslationBundle\Async\Topics;
+use Oro\Bundle\TranslationBundle\Async\Topic\DumpJsTranslationsTopic;
 use Oro\Bundle\TranslationBundle\Entity\Translation;
 use Oro\Bundle\TranslationBundle\Manager\TranslationManager;
 use Oro\Bundle\TranslationBundle\Translation\Translator;
@@ -140,7 +140,7 @@ class SaveProductUnitLabels implements ProcessorInterface
         $this->translationManager->flush();
 
         // send MQ message to dump JS translations
-        $this->producer->send(Topics::JS_TRANSLATIONS_DUMP, []);
+        $this->producer->send(DumpJsTranslationsTopic::getName(), []);
     }
 
     private function isSubmittedAtLeastOneLabel(array $data): bool

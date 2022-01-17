@@ -84,7 +84,8 @@ services:
             - '@event_dispatcher'
             - '@oro_website_search.mapping_configuration.provider'
             - '@oro_website_search.cache.mapping_configuration'
-            - 'oro_website_search.mapping_config'
+            - 'oro_website_search.mapping_config:'
+            - "@=service('oro_website_search.engine.parameters').getEngineName()"
             - 'oro_website_search.event.website_search_mapping.configuration'
 
     oro_website_search.cache.website_search_mapping.warmer:
@@ -327,7 +328,7 @@ services:
     oro_website_search.form.extension.remove_search_boost_attribute:
         class: 'Oro\Bundle\WebsiteSearchBundle\Form\Extension\RemoveSearchBoostAttributeExtension'
         arguments:
-            - '%oro_website_search.engine%'
+            - "@=service('oro_website_search.engine.parameters').getEngineName()"
             - '@oro_entity_config.provider.attribute'
             - '@oro_entity_config.registry.attribute_type'
         tags:

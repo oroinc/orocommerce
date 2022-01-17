@@ -499,6 +499,12 @@ services:
         tags:
             - { name: oro.requirements_provider }
 
+    oro_cms.decorator.wysiwyg_entity_audit_inverse_strategy:
+        class: 'Oro\Bundle\CMSBundle\DataAudit\Strategy\WYSIWYGAuditStrategyProcessor'
+        decorates: oro_dataaudit.strategy_processor.entity_audit_strategy_delegate
+        arguments:
+            - '@oro_cms.decorator.wysiwyg_entity_audit_inverse_strategy.inner'
+
     oro_cms.twig.image_slider_extension:
         class: 'Oro\Bundle\CMSBundle\Twig\ImageSliderExtension'
         arguments:

@@ -19,7 +19,10 @@ class OrmEngineTest extends AbstractEngineTest
     {
         $this->initClient();
 
-        if ($this->getContainer()->getParameter('oro_website_search.engine') !== 'orm') {
+        $engine = $this->getContainer()
+            ->get('oro_website_search.engine.parameters')
+            ->getEngineName();
+        if ($engine !== 'orm') {
             $this->markTestSkipped('Should be tested only with ORM search engine');
         }
 

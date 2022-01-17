@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Tests\Unit\Api\Processor\Stub;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Stub;
 
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;

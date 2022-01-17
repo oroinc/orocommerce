@@ -2,17 +2,23 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Api\Frontend\RestJsonApi;
 
+use Oro\Bundle\AttachmentBundle\Tests\Functional\WebpConfigurationTrait;
+use Oro\Bundle\AttachmentBundle\Tools\WebpConfiguration;
 use Oro\Bundle\CustomerBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadAdminCustomerUserData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\Api\FrontendRestJsonApiTestCase;
+use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
+ * @dbIsolationPerTest
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
 class ProductImageTest extends FrontendRestJsonApiTestCase
 {
+    use WebpConfigurationTrait;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -20,6 +26,20 @@ class ProductImageTest extends FrontendRestJsonApiTestCase
             LoadAdminCustomerUserData::class,
             '@OroProductBundle/Tests/Functional/Api/Frontend/DataFixtures/product.yml'
         ]);
+    }
+
+    private static function updateExpectedData(array $expectedData, array $replace): array
+    {
+        array_walk_recursive(
+            $expectedData,
+            function (&$val) use ($replace) {
+                if (is_string($val)) {
+                    $val = strtr($val, $replace);
+                }
+            }
+        );
+
+        return self::processTemplateData($expectedData);
     }
 
     public function testGetList()
@@ -33,12 +53,19 @@ class ProductImageTest extends FrontendRestJsonApiTestCase
 
     public function testGetListFilteredByProduct()
     {
+        $file1Id = $this->getReference('product1_image1')->getImage()->getId();
+        $file2Id = $this->getReference('product1_image2')->getImage()->getId();
+
         $response = $this->cget(
             ['entity' => 'productimages'],
             ['filter' => ['product' => '<toString(@product1->id)>']]
         );
 
-        $this->assertResponseContains('cget_product_image_filter_by_product.yml', $response);
+        $expectedData = self::updateExpectedData(
+            $this->getResponseData('cget_product_image_filter_by_product.yml'),
+            ['{file1Id}' => (string)$file1Id, '{file2Id}' => (string)$file2Id]
+        );
+        $this->assertResponseContains($expectedData, $response);
     }
 
     public function testGetListFilteredByTypesWithOperatorEquals()
@@ -225,11 +252,66 @@ class ProductImageTest extends FrontendRestJsonApiTestCase
 
     public function testGet()
     {
+        /** @var ProductImage $productImage */
+        $productImage = $this->getReference('product1_image1');
+        $fileId = $productImage->getImage()->getId();
+
         $response = $this->get(
-            ['entity' => 'productimages', 'id' => '<toString(@product1_image1->id)>']
+            ['entity' => 'productimages', 'id' => (string)$productImage->getId()]
         );
 
-        $this->assertResponseContains('get_product_image.yml', $response);
+        $expectedData = self::updateExpectedData(
+            $this->getResponseData('get_product_image.yml'),
+            ['{fileId}' => (string)$fileId]
+        );
+        $this->assertResponseContains($expectedData, $response);
+    }
+
+    public function testGetAndWebpDisabled()
+    {
+        self::setWebpStrategy(WebpConfiguration::DISABLED);
+
+        /** @var ProductImage $productImage */
+        $productImage = $this->getReference('product1_image1');
+        $fileId = $productImage->getImage()->getId();
+
+        $response = $this->get(
+            ['entity' => 'productimages', 'id' => (string)$productImage->getId()]
+        );
+
+        $expectedData = self::updateExpectedData(
+            $this->getResponseData('get_product_image.yml'),
+            ['{fileId}' => (string)$fileId]
+        );
+        foreach ($expectedData['data']['attributes']['files'] as &$file) {
+            unset($file['url_webp']);
+        }
+        unset($file);
+        $this->assertResponseContains($expectedData, $response);
+    }
+
+    public function testGetAndWebpEnabledForAll()
+    {
+        self::setWebpStrategy(WebpConfiguration::ENABLED_FOR_ALL);
+
+        /** @var ProductImage $productImage */
+        $productImage = $this->getReference('product1_image1');
+        $fileId = $productImage->getImage()->getId();
+
+        $response = $this->get(
+            ['entity' => 'productimages', 'id' => (string)$productImage->getId()]
+        );
+
+        $expectedData = self::updateExpectedData(
+            $this->getResponseData('get_product_image.yml'),
+            ['{fileId}' => (string)$fileId]
+        );
+        foreach ($expectedData['data']['attributes']['files'] as &$file) {
+            $file['url'] .= '.webp';
+            unset($file['url_webp']);
+        }
+        unset($file);
+        $this->assertResponseContains($expectedData, $response);
     }
 
     public function testTryToGetForNotAccessibleProduct()

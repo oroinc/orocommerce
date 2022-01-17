@@ -2,18 +2,17 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Api\Processor;
 
-use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\AbstractQuery;
+use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\ApiBundle\Config\EntityDefinitionConfig;
 use Oro\Bundle\ApiBundle\Tests\Unit\Processor\CustomizeLoadedData\CustomizeLoadedDataProcessorTestCase;
 use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
-use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\LayoutBundle\Model\ThemeImageType;
+use Oro\Bundle\LayoutBundle\Model\ThemeImageTypeDimension;
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
 use Oro\Bundle\ProductBundle\Api\Processor\ComputeImageFilePath;
-use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
-use Oro\Bundle\ProductBundle\Tests\Unit\Api\Processor\Stub\ProductImageStub;
 
 class ComputeImageFilePathTest extends CustomizeLoadedDataProcessorTestCase
 {
@@ -26,9 +25,6 @@ class ComputeImageFilePathTest extends CustomizeLoadedDataProcessorTestCase
     /** @var ImageTypeProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $typeProvider;
 
-    /** @var EntityRepository|\PHPUnit\Framework\MockObject\MockObject */
-    private $repo;
-
     /** @var ComputeImageFilePath */
     private $processor;
 
@@ -39,11 +35,6 @@ class ComputeImageFilePathTest extends CustomizeLoadedDataProcessorTestCase
         $this->attachmentManager = $this->createMock(AttachmentManager::class);
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->typeProvider = $this->createMock(ImageTypeProvider::class);
-        $this->repo = $this->createMock(EntityRepository::class);
-
-        $this->doctrineHelper->expects(self::any())
-            ->method('getEntityRepository')
-            ->willReturn($this->repo);
 
         $this->processor = new ComputeImageFilePath(
             $this->attachmentManager,
@@ -52,88 +43,295 @@ class ComputeImageFilePathTest extends CustomizeLoadedDataProcessorTestCase
         );
     }
 
-    /**
-     * @dataProvider getTestProcessShouldHandlePathsCorrectlyProvider
-     */
-    public function testProcessShouldHandlePathsCorrectly(
-        array $initialResults,
-        bool $isImageType,
-        ?ProductImage $productImage,
-        array $expectedResults
-    ): void {
-        $type1 = $this->createMock(ThemeImageType::class);
-        $type1->expects(self::any())
-            ->method('getDimensions')
-            ->willReturn(['testDimension' => [1, 2, 3]]);
+    private function expectsGetTypesQuery(int $fileId, array $typesData): void
+    {
+        $qb = $this->createMock(QueryBuilder::class);
+        $query = $this->createMock(AbstractQuery::class);
+        $qb->expects(self::once())
+            ->method('select')
+            ->with('imageType.type')
+            ->willReturnSelf();
+        $qb->expects(self::once())
+            ->method('innerJoin')
+            ->with('imageType.productImage', 'image')
+            ->willReturnSelf();
+        $qb->expects(self::once())
+            ->method('where')
+            ->with('image.image = :fileId')
+            ->willReturnSelf();
+        $qb->expects(self::once())
+            ->method('setParameter')
+            ->with('fileId', $fileId)
+            ->willReturnSelf();
+        $qb->expects(self::once())
+            ->method('getQuery')
+            ->willReturn($query);
+        $query->expects(self::once())
+            ->method('getArrayResult')
+            ->willReturn($typesData);
 
-        $allTypes = ['type1' => $type1];
-        $this->typeProvider->expects(self::any())
-            ->method('getImageTypes')
-            ->willReturn($allTypes);
-
-        $this->attachmentManager->expects(self::any())
-            ->method('getFilteredImageUrl')
-            ->willReturn('testUrl');
-        $this->attachmentManager->expects(self::any())
-            ->method('isImageType')
-            ->willReturn($isImageType);
-
-        $this->repo->expects(self::any())
-            ->method('findOneBy')
-            ->with(['image' => $initialResults['id']])
-            ->willReturn($productImage);
-
-        $entityConfig = new EntityDefinitionConfig();
-        $entityConfig->addField('filePath');
-        $entityConfig->addField('mimeType');
-        $entityConfig->addField('id');
-
-        $this->context->setConfig($entityConfig);
-        $this->context->setResult($initialResults);
-        $this->processor->process($this->context);
-
-        self::assertEquals($expectedResults, $this->context->getResult());
+        $this->doctrineHelper->expects(self::once())
+            ->method('createQueryBuilder')
+            ->with(ProductImageType::class, 'imageType')
+            ->willReturn($qb);
     }
 
-    public function getTestProcessShouldHandlePathsCorrectlyProvider(): array
+    private function getImageType(array $dimensions): ThemeImageType
     {
-        $basicInitialResults = ['id' => 1, 'content' => 'testContent', 'mimeType' => 'testMime'];
-        $productImageType = $this->createMock(ProductImageType::class);
-        $productImageType->expects(self::any())
-            ->method('getType')
-            ->willReturn('type1');
-        $productImage = $this->createMock(ProductImageStub::class);
-        $productImage->expects(self::any())
-            ->method('getTypes')
-            ->willReturn([$productImageType]);
-        $imageFile = $this->createMock(File::class);
-        $productImage->expects(self::any())
-            ->method('getImage')
-            ->willReturn($imageFile);
+        $type = $this->createMock(ThemeImageType::class);
+        $type->expects(self::any())
+            ->method('getDimensions')
+            ->willReturn($dimensions);
 
-        return [
-            [
-                'initialResults'  => $basicInitialResults,
-                'isImageType'     => false,
-                'productImage'    => null,
-                'expectedResults' => $basicInitialResults,
-            ],
-            [
-                'initialResults'  => $basicInitialResults,
-                'isImageType'     => true,
-                'productImage'    => $productImage,
-                'expectedResults' => array_merge(
-                    $basicInitialResults,
+        return $type;
+    }
+
+    private function getImageTypeDimension(): ThemeImageTypeDimension
+    {
+        return $this->createMock(ThemeImageTypeDimension::class);
+    }
+
+    public function testProcess(): void
+    {
+        $config = new EntityDefinitionConfig();
+        $config->addField('id');
+        $config->addField('filePath');
+        $config->addField('mimeType');
+        $config->addField('filename');
+
+        $data = [
+            'id'       => 1,
+            'content'  => 'testContent',
+            'mimeType' => 'testMime',
+            'filename' => 'test1.jpg'
+        ];
+
+        $this->attachmentManager->expects(self::once())
+            ->method('isImageType')
+            ->with($data['mimeType'])
+            ->willReturn(true);
+
+        $this->expectsGetTypesQuery($data['id'], [['type' => 'type1']]);
+        $this->typeProvider->expects(self::once())
+            ->method('getImageTypes')
+            ->willReturn(
+                [
+                    'type1' => $this->getImageType(['small' => $this->getImageTypeDimension()])
+                ]
+            );
+
+        $this->attachmentManager->expects(self::once())
+            ->method('isWebpEnabledIfSupported')
+            ->willReturn(false);
+        $this->attachmentManager->expects(self::once())
+            ->method('getFilteredImageUrlByIdAndFilename')
+            ->with($data['id'], $data['filename'], 'small')
+            ->willReturn('testUrl');
+
+        $this->context->setConfig($config);
+        $this->context->setData($data);
+        $this->processor->process($this->context);
+
+        self::assertEquals(
+            array_merge($data, [
+                'filePath' => [
                     [
-                        'filePath' => [
-                            [
-                                'url' => 'testUrl',
-                                'dimension' => 'testDimension'
-                            ],
-                        ]
+                        'url'       => 'testUrl',
+                        'dimension' => 'small'
                     ]
-                ),
-            ],
+                ]
+            ]),
+            $this->context->getData()
+        );
+    }
+
+    public function testProcessForWebpEnabled(): void
+    {
+        $config = new EntityDefinitionConfig();
+        $config->addField('id');
+        $config->addField('filePath');
+        $config->addField('mimeType');
+        $config->addField('filename');
+
+        $data = [
+            'id'       => 1,
+            'content'  => 'testContent',
+            'mimeType' => 'testMime',
+            'filename' => 'test1.jpg'
+        ];
+
+        $this->attachmentManager->expects(self::once())
+            ->method('isImageType')
+            ->with($data['mimeType'])
+            ->willReturn(true);
+
+        $this->expectsGetTypesQuery($data['id'], [['type' => 'type1']]);
+        $this->typeProvider->expects(self::once())
+            ->method('getImageTypes')
+            ->willReturn(
+                [
+                    'type1' => $this->getImageType(['small' => $this->getImageTypeDimension()])
+                ]
+            );
+
+        $this->attachmentManager->expects(self::once())
+            ->method('isWebpEnabledIfSupported')
+            ->willReturn(true);
+        $this->attachmentManager->expects(self::exactly(2))
+            ->method('getFilteredImageUrlByIdAndFilename')
+            ->withConsecutive(
+                [$data['id'], $data['filename'], 'small'],
+                [$data['id'], $data['filename'], 'small', 'webp']
+            )
+            ->willReturnOnConsecutiveCalls(
+                'testUrl',
+                'testWebpUrl'
+            );
+
+        $this->context->setConfig($config);
+        $this->context->setData($data);
+        $this->processor->process($this->context);
+
+        self::assertEquals(
+            array_merge($data, [
+                'filePath' => [
+                    [
+                        'url'       => 'testUrl',
+                        'dimension' => 'small',
+                        'url_webp'  => 'testWebpUrl'
+                    ]
+                ]
+            ]),
+            $this->context->getData()
+        );
+    }
+
+    public function testProcessWhenProductImageTypesAreEmpty(): void
+    {
+        $config = new EntityDefinitionConfig();
+        $config->addField('id');
+        $config->addField('filePath');
+        $config->addField('mimeType');
+        $config->addField('filename');
+
+        $data = [
+            'id'       => 1,
+            'content'  => 'testContent',
+            'mimeType' => 'testMime',
+            'filename' => 'test1.jpg'
+        ];
+
+        $this->attachmentManager->expects(self::once())
+            ->method('isImageType')
+            ->with($data['mimeType'])
+            ->willReturn(true);
+
+        $this->expectsGetTypesQuery($data['id'], []);
+        $this->typeProvider->expects(self::never())
+            ->method('getImageTypes');
+
+        $this->attachmentManager->expects(self::never())
+            ->method('isWebpEnabledIfSupported');
+        $this->attachmentManager->expects(self::never())
+            ->method('getFilteredImageUrlByIdAndFilename');
+
+        $this->context->setConfig($config);
+        $this->context->setData($data);
+        $this->processor->process($this->context);
+
+        self::assertEquals($data, $this->context->getData());
+    }
+
+    public function testProcessWhenMimeTypeIsNotImage(): void
+    {
+        $config = new EntityDefinitionConfig();
+        $config->addField('id');
+        $config->addField('filePath');
+        $config->addField('mimeType');
+        $config->addField('filename');
+
+        $data = [
+            'id'       => 1,
+            'content'  => 'testContent',
+            'mimeType' => 'testMime',
+            'filename' => 'test1.jpg'
+        ];
+
+        $this->attachmentManager->expects(self::once())
+            ->method('isImageType')
+            ->with($data['mimeType'])
+            ->willReturn(false);
+
+        $this->doctrineHelper->expects(self::never())
+            ->method('createQueryBuilder');
+        $this->typeProvider->expects(self::never())
+            ->method('getImageTypes');
+
+        $this->attachmentManager->expects(self::never())
+            ->method('isWebpEnabledIfSupported');
+        $this->attachmentManager->expects(self::never())
+            ->method('getFilteredImageUrlByIdAndFilename');
+
+        $this->context->setConfig($config);
+        $this->context->setData($data);
+        $this->processor->process($this->context);
+
+        self::assertEquals($data, $this->context->getData());
+    }
+
+    public function testProcessWhenFilePathFieldNotRequested(): void
+    {
+        $config = new EntityDefinitionConfig();
+        $config->addField('id');
+        $config->addField('filePath')->setExcluded();
+        $config->addField('mimeType');
+        $config->addField('filename');
+
+        $data = [
+            'id'       => 1,
+            'content'  => 'testContent',
+            'mimeType' => 'testMime',
+            'filename' => 'test1.jpg'
+        ];
+
+        $this->attachmentManager->expects(self::never())
+            ->method('isImageType');
+
+        $this->context->setConfig($config);
+        $this->context->setData($data);
+        $this->processor->process($this->context);
+
+        self::assertEquals($data, $this->context->getData());
+    }
+
+    /**
+     * @dataProvider notFullDataProvider
+     */
+    public function testProcessWhenDataAreNotFull(array $data): void
+    {
+        $config = new EntityDefinitionConfig();
+        $config->addField('id');
+        $config->addField('filePath');
+        $config->addField('mimeType');
+        $config->addField('filename');
+
+        $this->attachmentManager->expects(self::never())
+            ->method('isImageType');
+
+        $this->context->setConfig($config);
+        $this->context->setData($data);
+        $this->processor->process($this->context);
+
+        self::assertEquals($data, $this->context->getData());
+    }
+
+    public function notFullDataProvider(): array
+    {
+        return [
+            [[]],
+            [['id' => 1, 'mimeType' => '', 'filename' => 'test1.jpg']],
+            [['id' => 1, 'mimeType' => 'testMime', 'filename' => '']],
+            [['id' => 1, 'mimeType' => 'testMime']],
         ];
     }
 }

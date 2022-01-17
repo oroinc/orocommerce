@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ConsentBundle;
 
-use Oro\Bundle\LocaleBundle\DependencyInjection\Compiler\DefaultFallbackExtensionPass;
+use Oro\Bundle\LocaleBundle\DependencyInjection\Compiler\EntityFallbackFieldsStoragePass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
@@ -18,7 +18,7 @@ class OroConsentBundle extends Bundle
     {
         parent::build($container);
 
-        $container->addCompilerPass(new DefaultFallbackExtensionPass([
+        $container->addCompilerPass(new EntityFallbackFieldsStoragePass([
             'Oro\Bundle\ConsentBundle\Entity\Consent' => [
                 'name' => 'names'
             ]

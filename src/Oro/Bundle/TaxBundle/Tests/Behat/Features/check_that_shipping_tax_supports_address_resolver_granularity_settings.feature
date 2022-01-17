@@ -37,7 +37,7 @@ Feature: Check that shipping tax supports address resolver granularity settings
 
   Scenario: Check if the shipping tax is in effect across the country
     Given I proceed as the Buyer
-    And I signed in as AmandaRCole@example.org on the store frontend
+    And I signed in as MarleneSBradley@example.org on the store frontend
     When I open page with shopping list Shopping List
     And press "Create Order"
     And I check "Ship to this address" on the checkout page
