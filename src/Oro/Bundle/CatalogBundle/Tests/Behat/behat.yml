@@ -42,10 +42,15 @@ oro_behat_extension:
             type: 'xpath'
             locator: '//div[contains(@id,"s2id_oro_action_operation_language_code-uid")]//input'
 
+    Title Fallback Status:
+      selector:
+        type: xpath
+        locator: '//label[text()="Title"]/ancestor::div[contains(@class, "control-group-oro_locale_localized_fallback_value_collection")]//button[contains(@class, "fallback-status")]'
+
     URL Slug Fallback Status:
       selector:
         type: xpath
-        locator: '//label[text()="URL Slug"]/../..//button[contains(@class, "fallback-status")]'
+        locator: '//label[text()="URL Slug"]/ancestor::div[contains(@class, "control-group control-group-oro_redirect_localized_slug_with_redirect")]//button[contains(@class, "fallback-status")]'
 
     URL Slug Form:
       selector: 'form[name="oro_product"]'
@@ -141,6 +146,8 @@ oro_behat_extension:
             locator: '#CustomerGroupCategoryVisibility tr:contains(first) .grid-body-cell-visibility select'
             type: css
           Title: 'oro_catalog_category[titles][values][default]'
+          Title English (United States): 'oro_catalog_category[titles][values][localizations][1][value]'
+          Title English (United States) fallback selector: 'oro_catalog_category[titles][values][localizations][1][use_fallback]'
           URL Slug: 'oro_catalog_category[slugPrototypesWithRedirect][slugPrototypes][values][default]'
           Inventory Threshold Use: 'oro_catalog_category[inventoryThreshold][useFallback]'
           Inventory Threshold: 'oro_catalog_category[inventoryThreshold][scalarValue]'
@@ -148,12 +155,17 @@ oro_behat_extension:
           Managed Inventory Fallback: 'oro_catalog_category[manageInventory][fallback]'
           Backorders Fallback: 'oro_catalog_category[backOrder][fallback]'
           Short Description: 'oro_catalog_category[shortDescriptions][values][default]'
-          Short Description Localization 1: 'oro_catalog_category[shortDescriptions][values][localizations][1][value]'
-          Short Description Localization 1 fallback selector: 'oro_catalog_category[shortDescriptions][values][localizations][1][fallback]'
+          Short Description English (United States): 'oro_catalog_category[shortDescriptions][values][localizations][1][value]'
+          Short Description English (United States) fallback selector: 'oro_catalog_category[shortDescriptions][values][localizations][1][fallback]'
           Long Description:
             type: 'css'
             locator: '[name="oro_catalog_category[longDescriptions][values][default][wysiwyg]"]'
             class: Oro\Bundle\CMSBundle\Tests\Behat\Element\WysiwygField
+          Long Description English (United States):
+            type: 'css'
+            locator: '[name="oro_catalog_category[longDescriptions][values][localizations][1][value][wysiwyg]"]'
+            class: Oro\Bundle\CMSBundle\Tests\Behat\Element\WysiwygField
+          Long Description English (United States) fallback selector: 'oro_catalog_category[longDescriptions][values][localizations][1][fallback]'
           Long Description Localization 2:
             type: 'css'
             locator: '[name="oro_catalog_category[longDescriptions][values][localizations][2][value][wysiwyg]"]'

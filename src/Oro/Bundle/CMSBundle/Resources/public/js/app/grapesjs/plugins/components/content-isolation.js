@@ -85,10 +85,10 @@ class ContentIsolation {
         css = css.replace(cssSelectorRegexp, substr =>
             substr.split(',').map(selector => {
                 if (/(\:scope)/.test(selector)) {
-                    return selector.trim().replace(/(\:scope)/g, ` [id*="scope"]`);
+                    return selector.trim().replace(/(\:scope)/g, ` #${this.scopeId}[id*="scope"]`);
                 }
                 if (/(\:root)/.test(selector)) {
-                    return selector.trim().replace(/(\:root)/g, ` [id*="isolation"]`);
+                    return selector.trim().replace(/(\:root)/g, ` #${this.scopeId}[id*="isolation"]`);
                 }
                 return ` #${this.scopeId}${(selector.trim().indexOf(':') === 0 ? '' : ' ')}${selector.trim()}`;
             }).join(',')

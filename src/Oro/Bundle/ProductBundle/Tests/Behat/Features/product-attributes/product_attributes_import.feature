@@ -173,7 +173,7 @@ Feature: Product attributes import
       | bigIntTable                  | BigInt          | new Label         | Custom | Active        | Table column     | No        |                  |
       | brand                        | System relation | Brand             | System | Active        | Table column     | Yes       | Default          |
       | correct_field_name           | BigInt          | label value 1     | Custom | Active        | Serialized field | No        |                  |
-      | descriptions                 | System relation | Description       | System | Active        | Table column     | Yes       | Default          |
+      | descriptions                 | System relation | Description       | System | Active        | Table column     | No        | Default          |
       | featured                     | Boolean         | Is Featured       | System | Active        | Table column     | No        | Default          |
       | images                       | System relation | Images            | System | Active        | Table column     | Yes       | Default          |
       | inventory_status             | Select          | Inventory Status  | System | Active        | Table column     | Yes       | Default          |
@@ -186,7 +186,7 @@ Feature: Product attributes import
       | names                        | System relation | Name              | System | Active        | Table column     | Yes       | Default          |
       | newArrival                   | Boolean         | New Arrival       | System | Active        | Table column     | No        | Default          |
       | productPriceAttributesPrices | System relation | Product prices    | System | Active        | Table column     | No        | Default          |
-      | shortDescriptions            | System relation | Short Description | System | Active        | Table column     | Yes       | Default          |
+      | shortDescriptions            | System relation | Short Description | System | Active        | Table column     | No        | Default          |
       | sku                          | String          | SKU               | System | Active        | Table column     | Yes       | Default          |
       | SunSet                       | String          | label value 7     | Custom | Active        | Serialized field | No        |                  |
       | Text_underscore_text         | String          | label value 3     | Custom | Active        | Serialized field | No        |                  |

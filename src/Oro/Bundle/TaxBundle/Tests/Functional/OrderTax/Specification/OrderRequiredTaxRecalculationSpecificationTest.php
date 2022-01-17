@@ -156,4 +156,15 @@ class OrderRequiredTaxRecalculationSpecificationTest extends WebTestCase
 
         self::assertFalse($this->specification->isSatisfiedBy($order));
     }
+
+    public function testOrderWithChangedOverriddenShippingCostAmountWillRequireTaxRecalculation()
+    {
+        /**
+         * @var Order $order
+         */
+        $order = $this->getReference(LoadOrders::ORDER_1);
+        $order->setOverriddenShippingCostAmount(9.9);
+
+        self::assertTrue($this->specification->isSatisfiedBy($order));
+    }
 }

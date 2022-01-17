@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\EventListener;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Oro\Bundle\DataAuditBundle\Async\Topics as DataAuditTopics;
+use Oro\Bundle\DataAuditBundle\Async\Topic\AuditChangedEntitiesTopic;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\ProductBundle\Async\Topics as ProductTopics;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -11,7 +11,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\RedirectBundle\Async\Topics as RedirectTopics;
-use Oro\Bundle\SearchBundle\Async\Topics as SearchTopics;
+use Oro\Bundle\SearchBundle\Async\Topic\IndexEntitiesByIdTopic;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer as WebsiteSearchAsyncIndexerTopics;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Traits\DefaultWebsiteIdTestTrait;
@@ -302,9 +302,9 @@ class ProductImageListenerTest extends WebTestCase
 
         $this->assertMessagesCount(ProductTopics::PRODUCT_IMAGE_RESIZE, 2);
         $this->assertMessagesCount(WebsiteSearchAsyncIndexerTopics::TOPIC_REINDEX, 2);
-        $this->assertMessagesCount(SearchTopics::INDEX_ENTITIES, 2);
+        $this->assertMessagesCount(IndexEntitiesByIdTopic::getName(), 2);
         $this->assertMessagesCount(RedirectTopics::GENERATE_DIRECT_URL_FOR_ENTITIES, 2);
-        $this->assertMessagesCount(DataAuditTopics::ENTITIES_CHANGED, 4);
+        $this->assertMessagesCount(AuditChangedEntitiesTopic::getName(), 4);
 
         $this->assertMessageSent(
             ProductTopics::PRODUCT_IMAGE_RESIZE,

@@ -1334,6 +1334,19 @@ Retrieve an ID of the isUpcoming fallback entity for a specific product.
 
 Replace the isUpcoming entity fallback value for a specific product record.
 
+{@request:json_api}
+Example:
+
+```JSON
+{
+  "data": {
+    "type": "entityfieldfallbackvalues",
+    "id": "1"
+  }
+}
+```
+{@/request}
+
 ### lowInventoryThreshold
 
 #### get_subresource
@@ -1347,6 +1360,19 @@ Retrieve an ID of the lowInventoryThreshold for a specific product.
 #### update_relationship
 
 Replace the fallback value for lowInventoryThreshold for a specific product.
+
+{@request:json_api}
+Example:
+
+```JSON
+{
+  "data": {
+    "type": "entityfieldfallbackvalues",
+    "id": "1"
+  }
+}
+```
+{@/request}
 
 ### inventory_status
 
@@ -1415,6 +1441,19 @@ Retrieve an ID of the highlightLowInventory flag for a specific product.
 #### update_relationship
 
 Replace the fallback value for highlightLowInventory for a specific product.
+
+{@request:json_api}
+Example:
+
+```JSON
+{
+  "data": {
+    "type": "entityfieldfallbackvalues",
+    "id": "1"
+  }
+}
+```
+{@/request}
 
 ### maximumQuantityToOrder
 
@@ -2318,20 +2357,6 @@ Example:
 ```
 {@/request}
 
-### pageTemplate
-
-#### get_subresource
-
-Get the related pageTemplate entity for a specific product.
-
-#### get_relationship
-
-Retrieve the ID of the pageTemplate for a specific product.
-
-#### update_relationship
-
-Replace the pageTemplate for a specific product.
-
 ### variantLinks
 
 #### get_subresource
@@ -2346,13 +2371,62 @@ Retrieve a list of IDs for the variant products of a specific product record.
 
 Set the variant products of a specific product record.
 
+{@request:json_api}
+Example:
+
+```JSON
+{
+  "data": [
+    {
+      "type": "productvariantlinks",
+      "id": "1"
+    }
+  ]
+}
+```
+{@/request}
+
 #### update_relationship
 
 Replace the variant products for a specific product.
 
+{@request:json_api}
+Example:
+
+```JSON
+{
+  "data": [
+    {
+      "type": "productvariantlinks",
+      "id": "1"
+    },
+    {
+      "type": "productvariantlinks",
+      "id": "2"
+    }
+  ]
+}
+```
+{@/request}
+
 #### delete_relationship
 
 Remove the variant products of a specific product record.
+
+{@request:json_api}
+Example:
+
+```JSON
+{
+  "data": [
+    {
+      "type": "productvariantlinks",
+      "id": "1"
+    }
+  ]
+}
+```
+{@/request}
 
 # Extend\Entity\EV_Prod_Inventory_Status
 

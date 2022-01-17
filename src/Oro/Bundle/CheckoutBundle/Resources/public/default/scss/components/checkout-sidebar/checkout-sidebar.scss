@@ -2,11 +2,6 @@
 
 .checkout-sidebar {
     margin-top: $offset-x-m;
-
-    &--inner-invader {
-        float: left;
-        width: 220px;
-    }
 }
 
 @include breakpoint('tablet') {

@@ -18,6 +18,8 @@ import MapTypeBuilder from 'orocms/js/app/grapesjs/type-builders/map-type-builde
 import GridTypeBuilder from 'orocms/js/app/grapesjs/type-builders/grid-type-builder';
 import ColumnTypeBuilder from 'orocms/js/app/grapesjs/type-builders/column-type-builder';
 import RowTypeBuilder from 'orocms/js/app/grapesjs/type-builders/row-type-builder';
+import PictureTypeBuilder from 'orocms/js/app/grapesjs/type-builders/picture-type-builder';
+import SourceTypeBuilder from 'orocms/js/app/grapesjs/type-builders/source-type-builder';
 
 ComponentManager.registerComponentTypes({
     'default': {
@@ -63,6 +65,12 @@ ComponentManager.registerComponentTypes({
     },
     'image': {
         Constructor: ImageTypeBuilder
+    },
+    'picture': {
+        Constructor: PictureTypeBuilder
+    },
+    'source': {
+        Constructor: SourceTypeBuilder
     },
     'video': {
         Constructor: VideoTypeBuilder

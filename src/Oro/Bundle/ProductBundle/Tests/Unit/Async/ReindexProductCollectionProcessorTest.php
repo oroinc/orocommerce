@@ -20,7 +20,6 @@ use Oro\Component\MessageQueue\Test\JobRunner;
 use Oro\Component\MessageQueue\Transport\Message as TransportMessage;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Component\MessageQueue\Util\JSON;
 use Oro\Component\Testing\ReflectionUtil;
 use Psr\Log\LoggerInterface;
 
@@ -422,7 +421,7 @@ class ReindexProductCollectionProcessorTest extends \PHPUnit\Framework\TestCase
     private function getMessage(array $body = []): MessageInterface
     {
         $message = new TransportMessage();
-        $message->setBody(JSON::encode($body));
+        $message->setBody($body);
         $message->setMessageId('msg-001');
 
         return $message;

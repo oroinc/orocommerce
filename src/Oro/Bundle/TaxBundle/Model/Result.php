@@ -48,7 +48,7 @@ final class Result extends AbstractResult implements \JsonSerializable
     /**
      * {@inheritdoc}
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         // Prevent original object modifying
         $that = clone $this;
@@ -104,31 +104,6 @@ final class Result extends AbstractResult implements \JsonSerializable
     public function getItems()
     {
         return $this->getOffset(self::ITEMS, []);
-    }
-
-    /**
-     * This method is required for compatibility with PHP <7.4
-     *
-     * {@inheritdoc}
-     */
-    public function serialize()
-    {
-        // Prevent original object modifying
-        $that = clone $this;
-
-        $that->prepareToSerialization();
-
-        return $that->parentSerialize();
-    }
-
-    /**
-     * Proxy method to call parent serialization
-     *
-     * @return string
-     */
-    private function parentSerialize()
-    {
-        return parent::serialize();
     }
 
     /**

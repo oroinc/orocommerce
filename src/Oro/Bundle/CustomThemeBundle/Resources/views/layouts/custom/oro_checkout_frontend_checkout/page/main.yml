@@ -22,3 +22,5 @@ layout:
             id: page_title_container
             parentId: checkout_container
             prepend: true
+
+    conditions: 'context["workflowName"]!="b2b_flow_checkout_single_page"'

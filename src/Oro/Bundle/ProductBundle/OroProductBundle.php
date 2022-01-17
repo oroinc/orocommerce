@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle;
 
-use Oro\Bundle\LocaleBundle\DependencyInjection\Compiler\DefaultFallbackExtensionPass;
+use Oro\Bundle\LocaleBundle\DependencyInjection\Compiler\EntityFallbackFieldsStoragePass;
 use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\AttributeBlockTypeMapperPass;
 use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\ComponentProcessorPass;
 use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\ProductCollectionCompilerPass;
@@ -37,7 +37,7 @@ class OroProductBundle extends Bundle
 
         $container->addCompilerPass(new ComponentProcessorPass());
         $container->addCompilerPass(new TwigSandboxConfigurationPass());
-        $container->addCompilerPass(new DefaultFallbackExtensionPass([
+        $container->addCompilerPass(new EntityFallbackFieldsStoragePass([
             'Oro\Bundle\ProductBundle\Entity\Product' => [
                 'name' => 'names',
                 'description' => 'descriptions',

@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\WebCatalogBundle;
 
-use Oro\Bundle\LocaleBundle\DependencyInjection\Compiler\DefaultFallbackExtensionPass;
+use Oro\Bundle\LocaleBundle\DependencyInjection\Compiler\EntityFallbackFieldsStoragePass;
 use Oro\Bundle\WebCatalogBundle\DependencyInjection\Compiler\WebCatalogDependenciesCompilerPass;
 use Oro\Bundle\WebCatalogBundle\DependencyInjection\OroWebCatalogExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -32,7 +32,7 @@ class OroWebCatalogBundle extends Bundle
     {
         $container->addCompilerPass(new WebCatalogDependenciesCompilerPass());
 
-        $container->addCompilerPass(new DefaultFallbackExtensionPass([
+        $container->addCompilerPass(new EntityFallbackFieldsStoragePass([
             'Oro\Bundle\WebCatalogBundle\Entity\ContentNode' => [
                 'title' => 'titles',
                 'slugPrototype' => 'slugPrototypes'
