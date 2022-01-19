@@ -1,6 +1,7 @@
 @regression
 @ticket-BB-19911
 @ticket-BB-19652
+@ticket-BB-20956
 @fixture-OroProductBundle:ProductAttributesFixture.yml
 Feature: Product attributes should respect Frontend options
   In order to have custom attributes for Product entity
@@ -102,9 +103,9 @@ Feature: Product attributes should respect Frontend options
     And I should see "MultipleImages"
     And I should see "MultipleFiles"
     And I should see "WYSIWYG Field content"
-    And I proceed as the Admin
 
   Scenario Outline: Hide attributes on the storefront through "Show on view" option
+    Given I proceed as the Admin
     When I go to Products/ Product Attributes
     And I click Edit <AttributeName> in grid
     And I fill form with:
@@ -155,3 +156,25 @@ Feature: Product attributes should respect Frontend options
     And I should not see "MultipleImages"
     And I should not see "MultipleFiles"
     And I should not see "WYSIWYG Field content"
+
+  Scenario: Show image type attributes on the storefront for following validation of visibility
+    Given I proceed as the Admin
+    When I go to Products/ Product Attributes
+    And I click Edit ImageField in grid
+    And I fill form with:
+      | Show on view      | Yes       |
+      | File applications | [default, commerce] |
+    And I save and close form
+    Then I should see "Attribute was successfully saved" flash message
+
+  Scenario: The visibility to a logged in customer user should not depend on the storefront guest access settings
+    When I go to System/Configuration
+    And I follow "Commerce/Guests/Website Access" on configuration sidebar
+    And uncheck "Use default" for "Enable Guest Access" field
+    And I uncheck "Enable Guest Access"
+    When I save form
+    Then I should see "Configuration Saved" flash message
+    When I proceed as the Buyer
+    And I reload the page
+    Then I should see an "Uploaded Product Image" element
+    And "Uploaded Product Image" element "src" attribute should not contain "admin"
