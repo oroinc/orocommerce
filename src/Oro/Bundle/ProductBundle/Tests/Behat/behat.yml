@@ -1432,6 +1432,7 @@ oro_behat_extension:
         - Oro\Bundle\CustomerBundle\Tests\Behat\Context\FrontendGridContext
         - Oro\Bundle\EmailBundle\Tests\Behat\Context\EmailContext
         - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
+        - Oro\Bundle\FormBundle\Tests\Behat\Context\WysiwygContext
         - Oro\Bundle\ProductBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\ProductBundle\Tests\Behat\Context\ProductImportExportContext
         - Oro\Bundle\ProductBundle\Tests\Behat\Context\QuickOrderFormContext
@@ -1486,6 +1487,7 @@ oro_behat_extension:
         - Oro\Bundle\ApplicationBundle\Tests\Behat\Context\CommerceMainContext
         - Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext
         - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
+        - Oro\Bundle\FormBundle\Tests\Behat\Context\WysiwygContext
         - Oro\Bundle\ProductBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\ProductBundle\Tests\Behat\Context\QuickOrderFormContext
         - Oro\Bundle\RedirectBundle\Tests\Behat\Context\SlugPrototypesContext
