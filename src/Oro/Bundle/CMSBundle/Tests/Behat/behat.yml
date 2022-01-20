@@ -222,6 +222,7 @@ oro_behat_extension:
             contexts:
                 - OroDataGridBundle::GridContext
                 - OroFormBundle::FormContext
+                - OroFormBundle::WysiwygContext
                 - OroRedirectBundle::SlugPrototypesContext
                 - OroCMSBundle::FeatureContext
                 - OroCMSBundle::ImportExportFeatureContext

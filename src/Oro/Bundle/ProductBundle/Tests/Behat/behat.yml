@@ -1413,6 +1413,7 @@ oro_behat_extension:
         - OroCustomerBundle::FrontendGridContext
         - OroEmailBundle::EmailContext
         - OroFormBundle::FormContext
+        - OroFormBundle::WysiwygContext
         - OroProductBundle::FeatureContext
         - OroProductBundle::ProductImportExportContext
         - OroProductBundle::QuickOrderFormContext
@@ -1470,6 +1471,7 @@ oro_behat_extension:
         - OroApplicationBundle::CommerceMainContext
         - OroDataGridBundle::GridContext
         - OroFormBundle::FormContext
+        - OroFormBundle::WysiwygContext
         - OroProductBundle::FeatureContext
         - OroProductBundle::QuickOrderFormContext
         - OroRedirectBundle::SlugPrototypesContext
