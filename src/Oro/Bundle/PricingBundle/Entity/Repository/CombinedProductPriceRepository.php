@@ -33,7 +33,7 @@ use Oro\Component\DoctrineUtils\ORM\UnionQueryBuilder;
  */
 class CombinedProductPriceRepository extends BaseProductPriceRepository
 {
-    const BATCH_SIZE = 10000;
+    const BATCH_SIZE = 100000;
 
     /**
      * @param ShardQueryExecutorInterface $insertFromSelectQueryExecutor
@@ -68,6 +68,7 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         array $products
     ) {
         // Copy prices for products that are not in the CPL yet to temp table (faster insert)
+        // This logic is same to copying prices from price list with merge = false
         $notInListQb = $this->getPricesQb($combinedPriceList, $mergeAllowed, $priceList);
         $this->addPresentProductsRestriction($notInListQb, $combinedPriceList);
 
@@ -87,36 +88,38 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
             false
         );
 
-        // For merge allowed add prices not blocked by merge:false for qty/units that are not present yet
-        // Skip prices moved to temp table
-        $qb = $this->getPricesQb($combinedPriceList, $mergeAllowed, $priceList);
-        $this->addProductsBlockedByMergeFlagRestriction($qb, $combinedPriceList);
-        $this->addPresentPricesRestriction($qb, $combinedPriceList);
+        if ($mergeAllowed) {
+            // For merge allowed add prices not blocked by merge:false for qty/units/currencies that are not present yet
+            // Skip prices moved to temp table
+            $qb = $this->getPricesQb($combinedPriceList, $mergeAllowed, $priceList);
+            $this->addProductsBlockedByMergeFlagRestriction($qb, $combinedPriceList);
+            $this->addPresentPricesRestriction($qb, $combinedPriceList);
 
-        // Apply restriction by temp table
-        $tempTableSubQb = $this->_em->createQueryBuilder();
-        $tempTableSubQb->select('cpp_tmp.id')
-            ->from(CombinedProductPrice::class, 'cpp_tmp')
-            ->where(
-                $tempTableSubQb->expr()->eq('pp.product', 'cpp_tmp.product')
+            // Apply restriction by temp table
+            $tempTableSubQb = $this->_em->createQueryBuilder();
+            $tempTableSubQb->select('cpp_tmp.id')
+                ->from(CombinedProductPrice::class, 'cpp_tmp')
+                ->where(
+                    $tempTableSubQb->expr()->eq('pp.product', 'cpp_tmp.product')
+                );
+            $qb->andWhere(
+                $qb->expr()->not(
+                    $qb->expr()->exists($tempTableSubQb->getDQL())
+                )
             );
-        $qb->andWhere(
-            $qb->expr()->not(
-                $qb->expr()->exists($tempTableSubQb->getDQL())
-            )
-        );
 
-        // Source - PL, restricted by - TMP, target - CPL
-        $this->doInsertByProductsUsingTempTable(
-            $tempTableManipulator,
-            $combinedPriceList,
-            $priceList,
-            $products,
-            $qb,
-            $tempTableManipulator->getTableNameForEntity(CombinedProductPrice::class),
-            true,
-            ['cpp_tmp' => $tempTableName]
-        );
+            // Source - PL, restricted by - TMP, target - CPL
+            $this->doInsertByProductsUsingTempTable(
+                $tempTableManipulator,
+                $combinedPriceList,
+                $priceList,
+                $products,
+                $qb,
+                $tempTableManipulator->getTableNameForEntity(CombinedProductPrice::class),
+                true,
+                ['cpp_tmp' => $tempTableName]
+            );
+        }
 
         // Move prices from temp to persistent CPL table
         $tempTableManipulator->moveDataFromTemplateTableToEntityTable(
