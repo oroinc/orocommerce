@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CMSBundle;
 
 use Oro\Bundle\CMSBundle\DependencyInjection\Compiler\AttributeBlockTypeMapperPass;
+use Oro\Bundle\CMSBundle\DependencyInjection\Compiler\DbalTypeDefaultValuePass;
 use Oro\Bundle\CMSBundle\DependencyInjection\Compiler\EntityExtendFieldTypePass;
 use Oro\Bundle\CMSBundle\DependencyInjection\Compiler\ExtendFieldValidationLoaderPass;
 use Oro\Bundle\CMSBundle\DependencyInjection\Compiler\LayoutManagerPass;
@@ -24,6 +25,7 @@ class OroCMSBundle extends Bundle
 
         $container
             ->addCompilerPass(new EntityExtendFieldTypePass())
+            ->addCompilerPass(new DbalTypeDefaultValuePass())
             ->addCompilerPass(new ExtendFieldValidationLoaderPass())
             ->addCompilerPass(new AttributeBlockTypeMapperPass())
             ->addCompilerPass(new LayoutManagerPass())
