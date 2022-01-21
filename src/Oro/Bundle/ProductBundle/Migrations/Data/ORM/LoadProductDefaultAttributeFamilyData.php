@@ -8,8 +8,6 @@ use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
-use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadRolesData;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 
 /**
@@ -25,10 +23,7 @@ class LoadProductDefaultAttributeFamilyData extends AbstractFixture implements
     const DEFAULT_FAMILY_CODE = 'default_family';
     const GENERAL_GROUP_CODE = 'general';
 
-    /**
-     * @var array
-     */
-    private static $groups = [
+    private static array $groups = [
         [
             'groupLabel' => 'General',
             'groupCode' => self::GENERAL_GROUP_CODE,
@@ -61,7 +56,7 @@ class LoadProductDefaultAttributeFamilyData extends AbstractFixture implements
     /**
      * {@inheritdoc}
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             LoadDefaultAttributesData::class
@@ -71,27 +66,21 @@ class LoadProductDefaultAttributeFamilyData extends AbstractFixture implements
     /**
      * {@inheritdoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $user = $this->getFirstUser($manager);
         $organization = $user->getOrganization();
 
-        /** @var AttributeFamily $attributeFamily */
         $attributeFamily = $manager->getRepository(AttributeFamily::class)
-            ->findOneBy(['owner' => $organization]);
+            ->findOneBy(['code' => self::DEFAULT_FAMILY_CODE, 'owner' => $organization]);
 
         if ($attributeFamily === null) {
             $attributeFamily = new AttributeFamily();
             $attributeFamily->setCode(self::DEFAULT_FAMILY_CODE);
             $attributeFamily->setEntityClass(Product::class);
             $attributeFamily->setDefaultLabel('Default');
-        } else {
-            $groups = $attributeFamily->getAttributeGroups();
-            foreach ($groups as $group) {
-                $attributeFamily->removeAttributeGroup($group);
-            }
+            $attributeFamily->setOwner($organization);
         }
-        $attributeFamily->setOwner($organization);
 
         $this->addGroupsWithAttributesToFamily(self::$groups, $attributeFamily, $manager);
         $this->setReference(static::DEFAULT_FAMILY_CODE, $attributeFamily);
@@ -106,29 +95,5 @@ class LoadProductDefaultAttributeFamilyData extends AbstractFixture implements
             ->setParameter('attributeFamily', $attributeFamily)
             ->getQuery()
             ->execute();
-    }
-
-    /**
-     * @param ObjectManager $manager
-     *
-     * @throws \RuntimeException
-     *
-     * @return User
-     */
-    protected function getUser(ObjectManager $manager)
-    {
-        $role = $manager->getRepository('OroUserBundle:Role')->findOneBy(['role' => LoadRolesData::ROLE_ADMINISTRATOR]);
-        if (!$role) {
-            throw new \RuntimeException(sprintf('%s role should exist.', LoadRolesData::ROLE_ADMINISTRATOR));
-        }
-
-        $user = $manager->getRepository('OroUserBundle:Role')->getFirstMatchedUser($role);
-        if (!$user) {
-            throw new \RuntimeException(
-                sprintf('At least one user with role %s should exist.', LoadRolesData::ROLE_ADMINISTRATOR)
-            );
-        }
-
-        return $user;
     }
 }
