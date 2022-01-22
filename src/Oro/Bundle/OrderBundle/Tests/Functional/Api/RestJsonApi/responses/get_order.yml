@@ -23,7 +23,13 @@ data:
           shippingAddress:
               data: null
           lineItems:
-              data: []
+              data:
+                  -
+                      type: orderlineitems
+                      id: '<toString(@order_line_item.1->id)>'
+                  -
+                      type: orderlineitems
+                      id: '<toString(@order_line_item.2->id)>'
           discounts:
               data: []
           shippingTrackings:

@@ -44,16 +44,25 @@ data:
                 -
                     type: productdescriptions
                     id: '<toString(@product-1.descriptions.default->id)>'
+                -
+                    type: productdescriptions
+                    id: '<toString(@product-1.descriptions.en_CA->id)>'
         shortDescriptions:
             data:
                 -
                     type: productshortdescriptions
                     id: '<toString(@product-1.shortDescriptions.default->id)>'
+                -
+                    type: productshortdescriptions
+                    id: '<toString(@product-1.shortDescriptions.en_CA->id)>'
         slugPrototypes:
             data:
                 -
                     type: localizedfallbackvalues
                     id: '<toString(@product-1.slugPrototypes.default->id)>'
+                -
+                    type: localizedfallbackvalues
+                    id: '<toString(@product-1.slugPrototypes.en_CA->id)>'
         taxCode:
             data:
                 type: producttaxcodes
