@@ -26,9 +26,6 @@ use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodes;
  */
 class ProductTest extends RestJsonApiTestCase
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         parent::setUp();
@@ -42,6 +39,12 @@ class ProductTest extends RestJsonApiTestCase
             LoadVariantFields::class,
             LoadWorkflowDefinitions::class,
         ]);
+    }
+
+    private function assertSlugsPrototype(array $expected, array $slugs): void
+    {
+        $actual = array_map(fn (LocalizedFallbackValue $value) => $value->getString(), $slugs);
+        $this->assertEmpty(array_diff($actual, $expected));
     }
 
     public function testCreate()
@@ -76,12 +79,6 @@ class ProductTest extends RestJsonApiTestCase
             [null, null, 'test-prod-slug', 'product-in-spanish'],
             $product->getSlugPrototypes()->toArray()
         );
-    }
-
-    private function assertSlugsPrototype(array $expected, array $slugs): void
-    {
-        $actual = array_map(fn (LocalizedFallbackValue $value) => $value->getString(), $slugs);
-        $this->assertEmpty(array_diff($actual, $expected));
     }
 
     public function testGetListFilteredByProduct()
