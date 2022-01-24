@@ -11,21 +11,14 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
 
 /**
  * @dbIsolationPerTest
- *
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class PriceAttributeProductPriceTest extends RestJsonApiTestCase
 {
-    /**
-     * {@inheritDoc}
-     */
     protected function setUp(): void
     {
         parent::setUp();
-
-        $this->loadFixtures([
-            LoadPriceAttributeProductPrices::class
-        ]);
+        $this->loadFixtures([LoadPriceAttributeProductPrices::class]);
     }
 
     public function testGetList()
@@ -392,7 +385,7 @@ class PriceAttributeProductPriceTest extends RestJsonApiTestCase
         );
     }
 
-    private function assertGetSubResource(int $entityId, string $associationName, string $associationId)
+    private function assertGetSubResource(int $entityId, string $associationName, string $associationId): void
     {
         $response = $this->getSubresource([
             'entity'      => 'priceattributeproductprices',
@@ -400,15 +393,12 @@ class PriceAttributeProductPriceTest extends RestJsonApiTestCase
             'association' => $associationName
         ]);
 
-        $result = json_decode($response->getContent(), true);
+        $result = self::jsonToArray($response->getContent());
 
         self::assertEquals($associationId, $result['data']['id']);
     }
 
-    /**
-     * @return PriceAttributeProductPrice
-     */
-    private function getFirstPrice()
+    private function getFirstPrice(): PriceAttributeProductPrice
     {
         return $this->getReference('price_attribute_product_price.1');
     }

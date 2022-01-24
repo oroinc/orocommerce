@@ -225,6 +225,7 @@ oro_behat_extension:
             contexts:
                 - Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext
                 - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
+                - Oro\Bundle\FormBundle\Tests\Behat\Context\WysiwygContext
                 - Oro\Bundle\RedirectBundle\Tests\Behat\Context\SlugPrototypesContext
                 - Oro\Bundle\CMSBundle\Tests\Behat\Context\FeatureContext
                 - Oro\Bundle\CMSBundle\Tests\Behat\Context\ImportExportFeatureContext
