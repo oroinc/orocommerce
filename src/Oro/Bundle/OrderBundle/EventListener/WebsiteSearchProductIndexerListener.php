@@ -64,7 +64,7 @@ class WebsiteSearchProductIndexerListener
                     $placeholders = [CustomerUserIdPlaceholder::NAME => $orderInfo['customer_user_id']];
                     $event->addPlaceholderField(
                         $product->getId(),
-                        'ordered_at_by_CUSTOMER_USER_ID',
+                        'ordered_at_by.CUSTOMER_USER_ID',
                         $orderInfo['created_at'],
                         $placeholders
                     );
