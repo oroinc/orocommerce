@@ -1,0 +1,13 @@
+layout:
+    actions:
+        - '@setOption':
+              id: page_sidebar
+              optionName: vars.sidebarExpanded
+              optionValue: true
+
+        - '@setOption':
+              id: page_content
+              optionName: vars.sidebarExpanded
+              optionValue: true
+
+    conditions: 'context["filters_position"] == "sidebar"'
