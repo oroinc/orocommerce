@@ -53,7 +53,7 @@ class MergePricesCombiningStrategy extends AbstractPriceCombiningStrategy
             $progress = 0;
             $this->moveFirstPriceListPrices($combinedPriceList, $priceLists, $products, $progress, $progressBar);
 
-            if ($this->canUseTempTable($priceLists, $combinedPriceList)) {
+            if ($this->canUseTempTable($combinedPriceList)) {
                 $this->processPriceListsWithTempTable(
                     $combinedPriceList,
                     $priceLists,
@@ -89,39 +89,26 @@ class MergePricesCombiningStrategy extends AbstractPriceCombiningStrategy
     }
 
     /**
-     * @param array|CombinedPriceListToPriceList[] $priceLists
      * @param CombinedPriceList $combinedPriceList
      * @return bool
      */
-    private function canUseTempTable(array $priceLists, CombinedPriceList $combinedPriceList): bool
+    private function canUseTempTable(CombinedPriceList $combinedPriceList): bool
     {
         if (!$this->insertFromSelectQueryExecutor instanceof ShardQueryExecutorNativeSqlInterface) {
             return false;
         }
 
-        $mayUseTempTable = false;
-        /** @var CombinedPriceListToPriceList $priceListRelation */
-        foreach ($priceLists as $priceListRelation) {
-            if ($priceListRelation->isMergeAllowed()) {
-                $mayUseTempTable = true;
-                break;
-            }
+        try {
+            $this->tempTableManipulator->createTempTableForEntity(
+                CombinedProductPrice::class,
+                $combinedPriceList->getId()
+            );
+
+            return true;
+        } catch (Exception $e) {
+            // If exception occurs during temp table creation - it's not possible to use temp table optimization.
+            return false;
         }
-
-        if ($mayUseTempTable) {
-            try {
-                $this->tempTableManipulator->createTempTableForEntity(
-                    CombinedProductPrice::class,
-                    $combinedPriceList->getId()
-                );
-
-                return true;
-            } catch (Exception $e) {
-                return false;
-            }
-        }
-
-        return false;
     }
 
     private function processPriceListsWithTempTable(
@@ -133,12 +120,7 @@ class MergePricesCombiningStrategy extends AbstractPriceCombiningStrategy
     ): void {
         foreach ($priceLists as $priceListRelation) {
             $this->moveProgress($progressBar, $progress, $priceListRelation);
-
-            if ($priceListRelation->isMergeAllowed()) {
-                $this->processRelationWithTempTable($combinedPriceList, $priceListRelation, $products);
-            } else {
-                $this->processRelation($combinedPriceList, $priceListRelation, $products);
-            }
+            $this->processRelationWithTempTable($combinedPriceList, $priceListRelation, $products);
         }
 
         $this->tempTableManipulator->dropTempTableForEntity(
