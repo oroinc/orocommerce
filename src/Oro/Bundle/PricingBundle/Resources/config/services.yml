@@ -848,8 +848,8 @@ services:
         class: 'Oro\Bundle\PricingBundle\SubtotalProcessor\SubtotalProviderRegistry'
         public: false
         arguments:
-            - [] # provider names
-            - ~ # service locator
+            - !abstract '$providerNames defined in Oro\Bundle\PricingBundle\DependencyInjection\CompilerPass\SubtotalProviderPass'
+            - !abstract '$providerContainer defined in Oro\Bundle\PricingBundle\DependencyInjection\CompilerPass\SubtotalProviderPass'
 
     oro_pricing.subtotal_processor.total_processor_provider:
         class: 'Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider'

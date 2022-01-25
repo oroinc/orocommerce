@@ -10,14 +10,11 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class CheckoutLineItemConverterPassTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var ContainerBuilder */
-    private $container;
+    private ContainerBuilder $container;
 
-    /** @var Definition */
-    private $registry;
+    private Definition $registry;
 
-    /** @var CheckoutLineItemConverterPass */
-    private $compiler;
+    private CheckoutLineItemConverterPass $compiler;
 
     protected function setUp(): void
     {
@@ -28,17 +25,17 @@ class CheckoutLineItemConverterPassTest extends \PHPUnit\Framework\TestCase
         $this->compiler = new CheckoutLineItemConverterPass();
     }
 
-    public function testProcessWhenNoTaggedServices()
+    public function testProcessWhenNoTaggedServices(): void
     {
         $this->compiler->process($this->container);
 
         /** @var IteratorArgument $iteratorArgument */
-        $iteratorArgument = $this->registry->getArgument(0);
+        $iteratorArgument = $this->registry->getArgument('$converters');
         self::assertInstanceOf(IteratorArgument::class, $iteratorArgument);
         self::assertEquals([], $iteratorArgument->getValues());
     }
 
-    public function testProcessWithoutAliasAttribute()
+    public function testProcessWithoutAliasAttribute(): void
     {
         $this->expectException(\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException::class);
         $this->expectExceptionMessage(
@@ -51,7 +48,7 @@ class CheckoutLineItemConverterPassTest extends \PHPUnit\Framework\TestCase
         $this->compiler->process($this->container);
     }
 
-    public function testProcess()
+    public function testProcess(): void
     {
         $this->container->setDefinition('converter_1', new Definition())
             ->addTag('oro.checkout.line_item.converter', ['alias' => 'item1']);
@@ -69,7 +66,7 @@ class CheckoutLineItemConverterPassTest extends \PHPUnit\Framework\TestCase
         $this->compiler->process($this->container);
 
         /** @var IteratorArgument $iteratorArgument */
-        $iteratorArgument = $this->registry->getArgument(0);
+        $iteratorArgument = $this->registry->getArgument('$converters');
         self::assertInstanceOf(IteratorArgument::class, $iteratorArgument);
         self::assertEquals(
             [
