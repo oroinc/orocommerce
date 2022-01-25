@@ -10,6 +10,10 @@
 {% endblock %}
 
 {% block _quick_add_validation_items_table_header_additional_data_subtotal_widget %}
+    <th class="text-right">{{ 'oro.pricing.subtotal.label'|trans }}</th>
+{% endblock %}
+
+{% block _quick_add_validation_items_table_header_additional_data_price_widget %}
     <th class="text-right">{{ 'oro.pricing.price.label'|trans }}</th>
 {% endblock %}
 
@@ -17,6 +21,16 @@
     <td class="text-right">
         {% if validRow.additionalFields.price.value.value is defined %}
             {{ additionalFields.price.value.value|oro_format_currency({'currency': additionalFields.price.value.currency}) }}
+        {% else %}
+            {{ 'oro.pricing.priceAttribute.withoutPrice'|trans }}
+        {% endif %}
+    </td>
+{% endblock %}
+
+{% block _quick_add_validation_valid_items_additional_fields_price_widget %}
+    <td class="text-right">
+        {% if validRow.additionalFields.unitPrice.value.value is defined %}
+            {{ additionalFields.unitPrice.value.value|oro_format_currency({'currency': additionalFields.unitPrice.value.currency}) }}
         {% else %}
             {{ 'oro.pricing.priceAttribute.withoutPrice'|trans }}
         {% endif %}
