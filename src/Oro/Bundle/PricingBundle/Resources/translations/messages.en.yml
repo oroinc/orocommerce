@@ -180,6 +180,7 @@ oro.pricing:
         config.label: Config
     unit.label: Unit
     price.label: Price
+    subtotal.label: Subtotal
     add_product_price: Add Product Price
     add_price_list: Add Price List
     no_price_lists: No price lists
