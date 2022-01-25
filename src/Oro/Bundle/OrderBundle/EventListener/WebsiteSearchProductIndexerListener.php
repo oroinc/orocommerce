@@ -9,6 +9,9 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 
+/**
+ * Adds information about users who ordered products to website search index for product entity
+ */
 class WebsiteSearchProductIndexerListener
 {
     use FeatureCheckerHolderTrait;

@@ -240,8 +240,8 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
                             'fulltext'        => false,
                             'organization_id' => null,
                         ],
-                        $attribute1->getFieldName().'_'.EnumIdPlaceholder::NAME => [
-                            'name'            => $attribute1->getFieldName().'_'.EnumIdPlaceholder::NAME,
+                        $attribute1->getFieldName().'_enum.'.EnumIdPlaceholder::NAME => [
+                            'name'            => $attribute1->getFieldName().'_enum.'.EnumIdPlaceholder::NAME,
                             'type'            => Query::TYPE_INTEGER,
                             'store'           => true,
                             'fulltext'        => false,
@@ -254,8 +254,8 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
                             'fulltext'        => false,
                             'organization_id' => null,
                         ],
-                        $attribute3->getFieldName().'_'.EnumIdPlaceholder::NAME => [
-                            'name'            => $attribute3->getFieldName().'_'.EnumIdPlaceholder::NAME,
+                        $attribute3->getFieldName().'_enum.'.EnumIdPlaceholder::NAME => [
+                            'name'            => $attribute3->getFieldName().'_enum.'.EnumIdPlaceholder::NAME,
                             'type'            => Query::TYPE_INTEGER,
                             'store'           => true,
                             'fulltext'        => false,
@@ -268,8 +268,8 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
                             'fulltext'        => false,
                             'organization_id' => null,
                         ],
-                        $attribute5->getFieldName().'_'.EnumIdPlaceholder::NAME                 => [
-                            'name'            => $attribute5->getFieldName().'_'.EnumIdPlaceholder::NAME,
+                        $attribute5->getFieldName().'_enum.'.EnumIdPlaceholder::NAME                 => [
+                            'name'            => $attribute5->getFieldName().'_enum.'.EnumIdPlaceholder::NAME,
                             'type'            => Query::TYPE_INTEGER,
                             'store'           => true,
                             'fulltext'        => false,
