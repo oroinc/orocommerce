@@ -71,9 +71,9 @@ class IndexDataProviderTest extends \Oro\Bundle\TestFrameworkBundle\Test\WebTest
         }
 
         $enumFieldNames = [
-            'type_contact_enum_third_option',
+            'type_contact_enum.enum_third_option',
             'type_contact_priority',
-            'contact_type_enum_second_option',
+            'contact_type_enum.enum_second_option',
             'contact_type_priority',
         ];
 
