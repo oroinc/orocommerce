@@ -20,12 +20,8 @@
         vertical-align: middle;
         line-height: 30px;
         margin: 0 0 10px;
-
-        > * {
-            display: inline-block;
-            float: left;
-            margin-right: 7px;
-        }
+        display: flex;
+        gap: 8px;
     }
 
     &__unit {
@@ -63,10 +59,6 @@
         margin-left: 25px;
     }
 
-    &__in {
-        color: $primary-inverse;
-    }
-
     &.error-block {
         margin-left: 170px;
         // stylelint-disable-next-line declaration-no-important
@@ -81,6 +73,12 @@
     .removeRow.icons-holder {
         margin-top: 1px;
         margin-left: 15px;
+    }
+
+    .price-rule-switcher {
+        line-height: $line-height-base;
+        margin-top: 8px;
+        display: block;
     }
 }
 

@@ -58,6 +58,10 @@
         vertical-align: top;
     }
 
+    &__row--align-middle td {
+        vertical-align: middle;
+    }
+
     input[type='text'],
     input[type='number'] {
         &.precision,
