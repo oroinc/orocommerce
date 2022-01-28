@@ -4,7 +4,7 @@ services:
 
     Oro\Bundle\ProductBundle\Command\ProductCollectionsIndexCronCommand:
         arguments:
-            - '@oro_message_queue.client.message_producer'
+            - '@oro_product.handler.async_reindex_product_collection_handler'
             - '@oro_product.model.segment_message_factory'
             - '@oro_product.provider.segment_with_relations_provider'
             - '@oro_product.helper.product_collection_segment'
