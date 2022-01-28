@@ -7,7 +7,10 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CronBundle\Command\CronCommandInterface;
 use Oro\Bundle\ProductBundle\Async\Topics;
 use Oro\Bundle\ProductBundle\EventListener\ProductCollectionsScheduleConfigurationListener;
+use Oro\Bundle\ProductBundle\Exception\FailedToRunReindexProductCollectionJobException;
+use Oro\Bundle\ProductBundle\Handler\AsyncReindexProductCollectionHandlerInterface as ReindexHandler;
 use Oro\Bundle\ProductBundle\Helper\ProductCollectionSegmentHelper;
+use Oro\Bundle\ProductBundle\Model\AccumulateSegmentMessageFactory as AccumulateMessageFactory;
 use Oro\Bundle\ProductBundle\Model\SegmentMessageFactory;
 use Oro\Bundle\ProductBundle\Provider\CronSegmentsProvider;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
@@ -23,6 +26,8 @@ class ProductCollectionsIndexCronCommand extends Command implements CronCommandI
     /** @var string */
     protected static $defaultName = 'oro:cron:product-collections:index';
 
+    private ReindexHandler $collectionIndexationHandler;
+    private AccumulateMessageFactory $accumulateMessageFactory;
     private MessageProducerInterface $messageProducer;
     private SegmentMessageFactory $messageFactory;
     private CronSegmentsProvider $segmentProvider;
@@ -43,6 +48,16 @@ class ProductCollectionsIndexCronCommand extends Command implements CronCommandI
         $this->configManager = $configManager;
 
         parent::__construct();
+    }
+
+    public function setReindexHandler(ReindexHandler $collectionIndexationHandler)
+    {
+        $this->collectionIndexationHandler = $collectionIndexationHandler;
+    }
+
+    public function setAccumulateMessageFactory(AccumulateMessageFactory $accumulateMessageFactory)
+    {
+        $this->accumulateMessageFactory = $accumulateMessageFactory;
     }
 
     /** @noinspection PhpMissingParentCallCommonInspection */
@@ -76,6 +91,42 @@ HELP
             $isFull = !(bool)$this->configManager->get('oro_product.product_collections_indexation_partial');
         }
 
+        $rootJobName = sprintf(
+            '%s:%s:%s',
+            Topics::ACCUMULATE_REINDEX_PRODUCT_COLLECTION_BY_SEGMENT,
+            'cron',
+            $isFull ? 'full' : 'partial'
+        );
+        $partialMessageIterator = $this->getPartialMessageIterator($isFull, $hasSchedules, $output);
+
+        try {
+            $this->collectionIndexationHandler->handle(
+                $partialMessageIterator,
+                $rootJobName,
+                true
+            );
+        } catch (FailedToRunReindexProductCollectionJobException $jobException) {
+            $output->writeln(
+                sprintf(
+                    '<error>Can\'t start the process because the same job on %s re-indexation is in progress.</error>',
+                    $isFull ? 'full' : 'partial'
+                )
+            );
+
+            return 1;
+        }
+
+        if ($hasSchedules) {
+            $output->writeln('<info>Product collections indexation has been successfully scheduled</info>');
+        } else {
+            $output->writeln('<info>There are no suitable segments for indexation</info>');
+        }
+
+        return 0;
+    }
+
+    private function getPartialMessageIterator(bool $isFull, bool &$hasSchedules, OutputInterface $output): \Generator
+    {
         foreach ($this->segmentProvider->getSegments() as $segment) {
             $websiteIds = $this->productCollectionHelper->getWebsiteIdsBySegment($segment);
             if (empty($websiteIds)) {
@@ -91,9 +142,11 @@ HELP
             );
 
             $hasSchedules = true;
-            $this->messageProducer->send(
-                Topics::REINDEX_PRODUCT_COLLECTION_BY_SEGMENT,
-                $this->messageFactory->createMessage($websiteIds, $segment, null, $isFull)
+            yield $this->accumulateMessageFactory->getPartialMessageData(
+                $websiteIds,
+                $segment,
+                null,
+                $isFull
             );
         }
 

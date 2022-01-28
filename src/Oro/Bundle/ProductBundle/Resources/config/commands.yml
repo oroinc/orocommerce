@@ -9,6 +9,9 @@ services:
             - '@oro_product.provider.segment_with_relations_provider'
             - '@oro_product.helper.product_collection_segment'
             - '@oro_config.manager'
+        calls:
+            - ['setReindexHandler', ['@oro_product.handler.async_reindex_product_collection_handler']]
+            - ['setAccumulateMessageFactory', ['@oro_product.model.accumulate_segment_message_factory']]
         tags:
             - { name: console.command }
 
