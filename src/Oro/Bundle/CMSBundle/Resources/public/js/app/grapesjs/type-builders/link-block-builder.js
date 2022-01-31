@@ -1,68 +1,54 @@
-import _ from 'underscore';
 import __ from 'orotranslation/js/translator';
 import BaseTypeBuilder from 'orocms/js/app/grapesjs/type-builders/base-type-builder';
 
-const LinkButtonTypeBuilder = BaseTypeBuilder.extend({
+const LinkBlockTypeBuilder = BaseTypeBuilder.extend({
     parentType: 'link',
 
-    constructor: function LinkButtonTypeBuilder(options) {
-        LinkButtonTypeBuilder.__super__.constructor.call(this, options);
+    button: {
+        category: 'Basic',
+        label: __('oro.cms.wysiwyg.component.link_block.label'),
+        attributes: {
+            'class': 'fa fa-link'
+        }
     },
 
-    /**
-     * @inheritdoc
-     */
-    initialize(options) {
-        _.extend(this, _.pick(options, 'editor', 'componentType'));
+    modelMixin: {
+        defaults: {
+            editable: false,
+            droppable: true,
+            classes: ['link-block'],
+            traits: ['href', 'title', 'target'],
+            style: {
+                'display': 'inline-block',
+                'padding': '5px',
+                'min-height': '50px',
+                'min-width': '50px'
+            },
+            components: []
+        }
     },
 
-    execute() {
-        this.editor.DomComponents.addType(this.componentType, {
-            isComponent: el => {
-                let result = null;
+    viewMixin: {
+        init() {
+            this.$el.off('dblclick');
+        }
+    },
 
-                if (el.tagName === 'A' && el.classList.contains('link-block')) {
-                    result = {
-                        type: this.componentType
-                    };
-                }
+    constructor: function LinkBlockTypeBuilder(options) {
+        LinkBlockTypeBuilder.__super__.constructor.call(this, options);
+    },
 
-                return result;
-            },
-            extend: this.parentType,
-            model: {
-                defaults: {
-                    classes: ['link-block'],
-                    traits: ['href', 'title', 'target']
-                }
-            },
-            extendView: this.parentType,
-            view: {
-                events: {
-                    dblclick: 'onActive'
-                }
-            }
-        });
+    isComponent(el) {
+        let result = null;
 
-        this.editor.BlockManager.get(this.componentType).set({
-            category: 'Basic',
-            label: __('oro.cms.wysiwyg.component.link_block.label'),
-            attributes: {
-                'class': 'fa fa-link'
-            },
-            content: {
-                type: this.componentType,
-                editable: false,
-                droppable: true,
-                style: {
-                    'display': 'inline-block',
-                    'padding': '5px',
-                    'min-height': '50px',
-                    'min-width': '50px'
-                }
-            }
-        });
+        if (el.tagName === 'A' && el.classList.contains('link-block')) {
+            result = {
+                type: this.componentType
+            };
+        }
+
+        return result;
     }
 });
 
-export default LinkButtonTypeBuilder;
+export default LinkBlockTypeBuilder;

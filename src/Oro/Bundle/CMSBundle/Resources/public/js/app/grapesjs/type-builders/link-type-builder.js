@@ -85,94 +85,83 @@ const LinkTypeBuilder = BaseTypeBuilder.extend({
         }
     },
 
-    /**
-     * @inheritdoc
-     */
-    initialize(options) {
-        _.extend(this, _.pick(options, 'editor', 'componentType'));
+    button: {
+        label: __('oro.cms.wysiwyg.component.link.label')
     },
 
-    execute() {
-        this.editor.DomComponents.addType(this.componentType, {
-            isComponent: el => {
-                let result = null;
-
-                if (el.tagName === 'A') {
-                    result = {
-                        type: this.componentType
-                    };
-                }
-
-                return result;
+    modelMixin: {
+        defaults: {
+            tagName: 'a',
+            classes: ['link'],
+            traits: ['href', 'text', 'title', 'target'],
+            style: {
+                color: linkColor
             },
-            extend: this.componentType,
-            model: {
-                defaults: {
-                    tagName: 'a',
-                    classes: ['link'],
-                    traits: ['href', 'text', 'title', 'target']
-                },
-                tempAttr: TEMP_ATTR,
+            components: [{
+                type: 'textnode',
+                content: __('oro.cms.wysiwyg.component.link.content')
+            }]
+        },
 
-                getAttrToHTML() {
-                    const attrs = this.getAttributes();
+        tempAttr: TEMP_ATTR,
 
-                    delete attrs.style;
-                    delete attrs.onmousedown;
-                    delete attrs[this.tempAttr];
-                    delete attrs['text'];
+        init() {
+            this.listenTo(this, 'change:attributes:text', (model, value) => model.components(value));
+        },
 
-                    return attrs;
-                }
-            },
-            extendView: this.componentType,
-            extendFnView: ['initialize'],
-            view: {
-                defaults: {
-                    tagName: 'a'
-                },
-                events: {
-                    dblclick: 'onDoubleClick'
-                },
-                editor: this.editor,
-                initialize() {
-                    this.listenTo(this.model, 'change:attributes:text', (model, value) => model.components(value));
-                },
-                onRender() {
-                    const traitText = this.model.getTrait('text');
+        getAttrToHTML() {
+            const attrs = this.getAttributes();
 
-                    if (traitText) {
-                        traitText.set('value', this.el.innerText);
-                    }
-                },
-                onDoubleClick: function(e) {
-                    e.stopPropagation();
+            delete attrs.style;
+            delete attrs.onmousedown;
+            delete attrs[this.tempAttr];
+            delete attrs['text'];
 
-                    this.editor.runCommand('open-create-link-dialog', {
-                        link: e.currentTarget,
-                        dialogOptions: {
-                            unlink: false,
-                            title: __('oro.cms.wysiwyg.create_link_dialog.add_edit_link'),
-                            okText: __('oro.cms.wysiwyg.create_link_dialog.apply')
-                        }
-                    });
-                }
+            return attrs;
+        }
+    },
+
+    viewMixin: {
+        events: {
+            dblclick: 'onDoubleClick'
+        },
+
+        onRender() {
+            const traitText = this.model.getTrait('text');
+
+            if (traitText) {
+                traitText.set('value', this.el.innerText);
             }
-        });
-        this.editor.BlockManager.get('link').set({
-            label: __('oro.cms.wysiwyg.component.link.label'),
-            content: {
-                type: this.componentType,
-                components: [{
-                    type: 'textnode',
-                    content: __('oro.cms.wysiwyg.component.link.content')
-                }],
-                style: {
-                    color: linkColor
+        },
+
+        onDoubleClick: function(e) {
+            e.stopPropagation();
+
+            this.editor.runCommand('open-create-link-dialog', {
+                link: e.currentTarget,
+                dialogOptions: {
+                    unlink: false,
+                    title: __('oro.cms.wysiwyg.create_link_dialog.add_edit_link'),
+                    okText: __('oro.cms.wysiwyg.create_link_dialog.apply')
                 }
-            }
-        });
-        this.registerEditorCommands();
+            });
+        }
+    },
+
+    constructor: function LinkTypeBuilder(...args) {
+        return LinkTypeBuilder.__super__.constructor.apply(this, args);
+    },
+
+    isComponent(el) {
+        let result = null;
+
+        if (el.tagName === 'A') {
+            result = {
+                type: this.componentType
+            };
+        }
+
+        return result;
     }
 });
 
