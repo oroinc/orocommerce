@@ -43,12 +43,18 @@ Oro\Bundle\PromotionBundle\Entity\Coupon:
             - Oro\Bundle\ValidationBundle\Validator\Constraints\AlphanumericDash: ~
         validFrom:
             - Type:
-                type: \DateTimeInterface
+                type: DateTimeInterface
                 message: oro.promotion.coupon.valid_from.type.message
+                payload:
+                    jsValidation:
+                        type: Date
         validUntil:
             - Type:
-                type: \DateTimeInterface
+                type: DateTimeInterface
                 message: oro.promotion.coupon.valid_until.type.message
+                payload:
+                    jsValidation:
+                        type: Date
         usesPerCoupon:
             - Oro\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
             - Range:
