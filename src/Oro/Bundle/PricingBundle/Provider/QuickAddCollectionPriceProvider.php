@@ -72,6 +72,11 @@ class QuickAddCollectionPriceProvider
             }
 
             $productPrice = $productPrices[$quickAddRow->getProduct()->getId()];
+            $rowUnitPrice = [
+                'value' => $productPrice->getValue(),
+                'currency' => $productPrice->getCurrency()
+            ];
+            $quickAddRow->addAdditionalField(new QuickAddField('unitPrice', $rowUnitPrice));
             $rowPrice = [
                 'value' => $this->rounding->round($productPrice->getValue() * $quickAddRow->getQuantity()),
                 'currency' => $productPrice->getCurrency()

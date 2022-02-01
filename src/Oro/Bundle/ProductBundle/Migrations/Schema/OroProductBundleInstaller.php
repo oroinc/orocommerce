@@ -49,6 +49,8 @@ class OroProductBundleInstaller implements
     const PRODUCT_IMAGE_TABLE_NAME = 'oro_product_image';
     const PRODUCT_IMAGE_TYPE_TABLE_NAME = 'oro_product_image_type';
 
+    public const PRODUCT_WEBSITE_REINDEX_REQUEST_ITEM = 'oro_prod_webs_reindex_req_item';
+
     /** @var ExtendExtension */
     protected $extendExtension;
 
@@ -89,7 +91,7 @@ class OroProductBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_25';
+        return 'v1_25_1';
     }
 
     /**
@@ -117,6 +119,8 @@ class OroProductBundleInstaller implements
         $this->createOroBrandShortDescTable($schema);
         $this->createOroBrandSlugTable($schema);
         $this->createOroBrandSlugPrototypeTable($schema);
+
+        $this->createOroProductWebsiteReindexRequestItem($schema);
 
         $this->addOroProductForeignKeys($schema);
         $this->addOroProductUnitPrecisionForeignKeys($schema);
@@ -732,6 +736,21 @@ class OroProductBundleInstaller implements
             'oro_brand_slug_prototype',
             'oro_brand',
             'brand_id'
+        );
+    }
+
+    /**
+     * Create oro_prod_webs_reindex_req_item table
+     */
+    protected function createOroProductWebsiteReindexRequestItem(Schema $schema)
+    {
+        $table = $schema->createTable(self::PRODUCT_WEBSITE_REINDEX_REQUEST_ITEM);
+        $table->addColumn('related_job_id', 'integer', ['notnull' => true]);
+        $table->addColumn('website_id', 'integer', ['notnull' => true]);
+        $table->addColumn('product_id', 'integer', ['notnull' => true]);
+        $table->addIndex(
+            ['related_job_id', 'website_id'],
+            'idx_oro_prod_webs_reindex_req_item_main_ids'
         );
     }
 
