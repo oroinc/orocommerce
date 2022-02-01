@@ -52,9 +52,7 @@ services:
             - '@property_accessor'
 
     oro_paypal.test.express_payment.cache:
-        parent: oro.cache.abstract
+        parent: oro.data.cache
         public: true
-        arguments:
-            - '%kernel.cache_dir%/oro_data'
-        calls:
-            - [ setNamespace, [ 'oro_paypal_express' ] ]
+        tags:
+            - { name: 'cache.pool', namespace: 'oro_paypal_express' }
