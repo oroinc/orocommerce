@@ -26,6 +26,6 @@ class CheckoutLineItemConverterPass implements CompilerPassInterface
         );
 
         $container->getDefinition('oro_checkout.line_item.converter_registry')
-            ->setArgument(0, new IteratorArgument(array_values($services)));
+            ->setArgument('$converters', new IteratorArgument(array_values($services)));
     }
 }

@@ -13,11 +13,11 @@ use Oro\Bundle\SegmentBundle\Entity\SegmentType;
 
 class LoadProductCollectionData extends AbstractFixture implements DependentFixtureInterface
 {
-    const SEGMENT = 'product-collection-segment';
+    public const SEGMENT = 'product-collection-segment';
 
-    const PRODUCT = 'pr_collection_product';
-    const PRODUCT_REMOVED = 'removed_pr_collection_product';
-    const PRODUCT_ADDED = 'pr_collection_product_added';
+    public const PRODUCT = 'pr_collection_product';
+    public const PRODUCT_REMOVED = 'removed_pr_collection_product';
+    public const PRODUCT_ADDED = 'pr_collection_product_added';
 
     private static $products = [
         LoadProductData::PRODUCT_1 => self::PRODUCT,

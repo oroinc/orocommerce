@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\PayPalBundle\Tests\Behat\Mock\PayPal\Payflow\Client;
 
-use Doctrine\Common\Cache\Cache;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Client\ClientInterface;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\ReturnUrl;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\User;
+use Psr\Cache\CacheItemPoolInterface;
 
 class NVPClientMock implements ClientInterface
 {
@@ -15,15 +15,12 @@ class NVPClientMock implements ClientInterface
 
     public const LINE_ITEM_CACHE_KEY = 'lineItems';
 
-    /**
-     * @var Cache
-     */
-    private $cache;
+    private CacheItemPoolInterface $cache;
 
     /**
      * NVPClientMock constructor.
      */
-    public function __construct(Cache $cache)
+    public function __construct(CacheItemPoolInterface $cache)
     {
         $this->cache = $cache;
     }
@@ -40,10 +37,12 @@ class NVPClientMock implements ClientInterface
         $filteredLineItems = array_values(array_filter($options, function ($item) {
             return false !== strpos($item, self::LINE_ITEM_NAME) || false !== strpos($item, self::LINE_ITEM_DESC);
         }, ARRAY_FILTER_USE_KEY));
-        if ($this->cache->contains(self::LINE_ITEM_CACHE_KEY)) {
-            $filteredLineItems = array_merge($filteredLineItems, $this->cache->fetch(self::LINE_ITEM_CACHE_KEY));
+        $cacheItem = $this->cache->getItem(self::LINE_ITEM_CACHE_KEY);
+        if ($cacheItem->isHit()) {
+            $filteredLineItems = array_merge($filteredLineItems, $cacheItem->get());
         }
-        $this->cache->save(self::LINE_ITEM_CACHE_KEY, $filteredLineItems);
+        $cacheItem->set($filteredLineItems);
+        $this->cache->save($cacheItem);
 
         return $this->getApprovedResponse($this->isOnCheckout($options) ? null : 1);
     }

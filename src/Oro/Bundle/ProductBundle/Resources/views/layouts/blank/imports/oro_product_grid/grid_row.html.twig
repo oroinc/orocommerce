@@ -94,7 +94,8 @@
         } %}
 
         {% set attr = layout_attr_defaults(attr, {
-            'data-page-component-view': options|json_encode
+            'data-page-component-view': options|json_encode,
+            'data-popup-gallery': ''
         }) %}
     {% endif %}
 

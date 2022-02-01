@@ -25,8 +25,11 @@ Oro\Bundle\RFPBundle\Entity\Request:
                 max: 255
         shipUntil:
             - Type:
-                  type: \DateTimeInterface
+                  type: DateTimeInterface
                   message: oro.rfp.request.ship_until.type.message
+                  payload:
+                      jsValidation:
+                          type: Date
         requestProducts:
             - Valid: ~
 
