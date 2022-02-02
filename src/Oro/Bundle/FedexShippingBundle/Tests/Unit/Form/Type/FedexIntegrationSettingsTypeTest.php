@@ -140,8 +140,7 @@ class FedexIntegrationSettingsTypeTest extends FormIntegrationTestCase
         static::assertSame($settings, $form->getData());
 
         $this->fedexResponseCache->expects($this->once())
-            ->method('deleteAll')
-            ->with($settings);
+            ->method('deleteAll');
         $this->shippingPriceCache->expects($this->once())
             ->method('deleteAllPrices');
 

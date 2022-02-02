@@ -2,13 +2,13 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\Entity\EntityListener;
 
-use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\EntityListener\CategoryEntityListener;
 use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\Cache\Adapter\AbstractAdapter;
 
 class CategoryEntityListenerTest extends \PHPUnit\Framework\TestCase
 {
@@ -17,7 +17,7 @@ class CategoryEntityListenerTest extends \PHPUnit\Framework\TestCase
     /** @var ProductIndexScheduler|\PHPUnit\Framework\MockObject\MockObject */
     private $productIndexScheduler;
 
-    /** @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var AbstractAdapter|\PHPUnit\Framework\MockObject\MockObject */
     private $categoryCache;
 
     /** @var CategoryEntityListener */
@@ -26,7 +26,7 @@ class CategoryEntityListenerTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->productIndexScheduler = $this->createMock(ProductIndexScheduler::class);
-        $this->categoryCache = $this->createMock(CacheProvider::class);
+        $this->categoryCache = $this->createMock(AbstractAdapter::class);
 
         $this->listener = new CategoryEntityListener(
             $this->productIndexScheduler,
@@ -46,7 +46,7 @@ class CategoryEntityListenerTest extends \PHPUnit\Framework\TestCase
             ->with([$category]);
 
         $this->categoryCache->expects($this->once())
-            ->method('deleteAll');
+            ->method('clear');
 
         return $category;
     }

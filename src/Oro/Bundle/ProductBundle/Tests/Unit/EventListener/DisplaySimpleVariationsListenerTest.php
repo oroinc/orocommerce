@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
 use Oro\Bundle\ProductBundle\EventListener\Config\DisplaySimpleVariationsListener;
+use Symfony\Component\Cache\Adapter\AbstractAdapter;
 
 class DisplaySimpleVariationsListenerTest extends \PHPUnit\Framework\TestCase
 {
@@ -13,7 +14,7 @@ class DisplaySimpleVariationsListenerTest extends \PHPUnit\Framework\TestCase
     /** @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $productCache;
 
-    /** @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var AbstractAdapter|\PHPUnit\Framework\MockObject\MockObject */
     protected $categoryCache;
 
     /** @var DisplaySimpleVariationsListener */
@@ -25,7 +26,7 @@ class DisplaySimpleVariationsListenerTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->productCache = $this->createMock(CacheProvider::class);
-        $this->categoryCache = $this->createMock(CacheProvider::class);
+        $this->categoryCache = $this->createMock(AbstractAdapter::class);
 
         $this->eventListener = new DisplaySimpleVariationsListener(
             $this->productCache,
@@ -46,7 +47,7 @@ class DisplaySimpleVariationsListenerTest extends \PHPUnit\Framework\TestCase
             ->method('deleteAll');
 
         $this->categoryCache->expects($this->once())
-            ->method('deleteAll');
+            ->method('clear');
 
         $this->eventListener->onUpdateAfter($event);
     }
@@ -63,7 +64,7 @@ class DisplaySimpleVariationsListenerTest extends \PHPUnit\Framework\TestCase
             ->method('deleteAll');
 
         $this->categoryCache->expects($this->never())
-            ->method('deleteAll');
+            ->method('clear');
 
         $this->eventListener->onUpdateAfter($event);
     }

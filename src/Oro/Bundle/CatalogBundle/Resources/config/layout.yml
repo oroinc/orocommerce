@@ -31,10 +31,10 @@ services:
             - { name: layout.data_provider, alias: category }
 
     oro_catalog.layout.data_provider.category.cache:
-        parent: oro.cache.abstract
+        parent: oro.data.cache
         public: false
-        calls:
-            - [ setNamespace, [ 'oro_catalog_category' ] ]
+        tags:
+            - { name: 'cache.pool', namespace: 'oro_catalog_category' }
 
     oro_catalog.layout.data_provider.category_breadcrumb:
         class: 'Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoryBreadcrumbProvider'

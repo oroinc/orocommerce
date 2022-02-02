@@ -3,22 +3,19 @@
 namespace Oro\Bundle\FedexShippingBundle\Cache;
 
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Response\FedexRateServiceResponseInterface;
-use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
 
+/**
+ * Provides an interface for FedEx cache adapters.
+ */
 interface FedexResponseCacheInterface
 {
     public function has(FedexResponseCacheKeyInterface $key): bool;
 
-    /**
-     * @param FedexResponseCacheKeyInterface $key
-     *
-     * @return FedexRateServiceResponseInterface|null
-     */
-    public function get(FedexResponseCacheKeyInterface $key);
+    public function get(FedexResponseCacheKeyInterface $key): FedexRateServiceResponseInterface|null;
 
     public function set(FedexResponseCacheKeyInterface $key, FedexRateServiceResponseInterface $response): bool;
 
     public function delete(FedexResponseCacheKeyInterface $key): bool;
 
-    public function deleteAll(FedexIntegrationSettings $settings): bool;
+    public function deleteAll(): bool;
 }

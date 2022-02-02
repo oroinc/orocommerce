@@ -2,12 +2,10 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\Layout\DataProvider;
 
-use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\CatalogBundle\Entity\CategoryTitle;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
 use Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoryProvider;
@@ -22,6 +20,7 @@ use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\Cache\Adapter\AbstractAdapter;
 
 class CategoryProviderTest extends \PHPUnit\Framework\TestCase
 {
@@ -58,7 +57,7 @@ class CategoryProviderTest extends \PHPUnit\Framework\TestCase
     private $masterCatalogProvider;
 
     /**
-     * @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject
+     * @var AbstractAdapter|\PHPUnit\Framework\MockObject\MockObject
      */
     private $cache;
 
@@ -78,7 +77,7 @@ class CategoryProviderTest extends \PHPUnit\Framework\TestCase
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
         $this->localizationHelper = $this->createMock(LocalizationHelper::class);
         $this->masterCatalogProvider = $this->createMock(MasterCatalogRootProviderInterface::class);
-        $this->cache = $this->createMock(CacheProvider::class);
+        $this->cache = $this->createMock(AbstractAdapter::class);
 
         $manager = $this->createMock(ObjectManager::class);
         $manager->expects($this->any())
@@ -196,51 +195,6 @@ class CategoryProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(new ArrayCollection([$expectedDTO]), $actual);
     }
 
-    /**
-     * @return CustomerUser
-     */
-    private function prepareGetCategoryTreeArray()
-    {
-        $childCategory = new Category();
-        $childCategory->setLevel(2);
-        $childCategory->setMaterializedPath('1_2_3');
-        $childCategory->addTitle((new CategoryTitle())->setString('category_1_2_3'));
-
-        $mainCategory = new Category();
-        $mainCategory->setLevel(1);
-        $mainCategory->setMaterializedPath('1_2');
-        $mainCategory->addTitle((new CategoryTitle())->setString('category_1_2'));
-        $mainCategory->addChildCategory($childCategory);
-
-        $rootCategory = new Category();
-        $rootCategory->setLevel(0);
-        $rootCategory->setMaterializedPath('1');
-        $rootCategory->addChildCategory($mainCategory);
-
-        $user = new CustomerUser();
-
-        $this->masterCatalogProvider
-            ->expects($this->once())
-            ->method('getMasterCatalogRoot')
-            ->willReturn($rootCategory);
-
-        $this->categoryTreeProvider->expects($this->once())
-            ->method('getCategories')
-            ->with($user, $rootCategory, null)
-            ->willReturn([$mainCategory, $childCategory]);
-
-        $this->localizationHelper
-            ->expects($this->any())
-            ->method('getLocalizedValue')
-            ->willReturnCallback(
-                function (ArrayCollection $values) {
-                    return $values->first();
-                }
-            );
-
-        return $user;
-    }
-
     public function testGetCategoryTreeArray()
     {
         $data = [
@@ -265,15 +219,11 @@ class CategoryProviderTest extends \PHPUnit\Framework\TestCase
             ->method('getOrganization')
             ->willReturn($organization);
 
-        $user = $this->prepareGetCategoryTreeArray();
+        $user = new CustomerUser();
         $this->cache->expects($this->once())
-            ->method('fetch')
+            ->method('get')
             ->with('category__0_0_0_')
-            ->willReturn(false);
-        $this->cache->expects($this->once())
-            ->method('save')
-            ->with('category__0_0_0_', $data)
-            ->willReturn(false);
+            ->willReturn($data);
 
         $actual = $this->categoryProvider->getCategoryTreeArray($user);
         $this->assertEquals($data, $actual);
@@ -305,11 +255,9 @@ class CategoryProviderTest extends \PHPUnit\Framework\TestCase
             ->willReturn($localization);
 
         $this->cache->expects($this->once())
-            ->method('fetch')
+            ->method('get')
             ->with('category_1_5_2_3_4')
             ->willReturn($data);
-        $this->cache->expects($this->never())
-            ->method('save');
 
         $actual = $this->categoryProvider->getCategoryTreeArray($user);
         $this->assertEquals($data, $actual);
