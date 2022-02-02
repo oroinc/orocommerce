@@ -7,9 +7,9 @@ use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ImportExportBundle\TemplateFixture\AbstractTemplateRepository;
 use Oro\Bundle\ImportExportBundle\TemplateFixture\TemplateFixtureInterface;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Manager\LocalizationManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductName;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
@@ -18,8 +18,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
  */
 class InventoryLevelFixture extends AbstractTemplateRepository implements TemplateFixtureInterface
 {
-    /** @var LocalizationManager */
-    private $localizationManager;
+    private LocalizationManager $localizationManager;
 
     public function __construct(LocalizationManager $localizationManager)
     {
@@ -60,10 +59,10 @@ class InventoryLevelFixture extends AbstractTemplateRepository implements Templa
 
         $localization = $this->localizationManager->getDefaultLocalization();
 
-        $name = new LocalizedFallbackValue();
+        $name = new ProductName();
         $name->setString('Product Name');
 
-        $localizedName = new LocalizedFallbackValue();
+        $localizedName = new ProductName();
         $localizedName->setLocalization($localization)
             ->setString('US Product Name')
             ->setFallback('system');
