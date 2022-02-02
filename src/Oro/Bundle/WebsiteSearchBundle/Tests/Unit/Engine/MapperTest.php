@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Engine;
 
+use Oro\Bundle\SearchBundle\Formatter\DateTimeFormatter;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebsiteSearchBundle\Engine\Mapper;
 
@@ -14,7 +15,7 @@ class MapperTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->mapper = new Mapper();
+        $this->mapper = new Mapper(new DateTimeFormatter());
     }
 
     protected function tearDown(): void
@@ -51,18 +52,21 @@ class MapperTest extends \PHPUnit\Framework\TestCase
         $query->select('titleCode as title');
         $query->addSelect('integer.codeId as code');
         $query->addSelect('decimal.decimalField as decimalValue');
+        $query->addSelect('datetime.updated as updatedAt');
 
         $item = [
             'titleCode' => 'QWERTY',
             'codeId' => '123',
             'decimalField' => '12.34',
+            'updated' => new \DateTime('2022-12-12 12:13:14', new \DateTimeZone('UTC')),
             'description' => 'I don\'t want to select it',
         ];
 
         $expectedResult = [
             'title' => 'QWERTY',
             'code' => 123,
-            'decimalValue' => 12.34
+            'decimalValue' => 12.34,
+            'updatedAt' => '2022-12-12 12:13:14',
         ];
 
         $this->assertSame($expectedResult, $this->mapper->mapSelectedData($query, $item));
