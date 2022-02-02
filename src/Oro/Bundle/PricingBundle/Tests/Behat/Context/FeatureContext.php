@@ -105,6 +105,17 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
+     * @When /^I change currency in currency switcher to "(?P<currency>[^"]+)"$/
+     */
+    public function iChangeCurrencyInCurrencySwitcher($currency): void
+    {
+        $currencySwitcher = $this->createElement('Currency Switcher');
+        $currencySwitcher->click();
+        $this->getPage()->clickLink($currency);
+        $this->waitForAjax();
+    }
+
+    /**
      * @param array|PriceListSequenceMember[] $priceLists
      * @return string
      */
