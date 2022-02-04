@@ -10,22 +10,16 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class BooleanVariantFieldValueHandler implements ProductVariantFieldValueHandlerInterface
 {
-    const TYPE = 'boolean';
+    public const TYPE = 'boolean';
 
-    /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
+    protected TranslatorInterface $translator;
 
     public function __construct(TranslatorInterface $translator)
     {
         $this->translator = $translator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getPossibleValues($fieldName)
+    public function getPossibleValues(string $fieldName) : array
     {
         return [
             0 => $this->translator->trans('oro.product.variant_fields.no.label'),
@@ -33,28 +27,19 @@ class BooleanVariantFieldValueHandler implements ProductVariantFieldValueHandler
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getScalarValue($value)
+    public function getScalarValue(mixed $value) : mixed
     {
         return (bool)$value;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getHumanReadableValue($fieldName, $value)
+    public function getHumanReadableValue(string $fieldName, mixed $value) : mixed
     {
         $values = $this->getPossibleValues($fieldName);
 
         return array_key_exists((int) $value, $values) ? $values[(int) $value] : 'N/A';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getType()
+    public function getType() : string
     {
         return self::TYPE;
     }

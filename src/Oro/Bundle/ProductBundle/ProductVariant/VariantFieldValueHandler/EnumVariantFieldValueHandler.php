@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\ProductBundle\ProductVariant\VariantFieldValueHandler;
 
-use Doctrine\Common\Cache\CacheProvider;
-use Doctrine\Common\Cache\Psr6\DoctrineProvider;
+use Oro\Bundle\CacheBundle\Generator\UniversalCacheKeyGenerator;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
+use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Provider\EnumValueProvider;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
@@ -14,37 +14,24 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantFieldValueHandlerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 
 /**
  * Provides easy way to work with the extended Enum fields of the Product entity.
  */
 class EnumVariantFieldValueHandler implements ProductVariantFieldValueHandlerInterface
 {
-    const TYPE = 'enum';
+    public const TYPE = 'enum';
 
-    /** @var DoctrineHelper */
-    protected $doctrineHelper;
-
-    /** @var EnumValueProvider */
-    protected $enumValueProvider;
-
-    /** @var LoggerInterface */
-    protected $logger;
-
-    /** @var ConfigManager */
-    protected $configManager;
-
-    /** @var CacheProvider */
-    private $cache;
-
-    /** @var int */
-    private $cacheLifeTime;
-
-    /** @var LocalizationHelper */
-    private $localizationHelper;
-
-    /** @var LocaleSettings */
-    private $localeSettings;
+    private DoctrineHelper $doctrineHelper;
+    private EnumValueProvider $enumValueProvider;
+    private LoggerInterface $logger;
+    private ConfigManager $configManager;
+    private CacheInterface $cache;
+    private int $cacheLifeTime = 0;
+    private LocalizationHelper $localizationHelper;
+    private LocaleSettings $localeSettings;
 
     public function __construct(
         DoctrineHelper $doctrineHelper,
@@ -60,38 +47,32 @@ class EnumVariantFieldValueHandler implements ProductVariantFieldValueHandlerInt
         $this->configManager = $configManager;
         $this->localizationHelper = $localizationHelper;
         $this->localeSettings = $localeSettings;
-        $this->cache = DoctrineProvider::wrap(new ArrayAdapter(0, false));
+        $this->cache = new ArrayAdapter($this->cacheLifeTime, false);
     }
 
-    public function setCache(CacheProvider $cache, int $lifeTime = 0): void
+    public function setCache(CacheInterface $cache, int $lifeTime = 0): void
     {
         $this->cache = $cache;
         $this->cacheLifeTime = $lifeTime;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getPossibleValues($fieldName)
+    public function getPossibleValues(string $fieldName) : array
     {
-        $key = sprintf('%s|%s', $fieldName, $this->getLocaleKey());
-        $data = $this->cache->fetch($key);
-        if (!\is_array($data)) {
+        $key = UniversalCacheKeyGenerator::normalizeCacheKey(sprintf('%s|%s', $fieldName, $this->getLocaleKey()));
+        return $this->cache->get($key, function (ItemInterface $item) use ($fieldName) {
+            if ($this->cacheLifeTime > 0) {
+                $item->expiresAfter($this->cacheLifeTime);
+            }
             $config = $this->configManager->getConfigFieldModel(Product::class, $fieldName);
-            $extendConfig = $config->toArray('extend');
-
-            $data = $this->enumValueProvider->getEnumChoicesWithNonUniqueTranslation($extendConfig['target_entity']);
-
-            $this->cache->save($key, $data, $this->cacheLifeTime);
-        }
-
-        return $data;
+            if ($config instanceof FieldConfigModel) {
+                $extendConfig = $config->toArray('extend');
+                return $this->enumValueProvider->getEnumChoicesWithNonUniqueTranslation($extendConfig['target_entity']);
+            }
+            return null;
+        });
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getScalarValue($value)
+    public function getScalarValue(mixed $value) : mixed
     {
         if (!$value instanceof AbstractEnumValue) {
             return null;
@@ -100,10 +81,7 @@ class EnumVariantFieldValueHandler implements ProductVariantFieldValueHandlerInt
         return $this->doctrineHelper->getSingleEntityIdentifier($value);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getHumanReadableValue($fieldName, $value)
+    public function getHumanReadableValue(string $fieldName, mixed $value) : mixed
     {
         $fieldIdentifier = $this->getScalarValue($value);
 
@@ -133,10 +111,7 @@ class EnumVariantFieldValueHandler implements ProductVariantFieldValueHandlerInt
             : $this->localeSettings->getLocale();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getType()
+    public function getType() : string
     {
         return self::TYPE;
     }

@@ -2,14 +2,14 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Entity\EntityListener;
 
-use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Oro\Bundle\ProductBundle\Entity\EntityListener\SegmentEntityListener;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
+use Symfony\Component\Cache\Adapter\AbstractAdapter;
 
 class SegmentEntityListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var AbstractAdapter|\PHPUnit\Framework\MockObject\MockObject */
     private $productCache;
 
     /** @var SegmentEntityListener */
@@ -20,7 +20,7 @@ class SegmentEntityListenerTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp(): void
     {
-        $this->productCache = $this->createMock(CacheProvider::class);
+        $this->productCache = $this->createMock(AbstractAdapter::class);
 
         $this->entityListener = new SegmentEntityListener($this->productCache);
     }
@@ -29,7 +29,7 @@ class SegmentEntityListenerTest extends \PHPUnit\Framework\TestCase
     {
         $this->productCache
             ->expects($this->once())
-            ->method('deleteAll');
+            ->method('clear');
 
         $this->entityListener->preRemove(new Segment());
     }
@@ -38,7 +38,7 @@ class SegmentEntityListenerTest extends \PHPUnit\Framework\TestCase
     {
         $this->productCache
             ->expects($this->once())
-            ->method('deleteAll');
+            ->method('clear');
 
         $this->entityListener->postPersist(new Segment());
     }
@@ -52,7 +52,7 @@ class SegmentEntityListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->productCache
             ->expects($this->once())
-            ->method('deleteAll');
+            ->method('clear');
 
         $this->entityListener->preUpdate(new Segment(), $eventArgs);
     }
@@ -66,7 +66,7 @@ class SegmentEntityListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->productCache
             ->expects($this->never())
-            ->method('deleteAll');
+            ->method('clear');
 
         $this->entityListener->preUpdate(new Segment(), $eventArgs);
     }

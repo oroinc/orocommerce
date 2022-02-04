@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ProductBundle\EventListener\Config;
 
-use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
 use Symfony\Contracts\Cache\CacheInterface;
 
@@ -12,12 +11,12 @@ use Symfony\Contracts\Cache\CacheInterface;
  */
 class DisplaySimpleVariationsListener
 {
-    private CacheProvider $productCache;
+    private CacheInterface $productCache;
     private CacheInterface $categoryCache;
     private string $configParameter;
 
     public function __construct(
-        CacheProvider $productCache,
+        CacheInterface $productCache,
         CacheInterface $categoryCache,
         $configParameter
     ) {
@@ -29,7 +28,7 @@ class DisplaySimpleVariationsListener
     public function onUpdateAfter(ConfigUpdateEvent $event) : void
     {
         if ($event->isChanged($this->configParameter)) {
-            $this->productCache->deleteAll();
+            $this->productCache->clear();
             $this->categoryCache->clear();
         }
     }
