@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Manager\UserProductFiltersSidebarStateManager;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFrontendProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -161,5 +162,85 @@ class AjaxProductControllerTest extends WebTestCase
 
         $data = json_decode($result->getContent(), true);
         $this->assertEquals([], $data);
+    }
+
+    /**
+     * @dataProvider getProductFiltersSidebarStateDataProvider
+     */
+    public function testSetProductFiltersSidebarStateAction(int|string $isSidebarExpanded, bool $expectedResult): void
+    {
+        $this->ajaxRequest(
+            'POST',
+            $this->getUrl('oro_product_frontend_ajax_set_product_filters_sidebar_state'),
+            [
+                'sidebarExpanded' => $isSidebarExpanded,
+            ]
+        );
+        $result = $this->client->getResponse();
+        self::assertJsonResponseStatusCodeEquals($result, 200);
+
+        $userProductFiltersSidebarStateManager = $this->getContainer()
+            ->get(UserProductFiltersSidebarStateManager::class);
+
+        self::assertEquals(
+            $expectedResult,
+            $userProductFiltersSidebarStateManager->isProductFiltersSidebarExpanded()
+        );
+    }
+
+    /**
+     * @dataProvider getProductFiltersSidebarStateDataProvider
+     */
+    public function testSetProductFiltersSidebarStateActionAnon(
+        int|string $isSidebarExpanded,
+        bool $expectedResult
+    ): void {
+        $this->initClient();
+
+        $this->ajaxRequest(
+            'POST',
+            $this->getUrl('oro_product_frontend_ajax_set_product_filters_sidebar_state'),
+            [
+                'sidebarExpanded' => $isSidebarExpanded,
+            ]
+        );
+        $result = $this->client->getResponse();
+        self::assertJsonResponseStatusCodeEquals($result, 200);
+
+        $this->ensureSessionIsAvailable();
+
+        $userProductFiltersSidebarStateManager = $this->getContainer()
+            ->get(UserProductFiltersSidebarStateManager::class);
+
+        self::assertEquals(
+            $expectedResult,
+            $userProductFiltersSidebarStateManager->isProductFiltersSidebarExpanded()
+        );
+    }
+
+    public function getProductFiltersSidebarStateDataProvider(): array
+    {
+        return [
+            [
+                'isSidebarExpanded' => '',
+                'expectedResult' => false,
+            ],
+            [
+                'isSidebarExpanded' => 0,
+                'expectedResult' => false,
+            ],
+            [
+                'isSidebarExpanded' => 1,
+                'expectedResult' => true,
+            ],
+            [
+                'isSidebarExpanded' => '0',
+                'expectedResult' => false,
+            ],
+            [
+                'isSidebarExpanded' => '1',
+                'expectedResult' => true,
+            ],
+        ];
     }
 }

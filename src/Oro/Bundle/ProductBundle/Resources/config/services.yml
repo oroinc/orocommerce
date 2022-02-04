@@ -1960,6 +1960,25 @@ services:
             - { name: kernel.event_listener, event: Oro\Bundle\ProductBundle\Event\CollectAutocompleteFieldsEvent, method: onCollectAutocompleteFields }
             - { name: kernel.event_listener, event: Oro\Bundle\ProductBundle\Event\ProcessAutocompleteDataEvent, method: onProcessAutocompleteData }
 
+    oro_product.manager.user_product_filters_sidebar_state_manager:
+        class: Oro\Bundle\ProductBundle\Manager\UserProductFiltersSidebarStateManager
+        arguments:
+            - '@request_stack'
+            - '@doctrine'
+            - '@oro_security.token_accessor'
+            - '@oro_website.manager'
+            - '@oro_config.manager'
+
+    Oro\Bundle\ProductBundle\Manager\UserProductFiltersSidebarStateManager:
+        alias: oro_product.manager.user_product_filters_sidebar_state_manager
+
+    oro_product.layout.data_provider.product_filters_sidebar_state:
+        class: Oro\Bundle\ProductBundle\Layout\DataProvider\UserProductFiltersSidebarStateDataProvider
+        arguments:
+            - '@oro_product.manager.user_product_filters_sidebar_state_manager'
+        tags:
+            - { name: layout.data_provider, alias: oro_product_filters_sidebar_state_data_provider }
+
     oro_product.driver.product_website_reindex_request_dbal_driver:
         class: Oro\Bundle\ProductBundle\Driver\ProductWebsiteReindexRequestDbalDriver
         arguments:

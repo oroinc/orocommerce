@@ -1,18 +1,58 @@
 @ticket-BB-17519
+@ticket-BB-20219
 @fixture-OroProductBundle:product_listing_images.yml
 
 Feature: Sidebar filters on product listing page
   To improve UX of the product category displaying on the storefront we need to implement top filters in the left sidebar
 
   Scenario: Feature background
-    Given I set configuration property "oro_product.filters_position" to "sidebar"
+    Given sessions active:
+      | admin    |first_session |
+      | customer  |second_session|
+    And I set configuration property "oro_product.filters_position" to "sidebar"
     And I set configuration property "oro_catalog.all_products_page_enabled" to "1"
 
-  Scenario: Check if sidebar filters present at catalog page
-    Then I signed in as AmandaRCole@example.org on the store frontend
+  Scenario: Ensure that filters are collapsed at catalog page
+    Given I proceed as the customer
+    And I login as AmandaRCole@example.org buyer
     When I click "NewCategory"
-    Then I should see an "Filters In Sidebar" element
+    Then I should see an "Toggle Sidebar Button" element
+    And I should not see an "Filters In Sidebar" element
+    And I should not see an "Toggle Sidebar Button Expanded" element
     And I should see an "FrontendProductGridFilters" element
+
+  Scenario: Ensure that filters are expanded at catalog page
+    Given I proceed as the admin
+    And I login as administrator
+    And I go to System / Configuration
+    And I follow "Commerce/Catalog/Filters and Sorters" on configuration sidebar
+    And uncheck "Use default" for "Default Filter Panel State" field
+    And I fill form with:
+      | Default Filter Panel State | Expanded |
+    And I submit form
+    When I proceed as the customer
+    Then I reload the page
+    And I should not see an "Toggle Sidebar Button" element
+    And I should see an "Filters In Sidebar" element
+    And I should see an "Toggle Sidebar Button Expanded" element
+
+  Scenario: Ensure that filters position will be saved after reload the page
+    Given I click "Toggle Sidebar Button Expanded"
+    Then I should see an "Toggle Sidebar Button" element
+    And I should not see an "Filters In Sidebar" element
+    And I should not see an "Toggle Sidebar Button Expanded" element
+    When I reload the page
+    Then I should see an "Toggle Sidebar Button" element
+    And I should not see an "Filters In Sidebar" element
+    And I should not see an "Toggle Sidebar Button Expanded" element
+    When I click "Toggle Sidebar Button"
+    Then I should not see an "Toggle Sidebar Button" element
+    And I should see an "Filters In Sidebar" element
+    And I should see an "Toggle Sidebar Button Expanded" element
+    When I reload the page
+    Then I should not see an "Toggle Sidebar Button" element
+    And I should see an "Filters In Sidebar" element
+    And I should see an "Toggle Sidebar Button Expanded" element
 
   Scenario: Apply one filter at one time
     And I set filter Any Text as contains "product"
