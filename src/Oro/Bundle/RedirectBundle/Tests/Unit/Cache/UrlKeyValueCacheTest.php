@@ -2,10 +2,7 @@
 
 namespace Oro\Bundle\RedirectBundle\Tests\Unit\Cache;
 
-use Doctrine\Common\Cache\Cache;
-use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\RedirectBundle\Cache\UrlKeyValueCache;
-use Oro\Bundle\RedirectBundle\Tests\Unit\Stub\CacheAllCapabilities;
 use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
@@ -16,9 +13,14 @@ use Symfony\Component\Cache\Adapter\ArrayAdapter;
 class UrlKeyValueCacheTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var Cache|\PHPUnit\Framework\MockObject\MockObject
+     * @var CacheItemPoolInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $persistentCache;
+
+    /**
+     * @var CacheItemInterface|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $persistentCacheItem;
 
     /**
      * @var CacheItemPoolInterface|\PHPUnit\Framework\MockObject\MockObject
@@ -32,8 +34,9 @@ class UrlKeyValueCacheTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->persistentCache = $this->createMock(Cache::class);
+        $this->persistentCache = $this->createMock(CacheItemPoolInterface::class);
         $this->localCache = $this->createMock(CacheItemPoolInterface::class);
+        $this->persistentCacheItem = $this->createMock(CacheItemInterface::class);
 
         $this->urlCache = new UrlKeyValueCache($this->persistentCache, $this->localCache);
     }
@@ -57,7 +60,7 @@ class UrlKeyValueCacheTest extends \PHPUnit\Framework\TestCase
             ->willReturn($hasInLocal);
 
         $this->persistentCache->expects($this->any())
-            ->method('contains')
+            ->method('hasItem')
             ->with($keyLocalization)
             ->willReturn($hasInPersistent);
 
@@ -105,13 +108,19 @@ class UrlKeyValueCacheTest extends \PHPUnit\Framework\TestCase
         $routeName = 'test';
         $routeParameters = ['id' => 1];
         $localization = 1;
-        $url = null;
+        $url = '/test';
         $keyLocalization = 'test_YToxOntzOjI6ImlkIjtpOjE7fQ==_1_u';
 
         $this->persistentCache->expects($this->once())
-            ->method('fetch')
+            ->method('getItem')
             ->with($keyLocalization)
-            ->willReturn(null);
+            ->willReturn($this->persistentCacheItem);
+        $this->persistentCacheItem->expects($this->once())
+            ->method('isHit')
+            ->willReturn(true);
+        $this->persistentCacheItem->expects($this->exactly(2))
+            ->method('get')
+            ->willReturn($url);
 
         $urlItem = $this->createMock(CacheItemInterface::class);
         $urlItem->expects($this->once())
@@ -136,8 +145,11 @@ class UrlKeyValueCacheTest extends \PHPUnit\Framework\TestCase
         $keyLocalization = 'test_YToxOntzOjI6ImlkIjtpOjE7fQ==_1_u';
 
         $this->persistentCache->expects($this->once())
-            ->method('fetch')
+            ->method('getItem')
             ->with($keyLocalization)
+            ->willReturn($this->persistentCacheItem);
+        $this->persistentCacheItem->expects($this->once())
+            ->method('isHit')
             ->willReturn(false);
 
         $urlItem = $this->createMock(CacheItemInterface::class);
@@ -258,7 +270,7 @@ class UrlKeyValueCacheTest extends \PHPUnit\Framework\TestCase
                 [$keySlugLocalization]
             );
         $this->persistentCache->expects($this->exactly(2))
-            ->method('delete')
+            ->method('deleteItem')
             ->withConsecutive(
                 [$keyUrlLocalization],
                 [$keySlugLocalization]
@@ -269,76 +281,65 @@ class UrlKeyValueCacheTest extends \PHPUnit\Framework\TestCase
 
     public function testDeleteAllPersistentClearable()
     {
-        /** @var Cache|\PHPUnit\Framework\MockObject\MockObject $persistentCache */
-        $persistentCache = $this->createMock(CacheAllCapabilities::class);
-
         $this->localCache->expects($this->once())
             ->method('clear');
-        $persistentCache->expects($this->once())
-            ->method('deleteAll');
+        $this->persistentCache->expects($this->once())
+            ->method('clear');
 
-        $urlCache = new UrlKeyValueCache($persistentCache, $this->localCache);
+        $urlCache = new UrlKeyValueCache($this->persistentCache, $this->localCache);
         $urlCache->deleteAll();
-    }
-
-    public function testDeleteAllPersistentFileNotClearable()
-    {
-        $this->localCache->expects($this->once())
-            ->method('clear');
-        $this->persistentCache->expects($this->never())
-            ->method($this->anything());
-
-        $this->urlCache->deleteAll();
     }
 
     public function testFlushAllMulti()
     {
         $localCache = new ArrayAdapter();
-        $persistentCache = $this->createMock(CacheProvider::class);
-
-        $urlCache = new UrlKeyValueCache($persistentCache, $localCache);
-        $urlCache->setUrl('test_1', null, '/test', 'test', 1);
+        $urlCache = new UrlKeyValueCache($this->persistentCache, $localCache);
+        $urlCache->setUrl('test_1', [], '/test', 'test', 1);
         $urlCache->setUrl('test', ['id' => 1], '/my-test', null);
 
-        $persistentCache->expects($this->exactly(2))
-            ->method('saveMultiple')
+        $this->persistentCache->expects($this->exactly(5))
+            ->method('getItem')
             ->withConsecutive(
-                [
-                    [
-                        'test_1_Tjs=_1_u' => '/test',
-                        'test_1_Tjs=_1_s' => 'test',
-                        'test_YToxOntzOjI6ImlkIjtpOjE7fQ==_0_u' => '/my-test'
-                    ]
-                ],
-                [
-                    [
-                        'test_1_Tjs=_2_u' => '/test2',
-                        'test_1_Tjs=_2_s' => 'test2',
-                    ]
-                ]
+                ['test_1_YTowOnt9_1_u'],
+                ['test_1_YTowOnt9_1_s'],
+                ['test_YToxOntzOjI6ImlkIjtpOjE7fQ==_0_u'],
+                ['test_1_YTowOnt9_2_u'],
+                ['test_1_YTowOnt9_2_s'],
+            )->willReturn($this->persistentCacheItem);
+        $this->persistentCacheItem->expects($this->exactly(5))
+            ->method('set')
+            ->withConsecutive(
+                ['/test'],
+                ['test'],
+                ['/my-test'],
+                ['/test2'],
+                ['test2'],
             );
+        $this->persistentCache->expects($this->exactly(5))
+            ->method('saveDeferred')
+            ->with($this->persistentCacheItem);
+        $this->persistentCache->expects($this->exactly(2))
+            ->method('commit');
 
         $this->assertNotEmpty($localCache->getValues());
         $urlCache->flushAll();
         $this->assertEmpty($localCache->getValues());
 
         // Check that second call of flushAll is not dependent on data from the first call
-        $urlCache->setUrl('test_1', null, '/test2', 'test2', 2);
+        $urlCache->setUrl('test_1', [], '/test2', 'test2', 2);
         $urlCache->flushAll();
     }
 
     public function testFlushAllMultiNoChanges()
     {
-        $persistentCache = $this->createMock(CacheProvider::class);
-
-        $urlCache = new UrlKeyValueCache($persistentCache, $this->localCache);
+        $urlCache = new UrlKeyValueCache($this->persistentCache, $this->localCache);
 
         $this->localCache->expects($this->once())
             ->method('getItems')
             ->with([])
             ->willReturn([]);
-        $persistentCache->expects($this->never())
-            ->method('saveMultiple');
+        $this->persistentCache->expects($this->never())
+            ->method('saveDeferred');
 
         $urlCache->flushAll();
     }
@@ -347,16 +348,28 @@ class UrlKeyValueCacheTest extends \PHPUnit\Framework\TestCase
     {
         $localCache = new ArrayAdapter();
         $urlCache = new UrlKeyValueCache($this->persistentCache, $localCache);
-        $urlCache->setUrl('test_1', null, '/test', 'test', 1);
+        $urlCache->setUrl('test_1', [], '/test', 'test', 1);
         $urlCache->setUrl('test', ['id' => 1], '/my-test', null);
 
         $this->persistentCache->expects($this->exactly(3))
-            ->method('save')
+            ->method('getItem')
             ->withConsecutive(
-                ['test_1_Tjs=_1_u', '/test'],
-                ['test_1_Tjs=_1_s', 'test'],
-                ['test_YToxOntzOjI6ImlkIjtpOjE7fQ==_0_u', '/my-test']
+                ['test_1_YTowOnt9_1_u'],
+                ['test_1_YTowOnt9_1_s'],
+                ['test_YToxOntzOjI6ImlkIjtpOjE7fQ==_0_u'],
+            )->willReturn($this->persistentCacheItem);
+        $this->persistentCacheItem->expects($this->exactly(3))
+            ->method('set')
+            ->withConsecutive(
+                ['/test'],
+                ['test'],
+                ['/my-test'],
             );
+        $this->persistentCache->expects($this->exactly(3))
+            ->method('saveDeferred')
+            ->with($this->persistentCacheItem);
+        $this->persistentCache->expects($this->once())
+            ->method('commit');
 
         $urlCache->flushAll();
     }

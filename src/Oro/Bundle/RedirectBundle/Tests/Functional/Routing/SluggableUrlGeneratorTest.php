@@ -18,7 +18,6 @@ use Oro\Bundle\RedirectBundle\Provider\SluggableUrlDatabaseAwareProvider;
 use Oro\Bundle\RedirectBundle\Routing\SluggableUrlGenerator;
 use Oro\Bundle\RedirectBundle\Tests\Functional\DataFixtures\LoadSlugsData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Component\Testing\Unit\Cache\CacheTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Container\ContainerInterface;
@@ -26,7 +25,6 @@ use Symfony\Component\Cache\Adapter\ArrayAdapter;
 
 class SluggableUrlGeneratorTest extends WebTestCase
 {
-    use CacheTrait;
     use EntityTrait;
     use ConfigManagerAwareTestTrait;
 
@@ -210,7 +208,7 @@ class SluggableUrlGeneratorTest extends WebTestCase
                 );
 
                 return new UrlKeyValueCache(
-                    $this->getCache($persistentCache),
+                    $persistentCache,
                     new ArrayAdapter(0, false)
                 );
 

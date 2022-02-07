@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\RedirectBundle\Cache\Dumper;
 
-use Doctrine\Common\Cache\FlushableCache;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LocaleBundle\DependencyInjection\Configuration;
+use Oro\Bundle\RedirectBundle\Cache\FlushableCacheInterface;
 use Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\Provider\RoutingInformationProviderInterface;
@@ -62,7 +62,7 @@ class SluggableUrlDumper
             $this->fillSlugCacheWithBaseSlug($routeData, $baseUrlInfo, $localizationIds, array_keys($existingSlugs));
         }
 
-        if ($this->cache instanceof FlushableCache) {
+        if ($this->cache instanceof FlushableCacheInterface) {
             $this->cache->flushAll();
         }
     }

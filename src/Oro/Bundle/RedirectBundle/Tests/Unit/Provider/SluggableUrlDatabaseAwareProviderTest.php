@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\RedirectBundle\Tests\Unit\Provider;
 
-use Doctrine\Common\Cache\FlushableCache;
+use Oro\Bundle\RedirectBundle\Cache\FlushableCacheInterface;
 use Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface;
 use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
@@ -61,7 +61,7 @@ class SluggableUrlDatabaseAwareProviderTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetUrlWithoutCacheUrl(UrlCacheInterface $cache)
     {
-        if ($cache instanceof FlushableCache) {
+        if ($cache instanceof FlushableCacheInterface) {
             $cache->expects($this->once())
                 ->method('flushAll');
         }

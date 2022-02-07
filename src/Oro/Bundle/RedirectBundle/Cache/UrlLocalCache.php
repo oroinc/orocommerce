@@ -2,14 +2,13 @@
 
 namespace Oro\Bundle\RedirectBundle\Cache;
 
-use Doctrine\Common\Cache\ClearableCache;
 use Psr\Cache\CacheItemPoolInterface;
 
 /**
  * Url local cache may be used to store URLs on per-request basis and may be used in pair with database URL provider
  * to always fetch Semantic URLs from DB without being saved in persistent cache
  */
-class UrlLocalCache implements UrlCacheInterface, ClearableCache
+class UrlLocalCache implements UrlCacheInterface, ClearableCacheInterface
 {
     /**
      * @var CacheItemPoolInterface
@@ -96,10 +95,7 @@ class UrlLocalCache implements UrlCacheInterface, ClearableCache
         $this->localCache->deleteItem($this->getCacheKey($routeName, $routeParameters, $localizationId));
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function deleteAll()
+    public function deleteAll() : void
     {
         $this->localCache->clear();
     }

@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\RedirectBundle\Provider;
 
-use Doctrine\Common\Cache\FlushableCache;
+use Oro\Bundle\RedirectBundle\Cache\FlushableCacheInterface;
 use Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface;
 use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
@@ -80,7 +80,7 @@ class SluggableUrlDatabaseAwareProvider implements SluggableUrlProviderInterface
             $this->updateSluggableRoutes($sluggableRoutes);
         }
 
-        if ($this->cache instanceof FlushableCache) {
+        if ($this->cache instanceof FlushableCacheInterface) {
             $this->cache->flushAll();
         }
 

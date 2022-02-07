@@ -377,9 +377,9 @@ services:
 
     oro_redirect.slug_url.cache.persistent_key_value:
         public: false
-        parent: oro.cache.abstract
-        calls:
-            - [ setNamespace, [ 'oro_slug_kv' ] ]
+        parent: oro.data.cache.without_memory_cache
+        tags:
+            - { name: 'cache.pool', namespace: 'oro_slug_kv' }
 
     oro_redirect.slug_url.cache.local:
         class: Symfony\Component\Cache\Adapter\ArrayAdapter
