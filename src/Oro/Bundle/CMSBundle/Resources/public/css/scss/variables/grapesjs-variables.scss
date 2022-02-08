@@ -23,7 +23,7 @@ $colorBlue: $secondary;
 $mainLhColor: $secondary;
 
 $button-bg-color: $primary-830;
-$button-bg-shadow: inset 0 2px 3px 2px rgba(0, 0, 0, .21);
+$button-bg-shadow: inset 0 2px 3px 2px rgba(0 0 0 / 21%);
 
 $canvas-bg-color: $primary-inverse;
 $canvas-box-shadow: 0 0 0 2px $primary-750 inset;
@@ -49,8 +49,8 @@ $grapesjs-content-editor-offset: 24px !default;
 $grapesjs-scrollbar-track-background: rgba($primary, .1) !default;
 $grapesjs-scrollbar-thumb-background: rgba($primary, .4) !default;
 
-$grapejs-shadow: 1px 1px 9px 3px rgba(0, 0, 0, .08) !default;
-$grapejs-radio-shadow: inset 0 2px 3px 2px rgba(0, 0, 0, .21) !default;
+$grapejs-shadow: 1px 1px 9px 3px rgba(0 0 0 / 8%) !default;
+$grapejs-radio-shadow: inset 0 2px 3px 2px rgba(0 0 0 / 21%) !default;
 
 $codemirror-scrollbar-track-background: rgba($primary-inverse, .1) !default;
 $codemirror-scrollbar-thumb-background: rgba($primary-inverse, .4) !default;

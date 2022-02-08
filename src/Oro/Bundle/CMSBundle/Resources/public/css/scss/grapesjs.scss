@@ -1,5 +1,7 @@
 /* @theme: admin.oro; */
 
+/* stylelint-disable selector-class-pattern */
+
 .#{$app-prefix} {
     &editor-cont {
         transition: height .5s;
