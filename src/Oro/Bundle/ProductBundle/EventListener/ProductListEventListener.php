@@ -7,6 +7,7 @@ use Oro\Bundle\LayoutBundle\Provider\Image\ImagePlaceholderProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Event\BuildQueryProductListEvent;
 use Oro\Bundle\ProductBundle\Event\BuildResultProductListEvent;
+use Oro\Bundle\UIBundle\Tools\UrlHelper;
 
 /**
  * Adds common fields to storefront product lists.
@@ -17,12 +18,16 @@ class ProductListEventListener
 
     private WebpConfiguration $webpConfiguration;
 
+    private UrlHelper $urlHelper;
+
     public function __construct(
         ImagePlaceholderProviderInterface $imagePlaceholderProvider,
-        WebpConfiguration $webpConfiguration
+        WebpConfiguration $webpConfiguration,
+        UrlHelper $urlHelper
     ) {
         $this->imagePlaceholderProvider = $imagePlaceholderProvider;
         $this->webpConfiguration = $webpConfiguration;
+        $this->urlHelper = $urlHelper;
     }
 
     public function onBuildQuery(BuildQueryProductListEvent $event): void
@@ -44,27 +49,19 @@ class ProductListEventListener
 
     public function onBuildResult(BuildResultProductListEvent $event): void
     {
-        $noImagePath = false;
         foreach ($event->getProductData() as $productId => $data) {
-            $hasProductImage = true;
-            $productImageUrl = $data['image'] ?: null;
-            if (!$productImageUrl) {
-                if (false === $noImagePath) {
-                    $noImagePath = $this->imagePlaceholderProvider->getPath('product_large');
-                }
-                $hasProductImage = false;
-                $productImageUrl = $noImagePath;
-            }
-
             $productView = $event->getProductView($productId);
             $productType = $data['type'];
             $productView->set('type', $productType);
             $productView->set('sku', $data['sku']);
             $productView->set('name', $data['name']);
-            $productView->set('hasImage', $hasProductImage);
-            $productView->set('image', $productImageUrl);
+            $productView->set('hasImage', $data['image'] !== '');
+            $productView->set('image', $this->getProductImageUrl($data['image'], 'product_large'));
             if (isset($data['imageWebp'])) {
-                $productView->set('imageWebp', $data['imageWebp']);
+                $productView->set(
+                    'imageWebp',
+                    $this->getProductImageUrl($data['imageWebp'], 'product_large', 'webp')
+                );
             }
             $productView->set('unit', $data['unit']);
             $productView->set(
@@ -77,5 +74,18 @@ class ProductListEventListener
                 Product::TYPE_CONFIGURABLE === $productType ? $data['variant_fields_count'] : null
             );
         }
+    }
+
+    private function getProductImageUrl(string $path, string $placeholderFilter, string $format = '')
+    {
+        if ($path !== '') {
+            // The image URL obtained from the search index does not contain a base url
+            // so may not represent an absolute path.
+            $imageUrl = $this->urlHelper->getAbsolutePath($path);
+        } else {
+            $imageUrl = $this->imagePlaceholderProvider->getPath($placeholderFilter, $format);
+        }
+
+        return $imageUrl;
     }
 }
