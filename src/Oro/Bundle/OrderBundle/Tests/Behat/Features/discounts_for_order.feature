@@ -1,4 +1,5 @@
 @ticket-BB-12071
+@waf-skip
 @fixture-OroOrderBundle:order.yml
 Feature: Discounts for Order
   In order to give simple discounts for Orders

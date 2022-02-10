@@ -1,6 +1,7 @@
 @feature-BB-17656
 @ticket-BB-18771
 @ticket-BB-18284
+@waf-skip
 @fixture-OroCMSBundle:WysiwygRoleFixture.yml
 Feature: Landing Page content purify
   In order to restrict access to attributes that may be vulnerable
