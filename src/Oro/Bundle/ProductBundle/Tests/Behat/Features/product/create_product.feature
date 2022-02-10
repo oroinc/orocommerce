@@ -3,6 +3,7 @@
 @ticket-BB-17327
 @ticket-BB-17630
 @ticket-BB-19940
+@waf-skip
 @automatically-ticket-tagged
 @fixture-OroCatalogBundle:categories.yml
 @fixture-OroCustomerBundle:CustomerUserFixture.yml

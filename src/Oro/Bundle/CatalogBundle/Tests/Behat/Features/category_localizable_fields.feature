@@ -1,5 +1,6 @@
 @ticket-BB-18698
 @regression
+@waf-skip
 
 Feature: Category localizable fields
   In order to have localizable categories
