@@ -2,42 +2,27 @@
 
 namespace Oro\Bundle\ProductBundle\VirtualFields;
 
-use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\EntityBundle\Helper\FieldHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\VirtualFields\QueryDesigner\VirtualFieldsSelectQueryConverter;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
+use Symfony\Contracts\Cache\CacheInterface;
 
 /**
  * Creates decorated product
  */
 class VirtualFieldsProductDecoratorFactory
 {
-    /**
-     * @var VirtualFieldsSelectQueryConverter
-     */
-    private $converter;
-
-    /**
-     * @var ManagerRegistry
-     */
-    private $doctrine;
-
-    /**
-     * @var FieldHelper
-     */
-    private $fieldHelper;
-
-    /**
-     * @var CacheProvider
-     */
-    private $cacheProvider;
+    private VirtualFieldsSelectQueryConverter $converter;
+    private ManagerRegistry $doctrine;
+    private FieldHelper $fieldHelper;
+    private CacheInterface $cacheProvider;
 
     public function __construct(
         VirtualFieldsSelectQueryConverter $converter,
         ManagerRegistry $doctrine,
         FieldHelper $fieldHelper,
-        CacheProvider $cacheProvider
+        CacheInterface $cacheProvider
     ) {
         $this->converter = $converter;
         $this->doctrine = $doctrine;

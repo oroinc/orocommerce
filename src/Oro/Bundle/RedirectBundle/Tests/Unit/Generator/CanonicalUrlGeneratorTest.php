@@ -38,19 +38,8 @@ class CanonicalUrlGeneratorTest extends AbstractCanonicalUrlGeneratorTestCase
 
         $key = 'oro_redirect.canonical_url_type';
         $cacheKey = 'oro_redirect.canonical_url_type.1';
-        $this->configManager->expects($this->once())
+        $this->cache->expects(self::once())
             ->method('get')
-            ->with($key, false, false, $website)
-            ->willReturn(Configuration::DIRECT_URL);
-        $this->cache->expects($this->once())
-            ->method('contains')
-            ->with($cacheKey)
-            ->willReturn(false);
-        $this->cache->expects($this->once())
-            ->method('save')
-            ->with($cacheKey, Configuration::DIRECT_URL);
-        $this->cache->expects($this->once())
-            ->method('fetch')
             ->with($cacheKey)
             ->willReturn(Configuration::DIRECT_URL);
 
@@ -62,19 +51,9 @@ class CanonicalUrlGeneratorTest extends AbstractCanonicalUrlGeneratorTestCase
         /** @var Website $website */
         $website = $this->getEntity(Website::class, ['id' => 1]);
 
-        $key = 'oro_redirect.canonical_url_type';
         $cacheKey = 'oro_redirect.canonical_url_type.1';
-        $this->configManager->expects($this->never())
+        $this->cache->expects(self::once())
             ->method('get')
-            ->with($key, false, false, $website);
-        $this->cache->expects($this->once())
-            ->method('contains')
-            ->with($cacheKey)
-            ->willReturn(true);
-        $this->cache->expects($this->never())
-            ->method('save');
-        $this->cache->expects($this->once())
-            ->method('fetch')
             ->with($cacheKey)
             ->willReturn(Configuration::SYSTEM_URL);
 
@@ -101,10 +80,6 @@ class CanonicalUrlGeneratorTest extends AbstractCanonicalUrlGeneratorTestCase
         $slug->setRouteParameters([]);
 
         $this->assertUrlTypeCalls($urlSecurityType, $website);
-
-        $this->cache->expects($this->any())
-            ->method('contains')
-            ->willReturn(false);
 
         $entity = $this->getSluggableEntity($slug);
         $this->assertRequestCalls($entity, $expectedBaseUrl);
@@ -177,10 +152,8 @@ class CanonicalUrlGeneratorTest extends AbstractCanonicalUrlGeneratorTestCase
                 ['oro_redirect.use_localized_canonical', false, false, null, true]
             ]);
         $this->cache->expects($this->any())
-            ->method('fetch')
-            ->willReturnMap([
-                ['oro_redirect.use_localized_canonical', true]
-            ]);
+            ->method('get')
+            ->willReturn('oro_redirect.use_localized_canonical');
 
         /** @var Localization $localization1 */
         $localization1 = $this->getEntity(Localization::class, ['id' => 1]);
@@ -266,10 +239,6 @@ class CanonicalUrlGeneratorTest extends AbstractCanonicalUrlGeneratorTestCase
         $routeParameters = ['param' => 42];
         $routeData = new RouteData($route, $routeParameters);
 
-        $this->cache->expects($this->any())
-            ->method('contains')
-            ->willReturn(false);
-
         $this->assertUrlTypeCalls(Configuration::INSECURE, $website);
 
         $this->routingInformationProvider->expects($this->once())
@@ -297,8 +266,8 @@ class CanonicalUrlGeneratorTest extends AbstractCanonicalUrlGeneratorTestCase
         $routeData = new RouteData($route, $routeParameters);
 
         $this->cache->expects($this->any())
-            ->method('contains')
-            ->willReturn(false);
+            ->method('get')
+            ->willReturn(Configuration::SECURE);
 
         $this->assertUrlTypeCalls(Configuration::SECURE, $website);
 
@@ -323,15 +292,7 @@ class CanonicalUrlGeneratorTest extends AbstractCanonicalUrlGeneratorTestCase
             ->willReturn(new ArrayCollection([]));
 
         $this->cache->expects($this->any())
-            ->method('contains')
-            ->willReturnMap([
-                ['oro_redirect.canonical_url_type', true],
-                ['oro_redirect.canonical_url_security_type', true],
-                ['oro_redirect.use_localized_canonical', true]
-            ]);
-
-        $this->cache->expects($this->any())
-            ->method('fetch')
+            ->method('get')
             ->willReturnMap([
                 ['oro_redirect.canonical_url_type', Configuration::DIRECT_URL],
                 ['oro_redirect.canonical_url_security_type', Configuration::INSECURE],
@@ -409,10 +370,17 @@ class CanonicalUrlGeneratorTest extends AbstractCanonicalUrlGeneratorTestCase
             ->with('oro_redirect.canonical_url_security_type', false, false, $website)
             ->willReturn(Configuration::SECURE);
 
-        $this->cache->expects($this->any())
-            ->method('fetch')
+        $this->cache->expects($this->once())
+            ->method('get')
             ->with('oro_redirect.canonical_url_security_type.777')
-            ->willReturn(Configuration::SECURE);
+            ->willReturnCallback(function () use ($website) {
+                return $this->configManager->get(
+                    'oro_redirect.canonical_url_security_type',
+                    false,
+                    false,
+                    $website
+                );
+            });
 
         $this->websiteUrlResolver->expects($this->atLeastOnce())
             ->method('getWebsiteSecureUrl')
@@ -431,11 +399,17 @@ class CanonicalUrlGeneratorTest extends AbstractCanonicalUrlGeneratorTestCase
             ->method('get')
             ->with('oro_redirect.canonical_url_security_type', false, false, $website)
             ->willReturn(Configuration::INSECURE);
-
-        $this->cache->expects($this->any())
-            ->method('fetch')
+        $this->cache->expects($this->once())
+            ->method('get')
             ->with('oro_redirect.canonical_url_security_type.777')
-            ->willReturn(Configuration::INSECURE);
+            ->willReturnCallback(function () use ($website) {
+                return $this->configManager->get(
+                    'oro_redirect.canonical_url_security_type',
+                    false,
+                    false,
+                    $website
+                );
+            });
 
         $this->websiteUrlResolver->expects($this->atLeastOnce())
             ->method('getWebsiteUrl')
@@ -456,10 +430,17 @@ class CanonicalUrlGeneratorTest extends AbstractCanonicalUrlGeneratorTestCase
             ->with('oro_redirect.canonical_url_security_type', false, false, $website)
             ->willReturn(Configuration::SECURE);
 
-        $this->cache->expects($this->any())
-            ->method('fetch')
+        $this->cache->expects($this->once())
+            ->method('get')
             ->with('oro_redirect.canonical_url_security_type.777')
-            ->willReturn(Configuration::SECURE);
+            ->willReturnCallback(function () use ($website) {
+                return $this->configManager->get(
+                    'oro_redirect.canonical_url_security_type',
+                    false,
+                    false,
+                    $website
+                );
+            });
 
         $this->websiteUrlResolver->expects($this->atLeastOnce())
             ->method('getWebsiteSecureUrl')

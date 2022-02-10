@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM;
 
-use Doctrine\Common\Cache\FlushableCache;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\ORM\EntityManager;
@@ -24,6 +23,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Form\Type\ProductType;
 use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadProductDefaultAttributeFamilyData;
+use Oro\Bundle\RedirectBundle\Cache\FlushableCacheInterface;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
@@ -195,7 +195,7 @@ class LoadProductDemoData extends AbstractFixture implements
         }
 
         $cache = $this->container->get('oro_redirect.url_cache');
-        if ($cache instanceof FlushableCache) {
+        if ($cache instanceof FlushableCacheInterface) {
             $cache->flushAll();
         }
         $manager->flush();

@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\RedirectBundle\Generator;
 
-use Doctrine\Common\Cache\Cache;
+use Oro\Bundle\CacheBundle\Generator\UniversalCacheKeyGenerator;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Provider\LocalizationProviderInterface;
@@ -15,45 +15,23 @@ use Oro\Bundle\RedirectBundle\Provider\RoutingInformationProvider;
 use Oro\Bundle\WebsiteBundle\Resolver\WebsiteUrlResolver;
 use Oro\Component\Website\WebsiteInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Contracts\Cache\CacheInterface;
 
 /**
  * Generates Canonical URLs based on the given website and website configuration.
  */
 class CanonicalUrlGenerator
 {
-    /**
-     * @var RoutingInformationProvider
-     */
-    protected $routingInformationProvider;
-
-    /**
-     * @var ConfigManager
-     */
-    protected $configManager;
-
-    /**
-     * @var RequestStack
-     */
-    protected $requestStack;
-
-    /**
-     * @var WebsiteUrlResolver
-     */
-    protected $websiteSystemUrlResolver;
-
-    /**
-     * @var Cache
-     */
-    private $cache;
-
-    /**
-     * @var LocalizationProviderInterface
-     */
-    private $localizationProvider;
+    private RoutingInformationProvider $routingInformationProvider;
+    private ConfigManager $configManager;
+    private RequestStack $requestStack;
+    private WebsiteUrlResolver $websiteSystemUrlResolver;
+    private CacheInterface $cache;
+    private LocalizationProviderInterface $localizationProvider;
 
     public function __construct(
         ConfigManager $configManager,
-        Cache $cache,
+        CacheInterface $cache,
         RequestStack $requestStack,
         RoutingInformationProvider $routingInformationProvider,
         WebsiteUrlResolver $websiteSystemUrlResolver,
@@ -203,15 +181,13 @@ class CanonicalUrlGenerator
         $this->cache->delete($this->getCacheKey($this->getConfigKey(Configuration::USE_LOCALIZED_CANONICAL)));
     }
 
-    private function getCachedConfigValue($key, WebsiteInterface $website = null)
+    private function getCachedConfigValue($key, WebsiteInterface $website = null) : mixed
     {
         $configKey = $this->getConfigKey($key);
         $cacheKey = $this->getCacheKey($configKey, $website);
-        if (!$this->cache->contains($cacheKey)) {
-            $this->cache->save($cacheKey, $this->configManager->get($configKey, false, false, $website));
-        }
-
-        return $this->cache->fetch($cacheKey);
+        return $this->cache->get($cacheKey, function () use ($configKey, $website) {
+            return $this->configManager->get($configKey, false, false, $website);
+        });
     }
 
     /**
@@ -271,14 +247,10 @@ class CanonicalUrlGenerator
         return sprintf('%s.%s', OroRedirectExtension::ALIAS, $configField);
     }
 
-    /**
-     * @param string $configKey
-     * @param WebsiteInterface|null $website
-     * @return string
-     */
-    private function getCacheKey($configKey, WebsiteInterface $website = null)
+    private function getCacheKey(string $configKey, WebsiteInterface $website = null) : string
     {
-        return $website ? sprintf('%s.%s', $configKey, $website->getId()) : $configKey;
+        $cacheKey  = $website ? sprintf('%s.%s', $configKey, $website->getId()) : $configKey;
+        return UniversalCacheKeyGenerator::normalizeCacheKey($cacheKey);
     }
 
     private function isLocalizedCanonicalUrlsEnabled(): bool

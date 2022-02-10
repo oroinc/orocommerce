@@ -25,7 +25,7 @@ services:
             - [addProvider, ['@oro_product.provider.product_image_placeholder.default']]
 
     oro_product.provider.product_image_placeholder.cache:
-        parent: oro_cache.array_cache
+        parent: oro.cache.adapter.array
         public: false
 
     oro_product.provider.product_image_placeholder.cache_decorator:
