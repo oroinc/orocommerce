@@ -664,7 +664,8 @@ services:
         arguments:
             - '@oro_product.datagrid_theme_helper'
             - '@oro_product.provider.product_image_placeholder'
-            - '@oro_attachment.tools.webp_configuration'
+        calls:
+            - ['setUrlHelper', ['@oro_ui.tools.url_helper']]
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
             - { name: kernel.event_listener, event: oro_datagrid.search_datasource.result.after.frontend-product-search-grid, method: onResultAfter }
@@ -675,6 +676,8 @@ services:
             - '@oro_product.datagrid_theme_helper'
             - '@oro_product.provider.product_image_placeholder'
             - '@oro_attachment.tools.webp_configuration'
+        calls:
+            - ['setUrlHelper', ['@oro_ui.tools.url_helper']]
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
             - { name: kernel.event_listener, event: oro_datagrid.search_datasource.result.after.frontend-product-search-grid, method: onResultAfter }
@@ -731,6 +734,8 @@ services:
         arguments:
             - '@oro_product.provider.product_image_placeholder'
             - '@oro_attachment.tools.webp_configuration'
+        calls:
+            - ['setUrlHelper', ['@oro_ui.tools.url_helper']]
         tags:
             - { name: kernel.event_listener, event: oro_product.product_list.build_query, method: onBuildQuery, priority: 10 }
             - { name: kernel.event_listener, event: oro_product.product_list.build_result, method: onBuildResult, priority: 10 }

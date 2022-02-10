@@ -10,6 +10,7 @@ use Oro\Bundle\LayoutBundle\Provider\Image\ImagePlaceholderProviderInterface;
 use Oro\Bundle\LocaleBundle\Datagrid\Formatter\Property\LocalizedValueProperty;
 use Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
 use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
+use Oro\Bundle\UIBundle\Tools\UrlHelper;
 
 /**
  * Prepare product items based on product grid view option
@@ -22,7 +23,10 @@ class FrontendProductDatagridListener
     private const COLUMN_IMAGE = 'image';
 
     private DataGridThemeHelper $themeHelper;
+
     private ImagePlaceholderProviderInterface $imagePlaceholderProvider;
+
+    private ?UrlHelper $urlHelper = null;
 
     public function __construct(
         DataGridThemeHelper $themeHelper,
@@ -30,6 +34,11 @@ class FrontendProductDatagridListener
     ) {
         $this->themeHelper = $themeHelper;
         $this->imagePlaceholderProvider = $imagePlaceholderProvider;
+    }
+
+    public function setUrlHelper(?UrlHelper $urlHelper): void
+    {
+        $this->urlHelper = $urlHelper;
     }
 
     public function onPreBuild(PreBuild $event): void
@@ -133,20 +142,11 @@ class FrontendProductDatagridListener
                 return;
         }
 
-        $noImagePath = false;
         foreach ($records as $record) {
-            $hasProductImage = true;
-            $productImageUrl = $record->getValue('image_' . $imageFilter);
-            if (!$productImageUrl) {
-                if (false === $noImagePath) {
-                    $noImagePath = $this->imagePlaceholderProvider->getPath($imageFilter);
-                }
-                $hasProductImage = false;
-                $productImageUrl = $noImagePath;
-            }
+            $path = (string) $record->getValue('image_' . $imageFilter);
             $record->addData([
-                self::COLUMN_HAS_IMAGE => $hasProductImage,
-                self::COLUMN_IMAGE => $productImageUrl
+                self::COLUMN_HAS_IMAGE => $path !== '',
+                self::COLUMN_IMAGE => $this->getProductImageUrl($path, $imageFilter)
             ]);
         }
     }
@@ -164,5 +164,18 @@ class FrontendProductDatagridListener
                     : []
             ]);
         }
+    }
+
+    private function getProductImageUrl(string $path, string $placeholderFilter)
+    {
+        if ($path !== '') {
+            // The image URL obtained from the search index does not contain a base url
+            // so may not represent an absolute path.
+            $imageUrl = $this->urlHelper ? $this->urlHelper->getAbsolutePath($path) : $path;
+        } else {
+            $imageUrl = $this->imagePlaceholderProvider->getPath($placeholderFilter);
+        }
+
+        return $imageUrl;
     }
 }
