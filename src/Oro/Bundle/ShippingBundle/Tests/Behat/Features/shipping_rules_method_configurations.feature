@@ -1,5 +1,6 @@
 @regression
 @ticket-BB-15402
+@waf-skip
 @fixture-OroLocaleBundle:ZuluLocalization.yml
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 Feature: Shipping rules method configurations

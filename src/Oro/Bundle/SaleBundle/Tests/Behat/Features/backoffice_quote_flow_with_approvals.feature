@@ -3,6 +3,7 @@
 @ticket-BB-11080
 @ticket-BB-12075
 @automatically-ticket-tagged
+@waf-skip
 @fixture-OroSaleBundle:QuoteBackofficeApprovalsFixture.yml
 Feature: Backoffice Quote Flow with Approvals
   In order to edit quote internal statuses and aprove quotes after price changes
