@@ -26,7 +26,7 @@ Feature: Product with fractional prices view
   Scenario: Filter product by fractional price
     When I set range filter "Price" as min value "10,55"
     Then should see filter hints in frontend grid:
-      | Price: after 10,55 / ea |
+      | Price: greater than 10,55 / ea |
     And I should see "Product 1"
     And I should see "12,99 $" in the "Product Price Main" element
     And I should see "15,99 $" in the "Product Price Listed" element
