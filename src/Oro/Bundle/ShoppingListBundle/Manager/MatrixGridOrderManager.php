@@ -2,9 +2,10 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Manager;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -18,34 +19,26 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
  */
 class MatrixGridOrderManager
 {
-    /**
-     * @var PropertyAccessor
-     */
-    private $propertyAccessor;
-
-    /**
-     * @var ProductVariantAvailabilityProvider
-     */
-    private $variantAvailability;
-
-    /**
-     * @var EmptyMatrixGridInterface
-     */
-    private $emptyMatrixGridManager;
+    private PropertyAccessor $propertyAccessor;
+    private ProductVariantAvailabilityProvider $variantAvailability;
+    private EmptyMatrixGridInterface $emptyMatrixGridManager;
+    private ManagerRegistry $doctrine;
 
     /**
      * @var array|MatrixCollection[]
      */
-    private $collectionCache = [];
+    private array $collectionCache = [];
 
     public function __construct(
         PropertyAccessor $propertyAccessor,
         ProductVariantAvailabilityProvider $variantAvailability,
-        EmptyMatrixGridInterface $emptyMatrixGridManager
+        EmptyMatrixGridInterface $emptyMatrixGridManager,
+        ManagerRegistry $doctrine
     ) {
         $this->propertyAccessor = $propertyAccessor;
         $this->variantAvailability = $variantAvailability;
         $this->emptyMatrixGridManager = $emptyMatrixGridManager;
+        $this->doctrine = $doctrine;
     }
 
     /**
@@ -217,8 +210,9 @@ class MatrixGridOrderManager
         $availableVariants = [];
 
         $variants = $this->variantAvailability->getSimpleProductsByVariantFields($product);
+        $variantIdsSupportUnit = $this->getProductIdsSupportUnit($variants, $unit);
         foreach ($variants as $variant) {
-            if (!$this->doSimpleProductSupportsUnitPrecision($variant, $unit)) {
+            if (false === \in_array($variant->getId(), $variantIdsSupportUnit, true)) {
                 continue;
             }
 
@@ -242,20 +236,12 @@ class MatrixGridOrderManager
         return $availableVariants;
     }
 
-    /**
-     * @param Product $product
-     * @param ProductUnit $unit
-     * @return bool
-     */
-    private function doSimpleProductSupportsUnitPrecision(Product $product, ProductUnit $unit)
+    private function getProductIdsSupportUnit(array $products, ProductUnit $unit): array
     {
-        $productUnits = $product->getUnitPrecisions()->map(
-            function (ProductUnitPrecision $unitPrecision) {
-                return $unitPrecision->getUnit();
-            }
-        );
+        /** @var ProductUnitRepository $productUnitRepository */
+        $productUnitRepository = $this->doctrine->getRepository(ProductUnit::class);
 
-        return $productUnits->contains($unit);
+        return $productUnitRepository->getProductIdsSupportUnit($products, $unit);
     }
 
     /**
