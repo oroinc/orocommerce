@@ -2,8 +2,11 @@ import GrapesJS from 'grapesjs';
 import $ from 'jquery';
 import ContentIsolation, {escapeWrapper, stripRestrictedAttrs} from './components/content-isolation';
 
-export default GrapesJS.plugins.add('grapesjs-style-isolation', (editor, options) => {
-    const contentIsolation = new ContentIsolation();
+export default GrapesJS.plugins.add('grapesjs-style-isolation', (editor, {editorView}) => {
+    const state = editorView.getState();
+    const contentIsolation = new ContentIsolation({scopeId: state.getIsolateScopeId()});
+
+    editor.once('load', () => state.set('isolateScopeId', contentIsolation.randomId));
 
     editor.getIsolatedHtml = content => {
         const wrapper = editor.getWrapper();
@@ -39,6 +42,14 @@ export default GrapesJS.plugins.add('grapesjs-style-isolation', (editor, options
     };
 
     editor.setIsolatedHtml = html => escapeWrapper(html);
+
+    editor.getIsolatedCssFromString = css => {
+        return contentIsolation.isolateCss(css);
+    };
+
+    editor.getUnIsolatedCssFromString = css => {
+        return contentIsolation.escapeCssIsolation(css);
+    };
 
     editor.getPureStyle = (css = '') => {
         if (!css.length) {

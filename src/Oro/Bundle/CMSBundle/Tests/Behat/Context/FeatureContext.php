@@ -37,6 +37,66 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
+     * Example: When I import content "Content" to "CMS Page Content" WYSIWYG editor
+     *
+     * @When /^(?:|I )import content "(?P<text>(?:[^"]|\\")*)" to "(?P<wysiwygElementName>[^"]+)" WYSIWYG editor$/
+     * @param string $text
+     * @param string $wysiwygElementName
+     */
+    public function importContentToWysiwygEditor($text, $wysiwygElementName)
+    {
+        $wysiwygContentElement = $this->createElement($wysiwygElementName);
+        self::assertTrue($wysiwygContentElement->isIsset(), sprintf(
+            'WYSIWYG element "%s" not found on page',
+            $wysiwygElementName
+        ));
+
+        $importDialog = $this->createElement('Import Button');
+        $importDialog->click();
+
+        /** @var WysiwygCodeTypeBlockEditor $editor */
+        $editor = $this->createElement('WysiwygCodeTypeBlockEditor');
+        self::assertNotNull($editor, 'Wysiwyg `code` type block editor not found!');
+
+        $editor->setValue(stripslashes($text));
+        $this->waitForAjax();
+        $editor->findButton('Import')->click();
+    }
+
+    /**
+     * @codingStandardsIgnoreStart
+     *
+     * Example: When I should see imported "Content" content in "CMS Page Content" WYSIWYG editor
+     *
+     * @When /^(?:|I )should see imported "(?P<text>(?:[^"]|\\")*)" content in "(?P<wysiwygElementName>[^"]+)" WYSIWYG editor$/
+     * @param string $text
+     * @param string $wysiwygElementName
+     * @param string $importDialogName
+     *
+     * @codingStandardsIgnoreEnd
+     */
+    public function shouldSeeImportedContent($text, $wysiwygElementName, $importDialogName = "Import Button")
+    {
+        $wysiwygContentElement = $this->createElement($wysiwygElementName);
+        self::assertTrue($wysiwygContentElement->isIsset(), sprintf(
+            'WYSIWYG element "%s" not found on page',
+            $wysiwygElementName
+        ));
+
+        $importDialog = $this->createElement($importDialogName);
+        $importDialog->click();
+
+        /** @var WysiwygCodeTypeBlockEditor $editor */
+        $editor = $this->createElement('WysiwygCodeTypeBlockEditor');
+        self::assertNotNull($editor, 'Wysiwyg `code` type block editor not found!');
+
+        $importedContent = str_replace("\n", "", $editor->getValue());
+        self::assertEquals(stripslashes($text), $importedContent);
+
+        $editor->findButton('Import')->click();
+    }
+
+    /**
      * Example: I open code editor of code type block containing the text "Same text 1"
      *
      * @When /^(?:|I )open code editor of code type block containing the text "(?P<value>(?:[^"]|\\")*)"$/
