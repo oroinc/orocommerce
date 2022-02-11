@@ -289,7 +289,7 @@ function parseNodes(el, config, ct = '', parent = {}) {
 export default function ContentParser(editor) {
     const cTypes = editor.DomComponents.componentTypes;
 
-    editor.Parser.parseHtml = html => htmlParser(html, editor.getConfig(), cTypes, editor.Parser.parseCss);
+    editor.Parser.parseHtml = html => htmlParser(html, editor.getConfig(), cTypes, editor.Parser.getConfig().parserCss);
 
     editor.Parser.parseTextBlockContentFromString = html => {
         return editor.Parser.parseHtml(`<div>${html}</div>`).html[0].components;
