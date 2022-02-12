@@ -10,7 +10,6 @@ use Oro\Bundle\FormBundle\Form\Extension\AdditionalAttrExtension;
 use Oro\Bundle\FormBundle\Tests\Unit\Stub\StripTagsExtensionStub;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\RuleBundle\Entity\Rule;
-use Oro\Bundle\RuleBundle\Validator\Constraints\ExpressionLanguageSyntax;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
@@ -27,9 +26,7 @@ use Oro\Bundle\ShippingBundle\Tests\Unit\Form\EventSubscriber\MethodConfigCollec
 use Oro\Bundle\ShippingBundle\Tests\Unit\Form\EventSubscriber\MethodConfigSubscriberProxy;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Form\EventSubscriber\MethodTypeConfigCollectionSubscriberProxy;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingMethodProviderStub;
-use Oro\Bundle\ShippingBundle\Validator\Constraints\EnabledTypeConfigsValidationGroup;
 use Oro\Bundle\ShippingBundle\Validator\Constraints\EnabledTypeConfigsValidationGroupValidator;
-use Oro\Bundle\ShippingBundle\Validator\Constraints\ShippingRuleEnable;
 use Oro\Bundle\ShippingBundle\Validator\Constraints\ShippingRuleEnableValidator;
 use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
@@ -183,23 +180,20 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritdoc}
      */
-    protected function getValidators()
+    protected function getValidators(): array
     {
-        $enabledTypeConfigsValidationGroup = new EnabledTypeConfigsValidationGroup();
-        $shippingRuleEnable = new ShippingRuleEnable();
-        $expressionLanguageSyntax = new ExpressionLanguageSyntax();
-
         return [
-            $enabledTypeConfigsValidationGroup->validatedBy() => new EnabledTypeConfigsValidationGroupValidator(),
-            $shippingRuleEnable->validatedBy() => $this->createMock(ShippingRuleEnableValidator::class),
-            $expressionLanguageSyntax->validatedBy() => $this->createMock(ExpressionLanguageSyntaxValidator::class),
+            'oro_shipping_enabled_type_config_validation_group_validator' =>
+                new EnabledTypeConfigsValidationGroupValidator(),
+            ShippingRuleEnableValidator::class => $this->createMock(ShippingRuleEnableValidator::class),
+            ExpressionLanguageSyntaxValidator::class => $this->createMock(ExpressionLanguageSyntaxValidator::class),
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getExtensions()
+    protected function getExtensions(): array
     {
         $roundingService = $this->createMock(RoundingServiceInterface::class);
         $roundingService->expects($this->any())

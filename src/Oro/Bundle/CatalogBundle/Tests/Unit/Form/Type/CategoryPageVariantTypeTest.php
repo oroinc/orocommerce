@@ -10,7 +10,6 @@ use Oro\Bundle\CatalogBundle\Form\Type\CategoryTreeType;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
-use Oro\Bundle\LocaleBundle\Validator\Constraints\NotBlankDefaultLocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Validator\Constraints\NotBlankDefaultLocalizedFallbackValueValidator;
 use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -24,21 +23,17 @@ class CategoryPageVariantTypeTest extends FormIntegrationTestCase
 {
     use EntityTrait;
 
-    /** @var array|Category[] */
-    protected static $categories = [];
+    /** @var Category[] */
+    private static $categories = [];
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
-        /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject $configProvider */
         $configProvider = $this->createMock(ConfigProvider::class);
-
-        /** @var Translator|\PHPUnit\Framework\MockObject\MockObject $translator */
         $translator = $this->createMock(Translator::class);
 
-        /** @var AbstractTreeHandler|\PHPUnit\Framework\MockObject\MockObject $treeHandler */
         $treeHandler = $this->createMock(AbstractTreeHandler::class);
         $treeHandler->expects($this->any())
             ->method('createTree')
@@ -80,6 +75,17 @@ class CategoryPageVariantTypeTest extends FormIntegrationTestCase
         ];
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    protected function getValidators(): array
+    {
+        return array_merge(parent::getValidators(), [
+            'oro_locale.default_localized_fallback_value.not_blank' =>
+                new NotBlankDefaultLocalizedFallbackValueValidator()
+        ]);
+    }
+
     public function testSubmit()
     {
         $form = $this->factory->create(CategoryPageVariantType::class, [], []);
@@ -104,11 +110,7 @@ class CategoryPageVariantTypeTest extends FormIntegrationTestCase
         );
     }
 
-    /**
-     * @param int $id
-     * @return Category
-     */
-    protected function getCategory($id)
+    private function getCategory(int $id): Category
     {
         if (!array_key_exists($id, self::$categories)) {
             /** @var Category $category */
@@ -142,19 +144,5 @@ class CategoryPageVariantTypeTest extends FormIntegrationTestCase
     {
         $type = new CategoryPageVariantType();
         $this->assertEquals(CategoryPageVariantType::NAME, $type->getBlockPrefix());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function getValidators()
-    {
-        $validators = [
-            NotBlankDefaultLocalizedFallbackValue::class => new NotBlankDefaultLocalizedFallbackValue(),
-            'oro_locale.default_localized_fallback_value.not_blank'
-            => new NotBlankDefaultLocalizedFallbackValueValidator()
-        ];
-
-        return array_merge(parent::getValidators(), $validators);
     }
 }
