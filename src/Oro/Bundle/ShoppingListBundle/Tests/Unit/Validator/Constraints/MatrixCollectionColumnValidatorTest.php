@@ -10,13 +10,20 @@ use Oro\Bundle\ShoppingListBundle\Model\MatrixCollectionColumn as MatrixCollecti
 use Oro\Bundle\ShoppingListBundle\Validator\Constraints\MatrixCollectionColumn;
 use Oro\Bundle\ShoppingListBundle\Validator\Constraints\MatrixCollectionColumnValidator;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class MatrixCollectionColumnValidatorTest extends ConstraintValidatorTestCase
 {
-    protected function createValidator()
+    protected function createValidator(): MatrixCollectionColumnValidator
     {
         return new MatrixCollectionColumnValidator();
+    }
+
+    public function testGetTargets()
+    {
+        $constraint = new MatrixCollectionColumn();
+        self::assertEquals(Constraint::CLASS_CONSTRAINT, $constraint->getTargets());
     }
 
     public function testValidateEmptyProduct()

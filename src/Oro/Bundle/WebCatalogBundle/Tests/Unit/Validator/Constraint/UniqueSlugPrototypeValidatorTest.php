@@ -12,47 +12,42 @@ use Oro\Bundle\WebCatalogBundle\Validator\Constraint\UniqueSlugPrototypeValidato
 use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
-class UniqueSlugPrototypeTest extends ConstraintValidatorTestCase
+class UniqueSlugPrototypeValidatorTest extends ConstraintValidatorTestCase
 {
-    /**
-     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $registry;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
+        $this->registry = $this->createMock(ManagerRegistry::class);
         parent::setUp();
-
-        $this->constraint = new UniqueSlugPrototype();
-        $this->context = $this->createContext();
-        $this->validator = $this->createValidator();
-        $this->validator->initialize($this->context);
     }
 
-    protected function createValidator()
+    protected function createValidator(): UniqueSlugPrototypeValidator
     {
-        $this->registry = $this->createMock(ManagerRegistry::class);
-
         return new UniqueSlugPrototypeValidator($this->registry);
+    }
+
+    private function createContentNode(int $id): ContentNode
+    {
+        $node = new ContentNode();
+        ReflectionUtil::setId($node, $id);
+
+        return $node;
     }
 
     public function testValidateNull()
     {
-        $value = null;
-
         $this->registry->expects($this->never())
             ->method($this->anything());
 
-        $this->validator->validate($value, $this->constraint);
+        $constraint = new UniqueSlugPrototype();
+        $this->validator->validate(null, $constraint);
         $this->assertNoViolation();
     }
 
     public function testValidateRootNode()
     {
-        /** @var ContentNode $value */
         $value = $this->createContentNode(1);
         $slugPrototype = (new LocalizedFallbackValue())->setString('test1');
         $value->addSlugPrototype($slugPrototype);
@@ -60,24 +55,22 @@ class UniqueSlugPrototypeTest extends ConstraintValidatorTestCase
         $this->registry->expects($this->never())
             ->method($this->anything());
 
-        $this->validator->validate($value, $this->constraint);
+        $constraint = new UniqueSlugPrototype();
+        $this->validator->validate($value, $constraint);
         $this->assertNoViolation();
     }
 
     public function testValidateValidForPersistedNode()
     {
-        /** @var ContentNode $parentNode */
         $parentNode = $this->createContentNode(1);
         $slugPrototype1 = (new LocalizedFallbackValue())->setString('test');
         $parentNode->addSlugPrototype($slugPrototype1);
 
-        /** @var ContentNode $firstChild */
         $firstChild = $this->createContentNode(2);
         $slugPrototype2 = (new LocalizedFallbackValue())->setString('test_child');
         $firstChild->addSlugPrototype($slugPrototype2);
         $firstChild->setParentNode($parentNode);
 
-        /** @var ContentNode $value */
         $value = $this->createContentNode(3);
         $slugPrototype2 = (new LocalizedFallbackValue())->setString('test1');
         $value->addSlugPrototype($slugPrototype2);
@@ -99,24 +92,22 @@ class UniqueSlugPrototypeTest extends ConstraintValidatorTestCase
             ->with(ContentNode::class)
             ->willReturn($em);
 
-        $this->validator->validate($value, $this->constraint);
+        $constraint = new UniqueSlugPrototype();
+        $this->validator->validate($value, $constraint);
         $this->assertNoViolation();
     }
 
     public function testValidateValidForNewNode()
     {
-        /** @var ContentNode $parentNode */
         $parentNode = $this->createContentNode(1);
         $slugPrototype1 = (new LocalizedFallbackValue())->setString('test');
         $parentNode->addSlugPrototype($slugPrototype1);
 
-        /** @var ContentNode $firstChild */
         $firstChild = $this->createContentNode(2);
         $slugPrototype2 = (new LocalizedFallbackValue())->setString('test_child');
         $firstChild->addSlugPrototype($slugPrototype2);
         $firstChild->setParentNode($parentNode);
 
-        /** @var ContentNode $value */
         $value = new ContentNode();
         $slugPrototype2 = (new LocalizedFallbackValue())->setString('test1');
         $value->addSlugPrototype($slugPrototype2);
@@ -138,24 +129,22 @@ class UniqueSlugPrototypeTest extends ConstraintValidatorTestCase
             ->with(ContentNode::class)
             ->willReturn($em);
 
-        $this->validator->validate($value, $this->constraint);
+        $constraint = new UniqueSlugPrototype();
+        $this->validator->validate($value, $constraint);
         $this->assertNoViolation();
     }
 
     public function testValidateInvalid()
     {
-        /** @var ContentNode $parentNode */
         $parentNode = $this->createContentNode(1);
         $slugPrototype1 = (new LocalizedFallbackValue())->setString('test');
         $parentNode->addSlugPrototype($slugPrototype1);
 
-        /** @var ContentNode $firstChild */
         $firstChild = $this->createContentNode(2);
         $slugPrototype2 = (new LocalizedFallbackValue())->setString('test1');
         $firstChild->addSlugPrototype($slugPrototype2);
         $firstChild->setParentNode($parentNode);
 
-        /** @var ContentNode $value */
         $value = new ContentNode();
         $slugPrototype2 = (new LocalizedFallbackValue())->setString('Test1');
         $value->addSlugPrototype($slugPrototype2);
@@ -177,18 +166,11 @@ class UniqueSlugPrototypeTest extends ConstraintValidatorTestCase
             ->with(ContentNode::class)
             ->willReturn($em);
 
-        $this->validator->validate($value, $this->constraint);
+        $constraint = new UniqueSlugPrototype();
+        $this->validator->validate($value, $constraint);
 
-        $this->buildViolation('oro.webcatalog.contentnode.slug_prototype.unique.message')
+        $this->buildViolation($constraint->message)
             ->atPath('property.path.slugPrototypes[0]')
             ->assertRaised();
-    }
-
-    private function createContentNode(int $id): ContentNode
-    {
-        $node = new ContentNode();
-        ReflectionUtil::setId($node, $id);
-
-        return $node;
     }
 }

@@ -9,36 +9,23 @@ use Oro\Bundle\ProductBundle\Validator\Constraints\PrimaryProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Validator\Constraints\PrimaryProductUnitPrecisionValidator;
 use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\Validator\Constraints\NotNull;
+use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class PrimaryProductUnitPrecisionValidatorTest extends ConstraintValidatorTestCase
 {
-    /**
-     * {@inheritDoc}
-     */
-    protected function createValidator()
+    protected function createValidator(): PrimaryProductUnitPrecisionValidator
     {
         return new PrimaryProductUnitPrecisionValidator();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function createContext()
-    {
-        $this->constraint = new PrimaryProductUnitPrecision();
-        $this->propertyPath = '';
-
-        return parent::createContext();
-    }
-
     public function testValidateWithWrongConstraint(): void
     {
-        $this->expectException(\Symfony\Component\Validator\Exception\UnexpectedTypeException::class);
+        $this->expectException(UnexpectedTypeException::class);
         $this->expectExceptionMessage(\sprintf(
             'Expected argument of type "%s", "%s" given',
-            \Oro\Bundle\ProductBundle\Validator\Constraints\PrimaryProductUnitPrecision::class,
-            \Symfony\Component\Validator\Constraints\NotNull::class
+            PrimaryProductUnitPrecision::class,
+            NotNull::class
         ));
 
         $constraint = new NotNull();
@@ -47,19 +34,21 @@ class PrimaryProductUnitPrecisionValidatorTest extends ConstraintValidatorTestCa
 
     public function testValidateWithNotTheProductUnitPrecisionEntity(): void
     {
-        $this->expectException(\Symfony\Component\Validator\Exception\UnexpectedTypeException::class);
+        $this->expectException(UnexpectedTypeException::class);
         $this->expectExceptionMessage(
             'Expected argument of type "Oro\Bundle\ProductBundle\Entity\Product", "stdClass" given'
         );
 
-        $this->validator->validate(new \stdClass(), $this->constraint);
+        $constraint = new PrimaryProductUnitPrecision();
+        $this->validator->validate(new \stdClass(), $constraint);
     }
 
     public function testValidateWithEmptyPrimaryProductUnitPrecision(): void
     {
         $value = new Product();
-        $this->validator->validate($value, $this->constraint);
 
+        $constraint = new PrimaryProductUnitPrecision();
+        $this->validator->validate($value, $constraint);
         $this->assertNoViolation();
     }
 
@@ -70,8 +59,8 @@ class PrimaryProductUnitPrecisionValidatorTest extends ConstraintValidatorTestCa
         ReflectionUtil::setId($precision, 23);
         $value->addUnitPrecision($precision);
 
-        $this->validator->validate($value, $this->constraint);
-
+        $constraint = new PrimaryProductUnitPrecision();
+        $this->validator->validate($value, $constraint);
         $this->assertNoViolation();
     }
 
@@ -83,8 +72,8 @@ class PrimaryProductUnitPrecisionValidatorTest extends ConstraintValidatorTestCa
         $precision->setUnit(new ProductUnit());
         $value->setPrimaryUnitPrecision($precision);
 
-        $this->validator->validate($value, $this->constraint);
-
+        $constraint = new PrimaryProductUnitPrecision();
+        $this->validator->validate($value, $constraint);
         $this->assertNoViolation();
     }
 
@@ -98,10 +87,11 @@ class PrimaryProductUnitPrecisionValidatorTest extends ConstraintValidatorTestCa
 
         $value->getUnitPrecisions()->clear();
 
-        $this->validator->validate($value, $this->constraint);
+        $constraint = new PrimaryProductUnitPrecision();
+        $this->validator->validate($value, $constraint);
 
-        $this->buildViolation($this->constraint->message)
-            ->atPath('unitPrecisions')
+        $this->buildViolation($constraint->message)
+            ->atPath('property.path.unitPrecisions')
             ->assertRaised();
     }
 }

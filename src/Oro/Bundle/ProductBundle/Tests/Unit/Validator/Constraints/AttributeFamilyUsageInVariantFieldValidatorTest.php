@@ -17,6 +17,7 @@ use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Validator\Constraints\AttributeFamilyUsageInVariantField;
 use Oro\Bundle\ProductBundle\Validator\Constraints\AttributeFamilyUsageInVariantFieldValidator;
 use Oro\Component\Testing\ReflectionUtil;
+use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class AttributeFamilyUsageInVariantFieldValidatorTest extends ConstraintValidatorTestCase
@@ -74,7 +75,7 @@ class AttributeFamilyUsageInVariantFieldValidatorTest extends ConstraintValidato
         parent::setUp();
     }
 
-    protected function createValidator()
+    protected function createValidator(): AttributeFamilyUsageInVariantFieldValidator
     {
         return new AttributeFamilyUsageInVariantFieldValidator(
             $this->attributeManager,
@@ -98,6 +99,12 @@ class AttributeFamilyUsageInVariantFieldValidatorTest extends ConstraintValidato
         $attributeGroupRelation->setEntityConfigFieldId($entityConfigFieldId);
 
         return $attributeGroupRelation;
+    }
+
+    public function testGetTargets()
+    {
+        $constraint = new AttributeFamilyUsageInVariantField();
+        self::assertEquals(Constraint::CLASS_CONSTRAINT, $constraint->getTargets());
     }
 
     public function testValidateUnsupportedClass()

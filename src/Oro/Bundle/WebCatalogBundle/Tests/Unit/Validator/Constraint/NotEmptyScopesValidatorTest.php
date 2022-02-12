@@ -11,63 +11,45 @@ use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebCatalogBundle\Provider\ScopeWebCatalogProvider;
 use Oro\Bundle\WebCatalogBundle\Validator\Constraint\NotEmptyScopes;
 use Oro\Bundle\WebCatalogBundle\Validator\Constraint\NotEmptyScopesValidator;
-use Oro\Component\Testing\Unit\EntityTrait;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
-use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
+use Oro\Component\Testing\ReflectionUtil;
+use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
-class NotEmptyScopesTest extends \PHPUnit\Framework\TestCase
+class NotEmptyScopesValidatorTest extends ConstraintValidatorTestCase
 {
-    use EntityTrait;
-
-    /**
-     * @var ScopeManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ScopeManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $scopeManager;
 
-    /**
-     * @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $context;
-
-    /**
-     * @var NotEmptyScopesValidator
-     */
-    protected $validator;
-
-    /**
-     * @var NotEmptyScopes
-     */
-    protected $constraint;
-
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->scopeManager = $this->createMock(ScopeManager::class);
-        $this->context = $this->createMock(ExecutionContextInterface::class);
-        $this->constraint = new NotEmptyScopes();
+        parent::setUp();
+    }
 
-        $this->validator = new NotEmptyScopesValidator($this->scopeManager);
-        $this->validator->initialize($this->context);
+    protected function createValidator(): NotEmptyScopesValidator
+    {
+        return new NotEmptyScopesValidator($this->scopeManager);
+    }
+
+    private function getScope(int $id): Scope
+    {
+        $scope = new Scope();
+        ReflectionUtil::setId($scope, $id);
+
+        return $scope;
     }
 
     public function testValidateNull()
     {
-        $value = null;
-        $this->context->expects($this->never())
-            ->method($this->anything());
-
-        $this->validator->validate($value, $this->constraint);
+        $constraint = new NotEmptyScopes();
+        $this->validator->validate(null, $constraint);
+        $this->assertNoViolation();
     }
 
     public function testValidateEmptyCollection()
     {
-        $value = new ArrayCollection();
-        $this->context->expects($this->never())
-            ->method($this->anything());
-
-        $this->validator->validate($value, $this->constraint);
+        $constraint = new NotEmptyScopes();
+        $this->validator->validate(new ArrayCollection(), $constraint);
+        $this->assertNoViolation();
     }
 
     /**
@@ -83,10 +65,9 @@ class NotEmptyScopesTest extends \PHPUnit\Framework\TestCase
             )
             ->willReturn($defaultScope);
 
-        $this->context->expects($this->never())
-            ->method($this->anything());
-
-        $this->validator->validate($value, $this->constraint);
+        $constraint = new NotEmptyScopes();
+        $this->validator->validate($value, $constraint);
+        $this->assertNoViolation();
     }
 
     public function validValuesDataProvider(): array
@@ -95,12 +76,9 @@ class NotEmptyScopesTest extends \PHPUnit\Framework\TestCase
         $contentNode = new ContentNode();
         $contentNode->setWebCatalog($webCatalog);
 
-        /** @var Scope $scope1 */
-        $scope1 = $this->getEntity(Scope::class, ['id' => 1]);
-        /** @var Scope $scope2 */
-        $scope2 = $this->getEntity(Scope::class, ['id' => 2]);
-        /** @var Scope $defaultScope */
-        $defaultScope = $this->getEntity(Scope::class, ['id' => 3]);
+        $scope1 = $this->getScope(1);
+        $scope2 = $this->getScope(2);
+        $defaultScope = $this->getScope(3);
 
         return [
             'only default variant without default scope' => [
@@ -142,16 +120,13 @@ class NotEmptyScopesTest extends \PHPUnit\Framework\TestCase
         $contentNode = new ContentNode();
         $contentNode->setWebCatalog($webCatalog);
 
-        /** @var Scope $scope1 */
-        $scope1 = $this->getEntity(Scope::class, ['id' => 1]);
-        /** @var Scope $defaultScope */
-        $defaultScope = $this->getEntity(Scope::class, ['id' => 3]);
+        $scope1 = $this->getScope(1);
+        $defaultScope = $this->getScope(3);
 
         $values = [
             (new ContentVariant())->addScope($scope1)->setNode($contentNode)->setDefault(true),
             (new ContentVariant())->addScope($defaultScope)->setNode($contentNode),
         ];
-        $value = new ArrayCollection($values);
 
         $this->scopeManager->expects($this->once())
             ->method('findOrCreate')
@@ -161,18 +136,11 @@ class NotEmptyScopesTest extends \PHPUnit\Framework\TestCase
             )
             ->willReturn($defaultScope);
 
-        $constraintBuilder = $this->createMock(ConstraintViolationBuilderInterface::class);
-        $constraintBuilder->expects($this->once())
-            ->method('atPath')
-            ->with('[1].scopes')
-            ->willReturnSelf();
-        $constraintBuilder->expects($this->once())
-            ->method('addViolation');
-        $this->context->expects($this->once())
-            ->method('buildViolation')
-            ->with($this->constraint->message)
-            ->willReturn($constraintBuilder);
+        $constraint = new NotEmptyScopes();
+        $this->validator->validate(new ArrayCollection($values), $constraint);
 
-        $this->validator->validate($value, $this->constraint);
+        $this->buildViolation($constraint->message)
+            ->atPath('property.path[1].scopes')
+            ->assertRaised();
     }
 }

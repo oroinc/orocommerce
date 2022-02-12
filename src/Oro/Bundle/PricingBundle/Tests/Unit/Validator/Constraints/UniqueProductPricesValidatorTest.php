@@ -11,63 +11,19 @@ use Oro\Bundle\PricingBundle\Validator\Constraints\UniqueProductPricesValidator;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Component\Testing\ReflectionUtil;
-use Symfony\Component\Validator\Constraint;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Component\Validator\Exception\UnexpectedTypeException;
+use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
-class UniqueProductPricesTest extends \PHPUnit\Framework\TestCase
+class UniqueProductPricesValidatorTest extends ConstraintValidatorTestCase
 {
-    /**
-     * @var UniqueProductPrices
-     */
-    protected $constraint;
-
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|ExecutionContextInterface
-     */
-    protected $context;
-
-    /**
-     * @var UniqueProductPricesValidator
-     */
-    protected $validator;
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function setUp(): void
+    protected function createValidator(): UniqueProductPricesValidator
     {
-        $this->constraint = new UniqueProductPrices();
-        $this->context = $this->createMock(ExecutionContextInterface::class);
-
-        $this->validator = new UniqueProductPricesValidator();
-        $this->validator->initialize($this->context);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function tearDown(): void
-    {
-        unset($this->constraint, $this->context, $this->validator);
-    }
-
-    public function testConfiguration()
-    {
-        $this->assertEquals('oro_pricing_unique_product_prices_validator', $this->constraint->validatedBy());
-        $this->assertEquals(Constraint::PROPERTY_CONSTRAINT, $this->constraint->getTargets());
-    }
-
-    public function testGetDefaultOption()
-    {
-        $this->assertNull($this->constraint->getDefaultOption());
+        return new UniqueProductPricesValidator();
     }
 
     public function testValidateWithoutDuplications()
     {
-        $this->context->expects($this->never())
-            ->method('addViolation');
-
-        $data = new ArrayCollection([
+        $value = new ArrayCollection([
             $this->createPriceList(1, 10, 'kg', 'USD'),
             $this->createPriceList(2, 10, 'kg', 'USD'),
             $this->createPriceList(1, 100, 'kg', 'USD'),
@@ -76,54 +32,57 @@ class UniqueProductPricesTest extends \PHPUnit\Framework\TestCase
             $this->createPriceList(1, 10, 'kg', 'EUR')
         ]);
 
-        $this->validator->validate($data, $this->constraint);
+        $constraint = new UniqueProductPrices();
+        $this->validator->validate($value, $constraint);
+        $this->assertNoViolation();
     }
 
     public function testValidateWithDuplications()
     {
-        $this->context->expects($this->once())
-            ->method('addViolation')
-            ->with($this->constraint->message);
-
-        $data = new ArrayCollection([
+        $value = new ArrayCollection([
             $this->createPriceList(1, 10, 'kg', 'USD'),
             $this->createPriceList(1, 10, 'kg', 'USD')
         ]);
 
-        $this->validator->validate($data, $this->constraint);
+        $constraint = new UniqueProductPrices();
+        $this->validator->validate($value, $constraint);
+
+        $this->buildViolation($constraint->message)
+            ->assertRaised();
     }
 
     public function testUnexpectedValue()
     {
-        $this->expectException(\Symfony\Component\Validator\Exception\UnexpectedTypeException::class);
+        $this->expectException(UnexpectedTypeException::class);
         $this->expectExceptionMessage(
             'Expected argument of type "array or Traversable and ArrayAccess", "string" given'
         );
 
-        $data = 'string';
-        $this->validator->validate($data, $this->constraint);
+        $value = 'string';
+
+        $constraint = new UniqueProductPrices();
+        $this->validator->validate($value, $constraint);
     }
 
     public function testUnexpectedItem()
     {
-        $this->expectException(\Symfony\Component\Validator\Exception\UnexpectedTypeException::class);
+        $this->expectException(UnexpectedTypeException::class);
         $this->expectExceptionMessage(
             'argument of type "Oro\Bundle\PricingBundle\Entity\ProductPrice", "stdClass" given'
         );
 
-        $data = new ArrayCollection([ new \stdClass()]);
-        $this->validator->validate($data, $this->constraint);
+        $value = new ArrayCollection([ new \stdClass()]);
+
+        $constraint = new UniqueProductPrices();
+        $this->validator->validate($value, $constraint);
     }
 
-    /**
-     * @param integer $priceListId
-     * @param integer $quantity
-     * @param string $unitCode
-     * @param string $currency
-     * @return ProductPrice
-     */
-    protected function createPriceList($priceListId, $quantity, $unitCode, $currency = null)
-    {
+    private function createPriceList(
+        int $priceListId,
+        int $quantity,
+        string $unitCode,
+        string $currency = null
+    ): ProductPrice {
         $unit = new ProductUnit();
         $unit->setCode($unitCode);
 

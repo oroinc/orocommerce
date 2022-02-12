@@ -12,7 +12,6 @@ use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\PricingBundle\Validator\Constraints\UniqueEntity;
 use Oro\Bundle\PricingBundle\Validator\Constraints\UniqueEntityValidator;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class UniqueEntityValidatorTest extends ConstraintValidatorTestCase
@@ -30,22 +29,9 @@ class UniqueEntityValidatorTest extends ConstraintValidatorTestCase
         parent::setUp();
     }
 
-    protected function createValidator()
+    protected function createValidator(): UniqueEntityValidator
     {
         return new UniqueEntityValidator($this->registry, $this->shardManager);
-    }
-
-    public function testConfiguration()
-    {
-        $constraint = new UniqueEntity();
-        $this->assertEquals('oro_pricing_unique_entity_validator', $constraint->validatedBy());
-        $this->assertEquals(Constraint::CLASS_CONSTRAINT, $constraint->getTargets());
-    }
-
-    public function testGetDefaultOption()
-    {
-        $constraint = new UniqueEntity();
-        $this->assertNull($constraint->getDefaultOption());
     }
 
     public function testNotExpectedValueException()

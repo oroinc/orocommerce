@@ -30,7 +30,7 @@ class ProductBySkuValidatorTest extends ConstraintValidatorTestCase
         parent::setUp();
     }
 
-    protected function createValidator()
+    protected function createValidator(): ProductBySkuValidator
     {
         return new ProductBySkuValidator($this->registry, $this->aclHelper);
     }
@@ -40,7 +40,7 @@ class ProductBySkuValidatorTest extends ConstraintValidatorTestCase
         $this->registry->expects($this->never())
             ->method('getRepository');
 
-        $constraint = $this->createMock(ProductBySku::class);
+        $constraint = new ProductBySku();
         $this->validator->validate('', $constraint);
 
         $this->assertNoViolation();
@@ -119,7 +119,7 @@ class ProductBySkuValidatorTest extends ConstraintValidatorTestCase
 
         $this->setRoot($form);
         $this->setPropertyPath('[products]');
-        $constraint = $this->createMock(ProductBySku::class);
+        $constraint = new ProductBySku();
         $this->validator->validate($sku, $constraint);
 
         if (null === $product) {
