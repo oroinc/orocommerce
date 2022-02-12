@@ -4,7 +4,6 @@ namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Validator\Constraint;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SecurityBundle\Owner\EntityOwnerAccessor;
 use Oro\Bundle\WebCatalogBundle\ContentVariantType\ContentVariantTypeRegistry;
@@ -13,81 +12,66 @@ use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebCatalogBundle\Tests\Unit\EventListener\ContentVariantWithEntity;
 use Oro\Bundle\WebCatalogBundle\Validator\Constraint\NotEmptyScopes;
-use Oro\Bundle\WebCatalogBundle\Validator\Constraint\SameOrganization;
 use Oro\Bundle\WebCatalogBundle\Validator\Constraint\SameOrganizationValidator;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\WebCatalog\ContentVariantTypeInterface;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
-use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
+use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
-class SameOrganizationTest extends \PHPUnit\Framework\TestCase
+class SameOrganizationValidatorTest extends ConstraintValidatorTestCase
 {
-    use EntityTrait;
-
-    /**
-     * @var ContentVariantTypeRegistry|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ContentVariantTypeRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $typeRegistry;
 
-    /**
-     * @var EntityOwnerAccessor|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var EntityOwnerAccessor|\PHPUnit\Framework\MockObject\MockObject */
     private $entityOwnerAccessor;
 
-    /**
-     * @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $context;
-
-    /**
-     * @var SameOrganizationValidator
-     */
-    protected $validator;
-
-    /**
-     * @var SameOrganization
-     */
-    protected $constraint;
-
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->typeRegistry = $this->createMock(ContentVariantTypeRegistry::class);
         $this->entityOwnerAccessor = $this->createMock(EntityOwnerAccessor::class);
-        $this->context = $this->createMock(ExecutionContextInterface::class);
-        $this->constraint = new NotEmptyScopes();
+        parent::setUp();
+    }
 
-        $this->validator = new SameOrganizationValidator($this->typeRegistry, $this->entityOwnerAccessor);
-        $this->validator->initialize($this->context);
+    protected function createValidator(): SameOrganizationValidator
+    {
+        return new SameOrganizationValidator($this->typeRegistry, $this->entityOwnerAccessor);
+    }
+
+    private function getOrganization(int $id): Organization
+    {
+        $organization = new Organization();
+        $organization->setId($id);
+
+        return $organization;
+    }
+
+    private function getProduct(int $id): Product
+    {
+        $product = new Product();
+        ReflectionUtil::setId($product, $id);
+
+        return $product;
     }
 
     public function testValidateNull()
     {
-        $value = null;
-        $this->context->expects($this->never())
-            ->method($this->anything());
-
-        $this->validator->validate($value, $this->constraint);
+        $constraint = new NotEmptyScopes();
+        $this->validator->validate(null, $constraint);
+        $this->assertNoViolation();
     }
 
     public function testValidateNotContentVariant()
     {
-        $value = new \stdClass();
-        $this->context->expects($this->never())
-            ->method($this->anything());
-
-        $this->validator->validate($value, $this->constraint);
+        $constraint = new NotEmptyScopes();
+        $this->validator->validate(new \stdClass(), $constraint);
+        $this->assertNoViolation();
     }
 
     public function testValidateWithoutAttachedEntity()
     {
-        /** @var OrganizationInterface $organization */
-        $organization = $this->getEntity(Organization::class, ['id' => 1]);
+        $organization = $this->getOrganization(1);
 
-        /** @var Product $attachedEntity */
-        $attachedEntity = $this->getEntity(Product::class, ['id' => 2]);
+        $attachedEntity = $this->getProduct(2);
         $attachedEntity->setOrganization($organization);
 
         $webCatalog = new WebCatalog();
@@ -109,19 +93,16 @@ class SameOrganizationTest extends \PHPUnit\Framework\TestCase
         $this->entityOwnerAccessor->expects($this->never())
             ->method('getOrganization');
 
-        $this->context->expects($this->never())
-            ->method($this->anything());
-
-        $this->validator->validate($contentVariant, $this->constraint);
+        $constraint = new NotEmptyScopes();
+        $this->validator->validate($contentVariant, $constraint);
+        $this->assertNoViolation();
     }
 
     public function testValidateNoOrganization()
     {
-        /** @var OrganizationInterface $organization */
-        $organization = $this->getEntity(Organization::class, ['id' => 1]);
+        $organization = $this->getOrganization(1);
 
-        /** @var Product $attachedEntity */
-        $attachedEntity = $this->getEntity(Product::class, ['id' => 2]);
+        $attachedEntity = $this->getProduct(2);
         $attachedEntity->setOrganization($organization);
 
         $webCatalog = new WebCatalog();
@@ -148,19 +129,16 @@ class SameOrganizationTest extends \PHPUnit\Framework\TestCase
             ->with($attachedEntity)
             ->willReturn(null);
 
-        $this->context->expects($this->never())
-            ->method($this->anything());
-
-        $this->validator->validate($contentVariant, $this->constraint);
+        $constraint = new NotEmptyScopes();
+        $this->validator->validate($contentVariant, $constraint);
+        $this->assertNoViolation();
     }
 
     public function testValidateValid()
     {
-        /** @var OrganizationInterface $organization */
-        $organization = $this->getEntity(Organization::class, ['id' => 1]);
+        $organization = $this->getOrganization(1);
 
-        /** @var Product $attachedEntity */
-        $attachedEntity = $this->getEntity(Product::class, ['id' => 2]);
+        $attachedEntity = $this->getProduct(2);
         $attachedEntity->setOrganization($organization);
 
         $webCatalog = new WebCatalog();
@@ -187,19 +165,16 @@ class SameOrganizationTest extends \PHPUnit\Framework\TestCase
             ->with($attachedEntity)
             ->willReturn($organization);
 
-        $this->context->expects($this->never())
-            ->method($this->anything());
-
-        $this->validator->validate($contentVariant, $this->constraint);
+        $constraint = new NotEmptyScopes();
+        $this->validator->validate($contentVariant, $constraint);
+        $this->assertNoViolation();
     }
 
     public function testValidateValidCollection()
     {
-        /** @var OrganizationInterface $organization */
-        $organization = $this->getEntity(Organization::class, ['id' => 1]);
+        $organization = $this->getOrganization(1);
 
-        /** @var Product $attachedEntity */
-        $attachedEntity = $this->getEntity(Product::class, ['id' => 2]);
+        $attachedEntity = $this->getProduct(2);
         $attachedEntity->setOrganization($organization);
 
         $webCatalog = new WebCatalog();
@@ -226,21 +201,17 @@ class SameOrganizationTest extends \PHPUnit\Framework\TestCase
             ->with($attachedEntity)
             ->willReturn($organization);
 
-        $this->context->expects($this->never())
-            ->method($this->anything());
-
-        $this->validator->validate($contentVariant, $this->constraint);
+        $constraint = new NotEmptyScopes();
+        $this->validator->validate($contentVariant, $constraint);
+        $this->assertNoViolation();
     }
 
     public function testValidateInvalid()
     {
-        /** @var OrganizationInterface $organization */
-        $organization = $this->getEntity(Organization::class, ['id' => 1]);
-        /** @var OrganizationInterface $organization2 */
-        $organization2 = $this->getEntity(Organization::class, ['id' => 2]);
+        $organization = $this->getOrganization(1);
+        $organization2 = $this->getOrganization(2);
 
-        /** @var Product $attachedEntity */
-        $attachedEntity = $this->getEntity(Product::class, ['id' => 2]);
+        $attachedEntity = $this->getProduct(2);
         $attachedEntity->setOrganization($organization2);
 
         $webCatalog = new WebCatalog();
@@ -267,14 +238,10 @@ class SameOrganizationTest extends \PHPUnit\Framework\TestCase
             ->with($attachedEntity)
             ->willReturn($organization2);
 
-        $builder = $this->createMock(ConstraintViolationBuilderInterface::class);
-        $builder->expects($this->once())
-            ->method('addViolation');
-        $this->context->expects($this->once())
-            ->method('buildViolation')
-            ->with('oro.webcatalog.scope.empty.message')
-            ->willReturn($builder);
+        $constraint = new NotEmptyScopes();
+        $this->validator->validate($contentVariant, $constraint);
 
-        $this->validator->validate($contentVariant, $this->constraint);
+        $this->buildViolation($constraint->message)
+            ->assertRaised();
     }
 }

@@ -13,6 +13,7 @@ use Oro\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinks;
 use Oro\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinksValidator;
 use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 /**
@@ -33,11 +34,20 @@ class UniqueProductVariantLinksValidatorTest extends ConstraintValidatorTestCase
         parent::setUp();
     }
 
-    protected function createValidator()
+    protected function createValidator(): UniqueProductVariantLinksValidator
     {
         return new UniqueProductVariantLinksValidator(
             PropertyAccess::createPropertyAccessor(),
             $this->registry
+        );
+    }
+
+    public function testGetTargets()
+    {
+        $constraint = new UniqueProductVariantLinks();
+        self::assertEquals(
+            [Constraint::CLASS_CONSTRAINT, Constraint::PROPERTY_CONSTRAINT],
+            $constraint->getTargets()
         );
     }
 

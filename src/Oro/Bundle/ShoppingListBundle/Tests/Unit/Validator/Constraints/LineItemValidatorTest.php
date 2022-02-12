@@ -8,6 +8,7 @@ use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Validator\Constraints\LineItem as LineItemConstraint;
 use Oro\Bundle\ShoppingListBundle\Validator\Constraints\LineItemValidator;
+use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class LineItemValidatorTest extends ConstraintValidatorTestCase
@@ -31,16 +32,22 @@ class LineItemValidatorTest extends ConstraintValidatorTestCase
         $this->lineItem = $this->createMock(LineItem::class);
         $this->shoppingList = $this->createMock(ShoppingList::class);
 
-        $this->lineItem->expects($this->once())
+        $this->lineItem->expects($this->any())
             ->method('getShoppingList')
             ->willReturn($this->shoppingList);
 
         parent::setUp();
     }
 
-    protected function createValidator()
+    protected function createValidator(): LineItemValidator
     {
         return new LineItemValidator($this->managerRegistry);
+    }
+
+    public function testGetTargets(): void
+    {
+        $constraint = new LineItemConstraint();
+        self::assertEquals(Constraint::CLASS_CONSTRAINT, $constraint->getTargets());
     }
 
     public function testValidateNoDuplicate(): void
@@ -55,7 +62,7 @@ class LineItemValidatorTest extends ConstraintValidatorTestCase
             ->with(LineItem::class)
             ->willReturn($this->repository);
 
-        $constraint = $this->createMock(LineItemConstraint::class);
+        $constraint = new LineItemConstraint();
         $this->validator->validate($this->lineItem, $constraint);
 
         $this->assertNoViolation();
@@ -73,7 +80,7 @@ class LineItemValidatorTest extends ConstraintValidatorTestCase
             ->with(LineItem::class)
             ->willReturn($this->repository);
 
-        $constraint = $this->createMock(LineItemConstraint::class);
+        $constraint = new LineItemConstraint();
         $this->validator->validate($this->lineItem, $constraint);
 
         $this->buildViolation($constraint->message)

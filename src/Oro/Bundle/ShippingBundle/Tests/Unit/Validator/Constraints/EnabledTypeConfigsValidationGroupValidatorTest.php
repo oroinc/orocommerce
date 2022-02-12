@@ -6,28 +6,14 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
 use Oro\Bundle\ShippingBundle\Validator\Constraints\EnabledTypeConfigsValidationGroup;
 use Oro\Bundle\ShippingBundle\Validator\Constraints\EnabledTypeConfigsValidationGroupValidator;
-use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class EnabledTypeConfigsValidationGroupValidatorTest extends ConstraintValidatorTestCase
 {
-    protected function createValidator()
+    protected function createValidator(): EnabledTypeConfigsValidationGroupValidator
     {
         return new EnabledTypeConfigsValidationGroupValidator();
-    }
-
-    public function testConfiguration()
-    {
-        $constraint = new EnabledTypeConfigsValidationGroup();
-        $this->assertEquals('oro_shipping_enabled_type_config_validation_group_validator', $constraint->validatedBy());
-        $this->assertEquals(Constraint::PROPERTY_CONSTRAINT, $constraint->getTargets());
-    }
-
-    public function testGetDefaultOption()
-    {
-        $constraint = new EnabledTypeConfigsValidationGroup();
-        $this->assertNull($constraint->getDefaultOption());
     }
 
     public function testValidateWithoutDuplications()

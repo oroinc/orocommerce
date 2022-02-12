@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ValidationBundle\Tests\Unit\Validator\Constraints;
 
 use Oro\Bundle\ValidationBundle\Validator\Constraints\NumericRange;
-use Oro\Bundle\ValidationBundle\Validator\Constraints\NumericRangeValidator;
 
 class NumericRangeTest extends \PHPUnit\Framework\TestCase
 {
@@ -23,10 +22,5 @@ class NumericRangeTest extends \PHPUnit\Framework\TestCase
         $constraint = new NumericRange(['min' => 1, 'max' => PHP_INT_MAX]);
         self::assertEquals(1, $constraint->min);
         self::assertEquals(PHP_INT_MAX, $constraint->max);
-    }
-
-    public function testValidatedBy(): void
-    {
-        self::assertSame(NumericRangeValidator::class, (new NumericRange())->validatedBy());
     }
 }

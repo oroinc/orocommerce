@@ -11,29 +11,31 @@ use Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpressions;
 use Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpressionsValidator;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
-class PriceRuleExpressionsTest extends ConstraintValidatorTestCase
+class PriceRuleExpressionsValidatorTest extends ConstraintValidatorTestCase
 {
-    /**
-     * @var PriceListRuleCompiler|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var PriceListRuleCompiler|\PHPUnit\Framework\MockObject\MockObject */
     private $compiler;
 
-    protected function createValidator()
+    protected function setUp(): void
     {
         $this->compiler = $this->createMock(PriceListRuleCompiler::class);
+        parent::setUp();
+    }
+
+    protected function createValidator(): PriceRuleExpressionsValidator
+    {
         return new PriceRuleExpressionsValidator($this->compiler);
     }
 
     public function testPriceListWithEmptyRule()
     {
         $priceRule = new PriceRule();
-        $constraint = new PriceRuleExpressions();
 
         $this->compiler->expects($this->never())
             ->method($this->anything());
 
+        $constraint = new PriceRuleExpressions();
         $this->validator->validate($priceRule, $constraint);
-
         $this->assertNoViolation();
     }
 
@@ -42,7 +44,6 @@ class PriceRuleExpressionsTest extends ConstraintValidatorTestCase
         $priceRule = new PriceRule();
         $priceRule->setRule('product.id');
         $priceRule->setRuleCondition('product.id > 0');
-        $constraint = new PriceRuleExpressions();
 
         $query1 = $this->createMock(AbstractQuery::class);
         $query1->expects($this->once())
@@ -68,8 +69,8 @@ class PriceRuleExpressionsTest extends ConstraintValidatorTestCase
                 $qb2
             );
 
+        $constraint = new PriceRuleExpressions();
         $this->validator->validate($priceRule, $constraint);
-
         $this->assertNoViolation();
     }
 
@@ -77,7 +78,6 @@ class PriceRuleExpressionsTest extends ConstraintValidatorTestCase
     {
         $priceRule = new PriceRule();
         $priceRule->setRule('product.id');
-        $constraint = new PriceRuleExpressions();
 
         $query = $this->createMock(AbstractQuery::class);
         $query->expects($this->once())
@@ -92,8 +92,8 @@ class PriceRuleExpressionsTest extends ConstraintValidatorTestCase
             ->method('compileQueryBuilder')
             ->willReturn($qb);
 
+        $constraint = new PriceRuleExpressions();
         $this->validator->validate($priceRule, $constraint);
-
         $this->assertNoViolation();
     }
 
@@ -101,7 +101,6 @@ class PriceRuleExpressionsTest extends ConstraintValidatorTestCase
     {
         $priceRule = new PriceRule();
         $priceRule->setRule('product.id * "a"');
-        $constraint = new PriceRuleExpressions();
 
         $query = $this->createMock(AbstractQuery::class);
         $query->expects($this->once())
@@ -117,6 +116,7 @@ class PriceRuleExpressionsTest extends ConstraintValidatorTestCase
             ->method('compileQueryBuilder')
             ->willReturn($qb);
 
+        $constraint = new PriceRuleExpressions();
         $this->validator->validate($priceRule, $constraint);
 
         $this->buildViolation($constraint->message)
@@ -128,7 +128,6 @@ class PriceRuleExpressionsTest extends ConstraintValidatorTestCase
     {
         $priceRule = new PriceRule();
         $priceRule->setRuleCondition('product.id > 0');
-        $constraint = new PriceRuleExpressions();
 
         $query = $this->createMock(AbstractQuery::class);
         $query->expects($this->once())
@@ -143,8 +142,8 @@ class PriceRuleExpressionsTest extends ConstraintValidatorTestCase
             ->method('compileQueryBuilder')
             ->willReturn($qb);
 
+        $constraint = new PriceRuleExpressions();
         $this->validator->validate($priceRule, $constraint);
-
         $this->assertNoViolation();
     }
 
@@ -152,7 +151,6 @@ class PriceRuleExpressionsTest extends ConstraintValidatorTestCase
     {
         $priceRule = new PriceRule();
         $priceRule->setRuleCondition('product.id > "a"');
-        $constraint = new PriceRuleExpressions();
 
         $query = $this->createMock(AbstractQuery::class);
         $query->expects($this->once())
@@ -168,6 +166,7 @@ class PriceRuleExpressionsTest extends ConstraintValidatorTestCase
             ->method('compileQueryBuilder')
             ->willReturn($qb);
 
+        $constraint = new PriceRuleExpressions();
         $this->validator->validate($priceRule, $constraint);
 
         $this->buildViolation($constraint->message)

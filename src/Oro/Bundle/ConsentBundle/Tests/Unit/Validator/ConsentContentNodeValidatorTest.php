@@ -33,6 +33,7 @@ class ConsentContentNodeValidatorTest extends \PHPUnit\Framework\TestCase
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->contextProvider = $this->createMock(ConsentContextProvider::class);
         $this->contentNodeTreeResolver = $this->createMock(ContentNodeTreeResolverInterface::class);
+
         $this->validator = new ConsentContentNodeValidator(
             $this->logger,
             $this->contextProvider,

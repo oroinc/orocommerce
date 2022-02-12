@@ -8,6 +8,7 @@ use Oro\Bundle\ProductBundle\Provider\VariantField;
 use Oro\Bundle\ProductBundle\Provider\VariantFieldProvider;
 use Oro\Bundle\ProductBundle\Validator\Constraints\NotEmptyConfigurableAttributes;
 use Oro\Bundle\ProductBundle\Validator\Constraints\NotEmptyConfigurableAttributesValidator;
+use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class NotEmptyConfigurableAttributesValidatorTest extends ConstraintValidatorTestCase
@@ -21,9 +22,15 @@ class NotEmptyConfigurableAttributesValidatorTest extends ConstraintValidatorTes
         parent::setUp();
     }
 
-    protected function createValidator()
+    protected function createValidator(): NotEmptyConfigurableAttributesValidator
     {
         return new NotEmptyConfigurableAttributesValidator($this->provider);
+    }
+
+    public function testGetTargets(): void
+    {
+        $constraint = new NotEmptyConfigurableAttributes();
+        self::assertEquals(Constraint::CLASS_CONSTRAINT, $constraint->getTargets());
     }
 
     public function testValidateUnsupportedClass(): void

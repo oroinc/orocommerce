@@ -3,49 +3,44 @@
 namespace Oro\Bundle\ValidationBundle\Tests\Unit\Validator\Constraints;
 
 use Oro\Bundle\ValidationBundle\Validator\Constraints\UrlSafe;
-use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints\RegexValidator;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
-class UrlSafeTest extends ConstraintValidatorTestCase
+class UrlSafeValidatorTest extends ConstraintValidatorTestCase
 {
-    protected function createValidator()
+    protected function createValidator(): RegexValidator
     {
         return new RegexValidator();
     }
 
-    protected function createContext()
-    {
-        $this->constraint = new UrlSafe();
-
-        return parent::createContext();
-    }
-
-    public function testConfiguration(): void
-    {
-        self::assertEquals(RegexValidator::class, $this->constraint->validatedBy());
-        self::assertEquals(Constraint::PROPERTY_CONSTRAINT, $this->constraint->getTargets());
-    }
-
     public function testGetAlias(): void
     {
-        self::assertEquals(UrlSafe::ALIAS, $this->constraint->getAlias());
+        $constraint = new UrlSafe();
+        self::assertEquals(UrlSafe::ALIAS, $constraint->getAlias());
+    }
+
+    public function testGetDefaultOption(): void
+    {
+        $constraint = new UrlSafe();
+        self::assertNull($constraint->getDefaultOption());
+    }
+
+    public function testGetRequiredOptions(): void
+    {
+        $constraint = new UrlSafe();
+        self::assertSame([], $constraint->getRequiredOptions());
     }
 
     /**
      * @dataProvider validateWrongValueDataProvider
-     *
-     * @param bool $allowSlashes
-     * @param mixed $data
      */
-    public function testValidateWrongValue(bool $allowSlashes, $data): void
+    public function testValidateWrongValue(bool $allowSlashes, string $value): void
     {
         $constraint = new UrlSafe(['allowSlashes' => $allowSlashes]);
-
-        $this->validator->validate($data, $constraint);
+        $this->validator->validate($value, $constraint);
 
         $this->buildViolation($constraint->message)
-            ->setParameter('{{ value }}', '"' . $data . '"')
+            ->setParameter('{{ value }}', '"' . $value . '"')
             ->setCode(UrlSafe::REGEX_FAILED_ERROR)
             ->assertRaised();
     }
@@ -55,31 +50,26 @@ class UrlSafeTest extends ConstraintValidatorTestCase
         return [
             'Url not safe' => [
                 'allowSlashes' => false,
-                'data' => 'Abc/test',
+                'value' => 'Abc/test',
             ],
             'Url not safe with slash on start' => [
                 'allowSlashes' => true,
-                'data' => '/Abc/test',
+                'value' => '/Abc/test',
             ],
             'Url not safe with slash on end' => [
                 'allowSlashes' => true,
-                'data' => 'Abc/test/',
+                'value' => 'Abc/test/',
             ],
         ];
     }
 
     /**
      * @dataProvider validateCorrectValueDataProvider
-     *
-     * @param bool $allowSlashes
-     * @param mixed $data
      */
-    public function testValidateCorrectValue(bool $allowSlashes, $data): void
+    public function testValidateCorrectValue(bool $allowSlashes, string $value): void
     {
         $constraint = new UrlSafe(['allowSlashes' => $allowSlashes]);
-
-        $this->validator->validate($data, $constraint);
-
+        $this->validator->validate($value, $constraint);
         $this->assertNoViolation();
     }
 
@@ -88,19 +78,12 @@ class UrlSafeTest extends ConstraintValidatorTestCase
         return [
             'Url safe' => [
                 'allowSlashes' => false,
-                'data' => 'ABC-abs_123~45.test',
-                'correct' => true
+                'value' => 'ABC-abs_123~45.test',
             ],
             'Url safe with slash' => [
                 'allowSlashes' => true,
-                'data' => 'ABC-abs_123~45.test/ABC-abs_123~45.test',
-                'correct' => true
+                'value' => 'ABC-abs_123~45.test/ABC-abs_123~45.test',
             ],
         ];
-    }
-
-    public function testGetDefaultOption(): void
-    {
-        self::assertNull($this->constraint->getDefaultOption());
     }
 }

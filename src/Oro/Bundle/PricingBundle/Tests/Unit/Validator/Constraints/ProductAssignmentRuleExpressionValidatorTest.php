@@ -11,29 +11,31 @@ use Oro\Bundle\PricingBundle\Validator\Constraints\ProductAssignmentRuleExpressi
 use Oro\Bundle\PricingBundle\Validator\Constraints\ProductAssignmentRuleExpressionValidator;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
-class ProductAssignmentRuleExpressionTest extends ConstraintValidatorTestCase
+class ProductAssignmentRuleExpressionValidatorTest extends ConstraintValidatorTestCase
 {
-    /**
-     * @var ProductAssignmentRuleCompiler|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ProductAssignmentRuleCompiler|\PHPUnit\Framework\MockObject\MockObject */
     private $compiler;
 
-    protected function createValidator()
+    protected function setUp(): void
     {
         $this->compiler = $this->createMock(ProductAssignmentRuleCompiler::class);
+        parent::setUp();
+    }
+
+    protected function createValidator(): ProductAssignmentRuleExpressionValidator
+    {
         return new ProductAssignmentRuleExpressionValidator($this->compiler);
     }
 
     public function testPriceListWithEmptyRule()
     {
         $priceList = new PriceList();
-        $constraint = new ProductAssignmentRuleExpression();
 
         $this->compiler->expects($this->never())
             ->method($this->anything());
 
+        $constraint = new ProductAssignmentRuleExpression();
         $this->validator->validate($priceList, $constraint);
-
         $this->assertNoViolation();
     }
 
@@ -41,7 +43,6 @@ class ProductAssignmentRuleExpressionTest extends ConstraintValidatorTestCase
     {
         $priceList = new PriceList();
         $priceList->setProductAssignmentRule('product.id > 0');
-        $constraint = new ProductAssignmentRuleExpression();
 
         $query = $this->createMock(AbstractQuery::class);
         $query->expects($this->once())
@@ -57,8 +58,8 @@ class ProductAssignmentRuleExpressionTest extends ConstraintValidatorTestCase
             ->with($priceList)
             ->willReturn($qb);
 
+        $constraint = new ProductAssignmentRuleExpression();
         $this->validator->validate($priceList, $constraint);
-
         $this->assertNoViolation();
     }
 
@@ -66,7 +67,6 @@ class ProductAssignmentRuleExpressionTest extends ConstraintValidatorTestCase
     {
         $priceList = new PriceList();
         $priceList->setProductAssignmentRule('product.id == true');
-        $constraint = new ProductAssignmentRuleExpression();
 
         $exception = new Exception();
         $query = $this->createMock(AbstractQuery::class);
@@ -84,6 +84,7 @@ class ProductAssignmentRuleExpressionTest extends ConstraintValidatorTestCase
             ->with($priceList)
             ->willReturn($qb);
 
+        $constraint = new ProductAssignmentRuleExpression();
         $this->validator->validate($priceList, $constraint);
 
         $this->buildViolation($constraint->message)
