@@ -19,9 +19,7 @@ describe('orocms/js/app/grapesjs/grapesjs-editor-view', () => {
             disableDeviceManager: true
         });
 
-        grapesjsEditorView.builder.on('load', () => {
-            setTimeout(() => done(), 250);
-        });
+        grapesjsEditorView.builder.on('editor:rendered', () => done());
     });
 
     afterEach(() => {

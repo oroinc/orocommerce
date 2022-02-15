@@ -20,9 +20,7 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
 
         htmlParser = grapesjsEditorView.builder.Parser.parseHtml;
 
-        grapesjsEditorView.builder.on('load', () => {
-            setTimeout(() => done(), 250);
-        });
+        grapesjsEditorView.builder.on('editor:rendered', () => done());
     });
 
     afterEach(() => {

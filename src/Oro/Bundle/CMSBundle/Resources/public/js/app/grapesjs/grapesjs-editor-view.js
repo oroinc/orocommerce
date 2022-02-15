@@ -743,6 +743,7 @@ const GrapesjsEditorView = BaseView.extend({
         this.enabled = true;
         _.delay(() => {
             this.renderStart = false;
+            this.builder.trigger('editor:rendered');
         }, 250);
     },
 
