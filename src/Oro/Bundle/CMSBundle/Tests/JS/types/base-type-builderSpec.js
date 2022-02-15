@@ -3,7 +3,7 @@ import grapesJS from 'grapesjs';
 import _ from 'underscore';
 import ComponentRestriction from 'orocms/js/app/grapesjs/plugins/components/component-restriction';
 import BaseTypeBuilder from 'orocms/js/app/grapesjs/type-builders/base-type-builder';
-import html from 'text-loader!./fixtures/grapesjs-editor-view-fixture.html';
+import html from 'text-loader!../fixtures/grapesjs-editor-view-fixture.html';
 
 describe('orocms/js/app/grapesjs/type-builders/base-type-builder', () => {
     let baseTypeBuilder;

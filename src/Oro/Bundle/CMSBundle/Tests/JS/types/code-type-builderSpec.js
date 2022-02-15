@@ -2,7 +2,7 @@ import 'jasmine-jquery';
 import grapesJS from 'grapesjs';
 import CodeTypeBuilder from 'orocms/js/app/grapesjs/type-builders/code-type-builder';
 import ComponentRestriction from 'orocms/js/app/grapesjs/plugins/components/component-restriction';
-import html from 'text-loader!./fixtures/grapesjs-editor-view-fixture.html';
+import html from 'text-loader!../fixtures/grapesjs-editor-view-fixture.html';
 
 describe('orocms/js/app/grapesjs/type-builders/code-type-builder', () => {
     let codeTypeBuilder;

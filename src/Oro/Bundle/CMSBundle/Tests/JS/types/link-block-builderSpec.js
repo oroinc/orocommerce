@@ -2,7 +2,7 @@ import 'jasmine-jquery';
 import grapesJS from 'grapesjs';
 import LinkBlockBuilder from 'orocms/js/app/grapesjs/type-builders/link-block-builder';
 import ComponentRestriction from 'orocms/js/app/grapesjs/plugins/components/component-restriction';
-import html from 'text-loader!./fixtures/grapesjs-editor-view-fixture.html';
+import html from 'text-loader!../fixtures/grapesjs-editor-view-fixture.html';
 
 describe('orocms/js/app/grapesjs/type-builders/link-block-builder', () => {
     let linkBlockBuilder;
@@ -76,13 +76,58 @@ describe('orocms/js/app/grapesjs/type-builders/link-block-builder', () => {
                 'min-height': '50px',
                 'min-width': '50px'
             });
-            expect(linkBlockBuilder.Model.prototype.defaults.traits).toEqual(['href', 'title', 'target']);
             expect(linkBlockBuilder.Model.prototype.defaults.components).toEqual([]);
             expect(linkBlockBuilder.Model.prototype.defaults.editable).toBeFalsy();
             expect(linkBlockBuilder.Model.prototype.defaults.droppable).toBeTruthy();
 
             expect(linkBlockBuilder.Model.prototype.editor).toBeDefined();
             expect(linkBlockBuilder.Model.prototype.editor).toEqual(editor);
+        });
+
+        describe('test type in editor scope', () => {
+            let linkComponent;
+            beforeEach(done => {
+                editor.addComponents([{
+                    type: 'link-block',
+                    attributes: {
+                        id: 'test'
+                    }
+                }]);
+
+                linkComponent = editor.Components.getComponents().models[0];
+                setTimeout(() => done(), 0);
+            });
+
+            afterEach(done => {
+                editor.setComponents([]);
+                setTimeout(() => done(), 0);
+            });
+
+            it('check "toHTML"', () => {
+                expect(linkComponent.toHTML()).toEqual('<a id="test" class="link-block"></a>');
+            });
+
+            it('check "toHTML" after update attributes', () => {
+                linkComponent.addAttributes({
+                    href: 'http://test.link',
+                    title: 'Link title',
+                    target: '_blank'
+                }, {
+                    silent: true
+                });
+
+                expect(linkComponent.toHTML()).toEqual(
+                    // eslint-disable-next-line
+                    '<a id="test" href="http://test.link" title="Link title" target="_blank" class="link-block"></a>'
+                );
+            });
+
+            it('check "getAttributes"', () => {
+                expect(linkComponent.getAttrToHTML()).toEqual({
+                    'class': 'link-block',
+                    'id': 'test'
+                });
+            });
         });
     });
 });

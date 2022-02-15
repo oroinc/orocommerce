@@ -2,7 +2,7 @@ import 'jasmine-jquery';
 import grapesJS from 'grapesjs';
 import MapTypeBuilder from 'orocms/js/app/grapesjs/type-builders/map-type-builder';
 import ComponentRestriction from 'orocms/js/app/grapesjs/plugins/components/component-restriction';
-import html from 'text-loader!./fixtures/grapesjs-editor-view-fixture.html';
+import html from 'text-loader!../fixtures/grapesjs-editor-view-fixture.html';
 
 describe('orocms/js/app/grapesjs/type-builders/grid-type-builder', () => {
     let mapTypeBuilder;
@@ -66,6 +66,32 @@ describe('orocms/js/app/grapesjs/type-builders/grid-type-builder', () => {
             });
 
             expect(mapTypeBuilder.Model.prototype.editor).toEqual(editor);
+        });
+
+        describe('test type in editor scope', () => {
+            let mapComponent;
+            beforeEach(done => {
+                editor.Components.getComponents().add([{
+                    type: 'map'
+                }], {
+                    silent: true
+                });
+
+                mapComponent = editor.Components.getComponents().models[0];
+                setTimeout(() => done(), 0);
+            });
+
+            afterEach(done => {
+                editor.setComponents([]);
+                setTimeout(() => done(), 0);
+            });
+
+            it('check "toHTML"', () => {
+                expect(mapComponent.toHTML()).toEqual(
+                    // eslint-disable-next-line
+                    '<iframe frameborder="0" src="https://maps.google.com/maps?&z=1&t=q&output=embed"></iframe>'
+                );
+            });
         });
     });
 });

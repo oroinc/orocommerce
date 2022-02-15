@@ -2,7 +2,7 @@ import 'jasmine-jquery';
 import grapesJS from 'grapesjs';
 import LinkTypeBuilder from 'orocms/js/app/grapesjs/type-builders/link-type-builder';
 import ComponentRestriction from 'orocms/js/app/grapesjs/plugins/components/component-restriction';
-import html from 'text-loader!./fixtures/grapesjs-editor-view-fixture.html';
+import html from 'text-loader!../fixtures/grapesjs-editor-view-fixture.html';
 
 describe('orocms/js/app/grapesjs/type-builders/link-type-builder', () => {
     let linkTypeBuilder;
@@ -73,13 +73,62 @@ describe('orocms/js/app/grapesjs/type-builders/link-type-builder', () => {
             expect(linkTypeBuilder.Model.prototype.defaults.classes).toEqual(
                 ['link']
             );
-            expect(linkTypeBuilder.Model.prototype.defaults.traits).toEqual(['href', 'text', 'title', 'target']);
             expect(linkTypeBuilder.Model.prototype.defaults.components.length).toEqual(1);
             expect(linkTypeBuilder.Model.prototype.defaults.editable).toBeFalsy();
             expect(linkTypeBuilder.Model.prototype.defaults.droppable).toBeTruthy();
 
-            expect(linkTypeBuilder.Model.prototype.editor).toBeDefined();
             expect(linkTypeBuilder.Model.prototype.editor).toEqual(editor);
+        });
+
+        describe('test type in editor scope', () => {
+            let linkComponent;
+            beforeEach(done => {
+                editor.Components.getComponents().reset([{
+                    type: 'link',
+                    attributes: {
+                        id: 'test'
+                    }
+                }], {
+                    silent: true
+                });
+
+                linkComponent = editor.Components.getComponents().models[0];
+
+                setTimeout(() => done(), 0);
+            });
+
+            afterEach(done => {
+                editor.setComponents([]);
+                setTimeout(() => done(), 0);
+            });
+
+            it('check "toHTML"', () => {
+                expect(linkComponent.toHTML()).toEqual(
+                    '<a id="test" class="link">oro.cms.wysiwyg.component.link.content</a>'
+                );
+            });
+
+            it('check "toHTML" after update attributes', () => {
+                linkComponent.addAttributes({
+                    href: 'http://test.link',
+                    title: 'Link title',
+                    target: '_blank'
+                }, {
+                    silent: true
+                });
+
+                expect(linkComponent.toHTML()).toEqual(
+                    // eslint-disable-next-line
+                    '<a id="test" href="http://test.link" title="Link title" target="_blank" class="link">oro.cms.wysiwyg.component.link.content</a>'
+                );
+            });
+
+            it('check "getAttributes"', () => {
+                expect(linkComponent.getAttrToHTML()).toEqual({
+                    'class': 'link',
+                    'id': 'test'
+                });
+            });
         });
     });
 });

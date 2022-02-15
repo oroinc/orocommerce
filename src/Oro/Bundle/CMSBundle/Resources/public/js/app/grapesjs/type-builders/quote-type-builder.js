@@ -18,6 +18,14 @@ const QuiteBasicTypeBuilder = BaseTypeBuilder.extend({
 
     constructor: function QuiteBasicTypeBuilder(options) {
         QuiteBasicTypeBuilder.__super__.constructor.call(this, options);
+    },
+
+    isComponent(el) {
+        if (el.nodeType === 1 && el.tagName.toLowerCase() === 'blockquote') {
+            return {
+                type: this.componentType
+            };
+        }
     }
 });
 

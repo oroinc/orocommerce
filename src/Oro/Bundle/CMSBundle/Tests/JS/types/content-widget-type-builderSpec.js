@@ -3,7 +3,7 @@ import grapesJS from 'grapesjs';
 import ComponentRestriction from 'orocms/js/app/grapesjs/plugins/components/component-restriction';
 import RteEditorPlugin from 'orocms/js/app/grapesjs/plugins/oro-rte-editor';
 import ContentWidgetTypeBuilder from 'orocms/js/app/grapesjs/type-builders/content-widget-type-builder';
-import html from 'text-loader!./fixtures/grapesjs-editor-view-fixture.html';
+import html from 'text-loader!../fixtures/grapesjs-editor-view-fixture.html';
 
 describe('orocms/js/app/grapesjs/type-builders/content-widget-type-builder', () => {
     let editor;
@@ -74,7 +74,6 @@ describe('orocms/js/app/grapesjs/type-builders/content-widget-type-builder', () 
             expect(contentWidgetTypeBuilder.Model.prototype.defaults.editable).toBeFalsy();
             expect(contentWidgetTypeBuilder.Model.prototype.defaults.stylable).toBeFalsy();
 
-            expect(contentWidgetTypeBuilder.Model.prototype.editor).toBeDefined();
             expect(contentWidgetTypeBuilder.Model.prototype.editor).toEqual(editor);
         });
 
@@ -99,6 +98,47 @@ describe('orocms/js/app/grapesjs/type-builders/content-widget-type-builder', () 
             expect(contentWidgetTypeBuilder.editor.editor._events['canvas:drop']).toBeDefined();
             expect(contentWidgetTypeBuilder.editor.editor._events['component:deselected']).toBeDefined();
             expect(contentWidgetTypeBuilder.editor.editor._events['component:selected']).toBeDefined();
+        });
+
+        describe('test type in editor scope', () => {
+            let contentWidgetComponent;
+            beforeEach(done => {
+                editor.addComponents([{
+                    type: 'content-widget',
+                    attributes: {
+                        id: 'test'
+                    }
+                }]);
+
+                contentWidgetComponent = editor.Components.getComponents().models[0];
+                setTimeout(() => done(), 0);
+            });
+
+            afterEach(done => {
+                editor.setComponents([]);
+                setTimeout(() => done(), 0);
+            });
+
+            it('check "toHTML"', () => {
+                expect(contentWidgetComponent.toHTML()).toEqual(
+                    '<div id="test" class="content-widget content-placeholder"></div>'
+                );
+            });
+
+            it('check "toHTML" after content block change', () => {
+                contentWidgetComponent.set('contentWidget', {
+                    get(name) {
+                        return this[name];
+                    },
+                    name: 'content-widget-name',
+                    title: 'Content widget title'
+                });
+
+                expect(contentWidgetComponent.toHTML()).toEqual(
+                    // eslint-disable-next-line
+                    '<div data-title="content-widget-name" id="test" class="content-widget content-placeholder">{{ widget("content-widget-name") }}</div>'
+                );
+            });
         });
     });
 });

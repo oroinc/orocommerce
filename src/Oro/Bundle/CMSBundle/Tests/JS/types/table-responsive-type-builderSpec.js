@@ -2,7 +2,7 @@ import 'jasmine-jquery';
 import grapesJS from 'grapesjs';
 import TableResponsiveTypeBuilder from 'orocms/js/app/grapesjs/type-builders/table-responsive-type-builder';
 import ComponentRestriction from 'orocms/js/app/grapesjs/plugins/components/component-restriction';
-import html from 'text-loader!./fixtures/grapesjs-editor-view-fixture.html';
+import html from 'text-loader!../fixtures/grapesjs-editor-view-fixture.html';
 
 describe('orocms/js/app/grapesjs/type-builders/table-responsive-type-builder', () => {
     let tableResponsiveTypeBuilder;
@@ -70,6 +70,30 @@ describe('orocms/js/app/grapesjs/type-builders/table-responsive-type-builder', (
             ).toEqual(['table', 'tbody', 'thead', 'tfoot']);
 
             expect(tableResponsiveTypeBuilder.Model.prototype.editor).toEqual(editor);
+        });
+
+        describe('test type in editor scope', () => {
+            let tableResponsiveComponent;
+            beforeEach(done => {
+                editor.addComponents([{
+                    type: 'table-responsive'
+                }]);
+
+                tableResponsiveComponent = editor.Components.getComponents().models[0];
+                setTimeout(() => done(), 0);
+            });
+
+            afterEach(done => {
+                editor.setComponents([]);
+                setTimeout(() => done(), 0);
+            });
+
+            it('check "toHTML"', () => {
+                expect(tableResponsiveComponent.toHTML()).toEqual(
+                    // eslint-disable-next-line
+                    '<div class="table-responsive"><table><tbody><tr class="row"><td class="cell"></td></tr></tbody></table></div>'
+                );
+            });
         });
     });
 });

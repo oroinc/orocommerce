@@ -2,7 +2,7 @@ import 'jasmine-jquery';
 import grapesJS from 'grapesjs';
 import SourceTypeBuilder from 'orocms/js/app/grapesjs/type-builders/source-type-builder';
 import ComponentRestriction from 'orocms/js/app/grapesjs/plugins/components/component-restriction';
-import html from 'text-loader!./fixtures/grapesjs-editor-view-fixture.html';
+import html from 'text-loader!../fixtures/grapesjs-editor-view-fixture.html';
 
 describe('orocms/js/app/grapesjs/type-builders/source-type-builder', () => {
     let sourceTypeBuilder;
@@ -63,6 +63,41 @@ describe('orocms/js/app/grapesjs/type-builders/source-type-builder', () => {
             });
 
             expect(sourceTypeBuilder.Model.prototype.editor).toEqual(editor);
+        });
+
+        describe('test type in editor scope', () => {
+            let sourceComponent;
+            beforeEach(done => {
+                editor.addComponents([{
+                    type: 'source'
+                }]);
+
+                sourceComponent = editor.Components.getComponents().models[0];
+                setTimeout(() => done(), 0);
+            });
+
+            afterEach(done => {
+                editor.setComponents([]);
+                setTimeout(() => done(), 0);
+            });
+
+            it('check "toHTML"', () => {
+                expect(sourceComponent.toHTML()).toEqual('<source/>');
+            });
+
+            it('check "toHTML" after update attributes', () => {
+                sourceComponent.addAttributes({
+                    srcset: 'http://testsrcset.loc',
+                    type: 'type/test',
+                    media: 'media test',
+                    sizes: 'test sizes'
+                });
+
+                expect(sourceComponent.toHTML()).toEqual(
+                    // eslint-disable-next-line
+                    '<source srcset="http://testsrcset.loc" type="type/test" media="media test" sizes="test sizes"/>'
+                );
+            });
         });
     });
 });

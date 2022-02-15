@@ -3,7 +3,7 @@ import grapesJS from 'grapesjs';
 import FileTypeBuilder from 'orocms/js/app/grapesjs/type-builders/file-type-builder';
 import ComponentRestriction from 'orocms/js/app/grapesjs/plugins/components/component-restriction';
 import openDigitalAssetsCommand from 'orocms/js/app/grapesjs/modules/open-digital-assets-command';
-import html from 'text-loader!./fixtures/grapesjs-editor-view-fixture.html';
+import html from 'text-loader!../fixtures/grapesjs-editor-view-fixture.html';
 
 describe('orocms/js/app/grapesjs/type-builders/image-type-builder', () => {
     let fileTypeBuilder;
@@ -68,13 +68,51 @@ describe('orocms/js/app/grapesjs/type-builders/image-type-builder', () => {
             expect(fileTypeBuilder.Model.prototype.defaults.editable).toEqual(1);
             expect(fileTypeBuilder.Model.prototype.defaults.highlightable).toEqual(0);
             expect(fileTypeBuilder.Model.prototype.defaults.resizable).toEqual(0);
-            expect(fileTypeBuilder.Model.prototype.defaults.traits).toEqual(['title', 'text', 'target']);
 
             expect(fileTypeBuilder.Model.prototype.editor).toEqual(editor);
         });
 
         it('check commands', () => {
             expect(fileTypeBuilder.commands['open-digital-assets']).toEqual(openDigitalAssetsCommand);
+        });
+
+        describe('test type in editor scope', () => {
+            let fileComponent;
+            beforeEach(done => {
+                editor.addComponents([{
+                    type: 'file',
+                    attributes: {
+                        id: 'test'
+                    }
+                }]);
+
+                fileComponent = editor.Components.getComponents().models[0];
+                setTimeout(() => done(), 0);
+            });
+
+            afterEach(done => {
+                editor.setComponents([]);
+                setTimeout(() => done(), 0);
+            });
+
+            it('check "toHTML"', () => {
+                expect(fileComponent.toHTML()).toEqual(
+                    '<a id="test" class="digital-asset-file no-hash"></a>'
+                );
+            });
+
+            it('check "toHTML" after update attributes', () => {
+                fileComponent.setAttributes({
+                    href: 'http://testlink.loc',
+                    title: 'File title',
+                    target: '_blank'
+                }).set('content', 'test-filename');
+
+                expect(fileComponent.toHTML()).toEqual(
+                    // eslint-disable-next-line
+                    '<a href="http://testlink.loc" title="File title" target="_blank" id="test" class="digital-asset-file no-hash">test-filename</a>'
+                );
+            });
         });
     });
 });

@@ -2,7 +2,7 @@ import 'jasmine-jquery';
 import grapesJS from 'grapesjs';
 import ComponentRestriction from 'orocms/js/app/grapesjs/plugins/components/component-restriction';
 import ContentBlockTypeBuilder from 'orocms/js/app/grapesjs/type-builders/content-block-type-builder';
-import html from 'text-loader!./fixtures/grapesjs-editor-view-fixture.html';
+import html from 'text-loader!../fixtures/grapesjs-editor-view-fixture.html';
 
 describe('orocms/js/app/grapesjs/type-builders/content-block-type-builder', () => {
     let editor;
@@ -66,7 +66,6 @@ describe('orocms/js/app/grapesjs/type-builders/content-block-type-builder', () =
             expect(contentBlockTypeBuilder.Model.prototype.defaults.contentBlock).toBeNull();
             expect(contentBlockTypeBuilder.Model.prototype.defaults.droppable).toBeFalsy();
 
-            expect(contentBlockTypeBuilder.Model.prototype.editor).toBeDefined();
             expect(contentBlockTypeBuilder.Model.prototype.editor).toEqual(editor);
         });
 
@@ -76,6 +75,47 @@ describe('orocms/js/app/grapesjs/type-builders/content-block-type-builder', () =
 
         it('check editor events defined', () => {
             expect(contentBlockTypeBuilder.editor.editor._events['canvas:drop']).toBeDefined();
+        });
+
+        describe('test type in editor scope', () => {
+            let contentBlockComponent;
+            beforeEach(done => {
+                editor.addComponents([{
+                    type: 'content-block',
+                    attributes: {
+                        id: 'test'
+                    }
+                }]);
+
+                contentBlockComponent = editor.Components.getComponents().models[0];
+                setTimeout(() => done(), 0);
+            });
+
+            afterEach(done => {
+                editor.setComponents([]);
+                setTimeout(() => done(), 0);
+            });
+
+            it('check "toHTML"', () => {
+                expect(contentBlockComponent.toHTML()).toEqual(
+                    '<div id="test" class="content-block content-placeholder"></div>'
+                );
+            });
+
+            it('check "toHTML" after content block change', () => {
+                contentBlockComponent.set('contentBlock', {
+                    get(name) {
+                        return this[name];
+                    },
+                    alias: 'content-block-alias',
+                    title: 'Content block title'
+                });
+
+                expect(contentBlockComponent.toHTML()).toEqual(
+                    // eslint-disable-next-line
+                    '<div data-title="Content block title" id="test" class="content-block content-placeholder">{{ content_block("content-block-alias") }}</div>'
+                );
+            });
         });
     });
 });

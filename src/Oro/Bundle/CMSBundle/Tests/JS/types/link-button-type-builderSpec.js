@@ -2,7 +2,7 @@ import 'jasmine-jquery';
 import grapesJS from 'grapesjs';
 import LinkButtonTypeBuilder from 'orocms/js/app/grapesjs/type-builders/link-button-type-builder';
 import ComponentRestriction from 'orocms/js/app/grapesjs/plugins/components/component-restriction';
-import html from 'text-loader!./fixtures/grapesjs-editor-view-fixture.html';
+import html from 'text-loader!../fixtures/grapesjs-editor-view-fixture.html';
 
 describe('orocms/js/app/grapesjs/type-builders/link-block-builder', () => {
     let linkButtonTypeBuilder;
@@ -73,6 +73,54 @@ describe('orocms/js/app/grapesjs/type-builders/link-block-builder', () => {
 
             expect(linkButtonTypeBuilder.Model.prototype.editor).toBeDefined();
             expect(linkButtonTypeBuilder.Model.prototype.editor).toEqual(editor);
+        });
+
+        describe('test type in editor scope', () => {
+            let linkBlockComponent;
+            beforeEach(done => {
+                editor.addComponents([{
+                    type: 'link-button',
+                    attributes: {
+                        id: 'test'
+                    }
+                }]);
+
+                linkBlockComponent = editor.Components.getComponents().models[0];
+                setTimeout(() => done(), 0);
+            });
+
+            afterEach(done => {
+                editor.setComponents([]);
+                setTimeout(() => done(), 0);
+            });
+
+            it('check "toHTML"', () => {
+                expect(linkBlockComponent.toHTML()).toEqual(
+                    '<a id="test" class="btn btn--info">oro.cms.wysiwyg.component.link_button.content</a>'
+                );
+            });
+
+            it('check "toHTML" after update attributes', () => {
+                linkBlockComponent.addAttributes({
+                    href: 'http://test.link',
+                    title: 'Link title',
+                    target: '_blank'
+                }, {
+                    silent: true
+                });
+
+                expect(linkBlockComponent.toHTML()).toEqual(
+                    // eslint-disable-next-line
+                    '<a id="test" href="http://test.link" title="Link title" target="_blank" class="btn btn--info">oro.cms.wysiwyg.component.link_button.content</a>'
+                );
+            });
+
+            it('check "getAttributes"', () => {
+                expect(linkBlockComponent.getAttrToHTML()).toEqual({
+                    'class': 'btn btn--info',
+                    'id': 'test'
+                });
+            });
         });
     });
 });

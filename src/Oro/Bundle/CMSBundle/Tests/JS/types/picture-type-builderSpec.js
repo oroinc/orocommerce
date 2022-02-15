@@ -2,7 +2,7 @@ import 'jasmine-jquery';
 import grapesJS from 'grapesjs';
 import PictureTypeBuilder from 'orocms/js/app/grapesjs/type-builders/picture-type-builder';
 import ComponentRestriction from 'orocms/js/app/grapesjs/plugins/components/component-restriction';
-import html from 'text-loader!./fixtures/grapesjs-editor-view-fixture.html';
+import html from 'text-loader!../fixtures/grapesjs-editor-view-fixture.html';
 
 describe('orocms/js/app/grapesjs/type-builders/image-type-builder', () => {
     let pictureTypeBuilder;
@@ -18,7 +18,8 @@ describe('orocms/js/app/grapesjs/type-builders/image-type-builder', () => {
         editor.DomComponents.addType('source', {
             model: {
                 defaults: {
-                    type: 'source'
+                    type: 'source',
+                    tagName: 'source'
                 }
             }
         });
@@ -106,14 +107,16 @@ describe('orocms/js/app/grapesjs/type-builders/image-type-builder', () => {
 
         describe('test type in editor scope', () => {
             let pictureComponent;
-            beforeEach(() => {
+            beforeEach(done => {
                 editor.setComponents('<picture></picture>');
 
                 pictureComponent = editor.Components.getComponents().models[0];
+                setTimeout(() => done(), 0);
             });
 
-            afterEach(() => {
+            afterEach(done => {
                 editor.setComponents('');
+                setTimeout(() => done(), 0);
             });
 
             it('is defined', () => {
@@ -154,6 +157,45 @@ describe('orocms/js/app/grapesjs/type-builders/image-type-builder', () => {
                         srcset: 'url2'
                     }
                 }]);
+            });
+
+            it('check "toHTML"', () => {
+                expect(pictureComponent.toHTML()).toEqual(
+                    // eslint-disable-next-line
+                    '<picture><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIHZpZXdCb3g9IjAgMCAyNCAyNCIgc3R5bGU9ImZpbGw6IHJnYmEoMCwwLDAsMC4xNSk7IHRyYW5zZm9ybTogc2NhbGUoMC43NSkiPgogICAgICAgIDxwYXRoIGQ9Ik04LjUgMTMuNWwyLjUgMyAzLjUtNC41IDQuNSA2SDVtMTYgMVY1YTIgMiAwIDAgMC0yLTJINWMtMS4xIDAtMiAuOS0yIDJ2MTRjMCAxLjEuOSAyIDIgMmgxNGMxLjEgMCAyLS45IDItMnoiPjwvcGF0aD4KICAgICAgPC9zdmc+"/></picture>'
+                );
+            });
+
+            it('check "toHTML" after update image', () => {
+                pictureComponent.image.set('src', 'http://testlink.loc').addAttributes({
+                    alt: 'Image title'
+                });
+
+                expect(pictureComponent.toHTML()).toEqual(
+                    // eslint-disable-next-line
+                    '<picture><img src="http://testlink.loc" alt="Image title"/></picture>'
+                );
+            });
+
+            it('check "toHTML" after update image and source', () => {
+                pictureComponent.image.set('src', 'http://testlink.loc').addAttributes({
+                    alt: 'Image title'
+                });
+
+                pictureComponent.setSource('webp', {
+                    srcset: 'url1',
+                    type: 'image/webp'
+                });
+
+                pictureComponent.setSource('jpeg', {
+                    srcset: 'url2',
+                    type: 'image/jpeg'
+                });
+
+                expect(pictureComponent.toHTML()).toEqual(
+                    // eslint-disable-next-line
+                    '<picture><source srcset="url1" type="image/webp"/><source srcset="url2" type="image/jpeg"/><img src="http://testlink.loc" alt="Image title"/></picture>'
+                );
             });
         });
     });
