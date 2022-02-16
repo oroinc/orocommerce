@@ -529,7 +529,7 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
             expect(htmlParser(str).html).toEqual(result);
         });
 
-        it('Isolate styles', () => {
+        xit('Isolate styles', () => {
             const str =
                 '<div><style>.a{color: red}</style></div><div></div><style>.b{color: blue}</style>';
             const resHtml = [
