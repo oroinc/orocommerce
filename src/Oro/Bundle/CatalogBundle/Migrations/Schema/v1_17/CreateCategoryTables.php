@@ -1,13 +1,13 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Migrations\Schema\v1_21;
+namespace Oro\Bundle\CatalogBundle\Migrations\Schema\v1_17;
 
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class CreateProductTables implements Migration, OrderedMigrationInterface
+class CreateCategoryTables implements Migration, OrderedMigrationInterface
 {
     /**
      * {@inheritdoc}
@@ -22,41 +22,45 @@ class CreateProductTables implements Migration, OrderedMigrationInterface
      */
     public function up(Schema $schema, QueryBag $queries): void
     {
-        $this->createOroProductNameTable($schema);
-        $this->addOroProductNameForeignKeys($schema);
+        if ($schema->hasTable('oro_catalog_cat_title')) {
+            return;
+        }
 
-        $this->createOroProductShortDescriptionTable($schema);
-        $this->addOroProductShortDescriptionForeignKeys($schema);
+        $this->createOroCatalogCategoryTitleTable($schema);
+        $this->addOroCatalogCategoryTitleForeignKeys($schema);
 
-        $this->createOroProductDescriptionTable($schema);
-        $this->addOroProductDescriptionForeignKeys($schema);
+        $this->createOroCatalogCategoryShortDescriptionTable($schema);
+        $this->addOroCatalogCategoryShortDescriptionForeignKeys($schema);
+
+        $this->createOroCatalogCategoryLongDescriptionTable($schema);
+        $this->addOroCatalogCategoryLongDescriptionForeignKeys($schema);
     }
 
     /**
-     * Create oro_product_prod_name table
+     * Create oro_catalog_cat_title table
      */
-    private function createOroProductNameTable(Schema $schema): void
+    private function createOroCatalogCategoryTitleTable(Schema $schema): void
     {
-        $table = $schema->createTable('oro_product_prod_name');
+        $table = $schema->createTable('oro_catalog_cat_title');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('product_id', 'integer', ['notnull' => false]);
+        $table->addColumn('category_id', 'integer', ['notnull' => false]);
         $table->addColumn('localization_id', 'integer', ['notnull' => false]);
         $table->addColumn('fallback', 'string', ['notnull' => false, 'length' => 64]);
         $table->addColumn('string', 'string', ['notnull' => false, 'length' => 255]);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['fallback'], 'idx_product_prod_name_fallback', []);
-        $table->addIndex(['string'], 'idx_product_prod_name_string', []);
+        $table->addIndex(['fallback'], 'idx_cat_cat_title_fallback', []);
+        $table->addIndex(['string'], 'idx_cat_cat_title_string', []);
     }
 
     /**
-     * Add oro_product_prod_name foreign keys.
+     * Add oro_catalog_cat_title foreign keys.
      */
-    private function addOroProductNameForeignKeys(Schema $schema): void
+    private function addOroCatalogCategoryTitleForeignKeys(Schema $schema): void
     {
-        $table = $schema->getTable('oro_product_prod_name');
+        $table = $schema->getTable('oro_catalog_cat_title');
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_product'),
-            ['product_id'],
+            $schema->getTable('oro_catalog_category'),
+            ['category_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
@@ -69,29 +73,29 @@ class CreateProductTables implements Migration, OrderedMigrationInterface
     }
 
     /**
-     * Create oro_product_prod_s_descr table
+     * Create oro_catalog_cat_s_descr table
      */
-    private function createOroProductShortDescriptionTable(Schema $schema): void
+    private function createOroCatalogCategoryShortDescriptionTable(Schema $schema): void
     {
-        $table = $schema->createTable('oro_product_prod_s_descr');
+        $table = $schema->createTable('oro_catalog_cat_s_descr');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('product_id', 'integer', ['notnull' => false]);
+        $table->addColumn('category_id', 'integer', ['notnull' => false]);
         $table->addColumn('localization_id', 'integer', ['notnull' => false]);
         $table->addColumn('fallback', 'string', ['notnull' => false, 'length' => 64]);
         $table->addColumn('text', 'text', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['fallback'], 'idx_product_prod_s_descr_fallback', []);
+        $table->addIndex(['fallback'], 'idx_cat_cat_s_descr_fallback', []);
     }
 
     /**
-     * Add oro_product_prod_s_descr foreign keys.
+     * Add oro_catalog_cat_s_descr foreign keys.
      */
-    private function addOroProductShortDescriptionForeignKeys(Schema $schema): void
+    private function addOroCatalogCategoryShortDescriptionForeignKeys(Schema $schema): void
     {
-        $table = $schema->getTable('oro_product_prod_s_descr');
+        $table = $schema->getTable('oro_catalog_cat_s_descr');
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_product'),
-            ['product_id'],
+            $schema->getTable('oro_catalog_category'),
+            ['category_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
@@ -104,31 +108,31 @@ class CreateProductTables implements Migration, OrderedMigrationInterface
     }
 
     /**
-     * Create oro_product_prod_descr table
+     * Create oro_catalog_cat_l_descr table
      */
-    private function createOroProductDescriptionTable(Schema $schema): void
+    private function createOroCatalogCategoryLongDescriptionTable(Schema $schema): void
     {
-        $table = $schema->createTable('oro_product_prod_descr');
+        $table = $schema->createTable('oro_catalog_cat_l_descr');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('product_id', 'integer', ['notnull' => false]);
+        $table->addColumn('category_id', 'integer', ['notnull' => false]);
         $table->addColumn('localization_id', 'integer', ['notnull' => false]);
         $table->addColumn('fallback', 'string', ['notnull' => false, 'length' => 64]);
         $table->addColumn('wysiwyg', 'wysiwyg', ['notnull' => false, 'comment' => '(DC2Type:wysiwyg)']);
         $table->addColumn('wysiwyg_style', 'wysiwyg_style', ['notnull' => false]);
         $table->addColumn('wysiwyg_properties', 'wysiwyg_properties', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['fallback'], 'idx_product_prod_descr_fallback', []);
+        $table->addIndex(['fallback'], 'idx_cat_cat_l_descr_fallback', []);
     }
 
     /**
-     * Add oro_product_prod_descr foreign keys.
+     * Add oro_catalog_cat_l_descr foreign keys.
      */
-    private function addOroProductDescriptionForeignKeys(Schema $schema): void
+    private function addOroCatalogCategoryLongDescriptionForeignKeys(Schema $schema): void
     {
-        $table = $schema->getTable('oro_product_prod_descr');
+        $table = $schema->getTable('oro_catalog_cat_l_descr');
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_product'),
-            ['product_id'],
+            $schema->getTable('oro_catalog_category'),
+            ['category_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );

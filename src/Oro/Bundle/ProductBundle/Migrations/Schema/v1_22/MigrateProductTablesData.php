@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Migrations\Schema\v1_21;
+namespace Oro\Bundle\ProductBundle\Migrations\Schema\v1_22;
 
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
@@ -22,6 +22,10 @@ class MigrateProductTablesData implements Migration, OrderedMigrationInterface
      */
     public function up(Schema $schema, QueryBag $queries): void
     {
+        if (!$schema->hasTable('oro_product_prod_name') || !$schema->hasTable('oro_product_name')) {
+            return;
+        }
+
         $queries->addQuery('INSERT INTO oro_product_prod_name (fallback, string, localization_id, product_id)
             SELECT oflv.fallback, oflv.string, oflv.localization_id, opn.product_id
             FROM oro_fallback_localization_val oflv

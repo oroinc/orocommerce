@@ -1,13 +1,13 @@
 <?php
 
-namespace Oro\Bundle\CatalogBundle\Migrations\Schema\v1_16;
+namespace Oro\Bundle\ProductBundle\Migrations\Schema\v1_22;
 
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class RemoveOldCategoryTables implements Migration, OrderedMigrationInterface
+class RemoveOldProductTables implements Migration, OrderedMigrationInterface
 {
     /**
      * {@inheritdoc}
@@ -22,26 +22,30 @@ class RemoveOldCategoryTables implements Migration, OrderedMigrationInterface
      */
     public function up(Schema $schema, QueryBag $queries): void
     {
+        if (!$schema->hasTable('oro_product_prod_name') || !$schema->hasTable('oro_product_name')) {
+            return;
+        }
+
         $queries->addPreQuery(<<<SQL
             DELETE FROM oro_fallback_localization_val WHERE id IN (
-                SELECT localized_value_id FROM oro_catalog_category_title
+                SELECT localized_value_id FROM oro_product_name
             )
         SQL);
 
         $queries->addPreQuery(<<<SQL
             DELETE FROM oro_fallback_localization_val WHERE id IN (
-                SELECT localized_value_id FROM oro_catalog_cat_short_desc
+                SELECT localized_value_id FROM oro_product_short_desc
             )
         SQL);
 
         $queries->addPreQuery(<<<SQL
             DELETE FROM oro_fallback_localization_val WHERE id IN (
-                SELECT localized_value_id FROM oro_catalog_cat_long_desc
+                SELECT localized_value_id FROM oro_product_description
             )
         SQL);
 
-        $schema->dropTable('oro_catalog_category_title');
-        $schema->dropTable('oro_catalog_cat_short_desc');
-        $schema->dropTable('oro_catalog_cat_long_desc');
+        $schema->dropTable('oro_product_name');
+        $schema->dropTable('oro_product_short_desc');
+        $schema->dropTable('oro_product_description');
     }
 }

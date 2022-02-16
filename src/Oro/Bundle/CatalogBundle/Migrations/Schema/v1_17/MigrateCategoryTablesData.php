@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CatalogBundle\Migrations\Schema\v1_16;
+namespace Oro\Bundle\CatalogBundle\Migrations\Schema\v1_17;
 
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
@@ -22,6 +22,12 @@ class MigrateCategoryTablesData implements Migration, OrderedMigrationInterface
      */
     public function up(Schema $schema, QueryBag $queries): void
     {
+        if (!$schema->hasTable('oro_catalog_cat_title')
+            || !$schema->hasTable('oro_catalog_category_title')
+        ) {
+            return;
+        }
+
         $queries->addQuery('INSERT INTO oro_catalog_cat_title (fallback, string, localization_id, category_id)
             SELECT oflv.fallback, oflv.string, oflv.localization_id, occt.category_id
             FROM oro_fallback_localization_val oflv

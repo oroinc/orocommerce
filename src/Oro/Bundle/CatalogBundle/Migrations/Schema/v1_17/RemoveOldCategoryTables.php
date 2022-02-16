@@ -1,13 +1,13 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Migrations\Schema\v1_21;
+namespace Oro\Bundle\CatalogBundle\Migrations\Schema\v1_17;
 
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class RemoveOldProductTables implements Migration, OrderedMigrationInterface
+class RemoveOldCategoryTables implements Migration, OrderedMigrationInterface
 {
     /**
      * {@inheritdoc}
@@ -22,26 +22,32 @@ class RemoveOldProductTables implements Migration, OrderedMigrationInterface
      */
     public function up(Schema $schema, QueryBag $queries): void
     {
+        if (!$schema->hasTable('oro_catalog_cat_title')
+            || !$schema->hasTable('oro_catalog_category_title')
+        ) {
+            return;
+        }
+
         $queries->addPreQuery(<<<SQL
             DELETE FROM oro_fallback_localization_val WHERE id IN (
-                SELECT localized_value_id FROM oro_product_name
+                SELECT localized_value_id FROM oro_catalog_category_title
             )
         SQL);
 
         $queries->addPreQuery(<<<SQL
             DELETE FROM oro_fallback_localization_val WHERE id IN (
-                SELECT localized_value_id FROM oro_product_short_desc
+                SELECT localized_value_id FROM oro_catalog_cat_short_desc
             )
         SQL);
 
         $queries->addPreQuery(<<<SQL
             DELETE FROM oro_fallback_localization_val WHERE id IN (
-                SELECT localized_value_id FROM oro_product_description
+                SELECT localized_value_id FROM oro_catalog_cat_long_desc
             )
         SQL);
 
-        $schema->dropTable('oro_product_name');
-        $schema->dropTable('oro_product_short_desc');
-        $schema->dropTable('oro_product_description');
+        $schema->dropTable('oro_catalog_category_title');
+        $schema->dropTable('oro_catalog_cat_short_desc');
+        $schema->dropTable('oro_catalog_cat_long_desc');
     }
 }
