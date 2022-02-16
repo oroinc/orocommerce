@@ -118,13 +118,7 @@ class SluggableUrlDatabaseAwareProvider implements SluggableUrlProviderInterface
         );
     }
 
-    /**
-     * @param string $routeName
-     * @param array $routeParameters
-     * @param int|null $localizationId
-     * @return array|null
-     */
-    protected function getSlugData($routeName, $routeParameters, $localizationId)
+    protected function getSlugData(string $routeName, array $routeParameters, ?int $localizationId): array
     {
         $slugData = $this->getSlugRepository()->getRawSlug(
             $routeName,
