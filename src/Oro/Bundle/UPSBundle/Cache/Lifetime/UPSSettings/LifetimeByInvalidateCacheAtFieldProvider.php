@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\UPSBundle\Cache\Lifetime\UPSSettings;
 
+use Oro\Bundle\CacheBundle\Generator\UniversalCacheKeyGenerator;
 use Oro\Bundle\UPSBundle\Cache\Lifetime\LifetimeProviderInterface;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport as UPSSettings;
 
@@ -51,9 +52,15 @@ class LifetimeByInvalidateCacheAtFieldProvider implements LifetimeProviderInterf
             $invalidateAt = $settings->getUpsInvalidateCacheAt()->getTimestamp();
         }
 
-        return implode('_', [
-            $key,
-            $invalidateAt,
-        ]);
+        return UniversalCacheKeyGenerator::normalizeCacheKey(
+            implode(
+                '_',
+                [
+                    'transport_' . $settings->getId(),
+                    $key,
+                    $invalidateAt,
+                ]
+            )
+        );
     }
 }

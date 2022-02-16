@@ -83,8 +83,7 @@ class InvalidateCacheActionHandlerTest extends \PHPUnit\Framework\TestCase
 
         $this->upsPriceCache
             ->expects(static::once())
-            ->method('deleteAll')
-            ->with(self::TRANSPORT_ID);
+            ->method('deleteAll');
 
         $this->shippingPriceCache
             ->expects(static::once())

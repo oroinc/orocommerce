@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\UPSBundle\Tests\Unit\TimeInTransit\CacheProvider\Factory;
 
-use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\UPSBundle\Cache\Lifetime\LifetimeProviderInterface;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport as UPSSettings;
 use Oro\Bundle\UPSBundle\TimeInTransit\CacheProvider\Factory\TimeInTransitCacheProviderFactory;
 use Oro\Bundle\UPSBundle\TimeInTransit\CacheProvider\TimeInTransitCacheProvider;
+use Symfony\Component\Cache\Adapter\AbstractAdapter;
 
 class TimeInTransitCacheProviderFactoryTest extends \PHPUnit\Framework\TestCase
 {
@@ -16,7 +16,7 @@ class TimeInTransitCacheProviderFactoryTest extends \PHPUnit\Framework\TestCase
     private $timeInTransitCacheProviderFactory;
 
     /**
-     * @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject
+     * @var AbstractAdapter|\PHPUnit\Framework\MockObject\MockObject
      */
     private $cacheProvider;
 
@@ -30,7 +30,7 @@ class TimeInTransitCacheProviderFactoryTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp(): void
     {
-        $this->cacheProvider = $this->createMock(CacheProvider::class);
+        $this->cacheProvider = $this->createMock(AbstractAdapter::class);
         $this->lifetimeProvider = $this->createMock(LifetimeProviderInterface::class);
         $this->timeInTransitCacheProviderFactory = new TimeInTransitCacheProviderFactory(
             $this->cacheProvider,
@@ -47,8 +47,8 @@ class TimeInTransitCacheProviderFactoryTest extends \PHPUnit\Framework\TestCase
 
         $this->cacheProvider
             ->expects(static::once())
-            ->method('setNamespace')
-            ->with('oro_ups_time_in_transit_' . 1);
+            ->method('enableVersioning')
+            ->with(true);
 
         $expectedTimeInTransitCacheProvider = new TimeInTransitCacheProvider(
             $settings,
@@ -71,8 +71,8 @@ class TimeInTransitCacheProviderFactoryTest extends \PHPUnit\Framework\TestCase
 
         $this->cacheProvider
             ->expects(static::once())
-            ->method('setNamespace')
-            ->with('oro_ups_time_in_transit_' . 1);
+            ->method('enableVersioning')
+            ->with(true);
 
         $timeInTransitCacheProvider1 = $this->timeInTransitCacheProviderFactory
             ->createCacheProviderForTransport($settings);
