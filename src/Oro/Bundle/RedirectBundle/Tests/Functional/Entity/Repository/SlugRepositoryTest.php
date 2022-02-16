@@ -56,11 +56,7 @@ class SlugRepositoryTest extends WebTestCase
         );
         $this->client->getContainer()->get('security.token_storage')->setToken($token);
 
-        $this->loadFixtures(
-            [
-                LoadSlugScopesData::class
-            ]
-        );
+        $this->loadFixtures([LoadSlugScopesData::class]);
     }
 
     public function testGetSlugByUrlAndScopeCriteriaAnonymous()
@@ -385,6 +381,29 @@ class SlugRepositoryTest extends WebTestCase
 
         $this->assertNotEmpty($slug);
         $this->assertNotEquals(
+            [
+                'url' => $expected->getUrl(),
+                'slug_prototype' => $expected->getSlugPrototype()
+            ],
+            $slug
+        );
+    }
+
+    public function testGetRawRedirectSlugForDuplicateSlug()
+    {
+        /** @var Slug $expected */
+        $expected = $this->getReference(LoadSlugsData::SLUG_URL_ANONYMOUS);
+
+        $slug = $this->repository->getRawSlug(
+            'oro_cms_frontend_page_view',
+            [
+                'id' => $this->getReference(LoadPageData::PAGE_1)->getId()
+            ],
+            null
+        );
+
+        $this->assertNotEmpty($slug);
+        $this->assertEquals(
             [
                 'url' => $expected->getUrl(),
                 'slug_prototype' => $expected->getSlugPrototype()
