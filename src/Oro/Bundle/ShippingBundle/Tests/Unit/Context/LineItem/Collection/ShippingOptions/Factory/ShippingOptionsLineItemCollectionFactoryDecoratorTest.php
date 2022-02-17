@@ -99,20 +99,24 @@ class ShippingOptionsLineItemCollectionFactoryDecoratorTest extends AbstractShip
             ->willReturn(
                 [
                     1001 => [
-                        'dimensionsHeight' => 3.0,
-                        'dimensionsLength' => 1.0,
-                        'dimensionsWidth' => 2.0,
-                        'dimensionsUnit' => 'in',
-                        'weightUnit' => 'kilo',
-                        'weightValue' => 42.0,
+                        'someCode' => [
+                            'dimensionsHeight' => 3.0,
+                            'dimensionsLength' => 1.0,
+                            'dimensionsWidth' => 2.0,
+                            'dimensionsUnit' => 'in',
+                            'weightUnit' => 'kilo',
+                            'weightValue' => 42.0,
+                        ]
                     ],
                     2002 => [
-                        'dimensionsHeight' => 13.0,
-                        'dimensionsLength' => 11.0,
-                        'dimensionsWidth' => 12.0,
-                        'dimensionsUnit' => 'meter',
-                        'weightUnit' => 'lbs',
-                        'weightValue' => 142.0,
+                        'someCode' => [
+                            'dimensionsHeight' => 13.0,
+                            'dimensionsLength' => 11.0,
+                            'dimensionsWidth' => 12.0,
+                            'dimensionsUnit' => 'meter',
+                            'weightUnit' => 'lbs',
+                            'weightValue' => 142.0,
+                        ]
                     ]
                 ]
             );
@@ -154,12 +158,14 @@ class ShippingOptionsLineItemCollectionFactoryDecoratorTest extends AbstractShip
             ->willReturn(
                 [
                     2002 => [
-                        'dimensionsHeight' => 13.0,
-                        'dimensionsLength' => 11.0,
-                        'dimensionsWidth' => 12.0,
-                        'dimensionsUnit' => null,
-                        'weightUnit' => 'lbs',
-                        'weightValue' => 142.0,
+                        'someCode' => [
+                            'dimensionsHeight' => 13.0,
+                            'dimensionsLength' => 11.0,
+                            'dimensionsWidth' => 12.0,
+                            'dimensionsUnit' => null,
+                            'weightUnit' => 'lbs',
+                            'weightValue' => 142.0,
+                        ]
                     ],
                 ]
             );
@@ -200,12 +206,14 @@ class ShippingOptionsLineItemCollectionFactoryDecoratorTest extends AbstractShip
             ->willReturn(
                 [
                     2002 => [
-                        'dimensionsHeight' => 13.0,
-                        'dimensionsLength' => 11.0,
-                        'dimensionsWidth' => 12.0,
-                        'dimensionsUnit' => null,
-                        'weightUnit' => null,
-                        'weightValue' => 142.0,
+                        'someCode' => [
+                            'dimensionsHeight' => 13.0,
+                            'dimensionsLength' => 11.0,
+                            'dimensionsWidth' => 12.0,
+                            'dimensionsUnit' => null,
+                            'weightUnit' => null,
+                            'weightValue' => 142.0,
+                        ]
                     ],
                 ]
             );
