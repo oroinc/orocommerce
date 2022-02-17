@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\ShippingBundle\Entity\Repository;
 
+use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Query;
 use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
@@ -14,42 +14,51 @@ class ProductShippingOptionsRepository extends EntityRepository
 {
     public function findIndexedByProductsAndUnits(array $unitsByProductIds): array
     {
+        $result = [];
         if (!$unitsByProductIds) {
-            return [];
+            return $result;
         }
-
-        $expressions = [];
-        $params = [];
 
         foreach ($unitsByProductIds as $productId => $unit) {
             QueryBuilderUtil::checkIdentifier($productId);
 
-            $productParam = 'product_' . $productId;
-            $unitParam = 'unit_' . $productId;
+            $expressions = [];
+            $params = [];
+            foreach ($unit as $unitCode => $unitArr) {
+                $productParam = 'product_' . $productId;
+                $unitParam = 'unit_' . $unitCode;
 
-            $expressions[] = sprintf('(o.product = :%s AND o.productUnit = :%s)', $productParam, $unitParam);
-            $params[] = [$productParam => $productId, $unitParam => $unit];
-        }
+                $expressions[] = sprintf('(o.product = :%s AND o.productUnit = :%s)', $productParam, $unitParam);
+                $params[] = [$productParam => $productId, $unitParam => $unitArr];
+            }
 
-        $query = sprintf(
-            <<<DQL
-                SELECT o.dimensionsHeight,
-                o.dimensionsLength,
-                o.dimensionsWidth,
-                IDENTITY(o.dimensionsUnit) AS dimensionsUnit,
-                IDENTITY(o.weightUnit) AS weightUnit,
-                o.weightValue,
-                p.id as productId
+            $query = sprintf(
+                <<<DQL
+                SELECT
+                    o.dimensionsHeight,
+                    o.dimensionsLength,
+                    o.dimensionsWidth,
+                    IDENTITY(o.dimensionsUnit) AS dimensionsUnit,
+                    IDENTITY(o.weightUnit) AS weightUnit,
+                    o.weightValue,
+                    u.code
                 FROM %s o
-                INNER JOIN o.product p INDEX BY p.id
+                INNER JOIN o.productUnit u INDEX BY u.code
                 WHERE %s
             DQL,
-            ProductShippingOptions::class,
-            implode(' OR ', $expressions)
-        );
+                ProductShippingOptions::class,
+                implode(' OR ', $expressions)
+            );
 
-        return $this->getEntityManager()
-            ->createQuery($query)
-            ->execute(array_merge(...$params), Query::HYDRATE_ARRAY);
+            $unitsByCode = $this->getEntityManager()
+                ->createQuery($query)
+                ->execute(array_merge(...$params), AbstractQuery::HYDRATE_ARRAY);
+
+            if ($unitsByCode) {
+                $result[$productId] = $unitsByCode;
+            }
+        }
+
+        return $result;
     }
 }
