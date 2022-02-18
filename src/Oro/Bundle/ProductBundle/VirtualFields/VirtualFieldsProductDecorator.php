@@ -2,8 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\VirtualFields;
 
-use Doctrine\Common\Cache\CacheProvider;
-use Doctrine\Common\Collections\Collection;
+use Oro\Bundle\CacheBundle\Generator\UniversalCacheKeyGenerator;
 use Oro\Bundle\EntityBundle\Helper\FieldHelper;
 use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -12,60 +11,30 @@ use Oro\Bundle\QueryDesignerBundle\Model\QueryDesigner;
 use Oro\Bundle\QueryDesignerBundle\QueryDesigner\QueryDefinitionUtil;
 use Oro\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
+use Symfony\Contracts\Cache\CacheInterface;
 
 /**
  * Extends product with virtual fields
  */
 class VirtualFieldsProductDecorator
 {
-    const PRODUCT_ID_LABEL = 'product_id';
-    const RELATED_ID_LABEL = 'related_id';
+    private const PRODUCT_ID_LABEL = 'product_id';
+    private const RELATED_ID_LABEL = 'related_id';
 
-    /**
-     * @var VirtualFieldsSelectQueryConverter
-     */
-    protected $converter;
-
-    /**
-     * @var ManagerRegistry
-     */
-    protected $doctrine;
-
-    /**
-     * @var Collection|Product[]
-     */
-    protected $products;
-
-    /**
-     * @var Collection
-     */
-    protected $product;
-
-    /**
-     * @var FieldHelper
-     */
-    protected $fieldHelper;
-
-    /**
-     * @var array
-     */
-    protected static $values = [];
-
-    /**
-     * @var PropertyAccessor
-     */
-    protected static $propertyAccessor;
-
-    /**
-     * @var CacheProvider
-     */
-    private $cacheProvider;
+    private VirtualFieldsSelectQueryConverter $converter;
+    private ManagerRegistry $doctrine;
+    private array $products;
+    private Product $product;
+    private FieldHelper $fieldHelper;
+    private static array $values = [];
+    private static ?PropertyAccessor $propertyAccessor = null;
+    private CacheInterface $cacheProvider;
 
     public function __construct(
         VirtualFieldsSelectQueryConverter $converter,
         ManagerRegistry $doctrine,
         FieldHelper $fieldHelper,
-        CacheProvider $cacheProvider,
+        CacheInterface $cacheProvider,
         array $products,
         Product $product
     ) {
@@ -77,17 +46,14 @@ class VirtualFieldsProductDecorator
         $this->product = $product;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function __get($name)
+    public function __get($name) : mixed
     {
-        $cacheKey = sprintf('%s_%s', $this->product->getId(), $name);
-
-        //Check contains before fetch considering bool value can be returned
-        if (!$this->cacheProvider->contains($cacheKey)) {
+        $cacheKey = UniversalCacheKeyGenerator::normalizeCacheKey(
+            sprintf('%s_%s', $this->product->getId(), $name)
+        );
+        return $this->cacheProvider->get($cacheKey, function () use ($name) {
             if ($this->getPropertyAccessor()->isReadable($this->product, $name)) {
-                $propertyValue = $this->getPropertyAccessor()->getValue($this->product, $name);
+                return $this->getPropertyAccessor()->getValue($this->product, $name);
             } else {
                 $field = $this->getRelationField($name);
                 if (!$field) {
@@ -95,15 +61,9 @@ class VirtualFieldsProductDecorator
                         sprintf('Relation "%s" doesn\'t exists for Product entity', $name)
                     );
                 }
-
-                $propertyValue = $this->getVirtualFieldValueForAllProducts($field)[$this->product->getId()];
+                return $this->getVirtualFieldValueForAllProducts($field)[$this->product->getId()];
             }
-            $this->cacheProvider->save($cacheKey, $propertyValue);
-        } else {
-            $propertyValue = $this->cacheProvider->fetch($cacheKey);
-        }
-
-        return $propertyValue;
+        });
     }
 
     /**

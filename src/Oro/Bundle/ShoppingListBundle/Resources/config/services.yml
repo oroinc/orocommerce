@@ -342,6 +342,7 @@ services:
             - '@property_accessor'
             - '@oro_product.provider.product_variant_availability_provider'
             - '@oro_shopping_list.manager.empty_matrix_grid'
+            - '@doctrine'
 
     Oro\Bundle\ShoppingListBundle\Manager\MatrixGridOrderManager:
         alias: 'oro_shopping_list.provider.matrix_grid_order_manager'
@@ -355,9 +356,9 @@ services:
 
     oro_shopping_list.shopping_list_provider.cache:
         public: false
-        parent: oro.cache.abstract
-        calls:
-            - [ setNamespace, [ 'shopping_list' ] ]
+        parent: oro.data.cache
+        tags:
+            - { name: 'cache.pool', namespace: 'shopping_list' }
 
     oro_shopping_list.current_shopping_list_storage:
         class: 'Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListStorage'

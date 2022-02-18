@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\RedirectBundle\Async;
 
-use Doctrine\Common\Cache\FlushableCache;
 use Doctrine\DBAL\Exception\RetryableException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\RedirectBundle\Cache\FlushableCacheInterface;
 use Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface;
 use Oro\Bundle\RedirectBundle\Generator\SlugEntityGenerator;
 use Oro\Bundle\RedirectBundle\Model\Exception\InvalidArgumentException;
@@ -133,7 +133,7 @@ class DirectUrlProcessor implements MessageProcessorInterface, TopicSubscriberIn
         // Remove slug routes cache on Slug changes to refill it with actual data
         $this->urlCache->removeUrl(UrlCacheInterface::SLUG_ROUTES_KEY, []);
 
-        if ($this->urlCache instanceof FlushableCache) {
+        if ($this->urlCache instanceof FlushableCacheInterface) {
             $this->urlCache->flushAll();
         }
     }

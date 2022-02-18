@@ -254,9 +254,10 @@ services:
 
     oro_shipping.price.cache:
         public: false
-        parent: oro.cache.abstract
-        calls:
-            - [setNamespace, ['oro_shipping_price']]
+        parent: oro.data.cache
+        tags:
+            - { name: 'cache.pool', namespace: 'oro_shipping_price' }
+
 
     Oro\Bundle\ShippingBundle\Form\Handler\ShippingMethodsConfigsRuleHandler:
         alias: oro_shipping.form.handler.shipping_methods_configs_rule

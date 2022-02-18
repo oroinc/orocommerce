@@ -14,6 +14,7 @@ use Oro\Bundle\ProductBundle\Validator\Constraints\EmptyVariantFieldInSimpleProd
 use Oro\Bundle\ProductBundle\Validator\Constraints\EmptyVariantFieldInSimpleProductForVariantLinksValidator;
 use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class EmptyVariantFieldInSimpleProductForVariantLinksValidatorTest extends ConstraintValidatorTestCase
@@ -27,12 +28,18 @@ class EmptyVariantFieldInSimpleProductForVariantLinksValidatorTest extends Const
         parent::setUp();
     }
 
-    protected function createValidator()
+    protected function createValidator(): EmptyVariantFieldInSimpleProductForVariantLinksValidator
     {
         return new EmptyVariantFieldInSimpleProductForVariantLinksValidator(
             PropertyAccess::createPropertyAccessor(),
             $this->registry
         );
+    }
+
+    public function testGetTargets()
+    {
+        $constraint = new EmptyVariantFieldInSimpleProductForVariantLinks();
+        self::assertEquals(Constraint::CLASS_CONSTRAINT, $constraint->getTargets());
     }
 
     public function testValidateUnsupportedClass()

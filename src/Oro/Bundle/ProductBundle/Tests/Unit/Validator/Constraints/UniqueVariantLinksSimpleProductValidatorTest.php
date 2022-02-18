@@ -14,6 +14,7 @@ use Oro\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinks;
 use Oro\Bundle\ProductBundle\Validator\Constraints\UniqueVariantLinksSimpleProduct;
 use Oro\Bundle\ProductBundle\Validator\Constraints\UniqueVariantLinksSimpleProductValidator;
 use Oro\Component\Testing\ReflectionUtil;
+use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
@@ -34,12 +35,18 @@ class UniqueVariantLinksSimpleProductValidatorTest extends ConstraintValidatorTe
         parent::setUp();
     }
 
-    protected function createValidator()
+    protected function createValidator(): UniqueVariantLinksSimpleProductValidator
     {
         return new UniqueVariantLinksSimpleProductValidator(
             $this->uniqueVariantLinksProductValidatorMock,
             $this->registry
         );
+    }
+
+    public function testGetTargets()
+    {
+        $constraint = new UniqueVariantLinksSimpleProduct();
+        self::assertEquals(Constraint::CLASS_CONSTRAINT, $constraint->getTargets());
     }
 
     public function testValidateUnsupportedClass()

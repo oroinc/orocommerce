@@ -12,7 +12,6 @@ use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
-use Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecision;
 use Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecisionValidator;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
@@ -42,13 +41,9 @@ class RequestTypeTest extends AbstractTest
     public function testConfigureOptions()
     {
         $resolver = $this->createMock(OptionsResolver::class);
-        $resolver->expects(static::once())
+        $resolver->expects(self::once())
             ->method('setDefaults')
-            ->with(
-                [
-                    'data_class' => Request::class
-                ]
-            );
+            ->with(['data_class' => Request::class]);
 
         $this->formType->configureOptions($resolver);
     }
@@ -181,7 +176,7 @@ class RequestTypeTest extends AbstractTest
     /**
      * {@inheritdoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         $priceType = $this->preparePriceType();
         $entityType = $this->prepareProductSelectType();
@@ -217,19 +212,17 @@ class RequestTypeTest extends AbstractTest
     /**
      * {@inheritDoc}
      */
-    protected function getValidators()
+    protected function getValidators(): array
     {
-        $quantityUnitPrecision = new QuantityUnitPrecision();
         $roundingService = $this->createMock(RoundingServiceInterface::class);
         $roundingService->expects($this->any())
             ->method('round')
             ->willReturnCallback(function ($quantity) {
                 return (float)$quantity;
             });
-        $quantityUnitPrecisionValidator = new QuantityUnitPrecisionValidator($roundingService);
 
         return [
-            $quantityUnitPrecision->validatedBy() => $quantityUnitPrecisionValidator,
+            'oro_product_quantity_unit_precision' => new QuantityUnitPrecisionValidator($roundingService),
         ];
     }
 }

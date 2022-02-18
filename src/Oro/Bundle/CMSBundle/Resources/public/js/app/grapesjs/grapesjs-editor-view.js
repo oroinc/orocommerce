@@ -9,6 +9,7 @@ import PanelManagerModule from 'orocms/js/app/grapesjs/modules/panels-module';
 import DevicesModule from 'orocms/js/app/grapesjs/modules/devices-module';
 import mediator from 'oroui/js/mediator';
 import canvasStyle from 'orocms/js/app/grapesjs/modules/canvas-style';
+import StateModel from 'orocms/js/app/grapesjs/modules/state-model';
 
 import 'grapesjs-preset-webpage';
 import parserPostCSS from 'grapesjs-parser-postcss';
@@ -17,6 +18,7 @@ import 'orocms/js/app/grapesjs/plugins/grapesjs-style-isolation';
 import 'orocms/js/app/grapesjs/plugins/import/import';
 import 'orocms/js/app/grapesjs/plugins/code/code';
 import 'orocms/js/app/grapesjs/plugins/panel-scrolling-hints';
+import 'orocms/js/app/grapesjs/plugins/code-mode';
 import RteEditorPlugin from 'orocms/js/app/grapesjs/plugins/oro-rte-editor';
 import {escapeWrapper, getWrapperAttrs} from 'orocms/js/app/grapesjs/plugins/components/content-isolation';
 import i18nMessages from 'orocms/js/app/grapesjs/plugins/i18n-messages';
@@ -189,6 +191,8 @@ const GrapesjsEditorView = BaseView.extend({
      */
     stylesInputSelector: '[data-grapesjs-styles]',
 
+    propertiesInputSelector: '[data-grapesjs-properties]',
+
     /**
      * Styles input element
      * @property {Object}
@@ -279,7 +283,8 @@ const GrapesjsEditorView = BaseView.extend({
         'grapesjs-style-isolation': {},
         'grapesjs-import': {},
         'grapesjs-code': {},
-        'grapesjs-panel-scrolling-hints': {}
+        'grapesjs-panel-scrolling-hints': {},
+        'grapesjs-code-mode': {}
     },
 
     events: {
@@ -307,8 +312,10 @@ const GrapesjsEditorView = BaseView.extend({
         this.inFallbackContainer = !!this.$el.closest(this.fallbackContainer).length;
         this.$parent = this.$el.closest(this.wrapperSelector);
         this.$stylesInputElement = this.$parent.find(this.stylesInputSelector);
+        this.$propertiesInputElement = this.$parent.find(this.propertiesInputSelector);
 
         this.setAlternativeFields();
+        this.initStateModel();
         this.setActiveTheme(this.getCurrentTheme());
 
         const extendOptions = {};
@@ -441,6 +448,20 @@ const GrapesjsEditorView = BaseView.extend({
         this.$container.appendTo(this.$el.parent());
     },
 
+    initStateModel() {
+        let data = {};
+
+        try {
+            data = JSON.parse(this.$propertiesInputElement.val());
+        } catch (e) {}
+
+        this.state = new StateModel(data);
+    },
+
+    getState() {
+        return this.state;
+    },
+
     /**
      * Initialize builder instance
      */
@@ -452,6 +473,7 @@ const GrapesjsEditorView = BaseView.extend({
         });
 
         this.builder.parentView = this;
+        this.builder.getState = this.getState.bind(this);
 
         this.builderDelegateEvents();
 
@@ -489,6 +511,8 @@ const GrapesjsEditorView = BaseView.extend({
         this.listenTo(this.builder, 'component:selected', this.componentSelected.bind(this));
         this.listenTo(this.builder, 'component:deselected}', this.componentDeselected.bind(this));
         this.listenTo(this.builder, 'rteToolbarPosUpdate', this.updateRtePosition.bind(this));
+        this.listenTo(this.state, 'change', this.updatePropertyField.bind(this));
+
         // Fix reload form when click export to zip dialog
         this.listenTo(this.builder, 'run:export-template', () => {
             $(this.builder.Modal.getContentEl())
@@ -608,12 +632,18 @@ const GrapesjsEditorView = BaseView.extend({
     setAlternativeFields() {
         const fieldPrefix = this.$el.attr('data-ftid');
         const styleFiledName = fieldPrefix + '_style';
+        const propertiesFiledName = fieldPrefix + '_properties';
 
         if (!this.$stylesInputElement.length) {
-            this.$stylesInputElement = this.form.find('[data-ftid="' + styleFiledName + '"]');
+            this.$stylesInputElement = this.form.find(`[data-ftid="${styleFiledName}"]`);
+        }
+
+        if (!this.$propertiesInputElement.length) {
+            this.$propertiesInputElement = this.form.find(`[data-ftid="${propertiesFiledName}"]`);
         }
 
         this.$stylesInputElement.attr('data-editor-field-name', this.$el.attr('name'));
+        this.$propertiesInputElement.attr('data-editor-field-name', this.$el.attr('name'));
     },
 
     /**
@@ -842,6 +872,10 @@ const GrapesjsEditorView = BaseView.extend({
         }
     },
 
+    updatePropertyField() {
+        this.$propertiesInputElement.val(JSON.stringify(this.state.toJSON()));
+    },
+
     /**
      * Collect and compare builder options
      * @returns {GrapesjsEditorView.builderOptions|{fromElement}}
@@ -927,17 +961,31 @@ const GrapesjsEditorView = BaseView.extend({
      * @private
      */
     _getPlugins() {
-        return {
+        const pluginConfig = {
             plugins: [
+                parserPostCSS,
                 i18nMessages,
                 CodeValidator,
                 ContentParser,
-                parserPostCSS,
                 RteEditorPlugin,
                 ...Object.keys(this.builderPlugins)
             ],
             pluginsOpts: this.builderPlugins
         };
+
+        pluginConfig.plugins.forEach(plugin => {
+            if (typeof plugin === 'function') {
+                plugin.bind({
+                    editorView: this
+                });
+            }
+
+            if (pluginConfig.pluginsOpts[plugin]) {
+                pluginConfig.pluginsOpts[plugin]['editorView'] = this;
+            }
+        });
+
+        return pluginConfig;
     },
 
     updateRtePosition(pos) {

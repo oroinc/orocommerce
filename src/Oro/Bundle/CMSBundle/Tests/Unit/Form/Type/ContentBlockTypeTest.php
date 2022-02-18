@@ -11,9 +11,7 @@ use Oro\Bundle\CMSBundle\Form\Type\TextContentVariantType;
 use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGType;
 use Oro\Bundle\CMSBundle\Provider\HTMLPurifierScopeProvider;
 use Oro\Bundle\CMSBundle\Tools\DigitalAssetTwigTagsConverter;
-use Oro\Bundle\CMSBundle\Validator\Constraints\TwigContent;
 use Oro\Bundle\CMSBundle\Validator\Constraints\TwigContentValidator;
-use Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYG;
 use Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYGValidator;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\FormBundle\Provider\HtmlTagProvider;
@@ -27,9 +25,6 @@ use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntityValidator;
-use Symfony\Component\Validator\Constraint;
-use Symfony\Component\Validator\Constraints\CollectionValidator;
-use Symfony\Component\Validator\ConstraintValidatorFactoryInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 use Twig\Template;
@@ -38,12 +33,12 @@ use Twig\TemplateWrapper;
 class ContentBlockTypeTest extends FormIntegrationTestCase
 {
     /** @var DefaultContentVariantScopesResolver|\PHPUnit\Framework\MockObject\MockObject */
-    protected $defaultVariantScopesResolver;
+    private $defaultVariantScopesResolver;
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         $htmlTagProvider = $this->createMock(HtmlTagProvider::class);
         $purifierScopeProvider = $this->createMock(HTMLPurifierScopeProvider::class);
@@ -78,7 +73,7 @@ class ContentBlockTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritdoc}
      */
-    protected function getValidators()
+    protected function getValidators(): array
     {
         $htmlTagHelper = $this->createMock(HtmlTagHelper::class);
         $purifierScopeProvider = $this->createMock(HTMLPurifierScopeProvider::class);
@@ -95,24 +90,22 @@ class ContentBlockTypeTest extends FormIntegrationTestCase
             ->method('createTemplate')
             ->willReturn(new TemplateWrapper($twig, $template));
 
-        $wysiwygConstraint = new WYSIWYG();
-        $twigContent = new TwigContent();
-
         return [
-            $wysiwygConstraint->validatedBy() => new WYSIWYGValidator(
+            'doctrine.orm.validator.unique' => $this->createMock(UniqueEntityValidator::class),
+            WYSIWYGValidator::class => new WYSIWYGValidator(
                 $htmlTagHelper,
                 $purifierScopeProvider,
                 $translator,
                 $logger
             ),
-            $twigContent->validatedBy() => new TwigContentValidator($twig)
+            TwigContentValidator::class => new TwigContentValidator($twig)
         ];
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
-    protected function getTypes()
+    protected function getTypes(): array
     {
         $this->defaultVariantScopesResolver = $this->createMock(DefaultContentVariantScopesResolver::class);
 
@@ -132,14 +125,13 @@ class ContentBlockTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider submitDataProvider
-     *
-     * @param bool         $isValid
-     * @param ContentBlock $existingData
-     * @param array        $submittedData
-     * @param ContentBlock $expectedData
      */
-    public function testSubmit($isValid, $existingData, $submittedData, $expectedData)
-    {
+    public function testSubmit(
+        bool $isValid,
+        ContentBlock $existingData,
+        array $submittedData,
+        ?ContentBlock $expectedData
+    ) {
         $form = $this->factory->create(ContentBlockType::class, $existingData);
 
         $this->defaultVariantScopesResolver->expects($this->once())
@@ -156,10 +148,7 @@ class ContentBlockTypeTest extends FormIntegrationTestCase
         }
     }
 
-    /**
-     * @return array
-     */
-    public function submitDataProvider()
+    public function submitDataProvider(): array
     {
         return [
             'empty_alias' => [
@@ -171,10 +160,7 @@ class ContentBlockTypeTest extends FormIntegrationTestCase
                     'enabled' => true,
                     'scopes' => [],
                     'contentVariants' => [
-                        [
-                            'content' => 'some_content',
-                            'scopes' => [],
-                        ]
+                        ['content' => 'some_content', 'scopes' => []]
                     ],
                 ],
                 null
@@ -188,10 +174,7 @@ class ContentBlockTypeTest extends FormIntegrationTestCase
                     'enabled' => true,
                     'scopes' => [],
                     'contentVariants' => [
-                        [
-                            'content' => 'some_content',
-                            'scopes' => [],
-                        ]
+                        ['content' => 'some_content', 'scopes' => []]
                     ],
                 ],
                 null
@@ -205,86 +188,36 @@ class ContentBlockTypeTest extends FormIntegrationTestCase
                     'enabled' => true,
                     'scopes' => [],
                     'contentVariants' => [
-                        [
-                            'content' => 'some_content',
-                            'scopes' => [],
-                        ]
+                        ['content' => 'some_content', 'scopes' => []]
                     ],
                 ],
                 (new ContentBlock())
                     ->setAlias('some_title')
                     ->addTitle((new LocalizedFallbackValue())->setString('new_block_node_title'))
                     ->setEnabled(true)
-                    ->addContentVariant(
-                        (new TextContentVariant())
-                            ->setContent('some_content')
-                    ),
+                    ->addContentVariant((new TextContentVariant())->setContent('some_content')),
             ],
             'exist entity' => [
                 true,
                 (new ContentBlock())
-                    ->addContentVariant(
-                        (new TextContentVariant())
-                            ->setContent('some_content')
-                    ),
+                    ->addContentVariant((new TextContentVariant())->setContent('some_content')),
                 [
                     'alias' => 'some_title',
                     'titles' => [['string' => 'changed_block_node_title']],
                     'enabled' => true,
                     'scopes' => [],
                     'contentVariants' => [
-                        [
-                            'content' => 'some_content',
-                            'scopes' => [],
-                        ],
-                        [
-                            'content' => 'some_content2',
-                            'scopes' => [],
-                        ]
+                        ['content' => 'some_content', 'scopes' => []],
+                        ['content' => 'some_content2', 'scopes' => []]
                     ],
                 ],
                 (new ContentBlock())
                     ->setAlias('some_title')
                     ->addTitle((new LocalizedFallbackValue())->setString('changed_block_node_title'))
                     ->setEnabled(true)
-                    ->addContentVariant(
-                        (new TextContentVariant())
-                            ->setContent('some_content')
-                    )
-                    ->addContentVariant(
-                        (new TextContentVariant())
-                            ->setContent('some_content2')
-                    ),
+                    ->addContentVariant((new TextContentVariant())->setContent('some_content'))
+                    ->addContentVariant((new TextContentVariant())->setContent('some_content2')),
             ]
         ];
-    }
-
-    /**
-     * @return \PHPUnit\Framework\MockObject\MockObject|ConstraintValidatorFactoryInterface
-     */
-    protected function getConstraintValidatorFactory()
-    {
-        $factory = $this->createMock(ConstraintValidatorFactoryInterface::class);
-        $factory->expects($this->any())
-            ->method('getInstance')
-            ->willReturnCallback(
-                function (Constraint $constraint) {
-                    $className = $constraint->validatedBy();
-
-                    if ($className === 'doctrine.orm.validator.unique') {
-                        $this->validators[$className] = $this->getMockBuilder(UniqueEntityValidator::class)
-                            ->disableOriginalConstructor()
-                            ->getMock();
-                    }
-
-                    if (!isset($this->validators[$className]) || $className === CollectionValidator::class) {
-                        $this->validators[$className] = new $className();
-                    }
-
-                    return $this->validators[$className];
-                }
-            );
-
-        return $factory;
     }
 }

@@ -147,8 +147,7 @@ class FedexIntegrationSettingsType extends AbstractType
 
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
             if ($event->getForm()->isValid()) {
-                $data = $event->getData();
-                $this->fedexResponseCache->deleteAll($data);
+                $this->fedexResponseCache->deleteAll();
                 $this->shippingPriceCache->deleteAllPrices();
             }
         });

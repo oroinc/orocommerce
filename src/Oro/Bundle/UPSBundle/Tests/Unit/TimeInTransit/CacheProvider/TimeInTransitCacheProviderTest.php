@@ -2,12 +2,13 @@
 
 namespace Oro\Bundle\UPSBundle\Tests\Unit\TimeInTransit\CacheProvider;
 
-use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Formatter\Stubs\AddressStub;
 use Oro\Bundle\UPSBundle\Cache\Lifetime\LifetimeProviderInterface;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport as UPSSettings;
 use Oro\Bundle\UPSBundle\TimeInTransit\CacheProvider\TimeInTransitCacheProvider;
 use Oro\Bundle\UPSBundle\TimeInTransit\Result\TimeInTransitResultInterface;
+use Psr\Cache\CacheItemInterface;
+use Psr\Cache\CacheItemPoolInterface;
 
 class TimeInTransitCacheProviderTest extends \PHPUnit\Framework\TestCase
 {
@@ -42,9 +43,12 @@ class TimeInTransitCacheProviderTest extends \PHPUnit\Framework\TestCase
     private $settings;
 
     /**
-     * @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject
+     * @var CacheItemPoolInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $cacheProvider;
+
+    /** @var CacheItemInterface|\PHPUnit\Framework\MockObject\MockObject */
+    protected $cacheItem;
 
     /**
      * @var LifetimeProviderInterface|\PHPUnit\Framework\MockObject\MockObject
@@ -69,7 +73,8 @@ class TimeInTransitCacheProviderTest extends \PHPUnit\Framework\TestCase
         $this->address = new AddressStub();
         $this->pickupDate = \DateTime::createFromFormat('d.m.Y H:i', self::PICKUP_DATE);
         $this->settings = $this->createMock(UPSSettings::class);
-        $this->cacheProvider = $this->createMock(CacheProvider::class);
+        $this->cacheProvider = $this->createMock(CacheItemPoolInterface::class);
+        $this->cacheItem = $this->createMock(CacheItemInterface::class);
         $this->lifetimeProvider = $this->createMock(LifetimeProviderInterface::class);
 
         $this->lifetimeProvider->method('generateLifetimeAwareKey')
@@ -87,49 +92,69 @@ class TimeInTransitCacheProviderTest extends \PHPUnit\Framework\TestCase
     {
         $this->cacheProvider
             ->expects(static::once())
-            ->method('contains')
-            ->with(self::CACHE_KEY);
+            ->method('hasItem')
+            ->with(self::CACHE_KEY)
+            ->willReturn(false);
 
-        $this->timeInTransitCacheProvider->contains($this->address, $this->address, $this->pickupDate);
+        self::assertFalse(
+            $this->timeInTransitCacheProvider->contains($this->address, $this->address, $this->pickupDate)
+        );
     }
 
     public function testDelete()
     {
         $this->cacheProvider
             ->expects(static::once())
-            ->method('delete')
-            ->with(self::CACHE_KEY);
+            ->method('deleteItem')
+            ->with(self::CACHE_KEY)
+            ->willReturn(true);
 
-        $this->timeInTransitCacheProvider->delete($this->address, $this->address, $this->pickupDate);
+        self::assertTrue($this->timeInTransitCacheProvider->delete($this->address, $this->address, $this->pickupDate));
     }
 
     public function testDeleteAll()
     {
         $this->cacheProvider
             ->expects(static::once())
-            ->method('deleteAll');
+            ->method('clear')
+            ->willReturn(true);
 
         $this->timeInTransitCacheProvider->deleteAll();
     }
 
     public function testFetch()
     {
-        $this->cacheProvider
-            ->expects(static::once())
-            ->method('fetch')
-            ->with(self::CACHE_KEY);
+        $this->cacheProvider->expects(self::once())
+            ->method('getItem')
+            ->with(self::CACHE_KEY)
+            ->willReturn($this->cacheItem);
+        $this->cacheItem->expects(self::once())
+            ->method('isHit')
+            ->willReturn(false);
 
-        $this->timeInTransitCacheProvider->fetch($this->address, $this->address, $this->pickupDate);
+        self::assertNull($this->timeInTransitCacheProvider->fetch($this->address, $this->address, $this->pickupDate));
     }
 
     public function testSave()
     {
         $timeInTransitResult = $this->createTimeInTransitResultMock();
 
-        $this->cacheProvider
-            ->expects(static::once())
+        $this->cacheProvider->expects($this->once())
+            ->method('getItem')
+            ->with(self::CACHE_KEY)
+            ->willReturn($this->cacheItem);
+        $this->cacheItem->expects(self::once())
+            ->method('set')
+            ->with($timeInTransitResult)
+            ->willReturn($this->cacheItem);
+        $this->cacheItem->expects(self::once())
+            ->method('expiresAfter')
+            ->with(self::LIFETIME)
+            ->willReturn($this->cacheItem);
+        $this->cacheProvider->expects($this->once())
             ->method('save')
-            ->with(self::CACHE_KEY, $timeInTransitResult, self::LIFETIME);
+            ->with($this->cacheItem)
+            ->willReturn(true);
 
         $lifetime = 10;
 
@@ -137,8 +162,10 @@ class TimeInTransitCacheProviderTest extends \PHPUnit\Framework\TestCase
             ->with($this->settings, $lifetime)
             ->willReturn(self::LIFETIME);
 
-        $this->timeInTransitCacheProvider
-            ->save($this->address, $this->address, $this->pickupDate, $timeInTransitResult, $lifetime);
+        self::assertTrue(
+            $this->timeInTransitCacheProvider
+                ->save($this->address, $this->address, $this->pickupDate, $timeInTransitResult, $lifetime)
+        );
     }
 
     /**

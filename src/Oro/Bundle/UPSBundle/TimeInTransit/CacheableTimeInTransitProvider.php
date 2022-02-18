@@ -8,20 +8,13 @@ use Oro\Bundle\UPSBundle\TimeInTransit\CacheProvider\Factory\TimeInTransitCacheP
 use Oro\Bundle\UPSBundle\TimeInTransit\CacheProvider\TimeInTransitCacheProviderInterface;
 use Oro\Bundle\UPSBundle\TimeInTransit\Result\TimeInTransitResultInterface;
 
+/**
+ * Provider for caching results from Time in Transit UPS API
+ */
 class CacheableTimeInTransitProvider implements TimeInTransitProviderInterface
 {
-    const CACHE_LIFETIME = 86400;
-    const PICKUP_DATE_CACHE_KEY_FORMAT = 'YmdHi';
-
-    /**
-     * @var TimeInTransitProviderInterface
-     */
-    protected $timeInTransit;
-
-    /**
-     * @var TimeInTransitCacheProviderFactoryInterface
-     */
-    protected $timeInTransitCacheProviderFactory;
+    private TimeInTransitProviderInterface $timeInTransit;
+    private TimeInTransitCacheProviderFactoryInterface $timeInTransitCacheProviderFactory;
 
     public function __construct(
         TimeInTransitProviderInterface $timeInTransit,
@@ -31,9 +24,6 @@ class CacheableTimeInTransitProvider implements TimeInTransitProviderInterface
         $this->timeInTransitCacheProviderFactory = $timeInTransitCacheProviderFactory;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getTimeInTransitResult(
         UPSTransport $transport,
         AddressInterface $shipFromAddress,
@@ -59,12 +49,7 @@ class CacheableTimeInTransitProvider implements TimeInTransitProviderInterface
         return $result;
     }
 
-    /**
-     * @param UPSTransport $transport
-     *
-     * @return TimeInTransitCacheProviderInterface
-     */
-    protected function createCacheProvider(UPSTransport $transport)
+    private function createCacheProvider(UPSTransport $transport) : TimeInTransitCacheProviderInterface
     {
         return $this->timeInTransitCacheProviderFactory->createCacheProviderForTransport($transport);
     }

@@ -6,6 +6,7 @@ use Oro\Bundle\TaxBundle\Entity\ZipCode;
 use Oro\Bundle\TaxBundle\Tests\Component\ZipCodeTestHelper;
 use Oro\Bundle\TaxBundle\Validator\Constraints\ZipCodeFields;
 use Oro\Bundle\TaxBundle\Validator\Constraints\ZipCodeFieldsValidator;
+use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -24,6 +25,12 @@ class ZipCodeFieldsValidatorTest extends \PHPUnit\Framework\TestCase
         $this->context = $this->createMock(ExecutionContextInterface::class);
         $this->validator = new ZipCodeFieldsValidator();
         $this->validator->initialize($this->context);
+    }
+
+    public function testGetTargets()
+    {
+        $constraint = new ZipCodeFields();
+        self::assertEquals(Constraint::CLASS_CONSTRAINT, $constraint->getTargets());
     }
 
     /**

@@ -2,12 +2,13 @@
 
 namespace Oro\Bundle\UPSBundle\Tests\Unit\Cache;
 
-use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\UPSBundle\Cache\Lifetime\LifetimeProviderInterface;
 use Oro\Bundle\UPSBundle\Cache\ShippingPriceCache;
 use Oro\Bundle\UPSBundle\Cache\ShippingPriceCacheKey;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport as UPSSettings;
+use Psr\Cache\CacheItemInterface;
+use Psr\Cache\CacheItemPoolInterface;
 
 class ShippingPriceCacheTest extends \PHPUnit\Framework\TestCase
 {
@@ -27,9 +28,12 @@ class ShippingPriceCacheTest extends \PHPUnit\Framework\TestCase
     private $cache;
 
     /**
-     * @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject
+     * @var CacheItemPoolInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $cacheProvider;
+
+    /** @var CacheItemInterface|\PHPUnit\Framework\MockObject\MockObject */
+    protected $cacheItem;
 
     /**
      * @var LifetimeProviderInterface|\PHPUnit\Framework\MockObject\MockObject
@@ -48,7 +52,8 @@ class ShippingPriceCacheTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->cacheProvider = $this->createMock(CacheProvider::class);
+        $this->cacheProvider = $this->createMock(CacheItemPoolInterface::class);
+        $this->cacheItem = $this->createMock(CacheItemInterface::class);
         $this->lifetimeProvider = $this->createMock(LifetimeProviderInterface::class);
 
         $this->settings = $this->createMock(UPSSettings::class);
@@ -56,10 +61,6 @@ class ShippingPriceCacheTest extends \PHPUnit\Framework\TestCase
         $this->settings
             ->method('getId')
             ->willReturn(self::SETTINGS_ID);
-
-        $this->cacheProvider->expects(static::once())
-            ->method('setNamespace')
-            ->with('oro_ups_shipping_price_'.self::SETTINGS_ID);
 
         $this->cacheKey = $this->getCacheKeyMock($this->settings, self::CACHE_KEY);
 
@@ -72,16 +73,18 @@ class ShippingPriceCacheTest extends \PHPUnit\Framework\TestCase
 
     public function testFetchPrice()
     {
-        $this->cacheProvider->expects(static::once())
-            ->method('contains')
+        $this->cacheProvider->expects(self::once())
+            ->method('getItem')
             ->with(self::CACHE_KEY)
+            ->willReturn($this->cacheItem);
+        $this->cacheItem->expects(self::once())
+            ->method('isHit')
             ->willReturn(true);
 
         $price = Price::create(10, 'USD');
 
-        $this->cacheProvider->expects(static::once())
-            ->method('fetch')
-            ->with(self::CACHE_KEY)
+        $this->cacheItem->expects(self::once())
+            ->method('get')
             ->willReturn($price);
 
         static::assertSame($price, $this->cache->fetchPrice($this->cacheKey));
@@ -89,21 +92,24 @@ class ShippingPriceCacheTest extends \PHPUnit\Framework\TestCase
 
     public function testFetchPriceFalse()
     {
-        $this->cacheProvider->expects(static::once())
-            ->method('contains')
+        $this->cacheProvider->expects(self::once())
+            ->method('getItem')
             ->with(self::CACHE_KEY)
+            ->willReturn($this->cacheItem);
+        $this->cacheItem->expects(self::once())
+            ->method('isHit')
             ->willReturn(false);
 
-        $this->cacheProvider->expects(static::never())
-            ->method('fetch');
+        $this->cacheItem->expects(static::never())
+            ->method('get');
 
         static::assertFalse($this->cache->fetchPrice($this->cacheKey));
     }
 
     public function testContainsPrice()
     {
-        $this->cacheProvider->expects(static::once())
-            ->method('contains')
+        $this->cacheProvider->expects(self::once())
+            ->method('hasItem')
             ->with(self::CACHE_KEY)
             ->willReturn(true);
 
@@ -112,8 +118,8 @@ class ShippingPriceCacheTest extends \PHPUnit\Framework\TestCase
 
     public function testContainsPriceFalse()
     {
-        $this->cacheProvider->expects(static::once())
-            ->method('contains')
+        $this->cacheProvider->expects(self::once())
+            ->method('hasItem')
             ->with(self::CACHE_KEY)
             ->willReturn(false);
 
@@ -129,11 +135,24 @@ class ShippingPriceCacheTest extends \PHPUnit\Framework\TestCase
             ->willReturn($lifetime);
 
         $price = Price::create(10, 'USD');
-        $this->cacheProvider->expects(static::once())
+        $this->cacheProvider->expects($this->once())
+            ->method('getItem')
+            ->with(self::CACHE_KEY)
+            ->willReturn($this->cacheItem);
+        $this->cacheItem->expects(self::once())
+            ->method('set')
+            ->with($price)
+            ->willReturn($this->cacheItem);
+        $this->cacheItem->expects(self::once())
+            ->method('expiresAfter')
+            ->with($lifetime)
+            ->willReturn($this->cacheItem);
+        $this->cacheProvider->expects($this->once())
             ->method('save')
-            ->with(self::CACHE_KEY, $price, $lifetime);
+            ->with($this->cacheItem)
+            ->willReturn(true);
 
-        static::assertEquals($this->cache, $this->cache->savePrice($this->cacheKey, $price));
+        static::assertTrue($this->cache->savePrice($this->cacheKey, $price));
     }
 
     /**

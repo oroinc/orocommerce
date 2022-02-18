@@ -9,19 +9,12 @@ use Oro\Bundle\ShippingBundle\Method\Validator\Result\ShippingMethodValidatorRes
 
 class BasicShippingMethodValidatorTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var Common\CommonShippingMethodValidatorResultFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var Common\CommonShippingMethodValidatorResultFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $commonShippingMethodValidatorResultFactory;
 
-    /**
-     * @var BasicShippingMethodValidator
-     */
+    /** @var BasicShippingMethodValidator */
     private $validator;
 
-    /**
-     * {@inheritDoc}
-     */
     protected function setUp(): void
     {
         $this->commonShippingMethodValidatorResultFactory = $this->createMock(
@@ -33,15 +26,14 @@ class BasicShippingMethodValidatorTest extends \PHPUnit\Framework\TestCase
 
     public function testValidate()
     {
-        /** @var ShippingMethodInterface $shippingMethod */
         $shippingMethod = $this->createMock(ShippingMethodInterface::class);
 
         $result = $this->createMock(ShippingMethodValidatorResultInterface::class);
 
-        $this->commonShippingMethodValidatorResultFactory->expects(static::once())
+        $this->commonShippingMethodValidatorResultFactory->expects(self::once())
             ->method('createSuccessResult')
             ->willReturn($result);
 
-        static::assertSame($result, $this->validator->validate($shippingMethod));
+        self::assertSame($result, $this->validator->validate($shippingMethod));
     }
 }

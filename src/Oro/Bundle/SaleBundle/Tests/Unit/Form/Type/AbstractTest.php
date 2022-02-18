@@ -13,7 +13,6 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
-use Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecision;
 use Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecisionValidator;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
@@ -87,13 +86,8 @@ abstract class AbstractTest extends FormIntegrationTestCase
     /**
      * {@inheritdoc}
      */
-    protected function getValidators()
+    protected function getValidators(): array
     {
-        $quoteProductConstraint = new Constraints\QuoteProduct();
-
-        $UniqueEntity = $this->createMock(UniqueEntityValidator::class);
-
-        $quantityUnitPrecision = new QuantityUnitPrecision();
         $roundingService = $this->createMock(RoundingServiceInterface::class);
         $roundingService->expects(self::any())
             ->method('round')
@@ -102,9 +96,9 @@ abstract class AbstractTest extends FormIntegrationTestCase
             });
 
         return [
-            $quoteProductConstraint->validatedBy() => new Constraints\QuoteProductValidator(),
-            'doctrine.orm.validator.unique' => $UniqueEntity,
-            $quantityUnitPrecision->validatedBy() => new QuantityUnitPrecisionValidator($roundingService)
+            'oro_sale.validator.quote_product' => new Constraints\QuoteProductValidator(),
+            'doctrine.orm.validator.unique' => $this->createMock(UniqueEntityValidator::class),
+            'oro_product_quantity_unit_precision' => new QuantityUnitPrecisionValidator($roundingService)
         ];
     }
 

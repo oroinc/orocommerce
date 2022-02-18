@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\CatalogBundle\Entity\EntityListener;
 
-use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;
+use Symfony\Contracts\Cache\CacheInterface;
 
 /**
  * Schedules product reindex and clears a cache for category layout data provider
@@ -13,37 +13,34 @@ use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;
  */
 class CategoryEntityListener
 {
-    /** @var ProductIndexScheduler */
-    private $productIndexScheduler;
-
-    /** @var CacheProvider */
-    private $categoryCache;
+    private ProductIndexScheduler $productIndexScheduler;
+    private CacheInterface $categoryCache;
 
     public function __construct(
         ProductIndexScheduler $productIndexScheduler,
-        CacheProvider $categoryCache
+        CacheInterface $categoryCache
     ) {
         $this->productIndexScheduler = $productIndexScheduler;
         $this->categoryCache = $categoryCache;
     }
 
-    public function preRemove(Category $category)
+    public function preRemove(Category $category) : void
     {
         $this->productIndexScheduler->scheduleProductsReindex([$category]);
-        $this->categoryCache->deleteAll();
+        $this->categoryCache->clear();
     }
 
-    public function postPersist(Category $category)
+    public function postPersist(Category $category) : void
     {
         $this->productIndexScheduler->scheduleProductsReindex([$category]);
-        $this->categoryCache->deleteAll();
+        $this->categoryCache->clear();
     }
 
-    public function preUpdate(Category $category, PreUpdateEventArgs $eventArgs)
+    public function preUpdate(Category $category, PreUpdateEventArgs $eventArgs) : void
     {
         if ($eventArgs->getEntityChangeSet()) {
             $this->productIndexScheduler->scheduleProductsReindex([$category]);
-            $this->categoryCache->deleteAll();
+            $this->categoryCache->clear();
         }
     }
 }

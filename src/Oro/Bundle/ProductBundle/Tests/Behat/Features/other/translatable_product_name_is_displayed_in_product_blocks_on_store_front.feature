@@ -1,4 +1,5 @@
 @ticket-BB-12917
+@waf-skip
 @fixture-OroProductBundle:translatable_product.yml
 Feature: Translatable product name is displayed in product blocks on store front
   In order to have products with translation for products blocks on the store front

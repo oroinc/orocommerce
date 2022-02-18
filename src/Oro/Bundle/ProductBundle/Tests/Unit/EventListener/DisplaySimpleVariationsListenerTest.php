@@ -2,18 +2,18 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
-use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
 use Oro\Bundle\ProductBundle\EventListener\Config\DisplaySimpleVariationsListener;
+use Symfony\Component\Cache\Adapter\AbstractAdapter;
 
 class DisplaySimpleVariationsListenerTest extends \PHPUnit\Framework\TestCase
 {
     const CONFIG_KEY = 'oro_product.display_simple_variations';
 
-    /** @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var AbstractAdapter|\PHPUnit\Framework\MockObject\MockObject */
     protected $productCache;
 
-    /** @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var AbstractAdapter|\PHPUnit\Framework\MockObject\MockObject */
     protected $categoryCache;
 
     /** @var DisplaySimpleVariationsListener */
@@ -24,8 +24,8 @@ class DisplaySimpleVariationsListenerTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp(): void
     {
-        $this->productCache = $this->createMock(CacheProvider::class);
-        $this->categoryCache = $this->createMock(CacheProvider::class);
+        $this->productCache = $this->createMock(AbstractAdapter::class);
+        $this->categoryCache = $this->createMock(AbstractAdapter::class);
 
         $this->eventListener = new DisplaySimpleVariationsListener(
             $this->productCache,
@@ -43,10 +43,10 @@ class DisplaySimpleVariationsListenerTest extends \PHPUnit\Framework\TestCase
             ->willReturn(true);
 
         $this->productCache->expects($this->once())
-            ->method('deleteAll');
+            ->method('clear');
 
         $this->categoryCache->expects($this->once())
-            ->method('deleteAll');
+            ->method('clear');
 
         $this->eventListener->onUpdateAfter($event);
     }
@@ -60,10 +60,10 @@ class DisplaySimpleVariationsListenerTest extends \PHPUnit\Framework\TestCase
             ->willReturn(false);
 
         $this->productCache->expects($this->never())
-            ->method('deleteAll');
+            ->method('clear');
 
         $this->categoryCache->expects($this->never())
-            ->method('deleteAll');
+            ->method('clear');
 
         $this->eventListener->onUpdateAfter($event);
     }

@@ -2,65 +2,46 @@
 
 namespace Oro\Bundle\ProductBundle\Provider;
 
-use Doctrine\Common\Cache\CacheProvider;
-use Doctrine\Common\Cache\Psr6\DoctrineProvider;
+use Oro\Bundle\CacheBundle\Generator\UniversalCacheKeyGenerator;
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 
 /**
  * Provides ability to get list of the custom extended fields of the entity.
  */
 class CustomFieldProvider
 {
-    /**
-     * @var ConfigProvider
-     */
-    protected $extendConfigProvider;
-
-    /**
-     * @var ConfigProvider
-     */
-    protected $entityConfigProvider;
-
-    /**
-     * @var CacheProvider
-     */
-    private $cache;
-
-    /**
-     * @var int
-     */
-    private $cacheLifeTime = 0;
+    private ConfigProvider $extendConfigProvider;
+    private ConfigProvider $entityConfigProvider;
+    private CacheInterface $cache;
+    private int $cacheLifeTime = 0;
 
     public function __construct(ConfigProvider $extendConfigProvider, ConfigProvider $entityConfigProvider)
     {
         $this->extendConfigProvider = $extendConfigProvider;
         $this->entityConfigProvider = $entityConfigProvider;
-        $this->cache = DoctrineProvider::wrap(new ArrayAdapter(0, false));
+        $this->cache = new ArrayAdapter($this->cacheLifeTime, false);
     }
 
-    public function setCache(CacheProvider $cache, int $lifeTime = 0): void
+    public function setCache(CacheInterface $cache, int $lifeTime = 0): void
     {
         $this->cache = $cache;
         $this->cacheLifeTime = $lifeTime;
     }
 
-    /**
-     * @param string $entityName
-     * @return array
-     */
-    public function getEntityCustomFields($entityName)
+    public function getEntityCustomFields(string $entityName) : array
     {
-        $data = $this->cache->fetch($entityName);
-        if (!\is_array($data)) {
-            $data = $this->getActualEntityCustomFields($entityName);
-
-            $this->cache->save($entityName, $data, $this->cacheLifeTime);
-        }
-
-        return $data;
+        $cacheKey = UniversalCacheKeyGenerator::normalizeCacheKey($entityName);
+        return $this->cache->get($cacheKey, function (ItemInterface $item) use ($entityName) {
+            if ($this->cacheLifeTime > 0) {
+                $item->expiresAfter($this->cacheLifeTime);
+            }
+            return $this->getActualEntityCustomFields($entityName);
+        });
     }
 
     private function getActualEntityCustomFields(string $entityName): array

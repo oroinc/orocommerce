@@ -45,7 +45,13 @@ Feature: My Shopping List Actions
     Then I should see "Shopping list has been successfully renamed" flash message
     When I open shopping list widget
     Then I should see "Shopping List 4" on shopping list widget
-    And I reload the page
+    And I close shopping list widget
+    And I should see "Create Order"
+    When I click "Create Order"
+    Then Page title equals to "Billing Information - Checkout"
+    When I follow "Account"
+    Then I click on "Shopping Lists Navigation Link"
+    And I click View "Shopping List 4" in grid
 
   Scenario: Set Default Action
     Given I click "Shopping List Actions"

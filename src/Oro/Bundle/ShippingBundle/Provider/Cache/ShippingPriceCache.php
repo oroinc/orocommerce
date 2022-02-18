@@ -2,91 +2,60 @@
 
 namespace Oro\Bundle\ShippingBundle\Provider\Cache;
 
-use Doctrine\Common\Cache\CacheProvider;
+use Oro\Bundle\CacheBundle\Generator\UniversalCacheKeyGenerator;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextCacheKeyGenerator;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
+use Psr\Cache\CacheItemPoolInterface;
 
 /**
  * The cache for shipping prices.
  */
 class ShippingPriceCache
 {
-    /**
-     * 1 hour, 60 * 60
-     */
-    const CACHE_LIFETIME = 3600;
+    private const CACHE_LIFETIME = 3600;
 
-    /**
-     * @var CacheProvider
-     */
-    protected $cache;
-
-    /**
-     * @var ShippingContextCacheKeyGenerator
-     */
-    protected $cacheKeyGenerator;
+    private CacheItemPoolInterface $cache;
+    private ShippingContextCacheKeyGenerator $cacheKeyGenerator;
 
     public function __construct(
-        CacheProvider $cacheProvider,
+        CacheItemPoolInterface $cacheProvider,
         ShippingContextCacheKeyGenerator $cacheKeyGenerator
     ) {
         $this->cache = $cacheProvider;
         $this->cacheKeyGenerator = $cacheKeyGenerator;
     }
 
-    /**
-     * @param ShippingContextInterface $context
-     * @param string $methodId
-     * @param string $typeId
-     * @return Price|null
-     */
-    public function getPrice(ShippingContextInterface $context, $methodId, $typeId)
+    public function getPrice(ShippingContextInterface $context, string $methodId, string $typeId) : Price|null
     {
-        $key = $this->generateKey($context, $methodId, $typeId);
-        $value = $this->cache->fetch($key);
+        $cacheKey = $this->generateKey($context, $methodId, $typeId);
+        $cacheItem = $this->cache->getItem($cacheKey);
 
-        return false !== $value ? $value : null;
+        return $cacheItem->isHit() ? $cacheItem->get() : null;
     }
 
-    /**
-     * @param ShippingContextInterface $context
-     * @param string $methodId
-     * @param string $typeId
-     * @return bool
-     */
-    public function hasPrice(ShippingContextInterface $context, $methodId, $typeId)
+    public function hasPrice(ShippingContextInterface $context, string $methodId, string $typeId) : bool
     {
-        return $this->cache->contains($this->generateKey($context, $methodId, $typeId));
+        return $this->cache->getItem($this->generateKey($context, $methodId, $typeId))->isHit();
     }
 
-    /**
-     * @param ShippingContextInterface $context
-     * @param string $methodId
-     * @param string $typeId
-     * @param Price $price
-     * @return $this
-     */
-    public function savePrice(ShippingContextInterface $context, $methodId, $typeId, Price $price)
+    public function savePrice(ShippingContextInterface $context, string $methodId, string $typeId, Price $price) : void
     {
-        $key = $this->generateKey($context, $methodId, $typeId);
-        $this->cache->save($key, $price, static::CACHE_LIFETIME);
-        return $this;
+        $cacheKey = $this->generateKey($context, $methodId, $typeId);
+        $cacheItem = $this->cache->getItem($cacheKey);
+        $cacheItem->set($price)->expiresAfter(static::CACHE_LIFETIME);
+        $this->cache->save($cacheItem);
     }
 
-    /**
-     * @param ShippingContextInterface $context
-     * @param string $methodId
-     * @param string $typeId
-     * @return string
-     */
-    protected function generateKey(ShippingContextInterface $context, $methodId, $typeId)
+    private function generateKey(ShippingContextInterface $context, string $methodId, string $typeId) : string
     {
-        return $this->cacheKeyGenerator->generateKey($context).$methodId.$typeId;
+        return UniversalCacheKeyGenerator::normalizeCacheKey(
+            $this->cacheKeyGenerator->generateKey($context).$methodId.$typeId
+        );
     }
 
-    public function deleteAllPrices()
+    public function deleteAllPrices() : void
     {
-        $this->cache->deleteAll();
+        $this->cache->clear();
     }
 }

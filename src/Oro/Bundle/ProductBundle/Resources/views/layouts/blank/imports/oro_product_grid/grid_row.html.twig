@@ -94,7 +94,8 @@
         } %}
 
         {% set attr = layout_attr_defaults(attr, {
-            'data-page-component-view': options|json_encode
+            'data-page-component-view': options|json_encode,
+            'data-popup-gallery': ''
         }) %}
     {% endif %}
 
@@ -124,7 +125,7 @@
 
     {% if product.imageWebp is defined and product.imageWebp %}
         {% set sources = [{
-            srcset: asset(product.imageWebp|trim('/')),
+            srcset: product.imageWebp,
             type: 'image/webp'
         }] %}
     {% endif %}
@@ -132,7 +133,7 @@
     {% include '@OroAttachment/Twig/picture.html.twig' with {
         sources: sources|default([]),
         img_attrs: {
-            src: asset(product.image|trim('/')),
+            src: product.image,
             alt: product.name,
             class: 'product-item__preview-image',
             itemprop: 'image'

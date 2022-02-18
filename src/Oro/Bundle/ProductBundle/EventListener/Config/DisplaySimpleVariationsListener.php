@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\EventListener\Config;
 
-use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
+use Symfony\Contracts\Cache\CacheInterface;
 
 /**
  * Clears caches for product and category layout data providers
@@ -11,23 +11,13 @@ use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
  */
 class DisplaySimpleVariationsListener
 {
-    /** @var CacheProvider */
-    private $productCache;
+    private CacheInterface $productCache;
+    private CacheInterface $categoryCache;
+    private string $configParameter;
 
-    /** @var CacheProvider */
-    private $categoryCache;
-
-    /** @var string */
-    private $configParameter;
-
-    /**
-     * @param CacheProvider $productCache
-     * @param CacheProvider $categoryCache
-     * @param string        $configParameter
-     */
     public function __construct(
-        CacheProvider $productCache,
-        CacheProvider $categoryCache,
+        CacheInterface $productCache,
+        CacheInterface $categoryCache,
         $configParameter
     ) {
         $this->productCache = $productCache;
@@ -35,11 +25,11 @@ class DisplaySimpleVariationsListener
         $this->configParameter = $configParameter;
     }
 
-    public function onUpdateAfter(ConfigUpdateEvent $event)
+    public function onUpdateAfter(ConfigUpdateEvent $event) : void
     {
         if ($event->isChanged($this->configParameter)) {
-            $this->productCache->deleteAll();
-            $this->categoryCache->deleteAll();
+            $this->productCache->clear();
+            $this->categoryCache->clear();
         }
     }
 }

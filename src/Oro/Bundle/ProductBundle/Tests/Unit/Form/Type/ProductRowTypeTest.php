@@ -10,40 +10,28 @@ use Oro\Bundle\ProductBundle\Model\ProductRow;
 use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductAutocompleteType;
+use Oro\Bundle\ProductBundle\Validator\Constraints\ProductBySkuValidator;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\FormConfigInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
-use Symfony\Component\Validator\ConstraintValidatorFactoryInterface;
 
 class ProductRowTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|ConstraintValidator
-     */
-    protected $validator;
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ConstraintValidator */
+    private $validator;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|ProductUnitsProvider
-     */
-    protected $productUnitsProvider;
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ProductUnitsProvider */
+    private $productUnitsProvider;
 
-    /**
-     * {@inheritDoc}
-     */
     protected function setUp(): void
     {
-        $this->validator = $this
-            ->getMockBuilder('Oro\Bundle\ProductBundle\Validator\Constraints\ProductBySkuValidator')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->validator = $this->createMock(ProductBySkuValidator::class);
 
         $this->productUnitsProvider = $this->createMock(ProductUnitsProvider::class);
-        $this->productUnitsProvider
-            ->expects($this->any())
+        $this->productUnitsProvider->expects($this->any())
             ->method('getAvailableProductUnits')
             ->willReturn([]);
 
@@ -51,22 +39,14 @@ class ProductRowTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * {@inheritDoc}
-     */
-    protected function tearDown(): void
-    {
-        unset($this->validator);
-    }
-
-    /**
      * @dataProvider submitDataProvider
-     * @param array|null $defaultData
-     * @param array $submittedData
-     * @param ProductRow $expectedData
-     * @param array $options
      */
-    public function testSubmit($defaultData, array $submittedData, ProductRow $expectedData, array $options = [])
-    {
+    public function testSubmit(
+        ?ProductRow $defaultData,
+        array $submittedData,
+        ProductRow $expectedData,
+        array $options = []
+    ) {
         if (count($options)) {
             $this->validator->expects($this->once())
                 ->method('validate')
@@ -88,7 +68,7 @@ class ProductRowTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritdoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         $unitsProviderMock = $this->createMock(ProductUnitsProvider::class);
         $unitsProviderMock->expects($this->any())
@@ -109,38 +89,16 @@ class ProductRowTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @return \PHPUnit\Framework\MockObject\MockObject|ConstraintValidatorFactoryInterface
+     * {@inheritdoc}
      */
-    protected function getConstraintValidatorFactory()
+    protected function getValidators(): array
     {
-        $factory = $this->createMock(ConstraintValidatorFactoryInterface::class);
-        $factory->expects($this->any())
-            ->method('getInstance')
-            ->willReturnCallback(
-                function (Constraint $constraint) {
-                    $className = $constraint->validatedBy();
-
-                    if ($className === 'oro_product_product_by_sku_validator') {
-                        $this->validators[$className] = $this->validator;
-                    }
-
-                    if (!isset($this->validators[$className]) ||
-                        $className === 'Symfony\Component\Validator\Constraints\CollectionValidator'
-                    ) {
-                        $this->validators[$className] = new $className();
-                    }
-
-                    return $this->validators[$className];
-                }
-            );
-
-        return $factory;
+        return [
+            'oro_product_product_by_sku_validator' => $this->validator
+        ];
     }
 
-    /**
-     * @return array
-     */
-    public function submitDataProvider()
+    public function submitDataProvider(): array
     {
         return [
             'without default data' => [
@@ -180,8 +138,7 @@ class ProductRowTypeTest extends FormIntegrationTestCase
 
         $view = new FormView();
 
-        /** @var FormConfigInterface|\PHPUnit\Framework\MockObject\MockObject $form */
-        $config = $this->createMock('Symfony\Component\Form\FormConfigInterface');
+        $config = $this->createMock(FormConfigInterface::class);
         $config->expects($this->any())
             ->method('getOptions')
             ->willReturn(
@@ -192,9 +149,10 @@ class ProductRowTypeTest extends FormIntegrationTestCase
                 ]
             );
 
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
-        $form = $this->createMock('Symfony\Component\Form\FormInterface');
-        $form->expects($this->any())->method('getConfig')->willReturn($config);
+        $form = $this->createMock(FormInterface::class);
+        $form->expects($this->any())
+            ->method('getConfig')
+            ->willReturn($config);
 
         $formType = new ProductRowType($this->productUnitsProvider);
         $formType->buildView($view, $form, []);
@@ -209,8 +167,7 @@ class ProductRowTypeTest extends FormIntegrationTestCase
 
         $view = new FormView();
 
-        /** @var FormConfigInterface|\PHPUnit\Framework\MockObject\MockObject $form */
-        $config = $this->createMock('Symfony\Component\Form\FormConfigInterface');
+        $config = $this->createMock(FormConfigInterface::class);
         $config->expects($this->any())
             ->method('getOptions')
             ->willReturn(
@@ -229,18 +186,23 @@ class ProductRowTypeTest extends FormIntegrationTestCase
                 ]
             );
 
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
-        $parentForm = $this->createMock('Symfony\Component\Form\FormInterface');
-        $parentForm->expects($this->any())->method('getConfig')->willReturn($config);
+        $parentForm = $this->createMock(FormInterface::class);
+        $parentForm->expects($this->any())
+            ->method('getConfig')
+            ->willReturn($config);
 
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
-        $skuField = $this->createMock('Symfony\Component\Form\FormInterface');
-        $skuField->expects($this->once())->method('getData')->willReturn('sku1Абв');
+        $skuField = $this->createMock(FormInterface::class);
+        $skuField->expects($this->once())
+            ->method('getData')
+            ->willReturn('sku1Абв');
 
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
-        $form = $this->createMock('Symfony\Component\Form\FormInterface');
-        $form->expects($this->any())->method('getConfig')->willReturn($config);
-        $form->expects($this->any())->method('getParent')->willReturn($parentForm);
+        $form = $this->createMock(FormInterface::class);
+        $form->expects($this->any())
+            ->method('getConfig')
+            ->willReturn($config);
+        $form->expects($this->any())
+            ->method('getParent')
+            ->willReturn($parentForm);
         $form->expects($this->once())
             ->method('get')
             ->with(ProductDataStorage::PRODUCT_SKU_KEY)
@@ -252,12 +214,7 @@ class ProductRowTypeTest extends FormIntegrationTestCase
         $this->assertEquals($product, $view->vars['product']);
     }
 
-    /**
-     * @param string $sku
-     * @param string $qty
-     * @return ProductRow
-     */
-    protected function createProductRow($sku, $qty)
+    private function createProductRow(string $sku, string $qty): ProductRow
     {
         $productRow = new ProductRow();
         $productRow->productSku = $sku;

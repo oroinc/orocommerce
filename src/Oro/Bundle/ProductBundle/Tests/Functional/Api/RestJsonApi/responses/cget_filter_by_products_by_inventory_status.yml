@@ -49,6 +49,9 @@ data:
                     -
                         type: productshortdescriptions
                         id: '<toString(@product-2.shortDescriptions.default->id)>'
+                    -
+                        type: productshortdescriptions
+                        id: '<toString(@product-2.shortDescriptions.es->id)>'
             slugPrototypes:
                 data:
                     -

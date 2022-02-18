@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Provider;
 
-use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
@@ -11,6 +10,7 @@ use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
 use Oro\Component\Testing\Unit\Cache\CacheTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Contracts\Cache\CacheInterface;
 
 class ProductUnitsProviderTest extends \PHPUnit\Framework\TestCase
 {
@@ -51,7 +51,7 @@ class ProductUnitsProviderTest extends \PHPUnit\Framework\TestCase
     /** @var UnitLabelFormatterInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $formatter;
 
-    /** @var CacheProvider */
+    /** @var CacheInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $cache;
 
     /** @var ProductUnitRepository|\PHPUnit\Framework\MockObject\MockObject */
@@ -60,12 +60,9 @@ class ProductUnitsProviderTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->repository = $this->createMock(ProductUnitRepository::class);
+        $this->cache = $this->createMock(CacheInterface::class);
 
         $manager = $this->createMock(ObjectManager::class);
-        $manager->expects($this->once())
-            ->method('getRepository')
-            ->with(ProductUnit::class)
-            ->willReturn($this->repository);
 
         /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject $managerRegistry */
         $managerRegistry = $this->createMock(ManagerRegistry::class);
@@ -79,24 +76,13 @@ class ProductUnitsProviderTest extends \PHPUnit\Framework\TestCase
         $this->productUnitsProvider = new ProductUnitsProvider(
             $managerRegistry,
             $this->formatter,
-            $this->getArrayCache()
+            $this->cache
         );
     }
 
     public function testGetAvailableProductUnits()
     {
-        $this->repository->expects($this->once())
-            ->method('getAllUnitCodes')
-            ->willReturn(
-                array_map(
-                    function (array $item) {
-                        return $item['code'];
-                    },
-                    self::UNITS
-                )
-            );
-
-        $this->formatter->expects($this->exactly(12))
+        $this->formatter->expects($this->exactly(6))
             ->method('format')
             ->will($this->returnValueMap([
                 ['each', false, false, 'oro.product_unit.each.label.full'],
@@ -115,31 +101,16 @@ class ProductUnitsProviderTest extends \PHPUnit\Framework\TestCase
             'oro.product_unit.set.label.full' => 'set',
             'oro.product_unit.piece.label.full' => 'piece',
         ];
+        $this->cache->expects(self::once())
+            ->method('get')
+            ->with('codes')
+            ->willReturn($expected);
 
-        $this->assertEquals($expected, $this->productUnitsProvider->getAvailableProductUnits());
-        // check cache
         $this->assertEquals($expected, $this->productUnitsProvider->getAvailableProductUnits());
     }
 
     public function testGetAvailableProductUnitsWithPrecision()
     {
-        $this->repository->expects($this->once())
-            ->method('getAllUnits')
-            ->willReturn(
-                array_map(
-                    function (array $unit) {
-                        return $this->getEntity(
-                            ProductUnit::class,
-                            [
-                                'code' => $unit['code'],
-                                'defaultPrecision' => $unit['precision']
-                            ]
-                        );
-                    },
-                    self::UNITS
-                )
-            );
-
         $expected = [
             'each' => 1,
             'kg' => 3,
@@ -148,9 +119,11 @@ class ProductUnitsProviderTest extends \PHPUnit\Framework\TestCase
             'set' => 2,
             'piece' => 1,
         ];
+        $this->cache->expects(self::once())
+            ->method('get')
+            ->with('codes_with_precision')
+            ->willReturn($expected);
 
-        $this->assertEquals($expected, $this->productUnitsProvider->getAvailableProductUnitsWithPrecision());
-        // check cache
         $this->assertEquals($expected, $this->productUnitsProvider->getAvailableProductUnitsWithPrecision());
     }
 }

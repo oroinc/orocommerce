@@ -2,37 +2,33 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Manager;
 
-use Doctrine\Common\Cache\Cache;
+use Psr\Cache\CacheItemPoolInterface;
 
 /**
  * Provides a storage for the current shopping list identifier.
  */
 class CurrentShoppingListStorage
 {
-    /** @var Cache */
-    private $cache;
+    private CacheItemPoolInterface $cache;
 
-    public function __construct(Cache $cache)
+    public function __construct(CacheItemPoolInterface $cache)
     {
         $this->cache = $cache;
     }
 
     public function get(int $customerUserId): ?int
     {
-        $shoppingListId = $this->cache->fetch($customerUserId);
-        if (false === $shoppingListId) {
-            return null;
-        }
-
-        return $shoppingListId;
+        $cacheItem = $this->cache->getItem((string) $customerUserId);
+        return $cacheItem->isHit() ? $cacheItem->get() : null;
     }
 
     public function set(int $customerUserId, ?int $shoppingListId): void
     {
         if (null === $shoppingListId) {
-            $this->cache->delete($customerUserId);
+            $this->cache->deleteItem((string) $customerUserId);
         } else {
-            $this->cache->save($customerUserId, $shoppingListId);
+            $cacheItem = $this->cache->getItem((string) $customerUserId);
+            $this->cache->save($cacheItem->set($shoppingListId));
         }
     }
 }

@@ -449,9 +449,11 @@ const ImportDialogView = BaseView.extend({
         if (!this.disabled) {
             this.editor.CssComposer.clear();
             this.editor.selectRemove(this.editor.getSelectedAll());
-            this.editor.setComponents(escapeWrapper(content));
+            this.editor.setComponents(escapeWrapper(content), {
+                fromImport: true
+            });
             this.closeDialog();
-            this.trigger('import:after');
+            this.trigger('import:after', escapeWrapper(content));
         }
     },
 

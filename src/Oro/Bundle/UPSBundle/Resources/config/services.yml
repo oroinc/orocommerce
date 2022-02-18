@@ -122,9 +122,9 @@ services:
 
     oro_ups.cache.shipping_price:
         public: false
-        parent: oro.cache.abstract
-        calls:
-            - [ setNamespace, [ 'oro_ups_shipping_price' ] ]
+        parent: oro.data.cache
+        tags:
+            - { name: 'cache.pool', namespace: 'oro_ups_shipping_price' }
 
     oro_ups.cache.lifetime_provider:
         class: 'Oro\Bundle\UPSBundle\Cache\Lifetime\UPSSettings\LifetimeByInvalidateCacheAtFieldProvider'

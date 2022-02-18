@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\RedirectBundle\Cache;
 
-use Doctrine\Common\Cache\ClearableCache;
 use Symfony\Component\HttpKernel\CacheClearer\CacheClearerInterface;
 
 /**
@@ -19,7 +18,7 @@ class SlugUrlCacheClearer implements CacheClearerInterface
 
     public function clear(string $cacheDir)
     {
-        if ($this->cache instanceof ClearableCache) {
+        if ($this->cache instanceof ClearableCacheInterface) {
             $this->cache->deleteAll();
         }
     }

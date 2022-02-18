@@ -31,6 +31,7 @@
         'additionalSelector': '#' ~ form.additional.vars.id
     } %}
     {% set attr = layout_attr_defaults(attr, {
+        'autocomplete': 'off',
         'data-page-component-module': 'oroproduct/js/app/components/quick-add-component',
         '~data-page-component-options': pageComponentOptions
     }) %}

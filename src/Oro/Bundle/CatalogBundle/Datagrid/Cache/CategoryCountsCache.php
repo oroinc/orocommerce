@@ -2,9 +2,10 @@
 
 namespace Oro\Bundle\CatalogBundle\Datagrid\Cache;
 
-use Doctrine\Common\Cache\CacheProvider;
+use Oro\Bundle\CacheBundle\Generator\UniversalCacheKeyGenerator;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessor;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
+use Psr\Cache\CacheItemPoolInterface;
 
 /**
  * The cache for different kind of aggregated info for categories.
@@ -12,17 +13,12 @@ use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
  */
 class CategoryCountsCache
 {
-    /** @var CacheProvider */
-    protected $cacheProvider;
-
-    /** @var TokenAccessor */
-    protected $tokenAccessor;
-
-    /** @var WebsiteManager */
-    private $websiteManager;
+    private CacheItemPoolInterface $cacheProvider;
+    private TokenAccessor $tokenAccessor;
+    private WebsiteManager $websiteManager;
 
     public function __construct(
-        CacheProvider $cacheProvider,
+        CacheItemPoolInterface $cacheProvider,
         TokenAccessor $tokenAccessor,
         WebsiteManager $websiteManager
     ) {
@@ -31,35 +27,23 @@ class CategoryCountsCache
         $this->websiteManager = $websiteManager;
     }
 
-    /**
-     * @param string $key
-     * @return array|null
-     */
-    public function getCounts($key)
+    public function getCounts(string $key) : array|null
     {
         $key = $this->getDataKey($key);
-        $counts = $this->cacheProvider->fetch($key);
+        $cacheItem = $this->cacheProvider->getItem($key);
 
-        return false !== $counts ? $counts : null;
+        return $cacheItem->isHit() ? $cacheItem->get() : null;
     }
 
-    /**
-     * @param string $key
-     * @param array $counts
-     * @param int $lifeTime
-     */
-    public function setCounts($key, array $counts, $lifeTime = 0)
+    public function setCounts(string $key, array $counts, int $lifeTime = 0) : void
     {
         $key = $this->getDataKey($key);
-
-        $this->cacheProvider->save($key, $counts, $lifeTime);
+        $cacheItem = $this->cacheProvider->getItem($key);
+        $cacheItem->set($counts)->expiresAfter($lifeTime);
+        $this->cacheProvider->save($cacheItem);
     }
 
-    /**
-     * @param string $key
-     * @return string
-     */
-    protected function getDataKey($key)
+    protected function getDataKey(string $key) : string
     {
         $websiteId = null;
         $website = $this->websiteManager->getCurrentWebsite();
@@ -67,6 +51,8 @@ class CategoryCountsCache
             $websiteId = $website->getId();
         }
 
-        return sprintf('%s|%d|%d', $key, $websiteId, $this->tokenAccessor->getUserId());
+        return UniversalCacheKeyGenerator::normalizeCacheKey(
+            sprintf('%s|%d|%d', $key, $websiteId, $this->tokenAccessor->getUserId())
+        );
     }
 }

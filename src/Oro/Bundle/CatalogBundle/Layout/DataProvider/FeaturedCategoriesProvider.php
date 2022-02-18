@@ -2,31 +2,23 @@
 
 namespace Oro\Bundle\CatalogBundle\Layout\DataProvider;
 
-use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\CatalogBundle\Provider\CategoryTreeProvider as CategoriesProvider;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessor;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 
 /**
  * Provides Featured Category data for layouts
  */
 class FeaturedCategoriesProvider
 {
-    /** @var CategoriesProvider */
-    private $categoryTreeProvider;
-
-    /** @var TokenAccessor */
-    private $tokenAccessor;
-
-    /** @var LocalizationHelper */
-    private $localizationHelper;
-
-    /** @var CacheProvider */
-    private $cache;
-
-    /** @var int */
-    private $cacheLifeTime;
+    private CategoriesProvider $categoryTreeProvider;
+    private TokenAccessor $tokenAccessor;
+    private LocalizationHelper $localizationHelper;
+    private CacheInterface $cache;
+    private int $cacheLifeTime;
 
     public function __construct(
         CategoriesProvider $categoryTreeProvider,
@@ -38,46 +30,36 @@ class FeaturedCategoriesProvider
         $this->localizationHelper = $localizationHelper;
     }
 
-    /**
-     * @param CacheProvider $cache
-     * @param int           $lifeTime
-     */
-    public function setCache(CacheProvider $cache, $lifeTime = 0)
+    public function setCache(CacheInterface $cache, $lifeTime = 0) : void
     {
         $this->cache = $cache;
         $this->cacheLifeTime = $lifeTime;
     }
 
-    /**
-     * @param array $categoryIds
-     *
-     * @return array [['id' => id, 'title' => title, 'short' => short, 'small_image' => image], ...]
-     */
-    public function getAll(array $categoryIds = [])
+    public function getAll(array $categoryIds = []) : array //[['id' => id, 'title' => title, 'short' => short], ...]
     {
         $user = $this->getCurrentUser();
         $cacheKey = $this->getCacheKey($categoryIds, $user);
 
-        $result = $this->cache->fetch($cacheKey);
-        if (false !== $result) {
-            return $result;
-        }
-
-        $result = [];
-        $categories = $this->categoryTreeProvider->getCategories($user);
-        foreach ($categories as $category) {
-            if ($category->getLevel() !== 0 && (!$categoryIds || in_array($category->getId(), $categoryIds, true))) {
-                $result[] = [
-                    'id' => $category->getId(),
-                    'title' => (string) $this->localizationHelper->getLocalizedValue($category->getTitles()),
-                    'short' => (string) $this->localizationHelper->getLocalizedValue($category->getShortDescriptions()),
-                    'small_image' => $category->getSmallImage(),
-                ];
+        return $this->cache->get($cacheKey, function (ItemInterface $item) use ($user, $categoryIds) {
+            $item->expiresAfter($this->cacheLifeTime);
+            $result = [];
+            $categories = $this->categoryTreeProvider->getCategories($user);
+            foreach ($categories as $category) {
+                if ($category->getLevel() !== 0
+                    && (!$categoryIds || in_array($category->getId(), $categoryIds, true))) {
+                    $result[] = [
+                        'id' => $category->getId(),
+                        'title' => (string) $this->localizationHelper
+                            ->getLocalizedValue($category->getTitles()),
+                        'short' => (string) $this->localizationHelper
+                            ->getLocalizedValue($category->getShortDescriptions()),
+                        'small_image' => $category->getSmallImage(),
+                    ];
+                }
             }
-        }
-        $this->cache->save($cacheKey, $result, $this->cacheLifeTime);
-
-        return $result;
+            return $result;
+        });
     }
 
     /**

@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Layout\SegmentProducts;
 
-use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query;
@@ -10,6 +9,8 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Layout\SegmentProducts\SegmentProductsQueryCache;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
+use Psr\Cache\CacheItemInterface;
+use Psr\Cache\CacheItemPoolInterface;
 
 class SegmentProductsQueryCacheTest extends \PHPUnit\Framework\TestCase
 {
@@ -21,8 +22,11 @@ class SegmentProductsQueryCacheTest extends \PHPUnit\Framework\TestCase
     /** @var SymmetricCrypterInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $crypter;
 
-    /** @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var CacheItemPoolInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $cache;
+
+    /** @var CacheItemInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $cacheItem;
 
     /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $em;
@@ -34,7 +38,8 @@ class SegmentProductsQueryCacheTest extends \PHPUnit\Framework\TestCase
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->crypter = $this->createMock(SymmetricCrypterInterface::class);
-        $this->cache = $this->createMock(CacheProvider::class);
+        $this->cache = $this->createMock(CacheItemPoolInterface::class);
+        $this->cacheItem = $this->createMock(CacheItemInterface::class);
 
         $this->em = $this->createMock(EntityManagerInterface::class);
         $this->em->expects(self::any())
@@ -67,8 +72,14 @@ class SegmentProductsQueryCacheTest extends \PHPUnit\Framework\TestCase
         $query = new Query($this->em);
 
         $this->cache->expects(self::once())
-            ->method('fetch')
+            ->method('getItem')
             ->with($cacheKey)
+            ->willReturn($this->cacheItem);
+        $this->cacheItem->expects(self::once())
+            ->method('isHit')
+            ->willReturn(true);
+        $this->cacheItem->expects(self::once())
+            ->method('get')
             ->willReturn($cachedData);
         $this->crypter->expects(self::once())
             ->method('decryptData')
@@ -102,8 +113,14 @@ class SegmentProductsQueryCacheTest extends \PHPUnit\Framework\TestCase
         $query = new Query($this->em);
 
         $this->cache->expects(self::once())
-            ->method('fetch')
+            ->method('getItem')
             ->with($cacheKey)
+            ->willReturn($this->cacheItem);
+        $this->cacheItem->expects(self::once())
+            ->method('isHit')
+            ->willReturn(true);
+        $this->cacheItem->expects(self::once())
+            ->method('get')
             ->willReturn($cachedData);
         $this->crypter->expects(self::once())
             ->method('decryptData')
@@ -135,8 +152,14 @@ class SegmentProductsQueryCacheTest extends \PHPUnit\Framework\TestCase
         ];
 
         $this->cache->expects(self::once())
-            ->method('fetch')
+            ->method('getItem')
             ->with($cacheKey)
+            ->willReturn($this->cacheItem);
+        $this->cacheItem->expects(self::once())
+            ->method('isHit')
+            ->willReturn(true);
+        $this->cacheItem->expects(self::once())
+            ->method('get')
             ->willReturn($cachedData);
         $this->crypter->expects(self::once())
             ->method('decryptData')
@@ -156,8 +179,14 @@ class SegmentProductsQueryCacheTest extends \PHPUnit\Framework\TestCase
         $cacheKey = 'test_cache_key';
 
         $this->cache->expects(self::once())
-            ->method('fetch')
+            ->method('getItem')
             ->with($cacheKey)
+            ->willReturn($this->cacheItem);
+        $this->cacheItem->expects(self::once())
+            ->method('isHit')
+            ->willReturn(true);
+        $this->cacheItem->expects(self::once())
+            ->method('get')
             ->willReturn($cachedData);
         $this->crypter->expects(self::never())
             ->method('decryptData');
@@ -185,8 +214,11 @@ class SegmentProductsQueryCacheTest extends \PHPUnit\Framework\TestCase
         $cacheKey = 'test_cache_key';
 
         $this->cache->expects(self::once())
-            ->method('fetch')
+            ->method('getItem')
             ->with($cacheKey)
+            ->willReturn($this->cacheItem);
+        $this->cacheItem->expects(self::once())
+            ->method('isHit')
             ->willReturn(false);
         $this->crypter->expects(self::never())
             ->method('decryptData');
@@ -222,8 +254,19 @@ class SegmentProductsQueryCacheTest extends \PHPUnit\Framework\TestCase
             )
             ->willReturn($dataToSaveInCache['hash']);
         $this->cache->expects(self::once())
+            ->method('getItem')
+            ->with($cacheKey)
+            ->willReturn($this->cacheItem);
+        $this->cacheItem->expects(self::once())
+            ->method('expiresAfter')
+            ->with(self::CACHE_LIFE_TIME)
+            ->willReturn($this->cacheItem);
+        $this->cacheItem->expects(self::once())
+            ->method('set')
+            ->with($dataToSaveInCache);
+        $this->cache->expects(self::once())
             ->method('save')
-            ->with($cacheKey, $dataToSaveInCache, self::CACHE_LIFE_TIME);
+            ->with($this->cacheItem);
 
         $this->segmentProductsQueryCache->setQuery($cacheKey, $query);
     }

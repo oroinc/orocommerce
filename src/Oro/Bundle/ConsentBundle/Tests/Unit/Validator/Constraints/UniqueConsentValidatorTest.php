@@ -6,13 +6,20 @@ use Oro\Bundle\ConsentBundle\SystemConfig\ConsentConfig;
 use Oro\Bundle\ConsentBundle\SystemConfig\ConsentConfigConverter;
 use Oro\Bundle\ConsentBundle\Validator\Constraints\UniqueConsent;
 use Oro\Bundle\ConsentBundle\Validator\Constraints\UniqueConsentValidator;
+use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class UniqueConsentValidatorTest extends ConstraintValidatorTestCase
 {
-    protected function createValidator()
+    protected function createValidator(): UniqueConsentValidator
     {
         return new UniqueConsentValidator();
+    }
+
+    public function testGetTargets()
+    {
+        $constraint = new UniqueConsent();
+        self::assertEquals(Constraint::CLASS_CONSTRAINT, $constraint->getTargets());
     }
 
     public function testValidationOnValid()

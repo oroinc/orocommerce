@@ -7,6 +7,7 @@ use Oro\Bundle\ShippingBundle\Checker\ShippingRuleEnabledCheckerInterface;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\ShippingBundle\Validator\Constraints\ShippingRuleEnable;
 use Oro\Bundle\ShippingBundle\Validator\Constraints\ShippingRuleEnableValidator;
+use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
@@ -21,7 +22,7 @@ class ShippingRuleEnableValidatorTest extends ConstraintValidatorTestCase
         parent::setUp();
     }
 
-    protected function createValidator()
+    protected function createValidator(): ShippingRuleEnableValidator
     {
         return new ShippingRuleEnableValidator($this->ruleEnabledChecker);
     }
@@ -32,6 +33,12 @@ class ShippingRuleEnableValidatorTest extends ConstraintValidatorTestCase
         $shippingRule->setRule((new Rule())->setEnabled($isEnabled));
 
         return $shippingRule;
+    }
+
+    public function testGetTargets()
+    {
+        $constraint = new ShippingRuleEnable();
+        self::assertEquals(Constraint::CLASS_CONSTRAINT, $constraint->getTargets());
     }
 
     public function testValidateForWrongObject()

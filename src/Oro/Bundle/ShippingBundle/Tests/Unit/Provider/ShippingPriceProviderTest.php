@@ -376,8 +376,7 @@ class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
             ->willReturnOnConsecutiveCalls(false, true);
         $this->priceCache->expects(self::once())
             ->method('savePrice')
-            ->with($context, 'flat_rate', 'primary', Price::create(1, 'USD'))
-            ->willReturn(true);
+            ->with($context, 'flat_rate', 'primary', Price::create(1, 'USD'));
         $this->priceCache->expects(self::once())
             ->method('getPrice')
             ->with($context, 'flat_rate', 'primary')
@@ -588,8 +587,7 @@ class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
             ->willReturnOnConsecutiveCalls(false, true);
         $this->priceCache->expects(self::once())
             ->method('savePrice')
-            ->with($context, 'flat_rate', 'primary', Price::create(1, 'USD'))
-            ->willReturn(true);
+            ->with($context, 'flat_rate', 'primary', Price::create(1, 'USD'));
         $this->priceCache->expects(self::once())
             ->method('getPrice')
             ->with($context, 'flat_rate', 'primary')

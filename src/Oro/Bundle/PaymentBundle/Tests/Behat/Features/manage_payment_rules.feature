@@ -1,4 +1,5 @@
 @ticket-BB-12309
+@waf-skip
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-OroPaymentBundle:PaymentMethodsConfigsRule_BB12309.yml
 
