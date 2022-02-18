@@ -76,9 +76,9 @@
 }
 
 .price-list-grid-form {
-    min-width: 463px;
-
     table {
+        min-width: 463px;
+
         th {
             .price-list-grid-form__options-label {
                 padding-left: $content-padding-small;
