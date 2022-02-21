@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Async;
 
-use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeCacheDumper;
@@ -17,6 +16,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Contracts\Cache\CacheInterface;
 
 /**
  * Dumps content node cache
@@ -28,42 +28,19 @@ class ContentNodeTreeCacheProcessor implements MessageProcessorInterface, TopicS
     const CONTENT_NODE = 'contentNode';
     const SCOPE = 'scope';
 
-    /**
-     * @var ContentNodeTreeCacheDumper
-     */
-    private $dumper;
-
-    /**
-     * @var ManagerRegistry
-     */
-    private $registry;
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
-     * @var JobRunner
-     */
-    private $jobRunner;
-
-    /**
-     * @var OptionsResolver
-     */
-    private $resolver;
-
-    /**
-     * @var CacheProvider
-     */
-    private $layoutCacheProvider;
+    private ContentNodeTreeCacheDumper $dumper;
+    private ManagerRegistry $registry;
+    private LoggerInterface $logger;
+    private JobRunner $jobRunner;
+    private ?OptionsResolver $resolver = null;
+    private CacheInterface $layoutCacheProvider;
 
     public function __construct(
         JobRunner $jobRunner,
         ContentNodeTreeCacheDumper $dumper,
         ManagerRegistry $registry,
         LoggerInterface $logger,
-        CacheProvider $layoutCacheProvider
+        CacheInterface $layoutCacheProvider
     ) {
         $this->jobRunner = $jobRunner;
         $this->dumper = $dumper;
@@ -72,17 +49,14 @@ class ContentNodeTreeCacheProcessor implements MessageProcessorInterface, TopicS
         $this->layoutCacheProvider = $layoutCacheProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function process(MessageInterface $message, SessionInterface $session)
+    public function process(MessageInterface $message, SessionInterface $session) : string
     {
         try {
             $data = $this->getOptionsResolver()->resolve(JSON::decode($message->getBody()));
             $result = $this->jobRunner->runDelayed($data[self::JOB_ID], function () use ($data) {
                 $this->dumper->dump($data[self::CONTENT_NODE], $data[self::SCOPE]);
                 //Remove all cached layout data provider web catalog node items
-                $this->layoutCacheProvider->deleteAll();
+                $this->layoutCacheProvider->clear();
 
                 return true;
             });
@@ -101,18 +75,12 @@ class ContentNodeTreeCacheProcessor implements MessageProcessorInterface, TopicS
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public static function getSubscribedTopics()
+    public static function getSubscribedTopics() : array
     {
         return [Topics::CALCULATE_CONTENT_NODE_TREE_BY_SCOPE];
     }
 
-    /**
-     * @return OptionsResolver
-     */
-    private function getOptionsResolver()
+    private function getOptionsResolver() : OptionsResolver
     {
         if (!$this->resolver) {
             $this->resolver = new OptionsResolver();

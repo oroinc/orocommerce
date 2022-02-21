@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Cache;
 
-use Doctrine\Common\Cache\Cache;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
@@ -12,70 +11,61 @@ use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentVariant;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\Repository\WebCatalogRepository;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
+use Psr\Cache\CacheItemPoolInterface;
 
 /**
  * The cache for web catalog content node tree.
  */
 class ContentNodeTreeCache
 {
-    /** @var DoctrineHelper */
-    private $doctrineHelper;
+    private DoctrineHelper $doctrineHelper;
+    private CacheItemPoolInterface $cache;
 
-    /** @var Cache */
-    private $cache;
-
-    public function __construct(DoctrineHelper $doctrineHelper, Cache $cache)
+    public function __construct(DoctrineHelper $doctrineHelper, CacheItemPoolInterface $cache)
     {
         $this->doctrineHelper = $doctrineHelper;
         $this->cache = $cache;
     }
 
     /**
-     * Gets a content node tree from the cache.
-     *
-     * @param int $nodeId
-     * @param int $scopeId
-     *
-     * @return ResolvedContentNode|null|bool The cached data or FALSE, if no cache entry exists
+     * Gets a content node tree from the cache
      */
-    public function fetch(int $nodeId, int $scopeId)
+    public function fetch(int $nodeId, int $scopeId) : ResolvedContentNode|false|null
     {
-        $cachedData = $this->cache->fetch($this->getCacheKey($nodeId, $scopeId));
-        if (false === $cachedData) {
+        $cacheItem = $this->cache->getItem($this->getCacheKey($nodeId, $scopeId));
+        if (!$cacheItem->isHit()) {
             return false;
         }
-        if (!$cachedData) {
+        if (empty($cacheItem->get())) {
             return null;
         }
-
+        $cachedData = $cacheItem->get();
         $this->resolveReferences($cachedData);
-
         return $this->deserializeCachedNode($cachedData);
     }
 
     /**
-     * Saves a content node tree to the cache.
+     * Saves a content node tree to the cache
      */
     public function save(int $nodeId, int $scopeId, ?ResolvedContentNode $tree): void
     {
-        $this->cache->save(
-            $this->getCacheKey($nodeId, $scopeId),
-            null === $tree ? [] : $this->convertResolvedContentNode($tree)
-        );
+        $cacheItem = $this->cache->getItem($this->getCacheKey($nodeId, $scopeId));
+        $cacheItem->set(null === $tree ? [] : $this->convertResolvedContentNode($tree));
+        $this->cache->save($cacheItem);
     }
 
     /**
-     * Deletes a content node tree from the cache.
+     * Deletes a content node tree from the cache
      */
     public function delete(int $nodeId, int $scopeId): void
     {
-        $this->cache->delete($this->getCacheKey($nodeId, $scopeId));
+        $this->cache->deleteItem($this->getCacheKey($nodeId, $scopeId));
     }
 
     /**
      * Delete content node cache entries for every scope
      */
-    public function deleteForNode(ContentNode $node)
+    public function deleteForNode(ContentNode $node) : void
     {
         $nodeId = $node->getId();
         $webCatalog = $node->getWebCatalog();
@@ -83,18 +73,16 @@ class ContentNodeTreeCache
         /** @var WebCatalogRepository $webCatalogRepository */
         $webCatalogRepository = $this->doctrineHelper->getEntityRepositoryForClass(WebCatalog::class);
         $scopeIds = $webCatalogRepository->getUsedScopesIds($webCatalog);
+        $cacheKeys = [];
         foreach ($scopeIds as $scopeId) {
-            $this->cache->delete($this->getCacheKey($nodeId, $scopeId));
+            $cacheKeys[] = $this->getCacheKey($nodeId, $scopeId);
+        }
+        if (!empty($cacheKeys)) {
+            $this->cache->deleteItems($cacheKeys);
         }
     }
 
-    /**
-     * @param int $nodeId
-     * @param int $scopeId
-     *
-     * @return string
-     */
-    private function getCacheKey(int $nodeId, int $scopeId)
+    private function getCacheKey(int $nodeId, int $scopeId) : string
     {
         return sprintf('node_%s_scope_%s', $nodeId, $scopeId);
     }
@@ -112,12 +100,7 @@ class ContentNodeTreeCache
         }
     }
 
-    /**
-     * @param array $nodeData
-     *
-     * @return ResolvedContentNode
-     */
-    private function deserializeCachedNode(array $nodeData)
+    private function deserializeCachedNode(array $nodeData) : ResolvedContentNode
     {
         $resolvedVariant = new ResolvedContentVariant();
         $resolvedVariant->setData($nodeData['contentVariant']['data']);
@@ -146,12 +129,7 @@ class ContentNodeTreeCache
         return $resolvedNode;
     }
 
-    /**
-     * @param array $localizedData
-     *
-     * @return LocalizedFallbackValue
-     */
-    private function getLocalizedValue(array $localizedData)
+    private function getLocalizedValue(array $localizedData) : LocalizedFallbackValue
     {
         $value = new LocalizedFallbackValue();
         $value->setString($localizedData['string']);
@@ -190,11 +168,6 @@ class ContentNodeTreeCache
         ];
     }
 
-    /**
-     * @param object $object
-     *
-     * @return array|null
-     */
     private function getEntityReference($object): ?array
     {
         if ($object === null) {
@@ -218,13 +191,7 @@ class ContentNodeTreeCache
         );
     }
 
-    /**
-     * @param array|\Traversable $traversable
-     * @param bool               $skipNulls
-     *
-     * @return array
-     */
-    private function convertArray($traversable, bool $skipNulls = false): array
+    private function convertArray(array|\Traversable $traversable, bool $skipNulls = false): array
     {
         $data = [];
         foreach ($traversable as $key => $value) {
@@ -244,11 +211,6 @@ class ContentNodeTreeCache
         return $data;
     }
 
-    /**
-     * @param object $value
-     *
-     * @return array|null
-     */
     private function convertObject($value): ?array
     {
         if ($value instanceof LocalizedFallbackValue) {
