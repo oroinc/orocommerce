@@ -73,9 +73,9 @@ services:
         public: false
 
     oro_website_search.cache.mapping_configuration:
-        parent: oro.cache.abstract
-        calls:
-            - [ setNamespace, [ 'oro_website_search_mapping_configuration' ] ]
+        parent: oro.data.cache
+        tags:
+            - { name: 'cache.pool', namespace: 'oro_website_search_mapping_configuration' }
 
     oro_website_search.provider.search_mapping:
         class: Oro\Bundle\SearchBundle\Provider\SearchMappingProvider
