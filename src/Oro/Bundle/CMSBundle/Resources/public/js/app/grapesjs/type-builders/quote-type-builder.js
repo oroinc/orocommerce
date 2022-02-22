@@ -1,14 +1,13 @@
 import __ from 'orotranslation/js/translator';
-import BaseTypeBuilder from 'orocms/js/app/grapesjs/type-builders/base-type-builder';
+import TextTypeBuilder from 'orocms/js/app/grapesjs/type-builders/text-type-builder';
 
-const QuiteBasicTypeBuilder = BaseTypeBuilder.extend({
-    parentType: 'text',
-
+const QuiteBasicTypeBuilder = TextTypeBuilder.extend({
     button: {
         label: __('oro.cms.wysiwyg.component.quote.label')
     },
 
     modelMixin: {
+        ...TextTypeBuilder.prototype.modelMixin,
         defaults: {
             tagName: 'blockquote',
             classes: ['quote'],
