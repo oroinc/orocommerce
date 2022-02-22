@@ -51,7 +51,7 @@ export default GrapesJS.plugins.add('grapesjs-style-isolation', (editor, {editor
         return contentIsolation.escapeCssIsolation(css);
     };
 
-    editor.getPureStyle = (css = '') => {
+    editor.getPureStyleString = (css = '') => {
         if (!css.length) {
             return '';
         }
@@ -67,7 +67,15 @@ export default GrapesJS.plugins.add('grapesjs-style-isolation', (editor, {editor
             return false;
         }
 
-        const _res = editor.Parser.getConfig().parserCss(css).reduce((acc, rule) => {
+        return css;
+    };
+
+    editor.getPureStyle = (css = '') => {
+        if (!css.length) {
+            return '';
+        }
+
+        const _res = editor.Parser.getConfig().parserCss(editor.getPureStyleString(css)).reduce((acc, rule) => {
             const {state = '', atRuleType = '', mediaText = '', selectorsAdd = ''} = rule;
             const key = rule.selectors + state + atRuleType + mediaText + selectorsAdd;
 
