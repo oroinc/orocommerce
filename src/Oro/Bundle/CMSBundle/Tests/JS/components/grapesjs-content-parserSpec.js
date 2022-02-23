@@ -1,7 +1,6 @@
 import 'jasmine-jquery';
 import GrapesjsEditorView from 'orocms/js/app/grapesjs/grapesjs-editor-view';
-import ComponentManager from 'orocms/js/app/grapesjs/plugins/components/component-manager';
-import html from 'text-loader!./fixtures/grapesjs-editor-view-fixture.html';
+import html from 'text-loader!../fixtures/grapesjs-editor-view-fixture.html';
 
 describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
     let grapesjsEditorView;
@@ -17,7 +16,6 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
     };
 
     beforeEach(done => {
-        import('orocms/js/app/modules/grapesjs-module');
         window.setFixtures(html);
         grapesjsEditorView = new GrapesjsEditorView({
             el: '#grapesjs-view',
@@ -35,10 +33,6 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
 
     afterEach(() => {
         grapesjsEditorView.dispose();
-    });
-
-    afterAll(() => {
-        ComponentManager.componentTypes = {};
     });
 
     describe('feature "GrapesjsContentParser"', () => {
@@ -310,7 +304,7 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                             ],
                             tagName: 'i',
                             type: 'text',
-                            ...textBlockOptions,
+                            ...textBlockOptions
                         },
                         {
                             content: 'c ',
@@ -327,7 +321,7 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                                     content: 'ABC'
                                 }
                             ],
-                            ...textBlockOptions,
+                            ...textBlockOptions
                         },
                         {
                             content: ' ',
@@ -344,7 +338,7 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                             ],
                             tagName: 'i',
                             type: 'text',
-                            ...textBlockOptions,
+                            ...textBlockOptions
                         },
                         {
                             content: ' ',
@@ -361,7 +355,7 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                             ],
                             tagName: 'u',
                             type: 'text',
-                            ...textBlockOptions,
+                            ...textBlockOptions
                         },
                         {
                             content: ' test ',

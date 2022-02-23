@@ -1,6 +1,7 @@
 import 'jquery.validate';
 import 'jasmine-jquery';
 import 'oroui/js/app/modules/input-widgets';
+import 'orocms/js/app/modules/grapesjs-module';
 import GrapesjsEditorView from 'orocms/js/app/grapesjs/grapesjs-editor-view';
 import html from 'text-loader!./fixtures/grapesjs-editor-view-fixture.html';
 
@@ -47,7 +48,7 @@ describe('orocms/js/app/grapesjs/grapesjs-editor-view', () => {
         it('check "RteEditor" should be defined', () => {
             expect(grapesjsEditorView.builder.RteEditor).toBeDefined();
             expect(grapesjsEditorView.builder.RteEditor.collection).toBeDefined();
-            expect(grapesjsEditorView.builder.RteEditor.collection.length).toBe(10);
+            expect(grapesjsEditorView.builder.RteEditor.collection.length).toBe(11);
         });
 
         it('check "CodeValidator" should be defined', () => {

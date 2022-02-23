@@ -2,7 +2,7 @@ import grapesJS from 'grapesjs';
 import $ from 'jquery';
 import 'jasmine-jquery';
 import ComponentRestriction from 'orocms/js/app/grapesjs/plugins/components/component-restriction';
-import html from 'text-loader!./fixtures/grapesjs-editor-view-fixture.html';
+import html from 'text-loader!../fixtures/grapesjs-editor-view-fixture.html';
 
 describe('orocms/js/app/grapesjs/plugins/components/component-restriction', () => {
     let componentRestriction;

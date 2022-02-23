@@ -4,11 +4,12 @@ import ComponentManager from 'orocms/js/app/grapesjs/plugins/components/componen
 import ComponentRestriction from 'orocms/js/app/grapesjs/plugins/components/component-restriction';
 import DefaultTypeBuilder from 'orocms/js/app/grapesjs/type-builders/default-type-builder';
 import TextTypeBuilder from 'orocms/js/app/grapesjs/type-builders/text-type-builder';
-import html from 'text-loader!./fixtures/grapesjs-editor-view-fixture.html';
+import html from 'text-loader!../fixtures/grapesjs-editor-view-fixture.html';
 
 describe('orocms/js/app/grapesjs/plugins/components/component-manager', () => {
     let editor;
     let componentManager;
+    let componentTypes = {};
 
     beforeEach(() => {
         window.setFixtures(html);
@@ -24,6 +25,7 @@ describe('orocms/js/app/grapesjs/plugins/components/component-manager', () => {
 
     describe('feature "ComponentManager"', () => {
         beforeEach(() => {
+            componentTypes = ComponentManager.componentTypes;
             ComponentManager.componentTypes = {};
             componentManager = new ComponentManager({
                 editor
@@ -31,8 +33,8 @@ describe('orocms/js/app/grapesjs/plugins/components/component-manager', () => {
         });
 
         afterEach(() => {
-            ComponentManager.componentTypes = {};
             componentManager.dispose();
+            ComponentManager.componentTypes = componentTypes;
         });
 
         it('check module be defined', () => {

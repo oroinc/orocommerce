@@ -68,6 +68,7 @@ export default GrapesJS.plugins.add('grapesjs-code-mode', (editor, {editorView} 
     const originMethods = pick(editor, ['getIsolatedCss', 'getCss']);
 
     const originGetPureStyle = editor.getPureStyle;
+    const origingGetPureStyleString = editor.getPureStyleString;
     const originSetComponents = editor.setComponents;
 
     editor.getPureStyle = css => {
@@ -75,6 +76,13 @@ export default GrapesJS.plugins.add('grapesjs-code-mode', (editor, {editorView} 
             editor.storeProtectedCss = editor.getUnIsolatedCssFromString(css);
         }
         return originGetPureStyle(css);
+    };
+
+    editor.getPureStyleString = css => {
+        if (typeof css === 'string') {
+            editor.storeProtectedCss = editor.getUnIsolatedCssFromString(css);
+        }
+        return origingGetPureStyleString(css);
     };
 
     editor.setComponents = (components, {fromImport, ...rest} = {}) => {

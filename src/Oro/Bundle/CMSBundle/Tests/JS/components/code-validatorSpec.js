@@ -1,7 +1,7 @@
 import 'jasmine-jquery';
 import GrapesjsEditorView from 'orocms/js/app/grapesjs/grapesjs-editor-view';
 import Modal from 'oroui/js/modal';
-import html from 'text-loader!./fixtures/grapesjs-editor-view-fixture.html';
+import html from 'text-loader!../fixtures/grapesjs-editor-view-fixture.html';
 
 describe('orocms/js/app/grapesjs/plugins/code-validator', () => {
     let grapesjsEditorView;
