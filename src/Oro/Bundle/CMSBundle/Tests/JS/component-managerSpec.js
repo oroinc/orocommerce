@@ -24,6 +24,7 @@ describe('orocms/js/app/grapesjs/plugins/components/component-manager', () => {
 
     describe('feature "ComponentManager"', () => {
         beforeEach(() => {
+            ComponentManager.componentTypes = {};
             componentManager = new ComponentManager({
                 editor
             });

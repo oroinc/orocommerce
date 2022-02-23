@@ -1,12 +1,23 @@
 import 'jasmine-jquery';
 import GrapesjsEditorView from 'orocms/js/app/grapesjs/grapesjs-editor-view';
+import ComponentManager from 'orocms/js/app/grapesjs/plugins/components/component-manager';
 import html from 'text-loader!./fixtures/grapesjs-editor-view-fixture.html';
 
 describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
     let grapesjsEditorView;
     let htmlParser;
+    const textBlockOptions = {
+        draggable: 0,
+        droppable: 0,
+        editable: 0,
+        highlightable: 0,
+        hoverable: 0,
+        layerable: 0,
+        selectable: 0
+    };
 
     beforeEach(done => {
+        import('orocms/js/app/modules/grapesjs-module');
         window.setFixtures(html);
         grapesjsEditorView = new GrapesjsEditorView({
             el: '#grapesjs-view',
@@ -19,12 +30,15 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
         });
 
         htmlParser = grapesjsEditorView.builder.Parser.parseHtml;
-
         grapesjsEditorView.builder.on('editor:rendered', () => done());
     });
 
     afterEach(() => {
         grapesjsEditorView.dispose();
+    });
+
+    afterAll(() => {
+        ComponentManager.componentTypes = {};
     });
 
     describe('feature "GrapesjsContentParser"', () => {
@@ -136,6 +150,36 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
             expect(htmlParser(str).html).toEqual(result);
         });
 
+        it('Parse blockquote component', () => {
+            const str =
+                `<blockquote class="quote">
+                    <i>Lorem ipsum dolor sit amet, consectetur adipiscing</i>
+                </blockquote>`;
+
+            const result = [{
+                tagName: 'blockquote',
+                attributes: {},
+                classes: ['quote'],
+                type: 'quote',
+                components: [
+                    {
+                        tagName: 'i',
+                        type: 'text',
+                        ...textBlockOptions,
+                        components: [
+                            {
+                                type: 'textnode',
+                                content: 'Lorem ipsum dolor sit amet, consectetur adipiscing',
+                                tagName: ''
+                            }
+                        ]
+                    }
+                ]
+            }];
+
+            expect(htmlParser(str).html).toEqual(result);
+        });
+
         it('Parse text with few text tags', () => {
             const str =
                 '<div id="test1"><br/> test2 <br/> a b <b>b</b> <i>i</i> <u>u</u> test </div>';
@@ -148,7 +192,8 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                     type: 'text',
                     components: [
                         {
-                            tagName: 'br'
+                            tagName: 'br',
+                            ...textBlockOptions
                         },
                         {
                             content: ' test2 ',
@@ -156,7 +201,8 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                             tagName: ''
                         },
                         {
-                            tagName: 'br'
+                            tagName: 'br',
+                            ...textBlockOptions
                         },
                         {
                             content: ' a b ',
@@ -173,13 +219,7 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                             ],
                             type: 'text',
                             tagName: 'b',
-                            draggable: 0,
-                            droppable: 0,
-                            editable: 0,
-                            highlightable: 0,
-                            hoverable: 0,
-                            layerable: 0,
-                            selectable: 0
+                            ...textBlockOptions
                         },
                         {
                             content: ' ',
@@ -196,13 +236,7 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                             ],
                             tagName: 'i',
                             type: 'text',
-                            draggable: 0,
-                            droppable: 0,
-                            editable: 0,
-                            highlightable: 0,
-                            hoverable: 0,
-                            layerable: 0,
-                            selectable: 0
+                            ...textBlockOptions
                         },
                         {
                             content: ' ',
@@ -219,13 +253,7 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                             ],
                             tagName: 'u',
                             type: 'text',
-                            draggable: 0,
-                            droppable: 0,
-                            editable: 0,
-                            highlightable: 0,
-                            hoverable: 0,
-                            layerable: 0,
-                            selectable: 0
+                            ...textBlockOptions
                         },
                         {
                             content: ' test ',
@@ -264,13 +292,7 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                                 }
                             ],
                             tagName: 'b',
-                            draggable: 0,
-                            droppable: 0,
-                            editable: 0,
-                            highlightable: 0,
-                            hoverable: 0,
-                            layerable: 0,
-                            selectable: 0,
+                            ...textBlockOptions,
                             type: 'text'
                         },
                         {
@@ -288,13 +310,7 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                             ],
                             tagName: 'i',
                             type: 'text',
-                            draggable: 0,
-                            droppable: 0,
-                            editable: 0,
-                            highlightable: 0,
-                            hoverable: 0,
-                            layerable: 0,
-                            selectable: 0
+                            ...textBlockOptions,
                         },
                         {
                             content: 'c ',
@@ -311,13 +327,7 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                                     content: 'ABC'
                                 }
                             ],
-                            draggable: 0,
-                            droppable: 0,
-                            editable: 0,
-                            highlightable: 0,
-                            hoverable: 0,
-                            layerable: 0,
-                            selectable: 0
+                            ...textBlockOptions,
                         },
                         {
                             content: ' ',
@@ -334,13 +344,7 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                             ],
                             tagName: 'i',
                             type: 'text',
-                            draggable: 0,
-                            droppable: 0,
-                            editable: 0,
-                            highlightable: 0,
-                            hoverable: 0,
-                            layerable: 0,
-                            selectable: 0
+                            ...textBlockOptions,
                         },
                         {
                             content: ' ',
@@ -357,13 +361,7 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                             ],
                             tagName: 'u',
                             type: 'text',
-                            draggable: 0,
-                            droppable: 0,
-                            editable: 0,
-                            highlightable: 0,
-                            hoverable: 0,
-                            layerable: 0,
-                            selectable: 0
+                            ...textBlockOptions,
                         },
                         {
                             content: ' test ',
@@ -436,13 +434,7 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                         {
                             tagName: 'div',
                             type: 'text',
-                            draggable: 0,
-                            droppable: 0,
-                            editable: 0,
-                            highlightable: 0,
-                            hoverable: 0,
-                            layerable: 0,
-                            selectable: 0,
+                            ...textBlockOptions,
                             components: [{
                                 type: 'textnode',
                                 content: 'nested',
@@ -476,24 +468,12 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                         {
                             tagName: 'div',
                             type: 'text',
-                            draggable: 0,
-                            droppable: 0,
-                            editable: 0,
-                            highlightable: 0,
-                            hoverable: 0,
-                            layerable: 0,
-                            selectable: 0,
+                            ...textBlockOptions,
                             components: [
                                 {
                                     tagName: 'span',
                                     type: 'text',
-                                    draggable: 0,
-                                    droppable: 0,
-                                    editable: 0,
-                                    highlightable: 0,
-                                    hoverable: 0,
-                                    layerable: 0,
-                                    selectable: 0,
+                                    ...textBlockOptions,
                                     components: [
                                         {
                                             type: 'textnode',
@@ -574,13 +554,7 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                         },
                         {
                             tagName: 'p',
-                            draggable: 0,
-                            droppable: 0,
-                            editable: 0,
-                            highlightable: 0,
-                            hoverable: 0,
-                            layerable: 0,
-                            selectable: 0,
+                            ...textBlockOptions,
                             type: 'text',
                             components: [
                                 {
