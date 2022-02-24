@@ -1,6 +1,6 @@
-{% block attribute_group_rest_attribute_group_widget %}
+{%- block attribute_group_rest_attribute_group_widget -%}
     {% set content = block_widget(block) %}
-    {% if content|trim|length > 0 %}
+    {%- if content|trim|length > 0 -%}
     {% set attr = layout_attr_defaults(attr, {
         'data-page-component-module': 'oroproduct/js/app/components/fullscreen-attribute-group-tab-content-component',
         '~data-page-component-options': {
@@ -15,5 +15,5 @@
     <div {{ block('block_attributes') }} style="display: none;" class="tab-content">
         {{ content|raw }}
     </div>
-    {% endif %}
-{% endblock %}
+    {%- endif -%}
+{%- endblock -%}

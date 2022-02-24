@@ -172,9 +172,12 @@
         '~class': ' product-view__additional'
     }) %}
 
+    {% set content = block_widget(block) %}
+    {% if content|trim|length > 0 %}
     <div {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
+        {{ content|raw }}
     </div>
+    {% endif %}
 {% endblock %}
 {# Product view Layout START #}
 
