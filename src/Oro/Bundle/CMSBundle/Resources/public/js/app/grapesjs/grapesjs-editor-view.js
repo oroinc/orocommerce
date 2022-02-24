@@ -486,9 +486,7 @@ const GrapesjsEditorView = BaseView.extend({
 
         this.rte = this.builder.RichTextEditor;
 
-        this.builder.setStyle(
-            this.builder.getPureStyle(this.$stylesInputElement.val())
-        );
+        this.builder.setStyle(this.builder.getPureStyleString(this.$stylesInputElement.val()));
 
         if (_.isRTL()) {
             this.rtlFallback();
@@ -773,6 +771,7 @@ const GrapesjsEditorView = BaseView.extend({
         this.enabled = true;
         _.delay(() => {
             this.renderStart = false;
+            this.builder.trigger('editor:rendered');
         }, 250);
     },
 
