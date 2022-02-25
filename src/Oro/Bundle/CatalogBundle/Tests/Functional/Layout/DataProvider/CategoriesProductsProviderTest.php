@@ -47,7 +47,7 @@ class CategoriesProductsProviderTest extends FrontendWebTestCase
             $this->getCategoryId(LoadCategoryData::FOURTH_LEVEL2),
         ];
 
-        $this->getContainer()->get('oro_catalog.layout.data_provider.category.cache')->deleteAll();
+        $this->getContainer()->get('oro_catalog.layout.data_provider.category.cache')->clear();
         $provider = $this->getContainer()->get('oro_catalog.layout.data_provider.featured_categories_products');
         $result = $provider->getCountByCategories($categoryIds);
 

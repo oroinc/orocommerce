@@ -68,6 +68,7 @@ class LifetimeByInvalidateCacheAtFieldProviderTest extends \PHPUnit\Framework\Te
     public function testGenerateLifetimeAwareKey()
     {
         $settings = $this->createSettingsMock();
+        $settingId = 1;
 
         $datetime = $this->createMock(\DateTime::class);
 
@@ -76,10 +77,12 @@ class LifetimeByInvalidateCacheAtFieldProviderTest extends \PHPUnit\Framework\Te
 
         $settings->method('getUpsInvalidateCacheAt')
             ->willReturn($datetime);
+        $settings->method('getId')
+            ->willReturn($settingId);
 
         $key = 'cache_key';
 
-        $expectedKey = 'cache_key_1000';
+        $expectedKey = 'transport_' . $settingId . '_cache_key_1000';
 
         static::assertEquals($expectedKey, $this->provider->generateLifetimeAwareKey($settings, $key));
     }
@@ -90,7 +93,7 @@ class LifetimeByInvalidateCacheAtFieldProviderTest extends \PHPUnit\Framework\Te
 
         $key = 'cache_key';
 
-        $expectedKey = 'cache_key_';
+        $expectedKey = 'transport__cache_key_';
 
         static::assertEquals($expectedKey, $this->provider->generateLifetimeAwareKey($settings, $key));
     }

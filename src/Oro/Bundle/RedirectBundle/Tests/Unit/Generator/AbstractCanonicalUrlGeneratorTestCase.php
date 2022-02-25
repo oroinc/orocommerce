@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\RedirectBundle\Tests\Unit\Generator;
 
-use Doctrine\Common\Cache\Cache;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LocaleBundle\Provider\LocalizationProviderInterface;
 use Oro\Bundle\RedirectBundle\DependencyInjection\Configuration;
@@ -16,6 +15,7 @@ use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Website\WebsiteInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Contracts\Cache\CacheInterface;
 
 abstract class AbstractCanonicalUrlGeneratorTestCase extends \PHPUnit\Framework\TestCase
 {
@@ -27,7 +27,7 @@ abstract class AbstractCanonicalUrlGeneratorTestCase extends \PHPUnit\Framework\
     protected $configManager;
 
     /**
-     * @var Cache|\PHPUnit\Framework\MockObject\MockObject
+     * @var CacheInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $cache;
 
@@ -59,7 +59,7 @@ abstract class AbstractCanonicalUrlGeneratorTestCase extends \PHPUnit\Framework\
     protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);
-        $this->cache = $this->createMock(Cache::class);
+        $this->cache = $this->createMock(CacheInterface::class);
         $this->requestStack = $this->createMock(RequestStack::class);
         $this->routingInformationProvider = $this->createMock(RoutingInformationProvider::class);
         $this->websiteUrlResolver = $this->createMock(WebsiteUrlResolver::class);
@@ -77,13 +77,18 @@ abstract class AbstractCanonicalUrlGeneratorTestCase extends \PHPUnit\Framework\
             $urlTypeKey .= '.' . $website->getId();
             $urlSecurityTypeKey .= '.' . $website->getId();
         }
-
         $this->cache->expects($this->any())
-            ->method('fetch')
-            ->willReturnMap([
-                [$urlTypeKey, Configuration::DIRECT_URL],
-                [$urlSecurityTypeKey, $urlSecurityType]
-            ]);
+            ->method('get')
+            ->willReturnCallback(
+                function ($cacheKey) use ($urlTypeKey, $urlSecurityTypeKey, $urlSecurityType) {
+                    switch ($cacheKey) {
+                        case $urlTypeKey:
+                            return Configuration::DIRECT_URL;
+                        case $urlSecurityTypeKey:
+                            return $urlSecurityType;
+                    }
+                }
+            );
 
         $this->configManager->expects($this->any())
             ->method('get')

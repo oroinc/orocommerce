@@ -11,15 +11,14 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class QuoteProductValidatorTest extends ConstraintValidatorTestCase
 {
-    protected function createValidator()
+    protected function createValidator(): Constraints\QuoteProductValidator
     {
         return new Constraints\QuoteProductValidator();
     }
 
-    public function testConfiguration()
+    public function testGetTargets()
     {
         $constraint = new Constraints\QuoteProduct();
-        self::assertEquals('oro_sale.validator.quote_product', $constraint->validatedBy());
         self::assertEquals([Constraint::CLASS_CONSTRAINT], $constraint->getTargets());
     }
 
@@ -34,10 +33,10 @@ class QuoteProductValidatorTest extends ConstraintValidatorTestCase
     /**
      * @dataProvider validateProvider
      */
-    public function testValidate($data, bool $valid, string $fieldPath = 'product')
+    public function testValidate(QuoteProduct $value, bool $valid, string $fieldPath = 'product')
     {
         $constraint = new Constraints\QuoteProduct();
-        $this->validator->validate($data, $constraint);
+        $this->validator->validate($value, $constraint);
 
         if ($valid) {
             $this->assertNoViolation();
@@ -61,31 +60,31 @@ class QuoteProductValidatorTest extends ConstraintValidatorTestCase
 
         return [
             'empty product & empty free form' => [
-                'data'      => $item1,
-                'valid'     => false,
+                'value' => $item1,
+                'valid' => false,
             ],
             'empty product replacement & empty free form replacement' => [
-                'data'      => $item2,
-                'valid'     => false,
+                'value' => $item2,
+                'valid' => false,
                 'fieldPath' => 'productReplacement',
             ],
             'empty product & filled free form' => [
-                'data'      => $item3,
-                'valid'     => true,
+                'value' => $item3,
+                'valid' => true,
             ],
             'empty product replacement & filled free form replacement' => [
-                'data'      => $item4,
-                'valid'     => true,
+                'value' => $item4,
+                'valid' => true,
                 'fieldPath' => 'product',
             ],
             'filled product' => [
-                'data'      => $item5,
-                'valid'     => true,
+                'value' => $item5,
+                'valid' => true,
                 'fieldPath' => 'product',
             ],
             'filled product replacement' => [
-                'data'      => $item6,
-                'valid'     => true,
+                'value' => $item6,
+                'valid'=> true,
                 'fieldPath' => 'product',
             ],
         ];

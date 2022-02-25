@@ -9,6 +9,7 @@ use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductVariantLinks;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductVariantLinksValidator;
 use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 /**
@@ -20,9 +21,18 @@ class ProductVariantLinksValidatorTest extends ConstraintValidatorTestCase
     private const VARIANT_FIELD_KEY_SIZE = 'size';
     private const VARIANT_FIELD_KEY_SLIM_FIT = 'slim_fit';
 
-    protected function createValidator()
+    protected function createValidator(): ProductVariantLinksValidator
     {
         return new ProductVariantLinksValidator(PropertyAccess::createPropertyAccessor());
+    }
+
+    public function testGetTargets(): void
+    {
+        $constraint = new ProductVariantLinks();
+        self::assertEquals(
+            [Constraint::CLASS_CONSTRAINT, Constraint::PROPERTY_CONSTRAINT],
+            $constraint->getTargets()
+        );
     }
 
     public function testValidateUnsupportedClass(): void

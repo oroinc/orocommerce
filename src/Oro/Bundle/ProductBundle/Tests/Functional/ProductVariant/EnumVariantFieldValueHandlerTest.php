@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\ProductVariant;
 
-use Doctrine\Common\Cache\Cache;
-use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
@@ -34,9 +32,6 @@ class EnumVariantFieldValueHandlerTest extends WebTestCase
     /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     private $configManager;
 
-    /** @var CacheProvider */
-    private $cache;
-
     /** @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $localizationHelper;
 
@@ -54,7 +49,6 @@ class EnumVariantFieldValueHandlerTest extends WebTestCase
         $this->configManager = $this->createMock(ConfigManager::class);
         $this->localizationHelper = $this->createMock(LocalizationHelper::class);
         $this->localeSettings = $this->createMock(LocaleSettings::class);
-        $this->cache = $this->getCache();
 
         $this->enumVariantFieldValueHandler = new EnumVariantFieldValueHandler(
             $this->doctrineHelper,
@@ -121,15 +115,5 @@ class EnumVariantFieldValueHandlerTest extends WebTestCase
 
         $this->assertEquals(['cache_data_en'], $enData);
         $this->assertEquals(['cache_data_de'], $deData);
-    }
-
-    /**
-     * @return Cache|object
-     */
-    private function getCache()
-    {
-        return $this
-            ->getContainer()
-            ->get('oro_product.product_variant_field.field_value_handler.enum_type_handler.cache');
     }
 }

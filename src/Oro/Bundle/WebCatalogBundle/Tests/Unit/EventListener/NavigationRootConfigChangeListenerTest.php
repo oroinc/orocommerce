@@ -2,15 +2,15 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\EventListener;
 
-use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
 use Oro\Bundle\WebCatalogBundle\Async\Topics;
 use Oro\Bundle\WebCatalogBundle\EventListener\NavigationRootConfigChangeListener;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
+use Symfony\Component\Cache\Adapter\AbstractAdapter;
 
 class NavigationRootConfigChangeListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var AbstractAdapter|\PHPUnit\Framework\MockObject\MockObject */
     private $layoutCacheProvider;
 
     /** @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject */
@@ -24,7 +24,7 @@ class NavigationRootConfigChangeListenerTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp(): void
     {
-        $this->layoutCacheProvider = $this->createMock(CacheProvider::class);
+        $this->layoutCacheProvider = $this->createMock(AbstractAdapter::class);
         $this->messageProducer = $this->createMock(MessageProducerInterface::class);
         $this->configListener = new NavigationRootConfigChangeListener(
             $this->layoutCacheProvider,
@@ -36,7 +36,7 @@ class NavigationRootConfigChangeListenerTest extends \PHPUnit\Framework\TestCase
     {
         $event = new ConfigUpdateEvent(['oro_web_catalog.navigation_root' => ['old' => 1, 'new' => 2]], null, 1);
         $this->layoutCacheProvider->expects($this->once())
-            ->method('deleteAll');
+            ->method('clear');
         $this->messageProducer->expects($this->once())
             ->method('send')
             ->with(Topics::CALCULATE_CONTENT_NODE_CACHE, ['contentNodeId' => 2]);
@@ -47,7 +47,7 @@ class NavigationRootConfigChangeListenerTest extends \PHPUnit\Framework\TestCase
     {
         $event = new ConfigUpdateEvent(['oro_web_catalog.navigation_root' => ['old' => 1, 'new' => null]], null, 1);
         $this->layoutCacheProvider->expects($this->once())
-            ->method('deleteAll');
+            ->method('clear');
         $this->messageProducer->expects($this->never())
             ->method('send');
         $this->configListener->onConfigUpdate($event);
@@ -57,7 +57,7 @@ class NavigationRootConfigChangeListenerTest extends \PHPUnit\Framework\TestCase
     {
         $event = new ConfigUpdateEvent(['some_other_setting_changed' => ['old' => 1, 'new' => 2]]);
         $this->layoutCacheProvider->expects($this->never())
-            ->method('deleteAll');
+            ->method('clear');
         $this->messageProducer->expects($this->never())
             ->method('send');
         $this->configListener->onConfigUpdate($event);

@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Cache;
 
-use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShippingLineItemCollection;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
@@ -10,6 +9,8 @@ use Oro\Bundle\ShippingBundle\Context\ShippingContextCacheKeyGenerator;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Provider\Cache\ShippingPriceCache;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Psr\Cache\CacheItemInterface;
+use Psr\Cache\CacheItemPoolInterface;
 
 class ShippingPriceCacheTest extends \PHPUnit\Framework\TestCase
 {
@@ -18,16 +19,19 @@ class ShippingPriceCacheTest extends \PHPUnit\Framework\TestCase
     /** @var ShippingPriceCache */
     private $cache;
 
-    /** @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var CacheItemPoolInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $cacheProvider;
+
+    /** @var CacheItemInterface|\PHPUnit\Framework\MockObject\MockObject */
+    protected $cacheItem;
 
     /** @var ShippingContextCacheKeyGenerator|\PHPUnit\Framework\MockObject\MockObject */
     private $keyGenerator;
 
     protected function setUp(): void
     {
-        $this->cacheProvider = $this->createMock(CacheProvider::class);
-
+        $this->cacheProvider = $this->createMock(CacheItemPoolInterface::class);
+        $this->cacheItem = $this->createMock(CacheItemInterface::class);
         $this->keyGenerator = $this->createMock(ShippingContextCacheKeyGenerator::class);
         $this->keyGenerator->expects(self::any())
             ->method('generateKey')
@@ -45,10 +49,12 @@ class ShippingPriceCacheTest extends \PHPUnit\Framework\TestCase
     public function testHasPrice(bool $isContains, bool $hasPrice)
     {
         $context = $this->createShippingContext([]);
-
         $this->cacheProvider->expects(self::once())
-            ->method('contains')
+            ->method('getItem')
             ->with('_flat_rateprimary')
+            ->willReturn($this->cacheItem);
+        $this->cacheItem->expects(self::once())
+            ->method('isHit')
             ->willReturn($isContains);
 
         self::assertEquals($hasPrice, $this->cache->hasPrice($context, 'flat_rate', 'primary'));
@@ -75,10 +81,16 @@ class ShippingPriceCacheTest extends \PHPUnit\Framework\TestCase
     {
         $context = $this->createShippingContext([]);
 
-        $this->cacheProvider->expects(self::any())
-            ->method('fetch')
+        $this->cacheProvider->expects(self::once())
+            ->method('getItem')
             ->with('_flat_rateprimary')
-            ->willReturn($isContains ? $price : false);
+            ->willReturn($this->cacheItem);
+        $this->cacheItem->expects(self::once())
+            ->method('isHit')
+            ->willReturn($isContains);
+        $this->cacheItem->expects(self::any())
+            ->method('get')
+            ->willReturn($isContains ? $price : null);
 
         self::assertSame($price, $this->cache->getPrice($context, 'flat_rate', 'primary'));
     }
@@ -105,19 +117,29 @@ class ShippingPriceCacheTest extends \PHPUnit\Framework\TestCase
         ]);
 
         $price = Price::create(10, 'USD');
-
-        $this->cacheProvider->expects(self::once())
+        $this->cacheProvider->expects($this->once())
+            ->method('getItem')
+            ->with('stdClass_1flat_rateprimary')
+            ->willReturn($this->cacheItem);
+        $this->cacheItem->expects(self::once())
+            ->method('set')
+            ->with($price)
+            ->willReturn($this->cacheItem);
+        $this->cacheItem->expects(self::once())
+            ->method('expiresAfter')
+            ->with(3600)
+            ->willReturn($this->cacheItem);
+        $this->cacheProvider->expects($this->once())
             ->method('save')
-            ->with('stdClass_1flat_rateprimary', $price, ShippingPriceCache::CACHE_LIFETIME)
-            ->willReturn($price);
+            ->with($this->cacheItem);
 
-        self::assertEquals($this->cache, $this->cache->savePrice($context, 'flat_rate', 'primary', $price));
+        $this->cache->savePrice($context, 'flat_rate', 'primary', $price);
     }
 
     public function testDeleteAllPrices()
     {
         $this->cacheProvider->expects(self::once())
-            ->method('deleteAll');
+            ->method('clear');
 
         $this->cache->deleteAllPrices();
     }

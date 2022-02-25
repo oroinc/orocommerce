@@ -2,19 +2,23 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\Datagrid\Cache;
 
-use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\CatalogBundle\Datagrid\Cache\CategoryCountsCache;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessor;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Psr\Cache\CacheItemInterface;
+use Psr\Cache\CacheItemPoolInterface;
 
 class CategoryCountsCacheTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var CacheItemPoolInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $cacheProvider;
+
+    /** @var CacheItemInterface|\PHPUnit\Framework\MockObject\MockObject */
+    protected $cacheItem;
 
     /** @var TokenAccessor|\PHPUnit\Framework\MockObject\MockObject */
     protected $tokenAccessor;
@@ -27,7 +31,8 @@ class CategoryCountsCacheTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->cacheProvider = $this->createMock(CacheProvider::class);
+        $this->cacheProvider = $this->createMock(CacheItemPoolInterface::class);
+        $this->cacheItem = $this->createMock(CacheItemInterface::class);
         $this->tokenAccessor = $this->createMock(TokenAccessor::class);
         $this->websiteManager = $this->createMock(WebsiteManager::class);
 
@@ -49,8 +54,11 @@ class CategoryCountsCacheTest extends \PHPUnit\Framework\TestCase
             ->willReturn($website);
 
         $this->cacheProvider->expects($this->once())
-            ->method('fetch')
+            ->method('getItem')
             ->with($key . '|33|42')
+            ->willReturn($this->cacheItem);
+        $this->cacheItem->expects(self::once())
+            ->method('isHit')
             ->willReturn(false);
 
         $this->assertNull($this->cache->getCounts($key));
@@ -70,8 +78,11 @@ class CategoryCountsCacheTest extends \PHPUnit\Framework\TestCase
             ->willReturn(null);
 
         $this->cacheProvider->expects($this->once())
-            ->method('fetch')
+            ->method('getItem')
             ->with($key . '|0|0')
+            ->willReturn($this->cacheItem);
+        $this->cacheItem->expects(self::once())
+            ->method('isHit')
             ->willReturn(false);
 
         $this->assertNull($this->cache->getCounts($key));
@@ -98,9 +109,16 @@ class CategoryCountsCacheTest extends \PHPUnit\Framework\TestCase
             ->willReturn($website);
 
         $this->cacheProvider->expects($this->once())
-            ->method('fetch')
+            ->method('getItem')
             ->with($expectedKey)
+            ->willReturn($this->cacheItem);
+        $this->cacheItem->expects(self::once())
+            ->method('isHit')
+            ->willReturn(true);
+        $this->cacheItem->expects(self::once())
+            ->method('get')
             ->willReturn($data);
+
 
         $this->assertSame($data, $this->cache->getCounts($key));
     }
@@ -127,8 +145,20 @@ class CategoryCountsCacheTest extends \PHPUnit\Framework\TestCase
             ->willReturn($website);
 
         $this->cacheProvider->expects($this->once())
+            ->method('getItem')
+            ->with($expectedKey)
+            ->willReturn($this->cacheItem);
+        $this->cacheItem->expects(self::once())
+            ->method('set')
+            ->with($data)
+            ->willReturn($this->cacheItem);
+        $this->cacheItem->expects(self::once())
+            ->method('expiresAfter')
+            ->with($lifeTime)
+            ->willReturn($this->cacheItem);
+        $this->cacheProvider->expects($this->once())
             ->method('save')
-            ->with($expectedKey, $data, $lifeTime);
+            ->with($this->cacheItem);
 
         $this->cache->setCounts($key, $data, $lifeTime);
     }

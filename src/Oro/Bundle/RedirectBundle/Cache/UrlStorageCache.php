@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\RedirectBundle\Cache;
 
-use Doctrine\Common\Cache\ClearableCache;
-use Doctrine\Common\Cache\FlushableCache;
 use Oro\Bundle\CacheBundle\Provider\DirectoryAwareFileCacheInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\Filesystem\Filesystem;
@@ -13,7 +11,7 @@ use Symfony\Component\Filesystem\Filesystem;
  * used inode count. $splitDeep should be adjusted based on number of cached keys, use 2 for numbers lower 1M and higher
  * values for exceeding counts
  */
-class UrlStorageCache implements UrlCacheInterface, ClearableCache, FlushableCache
+class UrlStorageCache implements UrlCacheInterface, ClearableCacheInterface, FlushableCacheInterface
 {
     private const DEFAULT_SPLIT_DEEP = 2;
 
@@ -95,7 +93,7 @@ class UrlStorageCache implements UrlCacheInterface, ClearableCache, FlushableCac
     /**
      * Move collected changes from local cache to persistent cache and save changes.
      */
-    public function flushAll()
+    public function flushAll() : void
     {
         foreach (array_keys($this->usedKeys) as $cacheKey) {
             // Item isn't present in local cache. Nothing to move to persistent storage, continue.
@@ -124,10 +122,7 @@ class UrlStorageCache implements UrlCacheInterface, ClearableCache, FlushableCac
         $this->usedKeys = [];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function deleteAll()
+    public function deleteAll() : void
     {
         $this->localCache->clear();
         if ($this->persistentCache instanceof DirectoryAwareFileCacheInterface

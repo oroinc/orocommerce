@@ -1,9 +1,8 @@
 <% if (_.isMobile()) { %>
-    <label tabindex="0" class="btn btn--default btn--size-s">
-        <input type="checkbox" tabindex="-1"
-               data-checkbox-change-visible class="custom-checkbox__input">
-        <span class="icon-selector icon--no-offset"></span>
-    </label>
+    <input type="checkbox" tabindex="-1"
+           class="hidden"
+           data-input-widget-options="<%- JSON.stringify({parentBaseCssClass: null, parentCssClass: 'btn btn--default btn--size-s', parentAttrs: {tabindex: '0'} ,iconBaseCssClass: null, iconCssClass: 'icon-selector icon--no-offset'}) %>"
+           data-checkbox-change-visible>
 <% } else { %>
     <% var togglerId = _.uniqueId('dropdown-') %>
     <div class="datagrid-massaction">

@@ -225,14 +225,14 @@ Feature: Quick order form
     When I fill "Quick Add Copy Paste Form" with:
       | Paste your order | PSKU1 5 test |
     And I click "Verify Order"
-    Then I should see that "Quick Add Copy Paste Validation" contains "Some of the products SKUs or units you have provided were not found. Correct them and try again."
+    Then I should see that "Quick Add Copy Paste Validation" contains "Some of the product SKUs, units or quantities are not valid. Please make corrections and try again."
     When I fill "Quick Add Copy Paste Form" with:
       | Paste your order | PSKU1 test item |
     Then I should see that "Quick Add Copy Paste Validation" contains "Invalid format"
     When I fill "Quick Add Copy Paste Form" with:
       | Paste your order | test 5 item |
     And I click "Verify Order"
-    Then I should see that "Quick Add Copy Paste Validation" contains "Some of the products SKUs or units you have provided were not found. Correct them and try again."
+    Then I should see that "Quick Add Copy Paste Validation" contains "Some of the product SKUs, units or quantities are not valid. Please make corrections and try again."
     When I fill "Quick Add Copy Paste Form" with:
       | Paste your order | test |
     Then I should see that "Quick Add Copy Paste Validation" contains "Invalid format"

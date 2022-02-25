@@ -34,10 +34,10 @@ Feature: Product Filters On Products Catalog
       | Price: between 500.00 and 800.00 / ea |
     And I set range filter "Price" as min value "400" use "each" unit
     Then should see filter hints in frontend grid:
-      | Price: after 400.00 / ea |
+      | Price: greater than 400.00 / ea |
     And I set range filter "Price" as max value "700" use "each" unit
     Then should see filter hints in frontend grid:
-      | Price: before 700.00 / ea |
+      | Price: less than 700.00 / ea |
 
   Scenario: Check price filter apply values with different units
     And I set range filter "Price" as min value "12" and max value "16" use "item" unit
@@ -51,10 +51,10 @@ Feature: Product Filters On Products Catalog
       | Price: between 50.00 and 100.00 / kg |
     And I set range filter "Price" as min value "200" use "piece" unit
     Then should see filter hints in frontend grid:
-      | Price: after 200.00 / pc |
+      | Price: greater than 200.00 / pc |
     And I set range filter "Price" as max value "22" use "hour" unit
     Then should see filter hints in frontend grid:
-      | Price: before 22.00 / hr |
+      | Price: less than 22.00 / hr |
 
   Scenario: Check price filter in single unit mode
     Given I proceed as the admin

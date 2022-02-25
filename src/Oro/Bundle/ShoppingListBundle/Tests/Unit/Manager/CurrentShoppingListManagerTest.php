@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Manager;
 
-use Doctrine\Common\Cache\Cache;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
@@ -18,11 +17,14 @@ use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListStorage;
 use Oro\Bundle\ShoppingListBundle\Manager\GuestShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Psr\Cache\CacheItemInterface;
+use Psr\Cache\CacheItemPoolInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  */
 class CurrentShoppingListManagerTest extends \PHPUnit\Framework\TestCase
 {
@@ -37,8 +39,11 @@ class CurrentShoppingListManagerTest extends \PHPUnit\Framework\TestCase
     /** @var GuestShoppingListManager|\PHPUnit\Framework\MockObject\MockObject */
     private $guestShoppingListManager;
 
-    /** @var Cache|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var CacheItemPoolInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $cache;
+
+    /** @var CacheItemInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $cacheItem;
 
     /** @var AclHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $aclHelper;
@@ -59,7 +64,8 @@ class CurrentShoppingListManagerTest extends \PHPUnit\Framework\TestCase
     {
         $this->shoppingListManager = $this->createMock(ShoppingListManager::class);
         $this->guestShoppingListManager = $this->createMock(GuestShoppingListManager::class);
-        $this->cache = $this->createMock(Cache::class);
+        $this->cache = $this->createMock(CacheItemPoolInterface::class);
+        $this->cacheItem = $this->createMock(CacheItemInterface::class);
         $this->aclHelper = $this->createMock(AclHelper::class);
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
         $this->configManager = $this->createMock(ConfigManager::class);
@@ -146,13 +152,25 @@ class CurrentShoppingListManagerTest extends \PHPUnit\Framework\TestCase
      */
     private function expectCacheFetchAndSave($customerUserId, $fetchShoppingListId, $saveShoppingListId)
     {
-        $this->cache->expects($this->once())
-            ->method('fetch')
+        $this->cache->expects($this->any())
+            ->method('getItem')
             ->with($customerUserId)
-            ->willReturn($fetchShoppingListId);
+            ->willReturn($this->cacheItem);
+        $this->cacheItem->expects(self::once())
+            ->method('isHit')
+            ->willReturn($fetchShoppingListId ? true : false);
+        if ($fetchShoppingListId) {
+            $this->cacheItem->expects(self::once())
+                ->method('get')
+                ->willReturn($fetchShoppingListId);
+        }
+        $this->cacheItem->expects(self::once())
+            ->method('set')
+            ->with($saveShoppingListId)
+            ->willReturn($this->cacheItem);
         $this->cache->expects($this->once())
             ->method('save')
-            ->with($customerUserId, $saveShoppingListId);
+            ->with($this->cacheItem);
     }
 
     /**
@@ -162,9 +180,17 @@ class CurrentShoppingListManagerTest extends \PHPUnit\Framework\TestCase
     private function expectCacheFetchAndNoSave($customerUserId, $fetchShoppingListId)
     {
         $this->cache->expects($this->once())
-            ->method('fetch')
+            ->method('getItem')
             ->with($customerUserId)
-            ->willReturn($fetchShoppingListId);
+            ->willReturn($this->cacheItem);
+        $this->cacheItem->expects(self::once())
+            ->method('isHit')
+            ->willReturn($fetchShoppingListId ? true : false);
+        if ($fetchShoppingListId) {
+            $this->cacheItem->expects(self::once())
+                ->method('get')
+                ->willReturn($fetchShoppingListId);
+        }
         $this->cache->expects($this->never())
             ->method('save');
     }
@@ -172,7 +198,7 @@ class CurrentShoppingListManagerTest extends \PHPUnit\Framework\TestCase
     private function expectCacheNoFetchAndNoSave()
     {
         $this->cache->expects($this->never())
-            ->method('fetch');
+            ->method('getItem');
         $this->cache->expects($this->never())
             ->method('save');
     }
@@ -269,8 +295,16 @@ class CurrentShoppingListManagerTest extends \PHPUnit\Framework\TestCase
             ->with(true, $label)
             ->willReturn($shoppingList);
         $this->cache->expects($this->once())
+            ->method('getItem')
+            ->with($customerUserId)
+            ->willReturn($this->cacheItem);
+        $this->cacheItem->expects($this->once())
+            ->method('set')
+            ->with($shoppingListId)
+            ->willReturn($this->cacheItem);
+        $this->cache->expects($this->once())
             ->method('save')
-            ->with($customerUserId, $shoppingListId);
+            ->with($this->cacheItem);
 
         $this->assertSame($shoppingList, $this->currentShoppingListManager->createCurrent($label));
         $this->assertTrue($shoppingList->isCurrent());
@@ -285,8 +319,16 @@ class CurrentShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $customerUser = $this->getCustomerUser($customerUserId);
 
         $this->cache->expects($this->once())
+            ->method('getItem')
+            ->with($customerUserId)
+            ->willReturn($this->cacheItem);
+        $this->cacheItem->expects($this->once())
+            ->method('set')
+            ->with($shoppingListId)
+            ->willReturn($this->cacheItem);
+        $this->cache->expects($this->once())
             ->method('save')
-            ->with($customerUserId, $shoppingListId);
+            ->with($this->cacheItem);
 
         $this->currentShoppingListManager->setCurrent($customerUser, $shoppingList);
         $this->assertTrue($shoppingList->isCurrent());
@@ -535,9 +577,12 @@ class CurrentShoppingListManagerTest extends \PHPUnit\Framework\TestCase
 
         $this->expectNoGuestShoppingList();
         $this->cache->expects($this->once())
-            ->method('fetch')
+            ->method('getItem')
             ->with($customerUserId)
-            ->willReturn(null);
+            ->willReturn($this->cacheItem);
+        $this->cacheItem->expects(self::once())
+            ->method('isHit')
+            ->willReturn(false);
         $this->shoppingListRepository->expects($this->once())
             ->method('findByUserAndId')
             ->with($this->aclHelper, $shoppingListId)
@@ -584,9 +629,12 @@ class CurrentShoppingListManagerTest extends \PHPUnit\Framework\TestCase
 
         $this->expectNoGuestShoppingList();
         $this->cache->expects($this->once())
-            ->method('fetch')
+            ->method('getItem')
             ->with($customerUserId)
-            ->willReturn(null);
+            ->willReturn($this->cacheItem);
+        $this->cacheItem->expects(self::once())
+            ->method('isHit')
+            ->willReturn(false);
         $this->shoppingListRepository->expects($this->never())
             ->method('findByUserAndId');
         $this->shoppingListRepository->expects($this->once())
@@ -611,10 +659,16 @@ class CurrentShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $this->setCustomerUserForShoppingList($shoppingList);
 
         $this->expectNoGuestShoppingList();
-        $this->cache->expects($this->once())
-            ->method('fetch')
+        $this->cache->expects(self::exactly(3))
+            ->method('getItem')
             ->with($customerUserId)
-            ->willReturn(null);
+            ->willReturn($this->cacheItem);
+        $this->cacheItem->expects(self::once())
+            ->method('isHit')
+            ->willReturn(false);
+        $this->cacheItem->expects(self::exactly(2))
+            ->method('set')
+            ->willReturn($this->cacheItem);
         $this->shoppingListRepository->expects($this->never())
             ->method('findByUserAndId');
         $this->shoppingListRepository->expects($this->once())
@@ -643,10 +697,16 @@ class CurrentShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $this->setCustomerUserForShoppingList($shoppingList);
 
         $this->expectNoGuestShoppingList();
-        $this->cache->expects($this->once())
-            ->method('fetch')
+        $this->cache->expects(self::exactly(2))
+            ->method('getItem')
             ->with($customerUserId)
-            ->willReturn(null);
+            ->willReturn($this->cacheItem);
+        $this->cacheItem->expects(self::once())
+            ->method('isHit')
+            ->willReturn(false);
+        $this->cacheItem->expects(self::once())
+            ->method('set')
+            ->willReturn($this->cacheItem);
         $this->shoppingListRepository->expects($this->never())
             ->method('findByUserAndId');
         $this->shoppingListRepository->expects($this->once())
@@ -673,10 +733,16 @@ class CurrentShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $this->setCustomerUserForShoppingList($shoppingList);
 
         $this->expectNoGuestShoppingList();
-        $this->cache->expects($this->once())
-            ->method('fetch')
+        $this->cache->expects(self::exactly(2))
+            ->method('getItem')
             ->with($customerUserId)
-            ->willReturn(null);
+            ->willReturn($this->cacheItem);
+        $this->cacheItem->expects(self::once())
+            ->method('isHit')
+            ->willReturn(false);
+        $this->cacheItem->expects(self::once())
+            ->method('set')
+            ->willReturn($this->cacheItem);
         $this->shoppingListRepository->expects($this->never())
             ->method('findByUserAndId');
         $this->shoppingListRepository->expects($this->once())

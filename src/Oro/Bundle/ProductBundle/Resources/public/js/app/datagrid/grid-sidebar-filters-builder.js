@@ -1,5 +1,6 @@
 import _ from 'underscore';
 import $ from 'jquery';
+import mediator from 'oroui/js/mediator';
 import FilterItemsHintView from 'oroproduct/js/app/views/sidebar-filters/filter-items-hint-view';
 import FilterExtraHintView from 'oroproduct/js/app/views/sidebar-filters/filter-extra-hint-view';
 import FilterApplierComponent from 'oroproduct/js/app/components/sidebar-filters/filter-applier-component';
@@ -100,13 +101,6 @@ export default {
                         initExtraHits(Object.values(filterManager.filters));
                     }
                 });
-
-                filterItemsHintView.listenTo(filterManager, 'visibility-change', () => {
-                    // show en extra container for hints only if filters have rendered in sidebar
-                    const toShow = filterManager.$el.is(':visible') &&
-                        filterManager.$el.parents(options.filterContainerSelector).length;
-                    filterItemsHintView.$el[toShow ? 'show' : 'hide']();
-                });
             });
             grid.once('filterManager:connected', () => {
                 const filterManager = grid.filterManager;
@@ -119,7 +113,9 @@ export default {
 
                 applyFilterComponent = new FilterApplierComponent({filterManager});
 
+                mediator.trigger(`${grid.name}-filters-in-sidebar:connected`, filterManager);
                 filterManager.on('rendered', () => {
+                    mediator.trigger(`${grid.name}-filters-in-sidebar:rendered`, filterManager);
                     filterManager.$el.one('remove', () => disposeApplyFilter());
                 });
             });

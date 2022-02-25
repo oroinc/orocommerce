@@ -2,11 +2,12 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Provider;
 
-use Doctrine\Common\Cache\CacheProvider;
+use Oro\Bundle\CacheBundle\Generator\UniversalCacheKeyGenerator;
 use Oro\Bundle\EntityConfigBundle\Config\Config;
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
+use Symfony\Contracts\Cache\CacheInterface;
 
 class CustomFieldProviderTest extends \PHPUnit\Framework\TestCase
 {
@@ -58,10 +59,10 @@ class CustomFieldProviderTest extends \PHPUnit\Framework\TestCase
             ],
         ];
 
-        $cache = $this->createMock(CacheProvider::class);
+        $cache = $this->createMock(CacheInterface::class);
         $cache->expects($this->once())
-            ->method('fetch')
-            ->with($this->className)
+            ->method('get')
+            ->with(UniversalCacheKeyGenerator::normalizeCacheKey($this->className))
             ->willReturn($data);
 
         $this->provider->setCache($cache);
@@ -143,7 +144,7 @@ class CustomFieldProviderTest extends \PHPUnit\Framework\TestCase
         }
 
         $this->extendConfigProvider
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('getConfigs')
             ->with($this->className)
             ->willReturn($extendsConfigs);

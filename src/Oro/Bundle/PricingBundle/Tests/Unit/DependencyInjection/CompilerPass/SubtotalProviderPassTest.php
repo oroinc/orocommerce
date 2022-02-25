@@ -12,11 +12,9 @@ use Symfony\Component\DependencyInjection\ServiceLocator;
 
 class SubtotalProviderPassTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var ContainerBuilder */
-    private $container;
+    private ContainerBuilder $container;
 
-    /** @var SubtotalProviderPass */
-    private $compiler;
+    private SubtotalProviderPass $compiler;
 
     protected function setUp(): void
     {
@@ -24,7 +22,7 @@ class SubtotalProviderPassTest extends \PHPUnit\Framework\TestCase
         $this->compiler = new SubtotalProviderPass();
     }
 
-    public function testProcessWhenNoTaggedServices()
+    public function testProcessWhenNoTaggedServices(): void
     {
         $registry = $this->container->register(
             'oro_pricing.subtotal_processor.subtotal_provider_registry',
@@ -33,16 +31,16 @@ class SubtotalProviderPassTest extends \PHPUnit\Framework\TestCase
 
         $this->compiler->process($this->container);
 
-        self::assertEquals([], $registry->getArgument(0));
+        self::assertEquals([], $registry->getArgument('$providerNames'));
 
-        $serviceLocatorReference = $registry->getArgument(1);
+        $serviceLocatorReference = $registry->getArgument('$providerContainer');
         self::assertInstanceOf(Reference::class, $serviceLocatorReference);
         $serviceLocatorDef = $this->container->getDefinition((string)$serviceLocatorReference);
         self::assertEquals(ServiceLocator::class, $serviceLocatorDef->getClass());
         self::assertEquals([], $serviceLocatorDef->getArgument(0));
     }
 
-    public function testProcessWithTaggedServices()
+    public function testProcessWithTaggedServices(): void
     {
         $registry = $this->container->register(
             'oro_pricing.subtotal_processor.subtotal_provider_registry',
@@ -62,10 +60,10 @@ class SubtotalProviderPassTest extends \PHPUnit\Framework\TestCase
 
         self::assertEquals(
             ['provider3', 'provider2', 'provider1', 'provider4'],
-            $registry->getArgument(0)
+            $registry->getArgument('$providerNames')
         );
 
-        $serviceLocatorReference = $registry->getArgument(1);
+        $serviceLocatorReference = $registry->getArgument('$providerContainer');
         self::assertInstanceOf(Reference::class, $serviceLocatorReference);
         $serviceLocatorDef = $this->container->getDefinition((string)$serviceLocatorReference);
         self::assertEquals(ServiceLocator::class, $serviceLocatorDef->getClass());

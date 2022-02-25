@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Layout\DataProvider;
 
-use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
@@ -21,10 +20,18 @@ use Oro\Bundle\WebCatalogBundle\Provider\WebCatalogProvider;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 
 class MenuDataProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
+
+    private const IDENTIFIER = 'identifier';
+    private const LABEL = 'label';
+    private const URL = 'url';
+    private const CHILDREN = 'children';
+    private const CACHE_LIFETIME = 600;
 
     /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrine;
@@ -41,13 +48,10 @@ class MenuDataProviderTest extends \PHPUnit\Framework\TestCase
     /** @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $localizationHelper;
 
-    /** @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $cacheProvider;
-
     /** @var WebsiteManager|\PHPUnit\Framework\MockObject\MockObject */
     private $websiteManager;
 
-    /** @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var CacheInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $cache;
 
     /** @var MenuDataProvider */
@@ -61,7 +65,7 @@ class MenuDataProviderTest extends \PHPUnit\Framework\TestCase
         $this->contentNodeTreeResolver = $this->createMock(ContentNodeTreeResolver::class);
         $this->localizationHelper = $this->createMock(LocalizationHelper::class);
         $this->websiteManager = $this->createMock(WebsiteManager::class);
-        $this->cache = $this->createMock(CacheProvider::class);
+        $this->cache = $this->createMock(CacheInterface::class);
 
         $this->menuDataProvider = new MenuDataProvider(
             $this->doctrine,
@@ -71,7 +75,7 @@ class MenuDataProviderTest extends \PHPUnit\Framework\TestCase
             $this->requestWebContentScopeProvider,
             $this->websiteManager
         );
-        $this->menuDataProvider->setCache($this->cache);
+        $this->menuDataProvider->setCache($this->cache, self::CACHE_LIFETIME);
     }
 
     /**
@@ -132,9 +136,16 @@ class MenuDataProviderTest extends \PHPUnit\Framework\TestCase
             ->method('getCurrentWebsite')
             ->willReturn($website);
 
-        $this->cache->expects($this->any())
-            ->method('fetch')
-            ->willReturn(false);
+        $this->cache->expects($this->once())
+            ->method('get')
+            ->willReturnCallback(function ($cacheKey, $callback) {
+                $item = $this->createMock(ItemInterface::class);
+                $item->expects(self::once())
+                    ->method('expiresAfter')
+                    ->with(self::CACHE_LIFETIME)
+                    ->willReturn($item);
+                return $callback($item);
+            });
 
         $actual = $this->menuDataProvider->getItems($maxNodesNestedLevel);
         $this->assertEquals($expectedData, $actual);
@@ -190,9 +201,16 @@ class MenuDataProviderTest extends \PHPUnit\Framework\TestCase
             ->method('getCurrentWebsite')
             ->willReturn($website);
 
-        $this->cache->expects($this->any())
-            ->method('fetch')
-            ->willReturn(false);
+        $this->cache->expects($this->once())
+            ->method('get')
+            ->willReturnCallback(function ($cacheKey, $callback) {
+                $item = $this->createMock(ItemInterface::class);
+                $item->expects(self::once())
+                    ->method('expiresAfter')
+                    ->with(self::CACHE_LIFETIME)
+                    ->willReturn($item);
+                return $callback($item);
+            });
 
         $actual = $this->menuDataProvider->getItems($maxNodesNestedLevel);
         $this->assertEquals($expectedData, $actual);
@@ -206,10 +224,10 @@ class MenuDataProviderTest extends \PHPUnit\Framework\TestCase
         $scope = $this->getEntity(Scope::class, ['id' => 1]);
 
         $expectedData = [
-            MenuDataProvider::IDENTIFIER => 'root__node2',
-            MenuDataProvider::LABEL => 'node2',
-            MenuDataProvider::URL => '/node2',
-            MenuDataProvider::CHILDREN => []
+            self::IDENTIFIER => 'root__node2',
+            self::LABEL => 'node2',
+            self::URL => '/node2',
+            self::CHILDREN => []
         ];
 
         $this->requestWebContentScopeProvider->expects($this->once())
@@ -233,12 +251,12 @@ class MenuDataProviderTest extends \PHPUnit\Framework\TestCase
             ->willReturn($rootNode);
 
         $this->cache->expects($this->once())
-            ->method('fetch')
+            ->method('get')
             ->with(sprintf(
                 'menu_items_%s_1_77_42',
                 null !== $maxNodesNestedLevel ? (string)$maxNodesNestedLevel : ''
             ))
-            ->willReturn([MenuDataProvider::CHILDREN => $expectedData]);
+            ->willReturn([self::CHILDREN => $expectedData]);
 
         $actual = $this->menuDataProvider->getItems($maxNodesNestedLevel);
         $this->assertEquals($expectedData, $actual);
@@ -269,15 +287,15 @@ class MenuDataProviderTest extends \PHPUnit\Framework\TestCase
                 ]),
                 'expectedData' => [
                     [
-                        MenuDataProvider::IDENTIFIER => 'root__node2',
-                        MenuDataProvider::LABEL => 'node2',
-                        MenuDataProvider::URL => '/node2',
-                        MenuDataProvider::CHILDREN => [
+                        self::IDENTIFIER => 'root__node2',
+                        self::LABEL => 'node2',
+                        self::URL => '/node2',
+                        self::CHILDREN => [
                             [
-                                MenuDataProvider::IDENTIFIER => 'node3',
-                                MenuDataProvider::LABEL => 'node3',
-                                MenuDataProvider::URL => '/node3',
-                                MenuDataProvider::CHILDREN => []
+                                self::IDENTIFIER => 'node3',
+                                self::LABEL => 'node3',
+                                self::URL => '/node3',
+                                self::CHILDREN => []
                             ]
                         ]
                     ]
@@ -291,10 +309,10 @@ class MenuDataProviderTest extends \PHPUnit\Framework\TestCase
                 ]),
                 'expectedData' => [
                     [
-                        MenuDataProvider::IDENTIFIER => 'root__node2',
-                        MenuDataProvider::LABEL => 'node2',
-                        MenuDataProvider::URL => '/node2',
-                        MenuDataProvider::CHILDREN => []
+                        self::IDENTIFIER => 'root__node2',
+                        self::LABEL => 'node2',
+                        self::URL => '/node2',
+                        self::CHILDREN => []
                     ]
                 ],
                 'maxNodesNestedLevel' => 1
@@ -307,15 +325,15 @@ class MenuDataProviderTest extends \PHPUnit\Framework\TestCase
                 ]),
                 'expectedData' => [
                     [
-                        MenuDataProvider::IDENTIFIER => 'root__node2',
-                        MenuDataProvider::LABEL => 'node2',
-                        MenuDataProvider::URL => '/node2',
-                        MenuDataProvider::CHILDREN => [
+                        self::IDENTIFIER => 'root__node2',
+                        self::LABEL => 'node2',
+                        self::URL => '/node2',
+                        self::CHILDREN => [
                             [
-                                MenuDataProvider::IDENTIFIER => 'node3',
-                                MenuDataProvider::LABEL => 'node3',
-                                MenuDataProvider::URL => '/node3',
-                                MenuDataProvider::CHILDREN => []
+                                self::IDENTIFIER => 'node3',
+                                self::LABEL => 'node3',
+                                self::URL => '/node3',
+                                self::CHILDREN => []
                             ]
                         ]
                     ]

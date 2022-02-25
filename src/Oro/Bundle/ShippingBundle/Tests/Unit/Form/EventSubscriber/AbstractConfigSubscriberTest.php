@@ -117,7 +117,7 @@ abstract class AbstractConfigSubscriberTest extends FormIntegrationTestCase
     /**
      * {@inheritDoc}
      */
-    protected function getValidators()
+    protected function getValidators(): array
     {
         $enabledTypeConfigsValidationGroup = new EnabledTypeConfigsValidationGroup();
         $shippingRuleEnable = new ShippingRuleEnable();
@@ -133,7 +133,7 @@ abstract class AbstractConfigSubscriberTest extends FormIntegrationTestCase
     /**
      * {@inheritDoc}
      */
-    public function getExtensions()
+    protected function getExtensions(): array
     {
         $roundingService = $this->createMock(RoundingServiceInterface::class);
         $roundingService->expects($this->any())

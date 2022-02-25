@@ -22,6 +22,9 @@ class ComputeLocalizationDefaultField implements ProcessorInterface
         $this->localizationManager = $localizationManager;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function process(ContextInterface $context)
     {
         /** @var CustomizeLoadedDataContext $context */

@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\ProductVariant\VariantFieldValueHandler;
 
-use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
@@ -14,6 +13,7 @@ use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\ProductVariant\VariantFieldValueHandler\EnumVariantFieldValueHandler;
 use Psr\Log\LoggerInterface;
+use Symfony\Contracts\Cache\CacheInterface;
 
 class EnumVariantFieldValueHandlerTest extends \PHPUnit\Framework\TestCase
 {
@@ -86,16 +86,16 @@ class EnumVariantFieldValueHandlerTest extends \PHPUnit\Framework\TestCase
         $enumValues = ['red', 'green'];
 
         $fieldConfig = $this->createMock(FieldConfigModel::class);
-        $fieldConfig->expects($this->once())
+        $fieldConfig->expects(self::once())
             ->method('toArray')
             ->with('extend')
             ->willReturn(['target_entity' => '\stdClass']);
-        $this->configManager->expects($this->once())
+        $this->configManager->expects(self::once())
             ->method('getConfigFieldModel')
             ->with(Product::class, $fieldName)
             ->willReturn($fieldConfig);
 
-        $this->enumValueProvider->expects($this->once())
+        $this->enumValueProvider->expects(self::once())
             ->method('getEnumChoicesWithNonUniqueTranslation')
             ->with('\stdClass')
             ->willReturn($enumValues);
@@ -117,9 +117,9 @@ class EnumVariantFieldValueHandlerTest extends \PHPUnit\Framework\TestCase
         $fieldName = 'testField';
         $enumValues = ['red', 'green'];
 
-        $cache = $this->createMock(CacheProvider::class);
+        $cache = $this->createMock(CacheInterface::class);
         $cache->expects($this->once())
-            ->method('fetch')
+            ->method('get')
             ->with(sprintf('%s|%s', $fieldName, 'en_US'))
             ->willReturn($enumValues);
 

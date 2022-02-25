@@ -2,11 +2,12 @@
 
 namespace Oro\Bundle\ProductBundle\Layout\SegmentProducts;
 
-use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\CacheBundle\Generator\UniversalCacheKeyGenerator;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
+use Psr\Cache\CacheItemPoolInterface;
 
 /**
  * The cache for queries that are used to retrieve segment products.
@@ -20,13 +21,13 @@ class SegmentProductsQueryCache
 
     private ManagerRegistry $doctrine;
     private SymmetricCrypterInterface $crypter;
-    private CacheProvider $cache;
+    private CacheItemPoolInterface $cache;
     private int $cacheLifeTime;
 
     public function __construct(
         ManagerRegistry $doctrine,
         SymmetricCrypterInterface $crypter,
-        CacheProvider $cache,
+        CacheItemPoolInterface $cache,
         int $cacheLifeTime
     ) {
         $this->doctrine = $doctrine;
@@ -37,10 +38,12 @@ class SegmentProductsQueryCache
 
     public function getQuery(string $cacheKey): ?Query
     {
-        $data = $this->cache->fetch($cacheKey);
-        if (false === $data) {
+        $cacheKey = UniversalCacheKeyGenerator::normalizeCacheKey($cacheKey);
+        $cacheItem = $this->cache->getItem($cacheKey);
+        if (!$cacheItem->isHit()) {
             return null;
         }
+        $data = $cacheItem->get();
 
         if (!$this->checkCacheDataConsistency($data)) {
             return null;
@@ -76,7 +79,10 @@ class SegmentProductsQueryCache
             self::HINTS      => $hints,
             self::HASH       => $this->crypter->encryptData($this->getHash($dql, $parameters, $hints))
         ];
-        $this->cache->save($cacheKey, $data, $this->cacheLifeTime);
+        $cacheKey = UniversalCacheKeyGenerator::normalizeCacheKey($cacheKey);
+        $cacheItem = $this->cache->getItem($cacheKey);
+        $cacheItem->expiresAfter($this->cacheLifeTime)->set($data);
+        $this->cache->save($cacheItem);
     }
 
     private function checkCacheDataConsistency(array $data): bool

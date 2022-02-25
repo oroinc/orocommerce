@@ -18,7 +18,6 @@ use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodsConfigsRuleDestinationType;
 use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodsConfigsRuleType;
 use Oro\Bundle\PaymentBundle\Method\Provider\CompositePaymentMethodProvider;
 use Oro\Bundle\PaymentBundle\Method\View\CompositePaymentMethodViewProvider;
-use Oro\Bundle\RuleBundle\Validator\Constraints\ExpressionLanguageSyntax;
 use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
@@ -87,7 +86,7 @@ class RuleMethodConfigCollectionSubscriberTest extends FormIntegrationTestCase
     /**
      * {@inheritDoc}
      */
-    public function getExtensions()
+    protected function getExtensions(): array
     {
         $roundingService = $this->createMock(RoundingServiceInterface::class);
         $roundingService->expects($this->any())
@@ -141,12 +140,11 @@ class RuleMethodConfigCollectionSubscriberTest extends FormIntegrationTestCase
     /**
      * {@inheritDoc}
      */
-    protected function getValidators()
+    protected function getValidators(): array
     {
-        $expressionLanguageSyntax = new ExpressionLanguageSyntax();
-
         return [
-            $expressionLanguageSyntax->validatedBy() => $this->createMock(ExpressionLanguageSyntaxValidator::class),
+            'oro_rule.validator_constraints.expression_language_syntax_validator' =>
+                $this->createMock(ExpressionLanguageSyntaxValidator::class),
         ];
     }
 }

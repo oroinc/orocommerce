@@ -1,21 +1,30 @@
-import _ from 'underscore';
 import __ from 'orotranslation/js/translator';
-import BaseTypeBuilder from 'orocms/js/app/grapesjs/type-builders/base-type-builder';
+import TextTypeBuilder from 'orocms/js/app/grapesjs/type-builders/text-type-builder';
 
-const QuiteBasicTypeBuilder = BaseTypeBuilder.extend({
+const QuiteBasicTypeBuilder = TextTypeBuilder.extend({
+    button: {
+        label: __('oro.cms.wysiwyg.component.quote.label')
+    },
+
+    modelMixin: {
+        ...TextTypeBuilder.prototype.modelMixin,
+        defaults: {
+            tagName: 'blockquote',
+            classes: ['quote'],
+            content: __('oro.cms.wysiwyg.component.quote.content')
+        }
+    },
+
     constructor: function QuiteBasicTypeBuilder(options) {
         QuiteBasicTypeBuilder.__super__.constructor.call(this, options);
     },
 
-    initialize(options) {
-        Object.assign(this, _.pick(options, 'editor', 'componentType'));
-    },
-
-    execute: function() {
-        this.editor.BlockManager.get(this.componentType).set({
-            label: __('oro.cms.wysiwyg.component.quote.label'),
-            content: `<blockquote class="quote">${__('oro.cms.wysiwyg.component.quote.content')}</blockquote>`
-        });
+    isComponent(el) {
+        if (el.nodeType === 1 && el.tagName.toLowerCase() === 'blockquote') {
+            return {
+                type: this.componentType
+            };
+        }
     }
 });
 

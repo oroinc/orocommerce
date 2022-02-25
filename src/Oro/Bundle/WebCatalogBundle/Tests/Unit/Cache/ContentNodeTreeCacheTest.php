@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Cache;
 
-use Doctrine\Common\Cache\Cache;
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
@@ -16,6 +15,8 @@ use Oro\Bundle\WebCatalogBundle\Entity\Repository\WebCatalogRepository;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Component\Testing\Unit\EntityTrait;
 use PHPUnit\Framework\TestCase;
+use Psr\Cache\CacheItemInterface;
+use Psr\Cache\CacheItemPoolInterface;
 
 class ContentNodeTreeCacheTest extends TestCase
 {
@@ -24,8 +25,11 @@ class ContentNodeTreeCacheTest extends TestCase
     /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineHelper;
 
-    /** @var Cache|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var CacheItemPoolInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $cache;
+
+    /** @var CacheItemInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $cacheItem;
 
     /** @var ContentNodeTreeCache */
     private $contentNodeTreeCache;
@@ -33,7 +37,8 @@ class ContentNodeTreeCacheTest extends TestCase
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
-        $this->cache = $this->createMock(Cache::class);
+        $this->cache = $this->createMock(CacheItemPoolInterface::class);
+        $this->cacheItem = $this->createMock(CacheItemInterface::class);
 
         $this->contentNodeTreeCache = new ContentNodeTreeCache(
             $this->doctrineHelper,
@@ -44,21 +49,14 @@ class ContentNodeTreeCacheTest extends TestCase
     public function testFetchWhenNoCachedData()
     {
         $this->cache->expects($this->once())
-            ->method('fetch')
+            ->method('getItem')
             ->with('node_2_scope_5')
+            ->willReturn($this->cacheItem);
+        $this->cacheItem->expects(self::once())
+            ->method('isHit')
             ->willReturn(false);
 
         $this->assertFalse($this->contentNodeTreeCache->fetch(2, 5));
-    }
-
-    public function testFetchWhenCacheIsEmpty()
-    {
-        $this->cache->expects($this->once())
-            ->method('fetch')
-            ->with('node_2_scope_5')
-            ->willReturn([]);
-
-        $this->assertNull($this->contentNodeTreeCache->fetch(2, 5));
     }
 
     public function testFetchWhenCachedDataExist()
@@ -133,8 +131,14 @@ class ContentNodeTreeCacheTest extends TestCase
         );
 
         $this->cache->expects($this->once())
-            ->method('fetch')
+            ->method('getItem')
             ->with('node_2_scope_5')
+            ->willReturn($this->cacheItem);
+        $this->cacheItem->expects(self::once())
+            ->method('isHit')
+            ->willReturn(true);
+        $this->cacheItem->expects(self::exactly(2))
+            ->method('get')
             ->willReturn($cacheData);
 
         $this->doctrineHelper->expects($this->any())
@@ -150,9 +154,17 @@ class ContentNodeTreeCacheTest extends TestCase
 
     public function testShouldSaveEmptyCacheIfNodeNotResolved()
     {
-        $this->cache->expects($this->once())
+        $this->cache->expects(self::once())
+            ->method('getItem')
+            ->with('node_2_scope_5')
+            ->willReturn($this->cacheItem);
+        $this->cacheItem->expects(self::once())
+            ->method('set')
+            ->with([]);
+        $this->cache->expects(self::once())
             ->method('save')
-            ->with('node_2_scope_5', []);
+            ->with($this->cacheItem);
+
 
         $this->contentNodeTreeCache->save(2, 5, null);
     }
@@ -243,9 +255,16 @@ class ContentNodeTreeCacheTest extends TestCase
                 }
             );
 
-        $this->cache->expects($this->once())
+        $this->cache->expects(self::once())
+            ->method('getItem')
+            ->with('node_2_scope_5')
+            ->willReturn($this->cacheItem);
+        $this->cacheItem->expects(self::once())
+            ->method('set')
+            ->with($convertedNode);
+        $this->cache->expects(self::once())
             ->method('save')
-            ->with('node_2_scope_5', $convertedNode);
+            ->with($this->cacheItem);
 
         $this->contentNodeTreeCache->save(2, 5, $resolvedNode);
     }
@@ -275,9 +294,9 @@ class ContentNodeTreeCacheTest extends TestCase
         $fooScopeCacheKey = "node_{$contentNodeId}_scope_{$fooScopeIds}";
         $barScopeCacheKey = "node_{$contentNodeId}_scope_{$barScopeIds}";
 
-        $this->cache->expects($this->exactly(2))
-            ->method('delete')
-            ->withConsecutive([$fooScopeCacheKey], [$barScopeCacheKey]);
+        $this->cache->expects($this->once())
+            ->method('deleteItems')
+            ->with([$fooScopeCacheKey, $barScopeCacheKey]);
 
         $this->contentNodeTreeCache->deleteForNode($node);
     }

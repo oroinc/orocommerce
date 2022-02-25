@@ -10,16 +10,14 @@ use Oro\Bundle\ProductBundle\Event\BuildResultProductListEvent;
 use Oro\Bundle\ProductBundle\EventListener\ProductListEventListener;
 use Oro\Bundle\ProductBundle\Model\ProductView;
 use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
+use Oro\Bundle\UIBundle\Tools\UrlHelper;
 
 class ProductListEventListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var ImagePlaceholderProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $imagePlaceholderProvider;
+    private ImagePlaceholderProviderInterface|\PHPUnit\Framework\MockObject\MockObject $imagePlaceholderProvider;
 
-    /** @var WebpConfiguration|\PHPUnit\Framework\MockObject\MockObject */
-    private $webpConfiguration;
+    private WebpConfiguration|\PHPUnit\Framework\MockObject\MockObject $webpConfiguration;
 
-    /** @var ProductListEventListener */
     private $listener;
 
     protected function setUp(): void
@@ -27,7 +25,17 @@ class ProductListEventListenerTest extends \PHPUnit\Framework\TestCase
         $this->imagePlaceholderProvider = $this->createMock(ImagePlaceholderProviderInterface::class);
         $this->webpConfiguration = $this->createMock(WebpConfiguration::class);
 
-        $this->listener = new ProductListEventListener($this->imagePlaceholderProvider, $this->webpConfiguration);
+        $urlHelper = $this->createMock(UrlHelper::class);
+        $urlHelper
+            ->expects(self::any())
+            ->method('getAbsolutePath')
+            ->willReturnCallback(static fn (string $path) => '/absolute' . $path);
+
+        $this->listener = new ProductListEventListener(
+            $this->imagePlaceholderProvider,
+            $this->webpConfiguration,
+            $urlHelper
+        );
     }
 
     public function testOnBuildQuery(): void
@@ -86,7 +94,7 @@ class ProductListEventListenerTest extends \PHPUnit\Framework\TestCase
                 'type'                 => Product::TYPE_CONFIGURABLE,
                 'sku'                  => 'p1',
                 'name'                 => 'product 1',
-                'image'                => 'http://product1',
+                'image'                => '/image/1/medium',
                 'unit'                 => 'items',
                 'product_units'        => serialize(['items' => 0, 'set' => 2]),
                 'newArrival'           => 1,
@@ -115,7 +123,7 @@ class ProductListEventListenerTest extends \PHPUnit\Framework\TestCase
                 ['sku', self::identicalTo('p1')],
                 ['name', self::identicalTo('product 1')],
                 ['hasImage', self::identicalTo(true)],
-                ['image', self::identicalTo('http://product1')],
+                ['image', self::identicalTo('/absolute/image/1/medium')],
                 ['unit', self::identicalTo('items')],
                 ['product_units', self::identicalTo(['items' => 0, 'set' => 2])],
                 ['newArrival', self::identicalTo(true)],
@@ -151,8 +159,8 @@ class ProductListEventListenerTest extends \PHPUnit\Framework\TestCase
                 'type'                 => Product::TYPE_CONFIGURABLE,
                 'sku'                  => 'p1',
                 'name'                 => 'product 1',
-                'image'                => 'http://product1',
-                'imageWebp'            => 'http://product1/webp',
+                'image'                => '/image/1/medium',
+                'imageWebp'            => '/image/1/medium/webp',
                 'unit'                 => 'items',
                 'product_units'        => serialize(['items' => 0, 'set' => 2]),
                 'newArrival'           => 1,
@@ -169,8 +177,8 @@ class ProductListEventListenerTest extends \PHPUnit\Framework\TestCase
                 ['sku', self::identicalTo('p1')],
                 ['name', self::identicalTo('product 1')],
                 ['hasImage', self::identicalTo(true)],
-                ['image', self::identicalTo('http://product1')],
-                ['imageWebp', self::identicalTo('http://product1/webp')],
+                ['image', self::identicalTo('/absolute/image/1/medium')],
+                ['imageWebp', self::identicalTo('/absolute/image/1/medium/webp')],
             );
 
         $this->listener->onBuildResult(new BuildResultProductListEvent('test_list', $productData, $productViews));

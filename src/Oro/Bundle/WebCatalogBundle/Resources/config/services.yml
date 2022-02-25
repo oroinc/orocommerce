@@ -287,9 +287,9 @@ services:
         alias: oro_web_catalog.content_node_tree_resolver
 
     oro_web_catalog.cache:
-        parent: oro.cache.abstract
-        calls:
-            - [ setNamespace, [ 'oro_web_catalog' ] ]
+        parent: oro.data.cache
+        tags:
+            - { name: 'cache.pool', namespace: 'oro_web_catalog' }
 
     oro_web_catalog.cache.content_node_tree_cache_warmer:
         class: Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeCacheWarmer
@@ -329,10 +329,10 @@ services:
             - { name: layout.data_provider, alias: web_catalog_menu }
 
     oro_web_catalog.layout.data_provider.menu_data.cache:
-        parent: oro.cache.abstract
         public: false
-        calls:
-            - [ setNamespace, [ 'oro_web_catalog_layout_provider' ] ]
+        parent: oro.data.cache
+        tags:
+            - { name: 'cache.pool', namespace: 'oro_web_catalog_layout_provider' }
 
     oro_web_catalog.layout.data_provider.content_variant:
         class: Oro\Bundle\WebCatalogBundle\Layout\DataProvider\ContentVariantDataProvider

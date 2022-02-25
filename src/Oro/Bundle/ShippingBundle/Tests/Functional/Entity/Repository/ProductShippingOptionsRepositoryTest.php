@@ -12,19 +12,17 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
  */
 class ProductShippingOptionsRepositoryTest extends WebTestCase
 {
-    /**
-     * @var ProductShippingOptionsRepository
-     */
-    protected $repository;
+    protected ProductShippingOptionsRepository $repository;
 
     protected function setUp(): void
     {
-        $this->initClient([], $this->generateBasicAuthHeader());
+        $this->initClient([], self::generateBasicAuthHeader());
         $this->loadFixtures([
             LoadProductShippingOptions::class,
         ]);
 
-        $this->repository = $this->getContainer()->get('doctrine')->getRepository(ProductShippingOptions::class);
+        $this->repository = self::getContainer()->get('doctrine')
+            ->getRepository(ProductShippingOptions::class);
     }
 
     public function testFindIndexedByProductsAndUnits(): void
@@ -32,22 +30,24 @@ class ProductShippingOptionsRepositoryTest extends WebTestCase
         $product = $this->getReference('product-1');
         $unit = $this->getReference('product_unit.liter');
 
-        $unitsByProductIds = [$product->getId() => $unit];
+        $unitsByProductIds = [$product->getId() => ['liter' => $unit]];
 
         $shippingOptionsArray = $this->repository->findIndexedByProductsAndUnits($unitsByProductIds);
 
-        $expectedShippingOptions = $this->getReference(LoadProductShippingOptions::PRODUCT_SHIPPING_OPTIONS_1);
+        $expectedShippingOpts = $this->getReference(LoadProductShippingOptions::PRODUCT_SHIPPING_OPTIONS_1);
 
         $this->assertEquals(
             [
-                $expectedShippingOptions->getProduct()->getId() => [
-                    'dimensionsHeight' => 3,
-                    'dimensionsLength' => 1,
-                    'dimensionsWidth' => 2,
-                    'dimensionsUnit' => 'in',
-                    'weightUnit' => 'kilo',
-                    'weightValue' => 42,
-                    'productId' => $expectedShippingOptions->getProduct()->getId(),
+                $expectedShippingOpts->getProduct()->getId() => [
+                    'liter' => [
+                        'dimensionsHeight' => 3,
+                        'dimensionsLength' => 1,
+                        'dimensionsWidth' => 2,
+                        'dimensionsUnit' => 'in',
+                        'weightUnit' => 'kilo',
+                        'weightValue' => 42,
+                        'code' => 'liter'
+                    ]
                 ]
             ],
             $shippingOptionsArray
@@ -67,12 +67,56 @@ class ProductShippingOptionsRepositoryTest extends WebTestCase
         $unit2 = $this->getReference('product_unit.bottle');
 
         $unitsByProductIds = [
-            $product1->getId() => $unit1,
-            $product2->getId() => $unit2,
+            $product1->getId() => ['box' => $unit1],
+            $product2->getId() => ['bottle' => $unit2],
         ];
 
         $shippingOptionsArray = $this->repository->findIndexedByProductsAndUnits($unitsByProductIds);
 
         $this->assertEquals([], $shippingOptionsArray);
+    }
+
+    public function testFindIndexedByProductsAndUnitsMultipleUnits(): void
+    {
+        $product1 = $this->getReference('product-1');
+        $unit11 = $this->getReference('product_unit.bottle');
+        $unit12 = $this->getReference('product_unit.liter');
+        $product2 = $this->getReference('product-2');
+        $unit2 = $this->getReference('product_unit.box');
+
+        $unitsByProductIds = [
+            $product1->getId() => [
+                'bottle' => $unit11,
+                'liter' => $unit12
+            ],
+            $product2->getId() => [
+                'box' => $unit2
+            ],
+        ];
+
+        $shippingOptionsArray = $this->repository->findIndexedByProductsAndUnits($unitsByProductIds);
+
+        $this->assertEquals([
+            $product1->getId() => [
+                "bottle" => [
+                    "dimensionsHeight" => 10.0,
+                    "dimensionsLength" => 10.0,
+                    "dimensionsWidth" => 10.0,
+                    "dimensionsUnit" => "ft",
+                    "weightUnit" => "pound",
+                    "weightValue" => 5.0,
+                    "code" => "bottle",
+                ],
+                "liter" => [
+                    "dimensionsHeight" => 3.0,
+                    "dimensionsLength" => 1.0,
+                    "dimensionsWidth" => 2.0,
+                    "dimensionsUnit" => "in",
+                    "weightUnit" => "kilo",
+                    "weightValue" => 42.0,
+                    "code" => "liter",
+                ]
+            ]
+        ], $shippingOptionsArray);
     }
 }

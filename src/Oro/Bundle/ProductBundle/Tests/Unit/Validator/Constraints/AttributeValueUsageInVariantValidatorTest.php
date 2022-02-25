@@ -15,88 +15,38 @@ use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Validator\Constraints\AttributeValueUsageInVariant;
 use Oro\Bundle\ProductBundle\Validator\Constraints\AttributeValueUsageInVariantValidator;
-use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Validator\Constraint;
-use Symfony\Component\Validator\Constraints\NotNull;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class AttributeValueUsageInVariantValidatorTest extends ConstraintValidatorTestCase
 {
-    /**
-     * @var ManagerRegistry|MockObject
-     */
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $registry;
 
-    /**
-     * @var EnumSynchronizer|MockObject
-     */
+    /** @var EnumSynchronizer|\PHPUnit\Framework\MockObject\MockObject */
     private $enumSynchronizer;
 
-    /**
-     * {@inheritDoc}
-     */
-    protected function createValidator()
+    protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
         $this->enumSynchronizer = $this->createMock(EnumSynchronizer::class);
+        parent::setUp();
+    }
 
+    protected function createValidator(): AttributeValueUsageInVariantValidator
+    {
         return new AttributeValueUsageInVariantValidator(
             $this->registry,
             $this->enumSynchronizer
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function createContext()
+    private function createConstraint(): AttributeValueUsageInVariant
     {
-        $this->constraint = new AttributeValueUsageInVariant();
-        $this->constraint->configModel = $this->createConfigModel();
-
-        return parent::createContext();
-    }
-
-    public function testValidateEmptyValue()
-    {
-        $this->registry->expects($this->never())
-            ->method($this->anything());
-        $this->enumSynchronizer->expects($this->never())
-            ->method($this->anything());
-
-        $this->validator->validate(null, $this->constraint);
-        $this->assertEmpty($this->context->getViolations());
-    }
-
-    /**
-     * @dataProvider constraintDataProvider
-     */
-    public function testValidateWithUnsupportedConstraint(Constraint $constraint)
-    {
-        $this->registry->expects($this->never())
-            ->method($this->anything());
-        $this->enumSynchronizer->expects($this->never())
-            ->method($this->anything());
-
-        $this->validator->validate(null, $constraint);
-        $this->assertEmpty($this->context->getViolations());
-    }
-
-    public function constraintDataProvider(): \Generator
-    {
-        yield 'unsupported constraint' => [new NotNull()];
-
         $constraint = new AttributeValueUsageInVariant();
-        $constraint->configModel = $this->createMock(ConfigModel::class);
-        yield 'unsupported config model' => [$constraint];
+        $constraint->configModel = $this->createConfigModel();
 
-        $constraint = new AttributeValueUsageInVariant();
-        $constraint->configModel = $this->createConfigModel(ProductVariantLink::class, Product::class);
-        yield 'unsupported class name' => [$constraint];
-
-        $constraint = new AttributeValueUsageInVariant();
-        $constraint->configModel = $this->createConfigModel(Product::class, Product::class);
-        yield 'unsupported target entity' => [$constraint];
+        return $constraint;
     }
 
     private function createConfigModel(
@@ -113,6 +63,55 @@ class AttributeValueUsageInVariantValidatorTest extends ConstraintValidatorTestC
         return $fieldConfig;
     }
 
+    public function testValidateEmptyValue()
+    {
+        $this->registry->expects($this->never())
+            ->method($this->anything());
+        $this->enumSynchronizer->expects($this->never())
+            ->method($this->anything());
+
+        $constraint = $this->createConstraint();
+        $this->validator->validate(null, $constraint);
+        $this->assertNoViolation();
+    }
+
+    public function testValidateWithUnsupportedConstraint()
+    {
+        $this->registry->expects($this->never())
+            ->method($this->anything());
+        $this->enumSynchronizer->expects($this->never())
+            ->method($this->anything());
+
+        $constraint = $this->createMock(Constraint::class);
+        $this->validator->validate(null, $constraint);
+        $this->assertNoViolation();
+    }
+
+    /**
+     * @dataProvider unsupportedAttributeValueUsageInVariantConstraintDataProvider
+     */
+    public function testValidateWithUnsupportedAttributeValueUsageInVariantConstraint(ConfigModel $configModel)
+    {
+        $this->registry->expects($this->never())
+            ->method($this->anything());
+        $this->enumSynchronizer->expects($this->never())
+            ->method($this->anything());
+
+        $constraint = new AttributeValueUsageInVariant();
+        $constraint->configModel = $configModel;
+        $this->validator->validate(null, $constraint);
+        $this->assertNoViolation();
+    }
+
+    public function unsupportedAttributeValueUsageInVariantConstraintDataProvider(): array
+    {
+        return [
+            'unsupported config model' => [$this->createMock(ConfigModel::class)],
+            'unsupported class name' => [$this->createConfigModel(ProductVariantLink::class, Product::class)],
+            'unsupported target entity' => [$this->createConfigModel(Product::class, Product::class)],
+        ];
+    }
+
     /**
      * @dataProvider allowedValuesDataProvider
      */
@@ -123,7 +122,6 @@ class AttributeValueUsageInVariantValidatorTest extends ConstraintValidatorTestC
             new TestEnumValue('test2', 'test2')
         ];
 
-        /** @var EnumValueRepository|MockObject $enumRepo */
         $enumRepo = $this->createMock(EnumValueRepository::class);
         $enumRepo->expects($this->any())
             ->method('findAll')
@@ -138,24 +136,26 @@ class AttributeValueUsageInVariantValidatorTest extends ConstraintValidatorTestC
                 [Product::class, null, $productRepo]
             ]);
 
-        $this->validator->validate($values, $this->constraint);
-        $this->assertEmpty($this->context->getViolations());
+        $constraint = $this->createConstraint();
+        $this->validator->validate($values, $constraint);
+        $this->assertNoViolation();
     }
 
-    public function allowedValuesDataProvider(): \Generator
+    public function allowedValuesDataProvider(): array
     {
-        yield [
+        return [
             [
-                ['id' => 'test1', 'label' => 'test1'],
-                ['id' => 'test2', 'label' => 'test2']
-            ]
-        ];
-
-        yield [
+                [
+                    ['id' => 'test1', 'label' => 'test1'],
+                    ['id' => 'test2', 'label' => 'test2']
+                ]
+            ],
             [
-                ['id' => 'test1', 'label' => 'test1'],
-                ['id' => 'test2', 'label' => 'test2'],
-                ['id' => 'test3', 'label' => 'test3'],
+                [
+                    ['id' => 'test1', 'label' => 'test1'],
+                    ['id' => 'test2', 'label' => 'test2'],
+                    ['id' => 'test3', 'label' => 'test3'],
+                ]
             ]
         ];
     }
@@ -170,7 +170,6 @@ class AttributeValueUsageInVariantValidatorTest extends ConstraintValidatorTestC
             ['id' => 'test2', 'label' => 'test2']
         ];
 
-        /** @var EnumValueRepository|MockObject $enumRepo */
         $enumRepo = $this->createMock(EnumValueRepository::class);
         $enumRepo->expects($this->any())
             ->method('findAll')
@@ -189,8 +188,9 @@ class AttributeValueUsageInVariantValidatorTest extends ConstraintValidatorTestC
                 [Product::class, null, $productRepo]
             ]);
 
-        $this->validator->validate($values, $this->constraint);
-        $this->assertEmpty($this->context->getViolations());
+        $constraint = $this->createConstraint();
+        $this->validator->validate($values, $constraint);
+        $this->assertNoViolation();
     }
 
     public function testValidateRemovedItemsThatAreUsedInVariant()
@@ -203,7 +203,6 @@ class AttributeValueUsageInVariantValidatorTest extends ConstraintValidatorTestC
             ['id' => 'test2', 'label' => 'test2']
         ];
 
-        /** @var EnumValueRepository|MockObject $enumRepo */
         $enumRepo = $this->createMock(EnumValueRepository::class);
         $enumRepo->expects($this->any())
             ->method('findAll')
@@ -222,9 +221,10 @@ class AttributeValueUsageInVariantValidatorTest extends ConstraintValidatorTestC
                 [Product::class, null, $productRepo]
             ]);
 
-        $this->validator->validate($values, $this->constraint);
+        $constraint = $this->createConstraint();
+        $this->validator->validate($values, $constraint);
 
-        $this->buildViolation($this->constraint->message)
+        $this->buildViolation($constraint->message)
             ->setParameters([
                 '%productSkus%' => 'SKU1',
                 '%optionLabels%' => 'test1'

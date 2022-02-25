@@ -204,10 +204,12 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
     {
         $lineItems = $this->getAppContainer()
             ->get('oro_paypal.test.express_payment.cache')
-            ->fetch(NVPClientMock::LINE_ITEM_CACHE_KEY);
-        foreach ($table as $row) {
-            foreach ($row as $columnName => $rowValue) {
-                self::assertTrue(in_array($rowValue, $lineItems, true));
+            ->getItem(NVPClientMock::LINE_ITEM_CACHE_KEY);
+        if ($lineItems->isHit()) {
+            foreach ($table as $row) {
+                foreach ($row as $columnName => $rowValue) {
+                    self::assertTrue(in_array($rowValue, $lineItems->get(), true));
+                }
             }
         }
     }
@@ -220,9 +222,10 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
      */
     public function assertNotExistsProductDataBeforePay(TableNode $table)
     {
-        $lineItems = $this->getAppContainer()
+        $cacheItem = $this->getAppContainer()
             ->get('oro_paypal.test.express_payment.cache')
-            ->fetch(NVPClientMock::LINE_ITEM_CACHE_KEY);
+            ->getItem(NVPClientMock::LINE_ITEM_CACHE_KEY);
+        $lineItems = $cacheItem->isHit() ? $cacheItem->get() : [];
         foreach ($table as $row) {
             foreach ($row as $columnName => $rowValue) {
                 self::assertFalse(in_array($rowValue, $lineItems, true));

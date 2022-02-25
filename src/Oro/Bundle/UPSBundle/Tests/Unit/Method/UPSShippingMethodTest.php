@@ -289,10 +289,7 @@ class UPSShippingMethodTest extends \PHPUnit\Framework\TestCase
         $this->cache->expects(self::exactly(2))
             ->method('savePrice')
             ->with($cacheKey->setTypeId('03'))
-            ->willReturnOnConsecutiveCalls(
-                Price::create(80, 'USD'),
-                Price::create(90, 'USD')
-            );
+            ->willReturnOnConsecutiveCalls(true, true);
 
         $optionsByTypes = [
             '01' => ['surcharge' => 20],
@@ -367,8 +364,8 @@ class UPSShippingMethodTest extends \PHPUnit\Framework\TestCase
 
         $this->cache->expects(self::once())
             ->method('savePrice')
-            ->with($cacheKey->setTypeId(self::TYPE_IDENTIFIER))
-            ->willReturn(Price::create(70, 'USD'));
+            ->with($cacheKey->setTypeId(self::TYPE_IDENTIFIER), Price::create(70, 'USD'))
+            ->willReturn(true);
 
         $type = $this->createMock(UPSShippingMethodType::class);
         $type->expects(self::any())

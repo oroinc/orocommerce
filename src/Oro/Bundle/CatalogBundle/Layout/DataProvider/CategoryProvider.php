@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\CatalogBundle\Layout\DataProvider;
 
-use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
@@ -13,41 +12,24 @@ use Oro\Bundle\CatalogBundle\Provider\MasterCatalogRootProviderInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 
 /**
  * Provides Category data for layouts
  */
 class CategoryProvider
 {
-    /** @var Category[] */
-    protected $categories = [];
-
-    /** @var array */
-    protected $tree = [];
-
-    /** @var ManagerRegistry */
-    protected $registry;
-
-    /** @var RequestProductHandler */
-    protected $requestProductHandler;
-
-    /** @var CategoryTreeProvider */
-    protected $categoryTreeProvider;
-
-    /** @var TokenAccessorInterface */
-    protected $tokenAccessor;
-
-    /** @var LocalizationHelper */
-    protected $localizationHelper;
-
-    /** @var CacheProvider */
-    protected $cache;
-
-    /** @var int */
-    protected $cacheLifeTime;
-
-    /** @var MasterCatalogRootProviderInterface */
-    private $masterCatalogRootProvider;
+    private $categories = [];
+    private $tree = [];
+    private ManagerRegistry $registry;
+    private RequestProductHandler $requestProductHandler;
+    private CategoryTreeProvider $categoryTreeProvider;
+    private TokenAccessorInterface $tokenAccessor;
+    private LocalizationHelper $localizationHelper;
+    private CacheInterface $cache;
+    private int $cacheLifeTime;
+    private MasterCatalogRootProviderInterface $masterCatalogRootProvider;
 
     public function __construct(
         RequestProductHandler $requestProductHandler,
@@ -65,11 +47,7 @@ class CategoryProvider
         $this->masterCatalogRootProvider = $masterCatalogRootProvider;
     }
 
-    /**
-     * @param CacheProvider $cache
-     * @param int           $lifeTime
-     */
-    public function setCache(CacheProvider $cache, $lifeTime = 0)
+    public function setCache(CacheInterface $cache, int $lifeTime = 0) : void
     {
         $this->cache = $cache;
         $this->cacheLifeTime = $lifeTime;
@@ -91,24 +69,14 @@ class CategoryProvider
         return $this->loadCategory();
     }
 
-    /**
-     * @param CustomerUser|null $user
-     *
-     * @return array
-     */
-    public function getCategoryTreeArray(CustomerUser $user = null)
+    public function getCategoryTreeArray(CustomerUser $user = null) : array
     {
         $cacheKey = $this->getCacheKey($user);
 
-        $result = $this->cache->fetch($cacheKey);
-        if (false !== $result) {
-            return $result;
-        }
-
-        $result = $this->categoryTreeToArray($this->getCategoryTree($user));
-        $this->cache->save($cacheKey, $result, $this->cacheLifeTime);
-
-        return $result;
+        return $this->cache->get($cacheKey, function (ItemInterface $item) use ($user) {
+            $item->expiresAfter($this->cacheLifeTime);
+            return $this->categoryTreeToArray($this->getCategoryTree($user));
+        });
     }
 
     /**

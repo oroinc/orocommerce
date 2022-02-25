@@ -29,9 +29,6 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
     /** @var DigitalAssetTwigTagsConverter|\PHPUnit\Framework\MockObject\MockObject */
     private $digitalAssetTwigTagsConverter;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->htmlTagProvider = $this->createMock(HtmlTagProvider::class);
@@ -93,13 +90,11 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
      */
     public function testSubmit(string $htmlValue, array $allowedElements, bool $isValid): void
     {
-        $this->purifierScopeProvider
-            ->expects($this->once())
+        $this->purifierScopeProvider->expects($this->once())
             ->method('getScope')
             ->willReturn('default');
 
-        $this->htmlTagProvider
-            ->expects($this->once())
+        $this->htmlTagProvider->expects($this->once())
             ->method('getAllowedElements')
             ->with('default')
             ->willReturn($allowedElements);
@@ -116,14 +111,12 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
 
     public function testFinishView(): void
     {
-        $this->purifierScopeProvider
-            ->expects($this->once())
+        $this->purifierScopeProvider->expects($this->once())
             ->method('getScope')
             ->with(Page::class, 'wysiwyg')
             ->willReturn('default');
 
-        $this->htmlTagProvider
-            ->expects($this->once())
+        $this->htmlTagProvider->expects($this->once())
             ->method('getAllowedElements')
             ->with('default')
             ->willReturn(['h1', 'h2', 'h3']);
@@ -158,14 +151,12 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
 
     public function testFinishViewWithEntityClassOption(): void
     {
-        $this->purifierScopeProvider
-            ->expects($this->once())
+        $this->purifierScopeProvider->expects($this->once())
             ->method('getScope')
             ->with(Page::class, 'wysiwyg')
             ->willReturn('default');
 
-        $this->htmlTagProvider
-            ->expects($this->once())
+        $this->htmlTagProvider->expects($this->once())
             ->method('getAllowedElements')
             ->with('default')
             ->willReturn(['h1', 'h2', 'h3']);
@@ -200,14 +191,12 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
 
     public function testFinishViewForEmptyScope(): void
     {
-        $this->purifierScopeProvider
-            ->expects($this->once())
+        $this->purifierScopeProvider->expects($this->once())
             ->method('getScope')
             ->with(Page::class, 'wysiwyg')
             ->willReturn(null);
 
-        $this->htmlTagProvider
-            ->expects($this->never())
+        $this->htmlTagProvider->expects($this->never())
             ->method('getAllowedElements');
 
         $view = new FormView();
@@ -254,9 +243,9 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         return [
             new PreloadedExtension(
@@ -276,23 +265,20 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritdoc}
      */
-    protected function getValidators()
+    protected function getValidators(): array
     {
-        $htmlTagHelper = new HtmlTagHelper($this->htmlTagProvider);
-        /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject $translator */
         $translator = $this->createMock(TranslatorInterface::class);
+        $logger = $this->createMock(LoggerInterface::class);
+        $htmlTagHelper = new HtmlTagHelper($this->htmlTagProvider);
         $htmlTagHelper->setTranslator($translator);
 
-        $translator = $this->createMock(TranslatorInterface::class);
-
-        /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject $logger */
-        $logger = $this->createMock(LoggerInterface::class);
-
-        $wysiwygConstraint = new WYSIWYG();
-
         return [
-            $wysiwygConstraint->validatedBy() =>
-                new WYSIWYGValidator($htmlTagHelper, $this->purifierScopeProvider, $translator, $logger)
+            WYSIWYGValidator::class => new WYSIWYGValidator(
+                $htmlTagHelper,
+                $this->purifierScopeProvider,
+                $translator,
+                $logger
+            )
         ];
     }
 }

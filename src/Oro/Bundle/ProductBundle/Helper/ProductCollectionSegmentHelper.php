@@ -12,20 +12,9 @@ use Oro\Component\WebCatalog\Provider\WebCatalogUsageProviderInterface;
  */
 class ProductCollectionSegmentHelper
 {
-    /**
-     * @var ContentVariantSegmentProvider
-     */
-    private $contentVariantSegmentProvider;
-
-    /**
-     * @var WebCatalogUsageProviderInterface
-     */
-    private $webCatalogUsageProvider;
-
-    /**
-     * @var array
-     */
-    private $websiteIdsByWebCatalog;
+    private ContentVariantSegmentProvider $contentVariantSegmentProvider;
+    private ?WebCatalogUsageProviderInterface $webCatalogUsageProvider;
+    private ?array $websiteIdsByWebCatalog = null;
 
     public function __construct(
         ContentVariantSegmentProvider $contentVariantSegmentProvider,
@@ -48,17 +37,16 @@ class ProductCollectionSegmentHelper
         }
 
         $this->websiteIdsByWebCatalog = null;
-        $websiteIds = [];
         $contentVariants = $this->contentVariantSegmentProvider->getContentVariants($segment);
 
+        $websiteIdBatches = [];
         foreach ($contentVariants as $contentVariant) {
-            $websiteIds = array_merge(
-                $websiteIds,
-                $this->getWebsiteIdsByWebCatalog($contentVariant->getNode()->getWebCatalog())
+            $websiteIdBatches[] = $this->getWebsiteIdsByWebCatalog(
+                $contentVariant->getNode()->getWebCatalog()
             );
         }
 
-        return $websiteIds;
+        return \array_unique(\array_merge(...$websiteIdBatches));
     }
 
     private function getWebsiteIdsByWebCatalog(WebCatalogInterface $webCatalog): array
