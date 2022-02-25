@@ -90,7 +90,7 @@ define(function(require) {
             const targetIndex = this.$targets.index(target);
 
             // The field with value will always precede the fallback field.
-            return $(this.$targets.get(targetIndex-1));
+            return $(this.$targets.get(targetIndex - 1));
         },
 
         /**
