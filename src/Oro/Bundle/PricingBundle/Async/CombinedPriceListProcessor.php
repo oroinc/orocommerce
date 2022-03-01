@@ -19,6 +19,8 @@ use Psr\Log\LoggerInterface;
 
 /**
  * Updates combined price lists in case of changes in structure of original price lists.
+ *
+ * @deprecated implementation will be replaced with ScalableCombinedPriceListProcessor in 5.1
  */
 class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubscriberInterface
 {
@@ -51,7 +53,7 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
      */
     public static function getSubscribedTopics()
     {
-        return [Topics::REBUILD_COMBINED_PRICE_LISTS];
+        return [Topics::REBUILD_COMBINED_PRICE_LISTS . '.deprecated'];
     }
 
     /**

@@ -10,7 +10,7 @@ use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilderFacade;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
-use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelationsForCPLBuilderFacade;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListWithPricesForCPLBuilderFacade;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
@@ -38,9 +38,7 @@ class CombinedPriceListsBuilderFacadeTest extends WebTestCase
             ->getManagerForClass(CombinedPriceList::class)
             ->getRepository(CombinedPriceList::class);
 
-        $this->loadFixtures([
-            LoadPriceListRelationsForCPLBuilderFacade::class,
-        ]);
+        $this->loadFixtures([LoadPriceListWithPricesForCPLBuilderFacade::class]);
     }
 
     public function testRebuildAll()

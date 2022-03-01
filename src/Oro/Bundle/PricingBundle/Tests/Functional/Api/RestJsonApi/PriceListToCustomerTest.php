@@ -4,7 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\Api\RestJsonApi;
 
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
-use Oro\Bundle\PricingBundle\Async\Topics;
+use Oro\Bundle\PricingBundle\Async\Topic\RebuildCombinedPriceListsTopic;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomer;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations;
@@ -61,7 +61,7 @@ class PriceListToCustomerTest extends AbstractApiPriceListRelationTest
     protected function assertFirstRelationMessageSent()
     {
         static::assertMessageSent(
-            Topics::REBUILD_COMBINED_PRICE_LISTS,
+            RebuildCombinedPriceListsTopic::getName(),
             [
                 'website'  => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
                 'customer' => $this->getReference('customer.level_1_1')->getId()
@@ -97,7 +97,7 @@ class PriceListToCustomerTest extends AbstractApiPriceListRelationTest
         $this->assertNotNull($createdCustomer);
 
         static::assertMessageSent(
-            Topics::REBUILD_COMBINED_PRICE_LISTS,
+            RebuildCombinedPriceListsTopic::getName(),
             [
                 'website'  => $website->getId(),
                 'customer' => $customer->getId()
@@ -137,14 +137,14 @@ class PriceListToCustomerTest extends AbstractApiPriceListRelationTest
 
         static::assertCount(0, $entitiesAfterDelete);
         static::assertMessageSent(
-            Topics::REBUILD_COMBINED_PRICE_LISTS,
+            RebuildCombinedPriceListsTopic::getName(),
             [
                 'website'  => $customerRelationUS1->getWebsite()->getId(),
                 'customer' => $customerRelationUS1->getCustomer()->getId()
             ]
         );
         static::assertMessageSent(
-            Topics::REBUILD_COMBINED_PRICE_LISTS,
+            RebuildCombinedPriceListsTopic::getName(),
             [
                 'website'       => $customerRelationUS6->getWebsite()->getId(),
                 'customer'      => $customerRelationUS6->getCustomer()->getId(),
@@ -152,7 +152,7 @@ class PriceListToCustomerTest extends AbstractApiPriceListRelationTest
             ]
         );
         static::assertMessageSent(
-            Topics::REBUILD_COMBINED_PRICE_LISTS,
+            RebuildCombinedPriceListsTopic::getName(),
             [
                 'website'  => $customerRelationCanada1->getWebsite()->getId(),
                 'customer' => $customerRelationCanada1->getCustomer()->getId()

@@ -6,6 +6,7 @@ use Doctrine\DBAL\Exception\RetryableException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\NotificationBundle\NotificationAlert\NotificationAlertManager;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceListAssignedProductsTopic;
 use Oro\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
@@ -13,7 +14,6 @@ use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Component\MessageQueue\Util\JSON;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -46,7 +46,7 @@ class PriceListAssignedProductsProcessor implements MessageProcessorInterface, T
      */
     public static function getSubscribedTopics()
     {
-        return [Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS];
+        return [ResolvePriceListAssignedProductsTopic::getName()];
     }
 
     /**
@@ -54,12 +54,7 @@ class PriceListAssignedProductsProcessor implements MessageProcessorInterface, T
      */
     public function process(MessageInterface $message, SessionInterface $session)
     {
-        $body = JSON::decode($message->getBody());
-        if (!isset($body['product']) || !\is_array($body['product'])) {
-            $this->logger->critical('Got invalid message.');
-
-            return self::REJECT;
-        }
+        $body = $message->getBody();
         $priceListsCount = count($body['product']);
 
         /** @var EntityManagerInterface $em */
@@ -101,7 +96,7 @@ class PriceListAssignedProductsProcessor implements MessageProcessorInterface, T
                     }
 
                     $this->triggerHandler->handlePriceListTopic(
-                        Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS,
+                        ResolvePriceListAssignedProductsTopic::getName(),
                         $priceList,
                         $productIds
                     );

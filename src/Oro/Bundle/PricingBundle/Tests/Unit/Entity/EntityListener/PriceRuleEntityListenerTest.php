@@ -4,7 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Entity\EntityListener;
 
 use Doctrine\Common\Cache\Cache;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
-use Oro\Bundle\PricingBundle\Async\Topics;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceRulesTopic;
 use Oro\Bundle\PricingBundle\Entity\EntityListener\PriceRuleEntityListener;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
@@ -44,7 +44,7 @@ class PriceRuleEntityListenerTest extends \PHPUnit\Framework\TestCase
             ->with('pr_42');
         $this->priceRuleChangeTriggerHandler->expects($this->once())
             ->method('handlePriceListTopic')
-            ->with(Topics::RESOLVE_PRICE_RULES, $priceList);
+            ->with(ResolvePriceRulesTopic::getName(), $priceList);
 
         $event = $this->createMock(PreUpdateEventArgs::class);
         $event->expects($this->once())
@@ -63,7 +63,7 @@ class PriceRuleEntityListenerTest extends \PHPUnit\Framework\TestCase
             ->with('pr_2');
         $this->priceRuleChangeTriggerHandler->expects($this->once())
             ->method('handlePriceListTopic')
-            ->with(Topics::RESOLVE_PRICE_RULES, $priceList);
+            ->with(ResolvePriceRulesTopic::getName(), $priceList);
 
         $this->listener->preRemove($priceRule);
     }
@@ -78,7 +78,7 @@ class PriceRuleEntityListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->priceRuleChangeTriggerHandler->expects($this->once())
             ->method('handlePriceListTopic')
-            ->with(Topics::RESOLVE_PRICE_RULES, $priceList);
+            ->with(ResolvePriceRulesTopic::getName(), $priceList);
 
         $this->listener->postPersist($priceRule);
         $this->assertFalse($priceList->isActual());

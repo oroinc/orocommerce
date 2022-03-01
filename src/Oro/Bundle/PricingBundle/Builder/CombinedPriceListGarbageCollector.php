@@ -54,18 +54,15 @@ class CombinedPriceListGarbageCollector
 
     private function deleteInvalidRelations(): void
     {
-        $manager = $this->registry->getManager();
-        $manager->getRepository(CombinedPriceListToCustomer::class)->deleteInvalidRelations();
-        $manager->getRepository(CombinedPriceListToCustomerGroup::class)->deleteInvalidRelations();
-        $manager->getRepository(CombinedPriceListToWebsite::class)->deleteInvalidRelations();
+        $this->registry->getRepository(CombinedPriceListToCustomer::class)->deleteInvalidRelations();
+        $this->registry->getRepository(CombinedPriceListToCustomerGroup::class)->deleteInvalidRelations();
+        $this->registry->getRepository(CombinedPriceListToWebsite::class)->deleteInvalidRelations();
     }
 
     private function cleanActivationRules()
     {
         /** @var CombinedPriceListActivationRuleRepository $repo */
-        $repo = $this->registry
-            ->getManagerForClass(CombinedPriceListActivationRule::class)
-            ->getRepository(CombinedPriceListActivationRule::class);
+        $repo = $this->registry->getRepository(CombinedPriceListActivationRule::class);
 
         $repo->deleteExpiredRules(new \DateTime('now', new \DateTimeZone('UTC')));
 
@@ -76,12 +73,14 @@ class CombinedPriceListGarbageCollector
     private function scheduleUnusedPriceListsRemoval(): void
     {
         /** @var CombinedPriceListRepository $cplRepository */
-        $cplRepository = $this->registry
-            ->getManagerForClass(CombinedPriceList::class)
-            ->getRepository(CombinedPriceList::class);
+        $cplRepository = $this->registry->getRepository(CombinedPriceList::class);
 
         $exceptPriceLists = $this->getAllConfigPriceLists();
         $priceListsForDelete = $cplRepository->getUnusedPriceListsIds($exceptPriceLists);
+        if (!$priceListsForDelete) {
+            return;
+        }
+
         $this->triggerHandler->startCollect();
         $this->triggerHandler->massProcess($priceListsForDelete);
         $cplRepository->deletePriceLists($priceListsForDelete);

@@ -5,7 +5,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\EventListener;
 use Doctrine\Common\Cache\Cache;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
-use Oro\Bundle\PricingBundle\Command\PriceListRecalculateCommand;
+use Oro\Bundle\PricingBundle\Command\PriceListScheduleRecalculateCommand;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceRuleRepository;
 use Oro\Bundle\PricingBundle\EventListener\PriceCalculationPrecisionSystemConfigListener;
@@ -112,7 +112,10 @@ class PriceCalculationPrecisionSystemConfigListenerTest extends \PHPUnit\Framewo
             ->method('add')
             ->with(
                 'warning',
-                sprintf('NOTICE: <code>php bin/console %s --all</code>', PriceListRecalculateCommand::getDefaultName())
+                sprintf(
+                    'NOTICE: <code>php bin/console %s --all</code>',
+                    PriceListScheduleRecalculateCommand::getDefaultName()
+                )
             );
         $this->session->expects($this->once())
             ->method('getFlashBag')

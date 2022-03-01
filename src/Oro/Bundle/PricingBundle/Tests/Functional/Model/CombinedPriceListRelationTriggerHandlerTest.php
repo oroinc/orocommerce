@@ -7,7 +7,7 @@ use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
-use Oro\Bundle\PricingBundle\Async\Topics;
+use Oro\Bundle\PricingBundle\Async\Topic\RebuildCombinedPriceListsTopic;
 use Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback;
 use Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerHandler;
@@ -51,9 +51,9 @@ class CombinedPriceListRelationTriggerHandlerTest extends WebTestCase
 
         $this->flushMessagesBuffer();
 
-        self::assertMessagesCount(Topics::REBUILD_COMBINED_PRICE_LISTS, 1);
+        self::assertMessagesCount(RebuildCombinedPriceListsTopic::getName(), 1);
         self::assertMessageSent(
-            Topics::REBUILD_COMBINED_PRICE_LISTS,
+            RebuildCombinedPriceListsTopic::getName(),
             [
                 'website' => $website->getId()
             ]
@@ -71,9 +71,9 @@ class CombinedPriceListRelationTriggerHandlerTest extends WebTestCase
         $em->flush();
 
         self::assertNotEmpty($website->getId());
-        self::assertMessagesCount(Topics::REBUILD_COMBINED_PRICE_LISTS, 1);
+        self::assertMessagesCount(RebuildCombinedPriceListsTopic::getName(), 1);
         self::assertMessageSent(
-            Topics::REBUILD_COMBINED_PRICE_LISTS,
+            RebuildCombinedPriceListsTopic::getName(),
             [
                 'website' => $website->getId()
             ]
@@ -93,9 +93,9 @@ class CombinedPriceListRelationTriggerHandlerTest extends WebTestCase
 
         $this->flushMessagesBuffer();
 
-        self::assertMessagesCount(Topics::REBUILD_COMBINED_PRICE_LISTS, 1);
+        self::assertMessagesCount(RebuildCombinedPriceListsTopic::getName(), 1);
         self::assertMessageSent(
-            Topics::REBUILD_COMBINED_PRICE_LISTS,
+            RebuildCombinedPriceListsTopic::getName(),
             [
                 'website'       => $website->getId(),
                 'customer'      => $customer->getId(),
@@ -123,9 +123,9 @@ class CombinedPriceListRelationTriggerHandlerTest extends WebTestCase
         $em->flush();
 
         self::assertNotEmpty($customer->getId());
-        self::assertMessagesCount(Topics::REBUILD_COMBINED_PRICE_LISTS, 1);
+        self::assertMessagesCount(RebuildCombinedPriceListsTopic::getName(), 1);
         self::assertMessageSent(
-            Topics::REBUILD_COMBINED_PRICE_LISTS,
+            RebuildCombinedPriceListsTopic::getName(),
             [
                 'website'  => $website->getId(),
                 'customer' => $customer->getId()
@@ -155,9 +155,9 @@ class CombinedPriceListRelationTriggerHandlerTest extends WebTestCase
         $em->flush();
 
         self::assertNotEmpty($customer->getId());
-        self::assertMessagesCount(Topics::REBUILD_COMBINED_PRICE_LISTS, 1);
+        self::assertMessagesCount(RebuildCombinedPriceListsTopic::getName(), 1);
         self::assertMessageSent(
-            Topics::REBUILD_COMBINED_PRICE_LISTS,
+            RebuildCombinedPriceListsTopic::getName(),
             [
                 'website'       => $website->getId(),
                 'customer'      => $customer->getId(),
@@ -173,7 +173,7 @@ class CombinedPriceListRelationTriggerHandlerTest extends WebTestCase
         $this->flushMessagesBuffer();
 
         self::assertMessageSent(
-            Topics::REBUILD_COMBINED_PRICE_LISTS,
+            RebuildCombinedPriceListsTopic::getName(),
             []
         );
     }
@@ -190,9 +190,9 @@ class CombinedPriceListRelationTriggerHandlerTest extends WebTestCase
 
         $this->flushMessagesBuffer();
 
-        self::assertMessagesCount(Topics::REBUILD_COMBINED_PRICE_LISTS, 1);
+        self::assertMessagesCount(RebuildCombinedPriceListsTopic::getName(), 1);
         self::assertMessageSent(
-            Topics::REBUILD_COMBINED_PRICE_LISTS,
+            RebuildCombinedPriceListsTopic::getName(),
             [
                 'website'       => $website->getId(),
                 'customerGroup' => $customerGroup->getId()
@@ -219,9 +219,9 @@ class CombinedPriceListRelationTriggerHandlerTest extends WebTestCase
         $em->flush();
 
         self::assertNotEmpty($group->getId());
-        self::assertMessagesCount(Topics::REBUILD_COMBINED_PRICE_LISTS, 1);
+        self::assertMessagesCount(RebuildCombinedPriceListsTopic::getName(), 1);
         self::assertMessageSent(
-            Topics::REBUILD_COMBINED_PRICE_LISTS,
+            RebuildCombinedPriceListsTopic::getName(),
             [
                 'website'       => $website->getId(),
                 'customerGroup' => $group->getId()
@@ -260,23 +260,23 @@ class CombinedPriceListRelationTriggerHandlerTest extends WebTestCase
 
         self::assertNotEmpty($group1->getId());
         self::assertNotEmpty($group2->getId());
-        self::assertMessagesCount(Topics::REBUILD_COMBINED_PRICE_LISTS, 3);
+        self::assertMessagesCount(RebuildCombinedPriceListsTopic::getName(), 3);
         self::assertMessageSent(
-            Topics::REBUILD_COMBINED_PRICE_LISTS,
+            RebuildCombinedPriceListsTopic::getName(),
             [
                 'website'       => $website->getId(),
                 'customerGroup' => $group1->getId()
             ]
         );
         self::assertMessageSent(
-            Topics::REBUILD_COMBINED_PRICE_LISTS,
+            RebuildCombinedPriceListsTopic::getName(),
             [
                 'website'       => $website->getId(),
                 'customerGroup' => $group2->getId()
             ]
         );
         self::assertMessageSent(
-            Topics::REBUILD_COMBINED_PRICE_LISTS,
+            RebuildCombinedPriceListsTopic::getName(),
             [
                 'website'       => $website->getId(),
                 'customerGroup' => $customerGroup->getId()
@@ -295,9 +295,9 @@ class CombinedPriceListRelationTriggerHandlerTest extends WebTestCase
 
         $this->flushMessagesBuffer();
 
-        self::assertMessagesCount(Topics::REBUILD_COMBINED_PRICE_LISTS, 1);
+        self::assertMessagesCount(RebuildCombinedPriceListsTopic::getName(), 1);
         self::assertMessageSent(
-            Topics::REBUILD_COMBINED_PRICE_LISTS,
+            RebuildCombinedPriceListsTopic::getName(),
             [
                 'force' => true
             ]
@@ -312,12 +312,11 @@ class CombinedPriceListRelationTriggerHandlerTest extends WebTestCase
 
         $this->flushMessagesBuffer();
 
-        self::assertMessagesCount(Topics::REBUILD_COMBINED_PRICE_LISTS, 1);
+        self::assertMessagesCount(RebuildCombinedPriceListsTopic::getName(), 1);
         self::assertMessageSent(
-            Topics::REBUILD_COMBINED_PRICE_LISTS,
+            RebuildCombinedPriceListsTopic::getName(),
             [
                 'website'       => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
-                'customerGroup' => $this->getReference('customer_group.group1')->getId(),
                 'customer'      => $this->getReference('customer.level_1.3')->getId()
             ]
         );
@@ -343,7 +342,7 @@ class CombinedPriceListRelationTriggerHandlerTest extends WebTestCase
         $this->flushMessagesBuffer();
 
         $this->resolveIds($expectedMessages);
-        self::assertMessagesSent(Topics::REBUILD_COMBINED_PRICE_LISTS, $expectedMessages);
+        self::assertMessagesSent(RebuildCombinedPriceListsTopic::getName(), $expectedMessages);
     }
 
     /**

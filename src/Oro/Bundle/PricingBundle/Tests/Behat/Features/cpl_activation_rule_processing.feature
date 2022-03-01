@@ -39,7 +39,7 @@ Feature: CPL activation rule processing
     And I save and close form
     Then I should see "Price List has been saved" flash message
 
-  Scenario: Assign priceListForCustomer to customer
+  Scenario: Assign priceListForWebsite to customer
     Given I go to Customers/Customers
     And click Edit first customer in grid
     And I choose Price List "priceListForWebsite" in 1 row

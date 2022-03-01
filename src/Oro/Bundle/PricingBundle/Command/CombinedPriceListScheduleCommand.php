@@ -8,6 +8,7 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CronBundle\Command\CronCommandInterface;
 use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilderFacade;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListBuildActivity;
 use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\Resolver\CombinedPriceListScheduleResolver;
 use Symfony\Component\Console\Command\Command;
@@ -24,20 +25,20 @@ class CombinedPriceListScheduleCommand extends Command implements CronCommandInt
 
     private ManagerRegistry $registry;
     private ConfigManager $configManager;
-    private CombinedPriceListScheduleResolver $priceListResolver;
+    private CombinedPriceListScheduleResolver $priceListScheduleResolver;
     private CombinedPriceListTriggerHandler $triggerHandler;
     private CombinedPriceListsBuilderFacade $builder;
 
     public function __construct(
         ManagerRegistry $registry,
         ConfigManager $configManager,
-        CombinedPriceListScheduleResolver $priceListResolver,
+        CombinedPriceListScheduleResolver $priceListScheduleResolver,
         CombinedPriceListTriggerHandler $triggerHandler,
         CombinedPriceListsBuilderFacade $builder
     ) {
         $this->registry = $registry;
         $this->configManager = $configManager;
-        $this->priceListResolver = $priceListResolver;
+        $this->priceListScheduleResolver = $priceListScheduleResolver;
         $this->triggerHandler = $triggerHandler;
         $this->builder = $builder;
 
@@ -83,7 +84,7 @@ HELP
         // Build not calculated CPLs before switch
         $this->combinePricesForScheduledCPL();
         // Switch to scheduled CPLs according to activation schedule
-        $this->priceListResolver->updateRelations();
+        $this->priceListScheduleResolver->updateRelations();
 
         $this->triggerHandler->commit();
 
@@ -95,12 +96,17 @@ HELP
         $offsetHours = $this->configManager->get('oro_pricing.offset_of_processing_cpl_prices');
 
         $combinedPriceLists = $this->registry
-            ->getManagerForClass(CombinedPriceList::class)
             ->getRepository(CombinedPriceList::class)
             ->getCPLsForPriceCollectByTimeOffset($offsetHours);
 
+        $this->registry
+            ->getRepository(CombinedPriceListBuildActivity::class)
+            ->addBuildActivities($combinedPriceLists);
+
         $this->builder->rebuild($combinedPriceLists);
-        $this->builder->dispatchEvents();
+        foreach ($combinedPriceLists as $combinedPriceList) {
+            $this->builder->triggerProductIndexation($combinedPriceList);
+        }
     }
 
     public function getDefaultDefinition()

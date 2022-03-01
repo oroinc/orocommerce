@@ -3,45 +3,60 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Provider;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
+use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CombinedPriceListCreateEvent;
 use Oro\Bundle\PricingBundle\PricingStrategy\MinimalPricesCombiningStrategy;
 use Oro\Bundle\PricingBundle\PricingStrategy\PriceCombiningStrategyInterface;
 use Oro\Bundle\PricingBundle\PricingStrategy\StrategyRegister;
 use Oro\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
+use Oro\Bundle\PricingBundle\Provider\PriceListSequenceMember;
+use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Component\Testing\Unit\EntityTrait;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class CombinedPriceListProviderTest extends \PHPUnit\Framework\TestCase
+class CombinedPriceListProviderTest extends TestCase
 {
     use EntityTrait;
 
-    private EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject $eventDispatcher;
-
-    private ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject $registry;
-
-    private StrategyRegister|\PHPUnit\Framework\MockObject\MockObject $strategyRegister;
-
+    private EventDispatcherInterface|MockObject $eventDispatcher;
+    private ManagerRegistry|MockObject $registry;
+    private StrategyRegister|MockObject $strategyRegister;
     private CombinedPriceListProvider $provider;
+
+    /**
+     * @var ShardManager|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $shardManager;
 
     protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
         $this->strategyRegister = $this->createMock(StrategyRegister::class);
+        $this->shardManager = $this->createMock(ShardManager::class);
 
         $this->provider = new CombinedPriceListProvider(
             $this->registry,
             $this->eventDispatcher,
             $this->strategyRegister
         );
+        $this->provider->setShardManager($this->shardManager);
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function testGetCombinedPriceListCreateNew(): void
     {
         $priceListsRelationsData = [
@@ -75,14 +90,19 @@ class CombinedPriceListProviderTest extends \PHPUnit\Framework\TestCase
             ->method('getCurrentStrategy')
             ->willReturn($this->createMock(PriceCombiningStrategyInterface::class));
 
-        $repository = $this->createMock(CombinedPriceListRepository::class);
-        $manager = $this->createMock(EntityManagerInterface::class);
-        $manager->expects(self::any())
-            ->method('getRepository')
-            ->willReturn($repository);
+        [$combinedPriceListRepository, $productPriceRepository] = $this->getRepositoryMock();
+        $productPriceRepository
+            ->expects($this->any())
+            ->method('hasPrices')
+            ->willReturn(true);
+        $combinedPriceListRepository->expects($this->once())
+            ->method('findOneBy')
+            ->willReturn(null);
 
         $persistedEntities = [];
+        $flushedEntities = [];
 
+        $manager = $this->createMock(EntityManagerInterface::class);
         $manager->expects(self::exactly(4))
             ->method('persist')
             ->willReturnCallback(
@@ -90,7 +110,6 @@ class CombinedPriceListProviderTest extends \PHPUnit\Framework\TestCase
                     $persistedEntities[] = $entity;
                 }
             );
-        $flushedEntities = [];
         $manager->expects(self::once())
             ->method('flush')
             ->with(self::isType('array'))
@@ -100,13 +119,10 @@ class CombinedPriceListProviderTest extends \PHPUnit\Framework\TestCase
                 }
             );
 
-        $this->registry->expects(self::any())
+        $this->registry
+            ->expects(self::any())
             ->method('getManagerForClass')
             ->willReturn($manager);
-
-        $repository->expects(self::once())
-            ->method('findOneBy')
-            ->willReturn(null);
 
         $this->eventDispatcher->expects(self::once())
             ->method('dispatch')
@@ -151,24 +167,20 @@ class CombinedPriceListProviderTest extends \PHPUnit\Framework\TestCase
             ->method('getCurrentStrategy')
             ->willReturn($this->createMock(PriceCombiningStrategyInterface::class));
 
-        $repository = $this->createMock(CombinedPriceListRepository::class);
-        $manager = $this->createMock(EntityManagerInterface::class);
-        $manager->expects(self::any())
-            ->method('getRepository')
-            ->willReturn($repository);
+        [$combinedPriceListRepository, $productPriceRepository] = $this->getRepositoryMock();
+        $productPriceRepository
+            ->expects($this->any())
+            ->method('hasPrices')
+            ->willReturn(true);
+        $combinedPriceListRepository->expects(self::once())
+            ->method('findOneBy')
+            ->willReturn($cpl);
 
+        $manager = $this->createMock(EntityManagerInterface::class);
         $manager->expects(self::never())
             ->method('persist');
         $manager->expects(self::never())
             ->method('flush');
-
-        $this->registry->expects(self::any())
-            ->method('getManagerForClass')
-            ->willReturn($manager);
-
-        $repository->expects(self::once())
-            ->method('findOneBy')
-            ->willReturn($cpl);
 
         $this->eventDispatcher->expects(self::never())
             ->method('dispatch');
@@ -182,12 +194,23 @@ class CombinedPriceListProviderTest extends \PHPUnit\Framework\TestCase
     {
         $options = ['test' => true];
 
-        $repository = $this->getRepositoryMock();
-        $repository->expects(self::any())
+        [$combinedPriceListRepository, $productPriceRepository] = $this->getRepositoryMock();
+        $productPriceRepository
+            ->expects($this->any())
+            ->method('hasPrices')
+            ->willReturn(true);
+        $combinedPriceListRepository
+            ->expects(self::any())
             ->method('findOneBy')
             ->willReturn(null);
 
-        $this->eventDispatcher->expects(self::once())
+        $manager = $this->createMock(EntityManagerInterface::class);
+        $this->registry
+            ->expects(self::any())
+            ->method('getManagerForClass')
+            ->willReturn($manager);
+
+        $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
             ->willReturnCallback(
                 function (CombinedPriceListCreateEvent $event, string $eventName) use ($options) {
@@ -216,17 +239,30 @@ class CombinedPriceListProviderTest extends \PHPUnit\Framework\TestCase
         $priceList->expects(self::any())->method('getName')->willReturn($identifier);
         $priceList->expects(self::any())->method('getCurrencies')->willReturn(['USD']);
 
-        $this->strategyRegister->expects(self::atLeastOnce())
+        $this->strategyRegister
+            ->expects($this->atLeastOnce())
             ->method('getCurrentStrategy')
             ->willReturn($this->createMock(PriceCombiningStrategyInterface::class));
 
-        $repository = $this->getRepositoryMock();
-        $repository->expects(self::any())
+        [$combinedPriceListRepository, $productPriceRepository] = $this->getRepositoryMock();
+        $productPriceRepository
+            ->expects($this->any())
+            ->method('hasPrices')
+            ->willReturn(true);
+        $combinedPriceListRepository
+            ->expects(self::any())
             ->method('findOneBy')
             ->with(['name' => $identifier])
             ->willReturn($priceList);
 
-        $this->eventDispatcher->expects(self::never())
+        $manager = $this->createMock(EntityManagerInterface::class);
+        $this->registry
+            ->expects($this->any())
+            ->method('getManagerForClass')
+            ->willReturn($manager);
+
+        $this->eventDispatcher
+            ->expects($this->never())
             ->method('dispatch');
 
         $priceListsRelations = $this->getPriceListsRelationMocks(
@@ -258,20 +294,34 @@ class CombinedPriceListProviderTest extends \PHPUnit\Framework\TestCase
         $priceList->expects(self::any())->method('getCurrencies')->willReturn(['USD']);
 
         $strategy = $this->createMock(MinimalPricesCombiningStrategy::class);
-        $strategy->expects(self::once())
+        $strategy
+            ->expects($this->once())
             ->method('getCombinedPriceListIdentifier')
             ->willReturn($identifier);
-        $this->strategyRegister->expects(self::atLeastOnce())
+        $this->strategyRegister
+            ->expects($this->atLeastOnce())
             ->method('getCurrentStrategy')
             ->willReturn($strategy);
 
-        $repository = $this->getRepositoryMock();
-        $repository->expects(self::any())
+        [$combinedPriceListRepository, $productPriceRepository] = $this->getRepositoryMock();
+        $productPriceRepository
+            ->expects($this->any())
+            ->method('hasPrices')
+            ->willReturn(true);
+        $combinedPriceListRepository
+            ->expects(self::any())
             ->method('findOneBy')
             ->with(['name' => $identifier])
             ->willReturn($priceList);
 
-        $this->eventDispatcher->expects(self::never())
+        $manager = $this->createMock(EntityManagerInterface::class);
+        $this->registry
+            ->expects($this->any())
+            ->method('getManagerForClass')
+            ->willReturn($manager);
+
+        $this->eventDispatcher
+            ->expects($this->never())
             ->method('dispatch');
 
         $priceListsRelations = $this->getPriceListsRelationMocks(
@@ -345,20 +395,117 @@ class CombinedPriceListProviderTest extends \PHPUnit\Framework\TestCase
         self::assertEquals([], $cpl->getCurrencies());
     }
 
-    private function getRepositoryMock(): ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
+    public function testGetCollectionInformation()
     {
-        $repository = $this->createMock(CombinedPriceListRepository::class);
+        $relations = [
+            new PriceListSequenceMember($this->getEntity(PriceList::class, ['id' => 1]), true),
+            new PriceListSequenceMember($this->getEntity(PriceList::class, ['id' => 2]), false)
+        ];
+        $this->assertEquals(
+            [
+                'identifier' => '35850c5607d24a9f0a9df0a106837868',
+                'elements' => [
+                    ['p' => 1, 'm' => true],
+                    ['p' => 2, 'm' => false]
+                ]
+            ],
+            $this->provider->getCollectionInformation($relations)
+        );
+    }
+
+    public function testGetCombinedPriceListByCollectionInformation()
+    {
+        $collectionInfo = [
+            ['p' => 1, 'm' => true],
+            ['p' => 2, 'm' => false]
+        ];
+
+        $cpl = new CombinedPriceList();
+        $this->strategyRegister->expects(self::atLeastOnce())
+            ->method('getCurrentStrategy')
+            ->willReturn($this->createMock(PriceCombiningStrategyInterface::class));
+
+        [$combinedPriceListRepository, $productPriceRepository, $priceListRepository] = $this->getRepositoryMock();
+        $productPriceRepository
+            ->expects($this->any())
+            ->method('hasPrices')
+            ->willReturn(true);
+        $combinedPriceListRepository
+            ->expects(self::once())
+            ->method('findOneBy')
+            ->with(['name' => '35850c5607d24a9f0a9df0a106837868'])
+            ->willReturn($cpl);
+        $priceListRepository->expects($this->once())
+            ->method('findBy')
+            ->with(['id' => [1, 2]])
+            ->willReturn([
+                $this->getEntity(PriceList::class, ['id' => 1]),
+                $this->getEntity(PriceList::class, ['id' => 2])
+            ]);
+
         $manager = $this->createMock(EntityManagerInterface::class);
+        $manager->expects($this->any())
+            ->method('getReference')
+            ->willReturnCallback(function ($className, $id) {
+                return $this->getEntity($className, ['id' => $id]);
+            });
 
-        $manager->expects(self::any())
-            ->method('getRepository')
-            ->willReturn($repository);
+        $this->assertEquals($cpl, $this->provider->getCombinedPriceListByCollectionInformation($collectionInfo));
+    }
 
-        $this->registry->expects(self::any())
+    public function testGetCombinedPriceListByCollectionInformationOneOfPlsNotFound()
+    {
+        $collectionInfo = [
+            ['p' => 1, 'm' => true],
+            ['p' => 2, 'm' => false]
+        ];
+
+        $manager = $this->createMock(EntityManagerInterface::class);
+        $this->registry
+            ->expects(self::any())
             ->method('getManagerForClass')
             ->willReturn($manager);
 
-        return $repository;
+        $this->strategyRegister->expects(self::never())
+            ->method('getCurrentStrategy');
+
+        $plRepo = $this->createMock(PriceListRepository::class);
+        $plRepo->expects($this->once())
+            ->method('findBy')
+            ->with(['id' => [1, 2]])
+            ->willReturn([
+                $this->getEntity(PriceList::class, ['id' => 1])
+            ]);
+
+        $this->registry->expects(self::any())
+            ->method('getRepository')
+            ->with(PriceList::class)
+            ->willReturn($plRepo);
+
+        $this->expectException(EntityNotFoundException::class);
+        $this->expectDeprecationMessage(
+            "Entity of type 'Oro\Bundle\PricingBundle\Entity\PriceList' for IDs id(2) was not found"
+        );
+
+        $this->provider->getCombinedPriceListByCollectionInformation($collectionInfo);
+    }
+
+    private function getRepositoryMock(): array
+    {
+        $combinedPriceListRepository = $this->createMock(CombinedPriceListRepository::class);
+        $productPriceRepository = $this->createMock(ProductPriceRepository::class);
+        $priceListRepository = $this->createMock(PriceListRepository::class);
+
+        $this->registry
+            ->expects(self::any())
+            ->method('getRepository')
+            ->willReturnMap([
+                [CombinedPriceList::class, null, $combinedPriceListRepository],
+                [ProductPrice::class, null, $productPriceRepository],
+                [PriceList::class, null, $priceListRepository]
+            ]);
+
+        return [$combinedPriceListRepository, $productPriceRepository, $priceListRepository];
     }
 
     private function getPriceListsRelationMocks(array $relations): array
@@ -372,6 +519,10 @@ class CombinedPriceListProviderTest extends \PHPUnit\Framework\TestCase
             $priceList->expects(self::any())
                 ->method('getCurrencies')
                 ->willReturn($priceListData['currencies']);
+            $priceList
+                ->expects($this->any())
+                ->method('isActive')
+                ->willReturn(true);
 
             $priceListRelation = $this->createMock(BasePriceListRelation::class);
             $priceListRelation->expects(self::any())

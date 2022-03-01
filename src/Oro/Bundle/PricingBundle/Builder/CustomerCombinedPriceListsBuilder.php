@@ -15,6 +15,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  * @method PriceListToCustomerRepository getPriceListToEntityRepository()
  *
  * @internal Allowed to be accessed only by CombinedPriceListsBuilderFacade
+ * @deprecated Will be removed in 5.1.
  */
 class CustomerCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
 {
@@ -35,6 +36,11 @@ class CustomerCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
      */
     public function build(Website $website, Customer $customer, $forceTimestamp = null)
     {
+        @trigger_error(
+            'Combined price list builders are deprecated and will be removed in OroCommerce 5.1',
+            \E_USER_DEPRECATED
+        );
+
         if ($this->isBuiltForCustomer($website, $customer)) {
             return;
         }
@@ -51,6 +57,11 @@ class CustomerCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
      */
     public function buildByCustomerGroup(Website $website, CustomerGroup $customerGroup, $forceTimestamp = null)
     {
+        @trigger_error(
+            'Combined price list builders are deprecated and will be removed in OroCommerce 5.1',
+            \E_USER_DEPRECATED
+        );
+
         if ($this->isBuiltForCustomerGroup($website, $customerGroup)) {
             return;
         }
@@ -82,6 +93,11 @@ class CustomerCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
      */
     public function buildForCustomersWithoutGroupAndFallbackToGroup(Website $website, $forceTimestamp = null)
     {
+        @trigger_error(
+            'Combined price list builders are deprecated and will be removed in OroCommerce 5.1',
+            \E_USER_DEPRECATED
+        );
+
         $customers = $this->getPriceListToEntityRepository()
             ->getAllCustomersWithEmptyGroupAndDefaultFallback($website);
 

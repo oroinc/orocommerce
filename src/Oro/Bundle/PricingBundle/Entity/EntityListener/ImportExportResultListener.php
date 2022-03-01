@@ -6,7 +6,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\ImportExportBundle\Entity\ImportExportResult;
-use Oro\Bundle\PricingBundle\Async\Topics;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolveCombinedPriceByPriceListTopic;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
@@ -98,7 +98,7 @@ class ImportExportResultListener implements FeatureToggleableInterface
         }
 
         $this->priceListTriggerHandler->handlePriceListTopic(
-            Topics::RESOLVE_COMBINED_PRICES,
+            ResolveCombinedPriceByPriceListTopic::getName(),
             $priceList,
             $products
         );

@@ -4,6 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\PricingBundle\Entity\BaseCombinedPriceListRelation;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 abstract class AbstractCombinedPriceListRelationRepositoryTest extends WebTestCase
@@ -13,7 +14,7 @@ abstract class AbstractCombinedPriceListRelationRepositoryTest extends WebTestCa
         $this->initClient();
         $this->loadFixtures(
             [
-                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists',
+                LoadCombinedPriceLists::class,
             ]
         );
     }

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Storage;
 
 use Oro\Bundle\ProductBundle\Driver\ProductWebsiteReindexRequestDriverInterface;
+use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
 
 /**
  * Allows managing data of Product Website Reindex Request Items independently of where it keeps.
@@ -10,10 +11,16 @@ use Oro\Bundle\ProductBundle\Driver\ProductWebsiteReindexRequestDriverInterface;
 class ProductWebsiteReindexRequestDataStorage implements ProductWebsiteReindexRequestDataStorageInterface
 {
     private ProductWebsiteReindexRequestDriverInterface $driver;
+    private WebsiteProviderInterface $websiteProvider;
 
     public function __construct(ProductWebsiteReindexRequestDriverInterface $driver)
     {
         $this->driver = $driver;
+    }
+
+    public function setWebsiteProvider(WebsiteProviderInterface $websiteProvider)
+    {
+        $this->websiteProvider = $websiteProvider;
     }
 
     public function insertMultipleRequests(
@@ -24,7 +31,7 @@ class ProductWebsiteReindexRequestDataStorage implements ProductWebsiteReindexRe
     ): int {
         return $this->driver->insertMultipleRequests(
             $relatedJobId,
-            $websiteIds,
+            $websiteIds ?: $this->websiteProvider->getWebsiteIds(),
             $productIds,
             $chunkSize
         );

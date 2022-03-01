@@ -147,7 +147,10 @@ class PriceListRecalculateCommandTest extends WebTestCase
             'all with triggers off' => [
                 'expected_message' => 'Start processing',
                 'params' => ['--all', '--disable-triggers'],
-                'expectedCount' => 64, // 2 + 52 + 8 + 2 = config + all levels for website1, website2 & website3
+                // 2 - config,
+                // 11 - US website, 1 - CA website,
+                // 8 - customer.level_1_1, 4 - customer.level_1.2, 15 - customer.level_1.3
+                'expectedCount' => 41,
                 'expectedMessages' => [
                     'oro.checkout.recalculate_checkout_subtotals' => 1,
                     'oro.website.search.indexer.reindex' => 1
@@ -156,7 +159,10 @@ class PriceListRecalculateCommandTest extends WebTestCase
             'all' => [
                 'expected_message' => 'Start processing',
                 'params' => ['--all'],
-                'expectedCount' => 64, // 2 + 52 + 8 + 2 = config + all levels for website1, website2 & website3
+                // 2 - config,
+                // 11 - US website, 1 - CA website,
+                // 8 - customer.level_1_1, 4 - customer.level_1.2, 15 - customer.level_1.3
+                'expectedCount' => 41,
                 'expectedMessages' => [
                     'oro.checkout.recalculate_checkout_subtotals' => 1,
                     'oro.website.search.indexer.reindex' => 1
@@ -165,7 +171,10 @@ class PriceListRecalculateCommandTest extends WebTestCase
             'all with triggers off with insert-select' => [
                 'expected_message' => 'Start processing',
                 'params' => ['--all', '--disable-triggers', '--use-insert-select'],
-                'expectedCount' => 64, // 2 + 52 + 8 + 2 = config + all levels for website1, website2 & website3
+                // 2 - config,
+                // 11 - US website, 1 - CA website,
+                // 8 - customer.level_1_1, 4 - customer.level_1.2, 15 - customer.level_1.3
+                'expectedCount' => 41,
                 'expectedMessages' => [
                     'oro.checkout.recalculate_checkout_subtotals' => 1,
                     'oro.website.search.indexer.reindex' => 1
@@ -174,7 +183,10 @@ class PriceListRecalculateCommandTest extends WebTestCase
             'all with insert-select' => [
                 'expected_message' => 'Start processing',
                 'params' => ['--all', '--use-insert-select'],
-                'expectedCount' => 64, // 2 + 52 + 8 + 2 = config + all levels for website1, website2 & website3
+                // 2 - config,
+                // 11 - US website, 1 - CA website,
+                // 8 - customer.level_1_1, 4 - customer.level_1.2, 15 - customer.level_1.3
+                'expectedCount' => 41,
                 'expectedMessages' => [
                     'oro.checkout.recalculate_checkout_subtotals' => 1,
                     'oro.website.search.indexer.reindex' => 1
@@ -189,7 +201,9 @@ class PriceListRecalculateCommandTest extends WebTestCase
             'website 1' => [
                 'expected_message' => 'Start processing',
                 'params' => [],
-                'expectedCount' => 48, // 10 + 10 + 14 + 14 = website1 + group1 + customer_1.3 + customer_1_1
+                // 11 - US website
+                // 15 - customer.level_1.3
+                'expectedCount' => 26,
                 'expectedMessages' => [
                     'oro.checkout.recalculate_checkout_subtotals' => 1,
                     'oro.website.search.indexer.reindex' => 1
@@ -201,7 +215,8 @@ class PriceListRecalculateCommandTest extends WebTestCase
             'customer.level_1_1' => [
                 'expected_message' => 'Start processing',
                 'params' => [],
-                'expectedCount' => 22,  // 14 + 8 = customer.level_1_1 + website2
+                // 15 - customer.level_1_1, 8  - customer.level_1_1 (CA website)
+                'expectedCount' => 23,
                 'expectedMessages' => [
                     'oro.checkout.recalculate_checkout_subtotals' => 1,
                     'oro.website.search.indexer.reindex' => 1
@@ -213,6 +228,7 @@ class PriceListRecalculateCommandTest extends WebTestCase
             'customer.level_1.2' => [
                 'expected_message' => 'Start processing',
                 'params' => [],
+                // 4 - customer.level_1.2
                 'expectedCount' => 4,
                 'expectedMessages' => [
                     'oro.checkout.recalculate_checkout_subtotals' => 1,
@@ -225,68 +241,84 @@ class PriceListRecalculateCommandTest extends WebTestCase
             'customer.level_1.3' => [
                 'expected_message' => 'Start processing',
                 'params' => [],
-                'expectedCount' => 14,
+                // 15 - customer.level_1.3
+                'expectedCount' => 15,
                 'expectedMessages' => [
                     'oro.checkout.recalculate_checkout_subtotals' => 1,
                     'oro.website.search.indexer.reindex' => 1
-                ],                'website' => [],
+                ],
+                'website' => [],
                 'customerGroup' => [],
                 'customer' => ['customer.level_1.3']
             ],
             'customer_group' => [
                 'expected_message' => 'Start processing',
                 'params' => [],
-                'expectedCount' => 24, // 6 + 4 + 14 = customer.level_1_1 + customer.level_1.2 + customer.level_1.3
+                // 11 - customer_group.group1
+                // 15 - customer.level_1.3
+                'expectedCount' => 26,
                 'expectedMessages' => [
                     'oro.checkout.recalculate_checkout_subtotals' => 1,
                     'oro.website.search.indexer.reindex' => 1
-                ],                'website' => [],
+                ],
+                'website' => [],
                 'customerGroup' => ['customer_group.group1'], // doesn't has own price list
                 'customer' => []
             ],
             'price_list_1' => [
                 'expected_message' => 'Start the process',
                 'params' => [],
-                // 10 + 10 + 14 + 14 + 8 = WS(US) + group1 + customer_1.3(US) + customer_1_1(US) + customer_1_1(US)
-                'expectedCount' => 56,
+                // 11 - US website
+                // 15 - customer.level_1.3, 8 - customer.level_1_1
+                'expectedCount' => 34,
                 'expectedMessages' => [
                     'oro.checkout.recalculate_checkout_subtotals' => 1,
                     'oro.website.search.indexer.reindex' => 1
-                ],                'website' => [],
+                ],
+                'website' => [],
                 'customerGroup' => [],
                 'customer' => [],
-                'priceLists'=> [LoadPriceLists::PRICE_LIST_1]
+                'priceLists' => [LoadPriceLists::PRICE_LIST_1]
             ],
             'price_list_1 with dependant' => [
                 'expected_message' => 'Start the process',
                 'params' => ['--include-dependent'],
-                // 10 + 2 + 10 + 14 + 14 + 8 + 2
-                // WS1(US) + WS3(CA) + group1 + customer_1.3(WS1:US) + customer_1_1(WS1:US) + customer_1_1(WS2:Canada)
-                'expectedCount' => 58,
+                // 11 - US website, 2 - CA website
+                // 8 - customer.level_1_1, 15 - customer.level_1.3
+                'expectedCount' => 36,
                 'expectedMessages' => [
                     'oro.checkout.recalculate_checkout_subtotals' => 1,
                     'oro.website.search.indexer.reindex' => 1
-                ],                'website' => [],
+                ],
+                'website' => [],
                 'customerGroup' => [],
                 'customer' => [],
-                'priceLists'=> [LoadPriceLists::PRICE_LIST_1]
+                'priceLists' => [LoadPriceLists::PRICE_LIST_1]
             ],
             'verbosity_verbose' => [
                 'expected_message' => 'Processing combined price list id:',
                 'params' => ['--all', '-v'],
-                'expectedCount' => 64,
+                // 2 - config,
+                // 11 - US website, 1 - CA website,
+                // 8 - customer.level_1_1, 4 - customer.level_1.2, 15 - customer.level_1.3
+                'expectedCount' => 41,
                 'expectedMessages' => [
                     'oro.checkout.recalculate_checkout_subtotals' => 1,
                     'oro.website.search.indexer.reindex' => 1
-                ],            ],
+                ],
+            ],
             'verbosity_very_verbose' => [
                 'expected_message' => 'Processing price list:',
                 'params' => ['--all', '-vv'],
-                'expectedCount' => 64,
+                // 2 - config,
+                // 11 - US website, 1 - CA website,
+                // 8 - customer.level_1_1, 4 - customer.level_1.2, 15 - customer.level_1.3
+                'expectedCount' => 41,
                 'expectedMessages' => [
                     'oro.checkout.recalculate_checkout_subtotals' => 1,
                     'oro.website.search.indexer.reindex' => 1
-                ],            ],
+                ],
+            ],
         ];
     }
 

@@ -4,7 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\Api\RestJsonApi;
 
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
-use Oro\Bundle\PricingBundle\Async\Topics;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceRulesTopic;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
@@ -104,7 +104,7 @@ class PriceRuleTest extends RestJsonApiTestCase
         );
 
         self::assertMessageSent(
-            Topics::RESOLVE_PRICE_RULES,
+            ResolvePriceRulesTopic::getName(),
             [
                 'product' => [$priceRule->getPriceList()->getId() => []],
             ]
@@ -138,7 +138,7 @@ class PriceRuleTest extends RestJsonApiTestCase
         );
 
         self::assertMessageSent(
-            Topics::RESOLVE_PRICE_RULES,
+            ResolvePriceRulesTopic::getName(),
             [
                 'product' => [$priceRule->getPriceList()->getId() => []],
             ]
@@ -191,7 +191,7 @@ class PriceRuleTest extends RestJsonApiTestCase
 
         self::assertEquals($priceListId, $priceRule->getPriceList()->getId());
         self::assertMessageSent(
-            Topics::RESOLVE_PRICE_RULES,
+            ResolvePriceRulesTopic::getName(),
             ['product' => [$priceRule->getPriceList()->getId() => []]]
         );
         $this->assertLexemesCreated($priceRule->getPriceList());
@@ -222,14 +222,14 @@ class PriceRuleTest extends RestJsonApiTestCase
         );
 
         self::assertMessageSent(
-            Topics::RESOLVE_PRICE_RULES,
+            ResolvePriceRulesTopic::getName(),
             [
                 'product' => [$priceList1->getId() => []],
             ]
         );
 
         self::assertMessageSent(
-            Topics::RESOLVE_PRICE_RULES,
+            ResolvePriceRulesTopic::getName(),
             [
                 'product' => [$priceList2->getId() => []],
             ]
@@ -271,7 +271,7 @@ class PriceRuleTest extends RestJsonApiTestCase
         );
 
         self::assertMessageSent(
-            Topics::RESOLVE_PRICE_RULES,
+            ResolvePriceRulesTopic::getName(),
             [
                 'product' => [
                     $updatedPriceRule->getPriceList()->getId() => []
@@ -295,7 +295,7 @@ class PriceRuleTest extends RestJsonApiTestCase
         );
 
         self::assertMessageSent(
-            Topics::RESOLVE_PRICE_RULES,
+            ResolvePriceRulesTopic::getName(),
             [
                 'product' => [$priceList->getId() => []],
             ]

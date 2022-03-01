@@ -32,8 +32,16 @@ services:
             - '@oro_pricing.database_triggers.manager.combined_prices'
             - '@oro_pricing.builder.price_list_product_assignment_builder'
         calls:
-            - ['setInsertQueryExecutors', ['@oro_entity.orm.insert_from_select_query_executor', '@oro_pricing.orm.insert_from_select_query_executor', true]]
-            - ['setInsertQueryExecutors', ['@oro_entity.orm.multi_insert_query_executor', '@oro_pricing.orm.multi_insert_shard_query_executor', false]]
+            - [ 'setInsertQueryExecutors', [ '@oro_entity.orm.insert_from_select_query_executor', '@oro_pricing.orm.insert_from_select_query_executor', true ] ]
+            - [ 'setInsertQueryExecutors', [ '@oro_entity.orm.multi_insert_query_executor', '@oro_pricing.orm.multi_insert_shard_query_executor', false ] ]
+        tags:
+            - { name: console.command }
+
+    Oro\Bundle\PricingBundle\Command\PriceListScheduleRecalculateCommand:
+        arguments:
+            - '@doctrine'
+            - '@oro_pricing.provider.dependent_price_lists'
+            - '@oro_pricing.price_list_relation_trigger_handler.combined'
         tags:
             - { name: console.command }
 

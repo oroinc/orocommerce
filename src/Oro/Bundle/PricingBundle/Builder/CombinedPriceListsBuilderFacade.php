@@ -15,11 +15,15 @@ use Oro\Bundle\PricingBundle\Entity\PriceListToWebsite;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToCustomerGroupRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToCustomerRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToWebsiteRepository;
+use Oro\Bundle\PricingBundle\Event\CombinedPriceList\Assignment\GetAssociatedWebsitesEvent;
+use Oro\Bundle\PricingBundle\Event\CombinedPriceList\Assignment\ProcessEvent;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CombinedPriceListsUpdateEvent;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\ConfigCPLUpdateEvent;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CustomerCPLUpdateEvent;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CustomerGroupCPLUpdateEvent;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\WebsiteCPLUpdateEvent;
+use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
+use Oro\Bundle\PricingBundle\PricingStrategy\AbstractPriceCombiningStrategy;
 use Oro\Bundle\PricingBundle\PricingStrategy\StrategyRegister;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -28,6 +32,11 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 /**
  * This class provides a clean interface for rebuilding combined price lists
  * and dispatches required events when CPLs are updated
+ *
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.ExcessiveClassLength)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class CombinedPriceListsBuilderFacade
 {
@@ -58,7 +67,10 @@ class CombinedPriceListsBuilderFacade
     /** @var ConfigManager */
     private $configManager;
 
-    /** @var array  */
+    /** @var CombinedPriceListTriggerHandler */
+    private $triggerHandler;
+
+    /** @var array */
     private $rebuiltCombinedPriceListsIds = [];
 
     public function __construct(
@@ -83,6 +95,11 @@ class CombinedPriceListsBuilderFacade
         $this->configManager = $configManager;
     }
 
+    public function setCombinedPriceListTriggerHandler(CombinedPriceListTriggerHandler $triggerHandler): void
+    {
+        $this->triggerHandler = $triggerHandler;
+    }
+
     /**
      * @param iterable|CombinedPriceList[] $combinedPriceLists
      * @param array|Product[] $products
@@ -98,8 +115,57 @@ class CombinedPriceListsBuilderFacade
         }
     }
 
+    public function rebuildWithoutTriggers($combinedPriceLists, array $products = [])
+    {
+        $strategy = $this->strategyRegister->getCurrentStrategy();
+        if (!$strategy instanceof AbstractPriceCombiningStrategy) {
+            $this->rebuild($combinedPriceLists, $products);
+
+            return;
+        }
+
+        foreach ($combinedPriceLists as $combinedPriceList) {
+            $strategy->combinePricesWithoutTriggers($combinedPriceList, $products);
+        }
+    }
+
+    /**
+     * Process Combined Price Lists assignments information.
+     * Triggers ProcessEvent, Listeners of this event will create relation between passed CPL and assignments.
+     */
+    public function processAssignments(
+        CombinedPriceList $cpl,
+        array $assignTo,
+        bool $skipUpdateNotification = false
+    ): void {
+        // Nothing to do if there are no assignments
+        if (empty($assignTo)) {
+            return;
+        }
+
+        $event = new ProcessEvent($cpl, $assignTo, $skipUpdateNotification);
+        $this->dispatcher->dispatch($event, $event::NAME);
+    }
+
+    /**
+     * Trigger product indexation for a products.
+     * Limited to websites that are associated with a given CPL.
+     */
+    public function triggerProductIndexation(
+        CombinedPriceList $cpl,
+        array $assignTo = [],
+        array $productIds = []
+    ): void {
+        $event = new GetAssociatedWebsitesEvent($cpl, $assignTo);
+        $this->dispatcher->dispatch($event, $event::NAME);
+        foreach ($event->getWebsites() as $website) {
+            $this->triggerHandler->processByProduct($cpl, $productIds, $website);
+        }
+    }
+
     /**
      * @param int|null $forceTimestamp
+     * @deprecated This method will be removed in 5.1.
      */
     public function rebuildAll($forceTimestamp = null)
     {
@@ -117,6 +183,7 @@ class CombinedPriceListsBuilderFacade
     /**
      * @param Website[] $websites
      * @param int|null $forceTimestamp
+     * @deprecated This method will be removed in 5.1.
      */
     public function rebuildForWebsites($websites, $forceTimestamp = null)
     {
@@ -131,6 +198,7 @@ class CombinedPriceListsBuilderFacade
      * @param CustomerGroup[] $customerGroups
      * @param Website $website
      * @param int|null $forceTimestamp
+     * @deprecated This method will be removed in 5.1.
      */
     public function rebuildForCustomerGroups($customerGroups, Website $website, $forceTimestamp = null)
     {
@@ -145,6 +213,7 @@ class CombinedPriceListsBuilderFacade
      * @param int[]|Customer[]|Collection $customers
      * @param Website $website
      * @param int|null $forceTimestamp
+     * @deprecated This method will be removed in 5.1.
      */
     public function rebuildForCustomers($customers, Website $website, $forceTimestamp = null)
     {
@@ -158,6 +227,7 @@ class CombinedPriceListsBuilderFacade
     /**
      * @param int[]|PriceList[]|Collection $priceLists
      * @param int|null $forceTimestamp
+     * @deprecated This method will be removed in 5.1.
      */
     public function rebuildForPriceLists($priceLists, $forceTimestamp = null)
     {
@@ -169,6 +239,9 @@ class CombinedPriceListsBuilderFacade
         $this->garbageCollector->cleanCombinedPriceLists();
     }
 
+    /**
+     * @deprecated This method will be removed in 5.1.
+     */
     public function dispatchEvents()
     {
         $this->dispatchCustomerScopeEvent();

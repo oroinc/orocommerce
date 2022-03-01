@@ -22,7 +22,7 @@ use Oro\Bundle\PricingBundle\Resolver\PriceListScheduleResolver;
  * Generate activation plans for Combined Price Lists based on Price Lists Schedules.
  * Full Chain CPL - is a CPL which consists of all Price Lists in the chain.
  * Active CPL - is a CPL which consists of Price Lists active at the moment.
- * Activation plan may exists only for Full Chain CPLs that are assigned to some level" Config, Website, Group, Customer
+ * Activation plan may exist only for Full Chain CPLs that are assigned to some level: Config, Website, Group, Customer
  */
 class CombinedPriceListActivationPlanBuilder
 {

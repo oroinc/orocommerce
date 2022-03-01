@@ -14,7 +14,7 @@ class LoadCombinedPriceListsSimplified extends AbstractCombinedPriceListsFixture
         [
             'name' => '1_2_3',
             'enabled' => true,
-            'calculated' => true,
+            'calculated' => false,
             'priceListsToCustomers' => [],
             'priceListsToCustomerGroups' => [
                 [

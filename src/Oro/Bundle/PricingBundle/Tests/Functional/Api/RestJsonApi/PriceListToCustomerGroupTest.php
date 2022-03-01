@@ -4,7 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\Api\RestJsonApi;
 
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
-use Oro\Bundle\PricingBundle\Async\Topics;
+use Oro\Bundle\PricingBundle\Async\Topic\RebuildCombinedPriceListsTopic;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations;
@@ -52,7 +52,7 @@ class PriceListToCustomerGroupTest extends AbstractApiPriceListRelationTest
         static::assertTrue($relation->isMergeAllowed());
 
         static::assertMessageSent(
-            Topics::REBUILD_COMBINED_PRICE_LISTS,
+            RebuildCombinedPriceListsTopic::getName(),
             [
                 'website'       => $this->getWebsiteForCreateAction()->getId(),
                 'customerGroup' => $this->getReference('customer_group.group3')->getId()
@@ -85,7 +85,7 @@ class PriceListToCustomerGroupTest extends AbstractApiPriceListRelationTest
         $this->assertFirstRelationMessageSent();
 
         static::assertMessageSent(
-            Topics::REBUILD_COMBINED_PRICE_LISTS,
+            RebuildCombinedPriceListsTopic::getName(),
             [
                 'website'       => $this->getReference(LoadWebsiteData::WEBSITE2)->getId(),
                 'customerGroup' => $this->getReference('customer_group.group3')->getId()
@@ -176,7 +176,7 @@ class PriceListToCustomerGroupTest extends AbstractApiPriceListRelationTest
     protected function assertFirstRelationMessageSent()
     {
         static::assertMessageSent(
-            Topics::REBUILD_COMBINED_PRICE_LISTS,
+            RebuildCombinedPriceListsTopic::getName(),
             [
                 'website'       => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
                 'customerGroup' => $this->getReference('customer_group.group1')->getId()

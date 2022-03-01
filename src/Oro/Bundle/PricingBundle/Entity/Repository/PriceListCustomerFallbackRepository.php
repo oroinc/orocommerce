@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
@@ -45,24 +46,24 @@ class PriceListCustomerFallbackRepository extends EntityRepository
     {
         $qb = $this->_em->createQueryBuilder();
         $qb->select('DISTINCT customer.id')
-            ->from('OroCustomerBundle:Customer', 'customer');
-        $qb->leftJoin(
-            'OroPricingBundle:PriceListCustomerFallback',
-            'customerFallback',
-            Join::WITH,
-            $qb->expr()->andX(
-                $qb->expr()->eq('customer.id', 'customerFallback.customer'),
-                $qb->expr()->eq('customerFallback.website', ':website')
+            ->from(Customer::class, 'customer')
+            ->leftJoin(
+                PriceListCustomerFallback::class,
+                'customerFallback',
+                Join::WITH,
+                $qb->expr()->andX(
+                    $qb->expr()->eq('customer.id', 'customerFallback.customer'),
+                    $qb->expr()->eq('customerFallback.website', ':website')
+                )
             )
-        )
-        ->andWhere(
-            $qb->expr()->orX(
-                $qb->expr()->isNull('customerFallback.id'),
-                $qb->expr()->eq('customerFallback.fallback', ':fallback')
+            ->andWhere(
+                $qb->expr()->orX(
+                    $qb->expr()->isNull('customerFallback.id'),
+                    $qb->expr()->eq('customerFallback.fallback', ':fallback')
+                )
             )
-        )
-        ->setParameter('website', $websiteId)
-        ->setParameter('fallback', PriceListCustomerFallback::ACCOUNT_GROUP);
+            ->setParameter('website', $websiteId, Types::INTEGER)
+            ->setParameter('fallback', PriceListCustomerFallback::ACCOUNT_GROUP, Types::INTEGER);
 
         return $qb;
     }

@@ -5,7 +5,7 @@ namespace Oro\Bundle\PricingBundle\EventListener;
 use Doctrine\Common\Cache\Cache;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
-use Oro\Bundle\PricingBundle\Command\PriceListRecalculateCommand;
+use Oro\Bundle\PricingBundle\Command\PriceListScheduleRecalculateCommand;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -66,7 +66,7 @@ class PriceCalculationPrecisionSystemConfigListener
         $message = sprintf(
             '%s <code>php bin/console %s --all</code>',
             $this->translator->trans(self::NOTICE_TEXT_TRANS_KEY),
-            PriceListRecalculateCommand::getDefaultName()
+            PriceListScheduleRecalculateCommand::getDefaultName()
         );
         $this->session->getFlashBag()->add(self::MESSAGE_TYPE, $message);
     }

@@ -16,6 +16,7 @@ use Oro\Bundle\PricingBundle\PricingStrategy\StrategyRegister;
 use Oro\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
 use Oro\Bundle\PricingBundle\Provider\PriceListCollectionProvider;
 use Oro\Bundle\PricingBundle\Provider\PriceListSequenceMember;
+use Oro\Bundle\PricingBundle\Resolver\ActiveCombinedPriceListResolver;
 use Oro\Bundle\PricingBundle\Resolver\CombinedPriceListScheduleResolver;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
@@ -23,6 +24,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  * Provides base methods and initialize parameters for combined price builders
  *
  * @SuppressWarnings(PHPMD.TooManyFields)
+ * @deprecated Will be removed in 5.1.
  */
 abstract class AbstractCombinedPriceListBuilder
 {
@@ -101,6 +103,11 @@ abstract class AbstractCombinedPriceListBuilder
      */
     protected $strategyRegister;
 
+    /**
+     * @var ActiveCombinedPriceListResolver
+     */
+    protected $activeCombinedPriceListResolver;
+
     public function __construct(
         ManagerRegistry $registry,
         PriceListCollectionProvider $priceListCollectionProvider,
@@ -115,6 +122,11 @@ abstract class AbstractCombinedPriceListBuilder
         $this->scheduleResolver = $scheduleResolver;
         $this->strategyRegister = $strategyRegister;
         $this->triggerHandler = $triggerHandler;
+    }
+
+    public function setActiveCombinedPriceListResolver(ActiveCombinedPriceListResolver $resolver): void
+    {
+        $this->activeCombinedPriceListResolver = $resolver;
     }
 
     /**
@@ -341,12 +353,9 @@ abstract class AbstractCombinedPriceListBuilder
      */
     protected function getActiveCplRelation(CombinedPriceList $cpl, Website $website, $targetEntity)
     {
-        $activeCpl = $this->scheduleResolver->getActiveCplByFullCPL($cpl);
-        if ($activeCpl === null) {
-            $activeCpl = $cpl;
-        }
+        $activeCpl = $this->activeCombinedPriceListResolver->getActiveCplByFullCPL($cpl);
+        $repository = $this->getCombinedPriceListRepository();
 
-        return $this->getCombinedPriceListRepository()
-            ->updateCombinedPriceListConnection($cpl, $activeCpl, $website, $targetEntity);
+        return $repository->updateCombinedPriceListConnection($cpl, $activeCpl, $website, $targetEntity);
     }
 }

@@ -548,4 +548,19 @@ class ProductPriceRepository extends BaseProductPriceRepository
 
         return array_column($qb->getQuery()->getArrayResult(), 'id');
     }
+
+    public function hasPrices(ShardManager $shardManager, PriceList $priceList): bool
+    {
+        $tableName = $shardManager->getEnabledShardName($this->_entityName, ['priceList' => $priceList]);
+        $connection = $this->_em->getConnection();
+        $qb = $connection->createQueryBuilder();
+        $qb
+            ->select('pp.id')
+            ->from($tableName, 'pp')
+            ->where($qb->expr()->eq('pp.price_list_id', ':priceListId'))
+            ->setMaxResults(1)
+            ->setParameter('priceListId', $priceList->getId());
+
+        return (bool)$qb->execute()->fetchOne();
+    }
 }
