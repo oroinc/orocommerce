@@ -17,7 +17,7 @@ use Oro\Bundle\LocaleBundle\Entity\AbstractLocalizedFallbackValue;
  *      }
  * )
  * @ORM\Entity
- * @Config
+ * @Config()
  */
 class ProductShortDescription extends AbstractLocalizedFallbackValue
 {
@@ -27,6 +27,9 @@ class ProductShortDescription extends AbstractLocalizedFallbackValue
      * @ORM\Column(name="text", type="text", nullable=true)
      * @ConfigField(
      *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          },
      *          "importexport"={
      *              "excluded"=false
      *          }

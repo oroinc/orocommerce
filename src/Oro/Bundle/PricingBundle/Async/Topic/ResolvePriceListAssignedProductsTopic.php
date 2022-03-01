@@ -1,0 +1,25 @@
+<?php
+
+namespace Oro\Bundle\PricingBundle\Async\Topic;
+
+use Oro\Bundle\MessageQueueBundle\Compatibility\TopicInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+
+/**
+ * Resolves combined price lists in case of price list product assigned rule is changed.
+ */
+class ResolvePriceListAssignedProductsTopic implements TopicInterface
+{
+    public const NAME = 'oro_pricing.price_lists.resolve_assigned_products';
+
+    public static function getName(): string
+    {
+        return static::NAME;
+    }
+
+    public function configureMessageBody(OptionsResolver $resolver): void
+    {
+        $resolver->setRequired('product');
+        $resolver->setAllowedTypes('product', 'array');
+    }
+}

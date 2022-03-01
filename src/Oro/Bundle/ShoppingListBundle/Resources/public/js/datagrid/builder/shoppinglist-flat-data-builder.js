@@ -4,7 +4,7 @@ import ShoppingListRefreshPlugin from 'oroshoppinglist/js/datagrid/plugins/shopp
 import quantityHelper from 'oroproduct/js/app/quantity-helper';
 import ShoppingListRow from 'oroshoppinglist/js/datagrid/row/shopping-list-row';
 
-const isHighlight = item => item.isUpcoming;
+const isHighlight = item => item.isUpcoming || (item.warnings && item.warnings.length);
 const isError = item => item.errors && item.errors.length;
 
 const messageModel = item => {

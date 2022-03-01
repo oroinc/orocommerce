@@ -181,7 +181,7 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        foreach ($expectedData as $websiteReference => $priceListsWithFallback) {
+        foreach ($expectedData as $priceListsWithFallback) {
             $priceListSection = $crawler->filter('div #priceLists');
             $fallbackText = $priceListSection->filter('p strong')->text();
             static::assertStringNotContainsString('only', $fallbackText);

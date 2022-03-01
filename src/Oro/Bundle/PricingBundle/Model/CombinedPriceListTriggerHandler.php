@@ -7,6 +7,7 @@ use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Storage\ProductWebsiteReindexRequestDataStorageInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -44,12 +45,25 @@ class CombinedPriceListTriggerHandler
     protected $productsSchedule = [];
 
     /**
-     * CombinedPriceListTriggerHandler constructor.
+     * @var ProductWebsiteReindexRequestDataStorageInterface
      */
+    protected $websiteReindexRequestDataStorage;
+
+    /**
+     * @var int|null
+     */
+    protected $collectVersion = null;
+
     public function __construct(Registry $registry, EventDispatcherInterface $eventDispatcher)
     {
         $this->registry = $registry;
         $this->eventDispatcher = $eventDispatcher;
+    }
+
+    public function setWebsiteReindexRequestDataStorage(
+        ProductWebsiteReindexRequestDataStorageInterface $websiteReindexRequestDataStorage
+    ): void {
+        $this->websiteReindexRequestDataStorage = $websiteReindexRequestDataStorage;
     }
 
     public function process(CombinedPriceList $combinedPriceList, Website $website = null)
@@ -78,6 +92,10 @@ class CombinedPriceListTriggerHandler
         }
     }
 
+    /**
+     * Mass process changes in a set of Combined Price Lists.
+     * Called by Combined Price List Garbage Collector.
+     */
     public function massProcess(array $combinedPriceLists, Website $website = null)
     {
         $productIds = $this->getProductIdsByCombinedPriceLists($combinedPriceLists);
@@ -88,6 +106,16 @@ class CombinedPriceListTriggerHandler
 
     public function startCollect()
     {
+        $this->startCollectVersioned();
+    }
+
+    public function startCollectVersioned($collectVersion = null): void
+    {
+        // If collect already was started with collectVersion do not override it.
+        // Version will be cleared after commit or rollback in top level logic.
+        if (!$this->collectVersion) {
+            $this->collectVersion = $collectVersion;
+        }
         $this->isSessionStarted++;
     }
 
@@ -118,8 +146,17 @@ class CombinedPriceListTriggerHandler
 
         foreach ($this->productsSchedule as $websiteId => $productIds) {
             $websiteIds = $websiteId ? [$websiteId] : [];
-            $event = new ReindexationRequestEvent([Product::class], $websiteIds, array_values($productIds));
-            $this->eventDispatcher->dispatch($event, ReindexationRequestEvent::EVENT_NAME);
+            $batch = array_values($productIds);
+            if (null === $this->collectVersion) {
+                $event = new ReindexationRequestEvent([Product::class], $websiteIds, $batch);
+                $this->eventDispatcher->dispatch($event, ReindexationRequestEvent::EVENT_NAME);
+            } else {
+                $this->websiteReindexRequestDataStorage->insertMultipleRequests(
+                    $this->collectVersion,
+                    $websiteIds,
+                    $batch
+                );
+            }
         }
 
         $this->clearSchedules();
@@ -183,14 +220,13 @@ class CombinedPriceListTriggerHandler
     {
         $this->scheduleCpl = [];
         $this->productsSchedule = [];
+        $this->collectVersion = null;
     }
 
     private function getProductIdsByCombinedPriceLists(array $combinedPriceLists): array
     {
         /** @var CombinedProductPriceRepository $repository */
-        $repository = $this->registry
-            ->getManagerForClass(CombinedProductPrice::class)
-            ->getRepository(CombinedProductPrice::class);
+        $repository = $this->registry->getRepository(CombinedProductPrice::class);
 
         return $repository->getProductIdsByPriceLists($combinedPriceLists);
     }

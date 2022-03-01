@@ -7,13 +7,20 @@ use Oro\Bundle\PlatformBundle\Tests\Unit\EventListener\DemoDataFixturesListenerT
 use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilderFacade;
 use Oro\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder;
 use Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 use Oro\Bundle\PricingBundle\EventListener\BuildPricesDemoDataFixturesListener;
+use Oro\Bundle\PricingBundle\Provider\CombinedPriceListAssociationsProvider;
+use Oro\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
+use Oro\Bundle\PricingBundle\Provider\PriceListSequenceMember;
+use Oro\Component\Testing\Unit\EntityTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 
 class BuildPricesDemoDataFixturesListenerTest extends DemoDataFixturesListenerTestCase
 {
+    use EntityTrait;
+
     /** @var CombinedPriceListsBuilderFacade|MockObject */
     private $combinedPriceListsBuilderFacade;
 
@@ -30,6 +37,16 @@ class BuildPricesDemoDataFixturesListenerTest extends DemoDataFixturesListenerTe
     private $priceListRepository;
 
     /**
+     * @var CombinedPriceListAssociationsProvider|MockObject
+     */
+    private $associationsProvider;
+
+    /**
+     * @var CombinedPriceListProvider|MockObject
+     */
+    private $combinedPriceListProvider;
+
+    /**
      * {@inheritDoc}
      */
     protected function setUp(): void
@@ -39,6 +56,8 @@ class BuildPricesDemoDataFixturesListenerTest extends DemoDataFixturesListenerTe
         $this->objectManager = $this->createMock(ObjectManager::class);
         $this->priceListRepository = $this->createMock(PriceListRepository::class);
         $this->combinedPriceListsBuilderFacade = $this->createMock(CombinedPriceListsBuilderFacade::class);
+        $this->associationsProvider = $this->createMock(CombinedPriceListAssociationsProvider::class);
+        $this->combinedPriceListProvider = $this->createMock(CombinedPriceListProvider::class);
 
         parent::setUp();
     }
@@ -48,12 +67,16 @@ class BuildPricesDemoDataFixturesListenerTest extends DemoDataFixturesListenerTe
      */
     protected function getListener()
     {
-        return new BuildPricesDemoDataFixturesListener(
+        $listener = new BuildPricesDemoDataFixturesListener(
             $this->listenerManager,
             $this->combinedPriceListsBuilderFacade,
             $this->priceBuilder,
             $this->assignmentBuilder
         );
+        $listener->setAssociationsProvider($this->associationsProvider);
+        $listener->setCombinedPriceListProvider($this->combinedPriceListProvider);
+
+        return $listener;
     }
 
     public function testOnPostLoad()
@@ -93,8 +116,30 @@ class BuildPricesDemoDataFixturesListenerTest extends DemoDataFixturesListenerTe
             ->method('buildByPriceListWithoutTriggers')
             ->with($priceList);
 
+        $associations = [
+            [
+                'collection' => [new PriceListSequenceMember($this->getEntity(PriceList::class, ['id' => 10]), false)],
+                'assign_to' => ['config' => true]
+            ]
+        ];
+        $this->associationsProvider->expects($this->once())
+            ->method('getCombinedPriceListsWithAssociations')
+            ->with(true)
+            ->willReturn($associations);
+        $cpl = $this->getEntity(CombinedPriceList::class, ['id' => 1]);
+        $this->combinedPriceListProvider->expects($this->once())
+            ->method('getCombinedPriceListByCollectionInformation')
+            ->with($associations[0]['collection'])
+            ->willReturn($cpl);
         $this->combinedPriceListsBuilderFacade->expects($this->once())
-            ->method('rebuildAll');
+            ->method('rebuild')
+            ->with([$cpl]);
+        $this->combinedPriceListsBuilderFacade->expects($this->once())
+            ->method('processAssignments')
+            ->with($cpl, $associations[0]['assign_to']);
+        $this->combinedPriceListsBuilderFacade->expects($this->once())
+            ->method('triggerProductIndexation')
+            ->with($cpl, $associations[0]['assign_to']);
 
         $this->listener->onPostLoad($this->event);
     }

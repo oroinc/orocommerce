@@ -7,7 +7,7 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
-use Oro\Bundle\PricingBundle\Async\Topics;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceListAssignedProductsTopic;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCategoryPriceRuleLexemes;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -46,7 +46,7 @@ class CategoryEntityListenerTest extends WebTestCase
         $this->getEntityManager()->flush();
 
         self::assertMessagesSent(
-            Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS,
+            ResolvePriceListAssignedProductsTopic::getName(),
             [
                 [
                     'product' => [
@@ -67,7 +67,7 @@ class CategoryEntityListenerTest extends WebTestCase
         $this->getEntityManager()->flush();
 
         self::assertMessagesSent(
-            Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS,
+            ResolvePriceListAssignedProductsTopic::getName(),
             [
                 [
                     'product' => [
@@ -89,7 +89,7 @@ class CategoryEntityListenerTest extends WebTestCase
         $this->getEntityManager()->flush();
 
         self::assertMessagesSent(
-            Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS,
+            ResolvePriceListAssignedProductsTopic::getName(),
             [
                 [
                     'product' => [
@@ -115,7 +115,7 @@ class CategoryEntityListenerTest extends WebTestCase
         $this->getEntityManager()->flush();
 
         self::assertMessagesSent(
-            Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS,
+            ResolvePriceListAssignedProductsTopic::getName(),
             [
                 [
                     'product' => [
@@ -138,7 +138,7 @@ class CategoryEntityListenerTest extends WebTestCase
         $em->flush();
 
         self::assertMessagesSent(
-            Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS,
+            ResolvePriceListAssignedProductsTopic::getName(),
             [
                 [
                     'product' => [

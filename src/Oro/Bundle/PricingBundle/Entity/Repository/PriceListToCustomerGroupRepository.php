@@ -45,9 +45,8 @@ class PriceListToCustomerGroupRepository extends EntityRepository implements Pri
         $qb->innerJoin('relation.priceList', 'priceList')
             ->where($qb->expr()->eq('relation.customerGroup', ':customerGroup'))
             ->andWhere($qb->expr()->eq('relation.website', ':website'))
-            ->andWhere($qb->expr()->eq('priceList.active', ':active'))
             ->orderBy('relation.sortOrder', QueryBuilderUtil::getSortOrder($sortOrder))
-            ->setParameters(['customerGroup' => $customerGroup, 'website' => $website, 'active' => true]);
+            ->setParameters(['customerGroup' => $customerGroup, 'website' => $website]);
 
         return $qb->getQuery()->getResult();
     }
@@ -58,34 +57,32 @@ class PriceListToCustomerGroupRepository extends EntityRepository implements Pri
      */
     public function getCustomerGroupIteratorWithDefaultFallback(Website $website)
     {
-        $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb->select('distinct customerGroup')
-            ->from(CustomerGroup::class, 'customerGroup')
-            ->leftJoin(
-                PriceListToCustomerGroup::class,
-                'plToCustomerGroup',
-                Join::WITH,
-                $qb->expr()->andX(
-                    $qb->expr()->eq('plToCustomerGroup.customerGroup', 'customerGroup'),
-                    $qb->expr()->eq('plToCustomerGroup.website', ':website')
+        $subQb = $this->getEntityManager()->createQueryBuilder();
+        $subQb->select('plToCustomerGroup.id')
+            ->from(PriceListToCustomerGroup::class, 'plToCustomerGroup')
+            ->where(
+                $subQb->expr()->andX(
+                    $subQb->expr()->eq('plToCustomerGroup.customerGroup', 'customerGroup'),
+                    $subQb->expr()->eq('plToCustomerGroup.website', ':website')
                 )
-            )
+            );
+
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select('customerGroup')
+            ->from(CustomerGroup::class, 'customerGroup')
             ->leftJoin(
                 PriceListCustomerGroupFallback::class,
                 'priceListFallBack',
                 Join::WITH,
                 $qb->expr()->andX(
                     $qb->expr()->eq('priceListFallBack.customerGroup', 'customerGroup'),
-                    $qb->expr()->eq('priceListFallBack.website', 'plToCustomerGroup.website')
+                    $qb->expr()->eq('priceListFallBack.website', ':website'),
+                    $qb->expr()->eq('priceListFallBack.fallback', ':fallback')
                 )
             )
-            ->andWhere(
-                $qb->expr()->orX(
-                    $qb->expr()->eq('priceListFallBack.fallback', ':fallbackToWebsite'),
-                    $qb->expr()->isNull('priceListFallBack.fallback')
-                )
-            )
-            ->setParameter('fallbackToWebsite', PriceListCustomerGroupFallback::WEBSITE)
+            ->where($qb->expr()->isNull('priceListFallBack.fallback'))
+            ->andWhere($qb->expr()->exists($subQb->getDQL()))
+            ->setParameter('fallback', PriceListCustomerGroupFallback::CURRENT_ACCOUNT_GROUP_ONLY)
             ->setParameter('website', $website)
             ->orderBy('customerGroup.id', Criteria::ASC);
 
@@ -99,7 +96,7 @@ class PriceListToCustomerGroupRepository extends EntityRepository implements Pri
     public function getCustomerGroupIteratorWithSelfFallback(Website $website)
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb->select('distinct customerGroup')
+        $qb->select('customerGroup')
             ->from(CustomerGroup::class, 'customerGroup')
             ->innerJoin(
                 PriceListCustomerGroupFallback::class,

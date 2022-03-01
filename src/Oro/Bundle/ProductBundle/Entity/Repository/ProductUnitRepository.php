@@ -9,6 +9,9 @@ use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
+/**
+ * Doctrine repository for ProductUnit entity
+ */
 class ProductUnitRepository extends EntityRepository
 {
     /**
@@ -51,6 +54,40 @@ class ProductUnitRepository extends EntityRepository
         }
 
         return $result;
+    }
+
+    /**
+     * @param array|int[]|Product[] $products
+     * @param ProductUnit $unit
+     * @param bool $onlySellable
+     * @return array|int[]
+     */
+    public function getProductIdsSupportUnit(
+        array $products,
+        ProductUnit $unit,
+        bool $onlySellable = true
+    ): array {
+        if (count($products) === 0) {
+            return [];
+        }
+
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb
+            ->from('OroProductBundle:ProductUnitPrecision', 'productUnitPrecision')
+            ->select('IDENTITY(productUnitPrecision.product) as productId')
+            ->where($qb->expr()->in('productUnitPrecision.product', ':products'))
+            ->andWhere($qb->expr()->eq('productUnitPrecision.unit', ':unit'));
+        
+        if ($onlySellable) {
+            $qb->andWhere('productUnitPrecision.sell = true');
+        }
+
+        $qb->setParameter('products', $products);
+        $qb->setParameter('unit', $unit);
+
+        $rawResult = $qb->getQuery()->getArrayResult();
+
+        return \array_column($rawResult, 'productId');
     }
 
     /**

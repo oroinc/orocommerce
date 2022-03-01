@@ -12,6 +12,8 @@ use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilderFacade;
 use Oro\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder;
 use Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Provider\CombinedPriceListAssociationsProvider;
+use Oro\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
 
 /**
  * Building all combined price lists during loading of demo data
@@ -21,14 +23,30 @@ class BuildPricesDemoDataFixturesListener extends AbstractDemoDataFixturesListen
 {
     use FeatureCheckerHolderTrait;
 
-    /** @var CombinedPriceListsBuilderFacade CombinedPriceListsBuilderFacade */
+    /**
+     * @var CombinedPriceListsBuilderFacade CombinedPriceListsBuilderFacade
+     */
     protected $combinedPriceListsBuilderFacade;
 
-    /** @var ProductPriceBuilder */
+    /**
+     * @var ProductPriceBuilder
+     */
     protected $priceBuilder;
 
-    /** @var PriceListProductAssignmentBuilder */
+    /**
+     * @var PriceListProductAssignmentBuilder
+     */
     protected $assignmentBuilder;
+
+    /**
+     * @var CombinedPriceListAssociationsProvider
+     */
+    protected $associationsProvider;
+
+    /**
+     * @var CombinedPriceListProvider
+     */
+    protected $combinedPriceListProvider;
 
     public function __construct(
         OptionalListenerManager $listenerManager,
@@ -41,6 +59,16 @@ class BuildPricesDemoDataFixturesListener extends AbstractDemoDataFixturesListen
         $this->combinedPriceListsBuilderFacade = $builderFacade;
         $this->priceBuilder = $priceBuilder;
         $this->assignmentBuilder = $assignmentBuilder;
+    }
+
+    public function setAssociationsProvider(CombinedPriceListAssociationsProvider $associationsProvider): void
+    {
+        $this->associationsProvider = $associationsProvider;
+    }
+
+    public function setCombinedPriceListProvider(CombinedPriceListProvider $combinedPriceListProvider): void
+    {
+        $this->combinedPriceListProvider = $combinedPriceListProvider;
     }
 
     /**
@@ -69,6 +97,21 @@ class BuildPricesDemoDataFixturesListener extends AbstractDemoDataFixturesListen
             $this->priceBuilder->buildByPriceListWithoutTriggers($priceList);
         }
 
-        $this->combinedPriceListsBuilderFacade->rebuildAll(time());
+        $this->rebuildCombinedPrices();
+    }
+
+    private function rebuildCombinedPrices(): void
+    {
+        $associations = $this->associationsProvider->getCombinedPriceListsWithAssociations(true);
+        foreach ($associations as $association) {
+            $cpl = $this->combinedPriceListProvider
+                ->getCombinedPriceListByCollectionInformation($association['collection']);
+            $this->combinedPriceListsBuilderFacade->rebuild([$cpl]);
+            $assignTo = $association['assign_to'] ?? [];
+            if (!empty($assignTo)) {
+                $this->combinedPriceListsBuilderFacade->processAssignments($cpl, $assignTo, true);
+            }
+            $this->combinedPriceListsBuilderFacade->triggerProductIndexation($cpl, $assignTo);
+        }
     }
 }

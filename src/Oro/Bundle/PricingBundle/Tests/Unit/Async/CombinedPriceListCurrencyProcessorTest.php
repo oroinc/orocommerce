@@ -6,7 +6,7 @@ use Doctrine\DBAL\Exception\DeadlockException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PricingBundle\Async\CombinedPriceListCurrencyProcessor;
-use Oro\Bundle\PricingBundle\Async\Topics;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolveCombinedPriceListCurrenciesTopic;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListCurrency;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
@@ -16,17 +16,18 @@ use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\MessageQueue\Util\JSON;
+use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 
 class CombinedPriceListCurrencyProcessorTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var ManagerRegistry|MockObject */
     private $doctrine;
 
-    /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var LoggerInterface|MockObject */
     private $logger;
 
-    /** @var CombinedPriceListProvider|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var CombinedPriceListProvider|MockObject */
     private $combinedPriceListProvider;
 
     /** @var CombinedPriceListCurrencyProcessor */
@@ -43,6 +44,7 @@ class CombinedPriceListCurrencyProcessorTest extends \PHPUnit\Framework\TestCase
             $this->logger,
             $this->combinedPriceListProvider
         );
+        $this->processor->setTopic(new ResolveCombinedPriceListCurrenciesTopic());
     }
 
     /**
@@ -68,32 +70,8 @@ class CombinedPriceListCurrencyProcessorTest extends \PHPUnit\Framework\TestCase
     public function testGetSubscribedTopics()
     {
         $this->assertSame(
-            [Topics::RESOLVE_COMBINED_CURRENCIES],
+            [ResolveCombinedPriceListCurrenciesTopic::getName()],
             CombinedPriceListCurrencyProcessor::getSubscribedTopics()
-        );
-    }
-
-    public function testProcessWithInvalidMessage()
-    {
-        $this->logger->expects($this->once())
-            ->method('critical')
-            ->with('Got invalid message.');
-
-        $this->assertEquals(
-            MessageProcessorInterface::REJECT,
-            $this->processor->process($this->getMessage('invalid'), $this->getSession())
-        );
-    }
-
-    public function testProcessWithEmptyMessage()
-    {
-        $this->logger->expects($this->once())
-            ->method('critical')
-            ->with('Got invalid message.');
-
-        $this->assertEquals(
-            MessageProcessorInterface::REJECT,
-            $this->processor->process($this->getMessage([]), $this->getSession())
         );
     }
 

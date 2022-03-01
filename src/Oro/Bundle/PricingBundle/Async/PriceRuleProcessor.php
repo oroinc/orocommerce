@@ -5,6 +5,8 @@ namespace Oro\Bundle\PricingBundle\Async;
 use Doctrine\DBAL\Exception\RetryableException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\MessageQueueBundle\Compatibility\TopicAwareTrait;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceRulesTopic;
 use Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
@@ -15,7 +17,6 @@ use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Component\MessageQueue\Util\JSON;
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -24,6 +25,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberInterface
 {
+    use TopicAwareTrait;
+
     /** @var ManagerRegistry */
     private $doctrine;
 
@@ -66,7 +69,7 @@ class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberIn
      */
     public static function getSubscribedTopics()
     {
-        return [Topics::RESOLVE_PRICE_RULES];
+        return [ResolvePriceRulesTopic::getName()];
     }
 
     /**
@@ -74,10 +77,8 @@ class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberIn
      */
     public function process(MessageInterface $message, SessionInterface $session)
     {
-        $body = JSON::decode($message->getBody());
-        if (!isset($body['product']) || !\is_array($body['product'])) {
-            $this->logger->critical('Got invalid message.');
-
+        $body = $this->getResolvedBody($message, $this->logger);
+        if ($body === null) {
             return self::REJECT;
         }
         $priceListsCount = count($body['product']);
@@ -115,7 +116,7 @@ class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberIn
                     }
 
                     $this->triggerHandler->handlePriceListTopic(
-                        Topics::RESOLVE_PRICE_RULES,
+                        ResolvePriceRulesTopic::getName(),
                         $priceList,
                         $productIds
                     );

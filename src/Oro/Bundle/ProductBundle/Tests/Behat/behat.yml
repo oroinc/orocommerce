@@ -255,8 +255,10 @@ oro_behat_extension:
           Name French fallback:
             type: 'xpath'
             locator: '//label[text() = "Name"]/ancestor::div[contains(@class, "control-group")]//div[text() = "French"]/following-sibling::div//select]'
-          Description Localization 1: 'oro_product[descriptions][values][localizations][1][value][wysiwyg]'
-          Description Localization 1 fallback selector: 'oro_product[descriptions][values][localizations][1][fallback]'
+          Short Description English (United States): 'oro_product[shortDescriptions][values][localizations][1][value]'
+          Short Description English (United States) fallback selector: 'oro_product[shortDescriptions][values][localizations][1][fallback]'
+          Description English (United States): 'oro_product[descriptions][values][localizations][1][value][wysiwyg]'
+          Description English (United States) fallback selector: 'oro_product[descriptions][values][localizations][1][fallback]'
           Description Localization 2: 'oro_product[descriptions][values][localizations][2][value][wysiwyg]'
           Description Localization 2 fallback selector: 'oro_product[descriptions][values][localizations][2][fallback]'
           Description Localization 3: 'oro_product[descriptions][values][localizations][3][value][wysiwyg]'
@@ -512,6 +514,14 @@ oro_behat_extension:
           UNIT2:
             type: 'css'
             locator: 'select[name="oro_product_quick_add[products][1][productUnit]"]'
+            element: Select
+          UNIT3:
+            type: 'css'
+            locator: 'select[name="oro_product_quick_add[products][2][productUnit]"]'
+            element: Select
+          UNIT4:
+            type: 'css'
+            locator: 'select[name="oro_product_quick_add[products][3][productUnit]"]'
             element: Select
           SUBTOTAL1:
             type: 'css'
@@ -1066,7 +1076,7 @@ oro_behat_extension:
     Brand Form Name Fallbacks:
       selector:
         type: xpath
-        locator: '//label[text()="Name"]/../..//button[contains(@class, "fallback-status")]'
+        locator: '//label[text()="Name"]/ancestor::div[contains(@class, "control-group-oro_locale_localized_fallback_value_collection")]//button[contains(@class, "fallback-status")]'
 
     Brand Select Grid:
       selector: 'div[data-page-component-name="brand-select-grid"] div.oro-datagrid'
@@ -1078,10 +1088,13 @@ oro_behat_extension:
       options:
         mapping:
           Name: 'oro_product_brand[names][values][default]'
-          Name First: 'oro_product_brand[names][values][localizations][1][value]'
-          Name Second: 'oro_product_brand[names][values][localizations][2][value]'
-          Name First Use Default: 'oro_product_brand[names][values][localizations][1][use_fallback]'
-          Name Second Use Default: 'oro_product_brand[names][values][localizations][2][use_fallback]'
+          Name English: 'oro_product_brand[names][values][localizations][1][value]'
+          Name Zulu: 'oro_product_brand[names][values][localizations][2][value]'
+          Name English Use Default: 'oro_product_brand[names][values][localizations][1][use_fallback]'
+          Name Zulu Use Default: 'oro_product_brand[names][values][localizations][2][use_fallback]'
+          Short Description: 'oro_product_brand[shortDescriptions][values][default]'
+          Short Description English: 'oro_product_brand[shortDescriptions][values][localizations][1][value]'
+          Short Description English Use Default: 'oro_product_brand[shortDescriptions][values][localizations][1][fallback]'
           Meta Title: 'oro_product_brand[metaTitles][values][default]'
           Meta Description: 'oro_product_brand[metaDescriptions][values][default]'
           Meta Keywords: 'oro_product_brand[metaKeywords][values][default]'
@@ -1089,6 +1102,11 @@ oro_behat_extension:
             type: 'css'
             locator: '[name="oro_product_brand[descriptions][values][default][wysiwyg]"]'
             class: Oro\Bundle\CMSBundle\Tests\Behat\Element\WysiwygField
+          Description English:
+            type: 'css'
+            locator: '[name="oro_product_brand[descriptions][values][localizations][1][value][wysiwyg]"]'
+            class: Oro\Bundle\CMSBundle\Tests\Behat\Element\WysiwygField
+          Description English Use Default: 'oro_product_brand[descriptions][values][localizations][1][fallback]'
 
     Brand Filter:
       selector:
@@ -1106,25 +1124,20 @@ oro_behat_extension:
     Product Item Gallery Trigger:
       selector: '.product-item [data-trigger-gallery-open],div.product-item__image-holder--tiny [data-role^="data-trigger-gallery-open-product"]'
 
-    Product Form Name Fallbacks:
-      selector:
-        type: xpath
-        locator: '//label[text()="Name"]/ancestor::div[contains(@class, "control-group-oro_locale_localized_fallback_value_collection")]//button[contains(@class, "fallback-status")]'
-
     Product Form Slug Fallbacks:
       selector:
         type: xpath
-        locator: '//label[text()="URL Slug"]/../..//button[contains(@class, "fallback-status")]'
+        locator: '//label[text()="URL Slug"]/ancestor::div[contains(@class, "control-group-oro_redirect_localized_slug_with_redirect")]//button[contains(@class, "fallback-status")]'
 
     Product Names Fallbacks:
       selector:
         type: xpath
-        locator: '//label[text()="Name"]/../..//button[contains(@class, "fallback-status")]'
+        locator: '//label[text()="Name"]/ancestor::div[contains(@class, "control-group-oro_locale_localized_fallback_value_collection")]//button[contains(@class, "fallback-status")]'
 
     Content Node Titles Localization Form Fallbacks:
       selector:
         type: xpath
-        locator: '//label[text()="Titles"]/../..//button[contains(@class, "fallback-status")]'
+        locator: '//label[text()="Titles"]/ancestor::div[contains(@class, "control-group-oro_locale_localized_fallback_value_collection")]//button[contains(@class, "fallback-status")]'
 
     Content Node Titles Localization Form:
       selector: 'form[name="oro_web_catalog_content_node"]'
@@ -1408,6 +1421,7 @@ oro_behat_extension:
         - OroCustomerBundle::FrontendGridContext
         - OroEmailBundle::EmailContext
         - OroFormBundle::FormContext
+        - OroFormBundle::WysiwygContext
         - OroProductBundle::FeatureContext
         - OroProductBundle::ProductImportExportContext
         - OroProductBundle::QuickOrderFormContext
@@ -1465,6 +1479,7 @@ oro_behat_extension:
         - OroApplicationBundle::CommerceMainContext
         - OroDataGridBundle::GridContext
         - OroFormBundle::FormContext
+        - OroFormBundle::WysiwygContext
         - OroProductBundle::FeatureContext
         - OroProductBundle::QuickOrderFormContext
         - OroRedirectBundle::SlugPrototypesContext

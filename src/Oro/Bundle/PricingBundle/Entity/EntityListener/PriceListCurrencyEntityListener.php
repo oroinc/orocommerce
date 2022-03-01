@@ -7,7 +7,8 @@ use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerTrait;
-use Oro\Bundle\PricingBundle\Async\Topics;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolveCombinedPriceListCurrenciesTopic;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceRulesTopic;
 use Oro\Bundle\PricingBundle\Entity\PriceListCurrency;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerHandler;
@@ -73,7 +74,7 @@ class PriceListCurrencyEntityListener implements OptionalListenerInterface, Feat
             foreach ($priceList->getPriceRules() as $priceRule) {
                 $this->clearPriceRuleCache($priceRule);
             }
-            $this->priceListTriggerHandler->handlePriceListTopic(Topics::RESOLVE_PRICE_RULES, $priceList);
+            $this->priceListTriggerHandler->handlePriceListTopic(ResolvePriceRulesTopic::getName(), $priceList);
         }
     }
 
@@ -84,6 +85,9 @@ class PriceListCurrencyEntityListener implements OptionalListenerInterface, Feat
         }
 
         $priceList = $priceListCurrency->getPriceList();
-        $this->priceListTriggerHandler->handlePriceListTopic(Topics::RESOLVE_COMBINED_CURRENCIES, $priceList);
+        $this->priceListTriggerHandler->handlePriceListTopic(
+            ResolveCombinedPriceListCurrenciesTopic::getName(),
+            $priceList
+        );
     }
 }

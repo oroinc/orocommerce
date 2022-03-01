@@ -4,6 +4,8 @@ namespace Oro\Bundle\PricingBundle\Async;
 
 use Oro\Bundle\MessageQueueBundle\Client\MessageBuffer;
 use Oro\Bundle\MessageQueueBundle\Client\MessageFilterInterface;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceListAssignedProductsTopic;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceRulesTopic;
 
 /**
  * The filter for price management related topics that does the following:
@@ -64,10 +66,10 @@ class PriceListMessageFilter implements MessageFilterInterface
      * Collects information about price management related messages.
      *
      * @param MessageBuffer $buffer
-     * @param array         $priceListMap    [topic => [priceListId => [messageId, ...], ...], ...]
-     * @param array         $priceListDupMap [topic => [priceListId => [messageId, ...], ...], ...]
-     * @param array         $productMap      [topic => [priceListId => [productId => [messageId, ...], ...], ...], ...]
-     * @param array         $productDupMap   [topic => [priceListId => [productId => [messageId, ...], ...], ...], ...]
+     * @param array $priceListMap [topic => [priceListId => [messageId, ...], ...], ...]
+     * @param array $priceListDupMap [topic => [priceListId => [messageId, ...], ...], ...]
+     * @param array $productMap [topic => [priceListId => [productId => [messageId, ...], ...], ...], ...]
+     * @param array $productDupMap [topic => [priceListId => [productId => [messageId, ...], ...], ...], ...]
      */
     private function collectData(
         MessageBuffer $buffer,
@@ -100,9 +102,9 @@ class PriceListMessageFilter implements MessageFilterInterface
      * Removes messages by price list + products if a message by the corresponding price list exists.
      *
      * @param MessageBuffer $buffer
-     * @param array         $priceListMap  [topic => [priceListId => [messageId, ...], ...], ...]
-     * @param array         $productMap    [topic => [priceListId => [productId => [messageId, ...], ...], ...], ...]
-     * @param array         $productDupMap [topic => [priceListId => [productId => [messageId, ...], ...], ...], ...]
+     * @param array $priceListMap [topic => [priceListId => [messageId, ...], ...], ...]
+     * @param array $productMap [topic => [priceListId => [productId => [messageId, ...], ...], ...], ...]
+     * @param array $productDupMap [topic => [priceListId => [productId => [messageId, ...], ...], ...], ...]
      */
     private function removeRedundantProductMessages(
         MessageBuffer $buffer,
@@ -140,15 +142,15 @@ class PriceListMessageFilter implements MessageFilterInterface
      */
     private function removeRedundantMessagesForResolvePriceRules(MessageBuffer $buffer): void
     {
-        if (!$buffer->hasMessagesForTopic(Topics::RESOLVE_PRICE_RULES)) {
+        if (!$buffer->hasMessagesForTopic(ResolvePriceRulesTopic::getName())) {
             return;
         }
-        if (!$buffer->hasMessagesForTopic(Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS)) {
+        if (!$buffer->hasMessagesForTopic(ResolvePriceListAssignedProductsTopic::getName())) {
             return;
         }
 
         $assignPriceListIds = $this->collectAssignPriceListIds($buffer);
-        $messages = $buffer->getMessagesForTopic(Topics::RESOLVE_PRICE_RULES);
+        $messages = $buffer->getMessagesForTopic(ResolvePriceRulesTopic::getName());
         foreach ($messages as $messageId => $message) {
             $hasChanges = false;
             foreach ($message[self::PRODUCT] as $priceListId => $products) {
@@ -175,7 +177,7 @@ class PriceListMessageFilter implements MessageFilterInterface
     private function collectAssignPriceListIds(MessageBuffer $buffer): array
     {
         $assignPriceListIds = [];
-        $messages = $buffer->getMessagesForTopic(Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS);
+        $messages = $buffer->getMessagesForTopic(ResolvePriceListAssignedProductsTopic::getName());
         foreach ($messages as $message) {
             foreach ($message[self::PRODUCT] as $priceListId => $products) {
                 if (empty($products) && !isset($assignPriceListIds[$priceListId])) {
@@ -191,7 +193,7 @@ class PriceListMessageFilter implements MessageFilterInterface
      * Removes duplicated messages by price list.
      *
      * @param MessageBuffer $buffer
-     * @param array         $priceListDupMap [topic => [priceListId => [messageId, ...], ...], ...]
+     * @param array $priceListDupMap [topic => [priceListId => [messageId, ...], ...], ...]
      */
     private function removeDuplicatedMessagesForPriceLists(MessageBuffer $buffer, array $priceListDupMap): void
     {
@@ -221,7 +223,7 @@ class PriceListMessageFilter implements MessageFilterInterface
      * Removes duplicated messages by price list + products.
      *
      * @param MessageBuffer $buffer
-     * @param array         $productDupMap [topic => [priceListId => [productId => [messageId, ...], ...], ...], ...]
+     * @param array $productDupMap [topic => [priceListId => [productId => [messageId, ...], ...], ...], ...]
      */
     private function removeDuplicatedMessagesForProducts(MessageBuffer $buffer, array $productDupMap): void
     {

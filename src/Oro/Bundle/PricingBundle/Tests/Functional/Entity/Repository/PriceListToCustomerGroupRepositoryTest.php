@@ -143,7 +143,8 @@ class PriceListToCustomerGroupRepositoryTest extends WebTestCase
                 'website' => 'US',
                 'expectedPriceLists' => [
                     'priceList5',
-                    'priceList1'
+                    'priceList1',
+                    'priceList6' //Not active.
                 ]
             ],
             [
@@ -168,9 +169,7 @@ class PriceListToCustomerGroupRepositoryTest extends WebTestCase
         /** @var $website Website */
         $website = $this->getReference('US');
         $expectedCustomerGroups = [
-            'Non-Authenticated Visitors',
-            'customer_group.group1',
-            'customer_group.group3',
+            'customer_group.group1'
         ];
 
         $iterator = $this->getRepository()->getCustomerGroupIteratorWithDefaultFallback($website);

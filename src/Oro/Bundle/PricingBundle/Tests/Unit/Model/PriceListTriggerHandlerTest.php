@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Model;
 
-use Oro\Bundle\PricingBundle\Async\Topics;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceRulesTopic;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -41,9 +41,9 @@ class PriceListTriggerHandlerTest extends \PHPUnit\Framework\TestCase
 
         $this->messageProducer->expects($this->once())
             ->method('send')
-            ->with(Topics::RESOLVE_PRICE_RULES, ['product' => [$priceList->getId() => []]]);
+            ->with(ResolvePriceRulesTopic::getName(), ['product' => [$priceList->getId() => []]]);
 
-        $this->handler->handlePriceListTopic(Topics::RESOLVE_PRICE_RULES, $priceList);
+        $this->handler->handlePriceListTopic(ResolvePriceRulesTopic::getName(), $priceList);
     }
 
     public function testHandleWithProductIds()
@@ -53,9 +53,9 @@ class PriceListTriggerHandlerTest extends \PHPUnit\Framework\TestCase
 
         $this->messageProducer->expects($this->once())
             ->method('send')
-            ->with(Topics::RESOLVE_PRICE_RULES, ['product' => [$priceList->getId() => [$productId]]]);
+            ->with(ResolvePriceRulesTopic::getName(), ['product' => [$priceList->getId() => [$productId]]]);
 
-        $this->handler->handlePriceListTopic(Topics::RESOLVE_PRICE_RULES, $priceList, [$productId]);
+        $this->handler->handlePriceListTopic(ResolvePriceRulesTopic::getName(), $priceList, [$productId]);
     }
 
     public function testHandleWithProducts()
@@ -65,9 +65,12 @@ class PriceListTriggerHandlerTest extends \PHPUnit\Framework\TestCase
 
         $this->messageProducer->expects($this->once())
             ->method('send')
-            ->with(Topics::RESOLVE_PRICE_RULES, ['product' => [$priceList->getId() => [$product->getId()]]]);
+            ->with(
+                ResolvePriceRulesTopic::getName(),
+                ['product' => [$priceList->getId() => [$product->getId()]]]
+            );
 
-        $this->handler->handlePriceListTopic(Topics::RESOLVE_PRICE_RULES, $priceList, [$product]);
+        $this->handler->handlePriceListTopic(ResolvePriceRulesTopic::getName(), $priceList, [$product]);
     }
 
     public function testHandleWithProductButItIsNull()
@@ -77,9 +80,9 @@ class PriceListTriggerHandlerTest extends \PHPUnit\Framework\TestCase
 
         $this->messageProducer->expects($this->once())
             ->method('send')
-            ->with(Topics::RESOLVE_PRICE_RULES, ['product' => [$priceList->getId() => []]]);
+            ->with(ResolvePriceRulesTopic::getName(), ['product' => [$priceList->getId() => []]]);
 
-        $this->handler->handlePriceListTopic(Topics::RESOLVE_PRICE_RULES, $priceList, [$product]);
+        $this->handler->handlePriceListTopic(ResolvePriceRulesTopic::getName(), $priceList, [$product]);
     }
 
     public function testHandleWithDisabledPriceList()
@@ -90,6 +93,6 @@ class PriceListTriggerHandlerTest extends \PHPUnit\Framework\TestCase
         $this->messageProducer->expects($this->never())
             ->method('send');
 
-        $this->handler->handlePriceListTopic(Topics::RESOLVE_PRICE_RULES, $priceList);
+        $this->handler->handlePriceListTopic(ResolvePriceRulesTopic::getName(), $priceList);
     }
 }

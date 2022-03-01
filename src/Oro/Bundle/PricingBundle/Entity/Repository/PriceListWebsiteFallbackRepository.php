@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
@@ -20,9 +21,9 @@ class PriceListWebsiteFallbackRepository extends EntityRepository
     {
         $qb = $this->_em->createQueryBuilder();
         $qb->select('website.id')
-            ->from('OroWebsiteBundle:Website', 'website')
+            ->from(Website::class, 'website')
             ->leftJoin(
-                'OroPricingBundle:PriceListWebsiteFallback',
+                PriceListWebsiteFallback::class,
                 'fallback',
                 Join::WITH,
                 $qb->expr()->eq('fallback.website', 'website.id')
@@ -33,7 +34,7 @@ class PriceListWebsiteFallbackRepository extends EntityRepository
                     $qb->expr()->eq('fallback.fallback', ':fallback')
                 )
             )
-            ->setParameter('fallback', PriceListWebsiteFallback::CONFIG);
+            ->setParameter('fallback', PriceListWebsiteFallback::CONFIG, Types::INTEGER);
 
         return $qb->getQuery()->getResult(Query::HYDRATE_SCALAR);
     }

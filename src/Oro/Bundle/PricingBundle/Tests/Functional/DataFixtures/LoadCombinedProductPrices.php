@@ -6,8 +6,8 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
-use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
@@ -271,12 +271,14 @@ class LoadCombinedProductPrices extends AbstractFixture implements DependentFixt
      */
     public function load(ObjectManager $manager)
     {
+        $priceLists = [];
         foreach (static::$data as $data) {
             /** @var Product $product */
             $product = $this->getReference($data['product']);
 
-            /** @var PriceList $priceList */
-            $priceList = $this->getReference($data['priceList']);
+            /** @var CombinedPriceList $cpl */
+            $cpl = $this->getReference($data['priceList']);
+            $priceLists[$cpl->getId()] = $cpl;
 
             /** @var ProductUnit $unit */
             $unit = $this->getReference($data['unit']);
@@ -284,7 +286,7 @@ class LoadCombinedProductPrices extends AbstractFixture implements DependentFixt
 
             $productPrice = new CombinedProductPrice();
             $productPrice
-                ->setPriceList($priceList)
+                ->setPriceList($cpl)
                 ->setUnit($unit)
                 ->setQuantity($data['qty'])
                 ->setPrice($price)
@@ -292,6 +294,11 @@ class LoadCombinedProductPrices extends AbstractFixture implements DependentFixt
 
             $manager->persist($productPrice);
             $this->setReference($data['reference'], $productPrice);
+        }
+
+        foreach ($priceLists as $cpl) {
+            $cpl->setPricesCalculated(true);
+            $manager->persist($cpl);
         }
 
         $manager->flush();

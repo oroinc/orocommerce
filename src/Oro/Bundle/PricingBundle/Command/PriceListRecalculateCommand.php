@@ -30,6 +30,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Recalculates combined price lists and product prices.
+ * @deprecated Will be removed in 5.1. Use oro:price-lists:schedule-recalculate instead
+ *             to schedule recalculations with MQ.
  */
 class PriceListRecalculateCommand extends Command
 {
@@ -186,6 +188,8 @@ HELP
     /** @noinspection PhpMissingParentCallCommonInspection */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->renderDeprecationError($output, PriceListScheduleRecalculateCommand::getDefaultName());
+
         /** @var CombinedPriceListTriggerHandler $triggerHandler */
         $this->triggerHandler->startCollect();
 
@@ -230,7 +234,7 @@ HELP
         }
 
         $this->triggerHandler->commit();
-        
+
         return 0;
     }
 
@@ -421,5 +425,19 @@ HELP
             $this->assignmentBuilder->setInsertQueryExecutor($this->insertQueryExecutorMultiInsertMode);
             $this->priceBuilder->setShardInsertQueryExecutor($this->shardInsertQueryExecutorMultiInsertMode);
         }
+    }
+
+    private function renderDeprecationError(OutputInterface $output, string $replacement): void
+    {
+        $formatter = $this->getHelper('formatter');
+        $formattedBlock = $formatter->formatBlock(
+            [
+                '!!! This command is DEPRECATED !!!',
+                sprintf('Use %s instead', $replacement),
+            ],
+            'error',
+            true
+        );
+        $output->writeln($formattedBlock);
     }
 }

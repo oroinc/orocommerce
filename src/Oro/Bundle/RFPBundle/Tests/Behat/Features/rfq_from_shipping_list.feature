@@ -4,6 +4,7 @@
 @ticket-BB-14232
 @ticket-BB-16591
 @ticket-BB-16921
+@waf-skip
 Feature: RFQ from Shipping List
   In order to ...
   As an ...

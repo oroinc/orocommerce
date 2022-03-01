@@ -345,7 +345,7 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
             ->findMinByWebsiteForFilter(
                 $website->getId(),
                 [$product1],
-                $this->getReference('1f')->getId()
+                $this->getReference('1f')
             );
         $expected = [
             [

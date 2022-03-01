@@ -35,7 +35,7 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
         product: '@product'
         quantity: '1'
         unit: '@item'
-        customerUser: '@amanda'
+        customerUser: '@marlene'
         shoppingList: '@shoppinglist'
         organization: '@organization'
 
@@ -47,7 +47,7 @@ Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
     shoppinglist:
         label: 'Shopping list'
-        customerUser: '@amanda'
+        customerUser: '@marlene'
         organization: '@organization'
         owner: '@admin'
         website: '@website1'
@@ -96,7 +96,7 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
         street: 'Street'
         city: 'City'
         postalCode: '90001'
-        frontendOwner: '@amanda'
+        frontendOwner: '@marlene'
         owner: '@admin'
         __calls:
             - setDefaults: ['@shippingType', '@billingType']
@@ -128,13 +128,13 @@ Oro\Bundle\CustomerBundle\Entity\Customer:
         payment_term_7c4f1e8e: '@paymentTerm'
 
 Oro\Bundle\CustomerBundle\Entity\CustomerUser:
-    amanda:
-        email: 'AmandaRCole@example.org'
-        username: 'AmandaRCole@example.org'
-        password: 'gxP1L8r86hrdUMg9wKdfnsS/EZC4a7jOIdn6BMzegqL2S6e+KBIuHCrDVciMdiR/64osNnabmFonwK8l09vQxA=='
-        salt: 'fgswya1kzw0sck8ck48kosowckwo0ws'
-        firstName: 'Amanda'
-        lastName: 'Cole'
+    marlene:
+        email: 'MarleneSBradley@example.org'
+        username: 'MarleneSBradley@example.org'
+        password: 'pj5tHuTmxutgSkIbx84JtlzPA6TBjx00MARrJWyN06FcI2u5zzhyrKe28++k+ZH2hzRwn3WUYq762IJwoCfaBw=='
+        salt: 'hggf02559tkwgoowk40c4c8scosos40'
+        firstName: 'Marlene'
+        lastName: 'Bradley'
         enabled: '1'
         confirmed: '1'
         customer: '@customer'

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule;
 
 /**
@@ -32,5 +33,17 @@ trait BasicCombinedRelationRepositoryTrait
         }
 
         return $updated;
+    }
+
+    protected function deleteInvalidRelationsByQueryBuilder(QueryBuilder $qb): void
+    {
+        $result = $qb->getQuery()->getScalarResult();
+        $invalidRelationIds = array_map('current', $result);
+        if ($invalidRelationIds) {
+            $qb = $this->createQueryBuilder('relation');
+            $qb->delete()->where($qb->expr()->in('relation.id', ':invalidRelationIds'))
+                ->setParameter(':invalidRelationIds', $invalidRelationIds);
+            $qb->getQuery()->execute();
+        }
     }
 }

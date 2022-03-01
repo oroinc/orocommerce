@@ -5,12 +5,13 @@ namespace Oro\Bundle\PricingBundle\Builder;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
-use Oro\Bundle\PricingBundle\Async\Topics;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolveCombinedPriceByPriceListTopic;
 use Oro\Bundle\PricingBundle\Compiler\PriceListRuleCompiler;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
+use Oro\Bundle\PricingBundle\Handler\CombinedPriceListBuildTriggerHandler;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\ORM\ShardQueryExecutorInterface;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
@@ -54,6 +55,11 @@ class ProductPriceBuilder implements FeatureToggleableInterface
     protected $priceListTriggerHandler;
 
     /**
+     * @var CombinedPriceListBuildTriggerHandler
+     */
+    protected $combinedPriceListBuildTriggerHandler;
+
+    /**
      * @var int|null
      */
     private $version;
@@ -85,6 +91,11 @@ class ProductPriceBuilder implements FeatureToggleableInterface
     public function setShardInsertQueryExecutor(ShardQueryExecutorInterface $shardInsertQueryExecutor)
     {
         $this->shardInsertQueryExecutor = $shardInsertQueryExecutor;
+    }
+
+    public function setCombinedPriceListBuildTriggerHandler(CombinedPriceListBuildTriggerHandler $handler): void
+    {
+        $this->combinedPriceListBuildTriggerHandler = $handler;
     }
 
     /**
@@ -171,7 +182,17 @@ class ProductPriceBuilder implements FeatureToggleableInterface
 
     private function emitCplTriggers(PriceList $priceList, array $products): void
     {
-        if ($products || count($priceList->getPriceRules()) === 0) {
+        $priceRulesCount = count($priceList->getPriceRules());
+
+        // In some cases, we cannot guarantee that a combined price list includes a specific price list.
+        // This problem arises if prices are generated dynamically, and we do not know whether it is possible to
+        // include this price list in the combined price list until prices are generated.
+        // After generating prices need to send message to rebuild the combined price list.
+        if ($priceRulesCount > 0 && $this->combinedPriceListBuildTriggerHandler->handle($priceList)) {
+            return;
+        }
+
+        if ($products || $priceRulesCount === 0) {
             $productsBatches = $this->getProductBatches($products);
         } else {
             $productsBatches = $this->getProductPriceRepository()->getProductsByPriceListAndVersion(
@@ -184,7 +205,7 @@ class ProductPriceBuilder implements FeatureToggleableInterface
 
         foreach ($productsBatches as $batch) {
             $this->priceListTriggerHandler->handlePriceListTopic(
-                Topics::RESOLVE_COMBINED_PRICES,
+                ResolveCombinedPriceByPriceListTopic::getName(),
                 $priceList,
                 $batch
             );

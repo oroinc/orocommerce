@@ -1,5 +1,6 @@
 @regression
 @ticket-BAP-14671
+@ticket-BB-14857
 @fixture-OroFrontendLocalizationBundle:frontstore-customer.yml
 Feature: FrontStore language switcher
   In order to manage available localizations for language switcher
@@ -10,6 +11,8 @@ Feature: FrontStore language switcher
 
   Scenario: Feature Background
     Given I login as administrator
+    And I disable configuration options:
+      | oro_frontend.guest_access_enabled |
     And go to System/ Localization/ Languages
 
   Scenario Outline: Add Languages

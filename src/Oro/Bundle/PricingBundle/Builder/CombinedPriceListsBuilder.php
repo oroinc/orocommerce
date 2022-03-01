@@ -18,6 +18,7 @@ use Oro\Bundle\PricingBundle\Resolver\CombinedPriceListScheduleResolver;
  * Perform CPL build for config level, call website CPL builder for websites with fallback to config.
  *
  * @internal Allowed to be accessed only by CombinedPriceListsBuilderFacade
+ * @deprecated Will be removed in 5.1.
  */
 class CombinedPriceListsBuilder
 {
@@ -98,6 +99,11 @@ class CombinedPriceListsBuilder
      */
     public function build($forceTimestamp = null)
     {
+        @trigger_error(
+            'Combined price list builders are deprecated and will be removed in OroCommerce 5.1',
+            \E_USER_DEPRECATED
+        );
+
         if (!$this->isBuilt()) {
             /** @var EntityManagerInterface $em */
             $em = $this->registry->getManagerForClass(

@@ -79,6 +79,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      */
     public function combinedPriceListPricesCount($count, TableNode $table)
     {
+        $count = (int)$count;
         $em = $this->getKernel()->getContainer()->get('doctrine')->getManagerForClass(CombinedPriceList::class);
 
         $priceLists = [];
@@ -95,13 +96,29 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $cplRepo = $em->getRepository(CombinedPriceList::class);
         $cpl = $cplRepo->findOneBy(['name' => $identifier]);
 
-        $this->assertNotNull($cpl);
+        // If we expect 0 prices CPL may not exist
+        if ($count === 0 && !$cpl) {
+            return;
+        }
+
+        $this->assertNotNull($cpl, 'Expected Combined Price List does not exist');
 
         /** @var CombinedProductPriceRepository $cplPriceRepo */
         $cplPriceRepo = $em->getRepository(CombinedProductPrice::class);
         $prices = $cplPriceRepo->findBy(['priceList' => $cpl]);
 
-        $this->assertCount((int)$count, $prices);
+        $this->assertCount($count, $prices, 'Unexpected number of combined prices found');
+    }
+
+    /**
+     * @When /^I change currency in currency switcher to "(?P<currency>[^"]+)"$/
+     */
+    public function iChangeCurrencyInCurrencySwitcher($currency): void
+    {
+        $currencySwitcher = $this->createElement('Currency Switcher');
+        $currencySwitcher->click();
+        $this->getPage()->clickLink($currency);
+        $this->waitForAjax();
     }
 
     /**

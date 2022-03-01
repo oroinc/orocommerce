@@ -1,7 +1,7 @@
 import BaseView from 'oroui/js/app/views/base/view';
 import template from 'tpl-loader!orocms/templates/grapesjs-import-dialog-template.html';
 import DialogWidget from 'oro/dialog-widget';
-import {stripRestrictedAttrs, escapeWrapper} from 'orocms/js/app/grapesjs/plugins/grapesjs-style-isolation';
+import {stripRestrictedAttrs, escapeWrapper} from 'orocms/js/app/grapesjs/plugins/components/content-isolation';
 import _ from 'underscore';
 import __ from 'orotranslation/js/translator';
 import $ from 'jquery';
@@ -449,9 +449,11 @@ const ImportDialogView = BaseView.extend({
         if (!this.disabled) {
             this.editor.CssComposer.clear();
             this.editor.selectRemove(this.editor.getSelectedAll());
-            this.editor.setComponents(escapeWrapper(content));
+            this.editor.setComponents(escapeWrapper(content), {
+                fromImport: true
+            });
             this.closeDialog();
-            this.trigger('import:after');
+            this.trigger('import:after', escapeWrapper(content));
         }
     },
 

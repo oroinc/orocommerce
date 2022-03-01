@@ -56,6 +56,8 @@ class WebsiteCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
             $this->strategyRegister,
             $this->triggerHandler
         );
+
+        $this->builder->setActiveCombinedPriceListResolver($this->activeCombinedPriceListResolver);
         $this->builder->setCustomerGroupCombinedPriceListsBuilder($this->customerGroupBuilder);
         $this->builder->setPriceListToEntityClassName($this->priceListToEntityClass);
         $this->builder->setCombinedPriceListClassName($this->combinedPriceListClass);

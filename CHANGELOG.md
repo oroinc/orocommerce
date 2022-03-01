@@ -2,6 +2,63 @@ The upgrade instructions are available at [Oro documentation website](https://do
 
 The current file describes significant changes in the code that may affect the upgrade of your customizations.
 
+## 4.2.5
+
+### Added
+
+#### PricingBundle
+
+`oro:price-lists:schedule-recalculate` - CLI command added to replace existing `oro:price-lists:recalculate`. This command supports the same options except `--disable-triggers` and `--use-insert-select`. Unlike the previous version the new one will only schedule combined price lists build process. The `oro:price-lists:recalculate` is marked as deprecated and is planned for removal in 5.1
+
+Added new methods to `CombinedPriceListsBuilderFacade`. `processAssignments` Process Combined Price Lists assignments information, triggers ProcessEvent, Listeners of this event will create relation between passed CPL and assignments. `triggerProductIndexation` - Trigger product indexation for a products, limited to websites that are associated with a given CPL.
+
+Added `CombinedPriceListProvider::getCombinedPriceListByCollectionInformation` to get combined price list by the given price lists collection in format used by Collect and Process events.
+
+### Changed
+
+#### PricingBundle
+
+`oro_pricing.price_lists.cpl.rebuild` - MQ topic now processed by `ScalableCombinedPriceListProcessor`. The `CombinedPriceListProcessor` marked as deprecated and no longer tagged with `oro_message_queue.client.message_processor` tag. 
+
+`oro_pricing.price_lists.cpl.resolve_prices` - MQ topic now processed by `ScalablePriceListProcessor`. The `PriceListProcessor` marked as deprecated and no longer tagged with `oro_message_queue.client.message_processor` tag.
+
+### Removed
+
+`PriceCombiningStrategyFallbackAwareInterface` - marked as deprecated and will be not used anymore. Merge strategies now use the best matching existing calculated CPL as a fallback CPL. This logic no longer depends on level relations.
+
+All Combined price lists builders `CombinedPriceListsBuilder`, `WebsiteCombinedPriceListsBuilder`, `CustomerGroupCombinedPriceListsBuilder`, `CustomerCombinedPriceListsBuilder`, and `AbstractCombinedPriceListBuilder` are marked as deprecated and not involved in Combined Price List building process anymore. Consider using a new approach that is based on scalable MQ messages. More details about it may be found at updated developers documentation Combined Price Lists section. 
+
+All builder-related methods in `CombinedPriceListsBuilderFacade` are marked as deprecated and not used anymore. Methods list: `rebuildAll`, `rebuildForWebsites`, `rebuildForCustomerGroups`, `rebuildForCustomers`, `rebuildForPriceLists`. To rebuild by some level use next code snippet:
+
+```php
+/**
+ * When no website and target entity passed - equal to CombinedPriceListsBuilderFacade::rebuildAll
+ * When website passed - equal to CombinedPriceListsBuilderFacade::rebuildForWebsites
+ * When website with customer group as target entity passed - equal to CombinedPriceListsBuilderFacade::rebuildForCustomerGroups
+ * When website with customer as target entity passed - equal to CombinedPriceListsBuilderFacade::rebuildForCustomers
+ */
+public function rebuildPrices(Website, $website = null, object $targetEntity = null)
+    // !!! Important!!! The container dependency is used as an example to provide required services names.
+    // The next dependencies should be injected directly instead.
+    /** @var CombinedPriceListAssociationsProvider $associationsProvider */
+    $associationsProvider = $this->container->get('oro_pricing.combined_price_list_associations_provider');
+    /** @var CombinedPriceListProvider $cplProvider */
+    $cplProvider = $this->container->get('oro_pricing.provider.combined_price_list');
+    /** @var CombinedPriceListsBuilderFacade $cplBuilderFacade */
+    $cplBuilderFacade = $this->container->get('oro_pricing.builder.combined_price_list_builder_facade');
+
+    $associations = $associationsProvider->getCombinedPriceListsWithAssociations($website, $targetEntity);
+    foreach ($associations as $association) {
+        $cpl = $cplProvider->getCombinedPriceListByCollectionInformation($association['collection']);
+        $cplBuilderFacade->rebuild([$cpl]);
+        $assignTo = $association['assign_to'] ?? [];
+        if (!empty($assignTo)) {
+            $cplBuilderFacade->processAssignments($cpl, $assignTo, true);
+        }
+        $cplBuilderFacade->triggerProductIndexation($cpl, $assignTo);
+    }
+```
+
 ## 4.2.4
 
 ### Added

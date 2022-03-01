@@ -167,6 +167,13 @@ services:
         public: true
         parent: oro_product.storage.session_data_storage
 
+    oro_product.storage.product_website_reindex_request_data_storage:
+        class: Oro\Bundle\ProductBundle\Storage\ProductWebsiteReindexRequestDataStorage
+        arguments:
+            - '@oro_product.driver.product_website_reindex_request_dbal_driver'
+        calls:
+            - ['setWebsiteProvider', ['@oro_website.website.provider']]
+
     oro_product.validator.product_by_sku:
         class: 'Oro\Bundle\ProductBundle\Validator\Constraints\ProductBySkuValidator'
         arguments:
@@ -493,6 +500,9 @@ services:
             - '@oro_message_queue.client.message_producer'
             - '@oro_product.helper.product_collection_segment'
             - '@oro_product.model.segment_message_factory'
+        calls:
+            - [ 'setReindexHandler', [ '@oro_product.handler.async_reindex_product_collection_handler' ] ]
+            - [ 'setAccumulateMessageFactory', [ '@oro_product.model.accumulate_segment_message_factory' ] ]
         tags:
             - { name: doctrine.event_listener, event: postFlush }
 
@@ -1241,6 +1251,12 @@ services:
         arguments:
             - '@doctrine'
 
+    oro_product.model.accumulate_segment_message_factory:
+        class: Oro\Bundle\ProductBundle\Model\AccumulateSegmentMessageFactory
+        public: false
+        arguments:
+            - '@doctrine'
+
     oro_product.async.reindex_product_collection_processor:
         class: Oro\Bundle\ProductBundle\Async\ReindexProductCollectionProcessor
         arguments:
@@ -1250,6 +1266,17 @@ services:
             - '@oro_website_search.async.indexer.message_granularizer.reindex'
             - '@oro_product.model.segment_message_factory'
             - '@oro_segment.provider.segment_snapshot_delta_provider'
+        tags:
+            - { name: 'oro_message_queue.client.message_processor' }
+
+    oro_product.async.accumulate_product_collection_processor:
+        class: Oro\Bundle\ProductBundle\Async\AccumulateReindexProductCollectionProcessor
+        arguments:
+            - '@oro_message_queue.job.runner'
+            - '@logger'
+            - '@oro_product.model.accumulate_segment_message_factory'
+            - '@oro_segment.provider.segment_snapshot_delta_provider'
+            - '@oro_product.storage.product_website_reindex_request_data_storage'
         tags:
             - { name: 'oro_message_queue.client.message_processor' }
 
@@ -1286,6 +1313,14 @@ services:
     oro_product.handler.search_product_handler:
         class: Oro\Bundle\ProductBundle\Handler\SearchProductHandler
         arguments: ['@request_stack']
+
+    oro_product.handler.async_reindex_product_collection_handler:
+        class: Oro\Bundle\ProductBundle\Handler\AsyncReindexProductCollectionHandler
+        arguments:
+            - '@oro_message_queue.job.runner'
+            - '@oro_message_queue.job.dependent_job_service'
+            - '@oro_message_queue.message_producer'
+            - '@oro_product.model.accumulate_segment_message_factory'
 
     oro_product.helper.product_grouper.factory:
         class: Oro\Bundle\ProductBundle\Helper\ProductGrouper\ProductsGrouperFactory
@@ -1686,6 +1721,16 @@ services:
         tags:
             - { name: 'oro_message_queue.client.message_processor', topicName: 'oro_product.reindex_products_by_attributes' }
 
+    oro_product.async.reindex_request_item_products_by_related_job_processor:
+        class: Oro\Bundle\ProductBundle\Async\ReindexRequestItemProductsByRelatedJobProcessor
+        arguments:
+            - '@oro_product.storage.product_website_reindex_request_data_storage'
+            - '@oro_message_queue.job.runner'
+            - '@oro_message_queue.client.message_producer'
+            - '@logger'
+        tags:
+            - { name: 'oro_message_queue.client.message_processor', topicName: 'oro_product.reindex_request_item_products_by_related_job' }
+
     oro_product.config.event_listener.display_simple_variations_listener:
         class: Oro\Bundle\ProductBundle\EventListener\Config\DisplaySimpleVariationsListener
         arguments:
@@ -1860,3 +1905,8 @@ services:
             - '@oro_security.token_accessor'
         tags:
             - { name: kernel.event_listener, event: kernel.exception, method: onKernelException}
+
+    oro_product.driver.product_website_reindex_request_dbal_driver:
+        class: Oro\Bundle\ProductBundle\Driver\ProductWebsiteReindexRequestDbalDriver
+        arguments:
+            - '@doctrine'

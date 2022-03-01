@@ -3,7 +3,9 @@
 namespace Oro\Bundle\ProductBundle\EventListener;
 
 use Oro\Bundle\ProductBundle\Async\Topics;
+use Oro\Bundle\ProductBundle\Handler\AsyncReindexProductCollectionHandlerInterface as ReindexHandler;
 use Oro\Bundle\ProductBundle\Helper\ProductCollectionSegmentHelper;
+use Oro\Bundle\ProductBundle\Model\AccumulateSegmentMessageFactory as AccumulateMessageFactory;
 use Oro\Bundle\ProductBundle\Model\SegmentMessageFactory;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
@@ -16,6 +18,9 @@ class ProductCollectionVariantReindexMessageSendListener
     const SEGMENT = 'segment';
     const IS_FULL = 'is_full';
     const ADDITIONAL_PRODUCTS = 'additional_products';
+
+    private ReindexHandler $collectionIndexationHandler;
+    private AccumulateMessageFactory $accumulateMessageFactory;
 
     /**
      * @var MessageProducerInterface
@@ -52,12 +57,32 @@ class ProductCollectionVariantReindexMessageSendListener
         $this->messageFactory = $messageFactory;
     }
 
-    public function postFlush()
+    public function setReindexHandler(ReindexHandler $collectionIndexationHandler)
+    {
+        $this->collectionIndexationHandler = $collectionIndexationHandler;
+    }
+
+    public function setAccumulateMessageFactory(AccumulateMessageFactory $accumulateMessageFactory)
+    {
+        $this->accumulateMessageFactory = $accumulateMessageFactory;
+    }
+
+    public function postFlush(): void
     {
         $this->addSegmentsMessages();
-        while ($message = array_pop($this->scheduledMessages)) {
-            $this->messageProducer->send(Topics::REINDEX_PRODUCT_COLLECTION_BY_SEGMENT, $message);
+        if (empty($this->scheduledPartialMessages)) {
+            return;
         }
+
+        $scheduledPartialMessages = $this->scheduledPartialMessages;
+        $this->scheduledPartialMessages = [];
+        $rootJobName = sprintf(
+            '%s:%s:%s',
+            Topics::ACCUMULATE_REINDEX_PRODUCT_COLLECTION_BY_SEGMENT,
+            'listener',
+            $this->getMessageKey($scheduledPartialMessages)
+        );
+        $this->collectionIndexationHandler->handle($scheduledPartialMessages, $rootJobName);
     }
 
     /**
@@ -90,10 +115,14 @@ class ProductCollectionVariantReindexMessageSendListener
     public function scheduleMessageBySegmentDefinition(Segment $segment)
     {
         $websiteIds = $this->productCollectionSegmentHelper->getWebsiteIdsBySegment($segment);
-
         if (count($websiteIds) > 0) {
-            $message = $this->messageFactory->createMessage($websiteIds, null, $segment->getDefinition(), true);
-            $this->scheduledMessages[$this->getMessageKey($message)] = $message;
+            $message = $this->accumulateMessageFactory->getPartialMessageData(
+                $websiteIds,
+                null,
+                $segment->getDefinition(),
+                true
+            );
+            $this->scheduledPartialMessages[$this->getMessageKey($message)] = $message;
         }
     }
 
@@ -102,16 +131,15 @@ class ProductCollectionVariantReindexMessageSendListener
         while ($segmentData = array_pop($this->segments)) {
             $segment = $segmentData[self::SEGMENT];
             $websiteIds = $this->productCollectionSegmentHelper->getWebsiteIdsBySegment($segment);
-
             if (count($websiteIds) > 0) {
-                $message = $this->messageFactory->createMessage(
+                $message = $this->accumulateMessageFactory->getPartialMessageData(
                     $websiteIds,
                     $segment,
                     null,
                     $segmentData[self::IS_FULL],
                     $segmentData[self::ADDITIONAL_PRODUCTS]
                 );
-                $this->scheduledMessages[$this->getMessageKey($message)] = $message;
+                $this->scheduledPartialMessages[$this->getMessageKey($message)] = $message;
             }
         }
     }

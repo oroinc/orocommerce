@@ -204,6 +204,9 @@ oro_behat_extension:
         CMS Page Content:
             selector: "textarea[name='oro_cms_page[content]']"
 
+        CMS Page Style:
+            selector: "input[name='oro_cms_page[content_style]']"
+
         CMS Page Drafts Grid:
             selector: 'div[data-page-component-name="cms-page-drafts-grid"]'
             class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
@@ -217,11 +220,18 @@ oro_behat_extension:
             selector:
                 type: xpath
                 locator: '//div[contains(@class, "cms-page")]//figcaption[contains(text(),"RV & Gear Seller")]/..//img'
+        
+        External Mode Button:
+            selector: 'span[data-original-title="External Markup Mode"]'
+            
+        Import Button:
+            selector: 'span[data-original-title="Import"]'
     suites:
         OroCMSBundle:
             contexts:
                 - OroDataGridBundle::GridContext
                 - OroFormBundle::FormContext
+                - OroFormBundle::WysiwygContext
                 - OroRedirectBundle::SlugPrototypesContext
                 - OroCMSBundle::FeatureContext
                 - OroCMSBundle::ImportExportFeatureContext

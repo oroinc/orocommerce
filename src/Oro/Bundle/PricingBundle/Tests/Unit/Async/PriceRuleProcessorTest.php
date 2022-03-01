@@ -7,7 +7,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PricingBundle\Async\NotificationMessages;
 use Oro\Bundle\PricingBundle\Async\PriceRuleProcessor;
-use Oro\Bundle\PricingBundle\Async\Topics;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceRulesTopic;
 use Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
@@ -64,6 +64,7 @@ class PriceRuleProcessorTest extends \PHPUnit\Framework\TestCase
             $this->translator
         );
         $this->processor->setTriggerHandler($this->triggerHandler);
+        $this->processor->setTopic(new ResolvePriceRulesTopic());
     }
 
     /**
@@ -89,32 +90,8 @@ class PriceRuleProcessorTest extends \PHPUnit\Framework\TestCase
     public function testGetSubscribedTopics()
     {
         $this->assertEquals(
-            [Topics::RESOLVE_PRICE_RULES],
+            [ResolvePriceRulesTopic::getName()],
             PriceRuleProcessor::getSubscribedTopics()
-        );
-    }
-
-    public function testProcessWithInvalidMessage()
-    {
-        $this->logger->expects($this->once())
-            ->method('critical')
-            ->with('Got invalid message.');
-
-        $this->assertEquals(
-            MessageProcessorInterface::REJECT,
-            $this->processor->process($this->getMessage('invalid'), $this->getSession())
-        );
-    }
-
-    public function testProcessWithEmptyMessage()
-    {
-        $this->logger->expects($this->once())
-            ->method('critical')
-            ->with('Got invalid message.');
-
-        $this->assertEquals(
-            MessageProcessorInterface::REJECT,
-            $this->processor->process($this->getMessage([]), $this->getSession())
         );
     }
 
@@ -508,7 +485,7 @@ class PriceRuleProcessorTest extends \PHPUnit\Framework\TestCase
         $this->triggerHandler->expects($this->once())
             ->method('handlePriceListTopic')
             ->with(
-                Topics::RESOLVE_PRICE_RULES,
+                ResolvePriceRulesTopic::getName(),
                 $priceList1,
                 $productIds
             );

@@ -1,5 +1,9 @@
 oro.cms:
     wysiwyg:
+        external_markup_mode:
+            confirmation:
+                title: 'Leave External Markup Mode?'
+                desc: 'If you exit external markup mode, the editor may change the source code and break the imported content markup and styles.'
         option_panel:
             show_borders: 'Show Borders'
             preview: 'Preview'

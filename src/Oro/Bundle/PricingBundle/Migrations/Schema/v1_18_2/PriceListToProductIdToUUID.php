@@ -27,7 +27,7 @@ class PriceListToProductIdToUUID implements Migration, ConnectionAwareInterface,
         $table = $schema->getTable('oro_price_list_to_product');
 
         // Column type already changed
-        if ($table->getColumn('id')->getType()->getName() !== Types::INTEGER) {
+        if ($table->getColumn('id')->getType()->getName() === Types::GUID) {
             return;
         }
 
@@ -42,7 +42,7 @@ class PriceListToProductIdToUUID implements Migration, ConnectionAwareInterface,
             $table->changeColumn(
                 'id',
                 [
-                    'type' => Type::getType("guid"),
+                    'type' => Type::getType(Types::GUID),
                     'notnull' => false,
                     'comment' => '(DC2Type:guid)'
                 ]

@@ -7,6 +7,9 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
+/**
+ * Will return Product Prices for each of available currencies in each unit supported by product
+ */
 class AdditionalProductPricesIterator implements \Iterator
 {
     /**
@@ -133,7 +136,7 @@ class AdditionalProductPricesIterator implements \Iterator
         $data = [];
         foreach ($product->getUnitPrecisions() as $unitPrecision) {
             foreach ($this->priceList->getCurrencies() as $currency) {
-                $data[] = $productPrice = (new ProductPrice())
+                $data[] = (new ProductPrice())
                     ->setPriceList($this->priceList)
                     ->setProduct($product)
                     ->setUnit($unitPrecision->getUnit())

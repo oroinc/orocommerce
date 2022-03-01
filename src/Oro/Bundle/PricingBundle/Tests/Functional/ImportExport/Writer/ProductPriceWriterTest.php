@@ -8,7 +8,8 @@ use Akeneo\Bundle\BatchBundle\Entity\StepExecution;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ImportExportBundle\Context\ContextRegistry;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueAssertTrait;
-use Oro\Bundle\PricingBundle\Async\Topics;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolveCombinedPriceByPriceListTopic;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceRulesTopic;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\ImportExport\Strategy\ProductPriceImportStrategy;
 use Oro\Bundle\PricingBundle\ImportExport\Writer\ProductPriceWriter;
@@ -61,8 +62,8 @@ class ProductPriceWriterTest extends WebTestCase
         $price = $this->createPrice();
 
         $writer->write([$price]);
-        $this->assertEmptyMessages(Topics::RESOLVE_COMBINED_PRICES);
-        $this->assertEmptyMessages(Topics::RESOLVE_PRICE_RULES);
+        $this->assertEmptyMessages(ResolveCombinedPriceByPriceListTopic::getName());
+        $this->assertEmptyMessages(ResolvePriceRulesTopic::getName());
         $value = $context->getValue(ProductPriceImportStrategy::PROCESSED_ENTITIES_HASH);
         $this->assertEmpty($value);
     }
