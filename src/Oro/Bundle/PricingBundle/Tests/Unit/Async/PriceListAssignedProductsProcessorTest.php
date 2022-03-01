@@ -7,7 +7,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PricingBundle\Async\NotificationMessages;
 use Oro\Bundle\PricingBundle\Async\PriceListAssignedProductsProcessor;
-use Oro\Bundle\PricingBundle\Async\Topics;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceListAssignedProductsTopic;
 use Oro\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
@@ -63,6 +63,7 @@ class PriceListAssignedProductsProcessorTest extends \PHPUnit\Framework\TestCase
             $this->translator
         );
         $this->processor->setTriggerHandler($this->triggerHandler);
+        $this->processor->setTopic(new ResolvePriceListAssignedProductsTopic());
     }
 
     /**
@@ -88,32 +89,8 @@ class PriceListAssignedProductsProcessorTest extends \PHPUnit\Framework\TestCase
     public function testGetSubscribedTopics()
     {
         $this->assertEquals(
-            [Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS],
+            [ResolvePriceListAssignedProductsTopic::getName()],
             PriceListAssignedProductsProcessor::getSubscribedTopics()
-        );
-    }
-
-    public function testProcessWithInvalidMessage()
-    {
-        $this->logger->expects($this->once())
-            ->method('critical')
-            ->with('Got invalid message.');
-
-        $this->assertEquals(
-            MessageProcessorInterface::REJECT,
-            $this->processor->process($this->getMessage('invalid'), $this->getSession())
-        );
-    }
-
-    public function testProcessWithEmptyMessage()
-    {
-        $this->logger->expects($this->once())
-            ->method('critical')
-            ->with('Got invalid message.');
-
-        $this->assertEquals(
-            MessageProcessorInterface::REJECT,
-            $this->processor->process($this->getMessage([]), $this->getSession())
         );
     }
 
@@ -426,7 +403,7 @@ class PriceListAssignedProductsProcessorTest extends \PHPUnit\Framework\TestCase
         $this->triggerHandler->expects($this->once())
             ->method('handlePriceListTopic')
             ->with(
-                Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS,
+                ResolvePriceListAssignedProductsTopic::getName(),
                 $priceList1,
                 $productIds
             );

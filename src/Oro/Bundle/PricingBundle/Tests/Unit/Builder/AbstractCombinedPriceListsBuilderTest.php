@@ -14,6 +14,7 @@ use Oro\Bundle\PricingBundle\PricingStrategy\StrategyRegister;
 use Oro\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
 use Oro\Bundle\PricingBundle\Provider\PriceListCollectionProvider;
 use Oro\Bundle\PricingBundle\Provider\PriceListSequenceMember;
+use Oro\Bundle\PricingBundle\Resolver\ActiveCombinedPriceListResolver;
 use Oro\Bundle\PricingBundle\Resolver\CombinedPriceListScheduleResolver;
 
 /**
@@ -103,6 +104,11 @@ abstract class AbstractCombinedPriceListsBuilderTest extends \PHPUnit\Framework\
     protected $combinedPriceListEm;
 
     /**
+     * @var ActiveCombinedPriceListResolver|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $activeCombinedPriceListResolver;
+
+    /**
      * @return string
      */
     abstract protected function getPriceListToEntityRepositoryClass();
@@ -172,6 +178,12 @@ abstract class AbstractCombinedPriceListsBuilderTest extends \PHPUnit\Framework\
                     [$this->fallbackClass, $fallbackEm],
                 ]
             );
+
+        $this->activeCombinedPriceListResolver = $this->createMock(ActiveCombinedPriceListResolver::class);
+        $this->activeCombinedPriceListResolver
+            ->expects($this->any())
+            ->method('getActiveCplByFullCPL')
+            ->willReturnArgument(0);
 
         $this->cplScheduleResolver = $this->createMock(CombinedPriceListScheduleResolver::class);
         $this->combiningStrategy = $this->createMock(PriceCombiningStrategyInterface::class);

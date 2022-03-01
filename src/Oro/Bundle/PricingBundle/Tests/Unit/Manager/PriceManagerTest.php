@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Manager;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\UnitOfWork;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
@@ -13,6 +14,7 @@ use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Event\ProductPriceRemove;
 use Oro\Bundle\PricingBundle\Event\ProductPriceSaveAfterEvent;
 use Oro\Bundle\PricingBundle\Event\ProductPricesUpdated;
+use Oro\Bundle\PricingBundle\Event\ProductPricesUpdatedAfter;
 use Oro\Bundle\PricingBundle\Manager\PriceManager;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Component\Testing\ReflectionUtil;
@@ -77,7 +79,7 @@ class PriceManagerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    private function getProductPrice(string $id = null): ProductPrice
+    private function getProductPrice(int $id = null): ProductPrice
     {
         $price = new ProductPrice();
         $price->setId($id);
@@ -101,7 +103,8 @@ class PriceManagerTest extends \PHPUnit\Framework\TestCase
         $originalEntityData = ['value' => '1.0000'];
         $changeSet = ['value' => [null, '1.0000']];
 
-        $this->repository->expects($this->once())
+        $this->repository
+            ->expects($this->once())
             ->method('save')
             ->with($this->identicalTo($this->shardManager), $this->identicalTo($price))
             ->willReturnCallback(function ($shardManager, ProductPrice $price) use ($priceId) {
@@ -130,11 +133,12 @@ class PriceManagerTest extends \PHPUnit\Framework\TestCase
             ->with($this->identicalTo($price))
             ->willReturn($changeSet);
 
-        $this->eventDispatcher->expects($this->exactly(2))
+        $this->eventDispatcher->expects($this->exactly(3))
             ->method('dispatch')
             ->withConsecutive(
                 [$this->isInstanceOf(ProductPriceSaveAfterEvent::class), ProductPriceSaveAfterEvent::NAME],
-                [$this->isInstanceOf(ProductPricesUpdated::class), ProductPricesUpdated::NAME]
+                [$this->isInstanceOf(ProductPricesUpdated::class), ProductPricesUpdated::NAME],
+                [$this->isInstanceOf(ProductPricesUpdatedAfter::class), ProductPricesUpdatedAfter::NAME]
             );
 
         $this->messageBufferManager->expects($this->once())
@@ -179,11 +183,12 @@ class PriceManagerTest extends \PHPUnit\Framework\TestCase
             ->with($this->identicalTo($price))
             ->willReturn($changeSet);
 
-        $this->eventDispatcher->expects($this->exactly(2))
+        $this->eventDispatcher->expects($this->exactly(3))
             ->method('dispatch')
             ->withConsecutive(
                 [$this->isInstanceOf(ProductPriceSaveAfterEvent::class), ProductPriceSaveAfterEvent::NAME],
-                [$this->isInstanceOf(ProductPricesUpdated::class), ProductPricesUpdated::NAME]
+                [$this->isInstanceOf(ProductPricesUpdated::class), ProductPricesUpdated::NAME],
+                [$this->isInstanceOf(ProductPricesUpdatedAfter::class), ProductPricesUpdatedAfter::NAME]
             );
 
         $this->messageBufferManager->expects($this->once())
@@ -230,11 +235,12 @@ class PriceManagerTest extends \PHPUnit\Framework\TestCase
             ->with($this->identicalTo($price))
             ->willReturnOnConsecutiveCalls($changeSet, $updatedChangeSet);
 
-        $this->eventDispatcher->expects($this->exactly(2))
+        $this->eventDispatcher->expects($this->exactly(3))
             ->method('dispatch')
             ->withConsecutive(
                 [$this->isInstanceOf(ProductPriceSaveAfterEvent::class), ProductPriceSaveAfterEvent::NAME],
-                [$this->isInstanceOf(ProductPricesUpdated::class), ProductPricesUpdated::NAME]
+                [$this->isInstanceOf(ProductPricesUpdated::class), ProductPricesUpdated::NAME],
+                [$this->isInstanceOf(ProductPricesUpdatedAfter::class), ProductPricesUpdatedAfter::NAME]
             );
 
         $this->messageBufferManager->expects($this->once())
@@ -246,69 +252,71 @@ class PriceManagerTest extends \PHPUnit\Framework\TestCase
 
     public function testFlushForUpdatedPriceWhenPriceListChanged()
     {
-        $price = $this->getProductPrice('123');
-        $price->setPriceList($this->getPriceList(2));
-
-        $clonedPriceId = '234';
-        $clonedPrice = $this->getProductPrice();
-        $clonedPrice->setPriceList($price->getPriceList());
-
-        $savedClonedPrice = $this->getProductPrice($clonedPriceId);
-        $savedClonedPrice->setPriceList($price->getPriceList());
-
         $oldPriceList = $this->getPriceList(1);
-        $originalEntityData = ['priceList' => $oldPriceList];
-        $changeSet = ['priceList' => [$oldPriceList, $price->getPriceList()]];
+        $newPriceList = $this->getPriceList(2);
 
-        $this->repository->expects($this->once())
-            ->method('save')
-            ->with($this->identicalTo($this->shardManager), $this->equalTo($clonedPrice))
-            ->willReturnCallback(function ($shardManager, ProductPrice $price) use ($clonedPriceId) {
-                $price->setId($clonedPriceId);
-            });
-        $this->unitOfWork->expects($this->once())
-            ->method('registerManaged')
-            ->with($this->equalTo($savedClonedPrice), ['id' => $clonedPriceId], $changeSet);
+        $changedPrice = $this->getProductPrice(1);
+        $changedPrice->setPriceList($newPriceList);
 
-        $this->repository->expects($this->once())
-            ->method('remove')
-            ->with($this->identicalTo($this->shardManager), $this->identicalTo($price));
-        $this->entityManager->expects($this->once())
-            ->method('detach')
-            ->with($this->identicalTo($price));
+        $removedPrice = $this->getProductPrice(1);
+        $removedPrice->setPriceList($oldPriceList);
 
-        $this->unitOfWork->expects($this->exactly(2))
-            ->method('getOriginalEntityData')
-            ->withConsecutive(
-                [$this->identicalTo($price)],
-                [$this->equalTo($savedClonedPrice)]
-            )
-            ->willReturn($originalEntityData);
-        $this->unitOfWork->expects($this->never())
-            ->method('setOriginalEntityData');
-        $this->unitOfWork->expects($this->exactly(2))
-            ->method('computeChangeSet')
-            ->withConsecutive(
-                [$this->identicalTo($this->classMetadata), $this->identicalTo($price)],
-                [$this->identicalTo($this->classMetadata), $this->equalTo($savedClonedPrice)]
-            );
-        $this->unitOfWork->expects($this->exactly(3))
+        $savedPrice = $this->getProductPrice(2);
+        $savedPrice->setPriceList($newPriceList);
+
+        $changeSet = ['priceList' => [$oldPriceList, $newPriceList]];
+
+        $this->unitOfWork
+            ->expects($this->any())
             ->method('getEntityChangeSet')
-            ->with($this->isInstanceOf(ProductPrice::class))
-            ->willReturn($changeSet);
+            ->willReturnOnConsecutiveCalls($changeSet, [], []);
 
-        $this->eventDispatcher->expects($this->exactly(3))
+        $this->repository
+            ->expects($this->once())
+            ->method('save')
+            ->willReturnCallback(fn ($shardManager, ProductPrice $price) => $price->setId(2));
+
+        // Remove price event
+        $productPriceRemoveEvent = new ProductPriceRemove($removedPrice);
+        $productPriceRemoveEvent->setEntityManager($this->entityManager);
+
+        // Save price event
+        $emptyChangeSet = [];
+        $productPriceSaveAfterEventArgs = new PreUpdateEventArgs($savedPrice, $this->entityManager, $emptyChangeSet);
+        $productPriceSaveAfterEvent = new ProductPriceSaveAfterEvent($productPriceSaveAfterEventArgs);
+
+        // Update prices event
+        $productPricesUpdatedEvent = new ProductPricesUpdated(
+            $this->entityManager,
+            [$removedPrice],
+            [$savedPrice],
+            [],
+            []
+        );
+
+        // Update prices after event
+        $productPricesUpdatedAfterEvent = new ProductPricesUpdatedAfter(
+            $this->entityManager,
+            [$removedPrice],
+            [$savedPrice],
+            [],
+            []
+        );
+
+        $this->eventDispatcher
+            ->expects($this->exactly(4))
             ->method('dispatch')
             ->withConsecutive(
-                [$this->isInstanceOf(ProductPriceRemove::class), ProductPriceRemove::NAME],
-                [$this->isInstanceOf(ProductPriceSaveAfterEvent::class), ProductPriceSaveAfterEvent::NAME],
-                [$this->isInstanceOf(ProductPricesUpdated::class), ProductPricesUpdated::NAME]
+                [$productPriceRemoveEvent, ProductPriceRemove::NAME],
+                [$productPriceSaveAfterEvent, ProductPriceSaveAfterEvent::NAME],
+                [$productPricesUpdatedEvent, ProductPricesUpdated::NAME],
+                [$productPricesUpdatedAfterEvent, ProductPricesUpdatedAfter::NAME]
             );
 
         $this->messageBufferManager->expects($this->once())
             ->method('flushBuffer');
 
-        $this->manager->persist($price);
+        $this->manager->persist($changedPrice);
         $this->manager->flush();
     }
 
@@ -316,41 +324,24 @@ class PriceManagerTest extends \PHPUnit\Framework\TestCase
     {
         $price = $this->getProductPrice('123');
         $price->setPrice(Price::create('1.0000', 'USD'));
-
-        $originalEntityData = ['value' => '1.0000'];
-        $changeSet = [];
-
-        $this->repository->expects($this->never())
+        $this->repository
+            ->expects($this->never())
             ->method('save');
-        $this->unitOfWork->expects($this->never())
-            ->method('registerManaged');
 
-        $this->repository->expects($this->never())
+        $this->repository
+            ->expects($this->never())
             ->method('remove');
-        $this->entityManager->expects($this->never())
-            ->method('detach');
 
-        $this->unitOfWork->expects($this->once())
-            ->method('getOriginalEntityData')
-            ->with($this->identicalTo($price))
-            ->willReturn($originalEntityData);
-        $this->unitOfWork->expects($this->never())
-            ->method('setOriginalEntityData');
-        $this->unitOfWork->expects($this->once())
-            ->method('computeChangeSet')
-            ->with($this->identicalTo($this->classMetadata), $this->identicalTo($price));
-        $this->unitOfWork->expects($this->once())
+        $this->unitOfWork
+            ->expects($this->once())
             ->method('getEntityChangeSet')
-            ->with($this->identicalTo($price))
-            ->willReturn($changeSet);
+            ->willReturn([]);
 
-        $this->eventDispatcher->expects($this->once())
-            ->method('dispatch')
-            ->withConsecutive(
-                [$this->isInstanceOf(ProductPricesUpdated::class), ProductPricesUpdated::NAME]
-            );
-
-        $this->messageBufferManager->expects($this->once())
+        $this->eventDispatcher
+            ->expects($this->never())
+            ->method('dispatch');
+        $this->messageBufferManager
+            ->expects($this->never())
             ->method('flushBuffer');
 
         $this->manager->persist($price);
@@ -375,11 +366,12 @@ class PriceManagerTest extends \PHPUnit\Framework\TestCase
             ->method('detach')
             ->with($this->identicalTo($price));
 
-        $this->eventDispatcher->expects($this->exactly(2))
+        $this->eventDispatcher->expects($this->exactly(3))
             ->method('dispatch')
             ->withConsecutive(
                 [$this->isInstanceOf(ProductPriceRemove::class), ProductPriceRemove::NAME],
-                [$this->isInstanceOf(ProductPricesUpdated::class), ProductPricesUpdated::NAME]
+                [$this->isInstanceOf(ProductPricesUpdated::class), ProductPricesUpdated::NAME],
+                [$this->isInstanceOf(ProductPricesUpdatedAfter::class), ProductPricesUpdatedAfter::NAME]
             );
 
         $this->messageBufferManager->expects($this->once())

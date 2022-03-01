@@ -98,10 +98,15 @@ operations:
             - '@flash_message':
                 message: oro.pricing.pricelist.status.message.enabled
                 type: 'success'
-            - '@call_service_method':
-                service: oro_pricing.price_list_relation_trigger_handler
-                method: handlePriceListStatusChange
-                method_parameters: [$.data]
+            # Rebuilding of the combined price list is required only after the prices are generated.
+            - '@tree':
+                  conditions:
+                      '@no_elements': $.data.priceRules
+                  actions:
+                      - '@call_service_method':
+                            service: oro_pricing.price_list_relation_trigger_handler
+                            method: handlePriceListStatusChange
+                            method_parameters: [$.data]
 
     oro_pricing_price_list_disable:
         label: oro.pricing.pricelist.status.disable

@@ -1,0 +1,224 @@
+<?php
+
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Async;
+
+use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\MessageQueueBundle\Entity\Job;
+use Oro\Bundle\PricingBundle\Async\ScalablePriceListProcessor;
+use Oro\Bundle\PricingBundle\Async\Topic\CombineSingleCombinedPriceListPricesTopic;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolveCombinedPriceByPriceListTopic;
+use Oro\Bundle\PricingBundle\Async\Topic\RunCombinedPriceListPostProcessingStepsTopic;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListBuildActivity;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
+use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListBuildActivityRepository;
+use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToPriceListRepository;
+use Oro\Bundle\PricingBundle\Model\CombinedPriceListActivationStatusHelperInterface;
+use Oro\Component\MessageQueue\Client\MessageProducerInterface;
+use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
+use Oro\Component\MessageQueue\Job\DependentJobContext;
+use Oro\Component\MessageQueue\Job\DependentJobService;
+use Oro\Component\MessageQueue\Job\JobRunner;
+use Oro\Component\MessageQueue\Transport\MessageInterface;
+use Oro\Component\MessageQueue\Transport\SessionInterface;
+use Oro\Component\MessageQueue\Util\JSON;
+use Oro\Component\Testing\Unit\EntityTrait;
+use PHPUnit\Framework\MockObject\MockObject;
+use Psr\Log\LoggerInterface;
+
+class ScalablePriceListProcessorTest extends \PHPUnit\Framework\TestCase
+{
+    use EntityTrait;
+
+    /**
+     * @var ManagerRegistry|MockObject
+     */
+    private $doctrine;
+
+    /**
+     * @var LoggerInterface|MockObject
+     */
+    private $logger;
+
+    /** @var CombinedPriceListActivationStatusHelperInterface|MockObject */
+    private $activationStatusHelper;
+
+    /**
+     * @var JobRunner|MockObject
+     */
+    private $jobRunner;
+
+    /**
+     * @var MessageProducerInterface|MockObject
+     */
+    private $producer;
+
+    /**
+     * @var DependentJobService|MockObject
+     */
+    private $dependentJob;
+
+    /** @var ScalablePriceListProcessor */
+    private $processor;
+
+    protected function setUp(): void
+    {
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
+        $this->activationStatusHelper = $this->createMock(CombinedPriceListActivationStatusHelperInterface::class);
+        $this->jobRunner = $this->createMock(JobRunner::class);
+        $this->producer = $this->createMock(MessageProducerInterface::class);
+        $this->dependentJob = $this->createMock(DependentJobService::class);
+
+        $this->processor = new ScalablePriceListProcessor(
+            $this->doctrine,
+            $this->activationStatusHelper,
+            $this->producer,
+            $this->jobRunner,
+            $this->dependentJob
+        );
+        $this->processor->setLogger($this->logger);
+        $this->processor->setTopic(new ResolveCombinedPriceByPriceListTopic());
+    }
+
+    /**
+     * @param mixed $body
+     *
+     * @return MessageInterface
+     */
+    private function getMessage($body): MessageInterface
+    {
+        $message = $this->createMock(MessageInterface::class);
+        $message->expects($this->once())
+            ->method('getBody')
+            ->willReturn(JSON::encode($body));
+
+        return $message;
+    }
+
+    private function getSession(): SessionInterface
+    {
+        return $this->createMock(SessionInterface::class);
+    }
+
+    public function testGetSubscribedTopics()
+    {
+        $this->assertEquals(
+            [ResolveCombinedPriceByPriceListTopic::getName()],
+            ScalablePriceListProcessor::getSubscribedTopics()
+        );
+    }
+
+    public function testProcessException()
+    {
+        $body = ['product' => [1 => [2]]];
+
+        $exception = new \Exception('Some error');
+        $this->jobRunner->expects($this->once())
+            ->method('runUnique')
+            ->willThrowException($exception);
+
+        $this->logger->expects($this->once())
+            ->method('error')
+            ->with(
+                'Unexpected exception occurred during Price Lists build.',
+                ['exception' => $exception]
+            );
+
+        $this->assertEquals(
+            MessageProcessorInterface::REJECT,
+            $this->processor->process($this->getMessage($body), $this->getSession())
+        );
+    }
+
+    public function testProcess()
+    {
+        $priceListId = 1;
+        $productIds = [2];
+        $body = ['product' => [$priceListId => $productIds]];
+
+        $cpl1 = $this->getEntity(CombinedPriceList::class, ['id' => 10]);
+        $cpl2 = $this->getEntity(CombinedPriceList::class, ['id' => 20]);
+
+        $cpl2plRepo = $this->createMock(CombinedPriceListToPriceListRepository::class);
+        $cplBuildActivityRepo = $this->createMock(CombinedPriceListBuildActivityRepository::class);
+        $this->doctrine->expects($this->any())
+            ->method('getRepository')
+            ->willReturnMap(
+                [
+                    [CombinedPriceListToPriceList::class, null, $cpl2plRepo],
+                    [CombinedPriceListBuildActivity::class, null, $cplBuildActivityRepo]
+                ]
+            );
+        $cpl2plRepo->expects($this->once())
+            ->method('getCombinedPriceListsByActualPriceLists')
+            ->with([$priceListId])
+            ->willReturn([$cpl1, $cpl2]);
+        $this->activationStatusHelper->expects($this->exactly(2))
+            ->method('isReadyForBuild')
+            ->withConsecutive([$cpl1], [$cpl2])
+            ->willReturnOnConsecutiveCalls(true, false);
+
+        $cpl2plRepo->expects($this->once())
+            ->method('getPriceListIdsByCpls')
+            ->with([$cpl1])
+            ->willReturn([$priceListId]);
+
+        $rootJob = $this->createMock(Job::class);
+        $rootJob->expects($this->any())
+            ->method('getId')
+            ->willReturn(10);
+        $job = $this->createMock(Job::class);
+        $job->expects($this->any())
+            ->method('getRootJob')
+            ->willReturn($rootJob);
+        $childJob = $this->createMock(Job::class);
+        $childJob->expects($this->any())
+            ->method('getId')
+            ->willReturn(42);
+        $this->jobRunner->expects($this->once())
+            ->method('runUnique')
+            ->willReturnCallback(
+                function ($ownerId, $name, $closure) use ($job) {
+                    return $closure($this->jobRunner, $job);
+                }
+            );
+        $this->jobRunner->expects($this->once())
+            ->method('createDelayed')
+            ->willReturnCallback(function ($name, $closure) use ($childJob) {
+                return $closure($this->jobRunner, $childJob);
+            });
+
+        $dependentContext = $this->createMock(DependentJobContext::class);
+        $dependentContext->expects($this->once())
+            ->method('addDependentJob')
+            ->with(RunCombinedPriceListPostProcessingStepsTopic::getName(), ['relatedJobId' => 10]);
+        $this->dependentJob->expects($this->once())
+            ->method('createDependentJobContext')
+            ->with($rootJob)
+            ->willReturn($dependentContext);
+        $this->dependentJob->expects($this->once())
+            ->method('saveDependentJob')
+            ->with($dependentContext);
+
+        $this->producer->expects($this->once())
+            ->method('send')
+            ->with(
+                CombineSingleCombinedPriceListPricesTopic::getName(),
+                [
+                    'cpl' => $cpl1->getId(),
+                    'products' => $productIds,
+                    'jobId' => 42
+                ]
+            );
+
+        $cplBuildActivityRepo->expects($this->once())
+            ->method('addBuildActivities')
+            ->with([$cpl1], 10);
+
+        $this->assertEquals(
+            MessageProcessorInterface::ACK,
+            $this->processor->process($this->getMessage($body), $this->getSession())
+        );
+    }
+}

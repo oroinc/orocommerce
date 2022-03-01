@@ -4,7 +4,9 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\Api\RestJsonApi;
 
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
-use Oro\Bundle\PricingBundle\Async\Topics;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolveCombinedPriceByPriceListTopic;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceListAssignedProductsTopic;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceRulesTopic;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardOutputResultModifier;
@@ -301,7 +303,7 @@ class ProductPriceTest extends RestJsonApiTestCase
             )
         );
 
-        $message = self::getSentMessage(Topics::RESOLVE_COMBINED_PRICES);
+        $message = self::getSentMessage(ResolveCombinedPriceByPriceListTopic::getName());
         self::assertIsArray($message);
         self::assertArrayHasKey('product', $message);
         self::assertArrayHasKey($priceListId, $message['product']);
@@ -317,7 +319,7 @@ class ProductPriceTest extends RestJsonApiTestCase
             ['filter' => ['priceList' => '9999']]
         );
 
-        self::assertEmptyMessages(Topics::RESOLVE_COMBINED_PRICES);
+        self::assertEmptyMessages(ResolveCombinedPriceByPriceListTopic::getName());
     }
 
     public function testTryToDeleteListWithoutPriceListFilter()
@@ -481,11 +483,7 @@ class ProductPriceTest extends RestJsonApiTestCase
         $product1Id = $this->getReference('product-1')->getId();
         $product5Id = $this->getReference('product-5')->getId();
         self::assertMessageSent(
-            Topics::RESOLVE_COMBINED_PRICES,
-            ['product' => [$priceList1Id => [$product5Id]]]
-        );
-        self::assertMessageSent(
-            Topics::RESOLVE_PRICE_RULES,
+            ResolvePriceRulesTopic::getName(),
             [
                 'product' => [
                     $priceList1Id => [$product5Id],
@@ -494,7 +492,7 @@ class ProductPriceTest extends RestJsonApiTestCase
             ]
         );
         self::assertMessageSent(
-            Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS,
+            ResolvePriceListAssignedProductsTopic::getName(),
             ['product' => [$priceList2Id => [$product5Id]]]
         );
     }
@@ -517,16 +515,10 @@ class ProductPriceTest extends RestJsonApiTestCase
         $response = $this->patch(['entity' => 'productprices', 'id' => $id], $data);
 
         $this->assertResponseContains($data, $response);
-
-        $priceList1Id = $this->getReference('price_list_1')->getId();
         $priceList2Id = $this->getReference('price_list_2')->getId();
         $product2Id = $this->getReference('product-2')->getId();
         self::assertMessageSent(
-            Topics::RESOLVE_COMBINED_PRICES,
-            ['product' => [$priceList1Id => [$product2Id]]]
-        );
-        self::assertMessageSent(
-            Topics::RESOLVE_PRICE_RULES,
+            ResolvePriceRulesTopic::getName(),
             ['product' => [$priceList2Id => [$product2Id]]]
         );
     }
@@ -597,6 +589,9 @@ class ProductPriceTest extends RestJsonApiTestCase
 
     public function testDelete()
     {
+        $priceList = $this->getReference('price_list_1');
+        $product = $this->getReference('product-1');
+
         $this->delete(
             ['entity' => 'productprices', 'id' => $this->getFirstProductPriceApiId()]
         );
@@ -604,18 +599,17 @@ class ProductPriceTest extends RestJsonApiTestCase
         $productPrice = $this->findProductPriceByUniqueKey(
             5,
             'USD',
-            $this->getReference('price_list_1'),
-            $this->getReference('product-1'),
+            $priceList,
+            $product,
             $this->getReference('product_unit.liter')
         );
 
         self::assertNull($productPrice);
-
         self::assertMessageSent(
-            Topics::RESOLVE_COMBINED_PRICES,
-            [
-                'product' => [
-                    $this->getReference('price_list_1')->getId() => [$this->getReference('product-1')->getId()]
+            ResolvePriceRulesTopic::getName(),
+            ['product' =>
+                [
+                    $this->getReference('price_list_2')->getId() => [$this->getReference('product-1')->getId()]
                 ]
             ]
         );
@@ -713,15 +707,7 @@ class ProductPriceTest extends RestJsonApiTestCase
             : $priceListIdOrReference;
 
         self::assertMessageSent(
-            Topics::RESOLVE_COMBINED_PRICES,
-            [
-                'product' => [
-                    $priceListId => [$productId]
-                ]
-            ]
-        );
-        self::assertMessageSent(
-            Topics::RESOLVE_PRICE_RULES,
+            ResolvePriceRulesTopic::getName(),
             [
                 'product' => [
                     $priceListId => [$productId]

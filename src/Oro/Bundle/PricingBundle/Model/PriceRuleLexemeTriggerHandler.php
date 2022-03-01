@@ -3,7 +3,8 @@
 namespace Oro\Bundle\PricingBundle\Model;
 
 use Doctrine\Persistence\ManagerRegistry;
-use Oro\Bundle\PricingBundle\Async\Topics;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceListAssignedProductsTopic;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceRulesTopic;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
@@ -59,7 +60,7 @@ class PriceRuleLexemeTriggerHandler
             $priceList = $lexeme->getPriceList();
             if (!$lexeme->getPriceRule()) {
                 $this->priceListTriggerHandler->handlePriceListTopic(
-                    Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS,
+                    ResolvePriceListAssignedProductsTopic::getName(),
                     $priceList,
                     $products
                 );
@@ -71,7 +72,7 @@ class PriceRuleLexemeTriggerHandler
             $priceList = $lexeme->getPriceList();
             if ($lexeme->getPriceRule() && !array_key_exists($priceList->getId(), $assignmentsRecalculatePriceLists)) {
                 $this->priceListTriggerHandler->handlePriceListTopic(
-                    Topics::RESOLVE_PRICE_RULES,
+                    ResolvePriceRulesTopic::getName(),
                     $priceList,
                     $products
                 );

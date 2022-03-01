@@ -1,4 +1,5 @@
 <?php
+
 namespace Oro\Bundle\PricingBundle\Provider;
 
 use Doctrine\Persistence\ManagerRegistry;
@@ -9,6 +10,9 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
 use Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback;
+use Oro\Bundle\PricingBundle\Entity\PriceListToCustomer;
+use Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup;
+use Oro\Bundle\PricingBundle\Entity\PriceListToWebsite;
 use Oro\Bundle\PricingBundle\Entity\PriceListWebsiteFallback;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToCustomerGroupRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToCustomerRepository;
@@ -17,6 +21,9 @@ use Oro\Bundle\PricingBundle\SystemConfig\PriceListConfig;
 use Oro\Bundle\PricingBundle\SystemConfig\PriceListConfigConverter;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
+/**
+ * Provides prices lists assigned to one of defined levels: config, website, customer group, customer
+ */
 class PriceListCollectionProvider
 {
     /**
@@ -59,6 +66,7 @@ class PriceListCollectionProvider
                 $activeRelations[] = $priceList;
             }
         }
+
         return $this->getPriceListSequenceMembers($activeRelations);
     }
 
@@ -69,16 +77,16 @@ class PriceListCollectionProvider
     public function getPriceListsByWebsite(Website $website)
     {
         /** @var PriceListToWebsiteRepository $repo */
-        $repo = $this->getRepository('OroPricingBundle:PriceListToWebsite');
+        $repo = $this->getRepository(PriceListToWebsite::class);
         $priceListCollection = $this->getPriceListSequenceMembers(
             $repo->getPriceLists($website)
         );
-        $fallbackEntity = $this->registry
-            ->getRepository('OroPricingBundle:PriceListWebsiteFallback')
+        $fallbackEntity = $this->getRepository(PriceListWebsiteFallback::class)
             ->findOneBy(['website' => $website]);
         if (!$fallbackEntity || $fallbackEntity->getFallback() === PriceListWebsiteFallback::CONFIG) {
             return array_merge($priceListCollection, $this->getPriceListsByConfig());
         }
+
         return $priceListCollection;
     }
 
@@ -90,16 +98,16 @@ class PriceListCollectionProvider
     public function getPriceListsByCustomerGroup(CustomerGroup $customerGroup, Website $website)
     {
         /** @var PriceListToCustomerGroupRepository $repo */
-        $repo = $this->getRepository('OroPricingBundle:PriceListToCustomerGroup');
+        $repo = $this->getRepository(PriceListToCustomerGroup::class);
         $priceListCollection = $this->getPriceListSequenceMembers(
             $repo->getPriceLists($customerGroup, $website)
         );
-        $fallbackEntity = $this->registry
-            ->getRepository('OroPricingBundle:PriceListCustomerGroupFallback')
+        $fallbackEntity = $this->getRepository(PriceListCustomerGroupFallback::class)
             ->findOneBy(['customerGroup' => $customerGroup, 'website' => $website]);
         if (!$fallbackEntity || $fallbackEntity->getFallback() === PriceListCustomerGroupFallback::WEBSITE) {
             return array_merge($priceListCollection, $this->getPriceListsByWebsite($website));
         }
+
         return $priceListCollection;
     }
 
@@ -111,13 +119,12 @@ class PriceListCollectionProvider
     public function getPriceListsByCustomer(Customer $customer, Website $website)
     {
         /** @var PriceListToCustomerRepository $repo */
-        $repo = $this->getRepository('OroPricingBundle:PriceListToCustomer');
+        $repo = $this->getRepository(PriceListToCustomer::class);
         $priceListCollection = $this->getPriceListSequenceMembers(
             $repo->getPriceLists($customer, $website)
         );
 
-        $fallbackEntity = $this->registry
-            ->getRepository('OroPricingBundle:PriceListCustomerFallback')
+        $fallbackEntity = $this->getRepository(PriceListCustomerFallback::class)
             ->findOneBy(['customer' => $customer, 'website' => $website]);
 
         if ($this->isFallbackToCurrentCustomerOnly($fallbackEntity)) {
@@ -140,9 +147,7 @@ class PriceListCollectionProvider
      */
     public function getRepository($className)
     {
-        return $this->registry
-            ->getManagerForClass($className)
-            ->getRepository($className);
+        return $this->registry->getRepository($className);
     }
 
     /**
@@ -188,6 +193,7 @@ class PriceListCollectionProvider
                 $priceListsRelation->isMergeAllowed()
             );
         }
+
         return $priceListCollection;
     }
 

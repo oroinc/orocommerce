@@ -111,7 +111,7 @@ class CombinedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
     public function testGetSubscribedTopics()
     {
         $this->assertEquals(
-            [Topics::REBUILD_COMBINED_PRICE_LISTS],
+            [Topics::REBUILD_COMBINED_PRICE_LISTS . '.deprecated'],
             CombinedPriceListProcessor::getSubscribedTopics()
         );
     }

@@ -171,6 +171,8 @@ services:
         class: Oro\Bundle\ProductBundle\Storage\ProductWebsiteReindexRequestDataStorage
         arguments:
             - '@oro_product.driver.product_website_reindex_request_dbal_driver'
+        calls:
+            - ['setWebsiteProvider', ['@oro_website.website.provider']]
 
     oro_product.validator.product_by_sku:
         class: 'Oro\Bundle\ProductBundle\Validator\Constraints\ProductBySkuValidator'

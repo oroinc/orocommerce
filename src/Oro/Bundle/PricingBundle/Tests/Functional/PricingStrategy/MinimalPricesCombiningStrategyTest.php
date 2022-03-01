@@ -2,30 +2,45 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\PricingStrategy;
 
-use Doctrine\ORM\EntityManager;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\PricingStrategy\MinimalPricesCombiningStrategy;
 
-class MinimalPricesCombiningStrategyTest extends MergePricesCombiningStrategyTest
+/**
+ * @dbIsolationPerTest
+ */
+class MinimalPricesCombiningStrategyTest extends AbstractPricesCombiningStrategyTest
 {
-    /** @var MinimalPricesCombiningStrategy */
-    protected $resolver;
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp(): void
+    protected function getPricingStrategyName(): string
     {
-        parent::setUp();
+        return MinimalPricesCombiningStrategy::NAME;
+    }
 
-        $this->resolver = $this->getContainer()->get('oro_pricing.pricing_strategy.strategy_register')
-            ->get('minimal_prices');
+    public function testEmptyPriceLists()
+    {
+        /** @var CombinedPriceList $combinedPriceList */
+        $combinedPriceList = $this->getReference('1e');
+        $this->pricingStrategy->combinePrices($combinedPriceList);
+
+        $this->assertCombinedPriceListContainsPrices($combinedPriceList, []);
     }
 
     /**
-     * @return array
+     * @dataProvider combinePricesDataProvider
      */
-    public function combinePricesDataProvider()
+    public function testCombinePrices(string $combinedPriceList, array $expectedPrices)
+    {
+        /** @var CombinedPriceList $combinedPriceList */
+        $combinedPriceList = $this->getReference($combinedPriceList);
+        $this->pricingStrategy->combinePrices($combinedPriceList);
+
+        $this->assertTrue($combinedPriceList->isPricesCalculated());
+        $this->assertNotEmpty($this->getCombinedPrices($combinedPriceList));
+        $this->assertCombinedPriceListContainsPrices($combinedPriceList, $expectedPrices);
+    }
+
+    public function combinePricesDataProvider(): array
     {
         return [
             [
@@ -80,9 +95,24 @@ class MinimalPricesCombiningStrategyTest extends MergePricesCombiningStrategyTes
     }
 
     /**
-     * @return array
+     * @dataProvider addedCombinePricesDataProvider
      */
-    public function addedCombinePricesDataProvider()
+    public function testCombinePricesByProductPriceAdded(string $combinedPriceList, array $expectedPrices)
+    {
+        /** @var CombinedPriceList $combinedPriceList */
+        $combinedPriceList = $this->getReference($combinedPriceList);
+        $this->pricingStrategy->combinePrices($combinedPriceList);
+        self::getMessageCollector()->clear();
+
+        $price = $this->addProductPrice('price_list_2', 'product-2', 1, 'product_unit.liter', Price::create(42, 'EUR'));
+        $product = $price->getProduct();
+
+        $this->pricingStrategy->combinePrices($combinedPriceList, [$product->getId()]);
+
+        $this->assertCombinedPriceListContainsPrices($combinedPriceList, $expectedPrices);
+    }
+
+    public function addedCombinePricesDataProvider(): array
     {
         return [
             [
@@ -140,9 +170,27 @@ class MinimalPricesCombiningStrategyTest extends MergePricesCombiningStrategyTes
     }
 
     /**
-     * @return array
+     * @dataProvider updatedCombinePricesDataProvider
      */
-    public function updatedCombinePricesDataProvider()
+    public function testCombinePricesByProductPriceUpdate(string $combinedPriceList, array $expectedPrices)
+    {
+        /** @var CombinedPriceList $combinedPriceList */
+        $combinedPriceList = $this->getReference($combinedPriceList);
+        $this->pricingStrategy->combinePrices($combinedPriceList);
+        self::getMessageCollector()->clear();
+
+        /** @var ProductPrice $price */
+        $price = $this->getPriceByReference('product_price.7');
+        $price->getPrice()->setValue(22);
+        $this->saveProductPrice($price);
+
+        $product = $price->getProduct();
+        $this->pricingStrategy->combinePrices($combinedPriceList, [$product->getId()]);
+
+        $this->assertCombinedPriceListContainsPrices($combinedPriceList, $expectedPrices);
+    }
+
+    public function updatedCombinePricesDataProvider(): array
     {
         return [
             [
@@ -197,9 +245,27 @@ class MinimalPricesCombiningStrategyTest extends MergePricesCombiningStrategyTes
     }
 
     /**
-     * @return array
+     * @dataProvider removedCombinePricesDataProvider
      */
-    public function removedCombinePricesDataProvider()
+    public function testCombinePricesByProductPriceRemoved(string $combinedPriceList, array $expectedPrices)
+    {
+        /** @var CombinedPriceList $combinedPriceList */
+        $combinedPriceList = $this->getReference($combinedPriceList);
+        $this->pricingStrategy->combinePrices($combinedPriceList);
+        self::getMessageCollector()->clear();
+
+        /** @var ProductPrice $price */
+        $price = $this->getPriceByReference('product_price.7');
+        $product = $price->getProduct();
+
+        $this->removeProductPrice($price);
+
+        $this->pricingStrategy->combinePrices($combinedPriceList, [$product->getId()]);
+
+        $this->assertCombinedPriceListContainsPrices($combinedPriceList, $expectedPrices);
+    }
+
+    public function removedCombinePricesDataProvider(): array
     {
         return [
             [
@@ -248,33 +314,5 @@ class MinimalPricesCombiningStrategyTest extends MergePricesCombiningStrategyTes
                 ]
             ]
         ];
-    }
-
-    /**
-     * @return EntityManager
-     */
-    protected function getEntityManager()
-    {
-        return $this->getContainer()->get('doctrine')->getManager();
-    }
-
-    /**
-     * @param array|ProductPrice[] $prices
-     * @return array
-     */
-    protected function formatPrices(array $prices)
-    {
-        $actualPrices = [];
-        foreach ($prices as $price) {
-            $actualPrices[$price->getProduct()->getSku()][] = sprintf(
-                '%d %s/%d %s',
-                $price->getPrice()->getValue(),
-                $price->getPrice()->getCurrency(),
-                $price->getQuantity(),
-                $price->getProductUnitCode()
-            );
-        }
-
-        return $actualPrices;
     }
 }

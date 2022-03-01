@@ -209,17 +209,13 @@ class PriceListToCustomerRepositoryTest extends WebTestCase
                 'customerGroup' => 'customer_group.group1',
                 'website' => 'US',
                 'expectedCustomers' => [
-                    'customer.level_1',
-                    'customer.level_1.3',
+                    'customer.level_1.3'
                 ]
             ],
             'group2' => [
                 'customerGroup' => 'customer_group.group2',
                 'website' => 'US',
-                'expectedCustomers' => [
-                    'customer.level_1.2.1',
-                    'customer.level_1.2.1.1'
-                ]
+                'expectedCustomers' => []
             ],
         ];
     }
@@ -431,5 +427,43 @@ class PriceListToCustomerRepositoryTest extends WebTestCase
         $priceListRelation = $this->getRepository()->getFirstRelation($website, $customer);
         $this->assertInstanceOf(PriceListToCustomer::class, $priceListRelation);
         $this->assertEquals($expectedPriceList->getId(), $priceListRelation->getPriceList()->getId());
+    }
+
+    public function testGetCustomerIteratorWithSelfFallback()
+    {
+        /** @var Website $website */
+        $website = $this->getReference(LoadWebsiteData::WEBSITE2);
+        /** @var CustomerGroup $customerGroup */
+        $customerGroup = $this->getReference('customer_group.group2');
+
+        $customers = $this->getRepository()->getCustomerIteratorWithSelfFallback($customerGroup, $website);
+
+        $customerIds = [];
+        foreach ($customers as $customer) {
+            $customerIds[] = $customer->getId();
+        }
+
+        $expected = [
+            $this->getReference('customer.level_1.2')->getId()
+        ];
+        $this->assertEqualsCanonicalizing($expected, $customerIds);
+    }
+
+    public function testGetAllCustomersWithEmptyGroupAndSelfFallback()
+    {
+        /** @var Website $website */
+        $website = $this->getReference(LoadWebsiteData::WEBSITE2);
+
+        $customers = $this->getRepository()->getAllCustomersWithEmptyGroupAndSelfFallback($website);
+
+        $customerIds = [];
+        foreach ($customers as $customer) {
+            $customerIds[] = $customer->getId();
+        }
+
+        $expected = [
+            $this->getReference('customer.level_1_1')->getId()
+        ];
+        $this->assertEqualsCanonicalizing($expected, $customerIds);
     }
 }

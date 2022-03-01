@@ -6,7 +6,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\ImportExportBundle\Entity\ImportExportResult;
-use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\EntityListener\ImportExportResultListener;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
@@ -58,6 +57,7 @@ class ImportExportResultListenerTest extends \PHPUnit\Framework\TestCase
             $this->priceListTriggerHandler,
             $this->shardManager
         );
+
         $this->listener->setFeatureChecker($this->featureChecker);
         $this->listener->addFeature('oro_price_lists_combined');
     }
@@ -94,10 +94,6 @@ class ImportExportResultListenerTest extends \PHPUnit\Framework\TestCase
             ->method('processLexemes')
             ->with($lexemes);
 
-        $this->priceListTriggerHandler->expects($this->never())
-            ->method('handlePriceListTopic')
-            ->with(Topics::RESOLVE_COMBINED_PRICES, $priceList);
-
         $this->listener->postPersist($importExportResult);
     }
 
@@ -133,10 +129,6 @@ class ImportExportResultListenerTest extends \PHPUnit\Framework\TestCase
             ->method('processLexemes')
             ->with($lexemes);
 
-        $this->priceListTriggerHandler->expects($this->once())
-            ->method('handlePriceListTopic')
-            ->with(Topics::RESOLVE_COMBINED_PRICES, $priceList);
-
         $this->listener->postPersist($importExportResult);
     }
 
@@ -162,9 +154,6 @@ class ImportExportResultListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->lexemeTriggerHandler->expects($this->never())
             ->method('processLexemes');
-
-        $this->priceListTriggerHandler->expects($this->never())
-            ->method('handlePriceListTopic');
 
         $this->listener->postPersist($importExportResult);
     }
@@ -194,9 +183,6 @@ class ImportExportResultListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->lexemeTriggerHandler->expects($this->never())
             ->method('processLexemes');
-
-        $this->priceListTriggerHandler->expects($this->never())
-            ->method('handlePriceListTopic');
 
         $this->listener->postPersist($importExportResult);
     }
@@ -246,13 +232,6 @@ class ImportExportResultListenerTest extends \PHPUnit\Framework\TestCase
             ->withConsecutive(
                 [$lexemes, $products1],
                 [$lexemes, $products2]
-            );
-
-        $this->priceListTriggerHandler->expects($this->exactly(2))
-            ->method('handlePriceListTopic')
-            ->withConsecutive(
-                [Topics::RESOLVE_COMBINED_PRICES, $priceList, $products1],
-                [Topics::RESOLVE_COMBINED_PRICES, $priceList, $products2]
             );
 
         $this->listener->postPersist($importExportResult);

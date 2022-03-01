@@ -67,6 +67,7 @@ class CustomerGroupCombinedPriceListsBuilderTest extends AbstractCombinedPriceLi
             $this->strategyRegister,
             $this->triggerHandler
         );
+        $this->builder->setActiveCombinedPriceListResolver($this->activeCombinedPriceListResolver);
         $this->configureBuilderClasses($this->builder);
     }
 
@@ -536,6 +537,7 @@ class CustomerGroupCombinedPriceListsBuilderTest extends AbstractCombinedPriceLi
             $strategyRegister,
             $this->triggerHandler
         );
+        $builder->setActiveCombinedPriceListResolver($this->activeCombinedPriceListResolver);
         $this->configureBuilderClasses($builder);
 
         $builder->build($website, $customerGroup, $forceTimestamp);

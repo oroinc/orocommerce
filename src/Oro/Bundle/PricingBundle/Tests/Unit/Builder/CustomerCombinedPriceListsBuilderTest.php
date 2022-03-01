@@ -61,6 +61,7 @@ class CustomerCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBu
             $this->strategyRegister,
             $this->triggerHandler
         );
+        $this->builder->setActiveCombinedPriceListResolver($this->activeCombinedPriceListResolver);
         $this->configureBuilderClasses($this->builder);
     }
 
@@ -642,6 +643,7 @@ class CustomerCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBu
             $strategyRegister,
             $this->triggerHandler
         );
+        $builder->setActiveCombinedPriceListResolver($this->activeCombinedPriceListResolver);
         $this->configureBuilderClasses($builder);
 
         $builder->build($website, $customer, $forceTimestamp);

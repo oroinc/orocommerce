@@ -20,13 +20,17 @@ use Oro\Bundle\PricingBundle\Entity\PriceListToWebsite;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToCustomerGroupRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToCustomerRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToWebsiteRepository;
+use Oro\Bundle\PricingBundle\Event\CombinedPriceList\Assignment\GetAssociatedWebsitesEvent;
+use Oro\Bundle\PricingBundle\Event\CombinedPriceList\Assignment\ProcessEvent;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CombinedPriceListsUpdateEvent;
+use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\Model\DTO\CustomerWebsiteDTO;
 use Oro\Bundle\PricingBundle\PricingStrategy\PriceCombiningStrategyInterface;
 use Oro\Bundle\PricingBundle\PricingStrategy\StrategyRegister;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\EntityTrait;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class CombinedPriceListsBuilderFacadeTest extends \PHPUnit\Framework\TestCase
@@ -69,6 +73,11 @@ class CombinedPriceListsBuilderFacadeTest extends \PHPUnit\Framework\TestCase
     /** @var \PHPUnit\Framework\MockObject\MockObject|ConfigManager */
     private $configManager;
 
+    /**
+     * @var CombinedPriceListTriggerHandler|MockObject
+     */
+    private $triggerHandler;
+
     /** @var CombinedPriceListsBuilderFacade */
     private $facade;
 
@@ -83,6 +92,7 @@ class CombinedPriceListsBuilderFacadeTest extends \PHPUnit\Framework\TestCase
         $this->strategyRegister = $this->createMock(StrategyRegister::class);
         $this->garbageCollector = $this->createMock(CombinedPriceListGarbageCollector::class);
         $this->configManager = $this->createMock(ConfigManager::class);
+        $this->triggerHandler = $this->createMock(CombinedPriceListTriggerHandler::class);
 
         $this->facade = new CombinedPriceListsBuilderFacade(
             $this->doctrineHelper,
@@ -95,6 +105,7 @@ class CombinedPriceListsBuilderFacadeTest extends \PHPUnit\Framework\TestCase
             $this->garbageCollector,
             $this->configManager
         );
+        $this->facade->setCombinedPriceListTriggerHandler($this->triggerHandler);
 
         $this->priceListToWebsiteRepo = $this->createMock(PriceListToWebsiteRepository::class);
         $this->priceListToCustomerGroupRepo = $this->createMock(PriceListToCustomerGroupRepository::class);
@@ -132,6 +143,37 @@ class CombinedPriceListsBuilderFacadeTest extends \PHPUnit\Framework\TestCase
 
         $this->facade->rebuild($combinedPriceLists, $products, $startTimestamp);
         $this->facade->dispatchEvents();
+    }
+
+    public function testProcessAssignments()
+    {
+        $combinedPriceList = $this->getEntity(CombinedPriceList::class, ['id' => 11]);
+        $assignTo = [
+            'config' => true,
+            'website' => [
+                'ids' => [1, 2],
+                'id:1' => [
+                    'customer_group' => ['ids' => [3]],
+                    'customer' => ['ids' => [5]]
+                ]
+            ]
+        ];
+        $event = new ProcessEvent($combinedPriceList, $assignTo, true);
+        $this->dispatcher->expects($this->once())
+            ->method('dispatch')
+            ->with($event, $event::NAME);
+
+        $this->facade->processAssignments($combinedPriceList, $assignTo, true);
+    }
+
+    public function testProcessAssignmentsWhenNoAssinmentsPassed()
+    {
+        $combinedPriceList = $this->getEntity(CombinedPriceList::class, ['id' => 11]);
+        $assignTo = [];
+        $this->dispatcher->expects($this->never())
+            ->method('dispatch');
+
+        $this->facade->processAssignments($combinedPriceList, $assignTo, true);
     }
 
     public function testRebuildAll()
@@ -217,17 +259,13 @@ class CombinedPriceListsBuilderFacadeTest extends \PHPUnit\Framework\TestCase
         $customerGroup2 = new CustomerGroup();
         $customerGroup3 = new CustomerGroup();
 
-        $this->customerGroupCombinedPriceListBuilder->expects($this->at(0))
+        $this->customerGroupCombinedPriceListBuilder->expects($this->exactly(3))
             ->method('build')
-            ->with($website, $customerGroup1, $forceTimestamp);
-
-        $this->customerGroupCombinedPriceListBuilder->expects($this->at(1))
-            ->method('build')
-            ->with($website, $customerGroup2, $forceTimestamp);
-
-        $this->customerGroupCombinedPriceListBuilder->expects($this->at(2))
-            ->method('build')
-            ->with($website, $customerGroup3, $forceTimestamp);
+            ->withConsecutive(
+                [$website, $customerGroup1, $forceTimestamp],
+                [$website, $customerGroup2, $forceTimestamp],
+                [$website, $customerGroup3, $forceTimestamp]
+            );
 
         $this->garbageCollector->expects($this->once())
             ->method('cleanCombinedPriceLists');
@@ -244,17 +282,13 @@ class CombinedPriceListsBuilderFacadeTest extends \PHPUnit\Framework\TestCase
         $customer2 = new Customer();
         $customer3 = new Customer();
 
-        $this->customerCombinedPriceListBuilder->expects($this->at(0))
+        $this->customerCombinedPriceListBuilder->expects($this->exactly(3))
             ->method('build')
-            ->with($website, $customer1, $forceTimestamp);
-
-        $this->customerCombinedPriceListBuilder->expects($this->at(1))
-            ->method('build')
-            ->with($website, $customer2, $forceTimestamp);
-
-        $this->customerCombinedPriceListBuilder->expects($this->at(2))
-            ->method('build')
-            ->with($website, $customer3, $forceTimestamp);
+            ->withConsecutive(
+                [$website, $customer1, $forceTimestamp],
+                [$website, $customer2, $forceTimestamp],
+                [$website, $customer3, $forceTimestamp]
+            );
 
         $this->garbageCollector->expects($this->once())
             ->method('cleanCombinedPriceLists');
@@ -333,7 +367,7 @@ class CombinedPriceListsBuilderFacadeTest extends \PHPUnit\Framework\TestCase
             ->with($priceLists)
             ->willReturn([
                 [
-                    'website'       => $websiteId,
+                    'website' => $websiteId,
                     'customerGroup' => $customerGroupId,
                 ]
             ]);
@@ -344,12 +378,7 @@ class CombinedPriceListsBuilderFacadeTest extends \PHPUnit\Framework\TestCase
         $this->priceListToCustomerRepo->expects($this->once())
             ->method('getIteratorByPriceLists')
             ->with($priceLists)
-            ->willReturn([
-                [
-                    'website'  => $websiteId,
-                    'customer' => $customerId
-                ]
-            ]);
+            ->willReturn([['website' => $websiteId, 'customer' => $customerId]]);
         $this->customerCombinedPriceListBuilder->expects($this->once())
             ->method('build')
             ->with($website, $customer, $forceTimestamp);
@@ -389,5 +418,37 @@ class CombinedPriceListsBuilderFacadeTest extends \PHPUnit\Framework\TestCase
             ->method('resetCache');
 
         $this->facade->dispatchEvents();
+    }
+
+    public function testTriggerProductIndexation()
+    {
+        $cpl = $this->getEntity(CombinedPriceList::class, ['id' => 11]);
+        $assignTo = [
+            'config' => true,
+            'website' => [
+                'ids' => [1, 2],
+                'id:1' => [
+                    'customer_group' => ['ids' => [3]],
+                    'customer' => ['ids' => [5]]
+                ]
+            ]
+        ];
+        $productIds = [1, 10];
+        $website = $this->getEntity(Website::class, ['id' => 100]);
+
+        $this->dispatcher->expects($this->once())
+            ->method('dispatch')
+            ->willReturnCallback(function (GetAssociatedWebsitesEvent $event, string $name) use ($website) {
+                $this->assertEquals($event::NAME, $name);
+                $event->addWebsiteAssociation($website);
+
+                return $event;
+            });
+
+        $this->triggerHandler->expects($this->once())
+            ->method('processByProduct')
+            ->with($cpl, $productIds, $website);
+
+        $this->facade->triggerProductIndexation($cpl, $assignTo, $productIds);
     }
 }

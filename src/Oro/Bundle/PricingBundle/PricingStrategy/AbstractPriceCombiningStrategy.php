@@ -12,6 +12,7 @@ use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToPriceListRepos
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
 use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\ORM\InsertFromSelectExecutorAwareInterface;
+use Oro\Bundle\PricingBundle\ORM\QueryExecutorProviderInterface;
 use Oro\Bundle\PricingBundle\ORM\ShardQueryExecutorInterface;
 use Oro\Bundle\PricingBundle\Provider\PriceListSequenceMember;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -20,6 +21,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Abstract implementation of price combining strategy
+ *
+ * Complexity raised because of BC layer. In 5.1 this class was refactored and complexity lowered.
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 abstract class AbstractPriceCombiningStrategy implements
     PriceCombiningStrategyInterface,
@@ -65,6 +69,21 @@ abstract class AbstractPriceCombiningStrategy implements
      */
     protected $output;
 
+    /**
+     * @var QueryExecutorProviderInterface
+     */
+    protected $queryExecutorProvider;
+
+    /**
+     * @var bool
+     */
+    protected $allowFallbackCplUsage = true;
+
+    /**
+     * @var bool
+     */
+    private $isInsertFromSelectExecutorChanged = false;
+
     public function __construct(
         Registry $registry,
         ShardQueryExecutorInterface $insertFromSelectQueryExecutor,
@@ -75,6 +94,22 @@ abstract class AbstractPriceCombiningStrategy implements
         $this->triggerHandler = $triggerHandler;
     }
 
+    public function setQueryExecutorProvider(QueryExecutorProviderInterface $queryExecutorProvider): void
+    {
+        $this->queryExecutorProvider = $queryExecutorProvider;
+    }
+
+    /**
+     * This setter allows reconfiguring the strategy and disabling fallback CPL usage optimization.
+     */
+    public function setAllowFallbackCplUsage(bool $allowFallbackCplUsage): void
+    {
+        $this->allowFallbackCplUsage = $allowFallbackCplUsage;
+    }
+
+    /**
+     * @deprecated Console binding will be removed in 5.1
+     */
     public function setOutput(OutputInterface $output)
     {
         $this->output = $output;
@@ -82,6 +117,7 @@ abstract class AbstractPriceCombiningStrategy implements
 
     /**
      * @return bool
+     * @deprecated Console binding will be removed in 5.1
      */
     protected function isOutputEnabled()
     {
@@ -97,6 +133,22 @@ abstract class AbstractPriceCombiningStrategy implements
             //this CPL was recalculated at this go
             return;
         }
+
+        $this->combinePricesWithoutTriggers($combinedPriceList, $products);
+
+        $this->triggerHandler->processByProduct($combinedPriceList, $products);
+        $this->builtList[$startTimestamp][$combinedPriceList->getId()] = true;
+    }
+
+    /**
+     * @internal
+     * Compatibility version of combinePrices that does not trigger indexation events.
+     * Will replace combinePrices in 5.1
+     */
+    public function combinePricesWithoutTriggers(
+        CombinedPriceList $combinedPriceList,
+        array $products = []
+    ) {
         $priceListsRelations = $this->getCombinedPriceListRelationsRepository()
             ->getPriceListRelations(
                 $combinedPriceList,
@@ -106,7 +158,11 @@ abstract class AbstractPriceCombiningStrategy implements
         $progressBar = null;
         if ($this->isOutputEnabled()) {
             $this->output->writeln(
-                'Processing combined price list id: '.$combinedPriceList->getId().' - '.$combinedPriceList->getName(),
+                sprintf(
+                    'Processing combined price list id: %s - %s',
+                    $combinedPriceList->getId(),
+                    $combinedPriceList->getName()
+                ),
                 OutputInterface::VERBOSITY_VERBOSE
             );
             $progressBar = new ProgressBar($this->output, \count($priceListsRelations));
@@ -114,8 +170,19 @@ abstract class AbstractPriceCombiningStrategy implements
         $combinedPriceRepository = $this->getCombinedProductPriceRepository();
         $combinedPriceRepository->deleteCombinedPrices($combinedPriceList, $products);
 
-        if (count($priceListsRelations) > 0) {
-            $this->processPriceLists($combinedPriceList, $priceListsRelations, $products, $progressBar);
+        // $fallbackCpl var assignment done within `if` statement to eliminate fallback CPL fetch
+        // when $products is not empty.
+        if ($this->isFallbackMergeAllowed($priceListsRelations)
+            && ($fallbackCpl = $this->getFallbackCombinedPriceList($combinedPriceList))
+        ) {
+            $this->combinePricesUsingPrecalculatedFallbackWithProducts(
+                $combinedPriceList,
+                $fallbackCpl,
+                $priceListsRelations,
+                $products
+            );
+        } else {
+            $this->combinePricesForAllPriceLists($combinedPriceList, $priceListsRelations, $products);
         }
 
         if (!$products) {
@@ -126,15 +193,18 @@ abstract class AbstractPriceCombiningStrategy implements
         if ($this->isOutputEnabled()) {
             $progressBar->finish();
             $this->output->writeln(
-                '<info> - Finished processing combined price list id: '.$combinedPriceList->getId().'</info>',
+                '<info> - Finished processing combined price list id: ' . $combinedPriceList->getId() . '</info>',
                 OutputInterface::VERBOSITY_VERBOSE
             );
         }
-
-        $this->triggerHandler->processByProduct($combinedPriceList, $products);
-        $this->builtList[$startTimestamp][$combinedPriceList->getId()] = true;
     }
 
+    /**
+     * @deprecated Usage of this method now deprecated, prefer combinePricesUsingPrecalculatedFallbackWithProducts
+     *
+     * After 5.1 combinePricesUsingPrecalculatedFallbackWithProducts
+     * will be renamed to combinePricesUsingPrecalculatedFallback
+     */
     public function combinePricesUsingPrecalculatedFallback(
         CombinedPriceList $combinedPriceList,
         array $priceLists,
@@ -156,7 +226,11 @@ abstract class AbstractPriceCombiningStrategy implements
         $progressBar = null;
         if ($this->isOutputEnabled()) {
             $this->output->writeln(
-                'Processing combined price list id: '.$combinedPriceList->getId().' - '.$combinedPriceList->getName(),
+                sprintf(
+                    'Processing combined price list id: %d - %s',
+                    $combinedPriceList->getId(),
+                    $combinedPriceList->getName()
+                ),
                 OutputInterface::VERBOSITY_VERBOSE
             );
             $progressBar = new ProgressBar($this->output, \count($priceLists) + 1);
@@ -172,7 +246,11 @@ abstract class AbstractPriceCombiningStrategy implements
             $progressBar->finish();
             $progressBar->clear();
             $this->output->writeln(
-                'Applying combined price: '.$fallbackLevelCpl->getId().' - '.$fallbackLevelCpl->getName(),
+                sprintf(
+                    'Applying combined price: %d - %s',
+                    $fallbackLevelCpl->getId(),
+                    $fallbackLevelCpl->getName()
+                ),
                 OutputInterface::VERBOSITY_VERY_VERBOSE
             );
             $progressBar->display();
@@ -185,7 +263,7 @@ abstract class AbstractPriceCombiningStrategy implements
         if ($this->isOutputEnabled()) {
             $progressBar->finish();
             $this->output->writeln(
-                '<info> - Finished processing combined price list id: '.$combinedPriceList->getId().'</info>',
+                '<info> - Finished processing combined price list id: ' . $combinedPriceList->getId() . '</info>',
                 OutputInterface::VERBOSITY_VERBOSE
             );
         }
@@ -195,23 +273,111 @@ abstract class AbstractPriceCombiningStrategy implements
     }
 
     /**
+     * Combine prices using already calculated fallback combined price list.
+     *
+     *  - remove all prices for CPL
+     *  - combine prices for price lists that are not included into fallback combined price list
+     *  - add prices from combined price list
+     */
+    protected function combinePricesUsingPrecalculatedFallbackWithProducts(
+        CombinedPriceList $combinedPriceList,
+        CombinedPriceList $fallbackCpl,
+        array $priceListsRelations,
+        array $products = []
+    ): void {
+        // CPL cannot be fallback for itself, just skip, no calculations required.
+        if ($combinedPriceList->getId() === $fallbackCpl->getId()) {
+            return;
+        }
+
+        $tailPriceListRelations = $this->getPriceListRelationsNotIncludedInFallback(
+            $priceListsRelations,
+            $this->getCombinedPriceListRelationsRepository()->getPriceListRelations($fallbackCpl, $products)
+        );
+        if (count($tailPriceListRelations) > 0) {
+            $this->processPriceLists($combinedPriceList, $tailPriceListRelations, $products);
+        }
+        $this->processCombinedPriceListRelationWithProducts($combinedPriceList, $fallbackCpl, $products);
+    }
+
+    /**
+     * Check if fallback CPL optimization may be used for a given price lists chain.
+     *
+     * No need to use fallback when there are only 2 PLs in the chain because number of operations with fallback
+     * will also equal to 2.
+     */
+    protected function isFallbackMergeAllowed(array $relationsCollection): bool
+    {
+        return $this->allowFallbackCplUsage && count($relationsCollection) > 2;
+    }
+
+    /**
+     * Combine prices for a given combined price list and optional products.
+     *
+     *  - remove all prices for CPL
+     *  - combine prices for price lists that included into combined price list if any
+     */
+    protected function combinePricesForAllPriceLists(
+        CombinedPriceList $combinedPriceList,
+        array $priceListsRelations,
+        array $products = []
+    ): void {
+        if (count($priceListsRelations) > 0) {
+            $this->processPriceLists($combinedPriceList, $priceListsRelations, $products);
+        }
+    }
+
+    /**
+     * Return the best matching fallback Combined Price List for a give Combined Price List.
+     *
+     * Best matching fallback is a Combined Price List that includes maximum number of price lists in the chain that may
+     * be reused during price lists combination process. This CPL may differ for different strategies because of
+     * the internal merge logic.
+     */
+    abstract protected function getFallbackCombinedPriceList(CombinedPriceList $combinedPriceList): ?CombinedPriceList;
+
+    /**
+     * Returns price list relations that should be merged with fallback CPL.
+     *
+     * Mostly these are relations that are not included into fallback CPL relations.
+     * But list may be changed based on the internal strategy logic
+     */
+    abstract protected function getPriceListRelationsNotIncludedInFallback(
+        array $combinedPriceListRelation,
+        array $fallbackCplRelations
+    ): array;
+
+    public function processCombinedPriceListRelation(
+        CombinedPriceList $combinedPriceList,
+        CombinedPriceList $relatedCombinedPriceList
+    ) {
+        $this->processCombinedPriceListRelationWithProducts($combinedPriceList, $relatedCombinedPriceList);
+    }
+
+    /**
+     * Merge prices from a fallback CPL on top of prices in the combined price list.
+     * Merge may be done for a limited set of products.
+     */
+    abstract protected function processCombinedPriceListRelationWithProducts(
+        CombinedPriceList $combinedPriceList,
+        CombinedPriceList $fallbackCpl,
+        array $products = []
+    ): void;
+
+    /**
+     * Merge prices from a given price lists into a combined price list. Merge may be done for a limited set of products
+     *
      * @param CombinedPriceList $combinedPriceList
-     * @param array|CombinedPriceListToPriceList[] $priceLists
+     * @param array|CombinedPriceListToPriceList[] $priceListRelations
      * @param array|Product[] $products
      * @param ProgressBar|null $progressBar
      */
-    protected function processPriceLists(
+    abstract protected function processPriceLists(
         CombinedPriceList $combinedPriceList,
-        array $priceLists,
+        array $priceListRelations,
         array $products = [],
         ProgressBar $progressBar = null
-    ) {
-        $progress = 0;
-        foreach ($priceLists as $priceListRelation) {
-            $this->moveProgress($progressBar, $progress, $priceListRelation);
-            $this->processRelation($combinedPriceList, $priceListRelation, $products);
-        }
-    }
+    );
 
     /**
      * @return EntityManager
@@ -219,8 +385,7 @@ abstract class AbstractPriceCombiningStrategy implements
     protected function getManager()
     {
         if (!$this->manager) {
-            $this->manager = $this->registry
-                ->getManagerForClass(CombinedPriceList::class);
+            $this->manager = $this->registry->getManagerForClass(CombinedPriceList::class);
         }
 
         return $this->manager;
@@ -245,8 +410,7 @@ abstract class AbstractPriceCombiningStrategy implements
     protected function getCombinedProductPriceRepository()
     {
         if (!$this->combinedProductPriceRepository) {
-            $this->combinedProductPriceRepository = $this->registry
-                ->getRepository(CombinedProductPrice::class);
+            $this->combinedProductPriceRepository = $this->registry->getRepository(CombinedProductPrice::class);
         }
 
         return $this->combinedProductPriceRepository;
@@ -263,9 +427,8 @@ abstract class AbstractPriceCombiningStrategy implements
     }
 
     /**
-     * @param CombinedPriceList $combinedPriceList
-     * @param CombinedPriceListToPriceList $priceListRelation
-     * @param array|Product[] $products
+     * Apply prices from single price list relation into a given combined price list.
+     * This method will be removed from abstract class in 5.1
      */
     abstract protected function processRelation(
         CombinedPriceList $combinedPriceList,
@@ -274,10 +437,11 @@ abstract class AbstractPriceCombiningStrategy implements
     );
 
     /**
-     * {@inheritDoc}
+     * @deprecated Will be removed in 5.1
      */
     public function setInsertSelectExecutor(ShardQueryExecutorInterface $queryExecutor)
     {
+        $this->isInsertFromSelectExecutorChanged = true;
         $this->insertFromSelectQueryExecutor = $queryExecutor;
     }
 
@@ -286,7 +450,12 @@ abstract class AbstractPriceCombiningStrategy implements
      */
     public function getInsertSelectExecutor()
     {
-        return $this->insertFromSelectQueryExecutor;
+        // BC layer. Will be removed in 5.1
+        if ($this->isInsertFromSelectExecutorChanged) {
+            return $this->insertFromSelectQueryExecutor;
+        }
+
+        return $this->queryExecutorProvider->getQueryExecutor();
     }
 
     /**
@@ -312,6 +481,9 @@ abstract class AbstractPriceCombiningStrategy implements
         return $priceListRelations;
     }
 
+    /**
+     * @deprecated Console binding will be removed in 5.1
+     */
     protected function moveProgress(
         ?ProgressBar $progressBar,
         int &$progress,

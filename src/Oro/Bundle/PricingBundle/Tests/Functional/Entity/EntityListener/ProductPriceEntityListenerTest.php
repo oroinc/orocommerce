@@ -3,8 +3,9 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomer;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
-use Oro\Bundle\PricingBundle\Async\Topics;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceRulesTopic;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
@@ -17,6 +18,7 @@ use Oro\Bundle\PricingBundle\Tests\Functional\ProductPriceReference;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsite;
 
 class ProductPriceEntityListenerTest extends WebTestCase
 {
@@ -31,7 +33,9 @@ class ProductPriceEntityListenerTest extends WebTestCase
         $this->initClient();
         $this->loadFixtures([
             LoadProductPrices::class,
-            LoadPriceRuleLexemes::class
+            LoadPriceRuleLexemes::class,
+            LoadCustomer::class,
+            LoadWebsite::class
         ]);
 
         $this->getOptionalListenerManager()->enableListener('oro_pricing.entity_listener.product_price_cpl');
@@ -70,7 +74,7 @@ class ProductPriceEntityListenerTest extends WebTestCase
         $priceManager->flush();
 
         self::assertMessageSent(
-            Topics::RESOLVE_PRICE_RULES,
+            ResolvePriceRulesTopic::getName(),
             [
                 'product' => [
                     $this->getReference(LoadPriceLists::PRICE_LIST_2)->getId() => [
@@ -106,7 +110,7 @@ class ProductPriceEntityListenerTest extends WebTestCase
         $em->flush();
 
         //Ensure that no messages sent to MQ if no price changes
-        self::assertMessagesCount(Topics::RESOLVE_PRICE_RULES, 0);
+        self::assertMessagesCount(ResolvePriceRulesTopic::getName(), 0);
 
         $price->setPrice(Price::create($price->getPrice()->getValue() + 0.1, 'USD'));
         $price->setQuantity(20);
@@ -116,7 +120,7 @@ class ProductPriceEntityListenerTest extends WebTestCase
 
         $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_2);
         self::assertMessageSent(
-            Topics::RESOLVE_PRICE_RULES,
+            ResolvePriceRulesTopic::getName(),
             [
                 'product' => [
                     $priceList->getId() => [
@@ -140,7 +144,7 @@ class ProductPriceEntityListenerTest extends WebTestCase
         $priceManager->flush();
 
         self::assertMessageSent(
-            Topics::RESOLVE_PRICE_RULES,
+            ResolvePriceRulesTopic::getName(),
             [
                 'product' => [
                     $this->getReference(LoadPriceLists::PRICE_LIST_2)->getId() => [
