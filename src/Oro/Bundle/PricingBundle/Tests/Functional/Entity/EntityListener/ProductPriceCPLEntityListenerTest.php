@@ -5,7 +5,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener;
 use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
-use Oro\Bundle\PricingBundle\Async\Topics;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolveCombinedPriceByPriceListTopic;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
@@ -13,6 +13,7 @@ use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToProductRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Manager\PriceManager;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceListWithCustomerRelation;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -34,10 +35,11 @@ class ProductPriceCPLEntityListenerTest extends WebTestCase
     protected function setUp(): void
     {
         $this->initClient();
-        $this->loadFixtures([LoadProductPrices::class]);
+        $this->loadFixtures([LoadProductPrices::class, LoadCombinedPriceListWithCustomerRelation::class]);
 
         $this->getOptionalListenerManager()->enableListener('oro_pricing.entity_listener.product_price_cpl');
         $this->getOptionalListenerManager()->enableListener('oro_pricing.entity_listener.price_list_to_product');
+        $this->getOptionalListenerManager()->enableListener('oro_pricing.entity_listener.product_prices');
 
         $this->enableMessageBuffering();
     }
@@ -89,18 +91,19 @@ class ProductPriceCPLEntityListenerTest extends WebTestCase
         );
         $priceManager->flush();
 
-        $this->assertMessagesEmpty(Topics::RESOLVE_COMBINED_PRICES);
+        $this->assertMessagesEmpty(ResolveCombinedPriceByPriceListTopic::getName());
     }
 
     public function testOnUpdateChangeTriggerCreated()
     {
-        $priceList = $this->getReference('price_list_2');
+        $priceList = $this->getReference(LoadCombinedPriceListWithCustomerRelation::DEFAULT_PRICE_LIST);
+        $product = $this->getReference(LoadProductData::PRODUCT_2);
         $productPrices = $this->getProductPriceRepository()->findByPriceList(
             $this->getShardManager(),
             $priceList,
             [
                 'priceList' => $priceList,
-                'product'   => $this->getReference(LoadProductData::PRODUCT_2)
+                'product'   => $product
             ]
         );
         $productPrice = $productPrices[0];
@@ -109,8 +112,7 @@ class ProductPriceCPLEntityListenerTest extends WebTestCase
         $priceManager = $this->getPriceManager();
         $priceManager->persist($productPrice);
         $priceManager->flush();
-
-        static::assertMessageSent(Topics::RESOLVE_COMBINED_PRICES);
+        static::assertMessageSent(ResolveCombinedPriceByPriceListTopic::getName());
     }
 
     public function testOnUpdateFeatureDisabled()
@@ -138,7 +140,7 @@ class ProductPriceCPLEntityListenerTest extends WebTestCase
 
         $configManager->set('oro_pricing.price_storage', $savedStorage);
 
-        static::assertMessagesEmpty(Topics::RESOLVE_COMBINED_PRICES);
+        self::assertEmpty(self::getSentMessages());
     }
 
     public function testOnUpdateChangeTriggerCreatedWithDisabledListener()
@@ -161,7 +163,7 @@ class ProductPriceCPLEntityListenerTest extends WebTestCase
         $priceManager->persist($productPrice);
         $priceManager->flush();
 
-        $this->assertMessagesEmpty(Topics::RESOLVE_COMBINED_PRICES);
+        self::assertEmpty(self::getSentMessages());
     }
 
     public function testOnUpdatePriceToProductRelation()
@@ -262,7 +264,7 @@ class ProductPriceCPLEntityListenerTest extends WebTestCase
         $priceManager->persist($productPrice1);
         $priceManager->flush();
 
-        $this->assertMessagesEmpty(Topics::RESOLVE_COMBINED_PRICES);
+        $this->assertMessagesEmpty(ResolveCombinedPriceByPriceListTopic::getName());
     }
 
     public function testOnDelete()
@@ -278,7 +280,6 @@ class ProductPriceCPLEntityListenerTest extends WebTestCase
         $this->assertPriceListToProductCount($priceList, $product, 1);
         $this->clearMessageCollector();
         $priceManager->flush();
-        static::assertMessageSent(Topics::RESOLVE_COMBINED_PRICES);
         $this->assertPriceListToProductCount($priceList, $product, 1);
 
         $priceManager->remove($this->getReference(LoadProductPrices::PRODUCT_PRICE_2));
@@ -288,7 +289,6 @@ class ProductPriceCPLEntityListenerTest extends WebTestCase
         $this->assertPriceListToProductCount($priceList, $product, 1);
         $this->clearMessageCollector();
         $priceManager->flush();
-        static::assertMessageSent(Topics::RESOLVE_COMBINED_PRICES);
         $this->assertPriceListToProductCount($priceList, $product, 0);
     }
 
@@ -310,7 +310,7 @@ class ProductPriceCPLEntityListenerTest extends WebTestCase
 
         $priceManager->flush();
 
-        $this->assertMessagesEmpty(Topics::RESOLVE_COMBINED_PRICES);
+        $this->assertMessagesEmpty(ResolveCombinedPriceByPriceListTopic::getName());
     }
 
     /**

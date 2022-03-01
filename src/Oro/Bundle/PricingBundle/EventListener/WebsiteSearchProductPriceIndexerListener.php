@@ -7,6 +7,7 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
 use Oro\Bundle\PricingBundle\Placeholder\CPLIdPlaceholder;
@@ -24,20 +25,9 @@ class WebsiteSearchProductPriceIndexerListener implements FeatureToggleableInter
 
     const MP_ALIAS = 'minimal_price_CPL_ID_CURRENCY_UNIT';
 
-    /**
-     * @var WebsiteContextManager
-     */
-    private $websiteContextManger;
-
-    /**
-     * @var ManagerRegistry
-     */
-    private $doctrine;
-
-    /**
-     * @var ConfigManager
-     */
-    private $configManager;
+    private WebsiteContextManager $websiteContextManger;
+    private ManagerRegistry $doctrine;
+    private ConfigManager $configManager;
 
     public function __construct(
         WebsiteContextManager $websiteContextManager,
@@ -55,7 +45,7 @@ class WebsiteSearchProductPriceIndexerListener implements FeatureToggleableInter
             return;
         }
 
-        $websiteId = $this->websiteContextManger->getWebsiteId($event->getContext());
+        $websiteId = (int)$this->websiteContextManger->getWebsiteId($event->getContext());
         if (!$websiteId) {
             $event->stopPropagation();
 
@@ -63,9 +53,14 @@ class WebsiteSearchProductPriceIndexerListener implements FeatureToggleableInter
         }
 
         /** @var CombinedProductPriceRepository $repository */
-        $repository = $this->doctrine->getManagerForClass(CombinedProductPrice::class)
-            ->getRepository(CombinedProductPrice::class);
-        $configCpl = $this->configManager->get(Configuration::getConfigKeyToPriceList());
+        $repository = $this->doctrine->getRepository(CombinedProductPrice::class);
+        $configCplId = $this->configManager->get(Configuration::getConfigKeyToPriceList());
+        $configCpl = null;
+        if ($configCplId) {
+            $configCpl = $this->doctrine
+                ->getManagerForClass(CombinedPriceList::class)
+                ->getReference(CombinedPriceList::class, (int)$configCplId);
+        }
 
         $prices = $repository->findMinByWebsiteForFilter(
             $websiteId,

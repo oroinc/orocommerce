@@ -6,7 +6,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\ImportExportBundle\Entity\ImportExportResult;
-use Oro\Bundle\PricingBundle\Async\Topics;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolveCombinedPriceByPriceListTopic;
 use Oro\Bundle\PricingBundle\Entity\EntityListener\ImportExportResultListener;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
@@ -96,7 +96,7 @@ class ImportExportResultListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->priceListTriggerHandler->expects($this->never())
             ->method('handlePriceListTopic')
-            ->with(Topics::RESOLVE_COMBINED_PRICES, $priceList);
+            ->with(ResolveCombinedPriceByPriceListTopic::getName(), $priceList);
 
         $this->listener->postPersist($importExportResult);
     }
@@ -135,7 +135,7 @@ class ImportExportResultListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->priceListTriggerHandler->expects($this->once())
             ->method('handlePriceListTopic')
-            ->with(Topics::RESOLVE_COMBINED_PRICES, $priceList);
+            ->with(ResolveCombinedPriceByPriceListTopic::getName(), $priceList);
 
         $this->listener->postPersist($importExportResult);
     }
@@ -251,8 +251,8 @@ class ImportExportResultListenerTest extends \PHPUnit\Framework\TestCase
         $this->priceListTriggerHandler->expects($this->exactly(2))
             ->method('handlePriceListTopic')
             ->withConsecutive(
-                [Topics::RESOLVE_COMBINED_PRICES, $priceList, $products1],
-                [Topics::RESOLVE_COMBINED_PRICES, $priceList, $products2]
+                [ResolveCombinedPriceByPriceListTopic::getName(), $priceList, $products1],
+                [ResolveCombinedPriceByPriceListTopic::getName(), $priceList, $products2]
             );
 
         $this->listener->postPersist($importExportResult);

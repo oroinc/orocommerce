@@ -55,7 +55,7 @@ class PriceListToWebsiteRepositoryTest extends WebTestCase
         $actualPriceListsToWebsite = $this->getRepository()->getPriceLists($website);
 
         $actualPriceLists = array_map(
-            function (PriceListToWebsite $priceListToWebsite) {
+            static function (PriceListToWebsite $priceListToWebsite) {
                 return $priceListToWebsite->getPriceList()->getName();
             },
             $actualPriceListsToWebsite
@@ -126,7 +126,7 @@ class PriceListToWebsiteRepositoryTest extends WebTestCase
     {
         return [
             [
-                'expectedWebsites' => ['Default', 'US', 'CA']
+                'expectedWebsites' => ['US']
             ]
         ];
     }

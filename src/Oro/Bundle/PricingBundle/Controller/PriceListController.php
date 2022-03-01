@@ -11,7 +11,6 @@ use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -30,10 +29,9 @@ class PriceListController extends AbstractController
      *      permission="VIEW"
      * )
      * @param PriceList $priceList
-     * @param Request $request
      * @return array
      */
-    public function viewAction(PriceList $priceList, Request $request)
+    public function viewAction(PriceList $priceList)
     {
         return [
             'entity' => $priceList,

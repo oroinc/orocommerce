@@ -2,11 +2,12 @@
 
 namespace Oro\Bundle\PricingBundle\Model;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Storage\ProductWebsiteReindexRequestDataStorageInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -16,43 +17,32 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class CombinedPriceListTriggerHandler
 {
-    /**
-     * @var Registry
-     */
-    protected $registry;
+    protected ManagerRegistry $registry;
+    protected EventDispatcherInterface $eventDispatcher;
+    protected ProductWebsiteReindexRequestDataStorageInterface $websiteReindexRequestDataStorage;
 
     /**
      * Session is started when value of property > 0. Nested levels of session are supported.
-     *
-     * @var int
      */
-    protected $isSessionStarted = 0;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $eventDispatcher;
-
-    /**
-     * @var array
-     */
-    protected $scheduleCpl = [];
-
-    /**
-     * @var array
-     */
-    protected $productsSchedule = [];
+    protected int $isSessionStarted = 0;
+    protected array $scheduleCpl = [];
+    protected array $productsSchedule = [];
+    protected ?int $collectVersion = null;
 
     /**
      * CombinedPriceListTriggerHandler constructor.
      */
-    public function __construct(Registry $registry, EventDispatcherInterface $eventDispatcher)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        EventDispatcherInterface $eventDispatcher,
+        ProductWebsiteReindexRequestDataStorageInterface $websiteReindexRequestDataStorage
+    ) {
         $this->registry = $registry;
         $this->eventDispatcher = $eventDispatcher;
+        $this->websiteReindexRequestDataStorage = $websiteReindexRequestDataStorage;
     }
 
-    public function process(CombinedPriceList $combinedPriceList, Website $website = null)
+    public function process(CombinedPriceList $combinedPriceList, Website $website = null): void
     {
         $this->scheduleCpl[$this->getWebsiteId($website)][$combinedPriceList->getId()] = $combinedPriceList->getId();
 
@@ -68,7 +58,7 @@ class CombinedPriceListTriggerHandler
         CombinedPriceList $combinedPriceList,
         array $productIds = [],
         Website $website = null
-    ) {
+    ): void {
         if ($productIds) {
             $this->scheduleProductsByWebsite($productIds, $this->getWebsiteId($website));
 
@@ -78,7 +68,11 @@ class CombinedPriceListTriggerHandler
         }
     }
 
-    public function massProcess(array $combinedPriceLists, Website $website = null)
+    /**
+     * Mass process changes in a set of Combined Price Lists.
+     * Called by Combined Price List Garbage Collector.
+     */
+    public function massProcess(array $combinedPriceLists, Website $website = null): void
     {
         $productIds = $this->getProductIdsByCombinedPriceLists($combinedPriceLists);
         $this->scheduleProductsByWebsite($productIds, $this->getWebsiteId($website));
@@ -86,26 +80,31 @@ class CombinedPriceListTriggerHandler
         $this->send();
     }
 
-    public function startCollect()
+    public function startCollect($collectVersion = null): void
     {
+        // If collect already was started with collectVersion do not override it.
+        // Version will be cleared after commit or rollback in top level logic.
+        if (!$this->collectVersion) {
+            $this->collectVersion = $collectVersion;
+        }
         $this->isSessionStarted++;
     }
 
-    public function rollback()
+    public function rollback(): void
     {
         if ($this->checkNestedSession()) {
             $this->clearSchedules();
         }
     }
 
-    public function commit()
+    public function commit(): void
     {
         if ($this->checkNestedSession()) {
             $this->send();
         }
     }
 
-    protected function send()
+    protected function send(): void
     {
         if (!$this->isSendUnlocked()) {
             return;
@@ -118,8 +117,17 @@ class CombinedPriceListTriggerHandler
 
         foreach ($this->productsSchedule as $websiteId => $productIds) {
             $websiteIds = $websiteId ? [$websiteId] : [];
-            $event = new ReindexationRequestEvent([Product::class], $websiteIds, array_values($productIds));
-            $this->eventDispatcher->dispatch($event, ReindexationRequestEvent::EVENT_NAME);
+            $batch = array_values($productIds);
+            if (null === $this->collectVersion) {
+                $event = new ReindexationRequestEvent([Product::class], $websiteIds, $batch);
+                $this->eventDispatcher->dispatch($event, ReindexationRequestEvent::EVENT_NAME);
+            } else {
+                $this->websiteReindexRequestDataStorage->insertMultipleRequests(
+                    $this->collectVersion,
+                    $websiteIds,
+                    $batch
+                );
+            }
         }
 
         $this->clearSchedules();
@@ -129,7 +137,7 @@ class CombinedPriceListTriggerHandler
      * @param array|int[] $websiteIds
      * @param array|int[] $cplIds
      */
-    protected function dispatchByPriceLists(array $websiteIds, array $cplIds)
+    protected function dispatchByPriceLists(array $websiteIds, array $cplIds): void
     {
         // use minimal product prices because of table size
         $productIds = $this->getProductIdsByCombinedPriceLists($cplIds);
@@ -147,7 +155,7 @@ class CombinedPriceListTriggerHandler
      * @param array|int[] $productIds
      * @param int|null $websiteId
      */
-    private function scheduleProductsByWebsite(array $productIds, $websiteId = null)
+    private function scheduleProductsByWebsite(array $productIds, $websiteId = null): void
     {
         foreach ($productIds as $productId) {
             if (!isset($this->productsSchedule[null][$productId])) {
@@ -170,27 +178,22 @@ class CombinedPriceListTriggerHandler
         return $this->isSendUnlocked();
     }
 
-    /**
-     * @param Website|null $website
-     * @return int|null
-     */
-    private function getWebsiteId(Website $website = null)
+    private function getWebsiteId(?Website $website = null): ?int
     {
-        return $website ? $website->getId() : null;
+        return $website?->getId();
     }
 
-    private function clearSchedules()
+    private function clearSchedules(): void
     {
         $this->scheduleCpl = [];
         $this->productsSchedule = [];
+        $this->collectVersion = null;
     }
 
     private function getProductIdsByCombinedPriceLists(array $combinedPriceLists): array
     {
         /** @var CombinedProductPriceRepository $repository */
-        $repository = $this->registry
-            ->getManagerForClass(CombinedProductPrice::class)
-            ->getRepository(CombinedProductPrice::class);
+        $repository = $this->registry->getRepository(CombinedProductPrice::class);
 
         return $repository->getProductIdsByPriceLists($combinedPriceLists);
     }

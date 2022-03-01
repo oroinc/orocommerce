@@ -171,104 +171,6 @@ abstract class BaseProductPriceRepository extends EntityRepository
     }
 
     /**
-     * Return product prices for specified price list and product IDs
-     *
-     * @param ShardManager $shardManager
-     * @param int $priceListId
-     * @param array $productIds
-     * @param bool $getTierPrices
-     * @param string|null $currency
-     * @param string|null $productUnitCode
-     * @param array $orderBy
-     * @return ProductPrice[]
-     */
-    public function findByPriceListIdAndProductIds(
-        ShardManager $shardManager,
-        $priceListId,
-        array $productIds,
-        $getTierPrices = true,
-        $currency = null,
-        $productUnitCode = null,
-        array $orderBy = ['unit' => 'ASC', 'quantity' => 'ASC']
-    ) {
-        if (!$productIds) {
-            return [];
-        }
-
-        $qb = $this->getFindByPriceListIdAndProductIdsQueryBuilder(
-            $priceListId,
-            $productIds,
-            $getTierPrices,
-            $currency,
-            $productUnitCode,
-            $orderBy
-        );
-
-        $query = $qb->getQuery();
-        $query->useQueryCache(false);
-        $query->setHint(PriceShardOutputResultModifier::ORO_PRICING_SHARD_MANAGER, $shardManager);
-
-        return $query->getResult();
-    }
-
-    /**
-     * Return product prices for specified price list and product IDs
-     *
-     * @param int $priceListId
-     * @param array $productIds
-     * @param bool $getTierPrices
-     * @param string|null $currency
-     * @param string|null $productUnitCode
-     * @param array $orderBy
-     *
-     * @return QueryBuilder
-     */
-    public function getFindByPriceListIdAndProductIdsQueryBuilder(
-        $priceListId,
-        array $productIds,
-        $getTierPrices = true,
-        $currency = null,
-        $productUnitCode = null,
-        array $orderBy = ['unit' => 'ASC', 'quantity' => 'ASC']
-    ) {
-        $qb = $this->createQueryBuilder('price');
-        $qb
-            ->where(
-                $qb->expr()->eq('IDENTITY(price.priceList)', ':priceListId'),
-                $qb->expr()->in('IDENTITY(price.product)', ':productIds')
-            )
-            ->setParameter('priceListId', $priceListId)
-            ->setParameter('productIds', $productIds);
-
-        if ($currency) {
-            $qb
-                ->andWhere($qb->expr()->eq('price.currency', ':currency'))
-                ->setParameter('currency', $currency);
-        }
-
-        if (!$getTierPrices) {
-            $qb
-                ->andWhere($qb->expr()->eq('price.quantity', ':priceQuantity'))
-                ->setParameter('priceQuantity', 1);
-        }
-
-        if ($productUnitCode) {
-            $qb
-                ->andWhere($qb->expr()->eq('IDENTITY(price.unit)', ':productUnitCode'))
-                ->setParameter('productUnitCode', $productUnitCode);
-        }
-
-        foreach ($orderBy as $fieldName => $orderDirection) {
-            $qb->addOrderBy(
-                QueryBuilderUtil::getField('price', $fieldName),
-                QueryBuilderUtil::getSortOrder($orderDirection)
-            );
-        }
-
-        return $qb;
-    }
-
-    /**
      * @param ShardManager $shardManager
      * @param int $priceListId
      * @param array $productIds
@@ -390,7 +292,7 @@ abstract class BaseProductPriceRepository extends EntityRepository
 
         $result = $qb->getQuery()->getScalarResult();
 
-        return array_map(fn ($value) => (int) current($value), $result);
+        return array_map(fn ($value) => (int)current($value), $result);
     }
 
     /**
@@ -416,11 +318,11 @@ abstract class BaseProductPriceRepository extends EntityRepository
         foreach ($criteria as $field => $criterion) {
             QueryBuilderUtil::checkIdentifier($field);
             if ($criterion === null) {
-                $qb->andWhere($qb->expr()->isNull('prices.'.$field));
+                $qb->andWhere($qb->expr()->isNull('prices.' . $field));
             } elseif (is_array($criterion)) {
-                $qb->andWhere($qb->expr()->in('prices.'.$field, $criterion));
+                $qb->andWhere($qb->expr()->in('prices.' . $field, $criterion));
             } else {
-                $qb->andWhere($qb->expr()->eq('prices.'.$field, ':'.$field))
+                $qb->andWhere($qb->expr()->eq('prices.' . $field, ':' . $field))
                     ->setParameter($field, $criterion);
             }
         }

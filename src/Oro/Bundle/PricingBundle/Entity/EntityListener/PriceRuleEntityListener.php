@@ -4,7 +4,7 @@ namespace Oro\Bundle\PricingBundle\Entity\EntityListener;
 
 use Doctrine\Common\Cache\Cache;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
-use Oro\Bundle\PricingBundle\Async\Topics;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceRulesTopic;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
 
@@ -35,7 +35,7 @@ class PriceRuleEntityListener
         $priceList = $priceRule->getPriceList();
         $priceList->setActual(false);
 
-        $this->priceListTriggerHandler->handlePriceListTopic(Topics::RESOLVE_PRICE_RULES, $priceList);
+        $this->priceListTriggerHandler->handlePriceListTopic(ResolvePriceRulesTopic::getName(), $priceList);
     }
 
     /**
@@ -51,7 +51,7 @@ class PriceRuleEntityListener
         $this->clearCache($priceRule);
         $priceList = $priceRule->getPriceList();
 
-        $this->priceListTriggerHandler->handlePriceListTopic(Topics::RESOLVE_PRICE_RULES, $priceList);
+        $this->priceListTriggerHandler->handlePriceListTopic(ResolvePriceRulesTopic::getName(), $priceList);
     }
 
     /**
@@ -63,7 +63,7 @@ class PriceRuleEntityListener
         $this->clearCache($priceRule);
         $priceList = $priceRule->getPriceList();
 
-        $this->priceListTriggerHandler->handlePriceListTopic(Topics::RESOLVE_PRICE_RULES, $priceList);
+        $this->priceListTriggerHandler->handlePriceListTopic(ResolvePriceRulesTopic::getName(), $priceList);
     }
 
     protected function clearCache(PriceRule $priceRule)

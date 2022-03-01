@@ -79,6 +79,6 @@ class LoadPriceListSchedules extends AbstractFixture implements DependentFixture
      */
     public function getDependencies()
     {
-        return [LoadPriceLists::class];
+        return [LoadPriceLists::class, LoadCombinedPriceListWithCustomerRelation::class];
     }
 }

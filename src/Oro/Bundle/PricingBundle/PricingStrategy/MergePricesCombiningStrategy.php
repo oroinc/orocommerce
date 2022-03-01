@@ -6,10 +6,8 @@ use Doctrine\DBAL\Driver\Exception;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
-use Oro\Bundle\PricingBundle\ORM\ShardQueryExecutorInterface;
 use Oro\Bundle\PricingBundle\ORM\ShardQueryExecutorNativeSqlInterface;
 use Oro\Bundle\PricingBundle\ORM\TempTableManipulatorInterface;
-use Symfony\Component\Console\Helper\ProgressBar;
 
 /**
  * Implements combining price strategy base on PriceList priority and additional flag "mergeAllowed"
@@ -18,69 +16,86 @@ class MergePricesCombiningStrategy extends AbstractPriceCombiningStrategy
 {
     const NAME = 'merge_by_priority';
 
-    /**
-     * @var TempTableManipulatorInterface
-     */
-    private $tempTableManipulator;
+    private TempTableManipulatorInterface $tempTableManipulator;
 
-    public function setTempTableManipulator(TempTableManipulatorInterface $tempTableManipulator)
+    public function setTempTableManipulator(TempTableManipulatorInterface $tempTableManipulator): void
     {
         $this->tempTableManipulator = $tempTableManipulator;
     }
 
     /**
      * {@inheritdoc}
+     *
+     * If there is at least one price list with merge disallowed in the fallback combined price lists chain
+     * it is impossible to use this fallback combined price list because prices with `merge = false` when found
+     * at the first time are moved to combined price lists and block further product`s prices processing, but when
+     * `merge = false` price processed in the middle of the chain it is simply ignored. Cutting the chain with
+     * `merge = false` price list will lead to a situation when prices with `merge = true` that follows `merge = false`
+     * may be skipped compared to sequential price list processing.
      */
-    public function setInsertSelectExecutor(ShardQueryExecutorInterface $queryExecutor)
+    protected function isFallbackMergeAllowed(array $relationsCollection): bool
     {
-        if ($queryExecutor instanceof ShardQueryExecutorNativeSqlInterface) {
-            $this->tempTableManipulator->setInsertSelectExecutor($queryExecutor);
-        }
-
-        parent::setInsertSelectExecutor($queryExecutor);
+        return parent::isFallbackMergeAllowed($relationsCollection)
+            && !$this->containMergeDisallowed($relationsCollection);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    protected function getFallbackCombinedPriceList(CombinedPriceList $combinedPriceList): ?CombinedPriceList
+    {
+        return $this->getCombinedPriceListRelationsRepository()->findFallbackCplUsingMergeFlag($combinedPriceList);
+    }
+
+    protected function getPriceListRelationsNotIncludedInFallback(
+        array $combinedPriceListRelation,
+        array $fallbackCplRelations
+    ): array {
+        // return only a part of price lists chain that is not included in the fallback cpl price lists chain
+        // Example CPL: 1t_3f_4t_6f, fallback CPL: 1t_3f. Return chain will consist of 4t_6f
+        return array_splice($combinedPriceListRelation, 0, -\count($fallbackCplRelations));
+    }
+
     protected function processPriceLists(
         CombinedPriceList $combinedPriceList,
-        array $priceLists,
-        array $products = [],
-        ProgressBar $progressBar = null
-    ) {
-        if (count($priceLists) > 0) {
-            $progress = 0;
-            $this->moveFirstPriceListPrices($combinedPriceList, $priceLists, $products, $progress, $progressBar);
+        array $priceListRelations,
+        array $products = []
+    ): void {
+        if (count($priceListRelations) > 0) {
+            $this->moveFirstPriceListPrices($combinedPriceList, $priceListRelations, $products);
 
             if ($this->canUseTempTable($combinedPriceList)) {
                 $this->processPriceListsWithTempTable(
                     $combinedPriceList,
-                    $priceLists,
-                    $products,
-                    $progress,
-                    $progressBar
+                    $priceListRelations,
+                    $products
                 );
             } else {
-                foreach ($priceLists as $priceListRelation) {
-                    $this->moveProgress($progressBar, $progress, $priceListRelation);
+                foreach ($priceListRelations as $priceListRelation) {
                     $this->processRelation($combinedPriceList, $priceListRelation, $products);
                 }
             }
         }
     }
 
+    protected function processCombinedPriceListRelation(
+        CombinedPriceList $combinedPriceList,
+        CombinedPriceList $fallbackCpl,
+        array $products = []
+    ): void {
+        $this->getCombinedProductPriceRepository()->insertPricesByCombinedPriceList(
+            $this->getInsertSelectExecutor(),
+            $combinedPriceList,
+            $fallbackCpl,
+            $products
+        );
+    }
+
     private function moveFirstPriceListPrices(
         CombinedPriceList $combinedPriceList,
-        array &$priceLists,
-        array $products,
-        int $progress,
-        ?ProgressBar $progressBar
+        array &$priceListRelations,
+        array $products
     ): void {
-        $firstRelation = array_shift($priceLists);
-        $this->moveProgress($progressBar, $progress, $firstRelation);
+        $firstRelation = array_shift($priceListRelations);
         $this->getCombinedProductPriceRepository()->copyPricesByPriceList(
-            $this->insertFromSelectQueryExecutor,
+            $this->getInsertSelectExecutor(),
             $combinedPriceList,
             $firstRelation->getPriceList(),
             $firstRelation->isMergeAllowed(),
@@ -94,7 +109,7 @@ class MergePricesCombiningStrategy extends AbstractPriceCombiningStrategy
      */
     private function canUseTempTable(CombinedPriceList $combinedPriceList): bool
     {
-        if (!$this->insertFromSelectQueryExecutor instanceof ShardQueryExecutorNativeSqlInterface) {
+        if (!$this->getInsertSelectExecutor() instanceof ShardQueryExecutorNativeSqlInterface) {
             return false;
         }
 
@@ -113,13 +128,10 @@ class MergePricesCombiningStrategy extends AbstractPriceCombiningStrategy
 
     private function processPriceListsWithTempTable(
         CombinedPriceList $combinedPriceList,
-        array $priceLists,
-        array $products,
-        int &$progress,
-        ?ProgressBar $progressBar
+        array $priceListRelations,
+        array $products
     ): void {
-        foreach ($priceLists as $priceListRelation) {
-            $this->moveProgress($progressBar, $progress, $priceListRelation);
+        foreach ($priceListRelations as $priceListRelation) {
             $this->processRelationWithTempTable($combinedPriceList, $priceListRelation, $products);
         }
 
@@ -147,9 +159,9 @@ class MergePricesCombiningStrategy extends AbstractPriceCombiningStrategy
         CombinedPriceList $combinedPriceList,
         CombinedPriceListToPriceList $priceListRelation,
         array $products = []
-    ) {
+    ): void {
         $this->getCombinedProductPriceRepository()->insertPricesByPriceList(
-            $this->insertFromSelectQueryExecutor,
+            $this->getInsertSelectExecutor(),
             $combinedPriceList,
             $priceListRelation->getPriceList(),
             $priceListRelation->isMergeAllowed(),
@@ -158,16 +170,17 @@ class MergePricesCombiningStrategy extends AbstractPriceCombiningStrategy
     }
 
     /**
-     * {@inheritdoc}
+     * @param array|CombinedPriceListToPriceList[] $collection
+     * @return bool
      */
-    public function processCombinedPriceListRelation(
-        CombinedPriceList $combinedPriceList,
-        CombinedPriceList $relatedCombinedPriceList
-    ) {
-        $this->getCombinedProductPriceRepository()->insertPricesByCombinedPriceList(
-            $this->insertFromSelectQueryExecutor,
-            $combinedPriceList,
-            $relatedCombinedPriceList
-        );
+    private function containMergeDisallowed(array $collection): bool
+    {
+        foreach ($collection as $item) {
+            if (!$item->isMergeAllowed()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

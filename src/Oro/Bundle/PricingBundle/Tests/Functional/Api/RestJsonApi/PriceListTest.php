@@ -4,7 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\Api\RestJsonApi;
 
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
-use Oro\Bundle\PricingBundle\Async\Topics;
+use Oro\Bundle\PricingBundle\Async\Topic\RebuildCombinedPriceListsTopic;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations;
@@ -207,7 +207,7 @@ class PriceListTest extends RestJsonApiTestCase
         self::assertNotNull($lexeme);
 
         self::assertMessagesSent(
-            Topics::REBUILD_COMBINED_PRICE_LISTS,
+            RebuildCombinedPriceListsTopic::getName(),
             [
                 [
                     'website' => $this->getReference('US')->getId()
@@ -267,7 +267,7 @@ class PriceListTest extends RestJsonApiTestCase
         self::assertNotNull($lexeme);
 
         self::assertMessagesSent(
-            Topics::REBUILD_COMBINED_PRICE_LISTS,
+            RebuildCombinedPriceListsTopic::getName(),
             [
                 [
                     'website' => $this->getReference('US')->getId()

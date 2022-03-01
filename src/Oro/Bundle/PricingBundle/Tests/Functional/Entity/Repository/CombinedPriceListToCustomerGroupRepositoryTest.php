@@ -7,7 +7,11 @@ use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup;
+use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
+/**
+ * @dbIsolationPerTest
+ */
 class CombinedPriceListToCustomerGroupRepositoryTest extends AbstractCombinedPriceListRelationRepositoryTest
 {
     public function testDeleteInvalidRelations()
@@ -19,7 +23,7 @@ class CombinedPriceListToCustomerGroupRepositoryTest extends AbstractCombinedPri
         $registry = $this->getContainer()
             ->get('doctrine');
         $em = $registry->getManager();
-        $repo = $registry->getRepository('OroPricingBundle:CombinedPriceListToCustomerGroup');
+        $repo = $registry->getRepository(CombinedPriceListToCustomerGroup::class);
         $combinedPriceListsToCustomerGroup = $repo->findAll();
         $this->assertCount(1, $combinedPriceListsToCustomerGroup);
         //Add Base Relation
@@ -58,5 +62,18 @@ class CombinedPriceListToCustomerGroupRepositoryTest extends AbstractCombinedPri
         $repo->deleteInvalidRelations();
 
         $this->assertCount(0, $repo->findAll());
+    }
+
+    public function testGetWebsitesByCombinedPriceList()
+    {
+        /** @var  CombinedPriceList $combinedPriceList */
+        $combinedPriceList = $this->getReference('1t_2t_3t');
+
+        $registry = $this->getContainer()->get('doctrine');
+        $repo = $registry->getRepository(CombinedPriceListToCustomerGroup::class);
+
+        $websites = $repo->getWebsitesByCombinedPriceList($combinedPriceList);
+
+        $this->assertEquals([$this->getReference(LoadWebsiteData::WEBSITE1)], $websites);
     }
 }

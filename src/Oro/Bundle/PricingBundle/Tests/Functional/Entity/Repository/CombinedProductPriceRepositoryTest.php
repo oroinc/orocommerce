@@ -254,72 +254,6 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
     }
 
     /**
-     * @depends      testInsertPricesByPriceList
-     * @dataProvider getPricesForProductsByPriceListDataProvider
-     * @param string $priceList
-     * @param array $products
-     * @param string|null $currency
-     */
-    public function testGetPricesForProductsByPriceList($priceList, array $products, $currency = null)
-    {
-        /**
-         * @var CombinedPriceList $priceList
-         */
-        $priceList = $this->getReference($priceList);
-        $productIds = array_map(
-            function ($product) {
-                return $this->getReference($product)->getId();
-            },
-            $products
-        );
-
-        $expected = [];
-        foreach ($products as $product) {
-            $searchConditions = [
-                'priceList' => $priceList,
-                'product' => $this->getReference($product),
-            ];
-            if ($currency) {
-                $searchConditions['currency'] = $currency;
-            }
-            $expected = array_merge(
-                $expected,
-                $this->getCombinedProductPriceRepository()->findBy($searchConditions)
-            );
-        }
-
-        $result = $this->getCombinedProductPriceRepository()
-            ->getPricesForProductsByPriceList($priceList, $productIds, $currency);
-
-        $this->assertCount(count($expected), $result);
-        foreach ($expected as $price) {
-            $this->assertContains($price, $result);
-        }
-    }
-
-    /**
-     * @return array
-     */
-    public function getPricesForProductsByPriceListDataProvider()
-    {
-        return [
-            [
-                'combinedPriceList' => '1t_2t_3t',
-                'products' => ['product-1'],
-                'currency' => 'USD',
-            ],
-            [
-                'combinedPriceList' => '1t_2t_3t',
-                'products' => ['product-2'],
-            ],
-            [
-                'combinedPriceList' => '1t_2t_3t',
-                'products' => ['product-1', 'product-2'],
-            ],
-        ];
-    }
-
-    /**
      * @return CombinedProductPriceRepository
      */
     protected function getCombinedProductPriceRepository()
@@ -345,7 +279,7 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
             ->findMinByWebsiteForFilter(
                 $website->getId(),
                 [$product1],
-                $this->getReference('1f')->getId()
+                $this->getReference('1f')
             );
         $expected = [
             [

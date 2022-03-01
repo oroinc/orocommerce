@@ -5,10 +5,14 @@ namespace Oro\Bundle\PricingBundle\Migrations\Data\ORM;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
+use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilderFacade;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
+use Oro\Bundle\PricingBundle\Provider\CombinedPriceListAssociationsProvider;
+use Oro\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
 use Oro\Bundle\PricingBundle\SystemConfig\PriceListConfig;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
  * Sets default price list into configuration
@@ -16,18 +20,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class SetDefaultPriceList extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
-    }
+    use ContainerAwareTrait;
 
     /**
      * {@inheritDoc}
@@ -35,7 +28,7 @@ class SetDefaultPriceList extends AbstractFixture implements ContainerAwareInter
     public function getDependencies()
     {
         return [
-            'Oro\Bundle\PricingBundle\Migrations\Data\ORM\LoadPriceListData',
+            LoadPriceListData::class,
         ];
     }
 
@@ -44,10 +37,8 @@ class SetDefaultPriceList extends AbstractFixture implements ContainerAwareInter
      */
     public function load(ObjectManager $manager)
     {
-        $class = 'OroPricingBundle:PriceList';
         /** @var PriceListRepository $repository */
-        $repository = $this->container->get('doctrine')->getManagerForClass($class)
-            ->getRepository($class);
+        $repository = $this->container->get('doctrine')->getRepository(PriceList::class);
         $defaultPriceList = $repository->getDefault();
 
         $configManager = $this->container->get('oro_config.global');
@@ -56,6 +47,28 @@ class SetDefaultPriceList extends AbstractFixture implements ContainerAwareInter
             [new PriceListConfig($defaultPriceList, 100, true)]
         );
         $configManager->flush();
-        $this->container->get('oro_pricing.builder.combined_price_list_builder_facade')->rebuildAll();
+
+        $this->rebuildCombinedPrices();
+    }
+
+    private function rebuildCombinedPrices(): void
+    {
+        /** @var CombinedPriceListAssociationsProvider $associationsProvider */
+        $associationsProvider = $this->container->get('oro_pricing.combined_price_list_associations_provider');
+        /** @var CombinedPriceListProvider $cplProvider */
+        $cplProvider = $this->container->get('oro_pricing.provider.combined_price_list');
+        /** @var CombinedPriceListsBuilderFacade $cplBuilderFacade */
+        $cplBuilderFacade = $this->container->get('oro_pricing.builder.combined_price_list_builder_facade');
+
+        $associations = $associationsProvider->getCombinedPriceListsWithAssociations();
+        foreach ($associations as $association) {
+            $cpl = $cplProvider->getCombinedPriceListByCollectionInformation($association['collection']);
+            $cplBuilderFacade->rebuild([$cpl]);
+            $assignTo = $association['assign_to'] ?? [];
+            if (!empty($assignTo)) {
+                $cplBuilderFacade->processAssignments($cpl, $assignTo, true);
+            }
+            $cplBuilderFacade->triggerProductIndexation($cpl, $assignTo);
+        }
     }
 }

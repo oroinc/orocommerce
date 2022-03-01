@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Api\RestJsonApi;
 
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiUpdateListTestCase;
-use Oro\Bundle\PricingBundle\Async\Topics;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceRulesTopic;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceRules;
 
@@ -81,7 +81,7 @@ class PriceRuleUpdateListTest extends RestJsonApiUpdateListTestCase
         $this->processUpdateList(PriceRule::class, $data);
 
         self::assertMessagesSent(
-            Topics::RESOLVE_PRICE_RULES,
+            ResolvePriceRulesTopic::getName(),
             [
                 [
                     'product' => [
@@ -132,7 +132,7 @@ class PriceRuleUpdateListTest extends RestJsonApiUpdateListTestCase
         $this->processUpdateList(PriceRule::class, $data);
 
         self::assertMessagesSent(
-            Topics::RESOLVE_PRICE_RULES,
+            ResolvePriceRulesTopic::getName(),
             [
                 [
                     'product' => [
@@ -200,7 +200,7 @@ class PriceRuleUpdateListTest extends RestJsonApiUpdateListTestCase
         $this->processUpdateList(PriceRule::class, $data);
 
         self::assertMessagesSent(
-            Topics::RESOLVE_PRICE_RULES,
+            ResolvePriceRulesTopic::getName(),
             [
                 [
                     'product' => [

@@ -6,6 +6,7 @@ use Doctrine\DBAL\Exception\RetryableException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\NotificationBundle\NotificationAlert\NotificationAlertManager;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceRulesTopic;
 use Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
@@ -14,29 +15,28 @@ use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Component\MessageQueue\Util\JSON;
-use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 
 /**
  * Resolves price lists rules and updates actuality of price lists.
  */
-class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberInterface
+class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberInterface, LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     private ManagerRegistry $doctrine;
-    private LoggerInterface $logger;
     private ProductPriceBuilder $priceBuilder;
     private NotificationAlertManager $notificationAlertManager;
     private PriceListTriggerHandler $triggerHandler;
 
     public function __construct(
         ManagerRegistry $doctrine,
-        LoggerInterface $logger,
         ProductPriceBuilder $priceBuilder,
         NotificationAlertManager $notificationAlertManager,
         PriceListTriggerHandler $triggerHandler
     ) {
         $this->doctrine = $doctrine;
-        $this->logger = $logger;
         $this->priceBuilder = $priceBuilder;
         $this->notificationAlertManager = $notificationAlertManager;
         $this->triggerHandler = $triggerHandler;
@@ -47,7 +47,7 @@ class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberIn
      */
     public static function getSubscribedTopics()
     {
-        return [Topics::RESOLVE_PRICE_RULES];
+        return [ResolvePriceRulesTopic::getName()];
     }
 
     /**
@@ -55,12 +55,7 @@ class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberIn
      */
     public function process(MessageInterface $message, SessionInterface $session)
     {
-        $body = JSON::decode($message->getBody());
-        if (!isset($body['product']) || !\is_array($body['product'])) {
-            $this->logger->critical('Got invalid message.');
-
-            return self::REJECT;
-        }
+        $body = $message->getBody();
         $priceListsCount = count($body['product']);
 
         /** @var EntityManagerInterface $em */
@@ -69,7 +64,7 @@ class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberIn
             /** @var PriceList|null $priceList */
             $priceList = $em->find(PriceList::class, $priceListId);
             if (null === $priceList) {
-                $this->logger->warning(sprintf(
+                $this->logger?->warning(sprintf(
                     'PriceList entity with identifier %s not found.',
                     $priceListId
                 ));
@@ -88,7 +83,7 @@ class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberIn
                 $em->commit();
             } catch (\Exception $e) {
                 $em->rollback();
-                $this->logger->error(
+                $this->logger?->error(
                     'Unexpected exception occurred during Price Rule build.',
                     ['exception' => $e]
                 );
@@ -102,7 +97,7 @@ class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberIn
                     }
 
                     $this->triggerHandler->handlePriceListTopic(
-                        Topics::RESOLVE_PRICE_RULES,
+                        ResolvePriceRulesTopic::getName(),
                         $priceList,
                         $productIds
                     );
