@@ -1079,17 +1079,15 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
     {
         $productPriceQb = $this->getEntityManager()
             ->createQueryBuilder();
-        $productPriceQb->select('MIN(IDENTITY(ptp.product))')
+        $productPriceQb
+            ->select(
+                'MIN(IDENTITY(ptp.product))',
+                'MAX(IDENTITY(ptp.product))'
+            )
             ->from($priceToProductRelationClass, 'ptp')
             ->where($productPriceQb->expr()->in('ptp.priceList', ':priceLists'))
             ->setParameter('priceLists', $priceLists);
 
-        $minProductId = $productPriceQb->getQuery()
-            ->getSingleScalarResult();
-        $maxProductId = $productPriceQb->select('MAX(IDENTITY(ptp.product))')
-            ->getQuery()
-            ->getSingleScalarResult();
-
-        return [$minProductId, $maxProductId];
+        return array_values((array)$productPriceQb->getQuery()->getSingleResult());
     }
 }
