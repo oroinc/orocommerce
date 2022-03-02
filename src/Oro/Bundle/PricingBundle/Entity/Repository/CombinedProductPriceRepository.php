@@ -467,6 +467,9 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         } else {
             $minimaPriceIdsQb->andWhere($qb->expr()->between('pp.product', ':product_min', ':product_max'));
             [$minProductId, $maxProductId] = $this->getMinMaxProductIds(PriceListToProduct::class, $priceLists);
+            if (null === $minProductId) {
+                return;
+            }
 
             while ($minProductId <= $maxProductId) {
                 $currentMax = $minProductId + self::BATCH_SIZE;
@@ -738,6 +741,9 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         );
 
         [$minProductId, $maxProductId] = $this->getMinMaxProductIds(PriceListToProduct::class, [$priceList]);
+        if (null === $minProductId) {
+            return;
+        }
         while ($minProductId <= $maxProductId) {
             $currentMax = $minProductId + self::BATCH_SIZE;
             if ($currentMax > $maxProductId) {
@@ -764,6 +770,9 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         );
 
         [$minProductId, $maxProductId] = $this->getMinMaxProductIds($this->_entityName, [$priceList]);
+        if (null === $minProductId) {
+            return;
+        }
         while ($minProductId <= $maxProductId) {
             $currentMax = $minProductId + self::BATCH_SIZE;
             if ($currentMax > $maxProductId) {
@@ -875,6 +884,9 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         $qb->andWhere($qb->expr()->between('pp.product', ':product_min', ':product_max'));
 
         [$minProductId, $maxProductId] = $this->getMinMaxProductIds($priceToProductRelationClass, $priceLists);
+        if (null === $minProductId) {
+            return;
+        }
         while ($minProductId <= $maxProductId) {
             $currentMax = $minProductId + self::BATCH_SIZE;
             if ($currentMax > $maxProductId) {
@@ -1006,6 +1018,9 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         $qb->andWhere($qb->expr()->between('pp.product', ':product_min', ':product_max'));
 
         [$minProductId, $maxProductId] = $this->getMinMaxProductIds($priceToProductRelationClass, [$priceList]);
+        if (null === $minProductId) {
+            return;
+        }
         while ($minProductId <= $maxProductId) {
             $currentMax = $minProductId + self::BATCH_SIZE;
             if ($currentMax > $maxProductId) {
@@ -1066,17 +1081,20 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
     {
         $productPriceQb = $this->getEntityManager()
             ->createQueryBuilder();
-        $productPriceQb->select('MIN(IDENTITY(ptp.product))')
+        $productPriceQb
+            ->select(
+                'MIN(IDENTITY(ptp.product)) as min_id',
+                'MAX(IDENTITY(ptp.product)) as max_id'
+            )
             ->from($priceToProductRelationClass, 'ptp')
             ->where($productPriceQb->expr()->in('ptp.priceList', ':priceLists'))
             ->setParameter('priceLists', $priceLists);
 
-        $minProductId = $productPriceQb->getQuery()
-            ->getSingleScalarResult();
-        $maxProductId = $productPriceQb->select('MAX(IDENTITY(ptp.product))')
-            ->getQuery()
-            ->getSingleScalarResult();
+        $result = (array)$productPriceQb->getQuery()->getSingleResult();
 
-        return [$minProductId, $maxProductId];
+        return [
+            $result['min_id'] ?? null,
+            $result['max_id'] ?? null
+        ];
     }
 }
