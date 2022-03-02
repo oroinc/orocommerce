@@ -47,14 +47,14 @@ Feature: Product view page for configurable product with no matrix form and frac
 
   Scenario: Prepare first simple product
     Given I go to Products/Products
-    And I click Edit tpc b r in grid
+    And I click Edit tpc_b_r in grid
     When I fill in product attribute "Color" with "Black"
     And I save form
     Then I should see "Product has been saved" flash message
 
   Scenario: Prepare second simple product
     Given I go to Products/Products
-    And I click Edit tpc w in grid
+    And I click Edit tpc_w in grid
     When I fill in product attribute "Color" with "White"
     And I save form
     Then I should see "Product has been saved" flash message
@@ -67,7 +67,7 @@ Feature: Product view page for configurable product with no matrix form and frac
       | Configurable Attributes | [Color]   |
       | Is Featured             | Yes       |
       | URL Slug                | tablet-pc |
-    And I check tpc b r and tpc w in grid
+    And I check tpc_b_r and tpc_w in grid
     And I save form
     Then I should see "Product has been saved" flash message
 
