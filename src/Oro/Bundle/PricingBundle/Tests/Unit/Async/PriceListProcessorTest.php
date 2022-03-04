@@ -219,4 +219,99 @@ class PriceListProcessorTest extends \PHPUnit\Framework\TestCase
             $this->processor->process($this->getMessage($body), $this->getSession())
         );
     }
+
+    public function testProcessBatchedProducts()
+    {
+        $priceListId = 1;
+        $productIds = [2, 3];
+        $body = ['product' => [$priceListId => $productIds]];
+        $cpl = $this->getEntity(CombinedPriceList::class, ['id' => 10]);
+
+        $cpl2plRepo = $this->createMock(CombinedPriceListToPriceListRepository::class);
+        $cplBuildActivityRepo = $this->createMock(CombinedPriceListBuildActivityRepository::class);
+        $this->doctrine->expects($this->any())
+            ->method('getRepository')
+            ->willReturnMap([
+                [CombinedPriceListToPriceList::class, null, $cpl2plRepo],
+                [CombinedPriceListBuildActivity::class, null, $cplBuildActivityRepo]
+            ]);
+        $cpl2plRepo->expects($this->once())
+            ->method('getCombinedPriceListsByActualPriceLists')
+            ->with([$priceListId])
+            ->willReturn([$cpl]);
+        $this->statusHandler->expects($this->once())
+            ->method('isReadyForBuild')
+            ->with($cpl)
+            ->willReturn(true);
+        $cpl2plRepo->expects($this->once())
+            ->method('getPriceListIdsByCpls')
+            ->with([$cpl])
+            ->willReturn([$priceListId]);
+
+        $rootJob = $this->createMock(Job::class);
+        $rootJob->expects($this->any())
+            ->method('getId')
+            ->willReturn(10);
+        $job = $this->createMock(Job::class);
+        $job->expects($this->any())
+            ->method('getRootJob')
+            ->willReturn($rootJob);
+        $childJob = $this->createMock(Job::class);
+        $childJob->expects($this->any())
+            ->method('getId')
+            ->willReturn(42);
+        $this->jobRunner->expects($this->once())
+            ->method('runUnique')
+            ->willReturnCallback(function ($ownerId, $name, $closure) use ($job) {
+                return $closure($this->jobRunner, $job);
+            });
+        $this->jobRunner->expects($this->once())
+            ->method('createDelayed')
+            ->willReturnCallback(function ($name, $closure) use ($childJob) {
+                return $closure($this->jobRunner, $childJob);
+            });
+
+        $dependentContext = $this->createMock(DependentJobContext::class);
+        $dependentContext->expects($this->once())
+            ->method('addDependentJob')
+            ->with(RunCombinedPriceListPostProcessingStepsTopic::getName(), ['relatedJobId' => 10]);
+        $this->dependentJob->expects($this->once())
+            ->method('createDependentJobContext')
+            ->with($rootJob)
+            ->willReturn($dependentContext);
+        $this->dependentJob->expects($this->once())
+            ->method('saveDependentJob')
+            ->with($dependentContext);
+
+        $this->producer->expects($this->exactly(2))
+            ->method('send')
+            ->withConsecutive(
+                [
+                    CombineSingleCombinedPriceListPricesTopic::getName(),
+                    [
+                        'cpl' => $cpl->getId(),
+                        'products' => [2],
+                        'jobId' => 42
+                    ]
+                ],
+                [
+                    CombineSingleCombinedPriceListPricesTopic::getName(),
+                    [
+                        'cpl' => $cpl->getId(),
+                        'products' => [3],
+                        'jobId' => 42
+                    ]
+                ]
+            );
+
+        $cplBuildActivityRepo->expects($this->once())
+            ->method('addBuildActivities')
+            ->with([$cpl], 10);
+
+        $this->processor->setProductsBatchSize(1);
+        $this->assertEquals(
+            MessageProcessorInterface::ACK,
+            $this->processor->process($this->getMessage($body), $this->getSession())
+        );
+    }
 }
