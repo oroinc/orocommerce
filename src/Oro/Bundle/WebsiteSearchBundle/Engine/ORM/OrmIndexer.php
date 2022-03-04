@@ -85,7 +85,6 @@ class OrmIndexer extends AbstractIndexer
             $item->setEntity($entityClass)
                 ->setRecordId($entityId)
                 ->setAlias($entityAliasTemp)
-                ->setTitle($this->getEntityTitle($indexData))
                 ->setChanged(false)
                 ->saveItemData($indexData);
             $this->getDriver()->writeItem($item);
@@ -98,16 +97,6 @@ class OrmIndexer extends AbstractIndexer
         $this->getDriver()->flushWrites();
 
         return $entityIds;
-    }
-
-    /**
-     * Use first text field as a title
-     * @param array $indexData
-     * @return string
-     */
-    protected function getEntityTitle(array $indexData)
-    {
-        return isset($indexData[SearchQuery::TYPE_TEXT]) ? reset($indexData[SearchQuery::TYPE_TEXT]) : '';
     }
 
     /**

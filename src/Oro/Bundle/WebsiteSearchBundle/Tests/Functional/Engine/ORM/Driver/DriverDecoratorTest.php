@@ -90,7 +90,6 @@ class DriverDecoratorTest extends WebTestCase
             'entity' => $item->getEntity(),
             'alias' => $item->getAlias(),
             'recordId' => $item->getRecordId(),
-            'title' => $item->getTitle(),
             'changed' => $item->getChanged(),
             'weight' => $item->getWeight(),
             'createdAt' => $this->trimMicrosecondsFromDateTimeObject($item->getCreatedAt()),

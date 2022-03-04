@@ -50,7 +50,6 @@ class LoadItemData extends AbstractFixture implements ContainerAwareInterface, D
             'entity' => TestProduct::class,
             'alias' => 'oro_product_',
             'recordId' => LoadProductsToIndex::REFERENCE_PRODUCT1,
-            'title' => 'Good product',
             'datetimeFields' => [
                 [
                     'field' => 'created',
@@ -74,7 +73,6 @@ class LoadItemData extends AbstractFixture implements ContainerAwareInterface, D
             'entity' => TestProduct::class,
             'alias' => 'oro_product_',
             'recordId' => LoadProductsToIndex::REFERENCE_PRODUCT2,
-            'title' => 'Better product',
             'decimalFields' => [
                 [
                     'field' => 'price',
@@ -96,7 +94,6 @@ class LoadItemData extends AbstractFixture implements ContainerAwareInterface, D
             'entity' => TestEmployee::class,
             'alias' => 'oro_employee_',
             'recordId' => LoadEmployeesToIndex::REFERENCE_PERSON1,
-            'title' => 'Employee1',
             'textFields' => [
                 [
                     'field' => 'name',
@@ -108,7 +105,6 @@ class LoadItemData extends AbstractFixture implements ContainerAwareInterface, D
             'entity' => TestEmployee::class,
             'alias' => 'oro_employee_',
             'recordId' => LoadEmployeesToIndex::REFERENCE_PERSON2,
-            'title' => 'Employee2',
             'textFields' => [
                 [
                     'field' => 'name',
@@ -151,7 +147,6 @@ class LoadItemData extends AbstractFixture implements ContainerAwareInterface, D
 
                 $item = new Item;
                 $item
-                    ->setTitle($itemData['title'])
                     ->setAlias($itemData['alias'] . $websiteId)
                     ->setEntity($itemData['entity'])
                     ->setRecordId($entity->getId());

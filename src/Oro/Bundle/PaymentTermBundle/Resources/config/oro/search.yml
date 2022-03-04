@@ -1,7 +1,6 @@
 search:
     Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm:
         alias:                          oro_payment_term
-        title_fields:                   [label]
         route:
             name:                       oro_payment_term_view
             parameters:

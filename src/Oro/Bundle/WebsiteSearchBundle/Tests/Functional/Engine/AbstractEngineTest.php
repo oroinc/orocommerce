@@ -105,25 +105,6 @@ abstract class AbstractEngineTest extends WebTestCase
         return $listener;
     }
 
-    public function testRecordUrlForSearchAll()
-    {
-        $query = new Query();
-        $query->from('*');
-        $query->getCriteria()->orderBy(['stringValue' => Query::ORDER_ASC]);
-        $items = $this->getSearchItems($query);
-
-        $this->assertCount(LoadSearchItemData::COUNT, $items);
-        $this->assertStringStartsWith('item1@mail.com', $items[0]->getRecordTitle());
-        $this->assertStringStartsWith('item2@mail.com', $items[1]->getRecordTitle());
-        $this->assertStringStartsWith('item3@mail.com', $items[2]->getRecordTitle());
-        $this->assertStringStartsWith('item4@mail.com', $items[3]->getRecordTitle());
-        $this->assertStringStartsWith('item5@mail.com', $items[4]->getRecordTitle());
-        $this->assertStringStartsWith('item6@mail.com', $items[5]->getRecordTitle());
-        $this->assertStringStartsWith('item7@mail.com', $items[6]->getRecordTitle());
-        $this->assertStringStartsWith('item8@mail.com', $items[7]->getRecordTitle());
-        $this->assertStringStartsWith('item9@mail.com', $items[8]->getRecordTitle());
-    }
-
     public function testSearchAll()
     {
         $query = new Query();

@@ -71,8 +71,8 @@ class ProductListBuilderTest extends \PHPUnit\Framework\TestCase
             ->method('execute')
             ->willReturn(
                 [
-                    new SearchResultItem('product', null, null, null, ['id' => 1, 'sku' => 'p1']),
-                    new SearchResultItem('product', null, null, null, ['id' => 2, 'sku' => 'p2'])
+                    new SearchResultItem('product', null, null, ['id' => 1, 'sku' => 'p1']),
+                    new SearchResultItem('product', null, null, ['id' => 2, 'sku' => 'p2'])
                 ]
             );
 
@@ -123,8 +123,8 @@ class ProductListBuilderTest extends \PHPUnit\Framework\TestCase
             ->method('execute')
             ->willReturn(
                 [
-                    new SearchResultItem('product', null, null, null, ['id' => 1, 'sku' => 'p1']),
-                    new SearchResultItem('product', null, null, null, ['id' => 2, 'sku' => 'p2'])
+                    new SearchResultItem('product', null, null, ['id' => 1, 'sku' => 'p1']),
+                    new SearchResultItem('product', null, null, ['id' => 2, 'sku' => 'p2'])
                 ]
             );
 
@@ -175,8 +175,8 @@ class ProductListBuilderTest extends \PHPUnit\Framework\TestCase
             ->method('execute')
             ->willReturn(
                 [
-                    new SearchResultItem('product', null, null, null, ['id' => 1, 'sku' => 'p1']),
-                    new SearchResultItem('product', null, null, null, ['id' => 2, 'sku' => 'p2'])
+                    new SearchResultItem('product', null, null, ['id' => 1, 'sku' => 'p1']),
+                    new SearchResultItem('product', null, null, ['id' => 2, 'sku' => 'p2'])
                 ]
             );
 

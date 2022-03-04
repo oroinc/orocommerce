@@ -2,6 +2,23 @@ The upgrade instructions are available at [Oro documentation website](https://do
 
 The current file describes significant changes in the code that may affect the upgrade of your customizations.
 
+## Not released
+
+### Added
+
+#### CMSBundle
+* Added entity name provider for `Page` entity
+
+#### ConsentBundle
+* Added entity name provider for `Consent` entity
+
+#### ProductBundle
+* `Brand` entity now has its own search result template for the backend search  
+
+#### PromotionBundle
+* Added entity name provider for `Promotion` entity
+
+
 ## 5.0.0
 
 ### Changed

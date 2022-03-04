@@ -30,6 +30,5 @@ Feature: Check product attribute audit data
     And should see text matching "Is visible: 3"
     And should see text matching "Show filter: 0"
     And should see text matching "Searchable: 0"
-    And should see text matching "Title field: 0"
     And should see text matching "Identity: 0"
     And should see text matching "Excluded: 0"

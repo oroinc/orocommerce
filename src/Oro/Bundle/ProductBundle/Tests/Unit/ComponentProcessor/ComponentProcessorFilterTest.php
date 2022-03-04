@@ -65,7 +65,6 @@ class ComponentProcessorFilterTest extends \PHPUnit\Framework\TestCase
                             Product::class,
                             $index,
                             null,
-                            null,
                             [
                                 'sku'           => $sku,
                                 'sku_uppercase' => mb_strtoupper($sku)
