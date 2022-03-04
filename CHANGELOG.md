@@ -2,6 +2,7 @@ The upgrade instructions are available at [Oro documentation website](https://do
 
 The current file describes significant changes in the code that may affect the upgrade of your customizations.
 
+
 ## 5.0.2
 
 ### Added
@@ -13,6 +14,18 @@ The current file describes significant changes in the code that may affect the u
 Added new methods to `CombinedPriceListsBuilderFacade`. `processAssignments` Process Combined Price Lists assignments information, triggers ProcessEvent, Listeners of this event will create relation between passed CPL and assignments. `triggerProductIndexation` - Trigger product indexation for a products, limited to websites that are associated with a given CPL.
 
 Added `CombinedPriceListProvider::getCombinedPriceListByCollectionInformation` to get combined price list by the given price lists collection in format used by Collect and Process events.
+
+#### CMSBundle
+* Added entity name provider for `Page` entity
+
+#### ConsentBundle
+* Added entity name provider for `Consent` entity
+
+#### ProductBundle
+* `Brand` entity now has its own search result template for the backend search
+
+#### PromotionBundle
+* Added entity name provider for `Promotion` entity
 
 ### Changed
 
