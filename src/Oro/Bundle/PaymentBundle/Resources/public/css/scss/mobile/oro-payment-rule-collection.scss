@@ -1,0 +1,10 @@
+/* @theme: admin.oro; */
+
+.oro-payment-rule-collection {
+    &.oro-item-collection {
+        .row-oro {
+            max-width: none;
+            padding: 24px 34px 24px 24px;
+        }
+    }
+}
