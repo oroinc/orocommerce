@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\CatalogBundle\ImportExport\Normalizer;
 
+use Doctrine\ORM\Proxy\Proxy;
+use Doctrine\Persistence\ManagerRegistry;
+use Extend\Entity\EX_OroCatalogBundle_Category;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\ImportExport\Helper\CategoryImportExportHelper;
 use Oro\Bundle\ImportExportBundle\Serializer\Normalizer\ConfigurableEntityNormalizer;
@@ -13,12 +16,21 @@ use Oro\Bundle\ImportExportBundle\Serializer\Normalizer\ConfigurableEntityNormal
  */
 class CategoryNormalizer extends ConfigurableEntityNormalizer
 {
-    /** @var CategoryImportExportHelper */
-    private $categoryImportExportHelper;
+    private CategoryImportExportHelper $categoryImportExportHelper;
+
+    private ManagerRegistry $doctrine;
 
     public function setCategoryImportExportHelper(CategoryImportExportHelper $categoryImportExportHelper): void
     {
         $this->categoryImportExportHelper = $categoryImportExportHelper;
+    }
+
+    /**
+     * @param ManagerRegistry $doctrine
+     */
+    public function setDoctrine(ManagerRegistry $doctrine): void
+    {
+        $this->doctrine = $doctrine;
     }
 
     /**
@@ -44,6 +56,8 @@ class CategoryNormalizer extends ConfigurableEntityNormalizer
      */
     public function normalize($object, string $format = null, array $context = [])
     {
+        $object = $this->revitalizeObject($object);
+
         $normalizedCategory = parent::normalize($object, $format, $context);
 
         if ($this->getMode($context) === self::FULL_MODE && $parentCategory = $object->getParentCategory()) {
@@ -70,5 +84,32 @@ class CategoryNormalizer extends ConfigurableEntityNormalizer
         array $context
     ): bool {
         return $entityName === Category::class && $fieldName === 'organization';
+    }
+
+    /**
+     * Why a category need to re-vitalize is because during the export, it executes batch by batch
+     * and manager will do clear per batch. the parent category of a category might be cleared
+     * before it been accessed as a parent category.
+     * To fetch them with EAGER mode could prevent them to load as Proxy implementation.
+     * @param Category|EX_OroCatalogBundle_Category $object
+     * @return Category
+     */
+    private function revitalizeObject($object): Category
+    {
+        if ($object instanceof Category && $object->getParentCategory() instanceof Proxy) {
+            $parentCategory = $object->getParentCategory();
+
+            if ($parentCategory->__isInitialized__ === false) {
+                $parentCategory->__load();
+            }
+
+            if (!$parentCategory->getId()) {
+                return $this->doctrine
+                    ->getRepository(Category::class)
+                    ->getCategoryEagerMode($object);
+            }
+        }
+
+        return $object;
     }
 }
