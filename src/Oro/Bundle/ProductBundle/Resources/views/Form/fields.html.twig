@@ -404,11 +404,13 @@
                                          open: hasFilters
                                      }|json_encode() }}"
                                 >
-                                    <div class="control-group">
+                                    <div class="product-collection-segment-action-buttons clearfix-oro">
                                         <div class="pull-right">
+                                            {% if not isMobileVersion() %}
                                             <div data-collapse-trigger class="btn-group icons-holder">
                                                 <a class="collapse-view__trigger btn"><i class="fa-filter"></i> {{ 'oro.product.content_variant.ui.advanced_filter'|trans }}</a>
                                             </div>
+                                            {% endif %}
                                             {{ ProductCollection.popupButton(
                                                 oro_datagrid_build_fullname('product-collection-add-products-to-included-grid', scope),
                                                 includedProductsElementId,
@@ -419,6 +421,7 @@
                                     <div data-collapse-container class="filter control-group fields-row">
                                         {{ block('oro_segment_filter_builder_row') }}
                                         {# --Apply Query button start--#}
+                                        {% if not isMobileVersion() %}
                                         <div class="btn-container clearfix">
                                             <div class="pull-right">
                                                 <a href="#" class="btn btn-primary filter-apply">
@@ -426,6 +429,7 @@
                                                 </a>
                                             </div>
                                         </div>
+                                        {% endif %}
                                         {# --Apply Query button end-- #}
                                     </div>
                                     {{ oro_widget_render({

@@ -86,6 +86,7 @@
 
     &__sku {
         color: $search-autocomplete-product-sku-color;
+        word-break: $search-autocomplete-product-sku-word-break;
     }
 
     &__price {

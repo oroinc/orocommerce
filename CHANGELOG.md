@@ -14,6 +14,18 @@ Added new methods to `CombinedPriceListsBuilderFacade`. `processAssignments` Pro
 
 Added `CombinedPriceListProvider::getCombinedPriceListByCollectionInformation` to get combined price list by the given price lists collection in format used by Collect and Process events.
 
+#### CMSBundle
+* Added entity name provider for `Page` entity
+
+#### ConsentBundle
+* Added entity name provider for `Consent` entity
+
+#### ProductBundle
+* `Brand` entity now has its own search result template for the backend search
+
+#### PromotionBundle
+* Added entity name provider for `Promotion` entity
+
 ### Changed
 
 #### PricingBundle
@@ -58,6 +70,9 @@ public function rebuildPrices(Website, $website = null, object $targetEntity = n
         $cplBuilderFacade->triggerProductIndexation($cpl, $assignTo);
     }
 ```
+
+## 5.0.0 (2022-01-26)
+[Show detailed list of changes](incompatibilities-5-0.md)
 
 ## 5.0.0-rc (2021-12-07)
 [Show detailed list of changes](incompatibilities-5-0-rc.md)

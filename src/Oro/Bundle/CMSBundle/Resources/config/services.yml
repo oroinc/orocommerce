@@ -285,6 +285,11 @@ services:
         tags:
             - { name: oro_entity.name_provider, priority: 100 }
 
+    oro_cms.provider.page_entity_name:
+        class: Oro\Bundle\CMSBundle\Provider\PageEntityNameProvider
+        tags:
+            - { name: oro_entity.name_provider, priority: 100 }
+
     oro_cms.provider.content_widget_layout:
         class: Oro\Bundle\CMSBundle\Provider\ContentWidgetLayoutProvider
         arguments:

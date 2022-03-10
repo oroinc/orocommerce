@@ -47,6 +47,7 @@ layout:
                     blockType: container
                 product_view_attribute_group_general:
                     blockType: attribute_group
+                    prepend: false
                     options:
                         entity: '=data["product"]'
                         attribute_family: '=context["attribute_family"]'
@@ -64,11 +65,11 @@ layout:
                             product_view_aside_container: ~
                         product_view_main_container:
                             product_view_content_container:
-                                product_view_specification_container: ~
+                                product_view_specification_container:
+                                    product_view_attribute_group_general: ~
                                 product_view_description_container:
                                     product_view_line_item_container: ~
                                 product_view_brand_container: ~
-                                product_view_attribute_group_general: ~
                                 product_view_main_attributes_container: ~
                         product_view_additional_container: ~
         - '@move':
