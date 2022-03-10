@@ -91,6 +91,8 @@ class AddLineItemMassActionProvider implements MassActionProviderInterface
                     $shoppingLists = $this->currentShoppingListManager->getShoppingLists(['list.id' => Criteria::ASC]);
                 }
 
+                $currentShoppingList = $this->currentShoppingListManager->getCurrent();
+
                 /** @var ShoppingList $shoppingList */
                 foreach ($shoppingLists as $shoppingList) {
                     $name = 'list' . $shoppingList->getId();
@@ -100,6 +102,10 @@ class AddLineItemMassActionProvider implements MassActionProviderInterface
                         'route_parameters' => [
                             'shoppingList' => $shoppingList->getId(),
                         ],
+                        'is_current' => $currentShoppingList?->getId() === $shoppingList->getId(),
+                        'attributes' => [
+                            'data-order' => $shoppingList->isCurrent() ? 'new' : 'add'
+                        ]
                     ]);
                 }
             }
