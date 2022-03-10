@@ -4,10 +4,12 @@ define(function(require, exports, module) {
     const _ = require('underscore');
     const $ = require('jquery');
     const routing = require('routing');
+    const __ = require('orotranslation/js/translator');
     const template = require('tpl-loader!oroproduct/templates/datagrid/backend-action-header-cell.html');
     const ActionHeaderCell = require('orodatagrid/js/datagrid/header-cell/action-header-cell');
     const ShoppingListCollectionService = require('oroshoppinglist/js/shoppinglist-collection-service');
     const ActionsPanel = require('oroproduct/js/app/datagrid/backend-actions-panel');
+    const FullscreenPopupView = require('orofrontend/blank/js/app/views/fullscreen-popup-view');
     const config = require('module-config').default(module.id);
 
     const shoppingListAddAction = config.shoppingListAddAction || {
@@ -46,6 +48,10 @@ define(function(require, exports, module) {
         actionsPanel: ActionsPanel,
 
         shoppingListCollection: null,
+
+        events: {
+            'click [data-fullscreen-trigger]': 'showFullScreen'
+        },
 
         /**
          * @inheritdoc
@@ -130,6 +136,49 @@ define(function(require, exports, module) {
                 panel.setElement(this.$('[data-action-panel]'));
                 panel.render();
             }
+
+            return panel;
+        },
+
+        showFullScreen() {
+            const fullscreen = new FullscreenPopupView({
+                contentElement: document.createElement('div'),
+                popupIcon: 'fa-chevron-left',
+                popupLabel: __('oro.product.frontend.choose_action')
+            });
+
+            this.subview('fullscreen', fullscreen);
+            this.listenToOnce(fullscreen, {
+                show: this.onShowFullScreen,
+                beforeclose: this.onBeforeCloseFullScreen,
+                close: this.onCloseFullScreen
+            });
+            fullscreen.show();
+        },
+
+        onShowFullScreen() {
+            this.massActionsInSticky = false;
+
+            const fullscreen = this.subview('fullscreen');
+            const $content = this.render().$('[data-action-panel]');
+
+            $content.addClass('fullscreen');
+            fullscreen.content.$el.append($content);
+            fullscreen.$popup.on(`click${fullscreen.eventNamespace()}`, '.action', e => fullscreen.close());
+        },
+
+        onBeforeCloseFullScreen() {
+            const fullscreen = this.subview('fullscreen');
+
+            this.massActionsInSticky = true;
+            fullscreen.$popup.off(fullscreen.eventNamespace());
+        },
+
+        onCloseFullScreen() {
+            const fullscreen = this.subview('fullscreen');
+
+            fullscreen.dispose();
+            this.render();
         }
     });
 

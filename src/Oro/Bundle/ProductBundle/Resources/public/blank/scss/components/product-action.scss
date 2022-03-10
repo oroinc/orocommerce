@@ -1,6 +1,10 @@
 /* @theme: blank; */
 
 .product-action-area {
+    &:empty {
+        display: none;
+    }
+
     .product-action {
         display: inline-block;
 

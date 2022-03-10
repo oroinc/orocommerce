@@ -78,13 +78,24 @@
         max-height: 300px;
         overflow-y: auto;
 
+        // Prevent to crop focusable children
+        padding: $product-item-item-container-offset;
+
         .dropdown-item {
             position: relative;
-            padding-left: 36px;
+            padding-left: $product-item-item-container-item-offset;
 
             .fa {
                 position: absolute;
                 left: $dropdown-item-padding-x;
+            }
+
+            &[data-label]::after {
+                content: attr(data-label);
+                padding-left: $product-item-container-item-content-offset;
+                color: $product-item-container-item-color;
+                font-style: $product-item-container-item-font-style;
+                font-size: $product-item-container-item-font-size;
             }
         }
     }
@@ -109,6 +120,12 @@
                     display: none;
                 }
             }
+        }
+    }
+
+    &.fullscreen {
+        .item-container {
+            max-height: initial;
         }
     }
 }
