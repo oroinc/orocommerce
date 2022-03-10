@@ -4,6 +4,9 @@ namespace Oro\Bundle\PricingBundle\Tests\Behat\Isolation;
 
 use Doctrine\DBAL\Connection;
 use Oro\Bundle\DistributionBundle\Handler\ApplicationState;
+use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilderFacade;
+use Oro\Bundle\PricingBundle\Provider\CombinedPriceListAssociationsProvider;
+use Oro\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
 use Oro\Bundle\TestFrameworkBundle\Behat\Isolation\Event\AfterFinishTestsEvent;
 use Oro\Bundle\TestFrameworkBundle\Behat\Isolation\Event\AfterIsolatedTestEvent;
 use Oro\Bundle\TestFrameworkBundle\Behat\Isolation\Event\BeforeIsolatedTestEvent;
@@ -87,7 +90,24 @@ class PricingStorageIsolator implements IsolatorInterface
         }
         if ($storage === 'combined') {
             $event->writeln('<info>Rebuilding Combined Price Lists</info>');
-            $container->get('oro_pricing.builder.combined_price_list_builder_facade')->rebuildAll(time());
+
+            /** @var CombinedPriceListAssociationsProvider $associationsProvider */
+            $associationsProvider = $container->get('oro_pricing.combined_price_list_associations_provider');
+            /** @var CombinedPriceListProvider $cplProvider */
+            $cplProvider = $container->get('oro_pricing.provider.combined_price_list');
+            /** @var CombinedPriceListsBuilderFacade $cplBuilderFacade */
+            $cplBuilderFacade = $container->get('oro_pricing.builder.combined_price_list_builder_facade');
+
+            $associations = $associationsProvider->getCombinedPriceListsWithAssociations(true);
+            foreach ($associations as $association) {
+                $cpl = $cplProvider->getCombinedPriceListByCollectionInformation($association['collection']);
+                $cplBuilderFacade->rebuild([$cpl]);
+                $assignTo = $association['assign_to'] ?? [];
+                if (!empty($assignTo)) {
+                    $cplBuilderFacade->processAssignments($cpl, $association['assign_to'], true);
+                }
+                $cplBuilderFacade->triggerProductIndexation($cpl, $assignTo);
+            }
         }
     }
 

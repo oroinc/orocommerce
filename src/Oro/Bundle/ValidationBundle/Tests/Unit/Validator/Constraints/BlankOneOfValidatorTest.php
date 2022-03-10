@@ -5,12 +5,13 @@ namespace Oro\Bundle\ValidationBundle\Tests\Unit\Validator\Constraints;
 use Oro\Bundle\ValidationBundle\Validator\Constraints\BlankOneOf;
 use Oro\Bundle\ValidationBundle\Validator\Constraints\BlankOneOfValidator;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class BlankOneOfValidatorTest extends ConstraintValidatorTestCase
 {
-    protected function createValidator()
+    protected function createValidator(): BlankOneOfValidator
     {
         $translator = $this->createMock(TranslatorInterface::class);
         $translator->expects($this->any())
@@ -23,6 +24,12 @@ class BlankOneOfValidatorTest extends ConstraintValidatorTestCase
             $translator,
             new PropertyAccessor()
         );
+    }
+
+    public function testGetTargets()
+    {
+        $constraint = new BlankOneOf();
+        self::assertSame(Constraint::CLASS_CONSTRAINT, $constraint->getTargets());
     }
 
     public function testValidateCorrectFields()

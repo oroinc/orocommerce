@@ -5,6 +5,9 @@ namespace Oro\Bundle\PricingBundle\PricingStrategy;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
+/**
+ * Interface for price combining strategy.
+ */
 interface PriceCombiningStrategyInterface
 {
     /**

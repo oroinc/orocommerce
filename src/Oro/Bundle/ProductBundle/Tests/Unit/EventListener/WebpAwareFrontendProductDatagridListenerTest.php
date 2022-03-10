@@ -12,6 +12,7 @@ use Oro\Bundle\LayoutBundle\Provider\Image\ImagePlaceholderProviderInterface;
 use Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
 use Oro\Bundle\ProductBundle\EventListener\WebpAwareFrontendProductDatagridListener;
 use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
+use Oro\Bundle\UIBundle\Tools\UrlHelper;
 
 class WebpAwareFrontendProductDatagridListenerTest extends \PHPUnit\Framework\TestCase
 {
@@ -32,11 +33,18 @@ class WebpAwareFrontendProductDatagridListenerTest extends \PHPUnit\Framework\Te
         $this->imagePlaceholderProvider = $this->createMock(ImagePlaceholderProviderInterface::class);
         $this->webpConfiguration = $this->createMock(WebpConfiguration::class);
 
+        $urlHelper = $this->createMock(UrlHelper::class);
+        $urlHelper
+            ->expects(self::any())
+            ->method('getAbsolutePath')
+            ->willReturnCallback(static fn (string $path) => '/absolute' . $path);
+
         $this->listener = new WebpAwareFrontendProductDatagridListener(
             $this->themeHelper,
             $this->imagePlaceholderProvider,
             $this->webpConfiguration
         );
+        $this->listener->setUrlHelper($urlHelper);
     }
 
     /**
@@ -161,7 +169,7 @@ class WebpAwareFrontendProductDatagridListenerTest extends \PHPUnit\Framework\Te
             ],
             [
                 'id'        => 3,
-                'imageWebp' => '/image/3/medium/webp',
+                'imageWebp' => '/absolute/image/3/medium/webp',
             ],
         ];
         foreach ($expectedData as $expectedRecord) {

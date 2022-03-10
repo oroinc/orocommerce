@@ -4,7 +4,7 @@ namespace Oro\Bundle\PricingBundle\Entity\EntityListener;
 
 use Doctrine\Common\Cache\Cache;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
-use Oro\Bundle\PricingBundle\Async\Topics;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceListAssignedProductsTopic;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerHandler;
@@ -128,7 +128,7 @@ class PriceListEntityListener
 
         $priceList->setActual(false);
         $this->priceListTriggerHandler->handlePriceListTopic(
-            Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS,
+            ResolvePriceListAssignedProductsTopic::getName(),
             $priceList
         );
     }

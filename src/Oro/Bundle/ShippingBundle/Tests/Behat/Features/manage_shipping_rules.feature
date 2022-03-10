@@ -1,4 +1,5 @@
 @ticket-BB-12309
+@waf-skip
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroShippingBundle:ShippingMethodsConfigsRule_BB12309.yml
 

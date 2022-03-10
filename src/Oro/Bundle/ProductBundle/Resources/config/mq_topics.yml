@@ -1,0 +1,7 @@
+services:
+    _defaults:
+        tags:
+            - { name: oro_message_queue.topic }
+
+    Oro\Bundle\ProductBundle\Async\Topic\AccumulateReindexProductCollectionBySegmentTopic: ~
+    Oro\Bundle\ProductBundle\Async\Topic\ReindexRequestItemProductsByRelatedJobIdTopic: ~

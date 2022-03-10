@@ -4,7 +4,8 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
-use Oro\Bundle\PricingBundle\Async\Topics;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolveCombinedPriceListCurrenciesTopic;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceRulesTopic;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
@@ -41,14 +42,14 @@ class PriceListCurrencyEntityListenerTest extends WebTestCase
         $this->getEntityManager()->flush();
 
         self::assertMessageSent(
-            Topics::RESOLVE_PRICE_RULES,
+            ResolvePriceRulesTopic::getName(),
             [
                 'product' => [$priceList->getId() => []]
             ]
         );
 
         self::assertMessageSent(
-            Topics::RESOLVE_COMBINED_CURRENCIES,
+            ResolveCombinedPriceListCurrenciesTopic::getName(),
             [
                 'product' => [$priceList->getId() => []]
             ]
@@ -63,14 +64,14 @@ class PriceListCurrencyEntityListenerTest extends WebTestCase
         $this->getEntityManager()->flush();
 
         self::assertMessageSent(
-            Topics::RESOLVE_PRICE_RULES,
+            ResolvePriceRulesTopic::getName(),
             [
                 'product' => [$priceList->getId() => []]
             ]
         );
 
         self::assertMessageSent(
-            Topics::RESOLVE_COMBINED_CURRENCIES,
+            ResolveCombinedPriceListCurrenciesTopic::getName(),
             [
                 'product' => [$priceList->getId() => []]
             ]

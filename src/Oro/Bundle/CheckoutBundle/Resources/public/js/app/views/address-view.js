@@ -83,7 +83,7 @@ define(function(require) {
             if (isSelectorNotAvailable) {
                 this.$addressSelector.inputWidget('dispose');
                 this.$addressSelector.hide().attr('data-skip-input-widgets', true);
-                this.$addressSelector.siblings('label').toggle(showNewAddressForm);
+                this.$addressSelector.siblings('label').parent().toggle(showNewAddressForm);
             }
 
             // if external checkbox exists - synchronize it

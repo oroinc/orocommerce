@@ -27,23 +27,13 @@ abstract class AbstractCombinedPriceListsFixture extends AbstractFixture impleme
      */
     public function load(ObjectManager $manager)
     {
-        $now = new \DateTime();
-
         foreach ($this->data as $priceListData) {
-            $combinedPriceList = new CombinedPriceList();
-            $combinedPriceList
-                ->setPricesCalculated($priceListData['calculated'])
-                ->setName(md5($priceListData['name']))
-                ->setCreatedAt($now)
-                ->setUpdatedAt($now)
-                ->setEnabled($priceListData['enabled']);
-
+            $combinedPriceList = $this->createCombinedPriceList($priceListData, $manager);
             $this->loadCombinedPriceListToPriceList($manager, $priceListData, $combinedPriceList);
             $this->loadCombinedPriceListToCustomer($manager, $priceListData, $combinedPriceList);
             $this->loadCombinedPriceListToCustomerGroup($manager, $priceListData, $combinedPriceList);
             $this->loadCombinedPriceListToWebsite($manager, $priceListData, $combinedPriceList);
 
-            $manager->persist($combinedPriceList);
             $this->setReference($priceListData['name'], $combinedPriceList);
         }
 
@@ -118,7 +108,7 @@ abstract class AbstractCombinedPriceListsFixture extends AbstractFixture impleme
         array $priceListData,
         CombinedPriceList $combinedPriceList
     ) {
-        $websiteRepository = $manager->getRepository('OroWebsiteBundle:Website');
+        $websiteRepository = $manager->getRepository(Website::class);
         foreach ($priceListData['websites'] as $websiteReference) {
             if ($websiteReference === 'default') {
                 /** @var Website $website */
@@ -133,5 +123,22 @@ abstract class AbstractCombinedPriceListsFixture extends AbstractFixture impleme
             $priceListToWebsite->setPriceList($combinedPriceList);
             $manager->persist($priceListToWebsite);
         }
+    }
+
+    protected function createCombinedPriceList(array $priceListData, ObjectManager $manager): CombinedPriceList
+    {
+        $now = new \DateTime('now', new \DateTimeZone('UTC'));
+
+        $combinedPriceList = new CombinedPriceList();
+        $combinedPriceList
+            ->setPricesCalculated($priceListData['calculated'])
+            ->setName(md5($priceListData['name']))
+            ->setCreatedAt($now)
+            ->setUpdatedAt($now)
+            ->setEnabled($priceListData['enabled']);
+
+        $manager->persist($combinedPriceList);
+
+        return $combinedPriceList;
     }
 }

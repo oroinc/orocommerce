@@ -3,10 +3,12 @@
 namespace Oro\Bundle\ProductBundle\Controller\Frontend;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Layout\AttributeRenderRegistry;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\PricingBundle\Form\Extension\PriceAttributesProductFormExtension;
 use Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
+use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Layout\DataProvider\ProductViewFormAvailabilityProvider;
 use Oro\Bundle\ProductBundle\Provider\PageTemplateProvider;
@@ -28,7 +30,7 @@ class ProductController extends AbstractController
      * View list of products
      *
      * @Route("/", name="oro_product_frontend_product_index")
-     * @Layout(vars={"entity_class", "grid_config", "theme_name"})
+     * @Layout(vars={"entity_class", "grid_config", "theme_name", "filters_position"})
      * @AclAncestor("oro_product_frontend_view")
      *
      * @return array
@@ -42,6 +44,7 @@ class ProductController extends AbstractController
             'grid_config' => [
                 'frontend-product-search-grid'
             ],
+            'filters_position' => $this->getFiltersPosition(),
         ];
     }
 
@@ -49,7 +52,7 @@ class ProductController extends AbstractController
      * Search products
      *
      * @Route("/search", name="oro_product_frontend_product_search")
-     * @Layout(vars={"entity_class", "grid_config", "theme_name"})
+     * @Layout(vars={"entity_class", "grid_config", "theme_name", "filters_position"})
      * @AclAncestor("oro_product_frontend_view")
      *
      * @return array
@@ -63,7 +66,13 @@ class ProductController extends AbstractController
             'grid_config' => [
                 'frontend-product-search-grid'
             ],
+            'filters_position' => $this->getFiltersPosition(),
         ];
+    }
+
+    private function getFiltersPosition(): string
+    {
+        return $this->container->get(ConfigManager::class)->get(Configuration::getConfigKeyByName('filters_position'));
     }
 
     /**
@@ -155,7 +164,8 @@ class ProductController extends AbstractController
             PageTemplateProvider::class,
             AttributeRenderRegistry::class,
             ProductAutocompleteProvider::class,
-            ProductViewFormAvailabilityProvider::class
+            ProductViewFormAvailabilityProvider::class,
+            ConfigManager::class,
         ]);
     }
 

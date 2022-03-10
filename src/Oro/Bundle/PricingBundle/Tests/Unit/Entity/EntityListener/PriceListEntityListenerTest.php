@@ -4,7 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Entity\EntityListener;
 
 use Doctrine\Common\Cache\Cache;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
-use Oro\Bundle\PricingBundle\Async\Topics;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceListAssignedProductsTopic;
 use Oro\Bundle\PricingBundle\Entity\EntityListener\PriceListEntityListener;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
@@ -60,7 +60,7 @@ class PriceListEntityListenerTest extends \PHPUnit\Framework\TestCase
             ->with('ar_42');
         $this->priceListTriggerHandler->expects($this->once())
             ->method('handlePriceListTopic')
-            ->with(Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS, $priceList);
+            ->with(ResolvePriceListAssignedProductsTopic::getName(), $priceList);
 
         /** @var PreUpdateEventArgs|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->createMock(PreUpdateEventArgs::class);
@@ -100,7 +100,7 @@ class PriceListEntityListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->priceListTriggerHandler->expects($this->once())
             ->method('handlePriceListTopic')
-            ->with(Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS, $priceList);
+            ->with(ResolvePriceListAssignedProductsTopic::getName(), $priceList);
 
         /** @var PreUpdateEventArgs|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->createMock(PreUpdateEventArgs::class);
@@ -139,7 +139,7 @@ class PriceListEntityListenerTest extends \PHPUnit\Framework\TestCase
             );
         $this->priceListTriggerHandler->expects($this->once())
             ->method('handlePriceListTopic')
-            ->with(Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS, $priceList);
+            ->with(ResolvePriceListAssignedProductsTopic::getName(), $priceList);
 
         /** @var PreUpdateEventArgs|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->createMock(PreUpdateEventArgs::class);

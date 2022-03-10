@@ -35,13 +35,13 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
     }
 
     /**
-     * Example: When I fill in WYSIWYG "CMS Page Content" with "Content"
+     * Example: When I import content "Content" to "CMS Page Content" WYSIWYG editor
      *
-     * @When /^(?:|I )fill in WYSIWYG "(?P<wysiwygElementName>[^"]+)" with "(?P<text>(?:[^"]|\\")*)"$/
-     * @param string $wysiwygElementName
+     * @When /^(?:|I )import content "(?P<text>(?:[^"]|\\")*)" to "(?P<wysiwygElementName>[^"]+)" WYSIWYG editor$/
      * @param string $text
+     * @param string $wysiwygElementName
      */
-    public function fillWysiwygContentField($wysiwygElementName, $text)
+    public function importContentToWysiwygEditor($text, $wysiwygElementName)
     {
         $wysiwygContentElement = $this->createElement($wysiwygElementName);
         self::assertTrue($wysiwygContentElement->isIsset(), sprintf(
@@ -49,21 +49,49 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
             $wysiwygElementName
         ));
 
-        $this->getSession()->wait(300);
-        $function = sprintf(
-            '(function(){
-                $("#%s")
-                    .trigger("wysiwyg:disable")
-                    .val("%s")
-                    .trigger("change")
-                    .trigger("wysiwyg:enable");
-            })()',
-            $wysiwygContentElement->getAttribute('id'),
-            $text
-        );
+        $importDialog = $this->createElement('Import Button');
+        $importDialog->click();
 
-        $this->getSession()->executeScript($function);
-        $this->getSession()->wait(300);
+        /** @var WysiwygCodeTypeBlockEditor $editor */
+        $editor = $this->createElement('WysiwygCodeTypeBlockEditor');
+        self::assertNotNull($editor, 'Wysiwyg `code` type block editor not found!');
+
+        $editor->setValue(stripslashes($text));
+        $this->waitForAjax();
+        $editor->findButton('Import')->click();
+    }
+
+    /**
+     * @codingStandardsIgnoreStart
+     *
+     * Example: When I should see imported "Content" content in "CMS Page Content" WYSIWYG editor
+     *
+     * @When /^(?:|I )should see imported "(?P<text>(?:[^"]|\\")*)" content in "(?P<wysiwygElementName>[^"]+)" WYSIWYG editor$/
+     * @param string $text
+     * @param string $wysiwygElementName
+     * @param string $importDialogName
+     *
+     * @codingStandardsIgnoreEnd
+     */
+    public function shouldSeeImportedContent($text, $wysiwygElementName, $importDialogName = "Import Button")
+    {
+        $wysiwygContentElement = $this->createElement($wysiwygElementName);
+        self::assertTrue($wysiwygContentElement->isIsset(), sprintf(
+            'WYSIWYG element "%s" not found on page',
+            $wysiwygElementName
+        ));
+
+        $importDialog = $this->createElement($importDialogName);
+        $importDialog->click();
+
+        /** @var WysiwygCodeTypeBlockEditor $editor */
+        $editor = $this->createElement('WysiwygCodeTypeBlockEditor');
+        self::assertNotNull($editor, 'Wysiwyg `code` type block editor not found!');
+
+        $importedContent = str_replace("\n", "", $editor->getValue());
+        self::assertEquals(stripslashes($text), $importedContent);
+
+        $editor->findButton('Import')->click();
     }
 
     /**
@@ -75,28 +103,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
     {
         $codeTypeBlockElement = $this->findCodeTypeBlock($value);
         $this->openCodeTypeBlockEditor($codeTypeBlockElement);
-    }
-
-    /**
-     * @Then /^(?:|I )should see text matching (?P<pattern>"(?:[^"]|\\")*") in WYSIWYG editor$/
-     */
-    public function assertWysiwygEditorMatchesText(string $pattern): void
-    {
-        // Switch to WYSIWYG editor iframe.
-        $this->getDriver()->switchToIFrame(0);
-        $this->assertSession()->pageTextMatches($this->fixStepArgument($pattern));
-        $this->getDriver()->switchToIFrame(null);
-    }
-
-    /**
-     * @Then /^(?:|I )should not see text matching (?P<pattern>"(?:[^"]|\\")*") in WYSIWYG editor$/
-     */
-    public function assertWysiwygEditorNotMatchesText(string $pattern): void
-    {
-        // Switch to WYSIWYG editor iframe.
-        $this->getDriver()->switchToIFrame(0);
-        $this->assertSession()->pageTextNotMatches($this->fixStepArgument($pattern));
-        $this->getDriver()->switchToIFrame(null);
     }
 
     /**
@@ -119,26 +125,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
 
         $editor->setValue($newValue);
         $editor->findButton('Save')->click();
-    }
-
-    /**
-     * Example: When I click on "WysiwygFileTypeBlock" with title "File name" in WYSIWYG editor
-     *
-     * @When /^(?:|I )click on "(?P<selector>[^"]+)" with title "(?P<title>[^"]+)" in WYSIWYG editor$/
-     */
-    public function iClickOnElementWithTitleInWysiwygEditor(string $selector, string $title)
-    {
-        // Switch to WYSIWYG editor iframe.
-        $this->getDriver()->switchToIFrame(0);
-
-        $element = $this->findElementContains($selector, $title);
-        self::assertTrue(
-            $element->isValid(),
-            sprintf('Element "%s" with title "%s" not found in WYSIWYG editor', $selector, $title)
-        );
-        $element->click();
-
-        $this->getDriver()->switchToWindow();
     }
 
     private function findCodeTypeBlock(string $containingValue): Element

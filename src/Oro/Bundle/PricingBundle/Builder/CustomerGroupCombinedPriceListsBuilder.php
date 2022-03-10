@@ -19,6 +19,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  * @method PriceListToCustomerGroupRepository getPriceListToEntityRepository()
  *
  * @internal Allowed to be accessed only by CombinedPriceListsBuilderFacade
+ * @deprecated Will be removed in 5.1.
  */
 class CustomerGroupCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
 {
@@ -39,6 +40,11 @@ class CustomerGroupCombinedPriceListsBuilder extends AbstractCombinedPriceListBu
      */
     public function build(Website $website, CustomerGroup $currentCustomerGroup = null, $forceTimestamp = null)
     {
+        @trigger_error(
+            'Combined price list builders are deprecated and will be removed in OroCommerce 5.1',
+            \E_USER_DEPRECATED
+        );
+
         if (!$this->isBuiltForCustomerGroup($website, $currentCustomerGroup)) {
             $customerGroups = $this->getCustomerGroupsForBuild($website, $currentCustomerGroup);
             foreach ($customerGroups as $customerGroup) {

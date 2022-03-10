@@ -5,6 +5,7 @@ namespace Oro\Bundle\PricingBundle\Async;
 use Doctrine\DBAL\Exception\RetryableException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolveCombinedPriceListCurrenciesTopic;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListCurrency;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
@@ -13,7 +14,6 @@ use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Component\MessageQueue\Util\JSON;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -45,7 +45,7 @@ class CombinedPriceListCurrencyProcessor implements MessageProcessorInterface, T
      */
     public static function getSubscribedTopics()
     {
-        return [Topics::RESOLVE_COMBINED_CURRENCIES];
+        return [ResolveCombinedPriceListCurrenciesTopic::getName()];
     }
 
     /**
@@ -53,12 +53,7 @@ class CombinedPriceListCurrencyProcessor implements MessageProcessorInterface, T
      */
     public function process(MessageInterface $message, SessionInterface $session)
     {
-        $body = JSON::decode($message->getBody());
-        if (!isset($body['product']) || !\is_array($body['product'])) {
-            $this->logger->critical('Got invalid message.');
-
-            return self::REJECT;
-        }
+        $body = $message->getBody();
 
         /** @var EntityManagerInterface $em */
         $em = $this->doctrine->getManagerForClass(CombinedPriceListCurrency::class);

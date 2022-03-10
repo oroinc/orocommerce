@@ -9,7 +9,7 @@ use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerTrait;
-use Oro\Bundle\PricingBundle\Async\Topics;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolveCombinedPriceByPriceListTopic;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
@@ -18,6 +18,7 @@ use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Event\PriceListToProductSaveAfterEvent;
 use Oro\Bundle\PricingBundle\Event\ProductPriceRemove;
 use Oro\Bundle\PricingBundle\Event\ProductPriceSaveAfterEvent;
+use Oro\Bundle\PricingBundle\Handler\CombinedPriceListBuildTriggerHandler;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -46,6 +47,9 @@ class ProductPriceCPLEntityListener implements OptionalListenerInterface, Featur
     /** @var EventDispatcherInterface */
     protected $eventDispatcher;
 
+    /** @var CombinedPriceListBuildTriggerHandler */
+    protected $combinedPriceListBuildTriggerHandler;
+
     public function __construct(
         ExtraActionEntityStorageInterface $extraActionsStorage,
         ManagerRegistry $registry,
@@ -58,6 +62,11 @@ class ProductPriceCPLEntityListener implements OptionalListenerInterface, Featur
         $this->priceListTriggerHandler = $priceListTriggerHandler;
         $this->shardManager = $shardManager;
         $this->eventDispatcher = $eventDispatcher;
+    }
+
+    public function setCombinedPriceListBuildTriggerHandler(CombinedPriceListBuildTriggerHandler $handler): void
+    {
+        $this->combinedPriceListBuildTriggerHandler = $handler;
     }
 
     public function onSave(ProductPriceSaveAfterEvent $event)
@@ -80,12 +89,19 @@ class ProductPriceCPLEntityListener implements OptionalListenerInterface, Featur
         if (!$this->enabled || !$this->isProductPriceValid($productPrice)) {
             return;
         }
+
         if (!$this->isFeaturesEnabled()) {
             return;
         }
 
+        // Since there is already a price list check after adding the price, it does not make sense to
+        // recalculate the combined price list, as this combined price list may be incomplete.
+        if ($this->combinedPriceListBuildTriggerHandler->isSupported($productPrice->getPriceList())) {
+            return;
+        }
+
         $this->priceListTriggerHandler->handlePriceListTopic(
-            Topics::RESOLVE_COMBINED_PRICES,
+            ResolveCombinedPriceByPriceListTopic::getName(),
             $productPrice->getPriceList(),
             [$productPrice->getProduct()]
         );

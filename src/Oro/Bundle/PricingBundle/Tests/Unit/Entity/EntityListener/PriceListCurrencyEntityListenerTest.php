@@ -4,7 +4,8 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Entity\EntityListener;
 
 use Doctrine\Common\Cache\Cache;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
-use Oro\Bundle\PricingBundle\Async\Topics;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolveCombinedPriceListCurrenciesTopic;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceRulesTopic;
 use Oro\Bundle\PricingBundle\Entity\EntityListener\PriceListCurrencyEntityListener;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListCurrency;
@@ -78,8 +79,8 @@ class PriceListCurrencyEntityListenerTest extends \PHPUnit\Framework\TestCase
         $this->priceListTriggerHandler->expects($this->exactly(2))
             ->method('handlePriceListTopic')
             ->withConsecutive(
-                [Topics::RESOLVE_COMBINED_CURRENCIES, $priceList],
-                [Topics::RESOLVE_PRICE_RULES, $priceList]
+                [ResolveCombinedPriceListCurrenciesTopic::getName(), $priceList],
+                [ResolvePriceRulesTopic::getName(), $priceList]
             );
 
         $this->cache->expects($this->once())
@@ -109,7 +110,7 @@ class PriceListCurrencyEntityListenerTest extends \PHPUnit\Framework\TestCase
             ->willReturn(false);
         $this->priceListTriggerHandler->expects($this->once())
             ->method('handlePriceListTopic')
-            ->with(Topics::RESOLVE_PRICE_RULES, $priceList);
+            ->with(ResolvePriceRulesTopic::getName(), $priceList);
 
         $this->cache->expects($this->once())
             ->method('delete')
@@ -134,7 +135,7 @@ class PriceListCurrencyEntityListenerTest extends \PHPUnit\Framework\TestCase
             ->willReturn(true);
         $this->priceListTriggerHandler->expects($this->once())
             ->method('handlePriceListTopic')
-            ->with(Topics::RESOLVE_COMBINED_CURRENCIES, $priceList);
+            ->with(ResolveCombinedPriceListCurrenciesTopic::getName(), $priceList);
 
         $this->listener->postPersist($priceListCurrency);
         $this->assertTrue($priceList->isActual());
@@ -171,8 +172,8 @@ class PriceListCurrencyEntityListenerTest extends \PHPUnit\Framework\TestCase
         $this->priceListTriggerHandler->expects($this->exactly(2))
             ->method('handlePriceListTopic')
             ->withConsecutive(
-                [Topics::RESOLVE_COMBINED_CURRENCIES, $priceList],
-                [Topics::RESOLVE_PRICE_RULES, $priceList]
+                [ResolveCombinedPriceListCurrenciesTopic::getName(), $priceList],
+                [ResolvePriceRulesTopic::getName(), $priceList]
             );
 
         $this->cache->expects($this->once())
@@ -202,7 +203,7 @@ class PriceListCurrencyEntityListenerTest extends \PHPUnit\Framework\TestCase
             ->willReturn(false);
         $this->priceListTriggerHandler->expects($this->once())
             ->method('handlePriceListTopic')
-            ->with(Topics::RESOLVE_PRICE_RULES, $priceList);
+            ->with(ResolvePriceRulesTopic::getName(), $priceList);
 
         $this->cache->expects($this->once())
             ->method('delete')

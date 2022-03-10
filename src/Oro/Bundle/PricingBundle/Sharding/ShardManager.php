@@ -249,7 +249,7 @@ class ShardManager
         }
 
         $createQueries = $this->getCreateTableQueries($table);
-        foreach ($createQueries as $key => $query) {
+        foreach ($createQueries as $query) {
             $query = str_replace($search, $replace, $query);
             $connection->executeQuery($query);
         }

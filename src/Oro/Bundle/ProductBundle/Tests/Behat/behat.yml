@@ -515,6 +515,14 @@ oro_behat_extension:
             type: 'css'
             locator: 'select[name="oro_product_quick_add[products][1][productUnit]"]'
             element: Select
+          UNIT3:
+            type: 'css'
+            locator: 'select[name="oro_product_quick_add[products][2][productUnit]"]'
+            element: Select
+          UNIT4:
+            type: 'css'
+            locator: 'select[name="oro_product_quick_add[products][3][productUnit]"]'
+            element: Select
           SUBTOTAL1:
             type: 'css'
             locator: 'div[data-ftid="oro_product_quick_add_products_0"] input[data-name="field__product-subtotal"]'
@@ -1401,6 +1409,12 @@ oro_behat_extension:
     Filters In Sidebar:
       selector: '.page-sidebar .product-filters-sidebar .filter-box'
 
+    Toggle Sidebar Button:
+      selector: '.toggle-sidebar-btn[title="Expand Filters"]'
+
+    Toggle Sidebar Button Expanded:
+      selector: '.toggle-sidebar-btn[title="Collapse Filters"]'
+
     Apply Filters Button:
       selector: '.product-filters-sidebar .filter-box [data-role="apply"]'
 
@@ -1432,6 +1446,7 @@ oro_behat_extension:
         - Oro\Bundle\CustomerBundle\Tests\Behat\Context\FrontendGridContext
         - Oro\Bundle\EmailBundle\Tests\Behat\Context\EmailContext
         - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
+        - Oro\Bundle\FormBundle\Tests\Behat\Context\WysiwygContext
         - Oro\Bundle\ProductBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\ProductBundle\Tests\Behat\Context\ProductImportExportContext
         - Oro\Bundle\ProductBundle\Tests\Behat\Context\QuickOrderFormContext
@@ -1486,6 +1501,7 @@ oro_behat_extension:
         - Oro\Bundle\ApplicationBundle\Tests\Behat\Context\CommerceMainContext
         - Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext
         - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
+        - Oro\Bundle\FormBundle\Tests\Behat\Context\WysiwygContext
         - Oro\Bundle\ProductBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\ProductBundle\Tests\Behat\Context\QuickOrderFormContext
         - Oro\Bundle\RedirectBundle\Tests\Behat\Context\SlugPrototypesContext

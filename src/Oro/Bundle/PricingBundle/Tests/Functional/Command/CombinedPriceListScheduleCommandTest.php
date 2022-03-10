@@ -103,14 +103,14 @@ class CombinedPriceListScheduleCommandTest extends WebTestCase
         $website = $this->getReference(LoadWebsiteData::WEBSITE1);
         $customerGroup = $this->getReference(LoadGroups::GROUP1);
 
-        $this->assertCustomerGroupActiveCPL($website, $customerGroup, '1_2_3');
+        $this->assertCustomerGroupActiveCPL($website, $customerGroup, '1_2_3', false);
 
         $this->runCommand(CombinedPriceListScheduleCommand::getDefaultName());
 
         $priceList2 = $this->getReference(LoadPriceLists::PRICE_LIST_2);
         $priceList3 = $this->getReference(LoadPriceLists::PRICE_LIST_3);
         $expectedPriceListName = sprintf('%d_%d', $priceList2->getId(), $priceList3->getId());
-        $this->assertCustomerGroupActiveCPL($website, $customerGroup, $expectedPriceListName);
+        $this->assertCustomerGroupActiveCPL($website, $customerGroup, $expectedPriceListName, true);
 
         $this->assertMessageCollectorContainsRightMessagesOnReindex();
     }
@@ -129,7 +129,8 @@ class CombinedPriceListScheduleCommandTest extends WebTestCase
                 'context' => [
                     'entityIds' => [
                         $this->getReference(LoadProductData::PRODUCT_1)->getId(),
-                        $this->getReference(LoadProductData::PRODUCT_2)->getId()
+                        $this->getReference(LoadProductData::PRODUCT_2)->getId(),
+                        $this->getReference(LoadProductData::PRODUCT_3)->getId()
                     ],
                     'websiteIds' => $this->getWebsiteIds()
                 ],
@@ -155,7 +156,8 @@ class CombinedPriceListScheduleCommandTest extends WebTestCase
     protected function assertCustomerGroupActiveCPL(
         Website $website,
         CustomerGroup $customerGroup,
-        $expectedActivePriceList
+        string $expectedActivePriceList,
+        bool $isPricesCalculated
     ) {
         /** @var CombinedPriceListToCustomerGroupRepository $cplToCustomerGroupRepo */
         $cplToCustomerGroupRepo = $this->getContainer()->get('doctrine')
@@ -177,7 +179,7 @@ class CombinedPriceListScheduleCommandTest extends WebTestCase
             $groupToCPL->getPriceList()->getName(),
             'Active CPL should be ' . $expectedActivePriceList
         );
-        $this->assertTrue($groupToCPL->getPriceList()->isPricesCalculated());
+        $this->assertEquals($isPricesCalculated, $groupToCPL->getPriceList()->isPricesCalculated());
     }
 
     protected function buildActivationPlans()

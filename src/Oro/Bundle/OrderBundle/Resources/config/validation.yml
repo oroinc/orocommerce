@@ -7,8 +7,11 @@ Oro\Bundle\OrderBundle\Entity\Order:
                 max: 255
         shipUntil:
             - Type:
-                type: \DateTimeInterface
+                type: DateTimeInterface
                 message: oro.order.order.ship_until.type.message
+                payload:
+                    jsValidation:
+                        type: Date
         currency:
             - Currency: ~
         totalValue:

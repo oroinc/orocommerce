@@ -2,6 +2,7 @@
 @ticket-BB-9989
 @ticket-BB-16686
 @ticket-BB-16591
+@ticket-BB-7152
 @fixture-OroProductBundle:ProductAttributesFixture.yml
 Feature: Product attribute boolean
   In order to have custom attributes for Product entity
@@ -100,12 +101,40 @@ Feature: Product attribute boolean
     Then should see an "BooleanField" element
     And should not see "BooleanField: No"
 
-  Scenario: Delete product attribute
+  Scenario: Remove configurable product
     Given I proceed as the Admin
     And I go to Products/ Products
     And click delete "Conf_Sku" in grid
     And click "Yes, Delete"
-    And I go to Products/ Product Attributes
+
+  Scenario: Remove new attribute from product family
+    Given I go to Products/ Product Families
+    When I click "Edit" on row "default_family" in grid
+    And I clear "Attributes" field
+    And I save and close form
+    Then I should see "Successfully updated" flash message
+
+  Scenario: Check that attribute is not present
+    Given I go to Products/ Products
+    When I click "View" on row "SKU123" in grid
+    Then I should not see "BooleanField"
+
+  Scenario: Update product family with new attribute again to check if attribute data is deleted
+    Given I go to Products/ Product Families
+    When I click "Edit" on row "default_family" in grid
+    And I fill "Product Family Form" with:
+      | Attributes | [BooleanField] |
+    And I save and close form
+    Then I should see "Successfully updated" flash message
+
+  Scenario: Check that attribute is present but its data is gone
+    Given I go to Products/ Products
+    When I click "View" on row "SKU123" in grid
+    Then I should see product with:
+      | BooleanField | N/A |
+
+  Scenario: Delete product attribute
+    Given I go to Products/ Product Attributes
     When I click Remove "BooleanField" in grid
     Then I should see "Are you sure you want to delete this attribute?"
     And I click "Yes"

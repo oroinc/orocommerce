@@ -151,6 +151,13 @@ services:
         public: true
         parent: oro_product.storage.session_data_storage
 
+    oro_product.storage.product_website_reindex_request_data_storage:
+        class: Oro\Bundle\ProductBundle\Storage\ProductWebsiteReindexRequestDataStorage
+        arguments:
+            - '@oro_product.driver.product_website_reindex_request_dbal_driver'
+        calls:
+            - ['setWebsiteProvider', ['@oro_website.website.provider']]
+
     oro_product.validator.product_by_sku:
         class: 'Oro\Bundle\ProductBundle\Validator\Constraints\ProductBySkuValidator'
         arguments:
@@ -483,6 +490,9 @@ services:
             - '@oro_message_queue.client.message_producer'
             - '@oro_product.helper.product_collection_segment'
             - '@oro_product.model.segment_message_factory'
+        calls:
+            - ['setReindexHandler', ['@oro_product.handler.async_reindex_product_collection_handler']]
+            - ['setAccumulateMessageFactory', ['@oro_product.model.accumulate_segment_message_factory']]
         tags:
             - { name: doctrine.event_listener, event: postFlush }
 
@@ -656,7 +666,8 @@ services:
         arguments:
             - '@oro_product.datagrid_theme_helper'
             - '@oro_product.provider.product_image_placeholder'
-            - '@oro_attachment.tools.webp_configuration'
+        calls:
+            - ['setUrlHelper', ['@oro_ui.tools.url_helper']]
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
             - { name: kernel.event_listener, event: oro_datagrid.search_datasource.result.after.frontend-product-search-grid, method: onResultAfter }
@@ -667,6 +678,8 @@ services:
             - '@oro_product.datagrid_theme_helper'
             - '@oro_product.provider.product_image_placeholder'
             - '@oro_attachment.tools.webp_configuration'
+        calls:
+            - ['setUrlHelper', ['@oro_ui.tools.url_helper']]
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
             - { name: kernel.event_listener, event: oro_datagrid.search_datasource.result.after.frontend-product-search-grid, method: onResultAfter }
@@ -723,6 +736,8 @@ services:
         arguments:
             - '@oro_product.provider.product_image_placeholder'
             - '@oro_attachment.tools.webp_configuration'
+        calls:
+            - ['setUrlHelper', ['@oro_ui.tools.url_helper']]
         tags:
             - { name: kernel.event_listener, event: oro_product.product_list.build_query, method: onBuildQuery, priority: 10 }
             - { name: kernel.event_listener, event: oro_product.product_list.build_result, method: onBuildResult, priority: 10 }
@@ -1315,6 +1330,13 @@ services:
         public: false
         arguments:
             - '@doctrine'
+        # Add tags to bind topic with message_factory
+
+    oro_product.model.accumulate_segment_message_factory:
+        class: Oro\Bundle\ProductBundle\Model\AccumulateSegmentMessageFactory
+        public: false
+        arguments:
+            - '@doctrine'
 
     oro_product.async.reindex_product_collection_processor:
         class: Oro\Bundle\ProductBundle\Async\ReindexProductCollectionProcessor
@@ -1325,6 +1347,17 @@ services:
             - '@oro_website_search.async.indexer.message_granularizer.reindex'
             - '@oro_product.model.segment_message_factory'
             - '@oro_segment.provider.segment_snapshot_delta_provider'
+        tags:
+            - { name: 'oro_message_queue.client.message_processor' }
+
+    oro_product.async.accumulate_product_collection_processor:
+        class: Oro\Bundle\ProductBundle\Async\AccumulateReindexProductCollectionProcessor
+        arguments:
+            - '@oro_message_queue.job.runner'
+            - '@logger'
+            - '@oro_product.model.accumulate_segment_message_factory'
+            - '@oro_segment.provider.segment_snapshot_delta_provider'
+            - '@oro_product.storage.product_website_reindex_request_data_storage'
         tags:
             - { name: 'oro_message_queue.client.message_processor' }
 
@@ -1361,6 +1394,14 @@ services:
     oro_product.handler.search_product_handler:
         class: Oro\Bundle\ProductBundle\Handler\SearchProductHandler
         arguments: ['@request_stack']
+
+    oro_product.handler.async_reindex_product_collection_handler:
+        class: Oro\Bundle\ProductBundle\Handler\AsyncReindexProductCollectionHandler
+        arguments:
+            - '@oro_message_queue.job.runner'
+            - '@oro_message_queue.job.dependent_job_service'
+            - '@oro_message_queue.message_producer'
+            - '@oro_product.model.accumulate_segment_message_factory'
 
     oro_product.helper.product_grouper.factory:
         class: Oro\Bundle\ProductBundle\Helper\ProductGrouper\ProductsGrouperFactory
@@ -1735,6 +1776,16 @@ services:
         tags:
             - { name: 'oro_message_queue.client.message_processor', topicName: 'oro_product.reindex_products_by_attributes' }
 
+    oro_product.async.reindex_request_item_products_by_related_job_processor:
+        class: Oro\Bundle\ProductBundle\Async\ReindexRequestItemProductsByRelatedJobProcessor
+        arguments:
+            - '@oro_product.storage.product_website_reindex_request_data_storage'
+            - '@oro_message_queue.job.runner'
+            - '@oro_message_queue.client.message_producer'
+            - '@logger'
+        tags:
+            - { name: 'oro_message_queue.client.message_processor', topicName: 'oro_product.reindex_request_item_products_by_related_job' }
+
     oro_product.config.event_listener.display_simple_variations_listener:
         class: Oro\Bundle\ProductBundle\EventListener\Config\DisplaySimpleVariationsListener
         arguments:
@@ -1915,3 +1966,27 @@ services:
         tags:
             - { name: kernel.event_listener, event: Oro\Bundle\ProductBundle\Event\CollectAutocompleteFieldsEvent, method: onCollectAutocompleteFields }
             - { name: kernel.event_listener, event: Oro\Bundle\ProductBundle\Event\ProcessAutocompleteDataEvent, method: onProcessAutocompleteData }
+
+    oro_product.manager.user_product_filters_sidebar_state_manager:
+        class: Oro\Bundle\ProductBundle\Manager\UserProductFiltersSidebarStateManager
+        arguments:
+            - '@request_stack'
+            - '@doctrine'
+            - '@oro_security.token_accessor'
+            - '@oro_website.manager'
+            - '@oro_config.manager'
+
+    Oro\Bundle\ProductBundle\Manager\UserProductFiltersSidebarStateManager:
+        alias: oro_product.manager.user_product_filters_sidebar_state_manager
+
+    oro_product.layout.data_provider.product_filters_sidebar_state:
+        class: Oro\Bundle\ProductBundle\Layout\DataProvider\UserProductFiltersSidebarStateDataProvider
+        arguments:
+            - '@oro_product.manager.user_product_filters_sidebar_state_manager'
+        tags:
+            - { name: layout.data_provider, alias: oro_product_filters_sidebar_state_data_provider }
+
+    oro_product.driver.product_website_reindex_request_dbal_driver:
+        class: Oro\Bundle\ProductBundle\Driver\ProductWebsiteReindexRequestDbalDriver
+        arguments:
+            - '@doctrine'

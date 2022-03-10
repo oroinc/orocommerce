@@ -7,27 +7,24 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Validator\Constraints\ProductPriceCurrency;
 use Oro\Bundle\PricingBundle\Validator\Constraints\ProductPriceCurrencyValidator;
-use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class ProductPriceCurrencyValidatorTest extends ConstraintValidatorTestCase
 {
-    protected function createValidator()
+    protected function createValidator(): ProductPriceCurrencyValidator
     {
         return new ProductPriceCurrencyValidator();
     }
 
-    public function testConfiguration()
+    private function getProductPrice(): ProductPrice
     {
-        $constraint = new ProductPriceCurrency();
-        $this->assertEquals('oro_pricing_product_price_currency_validator', $constraint->validatedBy());
-        $this->assertEquals(Constraint::CLASS_CONSTRAINT, $constraint->getTargets());
-    }
+        $priceList = new PriceList();
+        $priceList->setCurrencies(['USD', 'EUR']);
 
-    public function testGetDefaultOption()
-    {
-        $constraint = new ProductPriceCurrency();
-        $this->assertNull($constraint->getDefaultOption());
+        $productPrice = new ProductPrice();
+        $productPrice->setPriceList($priceList);
+
+        return $productPrice;
     }
 
     public function testValidateWithAllowedPrice()
@@ -113,16 +110,5 @@ class ProductPriceCurrencyValidatorTest extends ConstraintValidatorTestCase
         $this->validator->validate($productPrice, $constraint);
 
         $this->assertNoViolation();
-    }
-
-    public function getProductPrice(): ProductPrice
-    {
-        $priceList = new PriceList();
-        $priceList->setCurrencies(['USD', 'EUR']);
-
-        $productPrice = new ProductPrice();
-        $productPrice->setPriceList($priceList);
-
-        return $productPrice;
     }
 }

@@ -46,9 +46,9 @@ class ShippingOptionsLineItemCollectionFactoryDecorator implements ShippingLineI
      */
     public function createShippingLineItemCollection(array $shippingLineItems): ShippingLineItemCollectionInterface
     {
-        $shippingOptionsByProductId = $this->getShippingOptionsIndexedByProductId($shippingLineItems);
+        $shippingOptsByCode = $this->getShippingOptionsIndexedByProductId($shippingLineItems);
 
-        if (count($shippingOptionsByProductId) === 0) {
+        if (count($shippingOptsByCode) === 0) {
             return $this->decoratedFactory->createShippingLineItemCollection($shippingLineItems);
         }
 
@@ -56,12 +56,11 @@ class ShippingOptionsLineItemCollectionFactoryDecorator implements ShippingLineI
 
         foreach ($shippingLineItems as $lineItem) {
             $builder = $this->builderByLineItemFactory->createBuilder($lineItem);
-
+            $unitCode = $lineItem->getProductUnitCode();
             $product = $lineItem->getProduct();
-
-            if ($product !== null && array_key_exists($product->getId(), $shippingOptionsByProductId)) {
-                $shippingOptions = $shippingOptionsByProductId[$product->getId()];
-
+            if ($product !== null && $unitCode !== null && isset($shippingOptsByCode[$product->getId()][$unitCode])) {
+                $shippingOptions = $shippingOptsByCode[$product->getId()][$unitCode];
+                // this shipping option is not the actual option.
                 if ($lineItem->getWeight() === null) {
                     $builder->setWeight(
                         Weight::create(
@@ -118,7 +117,7 @@ class ShippingOptionsLineItemCollectionFactoryDecorator implements ShippingLineI
             $product = $shippingLineItem->getProduct();
             $unit = $shippingLineItem->getProductUnit();
             if ($product !== null && $unit !== null) {
-                $result[$product->getId()] = $unit;
+                $result[$product->getId()][$unit->getCode()] = $unit;
             }
         }
 

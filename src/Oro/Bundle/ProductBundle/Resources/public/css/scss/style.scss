@@ -41,8 +41,6 @@
 
 .oro-item-collection {
     td {
-        vertical-align: baseline;
-
         .sell {
             margin-top: $content-padding-small;
         }
@@ -56,6 +54,10 @@
 
     &__row--align-top td {
         vertical-align: top;
+    }
+
+    &__row--align-middle td {
+        vertical-align: middle;
     }
 
     input[type='text'],
@@ -145,7 +147,7 @@
         width: 60%;
     }
 
-    .add-list-item {
+    + .add-list-item {
         margin-top: $content-padding-small;
         margin-left: 0;
     }

@@ -320,8 +320,13 @@ class CombinedPriceListRepositoryTest extends WebTestCase
             ],
             [
                 'priceList' => 'price_list_3',
-                'result' => 0,
+                'result' => 3,
                 'calculatedPrices' => false,
+            ],
+            [
+                'priceList' => 'price_list_3',
+                'result' => 0,
+                'calculatedPrices' => true,
             ],
             [
                 'priceList' => 'price_list_4',

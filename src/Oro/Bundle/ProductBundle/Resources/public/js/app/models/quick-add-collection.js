@@ -143,6 +143,7 @@ const QuickAddCollection = BaseCollection.extend({
      */
     async _addQuickAddRows(items, options = {}) {
         const itemsToLoad = {};
+        const zeroQuantityItems = [];
 
         await window.sleep(0); // give time to repaint UI
 
@@ -152,6 +153,11 @@ const QuickAddCollection = BaseCollection.extend({
         }
 
         items.forEach(item => {
+            if (!item.quantity) {
+                zeroQuantityItems.push(item);
+                return;
+            }
+
             let model = this.findCompatibleModel(item);
             if (model) {
                 // update existing model
@@ -174,25 +180,36 @@ const QuickAddCollection = BaseCollection.extend({
         this.trigger('quick-add-rows:before-load');
 
         let result;
+        let invalidItems;
         try {
             result = await this.loadProductInfo(itemsToLoad, options);
         } catch (e) {
             throw e;
         } finally {
-            let invalidItems;
+            const obsoleteModels = [];
             if (result) {
                 ({invalid: invalidItems = {}} = result);
+                const loadedItems = _.omit(itemsToLoad, Object.keys(invalidItems));
+                Object.keys(loadedItems).forEach(cid => {
+                    const model = this.get(cid);
+                    const existingModel = this.findCompatibleModel(model.toJSON());
+                    if (existingModel && model !== existingModel) {
+                        // update existing model
+                        existingModel.set('quantity', existingModel.get('quantity') + model.get('quantity'));
+                        obsoleteModels.push(model);
+                    }
+                });
             } else {
                 invalidItems = itemsToLoad;
             }
 
             const invalidModels = Object.keys(invalidItems).map(cid => this.get(cid));
 
-            this.remove(invalidModels);
+            this.remove([...invalidModels, ...obsoleteModels]);
         }
         this.trigger('quick-add-rows:after-load');
 
-        return result;
+        return {invalid: [...Object.values(invalidItems), ...zeroQuantityItems]};
     },
 
     /**
@@ -203,7 +220,7 @@ const QuickAddCollection = BaseCollection.extend({
      * @return {Promise<{invalid: any}>}
      */
     async loadProductInfo(items, options = {}) {
-        let remainingItems = Object.assign(items);
+        let remainingItems = Object.assign({}, items);
 
         const batches = _.chunk(_.unique(_.pluck(Object.values(items), 'sku')), this.loadProductsBatchSize);
         await batches.reduce(async (previousRequest, batch) => {
@@ -248,7 +265,7 @@ const QuickAddCollection = BaseCollection.extend({
      * @return {Object} remaining items that was not updated
      * @private
      */
-    _updateModels(productInfo, itemsToUpdate, options= {}) {
+    _updateModels(productInfo, itemsToUpdate, options = {}) {
         const updatedModels = [];
         productInfo.forEach(data => {
             const {id, sku, units, 'defaultName.string': productName, ...extraAttrs} = data;

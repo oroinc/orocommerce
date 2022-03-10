@@ -408,6 +408,11 @@ services:
         tags:
             - { name: oro_entity.name_provider, priority: 100 }
 
+    oro_promotion.promotion_entity_name_provider:
+        class: Oro\Bundle\PromotionBundle\Provider\PromotionEntityNameProvider
+        tags:
+            - { name: oro_entity.name_provider, priority: 100 }
+
     Oro\Bundle\PromotionBundle\Mapper\AppliedPromotionMapper:
         alias: oro_promotion.mapper.applied_promotion
 

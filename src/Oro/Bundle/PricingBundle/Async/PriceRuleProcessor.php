@@ -6,6 +6,7 @@ use Doctrine\DBAL\Exception\RetryableException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\NotificationBundle\NotificationAlert\NotificationAlertManager;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceRulesTopic;
 use Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
@@ -14,7 +15,6 @@ use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Component\MessageQueue\Util\JSON;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -47,7 +47,7 @@ class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberIn
      */
     public static function getSubscribedTopics()
     {
-        return [Topics::RESOLVE_PRICE_RULES];
+        return [ResolvePriceRulesTopic::getName()];
     }
 
     /**
@@ -55,12 +55,7 @@ class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberIn
      */
     public function process(MessageInterface $message, SessionInterface $session)
     {
-        $body = JSON::decode($message->getBody());
-        if (!isset($body['product']) || !\is_array($body['product'])) {
-            $this->logger->critical('Got invalid message.');
-
-            return self::REJECT;
-        }
+        $body = $message->getBody();
         $priceListsCount = count($body['product']);
 
         /** @var EntityManagerInterface $em */
@@ -102,7 +97,7 @@ class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberIn
                     }
 
                     $this->triggerHandler->handlePriceListTopic(
-                        Topics::RESOLVE_PRICE_RULES,
+                        ResolvePriceRulesTopic::getName(),
                         $priceList,
                         $productIds
                     );

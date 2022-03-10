@@ -38,7 +38,6 @@ class CreateOrderWithPromotionsTest extends FrontendRestJsonApiTestCase
             'create_order_with_promotions.yml'
         );
 
-        //$this->dumpYmlTemplate(null, $response);
         $responseContent = $this->updateResponseContent('create_order_with_promotions.yml', $response);
         $this->assertResponseContains($responseContent, $response);
     }

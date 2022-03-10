@@ -100,7 +100,7 @@ const QuickAddCopyPasteFormView = BaseView.extend({
         }
 
         if (result) {
-            const failed = Object.values(result.invalid || {});
+            const failed = result.invalid || [];
             if (failed.length) {
                 const failedLines = _.intersection(lines, _.flatten(_.pluck(failed, 'raw')));
                 this.$field.val(failedLines.join('\n'));

@@ -4,7 +4,8 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
-use Oro\Bundle\PricingBundle\Async\Topics;
+use Oro\Bundle\PricingBundle\Async\Topic\RebuildCombinedPriceListsTopic;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceListAssignedProductsTopic;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -40,7 +41,7 @@ class PriceListEntityListenerTest extends WebTestCase
         $em->remove($priceList);
         $em->flush();
 
-        self::assertEmptyMessages(Topics::REBUILD_COMBINED_PRICE_LISTS);
+        self::assertEmptyMessages(RebuildCombinedPriceListsTopic::getName());
     }
 
     public function testPreUpdate()
@@ -54,7 +55,7 @@ class PriceListEntityListenerTest extends WebTestCase
         $em->flush();
 
         self::assertMessageSent(
-            Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS,
+            ResolvePriceListAssignedProductsTopic::getName(),
             [
                 'product' => [$priceList->getId() => []]
             ]
@@ -71,13 +72,13 @@ class PriceListEntityListenerTest extends WebTestCase
         $em->persist($priceList);
         $em->flush();
 
-        self::assertEmptyMessages(Topics::REBUILD_COMBINED_PRICE_LISTS);
+        self::assertEmptyMessages(RebuildCombinedPriceListsTopic::getName());
 
         $priceList->setActive(true);
         $em->flush();
 
         self::assertMessageSent(
-            Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS,
+            ResolvePriceListAssignedProductsTopic::getName(),
             [
                 'product' => [$priceList->getId() => []]
             ]
@@ -94,7 +95,7 @@ class PriceListEntityListenerTest extends WebTestCase
         $em->persist($priceList);
         $em->flush();
 
-        self::assertEmptyMessages(Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS);
+        self::assertEmptyMessages(ResolvePriceListAssignedProductsTopic::getName());
     }
 
     public function testPrePersistEmptyAssignmentRule()
@@ -109,7 +110,7 @@ class PriceListEntityListenerTest extends WebTestCase
 
         $this->assertTrue($priceList->isActual());
 
-        self::assertEmptyMessages(Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS);
+        self::assertEmptyMessages(ResolvePriceListAssignedProductsTopic::getName());
     }
 
     public function testPrePersistWithAssignmentRule()
@@ -126,7 +127,7 @@ class PriceListEntityListenerTest extends WebTestCase
         $this->assertFalse($priceList->isActual());
 
         self::assertMessageSent(
-            Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS,
+            ResolvePriceListAssignedProductsTopic::getName(),
             [
                 'product' => [$priceList->getId() => []]
             ]

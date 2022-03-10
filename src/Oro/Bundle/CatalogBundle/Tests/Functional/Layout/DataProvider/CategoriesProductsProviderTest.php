@@ -10,6 +10,9 @@ use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadProductsToIndex;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * @group regression
+ */
 class CategoriesProductsProviderTest extends FrontendWebTestCase
 {
     /**

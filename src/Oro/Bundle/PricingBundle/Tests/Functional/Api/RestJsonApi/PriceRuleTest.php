@@ -4,7 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\Api\RestJsonApi;
 
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
-use Oro\Bundle\PricingBundle\Async\Topics;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceRulesTopic;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
@@ -21,15 +21,10 @@ class PriceRuleTest extends RestJsonApiTestCase
 {
     use MessageQueueExtension;
 
-    /**
-     * {@inheritDoc}
-     */
     protected function setUp(): void
     {
         parent::setUp();
-        $this->loadFixtures([
-            LoadPriceRules::class,
-        ]);
+        $this->loadFixtures([LoadPriceRules::class]);
     }
 
     public function testGetList()
@@ -52,16 +47,16 @@ class PriceRuleTest extends RestJsonApiTestCase
         $parameters = $this->getRequestData('price_rule/create_values_with_expressions.yml');
         $response = $this->post($routeParameters, $parameters, [], false);
 
-        static::assertResponseStatusCodeEquals($response, Response::HTTP_BAD_REQUEST);
-        static::assertStringContainsString(
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_BAD_REQUEST);
+        self::assertStringContainsString(
             'One of fields: Currency, Currency Expression should be blank',
             $response->getContent()
         );
-        static::assertStringContainsString(
+        self::assertStringContainsString(
             'One of fields: Quantity, Quantity Expression should be blank',
             $response->getContent()
         );
-        static::assertStringContainsString(
+        self::assertStringContainsString(
             'One of fields: Product Unit, Product Unit Expression should be blank',
             $response->getContent()
         );
@@ -73,8 +68,8 @@ class PriceRuleTest extends RestJsonApiTestCase
         $parameters = $this->getRequestData('price_rule/create_required_fields_blank.yml');
         $response = $this->post($routeParameters, $parameters, [], false);
 
-        static::assertResponseStatusCodeEquals($response, Response::HTTP_BAD_REQUEST);
-        static::assertStringContainsString(
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_BAD_REQUEST);
+        self::assertStringContainsString(
             'One of fields: Currency, Currency Expression is required',
             $response->getContent()
         );
@@ -91,25 +86,25 @@ class PriceRuleTest extends RestJsonApiTestCase
             ->getRepository(PriceRule::class)
             ->findOneBy(['rule' => 'pricelist[1].prices.value * 0.8']);
 
-        static::assertSame('EUR', $priceRule->getCurrency());
-        static::assertNull($priceRule->getCurrencyExpression());
-        static::assertEquals(1, $priceRule->getQuantity());
-        static::assertNull($priceRule->getQuantityExpression());
-        static::assertNull($priceRule->getProductUnitExpression());
-        static::assertSame('product.category.id == 1', $priceRule->getRuleCondition());
+        self::assertSame('EUR', $priceRule->getCurrency());
+        self::assertNull($priceRule->getCurrencyExpression());
+        self::assertEquals(1, $priceRule->getQuantity());
+        self::assertNull($priceRule->getQuantityExpression());
+        self::assertNull($priceRule->getProductUnitExpression());
+        self::assertSame('product.category.id == 1', $priceRule->getRuleCondition());
 
-        static::assertEquals(
+        self::assertEquals(
             $this->getReference(LoadProductUnits::BOX),
             $priceRule->getProductUnit()
         );
 
-        static::assertEquals(
+        self::assertEquals(
             $this->getReference(LoadPriceLists::PRICE_LIST_3),
             $priceRule->getPriceList()
         );
 
-        static::assertMessageSent(
-            Topics::RESOLVE_PRICE_RULES,
+        self::assertMessageSent(
+            ResolvePriceRulesTopic::getName(),
             [
                 'product' => [$priceRule->getPriceList()->getId() => []],
             ]
@@ -129,21 +124,21 @@ class PriceRuleTest extends RestJsonApiTestCase
             ->getRepository(PriceRule::class)
             ->findOneBy(['rule' => 'pricelist[1].prices.value * 0.8']);
 
-        static::assertSame('pricelist[1].prices.currency', $priceRule->getCurrencyExpression());
-        static::assertEmpty($priceRule->getCurrency());
-        static::assertSame('pricelist[1].prices.quantity + 3', $priceRule->getQuantityExpression());
-        static::assertNull($priceRule->getQuantity());
-        static::assertNull($priceRule->getProductUnit());
-        static::assertSame('pricelist[1].prices.unit', $priceRule->getProductUnitExpression());
-        static::assertSame('product.category.id == 1', $priceRule->getRuleCondition());
+        self::assertSame('pricelist[1].prices.currency', $priceRule->getCurrencyExpression());
+        self::assertEmpty($priceRule->getCurrency());
+        self::assertSame('pricelist[1].prices.quantity + 3', $priceRule->getQuantityExpression());
+        self::assertNull($priceRule->getQuantity());
+        self::assertNull($priceRule->getProductUnit());
+        self::assertSame('pricelist[1].prices.unit', $priceRule->getProductUnitExpression());
+        self::assertSame('product.category.id == 1', $priceRule->getRuleCondition());
 
-        static::assertEquals(
+        self::assertEquals(
             $this->getReference(LoadPriceLists::PRICE_LIST_3),
             $priceRule->getPriceList()
         );
 
-        static::assertMessageSent(
-            Topics::RESOLVE_PRICE_RULES,
+        self::assertMessageSent(
+            ResolvePriceRulesTopic::getName(),
             [
                 'product' => [$priceRule->getPriceList()->getId() => []],
             ]
@@ -196,7 +191,7 @@ class PriceRuleTest extends RestJsonApiTestCase
 
         self::assertEquals($priceListId, $priceRule->getPriceList()->getId());
         self::assertMessageSent(
-            Topics::RESOLVE_PRICE_RULES,
+            ResolvePriceRulesTopic::getName(),
             ['product' => [$priceRule->getPriceList()->getId() => []]]
         );
         $this->assertLexemesCreated($priceRule->getPriceList());
@@ -226,15 +221,15 @@ class PriceRuleTest extends RestJsonApiTestCase
             $this->getEntityManager()->find(PriceRule::class, $priceRuleId2)
         );
 
-        static::assertMessageSent(
-            Topics::RESOLVE_PRICE_RULES,
+        self::assertMessageSent(
+            ResolvePriceRulesTopic::getName(),
             [
                 'product' => [$priceList1->getId() => []],
             ]
         );
 
-        static::assertMessageSent(
-            Topics::RESOLVE_PRICE_RULES,
+        self::assertMessageSent(
+            ResolvePriceRulesTopic::getName(),
             [
                 'product' => [$priceList2->getId() => []],
             ]
@@ -264,19 +259,19 @@ class PriceRuleTest extends RestJsonApiTestCase
             ->getRepository(PriceRule::class)
             ->find($priceRuleId);
 
-        static::assertNull($updatedPriceRule->getQuantity());
-        static::assertSame('pricelist[1].prices.quantity + 4', $updatedPriceRule->getQuantityExpression());
-        static::assertSame('product.category.id > 0', $updatedPriceRule->getRuleCondition());
-        static::assertSame('pricelist[1].prices.value * 1', $updatedPriceRule->getRule());
-        static::assertSame(5, $updatedPriceRule->getPriority());
+        self::assertNull($updatedPriceRule->getQuantity());
+        self::assertSame('pricelist[1].prices.quantity + 4', $updatedPriceRule->getQuantityExpression());
+        self::assertSame('product.category.id > 0', $updatedPriceRule->getRuleCondition());
+        self::assertSame('pricelist[1].prices.value * 1', $updatedPriceRule->getRule());
+        self::assertSame(5, $updatedPriceRule->getPriority());
 
-        static::assertEquals(
+        self::assertEquals(
             $this->getReference(LoadProductUnits::BOTTLE),
             $updatedPriceRule->getProductUnit()
         );
 
-        static::assertMessageSent(
-            Topics::RESOLVE_PRICE_RULES,
+        self::assertMessageSent(
+            ResolvePriceRulesTopic::getName(),
             [
                 'product' => [
                     $updatedPriceRule->getPriceList()->getId() => []
@@ -299,8 +294,8 @@ class PriceRuleTest extends RestJsonApiTestCase
             $this->getEntityManager()->find(PriceRule::class, $priceRuleId)
         );
 
-        static::assertMessageSent(
-            Topics::RESOLVE_PRICE_RULES,
+        self::assertMessageSent(
+            ResolvePriceRulesTopic::getName(),
             [
                 'product' => [$priceList->getId() => []],
             ]
@@ -354,40 +349,37 @@ class PriceRuleTest extends RestJsonApiTestCase
             [
                 'data' => [
                     'type' => 'productunits',
-                    'id' => (string) $priceRule->getProductUnit()->getCode(),
+                    'id' => $priceRule->getProductUnit()->getCode(),
                 ]
             ],
             $response
         );
     }
 
-    /**
-     * @return PriceRule
-     */
-    private function getFirstPriceRule()
+    private function getFirstPriceRule(): PriceRule
     {
         return $this->getReference(LoadPriceRules::PRICE_RULE_1);
     }
 
-    private function assertLexemesCreated(PriceList $priceList)
+    private function assertLexemesCreated(PriceList $priceList): void
     {
         $lexeme = $this->getEntityManager()
             ->getRepository(PriceRuleLexeme::class)
             ->findOneBy(['priceList' => $priceList]);
 
-        static::assertNotNull($lexeme);
+        self::assertNotNull($lexeme);
     }
 
     private function assertGetSubResource(
         int $entityId,
         string $associationName,
         string $expectedAssociationId
-    ) {
+    ): void {
         $response = $this->getSubresource(
             ['entity' => 'pricerules', 'id' => $entityId, 'association' => $associationName]
         );
 
-        $result = json_decode($response->getContent(), true);
+        $result = self::jsonToArray($response->getContent());
 
         self::assertEquals($expectedAssociationId, $result['data']['id']);
     }

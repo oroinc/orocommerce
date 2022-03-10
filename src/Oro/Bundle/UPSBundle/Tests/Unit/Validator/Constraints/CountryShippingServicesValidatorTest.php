@@ -8,13 +8,20 @@ use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Oro\Bundle\UPSBundle\Validator\Constraints\CountryShippingServicesConstraint;
 use Oro\Bundle\UPSBundle\Validator\Constraints\CountryShippingServicesValidator;
+use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class CountryShippingServicesValidatorTest extends ConstraintValidatorTestCase
 {
-    protected function createValidator()
+    protected function createValidator(): CountryShippingServicesValidator
     {
         return new CountryShippingServicesValidator();
+    }
+
+    public function testGetTargets()
+    {
+        $constraint = new CountryShippingServicesConstraint();
+        self::assertSame(Constraint::CLASS_CONSTRAINT, $constraint->getTargets());
     }
 
     public function testValidate()

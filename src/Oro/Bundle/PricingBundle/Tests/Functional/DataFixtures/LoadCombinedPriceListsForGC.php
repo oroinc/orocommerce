@@ -32,7 +32,7 @@ class LoadCombinedPriceListsForGC extends AbstractCombinedPriceListsFixture impl
         [
             'name' => 'cpl_ws_f',
             'enabled' => true,
-            'calculated' => true,
+            'calculated' => false,
             'priceListsToCustomers' => [],
             'priceListsToCustomerGroups' => [],
             'websites' => [],
@@ -46,7 +46,7 @@ class LoadCombinedPriceListsForGC extends AbstractCombinedPriceListsFixture impl
         [
             'name' => 'cpl_ws',
             'enabled' => true,
-            'calculated' => true,
+            'calculated' => false,
             'priceListsToCustomers' => [],
             'priceListsToCustomerGroups' => [],
             'websites' => [LoadWebsiteData::WEBSITE1 => 'cpl_ws_f'],
@@ -60,7 +60,7 @@ class LoadCombinedPriceListsForGC extends AbstractCombinedPriceListsFixture impl
         [
             'name' => 'cpl_ws_alt',
             'enabled' => true,
-            'calculated' => true,
+            'calculated' => false,
             'priceListsToCustomers' => [],
             'priceListsToCustomerGroups' => [],
             'websites' => [],
@@ -74,7 +74,7 @@ class LoadCombinedPriceListsForGC extends AbstractCombinedPriceListsFixture impl
         [
             'name' => 'cpl_cg_f',
             'enabled' => true,
-            'calculated' => true,
+            'calculated' => false,
             'priceListsToCustomers' => [],
             'priceListsToCustomerGroups' => [],
             'websites' => [],
@@ -88,7 +88,7 @@ class LoadCombinedPriceListsForGC extends AbstractCombinedPriceListsFixture impl
         [
             'name' => 'cpl_cg',
             'enabled' => true,
-            'calculated' => true,
+            'calculated' => false,
             'priceListsToCustomers' => [],
             'priceListsToCustomerGroups' => [LoadGroups::GROUP1 => 'cpl_cg_f'],
             'websites' => [],
@@ -102,7 +102,7 @@ class LoadCombinedPriceListsForGC extends AbstractCombinedPriceListsFixture impl
         [
             'name' => 'cpl_c_f',
             'enabled' => true,
-            'calculated' => true,
+            'calculated' => false,
             'priceListsToCustomers' => [],
             'priceListsToCustomerGroups' => [],
             'websites' => [],
@@ -116,7 +116,7 @@ class LoadCombinedPriceListsForGC extends AbstractCombinedPriceListsFixture impl
         [
             'name' => 'cpl_c',
             'enabled' => true,
-            'calculated' => true,
+            'calculated' => false,
             'priceListsToCustomers' => [LoadCustomers::CUSTOMER_LEVEL_1 => 'cpl_c_f'],
             'priceListsToCustomerGroups' => [],
             'websites' => [],
@@ -130,7 +130,7 @@ class LoadCombinedPriceListsForGC extends AbstractCombinedPriceListsFixture impl
         [
             'name' => 'cpl_conf_f',
             'enabled' => true,
-            'calculated' => true,
+            'calculated' => false,
             'priceListsToCustomers' => [],
             'priceListsToCustomerGroups' => [],
             'websites' => [],
@@ -144,7 +144,7 @@ class LoadCombinedPriceListsForGC extends AbstractCombinedPriceListsFixture impl
         [
             'name' => 'cpl_conf',
             'enabled' => true,
-            'calculated' => true,
+            'calculated' => false,
             'priceListsToCustomers' => [],
             'priceListsToCustomerGroups' => [],
             'websites' => [],
@@ -158,7 +158,7 @@ class LoadCombinedPriceListsForGC extends AbstractCombinedPriceListsFixture impl
         [
             'name' => 'cpl_conf_alt',
             'enabled' => true,
-            'calculated' => true,
+            'calculated' => false,
             'priceListsToCustomers' => [],
             'priceListsToCustomerGroups' => [],
             'websites' => [],
@@ -172,7 +172,7 @@ class LoadCombinedPriceListsForGC extends AbstractCombinedPriceListsFixture impl
         [
             'name' => 'cpl_unassigned',
             'enabled' => true,
-            'calculated' => true,
+            'calculated' => false,
             'priceListsToCustomers' => [],
             'priceListsToCustomerGroups' => [],
             'websites' => [],
@@ -186,7 +186,7 @@ class LoadCombinedPriceListsForGC extends AbstractCombinedPriceListsFixture impl
         [
             'name' => 'cpl_broken_ar_f',
             'enabled' => true,
-            'calculated' => true,
+            'calculated' => false,
             'priceListsToCustomers' => [],
             'priceListsToCustomerGroups' => [],
             'websites' => [],
@@ -200,7 +200,7 @@ class LoadCombinedPriceListsForGC extends AbstractCombinedPriceListsFixture impl
         [
             'name' => 'cpl_broken_ar',
             'enabled' => true,
-            'calculated' => true,
+            'calculated' => false,
             'priceListsToCustomers' => [],
             'priceListsToCustomerGroups' => [],
             'websites' => [],

@@ -15,30 +15,16 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class QuantityToOrderValidatorServiceTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var EntityFallbackResolver|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $fallbackResolver;
+    /** @var EntityFallbackResolver|\PHPUnit\Framework\MockObject\MockObject */
+    private $fallbackResolver;
 
-    /**
-     * @var QuantityToOrderValidatorService
-     */
-    protected $quantityToOrderValidatorService;
-
-    /**
-     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $translator;
-
-    /**
-     * @var PreloadingManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var PreloadingManager|\PHPUnit\Framework\MockObject\MockObject */
     private $preloadingManager;
 
-    /**
-     * @var array
-     */
-    private $fieldsToPreload = [
+    /** @var QuantityToOrderValidatorService */
+    private $quantityToOrderValidatorService;
+
+    private array $fieldsToPreload = [
         'product' => [
             'minimumQuantityToOrder' => [],
             'maximumQuantityToOrder' => [],
@@ -51,21 +37,19 @@ class QuantityToOrderValidatorServiceTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->fallbackResolver = $this->getMockBuilder(EntityFallbackResolver::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->translator = $this->createMock(TranslatorInterface::class);
-        $this->translator->expects($this->any())
-            ->method('trans')
-            ->willReturnCallback(
-                function ($message) {
-                    return $message;
-                }
-            );
+        $this->fallbackResolver = $this->createMock(EntityFallbackResolver::class);
         $this->preloadingManager = $this->createMock(PreloadingManager::class);
+
+        $translator = $this->createMock(TranslatorInterface::class);
+        $translator->expects($this->any())
+            ->method('trans')
+            ->willReturnCallback(function ($message) {
+                return $message;
+            });
+
         $this->quantityToOrderValidatorService = new QuantityToOrderValidatorService(
             $this->fallbackResolver,
-            $this->translator,
+            $translator,
             $this->preloadingManager
         );
     }

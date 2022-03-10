@@ -4,7 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\Api\RestJsonApi;
 
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
-use Oro\Bundle\PricingBundle\Async\Topics;
+use Oro\Bundle\PricingBundle\Async\Topic\RebuildCombinedPriceListsTopic;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations;
@@ -23,9 +23,6 @@ class PriceListTest extends RestJsonApiTestCase
 {
     use MessageQueueExtension;
 
-    /**
-     * {@inheritDoc}
-     */
     protected function setUp(): void
     {
         parent::setUp();
@@ -126,19 +123,19 @@ class PriceListTest extends RestJsonApiTestCase
             ->getRepository(PriceList::class)
             ->findOneBy(['name' => 'New']);
 
-        static::assertFalse($priceList->isDefault());
-        static::assertTrue($priceList->isActive());
-        static::assertFalse($priceList->isActual());
-        static::assertSame('product.category.id == 1', $priceList->getProductAssignmentRule());
-        static::assertArrayContains(['USD'], $priceList->getCurrencies());
-        static::assertArrayContains(['RUB'], $priceList->getCurrencies());
-        static::assertEquals($this->getReference('schedule.5'), $priceList->getSchedules()->first());
+        self::assertFalse($priceList->isDefault());
+        self::assertTrue($priceList->isActive());
+        self::assertFalse($priceList->isActual());
+        self::assertSame('product.category.id == 1', $priceList->getProductAssignmentRule());
+        self::assertArrayContains(['USD'], $priceList->getCurrencies());
+        self::assertArrayContains(['RUB'], $priceList->getCurrencies());
+        self::assertEquals($this->getReference('schedule.5'), $priceList->getSchedules()->first());
 
         $lexeme = $this->getEntityManager()
             ->getRepository(PriceRuleLexeme::class)
             ->findOneBy(['priceList' => $priceList]);
 
-        static::assertNotNull($lexeme);
+        self::assertNotNull($lexeme);
     }
 
     public function testDeleteList()
@@ -189,28 +186,28 @@ class PriceListTest extends RestJsonApiTestCase
             ->getRepository(PriceList::class)
             ->find($priceListId);
 
-        static::assertSame('New Name', $updatedPriceList->getName());
-        static::assertFalse($updatedPriceList->isActive());
-        static::assertArrayContains(['USD'], $updatedPriceList->getCurrencies());
-        static::assertArrayContains(['EUR'], $updatedPriceList->getCurrencies());
-        static::assertArrayContains(['RUB'], $updatedPriceList->getCurrencies());
+        self::assertSame('New Name', $updatedPriceList->getName());
+        self::assertFalse($updatedPriceList->isActive());
+        self::assertArrayContains(['USD'], $updatedPriceList->getCurrencies());
+        self::assertArrayContains(['EUR'], $updatedPriceList->getCurrencies());
+        self::assertArrayContains(['RUB'], $updatedPriceList->getCurrencies());
 
-        static::assertCount(1, $updatedPriceList->getSchedules());
-        static::assertEquals(
+        self::assertCount(1, $updatedPriceList->getSchedules());
+        self::assertEquals(
             $this->getReference('schedule.4'),
             $updatedPriceList->getSchedules()->first()
         );
 
-        static::assertEmpty($updatedPriceList->getPriceRules());
+        self::assertEmpty($updatedPriceList->getPriceRules());
 
         $lexeme = $this->getEntityManager()
             ->getRepository(PriceRuleLexeme::class)
             ->findOneBy(['priceList' => $updatedPriceList]);
 
-        static::assertNotNull($lexeme);
+        self::assertNotNull($lexeme);
 
-        static::assertMessagesSent(
-            Topics::REBUILD_COMBINED_PRICE_LISTS,
+        self::assertMessagesSent(
+            RebuildCombinedPriceListsTopic::getName(),
             [
                 [
                     'website' => $this->getReference('US')->getId()
@@ -228,7 +225,7 @@ class PriceListTest extends RestJsonApiTestCase
         $priceList = $this->getFirstPriceList();
         $priceListId = $priceList->getId();
 
-        static::assertTrue($priceList->isActive());
+        self::assertTrue($priceList->isActive());
 
         $this->patch(
             ['entity' => 'pricerules', 'id' => '<toString(@price_list_1_price_rule_1->id)>'],
@@ -260,17 +257,17 @@ class PriceListTest extends RestJsonApiTestCase
             ->getRepository(PriceList::class)
             ->find($priceListId);
 
-        static::assertSame('Updated Name', $updatedPriceList->getName());
-        static::assertFalse($updatedPriceList->isActive());
+        self::assertSame('Updated Name', $updatedPriceList->getName());
+        self::assertFalse($updatedPriceList->isActive());
 
         $lexeme = $this->getEntityManager()
             ->getRepository(PriceRuleLexeme::class)
             ->findOneBy(['priceList' => $updatedPriceList]);
 
-        static::assertNotNull($lexeme);
+        self::assertNotNull($lexeme);
 
-        static::assertMessagesSent(
-            Topics::REBUILD_COMBINED_PRICE_LISTS,
+        self::assertMessagesSent(
+            RebuildCombinedPriceListsTopic::getName(),
             [
                 [
                     'website' => $this->getReference('US')->getId()
@@ -370,31 +367,23 @@ class PriceListTest extends RestJsonApiTestCase
         );
     }
 
-    /**
-     * @return PriceList
-     */
-    private function getFirstPriceList()
+    private function getFirstPriceList(): PriceList
     {
         return $this->getReference(LoadPriceLists::PRICE_LIST_1);
     }
 
-    /**
-     * @param int    $entityId
-     * @param string $associationName
-     * @param int[]  $expectedAssociationIds
-     */
     private function assertGetSubResource(
         int $entityId,
         string $associationName,
         array $expectedAssociationIds
-    ) {
+    ): void {
         $response = $this->getSubresource([
             'entity'      => 'pricelists',
             'id'          => $entityId,
             'association' => $associationName
         ]);
 
-        $result = json_decode($response->getContent(), true);
+        $result = self::jsonToArray($response->getContent());
 
         foreach ($result['data'] as $subResource) {
             self::assertTrue(in_array($subResource['id'], $expectedAssociationIds, false));

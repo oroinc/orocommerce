@@ -1,8 +1,9 @@
 import $ from 'jquery';
 import mediator from 'oroui/js/mediator';
 import filterSettings from 'oro/filter-settings';
-import FullscreenFiltersAction from 'orofrontend/js/app/datafilter/actions/fullscreen-filters-action';
 import FiltersManager from 'orofilter/js/filters-manager';
+import FullscreenFiltersAction from 'orofrontend/js/app/datafilter/actions/fullscreen-filters-action';
+import SidebarToggleFiltersView from 'oroproduct/js/app/views/sidebar-filters/sidebar-toggle-filters-view';
 
 const SidebarToggleFiltersAction = FullscreenFiltersAction.extend({
     /**
@@ -16,10 +17,10 @@ const SidebarToggleFiltersAction = FullscreenFiltersAction.extend({
         SidebarToggleFiltersAction.__super__.initialize.call(this, options);
 
         this.listenTo(mediator, {
-            'viewport:change': this.toggleLauncher,
+            'viewport:change': this.toggleLaunchers,
             'grid_load:complete': collection => {
                 if (options.datagrid.name === collection.inputName) {
-                    this.toggleLauncher();
+                    this.toggleLaunchers();
                 }
             }
         });
@@ -42,49 +43,74 @@ const SidebarToggleFiltersAction = FullscreenFiltersAction.extend({
         }
     },
 
-    toggleLauncher() {
+    toggleLaunchers() {
         if (filterSettings.isFullScreen() && !this.launcherInstance.$el.is(':visible')) {
-            this.addLauncher();
+            this.useFullScreenLauncher();
         } else if (!filterSettings.isFullScreen() && this.$launcherPlaceholder === void 0) {
-            this.removeLauncher();
+            this.useSwitchSidebarLauncher();
         }
     },
 
     /**
-     * There is filters might be hidden by CSS, that's was the reason to method is overridden
+     * There is filters might be hidden by CSS, that was the reason to override that method
      *
      * @param {Object} mode
      */
     toggleFilters: function(mode) {
         if (mode === FiltersManager.STATE_VIEW_MODE) {
             this.datagrid.filterManager.hide();
-        } else if (mode === FiltersManager.MANAGE_VIEW_MODE && this.datagrid.filterManager.hasFilters()
+        } else if (
+            mode === FiltersManager.MANAGE_VIEW_MODE && this.datagrid.filterManager.hasFilters()
         ) {
             this.datagrid.filterManager.show();
         }
     },
 
-    removeLauncher() {
-        const $placeholder = $('<span class="hidden"></span>');
-
-        if (this.$launcherPlaceholder) {
-            this.$launcherPlaceholder.remove();
-            delete this.$launcherPlaceholder;
-        }
-
-        this.$launcherPlaceholder = $placeholder;
-        this.launcherInstance.$el.replaceWith($placeholder);
+    useSwitchSidebarLauncher() {
+        this.launcherInstance.$el.remove();
+        this.subview('switch-sidebar').render();
     },
 
-    addLauncher() {
-        if (!this.$launcherPlaceholder) {
-            return;
-        }
-
-        this.$launcherPlaceholder.replaceWith(
+    useFullScreenLauncher() {
+        this.subview('switch-sidebar').$el.remove();
+        this.$launcherParent.append(
             this.launcherInstance.render().$el
         );
-        delete this.$launcherPlaceholder;
+    },
+
+    createLauncher: function(options) {
+        const launcher = SidebarToggleFiltersAction.__super__.createLauncher.call(this, options);
+        const triggerSidebar = new SidebarToggleFiltersView({
+            $content: $('[data-role="page-content"]'),
+            $sidebar: $('[data-role="page-sidebar"]'),
+            sidebarExpanded: this.datagrid.themeOptions.sidebarExpanded
+        });
+
+        this.listenTo(triggerSidebar, {
+            'toggle-sidebar:after-collapse': () => {
+                this.filterManager.hide();
+                this.filterManager.trigger('filters-render-mode-changed', {
+                    renderMode: this.filterManager.renderMode,
+                    isAsInitial: false
+                });
+            },
+            'toggle-sidebar:before-expand': () => {
+                this.filterManager.show();
+                this.filterManager.trigger('filters-render-mode-changed', {
+                    renderMode: this.filterManager.renderMode,
+                    isAsInitial: true
+                });
+            }
+        });
+        this.subview('switch-sidebar', triggerSidebar);
+        this.launcherInstance.on('appended', () => {
+            this.$launcherParent = this.launcherInstance.$el.parent();
+            triggerSidebar.container = this.$launcherParent;
+            triggerSidebar.render();
+            triggerSidebar.$el.hide();
+        });
+
+        return launcher;
     }
 });
 

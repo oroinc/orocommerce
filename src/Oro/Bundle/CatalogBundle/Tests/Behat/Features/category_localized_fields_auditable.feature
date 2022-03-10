@@ -100,12 +100,8 @@ Feature: Category Localized Fields Auditable
 
   Scenario: Check records in Data Audit page that there should not see localized fallback value be recorded
     Given go to System/ Data Audit
-    Then number of records should be 4
-    When I press "Action"
-    Then I should see following grid:
+    Then I should see following grid containing rows:
       | Action | Entity Type | Entity Name            |
       | Create | Category    | New Auditable Category |
-      | Create | Category    | All Products           |
-      | Update | Category    | All Products           |
       | Update | Category    | New Auditable Category |
   # Again update contents has random uuid and cant be examined.

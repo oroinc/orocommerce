@@ -232,7 +232,7 @@
                                 <div class="price_rule__unit">
                                     {{ form_widget(form.productUnit) }}
                                 </div>
-                                <a class="price-rule-item-product-unit-type-expression input-type-switcher" href="#">
+                                <a class="price-rule-item-product-unit-type-expression input-type-switcher price-rule-switcher" href="#">
                                     {{ 'oro.pricing.pricerule.show_expression_fields.label'|trans }}
                                 </a>
                             </div>
@@ -240,13 +240,13 @@
                                 <div class="price_rule__unit">
                                     {{ form_widget(form.productUnitExpression) }}
                                 </div>
-                                <a class="price-rule-item-product-unit-type-field input-type-switcher" href="#">
+                                <a class="price-rule-item-product-unit-type-field input-type-switcher price-rule-switcher" href="#">
                                     {{ 'oro.pricing.pricerule.show_unit_fields.label'|trans }}
                                 </a>
                             </div>
                         </div>
 
-                        <span class="price_rule__in"> {{ 'oro.pricing.pricerule.in_separator'|trans }}</span>
+                        <span class="price_rule__in">{{ 'oro.pricing.pricerule.in_separator'|trans }}</span>
                         <div
                             data-layout="separate"
                             data-page-component-module="oroui/js/app/components/view-component"
@@ -262,7 +262,7 @@
                                 <div class="price_rule__currency">
                                     {{ form_widget(form.currency) }}
                                 </div>
-                                <a class="price-rule-item-currency-type-expression input-type-switcher" href="#">
+                                <a class="price-rule-item-currency-type-expression input-type-switcher price-rule-switcher" href="#">
                                     {{ 'oro.pricing.pricerule.show_expression_fields.label'|trans }}
                                 </a>
                             </div>
@@ -270,7 +270,7 @@
                                 <div class="price_rule__currency">
                                     {{ form_widget(form.currencyExpression) }}
                                 </div>
-                                <a class="price-rule-item-currency-type-field" href="#">
+                                <a class="price-rule-item-currency-type-field price-rule-switcher" href="#">
                                     {{ 'oro.pricing.pricerule.show_currency_fields.label'|trans }}
                                 </a>
                             </div>

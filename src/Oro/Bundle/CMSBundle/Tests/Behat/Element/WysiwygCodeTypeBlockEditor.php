@@ -18,10 +18,22 @@ class WysiwygCodeTypeBlockEditor extends Element
         $this->session->executeScript(
             sprintf(
                 '(function(){
-                    document.querySelector(".CodeMirror").CodeMirror.setValue("%s")
+                    document.querySelector(".CodeMirror").CodeMirror.setValue(`%s`)
                 })()',
                 $value
             )
+        );
+    }
+
+    /**
+     * @return string
+     */
+    public function getValue(): string
+    {
+        return $this->session->evaluateScript(
+            '(function(){
+                return document.querySelector(".CodeMirror").CodeMirror.getValue()
+            })()'
         );
     }
 }

@@ -69,6 +69,7 @@ function randomId(length = 20) {
 class ContentIsolation {
     constructor({scopeId = randomId()} = {}) {
         this.scopeId = ISOLATION_SCOPE + scopeId;
+        this.randomId = scopeId;
     }
 
     beforeIsolateHook(css) {

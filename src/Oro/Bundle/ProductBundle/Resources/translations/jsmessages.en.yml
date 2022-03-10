@@ -14,6 +14,10 @@ oro:
 
         sidebar_filters:
             title: Filter By
+            button:
+                title:
+                    collapse: 'Collapse Filters'
+                    expand: 'Expand Filters'
 
         productunit:
             delete.confirmation: Are you sure you want to delete this product unit?
@@ -157,7 +161,7 @@ oro:
                     unit:
                         default: '--'
                 copy_paste:
-                    error: 'Some of the products SKUs or units you have provided were not found. Correct them and try again.'
+                    error: 'Some of the product SKUs, units or quantities are not valid. Please make corrections and try again.'
             choose_action: 'Choose Action'
             importexport:
                 product_data_export:

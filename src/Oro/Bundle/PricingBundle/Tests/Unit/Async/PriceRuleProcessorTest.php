@@ -8,7 +8,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\NotificationBundle\NotificationAlert\NotificationAlertManager;
 use Oro\Bundle\PricingBundle\Async\PriceListCalculationNotificationAlert;
 use Oro\Bundle\PricingBundle\Async\PriceRuleProcessor;
-use Oro\Bundle\PricingBundle\Async\Topics;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceRulesTopic;
 use Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
@@ -16,7 +16,6 @@ use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Component\MessageQueue\Util\JSON;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Psr\Log\LoggerInterface;
 
@@ -69,7 +68,7 @@ class PriceRuleProcessorTest extends \PHPUnit\Framework\TestCase
         $message = $this->createMock(MessageInterface::class);
         $message->expects(self::once())
             ->method('getBody')
-            ->willReturn(JSON::encode($body));
+            ->willReturn($body);
 
         return $message;
     }
@@ -82,32 +81,8 @@ class PriceRuleProcessorTest extends \PHPUnit\Framework\TestCase
     public function testGetSubscribedTopics()
     {
         $this->assertEquals(
-            [Topics::RESOLVE_PRICE_RULES],
+            [ResolvePriceRulesTopic::getName()],
             PriceRuleProcessor::getSubscribedTopics()
-        );
-    }
-
-    public function testProcessWithInvalidMessage()
-    {
-        $this->logger->expects(self::once())
-            ->method('critical')
-            ->with('Got invalid message.');
-
-        $this->assertEquals(
-            MessageProcessorInterface::REJECT,
-            $this->processor->process($this->getMessage('invalid'), $this->getSession())
-        );
-    }
-
-    public function testProcessWithEmptyMessage()
-    {
-        $this->logger->expects(self::once())
-            ->method('critical')
-            ->with('Got invalid message.');
-
-        $this->assertEquals(
-            MessageProcessorInterface::REJECT,
-            $this->processor->process($this->getMessage([]), $this->getSession())
         );
     }
 
@@ -465,7 +440,7 @@ class PriceRuleProcessorTest extends \PHPUnit\Framework\TestCase
         $this->triggerHandler->expects(self::once())
             ->method('handlePriceListTopic')
             ->with(
-                Topics::RESOLVE_PRICE_RULES,
+                ResolvePriceRulesTopic::getName(),
                 $priceList1,
                 $productIds
             );

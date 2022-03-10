@@ -7,6 +7,7 @@ use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductVariantField;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductVariantFieldValidator;
+use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class ProductVariantFieldValidatorTest extends ConstraintValidatorTestCase
@@ -14,14 +15,12 @@ class ProductVariantFieldValidatorTest extends ConstraintValidatorTestCase
     /** @var CustomFieldProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $customFieldProvider;
 
-    /** @var array */
-    private $variantFields = [
+    private array $variantFields = [
         'field_first',
         'field_second'
     ];
 
-    /** @var array */
-    private $incorrectCustomVariantFields = [
+    private array $incorrectCustomVariantFields = [
         'field_first' => [
             'name' => 'field_first',
             'type' => 'string',
@@ -34,8 +33,7 @@ class ProductVariantFieldValidatorTest extends ConstraintValidatorTestCase
         ]
     ];
 
-    /** @var array */
-    private $correctCustomVariantFields = [
+    private array $correctCustomVariantFields = [
         'field_first' => [
             'name' => 'field_first',
             'type' => 'string',
@@ -54,9 +52,15 @@ class ProductVariantFieldValidatorTest extends ConstraintValidatorTestCase
         parent::setUp();
     }
 
-    protected function createValidator()
+    protected function createValidator(): ProductVariantFieldValidator
     {
         return new ProductVariantFieldValidator($this->customFieldProvider);
+    }
+
+    public function testGetTargets()
+    {
+        $constraint = new ProductVariantField();
+        self::assertEquals(Constraint::CLASS_CONSTRAINT, $constraint->getTargets());
     }
 
     public function testDoesNothingIfEmptyProductCustomFields()

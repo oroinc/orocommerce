@@ -1,0 +1,92 @@
+Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
+    businessUnit:
+        name: 'Common Business Unit'
+        organization: '@organization'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precision1:
+        unit: '@item'
+        precision: '0'
+        sell: true
+    precision2:
+        unit: '@set'
+        precision: '0'
+        sell: true
+        conversionRate: 10
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    locValue:
+        string: '400-Watt Bulb Work Light'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product:
+        sku: 'SKU123'
+        type: 'simple'
+        primaryUnitPrecision: '@precision1'
+        __calls:
+            - addName: ['@locValue']
+            - addAdditionalUnitPrecision: ['@precision2']
+        attributeFamily: '@defaultProductFamily'
+        inventoryStatus: '@enumInventoryStatuses'
+        organization: '@organization'
+        owner: '@businessUnit'
+        status: 'enabled'
+
+Oro\Bundle\ShippingBundle\Model\Weight:
+    weight1:
+        unit: '@kg'
+        value: 1
+    weight10:
+        unit: '@kg'
+        value: 10
+
+Oro\Bundle\ShippingBundle\Model\DimensionsValue:
+    dimensionsValue:
+        length: 1
+        width: 1
+        height: 1
+
+Oro\Bundle\ShippingBundle\Model\Dimensions:
+    dimensions:
+        value: '@dimensionsValue'
+        unit: '@centimeter'
+
+Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions:
+    productShippingOptions1:
+        product: '@product'
+        productUnit: '@item'
+        weight: '@weight1'
+        dimensions: '@dimensions'
+    productShippingOptions2:
+        product: '@product'
+        productUnit: '@set'
+        weight: '@weight10'
+        dimensions: '@dimensions'
+
+Oro\Bundle\CurrencyBundle\Entity\Price:
+    price:
+        value: '10'
+        currency: 'USD'
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceRelationSku123ToPriceListDefault:
+        product: '@product'
+        priceList: '@defaultPriceList'
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    productPriceItem:
+        pricelist: '@defaultPriceList'
+        product: '@product'
+        productSku: 'SKU123'
+        quantity: 1
+        unit: '@item'
+        value: 0
+        currency: 'USD'
+    productPriceEach:
+        pricelist: '@defaultPriceList'
+        product: '@product'
+        productSku: 'SKU123'
+        quantity: 1
+        unit: '@set'
+        value: 0
+        currency: 'USD'

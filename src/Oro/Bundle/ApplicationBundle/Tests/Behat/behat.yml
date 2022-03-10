@@ -200,12 +200,12 @@ oro_behat_extension:
 
     Enter expression unit:
       selector:
-        locator: '//a[@class="price-rule-item-product-unit-type-expression input-type-switcher"]'
+        locator: '//a[contains(@class, "price-rule-item-product-unit-type-expression input-type-switcher")]'
         type: xpath
 
     Enter expression currency:
       selector:
-        locator: '//a[@class="price-rule-item-currency-type-expression input-type-switcher"]'
+        locator: '//a[contains(@class, "price-rule-item-currency-type-expression input-type-switcher")]'
         type: xpath
 
     Product Image:

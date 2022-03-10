@@ -1,0 +1,118 @@
+data:
+    '1':
+         -
+            class: Oro\Bundle\ProductBundle\Entity\Product
+            context:
+                websiteIds: [ 1 ]
+                entityIds: [ 1,2,3 ]
+         -
+             class: Oro\Bundle\ProductBundle\Entity\Product
+             context:
+                 websiteIds: [ 1 ]
+                 entityIds: [ 4,5,6 ]
+         -
+             class: Oro\Bundle\ProductBundle\Entity\Product
+             context:
+                 websiteIds: [ 1 ]
+                 entityIds: [ 7,10 ]
+         -
+             class: Oro\Bundle\ProductBundle\Entity\Product
+             context:
+                 websiteIds: [ 2 ]
+                 entityIds: [ 1,2,3 ]
+         -
+             class: Oro\Bundle\ProductBundle\Entity\Product
+             context:
+                 websiteIds: [ 2 ]
+                 entityIds: [ 4,5,6 ]
+         -
+             class: Oro\Bundle\ProductBundle\Entity\Product
+             context:
+                 websiteIds: [ 2 ]
+                 entityIds: [ 7 ]
+         -
+             class: Oro\Bundle\ProductBundle\Entity\Product
+             context:
+                 websiteIds: [ 3 ]
+                 entityIds: [ 1,2,3 ]
+         -
+             class: Oro\Bundle\ProductBundle\Entity\Product
+             context:
+                 websiteIds: [ 3 ]
+                 entityIds: [ 4,5,6 ]
+         -
+             class: Oro\Bundle\ProductBundle\Entity\Product
+             context:
+                 websiteIds: [ 3 ]
+                 entityIds: [ 7,8,9 ]
+         -
+             class: Oro\Bundle\ProductBundle\Entity\Product
+             context:
+                 websiteIds: [ 4 ]
+                 entityIds: [ 1,2,3 ]
+         -
+             class: Oro\Bundle\ProductBundle\Entity\Product
+             context:
+                 websiteIds: [ 4 ]
+                 entityIds: [ 4 ]
+         -
+             class: Oro\Bundle\ProductBundle\Entity\Product
+             context:
+                 websiteIds: [ 5 ]
+                 entityIds: [ 1,2,3 ]
+         -
+             class: Oro\Bundle\ProductBundle\Entity\Product
+             context:
+                 websiteIds: [ 5 ]
+                 entityIds: [ 4 ]
+    '2':
+        -
+            class: Oro\Bundle\ProductBundle\Entity\Product
+            context:
+                websiteIds: [ 1 ]
+                entityIds: [ 1,2,3 ]
+        -
+            class: Oro\Bundle\ProductBundle\Entity\Product
+            context:
+                websiteIds: [ 1 ]
+                entityIds: [ 4 ]
+        -
+            class: Oro\Bundle\ProductBundle\Entity\Product
+            context:
+                websiteIds: [ 2 ]
+                entityIds: [ 1,2,3 ]
+        -
+            class: Oro\Bundle\ProductBundle\Entity\Product
+            context:
+                websiteIds: [ 2 ]
+                entityIds: [ 4 ]
+        -
+            class: Oro\Bundle\ProductBundle\Entity\Product
+            context:
+                websiteIds: [ 3 ]
+                entityIds: [ 1,2,3 ]
+        -
+            class: Oro\Bundle\ProductBundle\Entity\Product
+            context:
+                websiteIds: [ 3 ]
+                entityIds: [ 4 ]
+        -
+            class: Oro\Bundle\ProductBundle\Entity\Product
+            context:
+                websiteIds: [ 4 ]
+                entityIds: [ 1,2,3 ]
+        -
+            class: Oro\Bundle\ProductBundle\Entity\Product
+            context:
+                websiteIds: [ 4 ]
+                entityIds: [ 4 ]
+        -
+            class: Oro\Bundle\ProductBundle\Entity\Product
+            context:
+                websiteIds: [ 5 ]
+                entityIds: [ 1,2,3 ]
+        -
+            class: Oro\Bundle\ProductBundle\Entity\Product
+            context:
+                websiteIds: [ 5 ]
+                entityIds: [ 4 ]
