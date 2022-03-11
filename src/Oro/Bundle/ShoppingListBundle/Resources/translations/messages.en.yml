@@ -315,11 +315,6 @@ oro:
                     inventory_status.label: 'Availability'
                     quantity.label: 'Quantity'
                     unit.label: 'Unit'
-            dropdown:
-                quick_search:
-                    clear: Clear field
-                    placeholder: Quick Search
-                    aria_label: Search shopping lists
             note:
                 textarea:
                     aria_label: 'Notes for %shoppinglist%'

@@ -1,4 +1,4 @@
-<% if (_.isMobile()) { %>
+<% if (obj.isSimple) { %>
     <input type="checkbox" tabindex="-1"
            class="hidden"
            data-input-widget-options="<%- JSON.stringify({parentBaseCssClass: null, parentCssClass: 'btn btn--default btn--size-s', parentAttrs: {tabindex: '0'} ,iconBaseCssClass: null, iconCssClass: 'icon-selector icon--no-offset'}) %>"
@@ -17,20 +17,21 @@
             <button class="btn btn--default btn--size-s dropdown-toggle dropdown-toggle--no-offset"
                     id="<%- togglerId %>" data-toggle="dropdown"
                     data-placement="bottom-center"
+                    data-inherit-parent-width="loosely"
                     data-modifiers="<%- JSON.stringify({preventOverflow: {enabled: false}, hide: {enabled: false}}) %>"
                     aria-haspopup="true" aria-expanded="false"
                     aria-label="<%- _.__('oro.datagrid.headerCell.selectAll.label') %>"
             ></button>
             <ul class="dropdown-menu datagrid-massaction__dropdown-menu" aria-labelledby="<%- togglerId %>">
                 <li class="all-visible">
-                    <a href="#" class="action dropdown-item" role="button" data-select-all-visible>
+                    <button type="button" class="dropdown-item" data-select-all-visible>
                         <%- _.__('oro.datagrid.headerCell.selectAll.allVisible') %>
-                    </a>
+                    </button>
                 </li>
                 <li>
-                    <a href="#" class="action dropdown-item" role="button" data-select-none>
+                    <button type="button" class="dropdown-item" data-select-none>
                         <%- _.__('oro.datagrid.headerCell.selectAll.none') %>
-                    </a>
+                    </button>
                 </li>
             </ul>
         </div>

@@ -166,6 +166,9 @@ oro:
             importexport:
                 product_data_export:
                     success_message: The product data export has started. You will receive download instructions by email once the export is finished.
+            actions_panel:
+                action_postfix: 'Default'
+
         dialog:
             quick_add.confirm:
                 title: 'Create Order'

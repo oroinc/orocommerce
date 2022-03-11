@@ -148,19 +148,5 @@
          }|json_encode }}"
          class="{{ options.quickSearchRootClass|default('dropdown-search') }} hide"
          data-intention="search"
-    >
-        <input type="text"
-               class="{{ options.quickSearchInputClass|default('input input--full input--size-s') }}"
-               placeholder="{{ options.quickSearchInputPlaceholder|default('oro.frontend.shoppinglist.dropdown.quick_search.placeholder')|trans }}"
-               aria-label="{{ options.quickSearchInputAriaLabel|default('oro.frontend.shoppinglist.dropdown.quick_search.aria_label')|trans }}"
-               data-role="quick-search"
-        >
-        <button class="btn btn--plain clear-search-button"
-                aria-label="{{ options.quickSearchActionAriaLabel|default('oro.frontend.shoppinglist.dropdown.quick_search.clear')|trans }}"
-                disabled="disabled"
-        >
-            <span class="{{ options.quickSearchActionIcon|default('fa fa-remove fa--no-offset') }}" aria-hidden="true"></span>
-        </button>
-        <span class="quick-search-icon {{ options.quickSearchIcon|default('fa fa-search fa--no-offset') }}" aria-hidden="true"></span>
-    </div>
+    ></div>
 {% endmacro %}
