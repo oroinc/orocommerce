@@ -6,7 +6,7 @@ use Doctrine\DBAL\Exception\DeadlockException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PricingBundle\Async\CombinedPriceListCurrencyProcessor;
-use Oro\Bundle\PricingBundle\Async\Topics;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolveCombinedPriceListCurrenciesTopic;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListCurrency;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
@@ -15,7 +15,6 @@ use Oro\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Component\MessageQueue\Util\JSON;
 use Psr\Log\LoggerInterface;
 
 class CombinedPriceListCurrencyProcessorTest extends \PHPUnit\Framework\TestCase
@@ -40,9 +39,9 @@ class CombinedPriceListCurrencyProcessorTest extends \PHPUnit\Framework\TestCase
 
         $this->processor = new CombinedPriceListCurrencyProcessor(
             $this->doctrine,
-            $this->logger,
             $this->combinedPriceListProvider
         );
+        $this->processor->setLogger($this->logger);
     }
 
     /**
@@ -55,7 +54,7 @@ class CombinedPriceListCurrencyProcessorTest extends \PHPUnit\Framework\TestCase
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->once())
             ->method('getBody')
-            ->willReturn(JSON::encode($body));
+            ->willReturn($body);
 
         return $message;
     }
@@ -68,32 +67,8 @@ class CombinedPriceListCurrencyProcessorTest extends \PHPUnit\Framework\TestCase
     public function testGetSubscribedTopics()
     {
         $this->assertSame(
-            [Topics::RESOLVE_COMBINED_CURRENCIES],
+            [ResolveCombinedPriceListCurrenciesTopic::getName()],
             CombinedPriceListCurrencyProcessor::getSubscribedTopics()
-        );
-    }
-
-    public function testProcessWithInvalidMessage()
-    {
-        $this->logger->expects($this->once())
-            ->method('critical')
-            ->with('Got invalid message.');
-
-        $this->assertEquals(
-            MessageProcessorInterface::REJECT,
-            $this->processor->process($this->getMessage('invalid'), $this->getSession())
-        );
-    }
-
-    public function testProcessWithEmptyMessage()
-    {
-        $this->logger->expects($this->once())
-            ->method('critical')
-            ->with('Got invalid message.');
-
-        $this->assertEquals(
-            MessageProcessorInterface::REJECT,
-            $this->processor->process($this->getMessage([]), $this->getSession())
         );
     }
 

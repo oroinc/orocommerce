@@ -1,7 +1,6 @@
 search:
     Oro\Bundle\PromotionBundle\Entity\Promotion:
         alias:                          oro_promotion
-        title_fields:                   [ruleName]
         route:
             name:                       oro_promotion_view
             parameters:
@@ -19,7 +18,6 @@ search:
 
     Oro\Bundle\PromotionBundle\Entity\Coupon:
         alias:                          oro_coupon
-        title_fields:                   [code]
         route:
             name:                       oro_promotion_coupon_view
             parameters:

@@ -27,6 +27,7 @@ services:
         parent: oro_importexport.serializer.configurable_entity_normalizer
         calls:
             - [setCategoryImportExportHelper, ['@oro_catalog.importexport.helper.category_import_export']]
+            - [setDoctrine, ['@doctrine']]
         tags:
             - { name: oro_importexport.normalizer }
 

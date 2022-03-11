@@ -1,7 +1,6 @@
 search:
     Oro\Bundle\CatalogBundle\Entity\Category:
         alias:                          oro_category
-        title_fields:                   [defaultTitle]
         route:
             name:                       oro_catalog_category_update
             parameters:

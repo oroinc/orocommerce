@@ -6,7 +6,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
-use Oro\Bundle\PricingBundle\Async\Topics;
+use Oro\Bundle\PricingBundle\Async\Topic\RebuildCombinedPriceListsTopic;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomer;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup;
@@ -86,11 +86,9 @@ class CombinedPriceListRelationTriggerHandler implements PriceListRelationTrigge
 
     public function handleCustomerGroupRemove(CustomerGroup $customerGroup): void
     {
-        $customerGroupId = $customerGroup->getId();
         $iterator = $this->doctrine->getRepository(PriceListToCustomer::class)
             ->getCustomerWebsitePairsByCustomerGroupIterator($customerGroup);
         foreach ($iterator as $item) {
-            $item[self::CUSTOMER_GROUP] = $customerGroupId;
             $this->sendMessage($item);
         }
     }
@@ -140,14 +138,14 @@ class CombinedPriceListRelationTriggerHandler implements PriceListRelationTrigge
     private function sendMessage(array $message): void
     {
         $this->messageProducer->send(
-            Topics::REBUILD_COMBINED_PRICE_LISTS,
+            RebuildCombinedPriceListsTopic::getName(),
             $this->normalizeMessage($message)
         );
     }
 
     private function sendMessageWithCallback(callable $callback): void
     {
-        $this->messageProducer->send(Topics::REBUILD_COMBINED_PRICE_LISTS, new CallbackMessageBuilder($callback));
+        $this->messageProducer->send(RebuildCombinedPriceListsTopic::getName(), new CallbackMessageBuilder($callback));
     }
 
     private function normalizeMessage(array $message): array

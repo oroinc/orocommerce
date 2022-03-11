@@ -27,7 +27,6 @@ class ItemTest extends \PHPUnit\Framework\TestCase
             ['id', 1],
             ['entity', 'Some\Entity'],
             ['alias', 'some_entity_alias'],
-            ['title', 'Some text is here'],
             ['recordId', 1],
             ['weight', 4.2],
             ['changed', false],

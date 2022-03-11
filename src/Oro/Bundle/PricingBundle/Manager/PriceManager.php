@@ -15,6 +15,7 @@ use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Event\ProductPriceRemove;
 use Oro\Bundle\PricingBundle\Event\ProductPriceSaveAfterEvent;
 use Oro\Bundle\PricingBundle\Event\ProductPricesUpdated;
+use Oro\Bundle\PricingBundle\Event\ProductPricesUpdatedAfter;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -23,20 +24,12 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class PriceManager
 {
-    /** @var ShardManager */
-    protected $shardManager;
-
-    /** @var EventDispatcherInterface */
-    protected $eventDispatcher;
-
-    /** @var MessageBufferManager */
-    protected $messageBufferManager;
-
-    /** @var ProductPrice[] */
-    protected $pricesToSave = [];
-
-    /** @var ProductPrice[] */
-    protected $pricesToRemove = [];
+    private ShardManager $shardManager;
+    private EventDispatcherInterface $eventDispatcher;
+    private MessageBufferManager $messageBufferManager;
+    private array $pricesToSave = [];
+    private array $pricesToRemove = [];
+    private array $pricesToUpdate = [];
 
     public function __construct(
         ShardManager $shardManager,
@@ -50,7 +43,11 @@ class PriceManager
 
     public function persist(ProductPrice $price)
     {
-        $this->pricesToSave[] = $price;
+        if ($price->getId()) {
+            $this->pricesToUpdate[] = $price;
+        } else {
+            $this->pricesToSave[] = $price;
+        }
     }
 
     public function remove(ProductPrice $price)
@@ -60,80 +57,177 @@ class PriceManager
 
     protected function doSave(ProductPrice $price)
     {
+        $removePrice = null;
         $price->updatePrice();
-        $class = ClassUtils::getRealClass(get_class($price));
 
-        $em = $this->shardManager->getEntityManager();
+        $em = $this->getEntityManager();
         $classMetadata = $em->getClassMetadata(ProductPrice::class);
         $uow = $em->getUnitOfWork();
         $changeSet = $this->getChangeSet($uow, $classMetadata, $price);
 
         if ($price->getId() === null || !empty($changeSet)) {
-            /** @var ProductPriceRepository $repository */
-            $repository = $em->getRepository($class);
+            $repository = $this->getProductPriceRepository();
 
-            //remove price from old shard
             if (array_key_exists('priceList', $changeSet) && $changeSet['priceList'][0]) {
-                $newPriceList = $price->getPriceList();
-                $price->setPriceList($changeSet['priceList'][0]);
-                $this->doRemove($price);
-                $price = clone $price;
-                $price->setPriceList($newPriceList);
-                $changeSet = $this->getChangeSet($uow, $classMetadata, $price);
+                // Updating the price list is an equivalent operation to removing the price with the price list
+                // and adding a new price with the price list.
+                [$removePrice, $price] = $this->removePriceListFromOldShard($price, $changeSet);
+            } else {
+                $repository->save($this->shardManager, $price);
             }
-            $repository->save($this->shardManager, $price);
 
             if ($price->getId() && !$uow->isInIdentityMap($price)) {
                 $uow->registerManaged($price, ['id' => $price->getId()], $changeSet);
+                $changeSet = $this->getChangeSet($uow, $classMetadata, $price);
             }
-
-            $changeSet = $this->getChangeSet($uow, $classMetadata, $price);
-
-            $this->eventDispatcher->dispatch(
-                new ProductPriceSaveAfterEvent(new PreUpdateEventArgs($price, $em, $changeSet)),
-                ProductPriceSaveAfterEvent::NAME
-            );
         }
+
+        return [
+            'changeSet' => $changeSet,
+            'removedPrice' => $removePrice,
+            'savedPrice' => $price
+        ];
+    }
+
+    private function removePriceListFromOldShard(ProductPrice $price, array $changeSet): array
+    {
+        $savedPrice = clone $price;
+        $price->setPriceList($changeSet['priceList'][0]);
+
+        return [$price, $savedPrice];
+    }
+
+    private function getProductPriceRepository(): ProductPriceRepository
+    {
+        $entityManager = $this->getEntityManager();
+
+        return $entityManager->getRepository(ProductPrice::class);
     }
 
     protected function doRemove(ProductPrice $price)
     {
         $class = ClassUtils::getRealClass(get_class($price));
 
-        $em = $this->shardManager->getEntityManager();
+        $em = $this->getEntityManager();
 
         /** @var ProductPriceRepository $repository */
         $repository = $em->getRepository($class);
         $repository->remove($this->shardManager, $price);
-
-        $event = new ProductPriceRemove($price);
-        $event->setEntityManager($em);
-        $this->eventDispatcher->dispatch($event, ProductPriceRemove::NAME);
 
         $em->detach($price);
     }
 
     public function flush()
     {
+        $changeSets = [];
         $pricesToRemove = $this->pricesToRemove;
+        $pricesToUpdate = $this->pricesToUpdate;
         $pricesToSave = $this->pricesToSave;
-        $this->pricesToRemove = [];
-        $this->pricesToSave = [];
-        foreach ($pricesToRemove as $price) {
-            $this->doRemove($price);
-        }
-        foreach ($pricesToSave as $price) {
-            $this->doSave($price);
-        }
-        if ($pricesToRemove || $pricesToSave) {
-            $event = new ProductPricesUpdated();
-            $event->setEntityManager($this->shardManager->getEntityManager());
-            $this->eventDispatcher->dispatch($event, ProductPricesUpdated::NAME);
+        $this->clearState();
 
+        $this->flushRemovedPrices($pricesToRemove);
+        $this->flushUpdatedPrices($pricesToRemove, $pricesToSave, $pricesToUpdate, $changeSets);
+        $this->flushSavedPrices($pricesToSave);
+
+        if ($pricesToRemove || $pricesToSave || $pricesToUpdate) {
+            $this->dispatchRemovedPrices($pricesToRemove);
+            $this->dispatchSavedPrices(array_merge($pricesToSave, $pricesToUpdate), $changeSets);
+            $this->dispatchUpdatedPrices($pricesToRemove, $pricesToSave, $pricesToUpdate, $changeSets);
+
+            $this->dispatchUpdatePricesAfter($pricesToRemove, $pricesToSave, $pricesToUpdate, $changeSets);
             // do flushing the message buffer here because the flush() does not use a database transaction
             // and can be executed without an outer database transaction
             $this->messageBufferManager->flushBuffer();
         }
+    }
+
+    private function flushUpdatedPrices(
+        array &$pricesToRemove,
+        array &$pricesToSave,
+        array &$pricesToUpdate,
+        array &$changeSets
+    ): void {
+        foreach ($pricesToUpdate as $key => $price) {
+            $savedData = $this->doSave($price);
+            if (isset($savedData['removedPrice']) && isset($savedData['savedPrice'])) {
+                $pricesToRemove[] = $savedData['removedPrice'];
+                $pricesToSave[] = $savedData['savedPrice'];
+                unset($pricesToUpdate[$key]);
+                continue;
+            }
+
+            if (empty($savedData['changeSet'])) {
+                unset($pricesToUpdate[$key]);
+                continue;
+            }
+
+            $changeSets[$price->getId()] = $savedData['changeSet'];
+        }
+    }
+
+    private function flushRemovedPrices(array $pricesToRemove): void
+    {
+        foreach ($pricesToRemove as $price) {
+            $this->doRemove($price);
+        }
+    }
+
+    private function flushSavedPrices(array $pricesToSave): void
+    {
+        foreach ($pricesToSave as $price) {
+            $this->doSave($price);
+        }
+    }
+
+    private function dispatchUpdatedPrices(
+        array $pricesToRemove,
+        array $pricesToSave,
+        array $pricesToUpdate,
+        array $changeSets
+    ): void {
+        $event = new ProductPricesUpdated(
+            $this->getEntityManager(),
+            $pricesToRemove,
+            $pricesToSave,
+            $pricesToUpdate,
+            $changeSets
+        );
+        $this->eventDispatcher->dispatch($event, ProductPricesUpdated::NAME);
+    }
+
+    private function dispatchRemovedPrices(array $pricesToRemove): void
+    {
+        $em = $this->getEntityManager();
+
+        /** @var ProductPrice[] $priceToRemove */
+        foreach ($pricesToRemove as $priceToRemove) {
+            $event = new ProductPriceRemove($priceToRemove);
+            $event->setEntityManager($em);
+            $this->eventDispatcher->dispatch($event, ProductPriceRemove::NAME);
+        }
+    }
+
+    private function dispatchSavedPrices(array $pricesToSave, array $changeSets): void
+    {
+        $em = $this->getEntityManager();
+
+        /** @var ProductPrice[] $pricesToSave */
+        foreach ($pricesToSave as $price) {
+            $changeSet = array_key_exists($price->getId(), $changeSets) ? $changeSets[$price->getId()] : [];
+            $event = new PreUpdateEventArgs($price, $em, $changeSet);
+            $this->eventDispatcher->dispatch(new ProductPriceSaveAfterEvent($event), ProductPriceSaveAfterEvent::NAME);
+        }
+    }
+
+    private function dispatchUpdatePricesAfter(
+        array $pricesToRemove,
+        array $pricesToSave,
+        array $pricesToUpdate,
+        array $changeSets
+    ): void {
+        $em = $this->getEntityManager();
+        $event = new ProductPricesUpdatedAfter($em, $pricesToRemove, $pricesToSave, $pricesToUpdate, $changeSets);
+        $this->eventDispatcher->dispatch($event, ProductPricesUpdatedAfter::NAME);
     }
 
     /**
@@ -172,6 +266,13 @@ class PriceManager
     public function postFlush(PostFlushEventArgs $args)
     {
         $this->flush();
+    }
+
+    private function clearState(): void
+    {
+        $this->pricesToRemove = [];
+        $this->pricesToSave = [];
+        $this->pricesToUpdate = [];
     }
 
     /**

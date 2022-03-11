@@ -2,14 +2,12 @@
 
 namespace Oro\Bundle\PricingBundle\PricingStrategy;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
-use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
-use Oro\Bundle\PricingBundle\ORM\ShardQueryExecutorInterface;
+use Oro\Bundle\PricingBundle\ORM\QueryExecutorProviderInterface;
 use Oro\Bundle\PricingBundle\Provider\CombinedPriceListIdentifierProviderInterface;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
-use Symfony\Component\Console\Helper\ProgressBar;
 
 /**
  * Implements combining price strategy based on PriceList priority and minimal prices
@@ -19,35 +17,50 @@ class MinimalPricesCombiningStrategy extends AbstractPriceCombiningStrategy impl
 {
     const NAME = 'minimal_prices';
 
-    /**
-     * @var ShardManager
-     */
-    protected $shardManager;
+    protected ShardManager $shardManager;
 
     public function __construct(
-        Registry $registry,
-        ShardQueryExecutorInterface $insertFromSelectQueryExecutor,
-        CombinedPriceListTriggerHandler $triggerHandler,
+        ManagerRegistry $registry,
+        QueryExecutorProviderInterface $queryExecutorProvider,
         ShardManager $shardManager
     ) {
         $this->shardManager = $shardManager;
-        parent::__construct($registry, $insertFromSelectQueryExecutor, $triggerHandler);
+        parent::__construct($registry, $queryExecutorProvider);
+    }
+
+    protected function getFallbackCombinedPriceList(CombinedPriceList $combinedPriceList): ?CombinedPriceList
+    {
+        return $this->getCombinedPriceListRelationsRepository()->findFallbackCpl($combinedPriceList);
+    }
+
+    protected function getPriceListRelationsNotIncludedInFallback(
+        array $combinedPriceListRelation,
+        array $fallbackCplRelations
+    ): array {
+        $fallbackPlIds = array_map(static function (CombinedPriceListToPriceList $relation) {
+            return $relation->getPriceList()->getId();
+        }, $fallbackCplRelations);
+
+        // Return only relations that contain price lists not included in the fallback CPL
+        return array_filter(
+            $combinedPriceListRelation,
+            static function (CombinedPriceListToPriceList $relation) use ($fallbackPlIds) {
+                return !\in_array($relation->getPriceList()->getId(), $fallbackPlIds, true);
+            }
+        );
     }
 
     protected function processPriceLists(
         CombinedPriceList $combinedPriceList,
-        array $priceLists,
-        array $products = [],
-        ProgressBar $progressBar = null
-    ) {
+        array $priceListRelations,
+        array $products = []
+    ): void {
         if ($this->shardManager->isShardingEnabled()) {
-            $progress = 0;
-            foreach ($priceLists as $priceListRelation) {
-                $this->moveProgress($progressBar, $progress, $priceListRelation);
+            foreach ($priceListRelations as $priceListRelation) {
                 $this->processRelation($combinedPriceList, $priceListRelation, $products);
             }
         } else {
-            $this->massProcessPriceLists($combinedPriceList, $priceLists, $products, $progressBar);
+            $this->massProcessPriceLists($combinedPriceList, $priceListRelations, $products);
         }
     }
 
@@ -58,7 +71,7 @@ class MinimalPricesCombiningStrategy extends AbstractPriceCombiningStrategy impl
     ): void {
         $this->getCombinedProductPriceRepository()->insertMinimalPricesByPriceList(
             $this->shardManager,
-            $this->insertFromSelectQueryExecutor,
+            $this->getInsertSelectExecutor(),
             $combinedPriceList,
             $priceListRelation->getPriceList(),
             $products
@@ -68,39 +81,29 @@ class MinimalPricesCombiningStrategy extends AbstractPriceCombiningStrategy impl
     private function massProcessPriceLists(
         CombinedPriceList $combinedPriceList,
         array $priceLists,
-        array $products = [],
-        ProgressBar $progressBar = null
+        array $products = []
     ): void {
-        $progress = 0;
-        foreach ($priceLists as $priceListRelation) {
-            $this->moveProgress($progressBar, $progress, $priceListRelation);
-        }
-
         $this->getCombinedProductPriceRepository()->insertMinimalPricesByPriceLists(
-            $this->insertFromSelectQueryExecutor,
+            $this->getInsertSelectExecutor(),
             $combinedPriceList,
             $this->getUniqueSortedPriceListIds($priceLists),
             $products
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function processCombinedPriceListRelation(
+    protected function processCombinedPriceListRelation(
         CombinedPriceList $combinedPriceList,
-        CombinedPriceList $relatedCombinedPriceList
-    ) {
+        CombinedPriceList $fallbackCpl,
+        array $products = []
+    ): void {
         $this->getCombinedProductPriceRepository()->insertMinimalPricesByCombinedPriceList(
-            $this->insertFromSelectQueryExecutor,
+            $this->getInsertSelectExecutor(),
             $combinedPriceList,
-            $relatedCombinedPriceList
+            $fallbackCpl,
+            $products
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getCombinedPriceListIdentifier(array $priceListsRelations): string
     {
         $key = $this->getUniqueSortedPriceListIds($priceListsRelations);
@@ -108,10 +111,6 @@ class MinimalPricesCombiningStrategy extends AbstractPriceCombiningStrategy impl
         return md5(implode(self::GLUE, $key));
     }
 
-    /**
-     * @param array $priceListsRelations
-     * @return array|int[]
-     */
     private function getUniqueSortedPriceListIds(array $priceListsRelations): array
     {
         $key = [];

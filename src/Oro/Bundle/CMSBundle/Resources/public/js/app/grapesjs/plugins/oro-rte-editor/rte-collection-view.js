@@ -19,12 +19,18 @@ const RteCollectionView = BaseCollectionView.extend({
      */
     itemView: RteItemView,
 
+    observer: null,
+
     constructor: function RteCollectionView(options) {
+        this.spansToRemove = [];
+        this.spansToSave = [];
+
         RteCollectionView.__super__.constructor.call(this, options);
     },
 
     initialize(options) {
         RteCollectionView.__super__.initialize.call(this, options);
+        this.spansToSave = this.$editableEl[0].querySelectorAll('span');
         this.doc = this.editableEl.ownerDocument;
     },
 
@@ -39,6 +45,12 @@ const RteCollectionView = BaseCollectionView.extend({
         this.$editableEl.on(`mouseup${this.eventNamespace()} keyup${this.eventNamespace()}`,
             this.updateActiveActions.bind(this));
 
+        this.observer = new MutationObserver(this.onDOMMutation.bind(this));
+        this.observer.observe(this.editableEl, {
+            childList: true,
+            subtree: true
+        });
+
         return this;
     },
 
@@ -47,11 +59,28 @@ const RteCollectionView = BaseCollectionView.extend({
      * @returns {RteCollectionView}
      */
     undelegateEvents: function() {
+        if (this.observer) {
+            this.observer.disconnect();
+        }
+
         RteCollectionView.__super__.undelegateEvents.call(this);
 
         this.$editableEl.off(this.eventNamespace());
 
         return this;
+    },
+
+    onDOMMutation(mutationsList) {
+        for (const mutation of mutationsList) {
+            const isSpanAdded = [...mutation.addedNodes].filter(node => {
+                const isNotSavedSpan = ![...this.spansToSave].find(span => span.isEqualNode(node));
+                return node.nodeType === 1 && node.tagName === 'SPAN' && isNotSavedSpan;
+            });
+
+            if (mutation.type === 'childList' && isSpanAdded.length) {
+                this.spansToRemove.push(...isSpanAdded);
+            }
+        }
     },
 
     /**
@@ -118,6 +147,17 @@ const RteCollectionView = BaseCollectionView.extend({
      */
     updateActiveActions() {
         invoke(this.subviews, 'updateActiveState');
+    },
+
+    dispose() {
+        if (this.disposed) {
+            return;
+        }
+
+        this.spansToRemove.forEach(span => span.replaceWith(...span.childNodes));
+        this.spansToSave = [];
+        this.spansToRemove = [];
+        RteCollectionView.__super__.dispose.call(this);
     },
 
     /**

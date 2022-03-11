@@ -4,7 +4,8 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
-use Oro\Bundle\PricingBundle\Async\Topics;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceListAssignedProductsTopic;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceRulesTopic;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\PricingBundle\Event\PriceListToProductSaveAfterEvent;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
@@ -60,7 +61,7 @@ class PriceListToProductEntityListenerTest extends WebTestCase
 
         // Assert Rules scheduled for rebuild
         self::assertMessageSent(
-            Topics::RESOLVE_PRICE_RULES,
+            ResolvePriceRulesTopic::getName(),
             [
                 'product' => [
                     $this->getReference(LoadPriceLists::PRICE_LIST_1)->getId() => [
@@ -72,7 +73,7 @@ class PriceListToProductEntityListenerTest extends WebTestCase
 
         // Assert Dependent price lists scheduled for recalculation
         self::assertMessageSent(
-            Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS,
+            ResolvePriceListAssignedProductsTopic::getName(),
             [
                 'product' => [
                     $this->getReference(LoadPriceLists::PRICE_LIST_2)->getId() => [
@@ -101,7 +102,7 @@ class PriceListToProductEntityListenerTest extends WebTestCase
 
         // Assert Rules scheduled for rebuild
         self::assertMessageSent(
-            Topics::RESOLVE_PRICE_RULES,
+            ResolvePriceRulesTopic::getName(),
             [
                 'product' => [
                     $this->getReference(LoadPriceLists::PRICE_LIST_1)->getId() => [
@@ -113,7 +114,7 @@ class PriceListToProductEntityListenerTest extends WebTestCase
 
         // Assert Dependent price lists scheduled for recalculation
         self::assertMessageSent(
-            Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS,
+            ResolvePriceListAssignedProductsTopic::getName(),
             [
                 'product' => [
                     $this->getReference(LoadPriceLists::PRICE_LIST_2)->getId() => [
@@ -137,7 +138,7 @@ class PriceListToProductEntityListenerTest extends WebTestCase
         $em->persist($priceListToProduct);
         $em->flush();
 
-        $this->assertMessagesEmpty(Topics::RESOLVE_PRICE_RULES);
+        $this->assertMessagesEmpty(ResolvePriceRulesTopic::getName());
     }
 
     public function testPreUpdate()
@@ -162,7 +163,7 @@ class PriceListToProductEntityListenerTest extends WebTestCase
         $em->flush();
 
         self::assertMessagesSent(
-            Topics::RESOLVE_PRICE_RULES,
+            ResolvePriceRulesTopic::getName(),
             [
                 // Recalculation for old product
                 // Recalculation for new product
@@ -179,7 +180,7 @@ class PriceListToProductEntityListenerTest extends WebTestCase
 
         // Assert Dependent price lists scheduled for recalculation for old product
         self::assertMessagesSent(
-            Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS,
+            ResolvePriceListAssignedProductsTopic::getName(),
             [
                 [
                     'product' => [
@@ -216,7 +217,7 @@ class PriceListToProductEntityListenerTest extends WebTestCase
         $em->persist($priceListToProduct);
         $em->flush();
 
-        $this->assertMessagesEmpty(Topics::RESOLVE_PRICE_RULES);
+        $this->assertMessagesEmpty(ResolvePriceRulesTopic::getName());
     }
 
     public function testPostRemove()
@@ -238,7 +239,7 @@ class PriceListToProductEntityListenerTest extends WebTestCase
         $em->flush();
 
         self::assertMessageSent(
-            Topics::RESOLVE_PRICE_RULES,
+            ResolvePriceRulesTopic::getName(),
             [
                 'product' => [
                     $this->getReference(LoadPriceLists::PRICE_LIST_1)->getId() => [
@@ -269,7 +270,7 @@ class PriceListToProductEntityListenerTest extends WebTestCase
         $em->remove($priceListToProduct);
         $em->flush();
 
-        $this->assertMessagesEmpty(Topics::RESOLVE_PRICE_RULES);
+        $this->assertMessagesEmpty(ResolvePriceRulesTopic::getName());
     }
 
     public function testOnAssignmentRuleBuilderBuild()
@@ -285,7 +286,7 @@ class PriceListToProductEntityListenerTest extends WebTestCase
 
         // Assert Rules scheduled for rebuild
         self::assertMessageSent(
-            Topics::RESOLVE_PRICE_RULES,
+            ResolvePriceRulesTopic::getName(),
             [
                 'product' => [
                     $this->getReference(LoadPriceLists::PRICE_LIST_1)->getId() => [
@@ -297,7 +298,7 @@ class PriceListToProductEntityListenerTest extends WebTestCase
 
         // Assert Dependent price lists scheduled for recalculation
         self::assertMessageSent(
-            Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS,
+            ResolvePriceListAssignedProductsTopic::getName(),
             [
                 'product' => [
                     $this->getReference(LoadPriceLists::PRICE_LIST_2)->getId() => [
@@ -321,6 +322,6 @@ class PriceListToProductEntityListenerTest extends WebTestCase
         $em->persist($priceListToProduct);
         $em->flush();
 
-        $this->assertMessagesEmpty(Topics::RESOLVE_PRICE_RULES);
+        $this->assertMessagesEmpty(ResolvePriceRulesTopic::getName());
     }
 }

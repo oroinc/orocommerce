@@ -2,48 +2,44 @@
 
 namespace Oro\Bundle\PricingBundle\Async;
 
-use Doctrine\DBAL\Exception\RetryableException;
-use Doctrine\Persistence\ManagerRegistry;
-use Oro\Bundle\CustomerBundle\Entity\Customer;
-use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
-use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilderFacade;
-use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
+use Oro\Bundle\PricingBundle\Async\Topic\CombineSingleCombinedPriceListPricesTopic;
+use Oro\Bundle\PricingBundle\Async\Topic\RebuildCombinedPriceListsTopic;
+use Oro\Bundle\PricingBundle\Async\Topic\RunCombinedPriceListPostProcessingStepsTopic;
 use Oro\Bundle\PricingBundle\Model\Exception\InvalidArgumentException;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\PricingBundle\Provider\CombinedPriceListAssociationsProvider;
+use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
+use Oro\Component\MessageQueue\Job\DependentJobService;
+use Oro\Component\MessageQueue\Job\Job;
+use Oro\Component\MessageQueue\Job\JobRunner;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Component\MessageQueue\Util\JSON;
-use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 
 /**
  * Updates combined price lists in case of changes in structure of original price lists.
  */
-class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubscriberInterface
+class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubscriberInterface, LoggerAwareInterface
 {
-    /** @var ManagerRegistry */
-    private $doctrine;
+    use LoggerAwareTrait;
 
-    /** @var LoggerInterface */
-    private $logger;
-
-    /** @var CombinedPriceListTriggerHandler */
-    private $triggerHandler;
-
-    /** @var CombinedPriceListsBuilderFacade */
-    private $builderFacade;
+    private CombinedPriceListAssociationsProvider $cplAssociationsProvider;
+    private JobRunner $jobRunner;
+    private MessageProducerInterface $producer;
+    private DependentJobService $dependentJob;
 
     public function __construct(
-        ManagerRegistry $doctrine,
-        LoggerInterface $logger,
-        CombinedPriceListTriggerHandler $triggerHandler,
-        CombinedPriceListsBuilderFacade $builderFacade
+        CombinedPriceListAssociationsProvider $combinedPriceListByEntityProvider,
+        MessageProducerInterface $producer,
+        JobRunner $jobRunner,
+        DependentJobService $dependentJob
     ) {
-        $this->doctrine = $doctrine;
-        $this->logger = $logger;
-        $this->triggerHandler = $triggerHandler;
-        $this->builderFacade = $builderFacade;
+        $this->cplAssociationsProvider = $combinedPriceListByEntityProvider;
+        $this->jobRunner = $jobRunner;
+        $this->producer = $producer;
+        $this->dependentJob = $dependentJob;
     }
 
     /**
@@ -51,7 +47,7 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
      */
     public static function getSubscribedTopics()
     {
-        return [Topics::REBUILD_COMBINED_PRICE_LISTS];
+        return [RebuildCombinedPriceListsTopic::getName()];
     }
 
     /**
@@ -59,33 +55,19 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
      */
     public function process(MessageInterface $message, SessionInterface $session)
     {
-        $body = JSON::decode($message->getBody());
-        if (!\is_array($body)) {
-            $this->logger->critical('Got invalid message.');
-
-            return self::REJECT;
-        }
-
-        $this->triggerHandler->startCollect();
         try {
-            $this->handlePriceListRelationTrigger($body);
-            $this->builderFacade->dispatchEvents();
-            $this->triggerHandler->commit();
+            if (!$this->handlePriceListRelationTrigger($message)) {
+                return self::REJECT;
+            }
         } catch (InvalidArgumentException $e) {
-            $this->triggerHandler->rollback();
-            $this->logger->error(sprintf('Message is invalid: %s', $e->getMessage()));
+            $this->logger?->warning(sprintf('Message is invalid: %s', $e->getMessage()));
 
             return self::REJECT;
         } catch (\Exception $e) {
-            $this->triggerHandler->rollback();
-            $this->logger->error(
+            $this->logger?->error(
                 'Unexpected exception occurred during Combined Price Lists build.',
                 ['exception' => $e]
             );
-
-            if ($e instanceof RetryableException) {
-                return self::REQUEUE;
-            }
 
             return self::REJECT;
         }
@@ -93,70 +75,62 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
         return self::ACK;
     }
 
-    private function handlePriceListRelationTrigger(array $body): void
+    private function handlePriceListRelationTrigger(MessageInterface $message): bool
     {
-        $force = $body['force'] ?? false;
-        $customer = $this->findCustomer($body);
-        if (null !== $customer) {
-            $this->builderFacade->rebuildForCustomers([$customer], $this->findWebsite($body), $force);
-        } else {
-            $customerGroup = $this->findCustomerGroup($body);
-            $website = $this->findWebsite($body);
-            if (null !== $customerGroup) {
-                $this->builderFacade->rebuildForCustomerGroups([$customerGroup], $website, $force);
-            } elseif (null !== $website) {
-                $this->builderFacade->rebuildForWebsites([$website], $force);
-            } else {
-                $this->builderFacade->rebuildAll($force);
+        $body = $message->getBody();
+        $associations = $this->getAssociations($body);
+
+        $jobName = RebuildCombinedPriceListsTopic::getName() . ':' . md5(json_encode($body));
+        $this->jobRunner->runUnique(
+            $message->getMessageId(),
+            $jobName,
+            function (JobRunner $jobRunner, Job $job) use ($associations) {
+                $this->schedulePostCplJobs($job);
+
+                foreach ($associations as $identifier => $associationData) {
+                    $jobRunner->createDelayed(
+                        sprintf('%s:cpl:%s', $job->getName(), $identifier),
+                        function (JobRunner $jobRunner, Job $child) use ($associationData) {
+                            $this->producer->send(
+                                CombineSingleCombinedPriceListPricesTopic::getName(),
+                                [
+                                    'collection' => $associationData['collection'],
+                                    'assign_to' => $associationData['assign_to'],
+                                    'jobId' => $child->getId()
+                                ]
+                            );
+                        }
+                    );
+                }
+
+                return true;
             }
-        }
+        );
+
+        return true;
     }
 
-    private function findCustomer(array $body): ?Customer
+    private function schedulePostCplJobs(Job $job): void
     {
-        if (!isset($body['customer'])) {
-            return null;
-        }
-
-        /** @var Customer|null $customer */
-        $customer = $this->doctrine->getManagerForClass(Customer::class)
-            ->find(Customer::class, $body['customer']);
-        if (null === $customer) {
-            throw new InvalidArgumentException('Customer was not found.');
-        }
-
-        return $customer;
+        $context = $this->dependentJob->createDependentJobContext($job->getRootJob());
+        $context->addDependentJob(
+            RunCombinedPriceListPostProcessingStepsTopic::getName(),
+            ['relatedJobId' => $job->getRootJob()->getId()]
+        );
+        $this->dependentJob->saveDependentJob($context);
     }
 
-    private function findCustomerGroup(array $body): ?CustomerGroup
+    private function getAssociations(array $body): array
     {
-        if (!isset($body['customerGroup'])) {
-            return null;
+        $targetEntity = null;
+        if ($body['website']) {
+            $targetEntity = $body['customer'] ?: $body['customerGroup'];
         }
 
-        /** @var CustomerGroup|null $customerGroup */
-        $customerGroup = $this->doctrine->getManagerForClass(CustomerGroup::class)
-            ->find(CustomerGroup::class, $body['customerGroup']);
-        if (null === $customerGroup) {
-            throw new InvalidArgumentException('Customer Group was not found.');
-        }
-
-        return $customerGroup;
-    }
-
-    private function findWebsite(array $body): ?Website
-    {
-        if (!isset($body['website'])) {
-            return null;
-        }
-
-        /** @var Website|null $website */
-        $website = $this->doctrine->getManagerForClass(Website::class)
-            ->find(Website::class, $body['website']);
-        if (null === $website) {
-            throw new InvalidArgumentException('Website was not found.');
-        }
-
-        return $website;
+        return $this->cplAssociationsProvider->getCombinedPriceListsWithAssociations(
+            $body['force'] ?? false,
+            $body['website'],
+            $targetEntity
+        );
     }
 }

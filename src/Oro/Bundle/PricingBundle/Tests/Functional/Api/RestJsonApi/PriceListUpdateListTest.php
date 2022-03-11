@@ -3,7 +3,8 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Api\RestJsonApi;
 
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiUpdateListTestCase;
-use Oro\Bundle\PricingBundle\Async\Topics;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\PricingBundle\Async\Topic\RebuildCombinedPriceListsTopic;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations;
@@ -91,7 +92,7 @@ class PriceListUpdateListTest extends RestJsonApiUpdateListTestCase
     public function testUpdateEntities()
     {
         $priceList1Id = $this->getReference('price_list_1')->getId();
-        $priceList3Id = $this->getReference('price_list_3')->getId();
+        $priceList4Id = $this->getReference('price_list_4')->getId();
         $this->processUpdateList(
             PriceList::class,
             [
@@ -108,9 +109,9 @@ class PriceListUpdateListTest extends RestJsonApiUpdateListTestCase
                     [
                         'meta'       => ['update' => true],
                         'type'       => 'pricelists',
-                        'id'         => (string)$priceList3Id,
+                        'id'         => (string)$priceList4Id,
                         'attributes' => [
-                            'name'                  => 'Updated Price List 3',
+                            'name'                  => 'Updated Price List 4',
                             'productAssignmentRule' => 'product.category.id > 0'
                         ]
                     ]
@@ -119,10 +120,10 @@ class PriceListUpdateListTest extends RestJsonApiUpdateListTestCase
         );
 
         self::assertNotNull($this->getPriceRuleLexeme($priceList1Id));
-        self::assertNotNull($this->getPriceRuleLexeme($priceList3Id));
+        self::assertNotNull($this->getPriceRuleLexeme($priceList4Id));
 
         self::assertMessagesSent(
-            Topics::REBUILD_COMBINED_PRICE_LISTS,
+            RebuildCombinedPriceListsTopic::getName(),
             [
                 [
                     'website' => $this->getReference('US')->getId()
@@ -136,7 +137,7 @@ class PriceListUpdateListTest extends RestJsonApiUpdateListTestCase
 
         $response = $this->cget(
             ['entity' => 'pricelists'],
-            ['filter' => ['id' => [(string)$priceList1Id, (string)$priceList3Id]]]
+            ['filter' => ['id' => [(string)$priceList1Id, (string)$priceList4Id]]]
         );
         $this->assertResponseContains(
             [
@@ -151,9 +152,9 @@ class PriceListUpdateListTest extends RestJsonApiUpdateListTestCase
                     ],
                     [
                         'type'       => 'pricelists',
-                        'id'         => (string)$priceList3Id,
+                        'id'         => (string)$priceList4Id,
                         'attributes' => [
-                            'name'                  => 'Updated Price List 3',
+                            'name'                  => 'Updated Price List 4',
                             'productAssignmentRule' => 'product.category.id > 0'
                         ]
                     ]
@@ -165,7 +166,7 @@ class PriceListUpdateListTest extends RestJsonApiUpdateListTestCase
 
     public function testCreateAndUpdateEntities()
     {
-        $updatedPriceListId = $this->getReference('price_list_3')->getId();
+        $updatedPriceListId = $this->getReference('price_list_4')->getId();
         $this->processUpdateList(
             PriceList::class,
             [
@@ -183,7 +184,7 @@ class PriceListUpdateListTest extends RestJsonApiUpdateListTestCase
                         'type'       => 'pricelists',
                         'id'         => (string)$updatedPriceListId,
                         'attributes' => [
-                            'name'                  => 'Updated Price List 3',
+                            'name'                  => 'Updated Price List 4',
                             'productAssignmentRule' => 'product.category.id > 0',
                             'active'                => false
                         ]
@@ -196,14 +197,22 @@ class PriceListUpdateListTest extends RestJsonApiUpdateListTestCase
         self::assertNotNull($this->getPriceRuleLexeme($newPriceListId));
         self::assertNotNull($this->getPriceRuleLexeme($updatedPriceListId));
 
+        /** @var Customer $customer */
+        $customerLevel13 = $this->getReference('customer.level_1.3');
+        $customerGroup1 = $this->getReference('customer_group.group1');
+        $customerGroup2 = $this->getReference('customer_group.group2');
+
         self::assertMessagesSent(
-            Topics::REBUILD_COMBINED_PRICE_LISTS,
+            RebuildCombinedPriceListsTopic::getName(),
             [
                 [
+                    'customer' => $customerLevel13->getId(),
+                    'customerGroup' => $customerGroup1->getId(),
                     'website' => $this->getReference('US')->getId()
                 ],
                 [
-                    'website' => $this->getReference('Canada')->getId()
+                    'customerGroup' => $customerGroup2->getId(),
+                    'website' => $this->getReference('US')->getId()
                 ]
             ]
         );
@@ -219,7 +228,7 @@ class PriceListUpdateListTest extends RestJsonApiUpdateListTestCase
                         'type'       => 'pricelists',
                         'id'         => (string)$updatedPriceListId,
                         'attributes' => [
-                            'name'                  => 'Updated Price List 3',
+                            'name'                  => 'Updated Price List 4',
                             'productAssignmentRule' => 'product.category.id > 0',
                             'active'                => false
                         ]

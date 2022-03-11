@@ -265,7 +265,7 @@ const QuickAddCollection = BaseCollection.extend({
      * @return {Object} remaining items that was not updated
      * @private
      */
-    _updateModels(productInfo, itemsToUpdate, options= {}) {
+    _updateModels(productInfo, itemsToUpdate, options = {}) {
         const updatedModels = [];
         productInfo.forEach(data => {
             const {id, sku, units, 'defaultName.string': productName, ...extraAttrs} = data;

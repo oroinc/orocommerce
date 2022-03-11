@@ -54,7 +54,6 @@ class OrmEngine extends AbstractEngine
                 $results[] = new Item(
                     $item['entity'],
                     $item['recordId'],
-                    $item['title'],
                     null,
                     $this->mapper->mapSelectedData($query, $searchResult),
                     $this->mappingProvider->getEntityConfig($item['entity'])

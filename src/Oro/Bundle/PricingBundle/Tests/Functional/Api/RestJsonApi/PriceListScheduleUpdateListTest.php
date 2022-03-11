@@ -8,7 +8,6 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListSchedule;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListActivationRuleRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
-use Oro\Bundle\PricingBundle\Entity\Repository\PriceListScheduleRepository;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListSchedules;
 
 /**
@@ -25,11 +24,6 @@ class PriceListScheduleUpdateListTest extends RestJsonApiUpdateListTestCase
     private function getPriceListRepository(): PriceListRepository
     {
         return $this->getEntityManager()->getRepository(PriceList::class);
-    }
-
-    private function getSchedulesRepository(): PriceListScheduleRepository
-    {
-        return $this->getEntityManager()->getRepository(PriceListSchedule::class);
     }
 
     private function getCombinedPriceListActivationRuleRepository(): CombinedPriceListActivationRuleRepository

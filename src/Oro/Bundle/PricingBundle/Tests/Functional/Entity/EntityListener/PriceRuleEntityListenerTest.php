@@ -4,7 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
-use Oro\Bundle\PricingBundle\Async\Topics;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceRulesTopic;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceRules;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -39,7 +39,7 @@ class PriceRuleEntityListenerTest extends WebTestCase
         $em->flush();
 
         self::assertMessageSent(
-            Topics::RESOLVE_PRICE_RULES,
+            ResolvePriceRulesTopic::getName(),
             [
                 'product' => [$rule->getPriceList()->getId() => []]
             ]
@@ -56,7 +56,7 @@ class PriceRuleEntityListenerTest extends WebTestCase
         $em->flush();
 
         self::assertMessageSent(
-            Topics::RESOLVE_PRICE_RULES,
+            ResolvePriceRulesTopic::getName(),
             [
                 'product' => [$rule->getPriceList()->getId() => []]
             ]

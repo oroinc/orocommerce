@@ -3,7 +3,8 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Model;
 
 use Doctrine\Persistence\ManagerRegistry;
-use Oro\Bundle\PricingBundle\Async\Topics;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceListAssignedProductsTopic;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceRulesTopic;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
@@ -123,8 +124,8 @@ class PriceRuleLexemeTriggerHandlerTest extends \PHPUnit\Framework\TestCase
         $this->priceListTriggerHandler->expects($this->exactly(2))
             ->method('handlePriceListTopic')
             ->withConsecutive(
-                [Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS, $priceList1, $product ? [$product] : []],
-                [Topics::RESOLVE_PRICE_RULES, $priceList2, $product ? [$product] : []]
+                [ResolvePriceListAssignedProductsTopic::getName(), $priceList1, $product ? [$product] : []],
+                [ResolvePriceRulesTopic::getName(), $priceList2, $product ? [$product] : []]
             );
 
         $this->handler->processLexemes($lexemes, $product ? [$product] : []);

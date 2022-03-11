@@ -53,7 +53,7 @@ const SidebarToggleFiltersView = BaseView.extend({
 
     getDataToSave() {
         return {
-            sidebarExpanded: this.sidebarExpanded ? 1: 0
+            sidebarExpanded: this.sidebarExpanded ? 1 : 0
         };
     },
 
@@ -109,7 +109,7 @@ const SidebarToggleFiltersView = BaseView.extend({
      */
     getTemplateData: function() {
         const data = SidebarToggleFiltersView.__super__.getTemplateData.call(this);
-        const stateKey = this.sidebarExpanded? EXPANDED : COLLAPSED;
+        const stateKey = this.sidebarExpanded ? EXPANDED : COLLAPSED;
 
         data.className = config.className;
         data.icon = config[`${stateKey}Icon`];

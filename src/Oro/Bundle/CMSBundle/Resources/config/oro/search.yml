@@ -1,7 +1,6 @@
 search:
     Oro\Bundle\CMSBundle\Entity\Page:
         alias:                          oro_cms_page
-        title_fields:                   [defaultTitle]
         route:
             name:                       oro_cms_page_view
             parameters:
@@ -35,7 +34,6 @@ search:
 
     Oro\Bundle\CMSBundle\Entity\ContentWidget:
         alias:                          oro_cms_content_widget
-        title_fields:                   [name]
         route:
             name:                       oro_cms_content_widget_view
             parameters:

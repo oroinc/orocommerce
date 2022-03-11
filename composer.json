@@ -12,11 +12,11 @@
     "require": {
         "ext-xmlwriter": "*",
         "ext-zlib": "*",
-        "oro/platform": "5.0.*",
-        "oro/platform-serialised-fields": "5.0.*",
-        "oro/calendar-bundle": "5.0.*",
-        "oro/marketing": "5.0.*",
-        "oro/customer-portal": "5.0.*",
+        "oro/platform": "5.1.*",
+        "oro/platform-serialised-fields": "5.1.*",
+        "oro/calendar-bundle": "5.1.*",
+        "oro/marketing": "5.1.*",
+        "oro/customer-portal": "5.1.*",
         "besimple/soap-client": "^0.2.6"
     },
     "require-dev": {
@@ -28,7 +28,7 @@
         "friends-of-behat/symfony-extension": "~2.2.0",
         "nelmio/alice": "~3.9.0",
         "theofidry/alice-data-fixtures": "~1.4.0",
-        "phpunit/phpunit": "~9.5.1",
+        "phpunit/phpunit": "9.5.13",
         "johnkary/phpunit-speedtrap": "~4.0.0",
         "squizlabs/php_codesniffer": "~3.6.0",
         "phpmd/phpmd": "~2.11.1",
@@ -65,7 +65,7 @@
             "require": "~5.4.0"
         },
         "branch-alias": {
-            "dev-master": "5.0-dev"
+            "dev-master": "5.1-dev"
         }
     },
     "autoload": {
