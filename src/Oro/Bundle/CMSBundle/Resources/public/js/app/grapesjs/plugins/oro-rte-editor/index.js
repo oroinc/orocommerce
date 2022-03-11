@@ -3,6 +3,30 @@ import RteCollection from './rte-collection';
 import rteActions from '../components/rte';
 import RteCollectionView from './rte-collection-view';
 
+function getTextNodesIn(element) {
+    let textNodes = [];
+
+    if (element) {
+        for (const node of [...element.childNodes]) {
+            if (node.nodeType === 3) {
+                textNodes.push(node);
+            } else {
+                textNodes = textNodes.concat(getTextNodesIn(node));
+            }
+        }
+    }
+
+    return textNodes;
+}
+
+function selectElementContents(el, doc) {
+    const range = doc.createRange();
+    range.selectNodeContents(getTextNodesIn(el)[0]);
+    const sel = doc.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+}
+
 const GrapesjsRteEditor = BaseClass.extend({
     constructor: function GrapesjsRteEditor(...args) {
         GrapesjsRteEditor.__super__.constructor.apply(this, args);
@@ -72,13 +96,15 @@ const GrapesjsRteEditor = BaseClass.extend({
             },
 
             focus(el, rte) {
-                if (rte && !rte.disposed) {
+                if (rte && rte.disposed) {
                     return;
                 }
 
                 el.contentEditable = true;
 
                 rte && rte.focus();
+                selectElementContents(el, rte.doc);
+                rte.updateActiveActions();
 
                 self.editor.trigger('change:canvasOffset');
             }
