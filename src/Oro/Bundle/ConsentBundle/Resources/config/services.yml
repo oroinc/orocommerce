@@ -295,3 +295,8 @@ services:
             - '@oro_consent.builder.cms_page_data_builder'
             - '@router.request_context'
         tags: [ 'oro_frontend.guest_access_urls_provider' ]
+
+    oro_consent.provider.consent_entity_name:
+        class: 'Oro\Bundle\ConsentBundle\Provider\ConsentEntityNameProvider'
+        tags:
+            - { name: oro_entity.name_provider, priority: 100 }

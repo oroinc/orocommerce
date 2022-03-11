@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Functional\ImportExport\Normalizer;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\ImportExport\Normalizer\CategoryNormalizer;
 use Oro\Bundle\CatalogBundle\Tests\Functional\CatalogTrait;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
@@ -15,11 +16,11 @@ class CategoryNormalizerTest extends WebTestCase
 {
     use EntityTrait, CatalogTrait;
 
-    /** @var Context */
-    private $context;
+    private Context $context;
 
-    /** @var CategoryNormalizer */
-    private $normalizer;
+    private CategoryNormalizer $normalizer;
+
+    private ManagerRegistry $doctrine;
 
     protected function setUp(): void
     {
@@ -35,13 +36,14 @@ class CategoryNormalizerTest extends WebTestCase
         $container = $this->getContainer();
 
         $container->get('oro_importexport.field.database_helper')->onClear();
-
+        $this->doctrine = $container->get('doctrine');
         $this->normalizer = new CategoryNormalizer($container->get('oro_entity.helper.field_helper'));
         $this->normalizer->setDispatcher($container->get('event_dispatcher'));
         $this->normalizer->setSerializer($container->get('oro_importexport.serializer'));
         $this->normalizer->setCategoryImportExportHelper(
             $container->get('oro_catalog.importexport.helper.category_import_export')
         );
+        $this->normalizer->setDoctrine($this->doctrine);
     }
 
     protected function tearDown(): void
@@ -89,5 +91,19 @@ class CategoryNormalizerTest extends WebTestCase
         $data = $this->normalizer->normalize($rootCategory);
 
         $this->assertNull($data['parentCategory']);
+    }
+
+    public function testNormalizeWhenParentCategoryIsBroken(): void
+    {
+        $category = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
+        // attempt to simulate that parent category is cleared and broken.
+        $category->setParentCategory(new \Proxies\__CG__\Oro\Bundle\CatalogBundle\Entity\Category());
+
+        $data = $this->normalizer->normalize($category);
+
+        $this->assertEquals(
+            'All Products / ' . LoadCategoryData::FIRST_LEVEL,
+            $data['parentCategory']['titles']['default']['string'] ?? ''
+        );
     }
 }

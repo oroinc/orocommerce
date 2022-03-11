@@ -1,7 +1,6 @@
 search:
     Oro\Bundle\TaxBundle\Entity\Tax:
         alias:                          oro_tax
-        title_fields:                   [code]
         route:
             name:                       oro_tax_view
             parameters:
@@ -19,7 +18,6 @@ search:
 
     Oro\Bundle\TaxBundle\Entity\ProductTaxCode:
         alias:                          oro_product_tax_code
-        title_fields:                   [code]
         route:
             name:                       oro_tax_product_tax_code_view
             parameters:
@@ -37,7 +35,6 @@ search:
 
     Oro\Bundle\TaxBundle\Entity\CustomerTaxCode:
         alias:                          oro_customer_tax_code
-        title_fields:                   [code]
         route:
             name:                       oro_tax_customer_tax_code_view
             parameters:
@@ -55,7 +52,6 @@ search:
 
     Oro\Bundle\TaxBundle\Entity\TaxJurisdiction:
         alias:                          oro_tax_jurisdiction
-        title_fields:                   [code]
         route:
             name:                       oro_tax_jurisdiction_view
             parameters:

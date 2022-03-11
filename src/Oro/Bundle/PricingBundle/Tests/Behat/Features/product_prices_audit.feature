@@ -177,7 +177,7 @@ Feature: Product prices audit
     When click "Change History"
     Then should see following "Audit History Grid" grid:
       | Old Values                                                                                                                                                    | New Values                                                                                                                                                       |
-      | Prices: Product Price "PSKU1 \| 5 each \| 7.4500 USD" removed: Currency: USD Price List: Price List "1" Quantity: 5 Unit: Product Unit "each" Value: 7.45     | Prices:                                                                                                                                                          |
+      | Prices: Product Price "PSKU1 \| 5 each \| 7.4500 USD" removed: Currency: USD Price List: Price List "1" Quantity: 5 Unit: Product Unit "each" Value: 7.45     | Prices:  Product Price "PSKU1 \| 5 each \| 7.4500 USD" added: Price List: Price List "1"                                                                         |
       | Prices:                                                                                                                                                       | Prices:  Product Price "PSKU1 \| 5 each \| 7.4500 USD" added: Currency: USD Price List: Price List "1" Quantity: 5 Unit: Product Unit "each" Value: 7.45         |
       | Prices: Product Price "PSKU1 \| 4 item \| 6.7500 EUR" removed: Currency: EUR Price List: Price List "1" Quantity: 4 Unit: Product Unit "item" Value: 6.7500   | Prices:                                                                                                                                                          |
       | Prices: Product Price "PSKU1 \| 4 item \| 6.7500 EUR" changed: Currency: USD  Quantity: 3  Unit: Product Unit "each"  Value: 5.65                             | Prices:  Product Price "PSKU1 \| 4 item \| 6.7500 EUR" changed: Currency: EUR Quantity: 4 Unit: Product Unit "item" Value: 6.75                                  |
@@ -190,6 +190,6 @@ Feature: Product prices audit
     And click view "Second Price List" in grid
     When click "Change History"
     Then should see following "Audit History Grid" grid:
-      | Old Values | New Values                                                                                                                                               |
-      | Prices:    | Prices:  Product Price "PSKU1 \| 5 each \| 7.4500 USD" added: Currency: USD Price List: Price List "4" Quantity: 5 Unit: Product Unit "each" Value: 7.45 |
+      | Old Values                                                                                | New Values                                                                                                                                               |
+      | Prices: Product Price "PSKU1 \| 5 each \| 7.4500 USD" removed: Price List: Price List "4" | Prices:  Product Price "PSKU1 \| 5 each \| 7.4500 USD" added: Currency: USD Price List: Price List "4" Quantity: 5 Unit: Product Unit "each" Value: 7.45 |
     And close ui dialog

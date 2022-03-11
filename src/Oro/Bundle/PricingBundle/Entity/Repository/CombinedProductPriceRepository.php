@@ -33,22 +33,15 @@ use Oro\Component\DoctrineUtils\ORM\UnionQueryBuilder;
  */
 class CombinedProductPriceRepository extends BaseProductPriceRepository
 {
-    const BATCH_SIZE = 100000;
+    private const BATCH_SIZE = 100000;
 
-    /**
-     * @param ShardQueryExecutorInterface $insertFromSelectQueryExecutor
-     * @param CombinedPriceList $combinedPriceList
-     * @param PriceList $priceList
-     * @param bool $mergeAllowed
-     * @param array|Product[] $products
-     */
     public function copyPricesByPriceList(
         ShardQueryExecutorInterface $insertFromSelectQueryExecutor,
         CombinedPriceList $combinedPriceList,
         PriceList $priceList,
         bool $mergeAllowed,
         array $products = []
-    ) {
+    ): void {
         $this->doInsertByProducts(
             $insertFromSelectQueryExecutor,
             $priceList,
@@ -57,16 +50,13 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         );
     }
 
-    /**
-     * @throws \Doctrine\ORM\NonUniqueResultException
-     */
     public function insertPricesByPriceListWithTempTable(
         TempTableManipulatorInterface $tempTableManipulator,
         CombinedPriceList $combinedPriceList,
         PriceList $priceList,
         bool $mergeAllowed,
         array $products
-    ) {
+    ): void {
         // Copy prices for products that are not in the CPL yet to temp table (faster insert)
         // This logic is same to copying prices from price list with merge = false
         $notInListQb = $this->getPricesQb($combinedPriceList, $mergeAllowed, $priceList);
@@ -140,20 +130,13 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         );
     }
 
-    /**
-     * @param ShardQueryExecutorInterface $insertFromSelectQueryExecutor
-     * @param CombinedPriceList $combinedPriceList
-     * @param PriceList $priceList
-     * @param boolean $mergeAllowed
-     * @param array|Product[] $products
-     */
     public function insertPricesByPriceList(
         ShardQueryExecutorInterface $insertFromSelectQueryExecutor,
         CombinedPriceList $combinedPriceList,
         PriceList $priceList,
-        $mergeAllowed,
+        bool $mergeAllowed,
         array $products = []
-    ) {
+    ): void {
         $qb = $this->getPricesQb($combinedPriceList, $mergeAllowed, $priceList);
         $this->addUniquePriceCondition($qb, $combinedPriceList, $mergeAllowed);
 
@@ -168,8 +151,9 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
     public function insertPricesByCombinedPriceList(
         ShardQueryExecutorInterface $insertFromSelectQueryExecutor,
         CombinedPriceList $combinedPriceList,
-        CombinedPriceList $sourceCpl
-    ) {
+        CombinedPriceList $sourceCpl,
+        array $products = []
+    ): void {
         $qb = $this->getEntityManager()
             ->getRepository(CombinedProductPrice::class)
             ->createQueryBuilder('pp');
@@ -190,14 +174,16 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
             ->where($qb->expr()->eq('pp.priceList', ':currentPriceList'))
             ->setParameter('currentPriceList', $sourceCpl);
         $this->addUniquePriceCondition($qb, $combinedPriceList, true);
-        $this->insertByProductsRangeByCpl($insertFromSelectQueryExecutor, $sourceCpl, $qb);
+
+        $this->doInsertByProductsByCpl(
+            $insertFromSelectQueryExecutor,
+            $sourceCpl,
+            $products,
+            $qb
+        );
     }
 
-    /**
-     * @param CombinedPriceList $combinedPriceList
-     * @param array|Product[] $products
-     */
-    public function deleteCombinedPrices(CombinedPriceList $combinedPriceList, array $products = [])
+    public function deleteCombinedPrices(CombinedPriceList $combinedPriceList, array $products = []): void
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->delete($this->getEntityName(), 'combinedPrice')
@@ -213,45 +199,19 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
     }
 
     /**
-     * @param CombinedPriceList $priceList
-     * @param array $productIds
-     * @param null|string $currency
-     * @return CombinedProductPrice[]
-     */
-    public function getPricesForProductsByPriceList(CombinedPriceList $priceList, array $productIds, $currency = null)
-    {
-        if (count($productIds) === 0) {
-            return [];
-        }
-
-        $qb = $this->createQueryBuilder('cpp');
-
-        $qb->select('cpp')
-            ->where($qb->expr()->eq('cpp.priceList', ':priceList'))
-            ->andWhere($qb->expr()->in('cpp.product', ':productIds'))
-            ->setParameters([
-                'priceList' => $priceList,
-                'productIds' => $productIds
-            ]);
-
-        if ($currency) {
-            $qb->andWhere($qb->expr()->eq('cpp.currency', ':currency'))
-                ->setParameter('currency', $currency);
-        }
-
-        return $qb->getQuery()->getResult();
-    }
-
-    /**
-     * @param QueryBuilder $qb
-     * @param CombinedPriceList $combinedPriceList
-     * @param boolean $mergeAllowed
+     * When merge allowed = true
+     *   - include only prices for product quantities that are not yet present.
+     *   - skip prices that were added with merge = false
+     *
+     * When merge allowed = false
+     *  - if there are no prices for product yet - include prices with merge allowed = false
+     *  - if there is at least one price for product - skip prices for product from PL with merge allowed = false
      */
     protected function addUniquePriceCondition(
         QueryBuilder $qb,
         CombinedPriceList $combinedPriceList,
-        $mergeAllowed
-    ) {
+        bool $mergeAllowed
+    ): void {
         if ($mergeAllowed) {
             $this->addProductsBlockedByMergeFlagRestriction($qb, $combinedPriceList);
             $this->addPresentPricesRestriction($qb, $combinedPriceList);
@@ -267,7 +227,7 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
     private function addPresentPricesRestriction(
         QueryBuilder $qb,
         CombinedPriceList $combinedPriceList
-    ) {
+    ): void {
         $subQuery = $this->_em->createQueryBuilder();
         $subQuery->select('cpp2.id')
             ->from(CombinedProductPrice::class, 'cpp2')
@@ -292,7 +252,7 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
     private function addProductsBlockedByMergeFlagRestriction(
         QueryBuilder $qb,
         CombinedPriceList $combinedPriceList
-    ) {
+    ): void {
         $subQuery = $this->_em->createQueryBuilder();
         $subQuery->select('cpp.id')
             ->from(CombinedProductPrice::class, 'cpp')
@@ -316,7 +276,7 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
     private function addPresentProductsRestriction(
         QueryBuilder $qb,
         CombinedPriceList $combinedPriceList
-    ) {
+    ): void {
         $subQuery = $this->_em->createQueryBuilder();
         $subQuery->select('cpp.id')
             ->from(CombinedProductPrice::class, 'cpp')
@@ -331,47 +291,11 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         $qb->setParameter('combinedPriceList', $combinedPriceList->getId());
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function findByPriceListIdAndProductIds(
-        ShardManager $shardManager,
-        $priceListId,
-        array $productIds,
-        $getTierPrices = true,
-        $currency = null,
-        $productUnitCode = null,
-        array $orderBy = ['unit' => 'ASC', 'quantity' => 'ASC']
-    ) {
-        if (!$productIds) {
-            return [];
-        }
-
-        $qb = $this->getFindByPriceListIdAndProductIdsQueryBuilder(
-            $priceListId,
-            $productIds,
-            $getTierPrices,
-            $currency,
-            $productUnitCode,
-            $orderBy
-        );
-        $qb
-            ->addSelect('product', 'unitPrecisions', 'unit')
-            ->leftJoin('price.product', 'product')
-            ->leftJoin('product.unitPrecisions', 'unitPrecisions')
-            ->leftJoin('unitPrecisions.unit', 'unit');
-
-        return $qb->getQuery()->getResult();
-    }
-
-    /**
-     * @param integer $websiteId
-     * @param Product[] $products
-     * @param CombinedPriceList $configCpl
-     * @return array
-     */
-    public function findMinByWebsiteForFilter($websiteId, array $products, $configCpl)
-    {
+    public function findMinByWebsiteForFilter(
+        int $websiteId,
+        array $products,
+        ?CombinedPriceList $configCpl = null
+    ): iterable {
         $qb = $this->getQbForMinimalPrices($websiteId, $products, $configCpl);
         $qb->select(
             'IDENTITY(mp.product) as product',
@@ -385,14 +309,11 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         return $qb->getQuery()->getArrayResult();
     }
 
-    /**
-     * @param integer $websiteId
-     * @param Product[] $products
-     * @param CombinedPriceList $configCpl
-     * @return array
-     */
-    public function findMinByWebsiteForSort($websiteId, array $products, $configCpl)
-    {
+    public function findMinByWebsiteForSort(
+        int $websiteId,
+        array $products,
+        ?CombinedPriceList $configCpl = null
+    ): iterable {
         $qb = $this->getQbForMinimalPrices($websiteId, $products, $configCpl);
         $qb->select(
             'IDENTITY(mp.product) as product',
@@ -405,20 +326,13 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         return $qb->getQuery()->getArrayResult();
     }
 
-    /**
-     * @param ShardManager $shardManager
-     * @param ShardQueryExecutorInterface $insertFromSelectQueryExecutor
-     * @param CombinedPriceList $combinedPriceList
-     * @param PriceList $priceList
-     * @param array|Product[] $products
-     */
     public function insertMinimalPricesByPriceList(
         ShardManager $shardManager,
         ShardQueryExecutorInterface $insertFromSelectQueryExecutor,
         CombinedPriceList $combinedPriceList,
         PriceList $priceList,
         array $products = []
-    ) {
+    ): void {
         //remove prices that are greater of prices from current PriceList
         $this->deleteInvalidPricesForMinimalStrategy($shardManager, $combinedPriceList, $priceList, $products);
 
@@ -432,12 +346,6 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         );
     }
 
-    /**
-     * @param ShardQueryExecutorInterface $insertFromSelectQueryExecutor
-     * @param CombinedPriceList $combinedPriceList
-     * @param array|PriceList[] $priceLists
-     * @param array|Product[] $products
-     */
     public function insertMinimalPricesByPriceLists(
         ShardQueryExecutorInterface $insertFromSelectQueryExecutor,
         CombinedPriceList $combinedPriceList,
@@ -526,27 +434,26 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
     public function insertMinimalPricesByCombinedPriceList(
         ShardQueryExecutorInterface $insertFromSelectQueryExecutor,
         CombinedPriceList $combinedPriceList,
-        CombinedPriceList $tailCpl
-    ) {
+        CombinedPriceList $tailCpl,
+        array $products = []
+    ): void {
         //remove prices that are greater of prices from current PriceList
-        $this->deleteInvalidPricesForMinimalStrategyByCpl($combinedPriceList, $tailCpl);
+        $this->deleteInvalidPricesForMinimalStrategyByCpl($combinedPriceList, $tailCpl, $products);
 
         //insert all prices to free slots
         $this->insertPricesByCombinedPriceList(
             $insertFromSelectQueryExecutor,
             $combinedPriceList,
-            $tailCpl
+            $tailCpl,
+            $products
         );
     }
 
-    /**
-     * @param int $websiteId
-     * @param array $products
-     * @param CombinedPriceList $configCpl
-     * @return QueryBuilder
-     */
-    protected function getQbForMinimalPrices($websiteId, array $products, $configCpl)
-    {
+    protected function getQbForMinimalPrices(
+        int $websiteId,
+        array $products,
+        ?CombinedPriceList $configCpl = null
+    ): QueryBuilder {
         $qb = $this->createQueryBuilder('mp');
 
         return $qb
@@ -568,12 +475,7 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
             );
     }
 
-    /**
-     * @param int $websiteId
-     * @param CombinedPriceList|null $configCpl
-     * @return array|int[]
-     */
-    private function getCplIdsForWebsite($websiteId, $configCpl = null)
+    private function getCplIdsForWebsite(int $websiteId, ?CombinedPriceList $configCpl = null): array
     {
         $em = $this->getEntityManager();
 
@@ -624,7 +526,7 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         CombinedPriceList $combinedPriceList,
         PriceList $priceList,
         array $products = []
-    ) {
+    ): void {
         $invalidPricesQb = $this->createQueryBuilder('cpp');
         $invalidPricesQb->select('DISTINCT cpp.id')
             ->where('cpp.priceList = :cpl')
@@ -653,8 +555,9 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
 
     protected function deleteInvalidPricesForMinimalStrategyByCpl(
         CombinedPriceList $combinedPriceList,
-        CombinedPriceList $priceList
-    ) {
+        CombinedPriceList $priceList,
+        array $products = []
+    ): void {
         $invalidPricesQb = $this->createQueryBuilder('cpp');
         $invalidPricesQb->select('DISTINCT cpp.id')
             ->where('cpp.priceList = :cpl')
@@ -674,10 +577,14 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         );
         $invalidPricesQb->setParameter('priceList', $priceList);
 
-        $this->deleteInvalidByRangeByCpl($invalidPricesQb, $priceList);
+        if (!$products) {
+            $this->deleteInvalidByRangeByCpl($invalidPricesQb, $priceList);
+        } else {
+            $this->deleteInvalidByProductsByCpl($invalidPricesQb, $products);
+        }
     }
 
-    protected function deletePricesByIds(array $prices)
+    protected function deletePricesByIds(array $prices): void
     {
         if (empty($prices)) {
             return;
@@ -757,6 +664,20 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         }
     }
 
+    private function deleteInvalidByProductsByCpl(
+        QueryBuilder $invalidPricesQb,
+        array $products
+    ): void {
+        $invalidPricesQb->andWhere(
+            $invalidPricesQb->expr()->in('cpp.product', ':products')
+        );
+        $invalidPricesQb->setParameter('products', $products);
+        $query = $invalidPricesQb->getQuery();
+
+        $ids = $query->getScalarResult();
+        $this->deletePricesByIds($ids);
+    }
+
     /**
      * @param ShardManager $shardManager
      * @param QueryBuilder $invalidPricesQb
@@ -784,7 +705,7 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         ShardQueryExecutorInterface $insertFromSelectQueryExecutor,
         PriceList $priceList,
         QueryBuilder $qb
-    ) {
+    ): void {
         $this->insertByProductsRangeForBaseProductPrice(
             $insertFromSelectQueryExecutor,
             PriceListToProduct::class,
@@ -793,11 +714,29 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         );
     }
 
+    private function doInsertByProductsByCpl(
+        ShardQueryExecutorInterface $insertFromSelectQueryExecutor,
+        CombinedPriceList $sourceCpl,
+        array $products,
+        QueryBuilder $qb
+    ): void {
+        if (!$products) {
+            $this->insertByProductsRangeByCpl($insertFromSelectQueryExecutor, $sourceCpl, $qb);
+        } else {
+            $qb->andWhere($qb->expr()->in('pp.product', ':products'));
+            foreach (array_chunk($products, self::BATCH_SIZE) as $productsBatch) {
+                $qb->setParameter('products', $productsBatch);
+
+                $this->insertToCombinedPricesFromQb($insertFromSelectQueryExecutor, $qb);
+            }
+        }
+    }
+
     private function insertByProductsRangeByCpl(
         ShardQueryExecutorInterface $insertFromSelectQueryExecutor,
         CombinedPriceList $sourceCpl,
         QueryBuilder $qb
-    ) {
+    ): void {
         $this->insertByProductsRangeForBaseProductPrice(
             $insertFromSelectQueryExecutor,
             CombinedProductPrice::class,
@@ -817,7 +756,7 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         string $priceToProductRelationClass,
         array $priceLists,
         QueryBuilder $qb
-    ) {
+    ): void {
         $qb->andWhere($qb->expr()->between('pp.product', ':product_min', ':product_max'));
 
         [$minProductId, $maxProductId] = $this->getMinMaxProductIds($priceToProductRelationClass, $priceLists);
@@ -904,9 +843,6 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         }
     }
 
-    /**
-     * @throws \Doctrine\ORM\NonUniqueResultException
-     */
     private function doInsertByProductsUsingTempTable(
         TempTableManipulatorInterface $tempTableManipulator,
         CombinedPriceList $combinedPriceList,
@@ -943,9 +879,6 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         }
     }
 
-    /**
-     * @throws \Doctrine\ORM\NonUniqueResultException
-     */
     private function insertByProductsRangeForBaseProductPriceToTempTable(
         TempTableManipulatorInterface $tempTableManipulator,
         CombinedPriceList $combinedPriceList,
@@ -955,7 +888,7 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         string $insertToTableName,
         bool $applyOnDuplicateKeyUpdate = true,
         ?array $tempTableAliases = []
-    ) {
+    ): void {
         $qb->andWhere($qb->expr()->between('pp.product', ':product_min', ':product_max'));
 
         $productPriceQb = $this->getEntityManager()
@@ -1026,24 +959,20 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
      * @param string $priceToProductRelationClass
      * @param array $priceLists
      * @return array [int, int]
-     * @throws \Doctrine\ORM\NoResultException
-     * @throws \Doctrine\ORM\NonUniqueResultException
      */
     private function getMinMaxProductIds(string $priceToProductRelationClass, array $priceLists): array
     {
         $productPriceQb = $this->getEntityManager()
             ->createQueryBuilder();
-        $productPriceQb->select('MIN(IDENTITY(ptp.product))')
+        $productPriceQb
+            ->select(
+                'MIN(IDENTITY(ptp.product))',
+                'MAX(IDENTITY(ptp.product))'
+            )
             ->from($priceToProductRelationClass, 'ptp')
             ->where($productPriceQb->expr()->in('ptp.priceList', ':priceLists'))
             ->setParameter('priceLists', $priceLists);
 
-        $minProductId = $productPriceQb->getQuery()
-            ->getSingleScalarResult();
-        $maxProductId = $productPriceQb->select('MAX(IDENTITY(ptp.product))')
-            ->getQuery()
-            ->getSingleScalarResult();
-
-        return [$minProductId, $maxProductId];
+        return array_values((array)$productPriceQb->getQuery()->getSingleResult());
     }
 }

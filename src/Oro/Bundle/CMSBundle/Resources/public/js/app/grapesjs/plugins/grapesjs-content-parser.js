@@ -188,8 +188,11 @@ function parseNodes(el, config, ct = '', parent = {}) {
             model.components = parseNodes(node, config, ct, model);
         }
 
-        if (!model.type && _.some(model.components, ({type}) => type === 'text')) {
-            model.type = 'text';
+        if (_.some(model.components, ({type}) => type === 'text')) {
+            if (!model.type) {
+                model.type = 'text';
+            }
+
             model.components = model.components.map(comp => {
                 if (comp.type && comp.type !== 'text') {
                     return comp;

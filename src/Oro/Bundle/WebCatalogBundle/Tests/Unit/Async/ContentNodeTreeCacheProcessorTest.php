@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Async;
 
-use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
@@ -17,6 +16,7 @@ use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\MessageQueue\Util\JSON;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Cache\Adapter\AbstractAdapter;
 
 class ContentNodeTreeCacheProcessorTest extends \PHPUnit\Framework\TestCase
 {
@@ -37,7 +37,7 @@ class ContentNodeTreeCacheProcessorTest extends \PHPUnit\Framework\TestCase
     /** @var ContentNodeTreeCacheProcessor */
     private $processor;
 
-    /** @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var AbstractAdapter|\PHPUnit\Framework\MockObject\MockObject */
     private $layoutCacheProvider;
 
     protected function setUp(): void
@@ -46,7 +46,7 @@ class ContentNodeTreeCacheProcessorTest extends \PHPUnit\Framework\TestCase
         $this->dumper = $this->createMock(ContentNodeTreeCacheDumper::class);
         $this->registry = $this->createMock(ManagerRegistry::class);
         $this->logger = $this->createMock(LoggerInterface::class);
-        $this->layoutCacheProvider = $this->createMock(CacheProvider::class);
+        $this->layoutCacheProvider = $this->createMock(AbstractAdapter::class);
 
         $this->processor = new ContentNodeTreeCacheProcessor(
             $this->jobRunner,
@@ -181,7 +181,7 @@ class ContentNodeTreeCacheProcessorTest extends \PHPUnit\Framework\TestCase
             ->with($this->identicalTo($node), $this->identicalTo($scope));
 
         $this->layoutCacheProvider->expects($this->once())
-            ->method('deleteAll');
+            ->method('clear');
 
         $this->assertEquals(MessageProcessorInterface::ACK, $this->processor->process($message, $session));
     }
@@ -218,7 +218,7 @@ class ContentNodeTreeCacheProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('dump')
             ->willThrowException(new \Exception('Test exception'));
 
-        $this->layoutCacheProvider->expects($this->never())->method('deleteAll');
+        $this->layoutCacheProvider->expects($this->never())->method('clear');
 
         $this->logger->expects($this->once())
             ->method('error')

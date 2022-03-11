@@ -220,7 +220,7 @@ class CombinedPriceListRepository extends BasePriceListRepository
         $em = $this->getEntityManager();
         $relation = null;
         if ($targetEntity instanceof Customer) {
-            $relation = $em->getRepository('OroPricingBundle:CombinedPriceListToCustomer')
+            $relation = $em->getRepository(CombinedPriceListToCustomer::class)
                 ->findOneBy(['customer' => $targetEntity, 'website' => $website]);
             if (!$relation) {
                 $relation = new CombinedPriceListToCustomer();
@@ -231,7 +231,7 @@ class CombinedPriceListRepository extends BasePriceListRepository
                 $em->persist($relation);
             }
         } elseif ($targetEntity instanceof CustomerGroup) {
-            $relation = $em->getRepository('OroPricingBundle:CombinedPriceListToCustomerGroup')
+            $relation = $em->getRepository(CombinedPriceListToCustomerGroup::class)
                 ->findOneBy(['customerGroup' => $targetEntity, 'website' => $website]);
             if (!$relation) {
                 $relation = new CombinedPriceListToCustomerGroup();
@@ -242,7 +242,7 @@ class CombinedPriceListRepository extends BasePriceListRepository
                 $em->persist($relation);
             }
         } elseif (!$targetEntity) {
-            $relation = $em->getRepository('OroPricingBundle:CombinedPriceListToWebsite')
+            $relation = $em->getRepository(CombinedPriceListToWebsite::class)
                 ->findOneBy(['website' => $website]);
             if (!$relation) {
                 $relation = new CombinedPriceListToWebsite();

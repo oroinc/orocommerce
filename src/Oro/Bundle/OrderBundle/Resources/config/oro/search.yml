@@ -1,7 +1,6 @@
 search:
     Oro\Bundle\OrderBundle\Entity\Order:
         alias:                          oro_order
-        title_fields:                   [identifier]
         route:
             name:                       oro_order_view
             parameters:

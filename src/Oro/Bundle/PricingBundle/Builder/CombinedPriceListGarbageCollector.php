@@ -20,20 +20,9 @@ use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
  */
 class CombinedPriceListGarbageCollector
 {
-    /**
-     * @var CombinedPriceListTriggerHandler
-     */
-    protected $triggerHandler;
-
-    /**
-     * @var ManagerRegistry
-     */
-    protected $registry;
-
-    /**
-     * @var ConfigManager
-     */
-    protected $configManager;
+    private CombinedPriceListTriggerHandler $triggerHandler;
+    private ManagerRegistry $registry;
+    private ConfigManager $configManager;
 
     public function __construct(
         ManagerRegistry $registry,
@@ -45,7 +34,7 @@ class CombinedPriceListGarbageCollector
         $this->triggerHandler = $triggerHandler;
     }
 
-    public function cleanCombinedPriceLists()
+    public function cleanCombinedPriceLists(): void
     {
         $this->deleteInvalidRelations();
         $this->cleanActivationRules();
@@ -54,18 +43,15 @@ class CombinedPriceListGarbageCollector
 
     private function deleteInvalidRelations(): void
     {
-        $manager = $this->registry->getManager();
-        $manager->getRepository(CombinedPriceListToCustomer::class)->deleteInvalidRelations();
-        $manager->getRepository(CombinedPriceListToCustomerGroup::class)->deleteInvalidRelations();
-        $manager->getRepository(CombinedPriceListToWebsite::class)->deleteInvalidRelations();
+        $this->registry->getRepository(CombinedPriceListToCustomer::class)->deleteInvalidRelations();
+        $this->registry->getRepository(CombinedPriceListToCustomerGroup::class)->deleteInvalidRelations();
+        $this->registry->getRepository(CombinedPriceListToWebsite::class)->deleteInvalidRelations();
     }
 
-    private function cleanActivationRules()
+    private function cleanActivationRules(): void
     {
         /** @var CombinedPriceListActivationRuleRepository $repo */
-        $repo = $this->registry
-            ->getManagerForClass(CombinedPriceListActivationRule::class)
-            ->getRepository(CombinedPriceListActivationRule::class);
+        $repo = $this->registry->getRepository(CombinedPriceListActivationRule::class);
 
         $repo->deleteExpiredRules(new \DateTime('now', new \DateTimeZone('UTC')));
 
@@ -76,12 +62,14 @@ class CombinedPriceListGarbageCollector
     private function scheduleUnusedPriceListsRemoval(): void
     {
         /** @var CombinedPriceListRepository $cplRepository */
-        $cplRepository = $this->registry
-            ->getManagerForClass(CombinedPriceList::class)
-            ->getRepository(CombinedPriceList::class);
+        $cplRepository = $this->registry->getRepository(CombinedPriceList::class);
 
         $exceptPriceLists = $this->getAllConfigPriceLists();
         $priceListsForDelete = $cplRepository->getUnusedPriceListsIds($exceptPriceLists);
+        if (!$priceListsForDelete) {
+            return;
+        }
+
         $this->triggerHandler->startCollect();
         $this->triggerHandler->massProcess($priceListsForDelete);
         $cplRepository->deletePriceLists($priceListsForDelete);

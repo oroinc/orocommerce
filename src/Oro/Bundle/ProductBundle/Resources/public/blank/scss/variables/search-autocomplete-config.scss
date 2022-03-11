@@ -52,6 +52,7 @@ $search-autocomplete-product-body-display: flex !default;
 $search-autocomplete-product-body-justify-content: space-between !default;
 
 $search-autocomplete-product-sku-color: get-color('primary', 'dark') !default;
+$search-autocomplete-product-sku-word-break: break-all !default;
 
 $search-autocomplete-product-price-font-weight: font-weight('bold') !default;
 $search-autocomplete-product-price-color: get-color('additional', 'dark') !default;

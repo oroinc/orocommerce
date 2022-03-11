@@ -8,13 +8,14 @@ use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
-use Oro\Bundle\PricingBundle\Async\Topics;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolveCombinedPriceByPriceListTopic;
 use Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder;
 use Oro\Bundle\PricingBundle\Compiler\PriceListRuleCompiler;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
+use Oro\Bundle\PricingBundle\Handler\CombinedPriceListBuildTriggerHandler;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\ORM\InsertFromSelectShardQueryExecutor;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
@@ -45,6 +46,9 @@ class ProductPriceBuilderTest extends \PHPUnit\Framework\TestCase
     /** @var ProductPriceBuilder */
     private $productPriceBuilder;
 
+    /** @var CombinedPriceListBuildTriggerHandler */
+    private $combinedPriceListBuildTriggerHandler;
+
     protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
@@ -53,13 +57,15 @@ class ProductPriceBuilderTest extends \PHPUnit\Framework\TestCase
         $this->priceListTriggerHandler = $this->createMock(PriceListTriggerHandler::class);
         $this->shardManager = $this->createMock(ShardManager::class);
         $this->featureChecker = $this->createMock(FeatureChecker::class);
+        $this->combinedPriceListBuildTriggerHandler = $this->createMock(CombinedPriceListBuildTriggerHandler::class);
 
         $this->productPriceBuilder = new ProductPriceBuilder(
             $this->registry,
             $this->insertFromSelectQueryExecutor,
             $this->ruleCompiler,
             $this->priceListTriggerHandler,
-            $this->shardManager
+            $this->shardManager,
+            $this->combinedPriceListBuildTriggerHandler
         );
         $this->productPriceBuilder->setFeatureChecker($this->featureChecker);
         $this->productPriceBuilder->addFeature('oro_price_lists_combined');
@@ -92,8 +98,8 @@ class ProductPriceBuilderTest extends \PHPUnit\Framework\TestCase
         $this->priceListTriggerHandler->expects($this->exactly(2))
             ->method('handlePriceListTopic')
             ->withConsecutive(
-                [Topics::RESOLVE_COMBINED_PRICES, $priceList, [$productId1, $productId2]],
-                [Topics::RESOLVE_COMBINED_PRICES, $priceList, [$productId3]]
+                [ResolveCombinedPriceByPriceListTopic::getName(), $priceList, [$productId1, $productId2]],
+                [ResolveCombinedPriceByPriceListTopic::getName(), $priceList, [$productId3]]
             );
 
         $this->productPriceBuilder->setBatchSize(2);
@@ -121,7 +127,7 @@ class ProductPriceBuilderTest extends \PHPUnit\Framework\TestCase
 
         $this->priceListTriggerHandler->expects($this->once())
             ->method('handlePriceListTopic')
-            ->with(Topics::RESOLVE_COMBINED_PRICES, $priceList, [$productId]);
+            ->with(ResolveCombinedPriceByPriceListTopic::getName(), $priceList, [$productId]);
 
         $this->productPriceBuilder->buildByPriceList($priceList, [$productId]);
     }
@@ -145,7 +151,7 @@ class ProductPriceBuilderTest extends \PHPUnit\Framework\TestCase
 
         $this->priceListTriggerHandler->expects($this->once())
             ->method('handlePriceListTopic')
-            ->with(Topics::RESOLVE_COMBINED_PRICES, $priceList, []);
+            ->with(ResolveCombinedPriceByPriceListTopic::getName(), $priceList, []);
 
         $this->productPriceBuilder->buildByPriceList($priceList);
     }
@@ -186,7 +192,7 @@ class ProductPriceBuilderTest extends \PHPUnit\Framework\TestCase
 
         $this->priceListTriggerHandler->expects($this->once())
             ->method('handlePriceListTopic')
-            ->with(Topics::RESOLVE_COMBINED_PRICES, $priceList, [$product]);
+            ->with(ResolveCombinedPriceByPriceListTopic::getName(), $priceList, [$product]);
 
         $this->productPriceBuilder->buildByPriceList($priceList, [$product]);
     }
@@ -274,8 +280,8 @@ class ProductPriceBuilderTest extends \PHPUnit\Framework\TestCase
         $this->priceListTriggerHandler->expects($this->exactly(2))
             ->method('handlePriceListTopic')
             ->withConsecutive(
-                [Topics::RESOLVE_COMBINED_PRICES, $priceList, [1]],
-                [Topics::RESOLVE_COMBINED_PRICES, $priceList, [2]]
+                [ResolveCombinedPriceByPriceListTopic::getName(), $priceList, [1]],
+                [ResolveCombinedPriceByPriceListTopic::getName(), $priceList, [2]]
             );
 
         $this->productPriceBuilder->buildByPriceList($priceList, []);

@@ -13,6 +13,7 @@ use Oro\Bundle\RedirectBundle\Tests\Unit\Entity\SluggableEntityStub;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Routing\RouteData;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Contracts\Cache\ItemInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -373,13 +374,9 @@ class CanonicalUrlGeneratorTest extends AbstractCanonicalUrlGeneratorTestCase
         $this->cache->expects($this->once())
             ->method('get')
             ->with('oro_redirect.canonical_url_security_type.777')
-            ->willReturnCallback(function () use ($website) {
-                return $this->configManager->get(
-                    'oro_redirect.canonical_url_security_type',
-                    false,
-                    false,
-                    $website
-                );
+            ->willReturnCallback(function ($cacheKey, $callback) {
+                $item = $this->createMock(ItemInterface::class);
+                return $callback($item);
             });
 
         $this->websiteUrlResolver->expects($this->atLeastOnce())
@@ -402,13 +399,9 @@ class CanonicalUrlGeneratorTest extends AbstractCanonicalUrlGeneratorTestCase
         $this->cache->expects($this->once())
             ->method('get')
             ->with('oro_redirect.canonical_url_security_type.777')
-            ->willReturnCallback(function () use ($website) {
-                return $this->configManager->get(
-                    'oro_redirect.canonical_url_security_type',
-                    false,
-                    false,
-                    $website
-                );
+            ->willReturnCallback(function ($cacheKey, $callback) {
+                $item = $this->createMock(ItemInterface::class);
+                return $callback($item);
             });
 
         $this->websiteUrlResolver->expects($this->atLeastOnce())
@@ -433,13 +426,9 @@ class CanonicalUrlGeneratorTest extends AbstractCanonicalUrlGeneratorTestCase
         $this->cache->expects($this->once())
             ->method('get')
             ->with('oro_redirect.canonical_url_security_type.777')
-            ->willReturnCallback(function () use ($website) {
-                return $this->configManager->get(
-                    'oro_redirect.canonical_url_security_type',
-                    false,
-                    false,
-                    $website
-                );
+            ->willReturnCallback(function ($cacheKey, $callback) {
+                $item = $this->createMock(ItemInterface::class);
+                return $callback($item);
             });
 
         $this->websiteUrlResolver->expects($this->atLeastOnce())

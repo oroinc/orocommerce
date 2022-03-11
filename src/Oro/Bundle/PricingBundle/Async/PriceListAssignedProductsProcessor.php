@@ -6,6 +6,7 @@ use Doctrine\DBAL\Exception\RetryableException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\NotificationBundle\NotificationAlert\NotificationAlertManager;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceListAssignedProductsTopic;
 use Oro\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
@@ -13,15 +14,19 @@ use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Component\MessageQueue\Util\JSON;
-use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 
 /**
  * Updates combined price lists in case of price list product assigned rule is changed.
  */
-class PriceListAssignedProductsProcessor implements MessageProcessorInterface, TopicSubscriberInterface
+class PriceListAssignedProductsProcessor implements
+    MessageProcessorInterface,
+    TopicSubscriberInterface,
+    LoggerAwareInterface
 {
-    private LoggerInterface $logger;
+    use LoggerAwareTrait;
+
     private PriceListProductAssignmentBuilder $assignmentBuilder;
     private ManagerRegistry $doctrine;
     private NotificationAlertManager $notificationAlertManager;
@@ -29,13 +34,11 @@ class PriceListAssignedProductsProcessor implements MessageProcessorInterface, T
 
     public function __construct(
         ManagerRegistry $doctrine,
-        LoggerInterface $logger,
         PriceListProductAssignmentBuilder $assignmentBuilder,
         NotificationAlertManager $notificationAlertManager,
         PriceListTriggerHandler $triggerHandler
     ) {
         $this->doctrine = $doctrine;
-        $this->logger = $logger;
         $this->assignmentBuilder = $assignmentBuilder;
         $this->notificationAlertManager = $notificationAlertManager;
         $this->triggerHandler = $triggerHandler;
@@ -46,7 +49,7 @@ class PriceListAssignedProductsProcessor implements MessageProcessorInterface, T
      */
     public static function getSubscribedTopics()
     {
-        return [Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS];
+        return [ResolvePriceListAssignedProductsTopic::getName()];
     }
 
     /**
@@ -54,12 +57,7 @@ class PriceListAssignedProductsProcessor implements MessageProcessorInterface, T
      */
     public function process(MessageInterface $message, SessionInterface $session)
     {
-        $body = JSON::decode($message->getBody());
-        if (!isset($body['product']) || !\is_array($body['product'])) {
-            $this->logger->critical('Got invalid message.');
-
-            return self::REJECT;
-        }
+        $body = $message->getBody();
         $priceListsCount = count($body['product']);
 
         /** @var EntityManagerInterface $em */
@@ -68,7 +66,7 @@ class PriceListAssignedProductsProcessor implements MessageProcessorInterface, T
             /** @var PriceList|null $priceList */
             $priceList = $em->find(PriceList::class, $priceListId);
             if (null === $priceList) {
-                $this->logger->warning(sprintf(
+                $this->logger?->warning(sprintf(
                     'PriceList entity with identifier %s not found.',
                     $priceListId
                 ));
@@ -87,7 +85,7 @@ class PriceListAssignedProductsProcessor implements MessageProcessorInterface, T
                 $em->commit();
             } catch (\Exception $e) {
                 $em->rollback();
-                $this->logger->error(
+                $this->logger?->error(
                     'Unexpected exception occurred during Price List Assigned Products build.',
                     ['exception' => $e]
                 );
@@ -101,7 +99,7 @@ class PriceListAssignedProductsProcessor implements MessageProcessorInterface, T
                     }
 
                     $this->triggerHandler->handlePriceListTopic(
-                        Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS,
+                        ResolvePriceListAssignedProductsTopic::getName(),
                         $priceList,
                         $productIds
                     );

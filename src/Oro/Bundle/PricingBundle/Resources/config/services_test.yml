@@ -1,9 +1,4 @@
 services:
-    oro_pricing.tests.database_triggers.manager.combined_prices:
-        decorates: oro_pricing.database_triggers.manager.combined_prices
-        parent: oro_pricing.database_triggers.manager.combined_prices
-        public: true
-
     oro_pricing.tests.combined_price_list_schedule_command:
         alias: Oro\Bundle\PricingBundle\Command\CombinedPriceListScheduleCommand
         public: true

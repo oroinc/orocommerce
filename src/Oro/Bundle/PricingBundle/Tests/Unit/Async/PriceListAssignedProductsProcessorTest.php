@@ -8,14 +8,13 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\NotificationBundle\NotificationAlert\NotificationAlertManager;
 use Oro\Bundle\PricingBundle\Async\PriceListAssignedProductsProcessor;
 use Oro\Bundle\PricingBundle\Async\PriceListCalculationNotificationAlert;
-use Oro\Bundle\PricingBundle\Async\Topics;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceListAssignedProductsTopic;
 use Oro\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Component\MessageQueue\Util\JSON;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Psr\Log\LoggerInterface;
 
@@ -51,11 +50,11 @@ class PriceListAssignedProductsProcessorTest extends \PHPUnit\Framework\TestCase
 
         $this->processor = new PriceListAssignedProductsProcessor(
             $this->doctrine,
-            $this->logger,
             $this->assignmentBuilder,
             $this->notificationAlertManager,
             $this->triggerHandler
         );
+        $this->processor->setLogger($this->logger);
     }
 
     /**
@@ -68,7 +67,7 @@ class PriceListAssignedProductsProcessorTest extends \PHPUnit\Framework\TestCase
         $message = $this->createMock(MessageInterface::class);
         $message->expects(self::once())
             ->method('getBody')
-            ->willReturn(JSON::encode($body));
+            ->willReturn($body);
 
         return $message;
     }
@@ -81,32 +80,8 @@ class PriceListAssignedProductsProcessorTest extends \PHPUnit\Framework\TestCase
     public function testGetSubscribedTopics()
     {
         $this->assertEquals(
-            [Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS],
+            [ResolvePriceListAssignedProductsTopic::getName()],
             PriceListAssignedProductsProcessor::getSubscribedTopics()
-        );
-    }
-
-    public function testProcessWithInvalidMessage()
-    {
-        $this->logger->expects(self::once())
-            ->method('critical')
-            ->with('Got invalid message.');
-
-        $this->assertEquals(
-            MessageProcessorInterface::REJECT,
-            $this->processor->process($this->getMessage('invalid'), $this->getSession())
-        );
-    }
-
-    public function testProcessWithEmptyMessage()
-    {
-        $this->logger->expects(self::once())
-            ->method('critical')
-            ->with('Got invalid message.');
-
-        $this->assertEquals(
-            MessageProcessorInterface::REJECT,
-            $this->processor->process($this->getMessage([]), $this->getSession())
         );
     }
 
@@ -389,7 +364,7 @@ class PriceListAssignedProductsProcessorTest extends \PHPUnit\Framework\TestCase
         $this->triggerHandler->expects(self::once())
             ->method('handlePriceListTopic')
             ->with(
-                Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS,
+                ResolvePriceListAssignedProductsTopic::getName(),
                 $priceList1,
                 $productIds
             );

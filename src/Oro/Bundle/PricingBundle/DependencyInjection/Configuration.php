@@ -5,7 +5,6 @@ namespace Oro\Bundle\PricingBundle\DependencyInjection;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 use Oro\Bundle\CurrencyBundle\Rounding\PriceRoundingService;
-use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilder;
 use Oro\Bundle\PricingBundle\PricingStrategy\MinimalPricesCombiningStrategy;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -37,6 +36,7 @@ class Configuration implements ConfigurationInterface
     const OFFSET_OF_PROCESSING_CPL_PRICES = 'offset_of_processing_cpl_prices';
     const PRICE_LIST_STRATEGIES = 'price_strategy';
     const PRICE_CALCULATION_PRECISION = 'price_calculation_precision';
+    const DEFAULT_OFFSET_OF_PROCESSING_CPL_PRICES = 12.0;
 
     /**
      * @var string
@@ -68,9 +68,7 @@ class Configuration implements ConfigurationInterface
                 self::PRECISION => ['value' => PriceRoundingService::DEFAULT_PRECISION],
                 self::COMBINED_PRICE_LIST => ['value' => null],
                 self::FULL_COMBINED_PRICE_LIST => ['value' => null],
-                self::OFFSET_OF_PROCESSING_CPL_PRICES => [
-                    'value' => CombinedPriceListsBuilder::DEFAULT_OFFSET_OF_PROCESSING_CPL_PRICES
-                ],
+                self::OFFSET_OF_PROCESSING_CPL_PRICES => ['value' => self::DEFAULT_OFFSET_OF_PROCESSING_CPL_PRICES],
                 self::PRICE_LIST_STRATEGIES => ['type' => 'string', 'value' => MinimalPricesCombiningStrategy::NAME],
                 'feature_enabled' => ['value' => true],
                 self::PRICE_CALCULATION_PRECISION => ['type' => 'integer', 'value' => null],

@@ -12,6 +12,7 @@
 
     &__sku-value {
         color: $product-item-sku-value-color;
+        word-break: $product-item-sku-value-word-break;
     }
 
     &.gallery-view {

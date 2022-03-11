@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Layout\DataProvider;
 
-use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
@@ -13,6 +12,8 @@ use Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentNodeRepository;
 use Oro\Bundle\WebCatalogBundle\Provider\RequestWebContentScopeProvider;
 use Oro\Bundle\WebCatalogBundle\Provider\WebCatalogProvider;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 
 /**
  * Layout data provider that helps to build main navigation menu on the front store.
@@ -20,37 +21,20 @@ use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
  */
 class MenuDataProvider
 {
-    const IDENTIFIER = 'identifier';
-    const LABEL = 'label';
-    const URL = 'url';
-    const CHILDREN = 'children';
+    private const IDENTIFIER = 'identifier';
+    private const LABEL = 'label';
+    private const URL = 'url';
+    private const CHILDREN = 'children';
 
-    /** @var ManagerRegistry */
-    private $doctrine;
-
-    /** @var LocalizationHelper */
-    private $localizationHelper;
-
-    /** @var RequestWebContentScopeProvider */
-    private $requestWebContentScopeProvider;
-
-    /** @var WebCatalogProvider */
-    private $webCatalogProvider;
-
-    /** @var ContentNodeTreeResolverInterface */
-    private $contentNodeTreeResolver;
-
-    /** @var WebsiteManager */
-    private $websiteManager;
-
-    /** @var CacheProvider */
-    private $cache;
-
-    /** @var int */
-    private $cacheLifeTime;
-
-    /** @var ContentNode */
-    private $rootNode = false;
+    private ManagerRegistry $doctrine;
+    private LocalizationHelper $localizationHelper;
+    private RequestWebContentScopeProvider $requestWebContentScopeProvider;
+    private WebCatalogProvider $webCatalogProvider;
+    private ContentNodeTreeResolverInterface $contentNodeTreeResolver;
+    private WebsiteManager $websiteManager;
+    private CacheInterface $cache;
+    private int $cacheLifeTime;
+    private ?ContentNode $rootNode = null;
 
     public function __construct(
         ManagerRegistry $doctrine,
@@ -68,31 +52,23 @@ class MenuDataProvider
         $this->websiteManager = $websiteManager;
     }
 
-    /**
-     * @param CacheProvider $cache
-     * @param int           $lifeTime
-     */
-    public function setCache(CacheProvider $cache, $lifeTime = 0)
+    public function setCache(CacheInterface $cache, int $lifeTime = 0) : void
     {
         $this->cache = $cache;
         $this->cacheLifeTime = $lifeTime;
     }
 
-    /**
-     * @param int|null $maxNodesNestedLevel
-     *
-     * @return array
-     */
-    public function getItems(int $maxNodesNestedLevel = null)
+    public function getItems(int $maxNodesNestedLevel = null) : array
     {
         $scope = $this->requestWebContentScopeProvider->getScope();
         if (null !== $scope) {
             $cacheKey = $this->getCacheKey($scope, $maxNodesNestedLevel);
-            $rootItem = $this->cache->fetch($cacheKey);
-            if (false === $rootItem) {
-                $rootItem = $this->getResolvedRootItem($scope, $maxNodesNestedLevel);
-                $this->cache->save($cacheKey, $rootItem, $this->cacheLifeTime);
-            }
+            $rootItem = $this->cache->get($cacheKey, function (ItemInterface $item) use ($scope, $maxNodesNestedLevel) {
+                if ($this->cacheLifeTime > 0) {
+                    $item->expiresAfter($this->cacheLifeTime);
+                }
+                return $this->getResolvedRootItem($scope, $maxNodesNestedLevel);
+            });
 
             if (array_key_exists(self::CHILDREN, $rootItem)) {
                 return $rootItem[self::CHILDREN];
@@ -102,12 +78,7 @@ class MenuDataProvider
         return [];
     }
 
-    /**
-     * @param Scope $scope
-     * @param int|null $maxNodesNestedLevel
-     * @return array
-     */
-    private function getResolvedRootItem(Scope $scope, int $maxNodesNestedLevel = null)
+    private function getResolvedRootItem(Scope $scope, int $maxNodesNestedLevel = null) : array
     {
         $rootItem = [];
         $rootNode = $this->getRootNode();
@@ -128,13 +99,7 @@ class MenuDataProvider
         return $rootItem;
     }
 
-    /**
-     * @param ResolvedContentNode $node
-     * @param int|null $remainingNestedLevel
-     *
-     * @return array
-     */
-    private function prepareItemsData(ResolvedContentNode $node, int $remainingNestedLevel = null)
+    private function prepareItemsData(ResolvedContentNode $node, int $remainingNestedLevel = null) : array
     {
         $result = [];
 
@@ -157,12 +122,9 @@ class MenuDataProvider
         return $result;
     }
 
-    /**
-     * @return ContentNode|null
-     */
-    private function getRootNode()
+    private function getRootNode() : ?ContentNode
     {
-        if ($this->rootNode === false) {
+        if ($this->rootNode === null) {
             $website = $this->websiteManager->getCurrentWebsite();
             $this->rootNode = $this->webCatalogProvider->getNavigationRoot($website);
         }
@@ -170,10 +132,7 @@ class MenuDataProvider
         return $this->rootNode;
     }
 
-    /**
-     * @return ContentNodeRepository
-     */
-    private function getContentNodeRepository()
+    private function getContentNodeRepository() : ContentNodeRepository
     {
         return $this->doctrine->getRepository(ContentNode::class);
     }

@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\WebCatalogBundle\EventListener;
 
-use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerTrait;
 use Oro\Bundle\WebCatalogBundle\Async\Topics;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
+use Symfony\Contracts\Cache\CacheInterface;
 
 /**
  * Clears nodes items cache when navigation root changed
@@ -16,13 +16,10 @@ class NavigationRootConfigChangeListener implements OptionalListenerInterface
 {
     use OptionalListenerTrait;
 
-    /** @var CacheProvider */
-    private $layoutCacheProvider;
+    private CacheInterface $layoutCacheProvider;
+    private MessageProducerInterface $messageProducer;
 
-    /** @var MessageProducerInterface */
-    private $messageProducer;
-
-    public function __construct(CacheProvider $layoutCacheProvider, MessageProducerInterface $messageProducer)
+    public function __construct(CacheInterface $layoutCacheProvider, MessageProducerInterface $messageProducer)
     {
         $this->layoutCacheProvider = $layoutCacheProvider;
         $this->messageProducer = $messageProducer;
@@ -41,6 +38,6 @@ class NavigationRootConfigChangeListener implements OptionalListenerInterface
             ]);
         }
 
-        $this->layoutCacheProvider->deleteAll();
+        $this->layoutCacheProvider->clear();
     }
 }

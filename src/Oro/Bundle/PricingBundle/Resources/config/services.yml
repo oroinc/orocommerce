@@ -114,11 +114,12 @@ services:
 
     oro_pricing.provider.combined_price_list:
         class: 'Oro\Bundle\PricingBundle\Provider\CombinedPriceListProvider'
-        public: false
+        public: true
         arguments:
             - '@doctrine'
             - '@event_dispatcher'
             - '@oro_pricing.pricing_strategy.strategy_register'
+            - '@oro_pricing.shard_manager'
 
     oro_pricing.provider.dependent_price_lists:
         class: Oro\Bundle\PricingBundle\Provider\DependentPriceListProvider
@@ -150,14 +151,20 @@ services:
     Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider:
         alias: oro_pricing.provider.frontend_product_prices
 
+    oro_pricing.orm.query_executor_provider:
+        class: Oro\Bundle\PricingBundle\ORM\QueryExecutorProvider
+        arguments:
+            - '@doctrine'
+            - '@oro_pricing.orm.insert_from_select_query_executor'
+            - '@oro_pricing.orm.multi_insert_shard_query_executor'
+
     oro_pricing.pricing_strategy.abstract_price_combining_strategy:
         class: 'Oro\Bundle\PricingBundle\PricingStrategy\AbstractPriceCombiningStrategy'
         abstract: true
         public: false
         arguments:
             - '@doctrine'
-            - '@oro_pricing.orm.multi_insert_shard_query_executor'
-            - '@oro_pricing.model.combined_price_list_trigger_handler'
+            - '@oro_pricing.orm.query_executor_provider'
 
     oro_pricing.pricing_strategy.merge_price_combining_strategy:
         class: Oro\Bundle\PricingBundle\PricingStrategy\MergePricesCombiningStrategy
@@ -186,82 +193,26 @@ services:
             - [addRelationClass, ['Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomerGroup']]
             - [addRelationClass, ['Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite']]
 
+    oro_pricing.resolver.active_combined_price_list:
+        class: Oro\Bundle\PricingBundle\Resolver\ActiveCombinedPriceListResolver
+        arguments:
+            - '@doctrine'
+            - '@oro_pricing.resolver.combined_product_schedule_resolver'
+
     oro_pricing.builder.combined_price_list_garbage_collector:
         class: 'Oro\Bundle\PricingBundle\Builder\CombinedPriceListGarbageCollector'
-        public: false
         arguments:
             - '@doctrine'
             - '@oro_config.global'
             - '@oro_pricing.model.combined_price_list_trigger_handler'
-
-    oro_pricing.builder.abstract_combined_price_list_builder:
-        class: 'Oro\Bundle\PricingBundle\Builder\AbstractCombinedPriceListBuilder'
-        public: false
-        abstract: true
-        arguments:
-            - '@doctrine'
-            - '@oro_pricing.provider.price_list_collection'
-            - '@oro_pricing.provider.combined_price_list'
-            - '@oro_pricing.resolver.combined_product_schedule_resolver'
-            - '@oro_pricing.pricing_strategy.strategy_register'
-            - '@oro_pricing.model.combined_price_list_trigger_handler'
-        calls:
-            - [setCombinedPriceListClassName, ['Oro\Bundle\PricingBundle\Entity\CombinedPriceList']]
-
-    oro_pricing.builder.customer_combined_price_list_builder:
-        class: 'Oro\Bundle\PricingBundle\Builder\CustomerCombinedPriceListsBuilder'
-
-        parent: oro_pricing.builder.abstract_combined_price_list_builder
-        calls:
-            - [setPriceListToEntityClassName, ['Oro\Bundle\PricingBundle\Entity\PriceListToCustomer']]
-            - [setCombinedPriceListToEntityClassName, ['Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomer']]
-            - [setFallbackClassName, ['Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback']]
-
-    oro_pricing.builder.customer_group_combined_price_list_builder:
-        class: 'Oro\Bundle\PricingBundle\Builder\CustomerGroupCombinedPriceListsBuilder'
-        parent: oro_pricing.builder.abstract_combined_price_list_builder
-        calls:
-            - [setCustomerCombinedPriceListsBuilder,  ['@oro_pricing.builder.customer_combined_price_list_builder']]
-            - [setPriceListToEntityClassName, ['Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup']]
-            - [setCombinedPriceListToEntityClassName, ['Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomerGroup']]
-            - [setFallbackClassName, ['Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback']]
-
-    oro_pricing.builder.website_combined_price_list_builder:
-        class: 'Oro\Bundle\PricingBundle\Builder\WebsiteCombinedPriceListsBuilder'
-        parent: oro_pricing.builder.abstract_combined_price_list_builder
-        calls:
-            - [setCustomerGroupCombinedPriceListsBuilder,  ['@oro_pricing.builder.customer_group_combined_price_list_builder']]
-            - [setPriceListToEntityClassName, ['Oro\Bundle\PricingBundle\Entity\PriceListToWebsite']]
-            - [setCombinedPriceListToEntityClassName, ['Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite']]
-            - [setFallbackClassName, ['Oro\Bundle\PricingBundle\Entity\PriceListWebsiteFallback']]
-
-    oro_pricing.builder.combined_price_list_builder:
-        class: 'Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilder'
-        arguments:
-            - '@doctrine'
-            - '@oro_config.global'
-            - '@oro_pricing.provider.price_list_collection'
-            - '@oro_pricing.provider.combined_price_list'
-            - '@oro_pricing.resolver.combined_product_schedule_resolver'
-            - '@oro_pricing.pricing_strategy.strategy_register'
-            - '@oro_pricing.model.combined_price_list_trigger_handler'
-            - '@oro_pricing.builder.website_combined_price_list_builder'
-        calls:
-            - [setCombinedPriceListClassName, ['Oro\Bundle\PricingBundle\Entity\CombinedPriceList']]
 
     oro_pricing.builder.combined_price_list_builder_facade:
         class: Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilderFacade
         public: true
         arguments:
-            - '@oro_entity.doctrine_helper'
-            - '@oro_pricing.builder.customer_combined_price_list_builder'
-            - '@oro_pricing.builder.customer_group_combined_price_list_builder'
-            - '@oro_pricing.builder.website_combined_price_list_builder'
-            - '@oro_pricing.builder.combined_price_list_builder'
             - '@event_dispatcher'
             - '@oro_pricing.pricing_strategy.strategy_register'
-            - '@oro_pricing.builder.combined_price_list_garbage_collector'
-            - '@oro_config.global'
+            - '@oro_pricing.model.combined_price_list_trigger_handler'
 
     oro_pricing.builder.combined_price_list_activation_plan_builder:
         class: 'Oro\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder'
@@ -374,10 +325,10 @@ services:
         class: 'Oro\Bundle\PricingBundle\Async\PriceListMessageFilter'
         arguments:
             -
-                - !php/const Oro\Bundle\PricingBundle\Async\Topics::RESOLVE_PRICE_RULES
-                - !php/const Oro\Bundle\PricingBundle\Async\Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS
-                - !php/const Oro\Bundle\PricingBundle\Async\Topics::RESOLVE_COMBINED_PRICES
-                - !php/const Oro\Bundle\PricingBundle\Async\Topics::RESOLVE_COMBINED_CURRENCIES
+                - !php/const Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceRulesTopic::NAME
+                - !php/const Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceListAssignedProductsTopic::NAME
+                - !php/const Oro\Bundle\PricingBundle\Async\Topic\ResolveCombinedPriceByPriceListTopic::NAME
+                - !php/const Oro\Bundle\PricingBundle\Async\Topic\ResolveCombinedPriceListCurrenciesTopic::NAME
         tags:
             - { name: oro_message_queue.message_filter }
 
@@ -386,7 +337,7 @@ services:
         arguments:
             - '@doctrine'
         tags:
-            - { name: oro_message_queue.message_filter, topic: !php/const Oro\Bundle\PricingBundle\Async\Topics::REBUILD_COMBINED_PRICE_LISTS }
+            - { name: oro_message_queue.message_filter, topic: !php/const Oro\Bundle\PricingBundle\Async\Topic\RebuildCombinedPriceListsTopic::NAME }
 
     oro_pricing.price_list_trigger_handler:
         class: 'Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler'
@@ -688,6 +639,7 @@ services:
             - '@oro_pricing.price_list_trigger_handler'
             - '@oro_pricing.shard_manager'
             - '@event_dispatcher'
+            - '@oro_pricing.handler.combined_price_list_build_trigger'
         tags:
             - { name: kernel.event_listener, event: oro_pricing.product_price.remove, method: onRemove }
             - { name: kernel.event_listener, event: oro_pricing.product_price.save_after, method: onSave }
@@ -800,7 +752,8 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_pricing.product_price.save_after, method: onSave }
             - { name: kernel.event_listener, event: oro_pricing.product_price.remove, method: onRemove }
-            - { name: kernel.event_listener, event: oro_pricing.product_prices.updated, method: onUpdated }
+            - { name: kernel.event_listener, event: oro_pricing.product_prices.updated_after, method: onUpdated }
+            - { name: monolog.logger, channel: oro_pricing }
 
     oro_pricing.entity_listener.price_list_to_product:
         class: Oro\Bundle\PricingBundle\Entity\EntityListener\PriceListToProductEntityListener
@@ -822,6 +775,8 @@ services:
             - '@oro_pricing.builder.combined_price_list_builder_facade'
             - '@oro_pricing.builder.product_price_builder'
             - '@oro_pricing.builder.price_list_product_assignment_builder'
+            - '@oro_pricing.combined_price_list_associations_provider'
+            - '@oro_pricing.provider.combined_price_list'
         calls:
             - [disableListener, ['oro_pricing.entity_listener.product_price_cpl']]
             - [disableListener, ['oro_pricing.entity_listener.price_list_to_product']]
@@ -1017,6 +972,7 @@ services:
             - '@oro_pricing.compiler.price_list_rule_compiler'
             - '@oro_pricing.price_list_trigger_handler'
             - '@oro_pricing.shard_manager'
+            - '@oro_pricing.handler.combined_price_list_build_trigger'
         tags:
             - { name: oro_featuretogle.feature, feature: oro_price_lists_combined }
 
@@ -1109,46 +1065,94 @@ services:
         calls:
             - [setEntityName, ['Oro\Bundle\PricingBundle\Entity\PriceListToProduct']]
 
-    oro_pricing.async.price_list_rule_processor:
-        class: 'Oro\Bundle\PricingBundle\Async\PriceRuleProcessor'
-        arguments:
-            - '@doctrine'
-            - '@logger'
-            - '@oro_pricing.builder.product_price_builder'
-            - '@oro_pricing.notification_alert_manager'
-            - '@oro_pricing.price_list_trigger_handler'
-        tags:
-            - { name: oro_message_queue.client.message_processor }
+    oro_pricing.event.combined_price_list.association.collect_event_factory:
+        class: Oro\Bundle\PricingBundle\Event\CombinedPriceList\Assignment\CollectEventFactory
 
-    oro_pricing.async.price_list_assigned_products_processor:
-        class: Oro\Bundle\PricingBundle\Async\PriceListAssignedProductsProcessor
+    oro_pricing.combined_price_list_associations_provider:
+        class: Oro\Bundle\PricingBundle\Provider\CombinedPriceListAssociationsProvider
+        public: true
         arguments:
-            - '@doctrine'
-            - '@logger'
-            - '@oro_pricing.builder.price_list_product_assignment_builder'
-            - '@oro_pricing.notification_alert_manager'
-            - '@oro_pricing.price_list_trigger_handler'
-        tags:
-            - { name: oro_message_queue.client.message_processor }
+            - '@oro_pricing.event.combined_price_list.association.collect_event_factory'
+            - '@event_dispatcher'
 
-    oro_pricing.async.combined_price_list_processor:
-        class: 'Oro\Bundle\PricingBundle\Async\CombinedPriceListProcessor'
+    oro_pricing.association_event_listener.collect_by_config:
+        class: Oro\Bundle\PricingBundle\EventListener\CombinedPriceListAssociation\CollectAssociationConfigEventListener
         arguments:
-            - '@doctrine'
-            - '@logger'
-            - '@oro_pricing.model.combined_price_list_trigger_handler'
-            - '@oro_pricing.builder.combined_price_list_builder_facade'
-        tags:
-            - { name: oro_message_queue.client.message_processor }
-
-    oro_pricing.async.combined_price_list_currency_processor:
-        class: 'Oro\Bundle\PricingBundle\Async\CombinedPriceListCurrencyProcessor'
-        arguments:
-            - '@doctrine'
-            - '@logger'
+            - '@oro_pricing.provider.price_list_collection'
             - '@oro_pricing.provider.combined_price_list'
         tags:
-            - { name: oro_message_queue.client.message_processor }
+            - { name: kernel.event_listener, event: oro_pricing.combined_price_list.assignment.collect.by_config, method: onCollectAssociations }
+
+    oro_pricing.association_event_listener.collect_abstract:
+        abstract: true
+        arguments:
+            - '@oro_pricing.provider.price_list_collection'
+            - '@oro_pricing.provider.combined_price_list'
+            - '@doctrine'
+            - '@event_dispatcher'
+
+    oro_pricing.association_event_listener.collect_by_website:
+        class: Oro\Bundle\PricingBundle\EventListener\CombinedPriceListAssociation\CollectAssociationWebsiteEventListener
+        parent: oro_pricing.association_event_listener.collect_abstract
+        tags:
+            - { name: kernel.event_listener, event: oro_pricing.combined_price_list.assignment.collect.by_config, method: onCollectAssociationsConfigLevel }
+            - { name: kernel.event_listener, event: oro_pricing.combined_price_list.assignment.collect.by_website, method: onCollectAssociations }
+
+    oro_pricing.association_event_listener.collect_by_customer_group:
+        class: Oro\Bundle\PricingBundle\EventListener\CombinedPriceListAssociation\CollectAssociationCustomerGroupEventListener
+        parent: oro_pricing.association_event_listener.collect_abstract
+        tags:
+            - { name: kernel.event_listener, event: oro_pricing.combined_price_list.assignment.collect.by_website, method: onCollectAssociationsWebsiteLevel }
+            - { name: kernel.event_listener, event: oro_pricing.combined_price_list.assignment.collect.by_customer_group, method: onCollectAssociations }
+
+    oro_pricing.association_event_listener.collect_by_customer:
+        class: Oro\Bundle\PricingBundle\EventListener\CombinedPriceListAssociation\CollectAssociationCustomerEventListener
+        parent: oro_pricing.association_event_listener.collect_abstract
+        tags:
+            - { name: kernel.event_listener, event: oro_pricing.combined_price_list.assignment.collect.by_website, method: onCollectAssociationsWebsiteLevel }
+            - { name: kernel.event_listener, event: oro_pricing.combined_price_list.assignment.collect.by_customer_group, method: onCollectAssociationsCustomerGroupLevel }
+            - { name: kernel.event_listener, event: oro_pricing.combined_price_list.assignment.collect.by_customer, method: onCollectAssociations }
+
+    oro_pricing.association_event_listener.process_abstract:
+        class: Oro\Bundle\PricingBundle\EventListener\CombinedPriceListAssociation\AbstractProcessAssociationEventListener
+        abstract: true
+        arguments:
+            - '@event_dispatcher'
+            - '@doctrine'
+            - '@oro_pricing.resolver.active_combined_price_list'
+            - '@oro_pricing.model.combined_price_list_trigger_handler'
+
+    oro_pricing.association_event_listener.process_config:
+        class: Oro\Bundle\PricingBundle\EventListener\CombinedPriceListAssociation\ProcessAssociationConfigEventListener
+        arguments:
+            - '@event_dispatcher'
+            - '@oro_pricing.resolver.active_combined_price_list'
+            - '@oro_config.global'
+            - '@oro_website.website.provider'
+        tags:
+            - { name: kernel.event_listener, event: oro_pricing.combined_price_list.assignment.process, method: onProcessAssociations }
+            - { name: kernel.event_listener, event: oro_pricing.combined_price_list.assignment.get_associated_websites, method: onGetAssociatedWebsites }
+
+    oro_pricing.association_event_listener.process_website:
+        class: Oro\Bundle\PricingBundle\EventListener\CombinedPriceListAssociation\ProcessAssociationWebsiteEventListener
+        parent: oro_pricing.association_event_listener.process_abstract
+        tags:
+            - { name: kernel.event_listener, event: oro_pricing.combined_price_list.assignment.process, method: onProcessAssociations }
+            - { name: kernel.event_listener, event: oro_pricing.combined_price_list.assignment.get_associated_websites, method: onGetAssociatedWebsites }
+
+    oro_pricing.association_event_listener.process_customer_group:
+        class: Oro\Bundle\PricingBundle\EventListener\CombinedPriceListAssociation\ProcessAssociationCustomerGroupEventListener
+        parent: oro_pricing.association_event_listener.process_abstract
+        tags:
+            - { name: kernel.event_listener, event: oro_pricing.combined_price_list.assignment.process, method: onProcessAssociations }
+            - { name: kernel.event_listener, event: oro_pricing.combined_price_list.assignment.get_associated_websites, method: onGetAssociatedWebsites }
+
+    oro_pricing.association_event_listener.process_customer:
+        class: Oro\Bundle\PricingBundle\EventListener\CombinedPriceListAssociation\ProcessAssociationCustomerEventListener
+        parent: oro_pricing.association_event_listener.process_abstract
+        tags:
+            - { name: kernel.event_listener, event: oro_pricing.combined_price_list.assignment.process, method: onProcessAssociations }
+            - { name: kernel.event_listener, event: oro_pricing.combined_price_list.assignment.get_associated_websites, method: onGetAssociatedWebsites }
 
     oro_pricing.pricing_storage_switch_handler:
         class: Oro\Bundle\PricingBundle\Model\PricingStorageSwitchHandler
@@ -1157,22 +1161,18 @@ services:
             - '@doctrine'
             - '@oro_pricing.system_config_converter'
 
-    oro_pricing.combined_price_list_activation_status_helper:
-        class: Oro\Bundle\PricingBundle\Model\CombinedPriceListActivationStatusHelper
+    oro_pricing.combined_price_list_status_handler:
+        class: Oro\Bundle\PricingBundle\Model\CombinedPriceListStatusHandler
+        arguments:
+            - !tagged_iterator combined_price_list_status_handler
+
+    oro_pricing.combined_price_list_activation_status_handler:
+        class: Oro\Bundle\PricingBundle\Model\CombinedPriceListActivationStatusHandler
         arguments:
             - '@doctrine'
             - '@oro_config.manager'
-
-    oro_bundle_pricing.async.price_list_processor:
-        class: 'Oro\Bundle\PricingBundle\Async\PriceListProcessor'
-        arguments:
-            - '@doctrine'
-            - '@logger'
-            - '@oro_pricing.builder.combined_price_list_builder_facade'
-            - '@oro_pricing.model.combined_price_list_trigger_handler'
-            - '@oro_pricing.combined_price_list_activation_status_helper'
         tags:
-            - { name: oro_message_queue.client.message_processor }
+            - { name: combined_price_list_status_handler, priority: 10 }
 
     oro_pricing.price_list_reference_checker:
         class: 'Oro\Bundle\PricingBundle\Model\PriceListReferenceChecker'
@@ -1293,6 +1293,7 @@ services:
         arguments:
             - '@doctrine'
             - '@event_dispatcher'
+            - '@oro_product.storage.product_website_reindex_request_data_storage'
 
     oro_pricing.layout.attribute_block_type_mapper:
         class: 'Oro\Bundle\PricingBundle\Layout\Mapper\AttributeBlockTypeMapper'
@@ -1302,12 +1303,6 @@ services:
             - [addBlockTypeByFieldName, ['productPriceAttributesPrices', 'attribute_prices']]
         tags:
             - { name: oro_entity_config.layout.attribute_block_type_mapper }
-
-    oro_pricing.database_triggers.manager.combined_prices:
-        parent: oro_entity.database_triggers.manager.abstract
-        arguments:
-            - '@oro_entity.doctrine_helper'
-            - 'Oro\Bundle\PricingBundle\Entity\CombinedProductPrice'
 
     oro_pricing.shard_manager:
         class: 'Oro\Bundle\PricingBundle\Sharding\ShardManager'
@@ -1338,7 +1333,6 @@ services:
             - '@oro_pricing.shard_manager'
         calls:
             - ['registerUniqueFields', ['Oro\Bundle\PricingBundle\Entity\ProductPrice', {search_fields: ['product_id', 'price_list_id', 'quantity', 'unit_code', 'currency'], update_field: 'value'}]]
-            - ['registerUniqueFields', ['Oro\Bundle\PricingBundle\Entity\CombinedProductPrice', {search_fields: ['combined_price_list_id', 'product_id', 'currency', 'unit_code', 'quantity'], update_field: 'value'}]]
 
     oro_pricing.orm.insert_from_select_query_executor:
         class: Oro\Bundle\PricingBundle\ORM\InsertFromSelectShardQueryExecutor
@@ -1464,6 +1458,7 @@ services:
 
     oro_pricing.pricing_strategy.strategy_register:
         class: Oro\Bundle\PricingBundle\PricingStrategy\StrategyRegister
+        public: true
         arguments:
             - '@oro_config.manager'
 
@@ -1582,3 +1577,19 @@ services:
     Oro\Bundle\PricingBundle\EntityConfig\ShardingEntityConfiguration:
         tags:
             - oro_entity_config.validation.entity_config
+
+    oro_pricing.handler.combined_price_list_build_trigger:
+        class: Oro\Bundle\PricingBundle\Handler\CombinedPriceListBuildTriggerHandler
+        arguments:
+            - '@doctrine'
+            - '@oro_pricing.price_list_relation_trigger_handler'
+            - '@oro_pricing.shard_manager'
+
+    oro_pricing.entity_listener.product_prices:
+        class: Oro\Bundle\PricingBundle\Entity\EntityListener\ProductPricesListener
+        arguments:
+            - '@oro_pricing.handler.combined_price_list_build_trigger'
+            - '@oro_pricing.price_list_trigger_handler'
+        tags:
+            - { name: kernel.event_listener, event: oro_pricing.product_prices.updated, method: onPricesUpdated }
+            - { name: oro_featuretogle.feature, feature: oro_price_lists_combined }

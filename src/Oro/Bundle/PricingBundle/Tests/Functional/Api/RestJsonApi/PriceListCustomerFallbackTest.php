@@ -4,7 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\Api\RestJsonApi;
 
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
-use Oro\Bundle\PricingBundle\Async\Topics;
+use Oro\Bundle\PricingBundle\Async\Topic\RebuildCombinedPriceListsTopic;
 use Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListFallbackSettings;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -50,7 +50,7 @@ class PriceListCustomerFallbackTest extends AbstractApiPriceListRelationTest
         static::assertNotNull($relation);
 
         static::assertMessageSent(
-            Topics::REBUILD_COMBINED_PRICE_LISTS,
+            RebuildCombinedPriceListsTopic::getName(),
             [
                 'website'  => $this->getWebsiteForTest()->getId(),
                 'customer' => $customer->getId()
@@ -82,7 +82,7 @@ class PriceListCustomerFallbackTest extends AbstractApiPriceListRelationTest
         $this->assertFirstRelationMessageSent();
 
         static::assertMessageSent(
-            Topics::REBUILD_COMBINED_PRICE_LISTS,
+            RebuildCombinedPriceListsTopic::getName(),
             [
                 'website'       => $this->getReference(LoadWebsiteData::WEBSITE2)->getId(),
                 'customer'      => $this->getReference('customer.level_1.2')->getId(),
@@ -154,7 +154,7 @@ class PriceListCustomerFallbackTest extends AbstractApiPriceListRelationTest
     protected function assertFirstRelationMessageSent()
     {
         static::assertMessageSent(
-            Topics::REBUILD_COMBINED_PRICE_LISTS,
+            RebuildCombinedPriceListsTopic::getName(),
             [
                 'website'  => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
                 'customer' => $this->getReference('customer.level_1_1')->getId()

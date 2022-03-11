@@ -3,7 +3,6 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Builder;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
-use Doctrine\ORM\EntityManager;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\PricingBundle\Builder\CombinedPriceListGarbageCollector;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
@@ -90,22 +89,15 @@ class CombinedPriceListGarbageCollectorTest extends \PHPUnit\Framework\TestCase
             ->method('deleteUnlinkedRules')
             ->with([2]);
 
-        $em = $this->createMock(EntityManager::class);
-        $em->method('getRepository')
+        $this->registry->expects($this->any())
+            ->method('getRepository')
             ->willReturnMap([
-                [CombinedPriceList::class, $cplRepository],
-                [CombinedPriceListToCustomer::class, $customerRelationRepository],
-                [CombinedPriceListToCustomerGroup::class, $customerGroupRelationRepository],
-                [CombinedPriceListToWebsite::class, $websiteRelationRepository],
-                [CombinedPriceListActivationRule::class, $cplActivationRuleRepository],
+                [CombinedPriceList::class, null, $cplRepository],
+                [CombinedPriceListToCustomer::class, null, $customerRelationRepository],
+                [CombinedPriceListToCustomerGroup::class, null, $customerGroupRelationRepository],
+                [CombinedPriceListToWebsite::class, null, $websiteRelationRepository],
+                [CombinedPriceListActivationRule::class, null, $cplActivationRuleRepository],
             ]);
-
-        $this->registry->expects($this->any())
-            ->method('getManagerForClass')
-            ->willReturn($em);
-        $this->registry->expects($this->any())
-            ->method('getManager')
-            ->willReturn($em);
 
         $this->triggerHandler->expects($this->once())
             ->method('startCollect');

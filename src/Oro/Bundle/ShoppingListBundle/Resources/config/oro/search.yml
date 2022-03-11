@@ -1,7 +1,6 @@
 search:
     Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
         alias:                          oro_shopping_list
-        title_fields:                   [label]
         route:
             name:                       oro_shopping_list_view
             parameters:

@@ -5,8 +5,12 @@ import selectTemplate from 'tpl-loader!orocms/templates/grapesjs-select-action.h
 import select2OptionTemplate from 'tpl-loader!orocms/templates/grapesjs-select2-option.html';
 
 const tags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p'];
+const formatting = ['b', 'i', 'u', 'strike', 'sup', 'sub'];
+const lists = ['ul', 'ol', 'li'];
 
 const isBlockFormatted = node => node.nodeType === 1 && tags.includes(node.tagName.toLowerCase());
+const isFormattedText = node => node.nodeType === 1 && formatting.includes(node.tagName.toLowerCase());
+const isContainLists = node => node.nodeType === 1 && lists.includes(node.tagName.toLowerCase());
 
 const surroundContent = (node, wrapper) => {
     if (node.nodeType !== 1) {
@@ -79,6 +83,33 @@ function setCaretPosition(element, caretPos) {
     }
 };
 
+function findClosestFormattingBlock(node) {
+    if (isBlockFormatted(node)) {
+        return node;
+    }
+
+    return findClosestFormattingBlock(node.parentNode);
+};
+
+function getParentsUntil(node, until = document) {
+    const parents = [];
+
+    for (;node && node !== until; node = node.parentNode) {
+        parents.push(node);
+    }
+    return parents;
+};
+
+function findParentSpan(node) {
+    const found = getParentsUntil(node).reverse().find(item => item.nodeType === 1 && item.tagName === 'SPAN');
+
+    if (found) {
+        return found;
+    }
+
+    return node;
+};
+
 export default {
     name: 'formatBlock',
 
@@ -121,8 +152,12 @@ export default {
     result(rte) {
         const value = rte.actionbar.querySelector('[name="tag"]').value;
         const selection = rte.selection();
+
+        if (selection.type === 'None') {
+            return;
+        }
+
         const anchorOffset = selection.anchorOffset;
-        const parentNode = selection.getRangeAt(0).startContainer.parentNode;
         const range = selection.getRangeAt(0);
         const surround = makeSurroundNode(rte.doc);
         const isTag = range.commonAncestorContainer.nodeType === 1;
@@ -143,19 +178,23 @@ export default {
                     }
                 });
 
+                if (isBlockFormatted(range.commonAncestorContainer)) {
+                    removeParent(range.commonAncestorContainer);
+                }
+
                 this.editor.trigger('change:canvasOffset');
                 setCaretPosition(rte.el, anchorOffset);
                 return;
             }
 
             if (isTextNode) {
-                removeParent(parentNode);
+                removeParent(findClosestFormattingBlock(range.commonAncestorContainer));
                 setCaretPosition(rte.el, anchorOffset);
                 return;
             }
         }
 
-        if (!range.collapsed && isTag) {
+        if (!range.collapsed && isTag && isContainLists(range.commonAncestorContainer)) {
             range.commonAncestorContainer.childNodes.forEach(node => {
                 if (range.intersectsNode(node)) {
                     surround(node, value);
@@ -169,10 +208,13 @@ export default {
             return;
         }
 
-        if (isTextNode && !isBlockFormatted(range.commonAncestorContainer.parentNode)) {
+        if (isTextNode &&
+            !isBlockFormatted(range.commonAncestorContainer.parentNode) &&
+            !isFormattedText(range.commonAncestorContainer.parentNode)
+        ) {
             const newParent = rte.doc.createElement(value);
             const docFragment = rte.doc.createDocumentFragment();
-            newParent.appendChild(range.commonAncestorContainer);
+            newParent.appendChild(findParentSpan(range.commonAncestorContainer));
             docFragment.appendChild(newParent);
             range.deleteContents();
             range.insertNode(docFragment);

@@ -5,6 +5,7 @@ namespace Oro\Bundle\PricingBundle\Async;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\MessageQueueBundle\Client\MessageBuffer;
 use Oro\Bundle\MessageQueueBundle\Client\MessageFilterInterface;
+use Oro\Bundle\PricingBundle\Async\Topic\RebuildCombinedPriceListsTopic;
 use Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback;
 
@@ -61,7 +62,7 @@ class PriceListRelationMessageFilter implements MessageFilterInterface
      */
     public function apply(MessageBuffer $buffer): void
     {
-        if (!$buffer->hasMessagesForTopic(Topics::REBUILD_COMBINED_PRICE_LISTS)) {
+        if (!$buffer->hasMessagesForTopic(RebuildCombinedPriceListsTopic::getName())) {
             return;
         }
 
@@ -94,7 +95,7 @@ class PriceListRelationMessageFilter implements MessageFilterInterface
         $this->checkCustomerGroupFallback = [self::CUSTOMER_GROUP => [], self::WEBSITE => []];
         $this->checkCustomerFallback = [self::CUSTOMER => [], self::WEBSITE => []];
         $this->processedMessages = [];
-        $messages = $buffer->getMessagesForTopic(Topics::REBUILD_COMBINED_PRICE_LISTS);
+        $messages = $buffer->getMessagesForTopic(RebuildCombinedPriceListsTopic::getName());
         foreach ($messages as $messageId => $message) {
             if ($this->isFullRebuildMessage($message)) {
                 $fullRebuildMessageId = $messageId;
@@ -144,7 +145,7 @@ class PriceListRelationMessageFilter implements MessageFilterInterface
 
     private function removeAllMessagesExceptFullRebuildMessage(MessageBuffer $buffer, int $fullRebuildMessageId): void
     {
-        $messages = $buffer->getMessagesForTopic(Topics::REBUILD_COMBINED_PRICE_LISTS);
+        $messages = $buffer->getMessagesForTopic(RebuildCombinedPriceListsTopic::getName());
         foreach ($messages as $messageId => $message) {
             if ($messageId !== $fullRebuildMessageId) {
                 $buffer->removeMessage($messageId);
@@ -154,7 +155,7 @@ class PriceListRelationMessageFilter implements MessageFilterInterface
 
     private function removeRedundantMessages(MessageBuffer $buffer): void
     {
-        $messages = $buffer->getMessagesForTopic(Topics::REBUILD_COMBINED_PRICE_LISTS);
+        $messages = $buffer->getMessagesForTopic(RebuildCombinedPriceListsTopic::getName());
         foreach ($messages as $messageId => $message) {
             if (!isset($message[self::WEBSITE])) {
                 continue;

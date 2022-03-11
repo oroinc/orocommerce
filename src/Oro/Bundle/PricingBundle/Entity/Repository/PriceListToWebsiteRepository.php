@@ -53,30 +53,26 @@ class PriceListToWebsiteRepository extends EntityRepository
      */
     public function getWebsiteIteratorWithDefaultFallback()
     {
+        $subQb = $this->getEntityManager()->createQueryBuilder();
+        $subQb->select('plToWebsite.id')
+            ->from(PriceListToWebsite::class, 'plToWebsite')
+            ->where($subQb->expr()->eq('plToWebsite.website', 'website'));
+
         $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb->select('distinct website')
+        $qb->select('website')
             ->from(Website::class, 'website')
-            ->leftJoin(
-                PriceListToWebsite::class,
-                'plToWebsite',
-                Join::WITH,
-                $qb->expr()->andX(
-                    $qb->expr()->eq('plToWebsite.website', 'website')
-                )
-            )
             ->leftJoin(
                 PriceListWebsiteFallback::class,
                 'priceListFallBack',
                 Join::WITH,
-                $qb->expr()->eq('priceListFallBack.website', 'website')
-            )
-            ->where(
-                $qb->expr()->orX(
-                    $qb->expr()->eq('priceListFallBack.fallback', ':websiteFallback'),
-                    $qb->expr()->isNull('priceListFallBack.fallback')
+                $qb->expr()->andX(
+                    $qb->expr()->eq('priceListFallBack.website', 'website'),
+                    $qb->expr()->eq('priceListFallBack.fallback', ':websiteFallback')
                 )
             )
-            ->setParameter('websiteFallback', PriceListWebsiteFallback::CONFIG);
+            ->where($qb->expr()->isNull('priceListFallBack.fallback'))
+            ->andWhere($qb->expr()->exists($subQb->getDQL()))
+            ->setParameter('websiteFallback', PriceListWebsiteFallback::CURRENT_WEBSITE_ONLY);
 
         return new BufferedIdentityQueryResultIterator($qb->getQuery());
     }
@@ -87,7 +83,7 @@ class PriceListToWebsiteRepository extends EntityRepository
     public function getWebsiteIteratorWithSelfFallback()
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb->select('distinct website')
+        $qb->select('website')
             ->from(Website::class, 'website')
             ->innerJoin(
                 PriceListWebsiteFallback::class,

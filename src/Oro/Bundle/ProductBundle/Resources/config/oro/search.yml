@@ -1,7 +1,6 @@
 search:
     Oro\Bundle\ProductBundle\Entity\Product:
         alias:                          oro_product
-        title_fields:                   [defaultName]
         route:
             name:                       oro_product_view
             parameters:
@@ -51,12 +50,11 @@ search:
 
     Oro\Bundle\ProductBundle\Entity\Brand:
         alias:                          oro_brand
-        title_fields:                   [defaultName]
         route:
             name:                       oro_product_brand_update
             parameters:
                 id:                     id
-        search_template:                '@OroProduct/Product/searchResult.html.twig'
+        search_template:                '@OroProduct/Brand/searchResult.html.twig'
         acl_permission:                'EDIT'
         fields:
             -

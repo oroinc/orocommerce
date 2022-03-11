@@ -2,589 +2,227 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Async;
 
-use Doctrine\DBAL\Exception\DeadlockException;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
+use Oro\Bundle\MessageQueueBundle\Entity\Job;
 use Oro\Bundle\PricingBundle\Async\CombinedPriceListProcessor;
-use Oro\Bundle\PricingBundle\Async\Topics;
-use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilderFacade;
-use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
+use Oro\Bundle\PricingBundle\Async\Topic\CombineSingleCombinedPriceListPricesTopic;
+use Oro\Bundle\PricingBundle\Async\Topic\RebuildCombinedPriceListsTopic;
+use Oro\Bundle\PricingBundle\Async\Topic\RunCombinedPriceListPostProcessingStepsTopic;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Provider\CombinedPriceListAssociationsProvider;
+use Oro\Bundle\PricingBundle\Provider\PriceListSequenceMember;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
+use Oro\Component\MessageQueue\Client\MessageProducerInterface;
+use Oro\Component\MessageQueue\Job\DependentJobContext;
+use Oro\Component\MessageQueue\Job\DependentJobService;
+use Oro\Component\MessageQueue\Job\JobRunner;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Component\MessageQueue\Util\JSON;
+use Oro\Component\Testing\Unit\EntityTrait;
+use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 
-/**
- * @SuppressWarnings(PHPMD.TooManyMethods)
- * @SuppressWarnings(PHPMD.TooManyPublicMethods)
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
 class CombinedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    private $doctrine;
+    use EntityTrait;
 
-    /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    /**
+     * @var LoggerInterface|MockObject
+     */
     private $logger;
 
-    /** @var CombinedPriceListTriggerHandler|\PHPUnit\Framework\MockObject\MockObject */
-    private $triggerHandler;
+    /**
+     * @var CombinedPriceListAssociationsProvider|MockObject
+     */
+    private $cplAssociationsProvider;
 
-    /** @var CombinedPriceListsBuilderFacade|\PHPUnit\Framework\MockObject\MockObject */
-    private $combinedPriceListsBuilderFacade;
+    /**
+     * @var JobRunner|MockObject
+     */
+    private $jobRunner;
 
-    /** @var CombinedPriceListProcessor */
+    /**
+     * @var MessageProducerInterface|MockObject
+     */
+    private $producer;
+
+    /**
+     * @var DependentJobService|MockObject
+     */
+    private $dependentJob;
+
+    /**
+     * @var CombinedPriceListProcessor
+     */
     private $processor;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
-        $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->logger = $this->createMock(LoggerInterface::class);
-        $this->triggerHandler = $this->createMock(CombinedPriceListTriggerHandler::class);
-        $this->combinedPriceListsBuilderFacade = $this->createMock(CombinedPriceListsBuilderFacade::class);
+        $this->cplAssociationsProvider = $this->createMock(CombinedPriceListAssociationsProvider::class);
+        $this->jobRunner = $this->createMock(JobRunner::class);
+        $this->producer = $this->createMock(MessageProducerInterface::class);
+        $this->dependentJob = $this->createMock(DependentJobService::class);
 
         $this->processor = new CombinedPriceListProcessor(
-            $this->doctrine,
-            $this->logger,
-            $this->triggerHandler,
-            $this->combinedPriceListsBuilderFacade
+            $this->cplAssociationsProvider,
+            $this->producer,
+            $this->jobRunner,
+            $this->dependentJob
         );
-    }
-
-    /**
-     * @param mixed $body
-     *
-     * @return MessageInterface
-     */
-    private function getMessage($body): MessageInterface
-    {
-        $message = $this->createMock(MessageInterface::class);
-        $message->expects($this->once())
-            ->method('getBody')
-            ->willReturn(JSON::encode($body));
-
-        return $message;
-    }
-
-    private function getSession(): SessionInterface
-    {
-        return $this->createMock(SessionInterface::class);
-    }
-
-    private function getWebsite(int $id): Website
-    {
-        $website = $this->createMock(Website::class);
-        $website->expects($this->any())
-            ->method('getId')
-            ->willReturn($id);
-
-        return $website;
-    }
-
-    private function getCustomerGroup(int $id): CustomerGroup
-    {
-        $customerGroup = $this->createMock(CustomerGroup::class);
-        $customerGroup->expects($this->any())
-            ->method('getId')
-            ->willReturn($id);
-
-        return $customerGroup;
-    }
-
-    private function getCustomer(int $id): Customer
-    {
-        $customer = $this->createMock(Customer::class);
-        $customer->expects($this->any())
-            ->method('getId')
-            ->willReturn($id);
-
-        return $customer;
+        $this->processor->setLogger($this->logger);
     }
 
     public function testGetSubscribedTopics()
     {
         $this->assertEquals(
-            [Topics::REBUILD_COMBINED_PRICE_LISTS],
+            [RebuildCombinedPriceListsTopic::getName()],
             CombinedPriceListProcessor::getSubscribedTopics()
         );
     }
 
-    public function testProcessWithInvalidMessage()
+    public function testProcessUnexpectedException()
     {
-        $this->logger->expects($this->once())
-            ->method('critical')
-            ->with('Got invalid message.');
+        $message = $this->createMock(MessageInterface::class);
+        $message->expects($this->any())
+            ->method('getBody')
+            ->willReturn(['force' => true, 'website' => null, 'customer' => null, 'customerGroup' => null]);
 
-        $this->assertEquals(
-            MessageProcessorInterface::REJECT,
-            $this->processor->process($this->getMessage('invalid'), $this->getSession())
-        );
-    }
+        $associations = [
+            [
+                'collection' => [new PriceListSequenceMember($this->getEntity(PriceList::class, ['id' => 10]), false)],
+                'assign_to' => ['config' => true]
+            ]
+        ];
+        $this->cplAssociationsProvider->expects($this->once())
+            ->method('getCombinedPriceListsWithAssociations')
+            ->willReturn($associations);
 
-    public function testProcessRebuildForWebsitesWhenWebsiteNotFound()
-    {
-        $websiteId = 1;
-        $body = ['website' => 1];
-
-        $this->triggerHandler->expects($this->once())
-            ->method('startCollect');
-        $this->triggerHandler->expects($this->once())
-            ->method('rollback');
-        $this->triggerHandler->expects($this->never())
-            ->method('commit');
-
-        $em = $this->createMock(EntityManagerInterface::class);
-        $this->doctrine->expects($this->once())
-            ->method('getManagerForClass')
-            ->with(Website::class)
-            ->willReturn($em);
-        $em->expects($this->once())
-            ->method('find')
-            ->with(Website::class, $websiteId)
-            ->willReturn(null);
-
-        $this->logger->expects($this->once())
-            ->method('error')
-            ->with('Message is invalid: Website was not found.');
-
-        $this->assertEquals(
-            MessageProcessorInterface::REJECT,
-            $this->processor->process($this->getMessage($body), $this->getSession())
-        );
-    }
-
-    public function testProcessRebuildForCustomerGroupsWhenCustomerGroupNotFound()
-    {
-        $customerGroupId = 10;
-        $body = ['website' => 1, 'customerGroup' => $customerGroupId];
-
-        $this->triggerHandler->expects($this->once())
-            ->method('startCollect');
-        $this->triggerHandler->expects($this->once())
-            ->method('rollback');
-        $this->triggerHandler->expects($this->never())
-            ->method('commit');
-
-        $em = $this->createMock(EntityManagerInterface::class);
-        $this->doctrine->expects($this->once())
-            ->method('getManagerForClass')
-            ->with(CustomerGroup::class)
-            ->willReturn($em);
-        $em->expects($this->once())
-            ->method('find')
-            ->with(CustomerGroup::class, $customerGroupId)
-            ->willReturn(null);
-
-        $this->logger->expects($this->once())
-            ->method('error')
-            ->with('Message is invalid: Customer Group was not found.');
-
-        $this->assertEquals(
-            MessageProcessorInterface::REJECT,
-            $this->processor->process($this->getMessage($body), $this->getSession())
-        );
-    }
-
-    public function testProcessRebuildForCustomerGroupsWhenWebsiteNotFound()
-    {
-        $websiteId = 1;
-        $customerGroupId = 10;
-        $body = ['website' => $websiteId, 'customerGroup' => $customerGroupId];
-
-        $this->triggerHandler->expects($this->once())
-            ->method('startCollect');
-        $this->triggerHandler->expects($this->once())
-            ->method('rollback');
-        $this->triggerHandler->expects($this->never())
-            ->method('commit');
-
-        $em = $this->createMock(EntityManagerInterface::class);
-        $this->doctrine->expects($this->exactly(2))
-            ->method('getManagerForClass')
-            ->willReturnMap([
-                [CustomerGroup::class, $em],
-                [Website::class, $em]
-            ]);
-        $em->expects($this->exactly(2))
-            ->method('find')
-            ->willReturnMap([
-                [CustomerGroup::class, $customerGroupId, $this->getCustomerGroup($customerGroupId)],
-                [Website::class, $websiteId, null]
-            ]);
-
-        $this->logger->expects($this->once())
-            ->method('error')
-            ->with('Message is invalid: Website was not found.');
-
-        $this->assertEquals(
-            MessageProcessorInterface::REJECT,
-            $this->processor->process($this->getMessage($body), $this->getSession())
-        );
-    }
-
-    public function testProcessRebuildForCustomersWhenCustomerNotFound()
-    {
-        $customerId = 100;
-        $body = ['website' => 1, 'customer' => $customerId];
-
-        $this->triggerHandler->expects($this->once())
-            ->method('startCollect');
-        $this->triggerHandler->expects($this->once())
-            ->method('rollback');
-        $this->triggerHandler->expects($this->never())
-            ->method('commit');
-
-        $em = $this->createMock(EntityManagerInterface::class);
-        $this->doctrine->expects($this->once())
-            ->method('getManagerForClass')
-            ->with(Customer::class)
-            ->willReturn($em);
-        $em->expects($this->once())
-            ->method('find')
-            ->with(Customer::class, $customerId)
-            ->willReturn(null);
-
-        $this->logger->expects($this->once())
-            ->method('error')
-            ->with('Message is invalid: Customer was not found.');
-
-        $this->assertEquals(
-            MessageProcessorInterface::REJECT,
-            $this->processor->process($this->getMessage($body), $this->getSession())
-        );
-    }
-
-    public function testProcessRebuildForCustomersWhenWebsiteNotFound()
-    {
-        $websiteId = 1;
-        $customerId = 100;
-        $body = ['website' => $websiteId, 'customer' => $customerId];
-
-        $this->triggerHandler->expects($this->once())
-            ->method('startCollect');
-        $this->triggerHandler->expects($this->once())
-            ->method('rollback');
-        $this->triggerHandler->expects($this->never())
-            ->method('commit');
-
-        $em = $this->createMock(EntityManagerInterface::class);
-        $this->doctrine->expects($this->exactly(2))
-            ->method('getManagerForClass')
-            ->willReturnMap([
-                [Customer::class, $em],
-                [Website::class, $em]
-            ]);
-        $em->expects($this->exactly(2))
-            ->method('find')
-            ->willReturnMap([
-                [Customer::class, $customerId, $this->getCustomer($customerId)],
-                [Website::class, $websiteId, null]
-            ]);
-
-        $this->logger->expects($this->once())
-            ->method('error')
-            ->with('Message is invalid: Website was not found.');
-
-        $this->assertEquals(
-            MessageProcessorInterface::REJECT,
-            $this->processor->process($this->getMessage($body), $this->getSession())
-        );
-    }
-
-    public function testProcessRebuildForCustomersWhenMessageContainsCustomerGroup()
-    {
-        $websiteId = 1;
-        $customerId = 100;
-        $website = $this->getWebsite($websiteId);
-        $customer = $this->getCustomer($customerId);
-        $body = ['website' => $websiteId, 'customerGroup' => 10, 'customer' => $customerId];
-
-        $this->triggerHandler->expects($this->once())
-            ->method('startCollect');
-        $this->triggerHandler->expects($this->once())
-            ->method('commit');
-        $this->triggerHandler->expects($this->never())
-            ->method('rollback');
-
-        $em = $this->createMock(EntityManagerInterface::class);
-        $this->doctrine->expects($this->exactly(2))
-            ->method('getManagerForClass')
-            ->willReturnMap([
-                [Customer::class, $em],
-                [Website::class, $em]
-            ]);
-        $em->expects($this->exactly(2))
-            ->method('find')
-            ->willReturnMap([
-                [Customer::class, $customerId, $customer],
-                [Website::class, $websiteId, $website]
-            ]);
-
-        $this->combinedPriceListsBuilderFacade->expects($this->once())
-            ->method('rebuildForCustomers')
-            ->with([$customer], $website, false);
-        $this->combinedPriceListsBuilderFacade->expects($this->once())
-            ->method('dispatchEvents');
-
-        $this->assertEquals(
-            MessageProcessorInterface::ACK,
-            $this->processor->process($this->getMessage($body), $this->getSession())
-        );
-    }
-
-    public function testProcessWhenUnexpectedExceptionOccurred()
-    {
-        $websiteId = 1;
-        $body = ['website' => $websiteId];
-
-        $exception = new \Exception('some error');
-
-        $this->triggerHandler->expects($this->once())
-            ->method('startCollect');
-        $this->triggerHandler->expects($this->once())
-            ->method('rollback');
-        $this->triggerHandler->expects($this->never())
-            ->method('commit');
-
-        $em = $this->createMock(EntityManagerInterface::class);
-        $this->doctrine->expects($this->once())
-            ->method('getManagerForClass')
-            ->with(Website::class)
-            ->willReturn($em);
-        $em->expects($this->once())
-            ->method('find')
-            ->with(Website::class, $websiteId)
-            ->willReturn($this->getWebsite($websiteId));
-
-        $this->combinedPriceListsBuilderFacade->expects($this->once())
-            ->method('rebuildForWebsites');
-        $this->combinedPriceListsBuilderFacade->expects($this->once())
-            ->method('dispatchEvents')
-            ->willThrowException($exception);
+        $e = new \Exception();
+        $this->jobRunner->expects($this->once())
+            ->method('runUnique')
+            ->willThrowException($e);
 
         $this->logger->expects($this->once())
             ->method('error')
             ->with(
                 'Unexpected exception occurred during Combined Price Lists build.',
-                ['exception' => $exception]
+                ['exception' => $e]
             );
 
         $this->assertEquals(
-            MessageProcessorInterface::REJECT,
-            $this->processor->process($this->getMessage($body), $this->getSession())
+            $this->processor::REJECT,
+            $this->processor->process($message, $this->createMock(SessionInterface::class))
         );
     }
 
-    public function testProcessWhenDeadlockExceptionOccurred()
+    /**
+     * @dataProvider messageDataProvider
+     * @param array $body
+     * @param Website|null $website
+     * @param Customer|CustomerGroup|null $targetEntity
+     */
+    public function testProcess(array $body, ?Website $website, ?object $targetEntity)
     {
-        $websiteId = 1;
-        $body = ['website' => $websiteId];
+        $message = $this->createMock(MessageInterface::class);
+        $message->expects($this->any())
+            ->method('getBody')
+            ->willReturn($body);
 
-        $exception = $this->createMock(DeadlockException::class);
+        $associations = [
+            [
+                'collection' => [new PriceListSequenceMember($this->getEntity(PriceList::class, ['id' => 10]), false)],
+                'assign_to' => ['config' => true]
+            ]
+        ];
+        $this->cplAssociationsProvider->expects($this->once())
+            ->method('getCombinedPriceListsWithAssociations')
+            ->with($body['force'] ?? false, $website, $targetEntity)
+            ->willReturn($associations);
 
-        $this->triggerHandler->expects($this->once())
-            ->method('startCollect');
-        $this->triggerHandler->expects($this->once())
-            ->method('rollback');
-        $this->triggerHandler->expects($this->never())
-            ->method('commit');
+        $rootJob = $this->createMock(Job::class);
+        $rootJob->expects($this->any())
+            ->method('getId')
+            ->willReturn(4242);
+        $job = $this->createMock(Job::class);
+        $job->expects($this->any())
+            ->method('getRootJob')
+            ->willReturn($rootJob);
+        $childJob = $this->createMock(Job::class);
+        $childJob->expects($this->any())
+            ->method('getId')
+            ->willReturn(42);
+        $this->jobRunner->expects($this->once())
+            ->method('runUnique')
+            ->willReturnCallback(
+                function ($ownerId, $name, $closure) use ($job) {
+                    return $closure($this->jobRunner, $job);
+                }
+            );
+        $this->jobRunner->expects($this->once())
+            ->method('createDelayed')
+            ->willReturnCallback(function ($name, $closure) use ($childJob) {
+                return $closure($this->jobRunner, $childJob);
+            });
 
-        $em = $this->createMock(EntityManagerInterface::class);
-        $this->doctrine->expects($this->once())
-            ->method('getManagerForClass')
-            ->with(Website::class)
-            ->willReturn($em);
-        $em->expects($this->once())
-            ->method('find')
-            ->with(Website::class, $websiteId)
-            ->willReturn($this->getWebsite($websiteId));
+        $dependentContext = $this->createMock(DependentJobContext::class);
+        $dependentContext->expects($this->once())
+            ->method('addDependentJob')
+            ->with(RunCombinedPriceListPostProcessingStepsTopic::getName(), ['relatedJobId' => 4242]);
+        $this->dependentJob->expects($this->once())
+            ->method('createDependentJobContext')
+            ->with($rootJob)
+            ->willReturn($dependentContext);
+        $this->dependentJob->expects($this->once())
+            ->method('saveDependentJob')
+            ->with($dependentContext);
 
-        $this->combinedPriceListsBuilderFacade->expects($this->once())
-            ->method('rebuildForWebsites');
-        $this->combinedPriceListsBuilderFacade->expects($this->once())
-            ->method('dispatchEvents')
-            ->willThrowException($exception);
-
-        $this->logger->expects($this->once())
-            ->method('error')
+        $this->producer->expects($this->once())
+            ->method('send')
             ->with(
-                'Unexpected exception occurred during Combined Price Lists build.',
-                ['exception' => $exception]
+                CombineSingleCombinedPriceListPricesTopic::getName(),
+                [
+                    'collection' => $associations[0]['collection'],
+                    'assign_to' => $associations[0]['assign_to'],
+                    'jobId' => 42
+                ]
             );
 
         $this->assertEquals(
-            MessageProcessorInterface::REQUEUE,
-            $this->processor->process($this->getMessage($body), $this->getSession())
+            $this->processor::ACK,
+            $this->processor->process($message, $this->createMock(SessionInterface::class))
         );
     }
 
-    public function testProcessRebuildForWebsites()
+    public function messageDataProvider(): \Generator
     {
-        $websiteId = 1;
-        $website = $this->getWebsite($websiteId);
-        $body = ['website' => $websiteId];
+        $website = $this->getEntity(Website::class, ['id' => 1]);
+        $customer = $this->getEntity(Customer::class, ['id' => 10]);
+        $customerGroup = $this->getEntity(CustomerGroup::class, ['id' => 10]);
 
-        $this->triggerHandler->expects($this->once())
-            ->method('startCollect');
-        $this->triggerHandler->expects($this->once())
-            ->method('commit');
-        $this->triggerHandler->expects($this->never())
-            ->method('rollback');
+        yield 'full rebuild' => [
+            ['force' => true, 'website' => null, 'customer' => null, 'customerGroup' => null],
+            null,
+            null
+        ];
 
-        $em = $this->createMock(EntityManagerInterface::class);
-        $this->doctrine->expects($this->once())
-            ->method('getManagerForClass')
-            ->with(Website::class)
-            ->willReturn($em);
-        $em->expects($this->once())
-            ->method('find')
-            ->with(Website::class, $websiteId)
-            ->willReturn($website);
+        yield 'per website' => [
+            ['force' => false, 'website' => $website, 'customer' => null, 'customerGroup' => null],
+            $website,
+            null
+        ];
 
-        $this->combinedPriceListsBuilderFacade->expects($this->once())
-            ->method('rebuildForWebsites')
-            ->with([$website], false);
-        $this->combinedPriceListsBuilderFacade->expects($this->once())
-            ->method('dispatchEvents');
+        yield 'per website and customer' => [
+            ['force' => false, 'website' => $website, 'customer' => $customer, 'customerGroup' => null],
+            $website,
+            $customer
+        ];
 
-        $this->assertEquals(
-            MessageProcessorInterface::ACK,
-            $this->processor->process($this->getMessage($body), $this->getSession())
-        );
-    }
-
-    public function testProcessRebuildForCustomerGroups()
-    {
-        $websiteId = 1;
-        $customerGroupId = 10;
-        $website = $this->getWebsite($websiteId);
-        $customerGroup = $this->getCustomerGroup($customerGroupId);
-        $body = ['website' => $websiteId, 'customerGroup' => $customerGroupId];
-
-        $this->triggerHandler->expects($this->once())
-            ->method('startCollect');
-        $this->triggerHandler->expects($this->once())
-            ->method('commit');
-        $this->triggerHandler->expects($this->never())
-            ->method('rollback');
-
-        $em = $this->createMock(EntityManagerInterface::class);
-        $this->doctrine->expects($this->exactly(2))
-            ->method('getManagerForClass')
-            ->willReturnMap([
-                [CustomerGroup::class, $em],
-                [Website::class, $em]
-            ]);
-        $em->expects($this->exactly(2))
-            ->method('find')
-            ->willReturnMap([
-                [CustomerGroup::class, $customerGroupId, $customerGroup],
-                [Website::class, $websiteId, $website]
-            ]);
-
-        $this->combinedPriceListsBuilderFacade->expects($this->once())
-            ->method('rebuildForCustomerGroups')
-            ->with([$customerGroup], $website, false);
-        $this->combinedPriceListsBuilderFacade->expects($this->once())
-            ->method('dispatchEvents');
-
-        $this->assertEquals(
-            MessageProcessorInterface::ACK,
-            $this->processor->process($this->getMessage($body), $this->getSession())
-        );
-    }
-
-    public function testProcessRebuildForCustomers()
-    {
-        $websiteId = 1;
-        $customerId = 100;
-        $website = $this->getWebsite($websiteId);
-        $customer = $this->getCustomer($customerId);
-        $body = ['website' => $websiteId, 'customer' => $customerId];
-
-        $this->triggerHandler->expects($this->once())
-            ->method('startCollect');
-        $this->triggerHandler->expects($this->once())
-            ->method('commit');
-        $this->triggerHandler->expects($this->never())
-            ->method('rollback');
-
-        $em = $this->createMock(EntityManagerInterface::class);
-        $this->doctrine->expects($this->exactly(2))
-            ->method('getManagerForClass')
-            ->willReturnMap([
-                [Customer::class, $em],
-                [Website::class, $em]
-            ]);
-        $em->expects($this->exactly(2))
-            ->method('find')
-            ->willReturnMap([
-                [Customer::class, $customerId, $customer],
-                [Website::class, $websiteId, $website]
-            ]);
-
-        $this->combinedPriceListsBuilderFacade->expects($this->once())
-            ->method('rebuildForCustomers')
-            ->with([$customer], $website, false);
-        $this->combinedPriceListsBuilderFacade->expects($this->once())
-            ->method('dispatchEvents');
-
-        $this->assertEquals(
-            MessageProcessorInterface::ACK,
-            $this->processor->process($this->getMessage($body), $this->getSession())
-        );
-    }
-
-    public function testProcessRebuildAll()
-    {
-        $body = [];
-
-        $this->triggerHandler->expects($this->once())
-            ->method('startCollect');
-        $this->triggerHandler->expects($this->once())
-            ->method('commit');
-        $this->triggerHandler->expects($this->never())
-            ->method('rollback');
-
-        $this->combinedPriceListsBuilderFacade->expects($this->once())
-            ->method('rebuildAll')
-            ->with(false);
-        $this->combinedPriceListsBuilderFacade->expects($this->once())
-            ->method('dispatchEvents');
-
-        $this->assertEquals(
-            MessageProcessorInterface::ACK,
-            $this->processor->process($this->getMessage($body), $this->getSession())
-        );
-    }
-
-    public function testProcessRebuildAllWithForce()
-    {
-        $body = ['force' => true];
-
-        $this->triggerHandler->expects($this->once())
-            ->method('startCollect');
-        $this->triggerHandler->expects($this->once())
-            ->method('commit');
-        $this->triggerHandler->expects($this->never())
-            ->method('rollback');
-
-        $this->combinedPriceListsBuilderFacade->expects($this->once())
-            ->method('rebuildAll')
-            ->with(true);
-        $this->combinedPriceListsBuilderFacade->expects($this->once())
-            ->method('dispatchEvents');
-
-        $this->assertEquals(
-            MessageProcessorInterface::ACK,
-            $this->processor->process($this->getMessage($body), $this->getSession())
-        );
+        yield 'per website and customer group' => [
+            ['force' => false, 'website' => $website, 'customer' => null, 'customerGroup' => $customerGroup],
+            $website,
+            $customerGroup
+        ];
     }
 }

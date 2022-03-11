@@ -58,15 +58,15 @@ const UpdateConfigurableProductAction = DialogAction.extend({
      * @param {number} count
      * @returns {number}
      */
-    getFlexibleWidth(count= 1) {
+    getFlexibleWidth(count = 1) {
         if (count <= this.withMap[0][0]) {
             return this.withMap[0][1];
-        } else if (count >= this.withMap[this.withMap.length -1][0]) {
-            return this.withMap[this.withMap.length -1][1];
+        } else if (count >= this.withMap[this.withMap.length - 1][0]) {
+            return this.withMap[this.withMap.length - 1][1];
         }
 
         let index;
-        for (let i = 1; i <= this.withMap.length -2; i++) {
+        for (let i = 1; i <= this.withMap.length - 2; i++) {
             if (count === this.withMap[i][0]) {
                 index = i;
                 break;

@@ -157,6 +157,10 @@ class PriceListCollectionProviderTest extends WebTestCase
                         'priceList' => 'price_list_1',
                         'mergeAllowed' => true,
                     ],
+                    [
+                        'priceList' => 'price_list_6', // Not active.
+                        'mergeAllowed' => false
+                    ],
                     /** End From group */
                     /** From Website */
                     [

@@ -1,7 +1,6 @@
 search:
     Oro\Bundle\WebCatalogBundle\Entity\WebCatalog:
         alias:                          oro_web_catalog
-        title_fields:                   [name]
         route:
             name:                       oro_web_catalog_view
             parameters:
