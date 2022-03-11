@@ -89,10 +89,7 @@ const RteItemView = BaseView.extend({
             const range = selection.getRangeAt(0);
             range.deleteContents();
             node.innerHTML = value;
-            [...node.childNodes].forEach(nd => {
-                range.insertNode(nd);
-            });
-
+            [...node.childNodes].reverse().forEach(nd => range.insertNode(nd));
             range.collapse(true);
             selection.removeAllRanges();
             selection.addRange(range);
