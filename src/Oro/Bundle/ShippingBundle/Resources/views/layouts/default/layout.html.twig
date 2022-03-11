@@ -59,7 +59,7 @@
                                    <% if (selected) { %>checked="checked"<% } %>
                             />
                             <span class="custom-radio__text">
-                                <%= _.__('oro.shipping.method_type.backend.method_type_and_price.label', {
+                                <%- _.__('oro.shipping.method_type.backend.method_type_and_price.label', {
                                     'translatedMethodType': _.escape(type.label),
                                     'price': formatter.formatCurrency(type.price.value, type.price.currency)
                                 }) %>
