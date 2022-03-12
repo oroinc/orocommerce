@@ -11,60 +11,34 @@ use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductRequest;
 use Oro\Bundle\SaleBundle\Formatter\QuoteProductFormatter;
-use Symfony\Component\Translation\Translator;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @SuppressWarnings(PHPMD.NPathComplexity)
  */
 class QuoteProductFormatterTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var QuoteProductFormatter
-     */
-    protected $formatter;
+    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $translator;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|Translator
-     */
-    protected $translator;
+    /** @var UnitValueFormatterInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $productUnitValueFormatter;
 
-    /**
-      * @var \PHPUnit\Framework\MockObject\MockObject|UnitValueFormatterInterface
-      */
-    protected $productUnitValueFormatter;
+    /** @var UnitLabelFormatterInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $productUnitLabelFormatter;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|UnitLabelFormatterInterface
-     */
-    protected $productUnitLabelFormatter;
+    /** @var NumberFormatter|\PHPUnit\Framework\MockObject\MockObject */
+    private $numberFormatter;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|NumberFormatter
-     */
-    protected $numberFormatter;
+    /** @var QuoteProductFormatter */
+    private $formatter;
 
-    /**
-     * {@inheritDoc}
-     */
     protected function setUp(): void
     {
-        $this->translator = $this->createMock('Symfony\Component\Translation\Translator');
-
-        $this->numberFormatter = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Formatter\NumberFormatter')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->productUnitValueFormatter = $this->getMockBuilder(
-            UnitValueFormatterInterface::class
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->productUnitLabelFormatter = $this->getMockBuilder(
-            UnitLabelFormatterInterface::class
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->translator = $this->createMock(TranslatorInterface::class);
+        $this->numberFormatter = $this->createMock(NumberFormatter::class);
+        $this->productUnitValueFormatter = $this->createMock(UnitValueFormatterInterface::class);
+        $this->productUnitLabelFormatter = $this->createMock(UnitLabelFormatterInterface::class);
 
         $this->formatter = new QuoteProductFormatter(
             $this->translator,
@@ -75,17 +49,13 @@ class QuoteProductFormatterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param mixed $inputData
-     * @param mixed $expectedData
-     *
      * @dataProvider formatTypeProvider
      */
-    public function testFormatType($inputData, $expectedData)
+    public function testFormatType(int $inputData, string $expectedData)
     {
         $this->translator->expects($this->any())
             ->method('trans')
-            ->with($expectedData)
-        ;
+            ->with($expectedData);
 
         $this->formatter->formatType($inputData);
     }
@@ -94,8 +64,7 @@ class QuoteProductFormatterTest extends \PHPUnit\Framework\TestCase
     {
         $this->translator->expects($this->once())
             ->method('trans')
-            ->with('oro.sale.quoteproduct.type.test_type')
-        ;
+            ->with('oro.sale.quoteproduct.type.test_type');
 
         $this->formatter->formatTypeLabel('test_type');
     }
@@ -107,10 +76,9 @@ class QuoteProductFormatterTest extends \PHPUnit\Framework\TestCase
     {
         $this->translator->expects($this->any())
             ->method('trans')
-            ->will($this->returnCallback(function ($type) {
+            ->willReturnCallback(function ($type) {
                 return $type;
-            }))
-        ;
+            });
 
         $this->assertSame($expectedData, $this->formatter->formatTypeLabels($inputData));
     }
@@ -127,35 +95,28 @@ class QuoteProductFormatterTest extends \PHPUnit\Framework\TestCase
             ->setQuantity($inputData['quantity'])
             ->setProductUnit($inputData['unit'])
             ->setProductUnitCode($inputData['unitCode'])
-            ->setPrice($inputData['price'])
-        ;
+            ->setPrice($inputData['price']);
 
         $this->productUnitValueFormatter->expects($expectedData['formatUnitValue'] ? $this->once() : $this->never())
             ->method('format')
             ->with($inputData['quantity'], $inputData['unitCode'])
-            ->will($this->returnValue($expectedData['formattedUnits']))
-        ;
+            ->willReturn($expectedData['formattedUnits']);
 
         $price = $inputData['price'] ?: new Price();
 
         $this->numberFormatter->expects($expectedData['formatPrice'] ? $this->once() : $this->never())
             ->method('formatCurrency')
             ->with($price->getValue(), $price->getCurrency())
-            ->will($this->returnValue($expectedData['formattedPrice']))
-        ;
+            ->willReturn($expectedData['formattedPrice']);
 
         $this->productUnitLabelFormatter->expects($expectedData['formatUnitLabel'] ? $this->once() : $this->never())
             ->method('format')
             ->with($inputData['unitCode'])
-            ->will($this->returnValue($expectedData['formattedUnit']))
-        ;
+            ->willReturn($expectedData['formattedUnit']);
 
         $this->translator->expects($this->any())
             ->method('trans')
-            ->will($this->returnCallback(function ($id) {
-                return $id;
-            }))
-        ;
+            ->willReturnArgument(0);
 
         $this->assertSame(
             $expectedData['formattedString'],
@@ -175,28 +136,24 @@ class QuoteProductFormatterTest extends \PHPUnit\Framework\TestCase
             ->setQuantity($inputData['quantity'])
             ->setProductUnit($inputData['unit'])
             ->setProductUnitCode($inputData['unitCode'])
-            ->setPrice($inputData['price'])
-        ;
+            ->setPrice($inputData['price']);
 
         $this->productUnitValueFormatter->expects($inputData['unit'] ? $this->once() : $this->never())
             ->method('format')
             ->with($inputData['quantity'], $inputData['unitCode'])
-            ->will($this->returnValue($expectedData['formattedUnits']))
-        ;
+            ->willReturn($expectedData['formattedUnits']);
 
         $price = $inputData['price'] ?: new Price();
 
         $this->numberFormatter->expects($price ? $this->once() : $this->never())
             ->method('formatCurrency')
             ->with($price->getValue(), $price->getCurrency())
-            ->will($this->returnValue($expectedData['formattedPrice']))
-        ;
+            ->willReturn($expectedData['formattedPrice']);
 
         $this->productUnitLabelFormatter->expects($this->once())
             ->method('format')
             ->with($inputData['unitCode'])
-            ->will($this->returnValue($expectedData['formattedUnit']))
-        ;
+            ->willReturn($expectedData['formattedUnit']);
 
         $this->translator->expects($this->once())
             ->method('trans')
@@ -205,20 +162,16 @@ class QuoteProductFormatterTest extends \PHPUnit\Framework\TestCase
                 '{units}'   => $expectedData['formattedUnits'],
                 '{price}'   => $expectedData['formattedPrice'],
                 '{unit}'    => $expectedData['formattedUnit'],
-            ])
-        ;
+            ]);
 
         $this->formatter->formatOffer($inputData['item']);
     }
 
-    /**
-     * @return array
-     */
-    public function formatTypeProvider()
+    public function formatTypeProvider(): array
     {
         $res = [
             'invalid type' => [
-                'input'     => 'asdf',
+                'input'     => 0,
                 'expected'  => 'N/A',
             ],
         ];
@@ -233,10 +186,7 @@ class QuoteProductFormatterTest extends \PHPUnit\Framework\TestCase
         return $res;
     }
 
-    /**
-     * @return array
-     */
-    public function formatTypeLabelsProvider()
+    public function formatTypeLabelsProvider(): array
     {
         return [
             [
@@ -252,10 +202,7 @@ class QuoteProductFormatterTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function formatRequestProvider()
+    public function formatRequestProvider(): array
     {
         return [
             'existing product unit' => [
@@ -351,10 +298,7 @@ class QuoteProductFormatterTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function formatOfferProvider()
+    public function formatOfferProvider(): array
     {
         return [
             'existing product unit and bundled price type' => [

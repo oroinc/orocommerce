@@ -9,23 +9,19 @@ use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Form\Type\BaseCouponType;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Translation\Translator;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class CouponEditMassActionHandlerTest extends AbstractCouponMassActionHandlerTest
 {
-    /**
-     * @var Translator|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $translator;
 
-    /**
-     * @var FormFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var FormFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $formFactory;
 
     protected function setUp(): void
     {
-        $this->translator = $this->createMock(Translator::class);
+        $this->translator = $this->createMock(TranslatorInterface::class);
         $this->formFactory = $this->createMock(FormFactoryInterface::class);
 
         parent::setUp();
@@ -47,15 +43,16 @@ class CouponEditMassActionHandlerTest extends AbstractCouponMassActionHandlerTes
     /**
      * {@inheritdoc}
      */
-    protected function assertExecuteCalled(array $coupons, MassActionHandlerArgs $args)
-    {
+    protected function assertExecuteCalled(
+        array $coupons,
+        MassActionHandlerArgs|\PHPUnit\Framework\MockObject\MockObject $args
+    ): void {
         $formData = ['test' => true];
         $requestData = [BaseCouponType::NAME => $formData];
         $args->expects($this->once())
             ->method('getData')
             ->willReturn($requestData);
 
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
         $form->expects($this->any())
             ->method('submit')
@@ -70,7 +67,7 @@ class CouponEditMassActionHandlerTest extends AbstractCouponMassActionHandlerTes
     /**
      * {@inheritdoc}
      */
-    protected function assertGetResponseCalled($entitiesCount)
+    protected function assertGetResponseCalled(int $entitiesCount): MassActionResponse
     {
         $translatedMessage = $entitiesCount . ' processed';
         $this->translator->expects($this->once())

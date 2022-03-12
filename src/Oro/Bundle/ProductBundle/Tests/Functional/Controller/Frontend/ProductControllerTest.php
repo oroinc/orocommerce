@@ -14,8 +14,8 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFrontendProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Symfony\Bundle\FrameworkBundle\Translation\Translator;
 use Symfony\Component\Routing\RequestContext;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @dbIsolationPerTest
@@ -28,9 +28,6 @@ class ProductControllerTest extends WebTestCase
 
     /** @var Client */
     protected $client;
-
-    /** @var Translator */
-    private $translator;
 
     protected function setUp(): void
     {
@@ -48,8 +45,11 @@ class ProductControllerTest extends WebTestCase
             LoadFrontendProductData::class,
             LoadCombinedPriceLists::class,
         ]);
+    }
 
-        $this->translator = $this->getContainer()->get('translator');
+    private function getTranslator(): TranslatorInterface
+    {
+        return self::getContainer()->get('translator');
     }
 
     private function getProduct(string $reference): Product
@@ -248,7 +248,7 @@ class ProductControllerTest extends WebTestCase
         self::assertStringContainsString($product->getDefaultName()->getString(), $result->getContent());
 
         self::assertStringContainsString(
-            $this->translator->trans('oro.frontend.product.view.request_a_quote'),
+            $this->getTranslator()->trans('oro.frontend.product.view.request_a_quote'),
             $result->getContent()
         );
     }
