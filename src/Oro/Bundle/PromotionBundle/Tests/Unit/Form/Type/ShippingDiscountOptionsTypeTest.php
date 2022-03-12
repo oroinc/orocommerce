@@ -4,9 +4,8 @@ namespace Oro\Bundle\PromotionBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\CurrencyBundle\Form\Type\MultiCurrencyType;
-use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
-use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
 use Oro\Bundle\FormBundle\Form\Type\OroMoneyType;
+use Oro\Bundle\FormBundle\Tests\Unit\Stub\TooltipFormExtensionStub;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
@@ -19,7 +18,6 @@ use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 use Oro\Bundle\ShippingBundle\Provider\ShippingMethodIconProviderInterface;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingMethodStub;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingMethodTypeStub;
-use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Asset\Packages;
@@ -43,7 +41,7 @@ class ShippingDiscountOptionsTypeTest extends FormIntegrationTestCase
 
     public function testBuildForm()
     {
-        $form = $this->factory->create(ShippingDiscountOptionsType::class, null);
+        $form = $this->factory->create(ShippingDiscountOptionsType::class);
 
         $this->assertTrue($form->has(ShippingDiscount::SHIPPING_OPTIONS));
     }
@@ -61,10 +59,7 @@ class ShippingDiscountOptionsTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expectedData, $form->getData());
     }
 
-    /**
-     * @return array
-     */
-    public function submitDataProvider()
+    public function submitDataProvider(): array
     {
         return [
             'create new discount' => [
@@ -72,7 +67,6 @@ class ShippingDiscountOptionsTypeTest extends FormIntegrationTestCase
                 'submittedData' => [
                     AbstractDiscount::DISCOUNT_TYPE => AbstractDiscount::TYPE_AMOUNT,
                     DiscountOptionsType::AMOUNT_DISCOUNT_VALUE_FIELD => ['value' => '2.0000', 'currency' => 'USD'],
-                    ShippingDiscount::SHIPPING_OPTIONS => null,
                     ShippingDiscount::SHIPPING_OPTIONS =>
                         '{"shipping_method":"flat_rate_2","shipping_method_type":"primary"}'
                 ],
@@ -118,27 +112,12 @@ class ShippingDiscountOptionsTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritdoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
-        /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject $configProvider */
-        $configProvider = $this->createMock(ConfigProvider::class);
-
-        /** @var Translator|\PHPUnit\Framework\MockObject\MockObject $translator */
-        $translator = $this->createMock(Translator::class);
-
-        /** @var LocaleSettings|\PHPUnit\Framework\MockObject\MockObject $localeSettings */
         $localeSettings = $this->createMock(LocaleSettings::class);
-
-        /** @var NumberFormatter|\PHPUnit\Framework\MockObject\MockObject $numberFormatter */
         $numberFormatter = $this->createMock(NumberFormatter::class);
-
-        /** @var ShippingMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject $provider */
         $provider = $this->createMock(ShippingMethodProviderInterface::class);
-
-        /** @var ShippingMethodIconProviderInterface|\PHPUnit\Framework\MockObject\MockObject $iconProvider */
         $iconProvider = $this->createMock(ShippingMethodIconProviderInterface::class);
-
-        /** @var Packages|\PHPUnit\Framework\MockObject\MockObject $assetHelper */
         $assetHelper = $this->createMock(Packages::class);
 
         $flatRatePrimaryShippingType = (new ShippingMethodTypeStub())->setIdentifier('primary');
@@ -148,23 +127,21 @@ class ShippingDiscountOptionsTypeTest extends FormIntegrationTestCase
             ->setIdentifier('flat_rate_2')
             ->setTypes([$flatRatePrimaryShippingType, $flatRateSecondaryShippingType]);
 
-        $provider
-            ->expects($this->any())
+        $provider->expects($this->any())
             ->method('getShippingMethods')
             ->willReturn([$flatRateShippingMethod]);
 
         return [
             new PreloadedExtension(
                 [
-                    MultiCurrencyType::class => new MultiCurrencyType(),
-                    CurrencySelectionType::class => new CurrencySelectionTypeStub(),
-                    DiscountOptionsType::class => new DiscountOptionsType(),
-                    OroMoneyType::class => new OroMoneyType($localeSettings, $numberFormatter),
-                    ShippingMethodTypesChoiceType::class =>
+                    new MultiCurrencyType(),
+                    new DiscountOptionsType(),
+                    new OroMoneyType($localeSettings, $numberFormatter),
                     new ShippingMethodTypesChoiceType($provider, $iconProvider, $assetHelper),
+                    CurrencySelectionType::class => new CurrencySelectionTypeStub(),
                 ],
                 [
-                    FormType::class => [new TooltipFormExtension($configProvider, $translator)],
+                    FormType::class => [new TooltipFormExtensionStub($this)]
                 ]
             ),
             new ValidatorExtension(Validation::createValidator()),

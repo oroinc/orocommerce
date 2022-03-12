@@ -4,16 +4,14 @@ namespace Oro\Bundle\PromotionBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\CurrencyBundle\Form\Type\MultiCurrencyType;
-use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
-use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
 use Oro\Bundle\FormBundle\Form\Type\OroMoneyType;
+use Oro\Bundle\FormBundle\Tests\Unit\Stub\TooltipFormExtensionStub;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 use Oro\Bundle\PromotionBundle\Discount\AbstractDiscount;
 use Oro\Bundle\PromotionBundle\Discount\DiscountInterface;
 use Oro\Bundle\PromotionBundle\Form\Type\DiscountOptionsType;
-use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
@@ -65,16 +63,10 @@ class DiscountOptionsTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider submitDataProvider
-     *
-     * @param array $submittedData
-     * @param array $expectedData
      */
-    public function testSubmit($submittedData, $expectedData)
+    public function testSubmit(array $submittedData, array $expectedData)
     {
-        $form = $this->factory->create(
-            DiscountOptionsType::class,
-            []
-        );
+        $form = $this->factory->create(DiscountOptionsType::class, []);
         $form->submit($submittedData);
 
         $this->assertTrue($form->isValid());
@@ -82,10 +74,7 @@ class DiscountOptionsTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expectedData, $form->getData());
     }
 
-    /**
-     * @return array
-     */
-    public function submitDataProvider()
+    public function submitDataProvider(): array
     {
         return [
             'options for percent discount' => [
@@ -114,24 +103,16 @@ class DiscountOptionsTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider submitInvalidDataProvider
-     *
-     * @param array $submittedData
      */
-    public function testSubmitInvalid($submittedData)
+    public function testSubmitInvalid(array $submittedData)
     {
-        $form = $this->factory->create(
-            DiscountOptionsType::class,
-            []
-        );
+        $form = $this->factory->create(DiscountOptionsType::class, []);
         $form->submit($submittedData);
         $this->assertFalse($form->isValid());
         $this->assertTrue($form->isSynchronized());
     }
 
-    /**
-     * @return array
-     */
-    public function submitInvalidDataProvider()
+    public function submitInvalidDataProvider(): array
     {
         return [
             'invalid type percent' => [
@@ -212,7 +193,7 @@ class DiscountOptionsTypeTest extends FormIntegrationTestCase
         $attr = $view->vars['attr'];
         $this->assertSame($form->getConfig()->getOption('page_component'), $attr['data-page-component-module']);
         $this->assertSame(
-            json_encode($form->getConfig()->getOption('page_component_options')),
+            json_encode($form->getConfig()->getOption('page_component_options'), JSON_THROW_ON_ERROR),
             $attr['data-page-component-options']
         );
     }
@@ -220,29 +201,20 @@ class DiscountOptionsTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritdoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
-        /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject $configProvider */
-        $configProvider = $this->createMock(ConfigProvider::class);
-
-        /** @var Translator|\PHPUnit\Framework\MockObject\MockObject $translator */
-        $translator = $this->createMock(Translator::class);
-
-        /** @var LocaleSettings|\PHPUnit\Framework\MockObject\MockObject $localeSettings */
         $localeSettings = $this->createMock(LocaleSettings::class);
-
-        /** @var NumberFormatter|\PHPUnit\Framework\MockObject\MockObject $numberFormatter */
         $numberFormatter = $this->createMock(NumberFormatter::class);
 
         return [
             new PreloadedExtension(
                 [
-                    MultiCurrencyType::class => new MultiCurrencyType(),
-                    CurrencySelectionType::class => new CurrencySelectionTypeStub(),
-                    OroMoneyType::class => new OroMoneyType($localeSettings, $numberFormatter)
+                    new MultiCurrencyType(),
+                    new OroMoneyType($localeSettings, $numberFormatter),
+                    CurrencySelectionType::class => new CurrencySelectionTypeStub()
                 ],
                 [
-                    FormType::class => [new TooltipFormExtension($configProvider, $translator)],
+                    FormType::class => [new TooltipFormExtensionStub($this)]
                 ]
             ),
             new ValidatorExtension(Validation::createValidator()),
@@ -256,11 +228,7 @@ class DiscountOptionsTypeTest extends FormIntegrationTestCase
         $this->assertTrue($form->has(DiscountOptionsType::PERCENT_DISCOUNT_VALUE_FIELD));
     }
 
-    /**
-     * @param FormInterface $form
-     * @param string $field
-     */
-    private function assertFieldIsHidden(FormInterface $form, $field)
+    private function assertFieldIsHidden(FormInterface $form, string $field): void
     {
         $this->assertSame('hide', $form->get($field)->getConfig()->getOption('attr')['class']);
     }

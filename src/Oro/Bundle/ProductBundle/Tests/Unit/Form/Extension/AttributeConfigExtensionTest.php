@@ -16,22 +16,19 @@ use Oro\Bundle\FormBundle\Form\Extension\DataBlockExtension;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Extension\AttributeConfigExtension;
 use Oro\Bundle\TranslationBundle\Translation\Translator;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class AttributeConfigExtensionTest extends FormIntegrationTestCase
 {
-    use EntityTrait;
-
     /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject */
-    protected $attributeConfigProvider;
+    private $attributeConfigProvider;
 
-    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var Translator|\PHPUnit\Framework\MockObject\MockObject */
     private $translator;
 
     /** @var ConfigInterface|\PHPUnit\Framework\MockObject\MockObject */
@@ -41,8 +38,10 @@ class AttributeConfigExtensionTest extends FormIntegrationTestCase
     {
         $this->attributeConfigProvider = $this->createMock(ConfigProvider::class);
 
-        $this->translator = $this->createMock(TranslatorInterface::class);
-        $this->translator->expects($this->any())->method('trans')->willReturnArgument(0);
+        $this->translator = $this->createMock(Translator::class);
+        $this->translator->expects($this->any())
+            ->method('trans')
+            ->willReturnArgument(0);
 
         parent::setUp();
     }
@@ -59,11 +58,10 @@ class AttributeConfigExtensionTest extends FormIntegrationTestCase
                 $datagrid
             );
 
-        $form = $this->factory->create(ConfigType::class, null, [
-            'config_model' => $this->getEntity(FieldConfigModel::class, [
-                'entity' => new EntityConfigModel(Product::class)
-            ])
-        ]);
+        $configModel = new FieldConfigModel();
+        $configModel->setEntity(new EntityConfigModel(Product::class));
+
+        $form = $this->factory->create(ConfigType::class, null, ['config_model' => $configModel]);
 
         $data = $form->getData();
 
@@ -79,12 +77,11 @@ class AttributeConfigExtensionTest extends FormIntegrationTestCase
                 ['is_visible' => DatagridScope::IS_VISIBLE_TRUE]
             );
 
-        $form = $this->factory->create(ConfigType::class, null, [
-            'config_model' => $this->getEntity(FieldConfigModel::class, [
-                'id' => 1,
-                'entity' => new EntityConfigModel(Product::class)
-            ])
-        ]);
+        $configModel = new FieldConfigModel();
+        ReflectionUtil::setId($configModel, 1);
+        $configModel->setEntity(new EntityConfigModel(Product::class));
+
+        $form = $this->factory->create(ConfigType::class, null, ['config_model' => $configModel]);
 
         $data = $form->getData();
 
@@ -100,11 +97,10 @@ class AttributeConfigExtensionTest extends FormIntegrationTestCase
                 []
             );
 
-        $form = $this->factory->create(ConfigType::class, null, [
-            'config_model' => $this->getEntity(FieldConfigModel::class, [
-                'entity' => new EntityConfigModel(Product::class)
-            ])
-        ]);
+        $configModel = new FieldConfigModel();
+        $configModel->setEntity(new EntityConfigModel(Product::class));
+
+        $form = $this->factory->create(ConfigType::class, null, ['config_model' => $configModel]);
 
         $data = $form->getData();
 
@@ -118,13 +114,13 @@ class AttributeConfigExtensionTest extends FormIntegrationTestCase
 
     public function testFinishViewNotApplicable()
     {
-        /** @var FormView|\PHPUnit\Framework\MockObject\MockObject $view */
         $view = $this->createMock(FormView::class);
-        $view->expects($this->never())->method($this->anything());
+        $view->expects($this->never())
+            ->method($this->anything());
 
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
-        $form->expects($this->never())->method($this->anything());
+        $form->expects($this->never())
+            ->method($this->anything());
 
         $this->assertConfigProviderCalled(true, false);
 
@@ -132,10 +128,7 @@ class AttributeConfigExtensionTest extends FormIntegrationTestCase
         $extension->finishView($view, $form, ['config_model' => $this->getFieldConfigModel()]);
     }
 
-    /**
-     * @return FieldConfigModel
-     */
-    protected function getFieldConfigModel()
+    private function getFieldConfigModel(): FieldConfigModel
     {
         $fieldConfigModel = new FieldConfigModel('test', 'string');
         $fieldConfigModel->setEntity(new EntityConfigModel(\stdClass::class));
@@ -202,9 +195,9 @@ class AttributeConfigExtensionTest extends FormIntegrationTestCase
         $view->children[] = $child4;
         $view->children[] = $child5;
 
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
-        $form->expects($this->never())->method($this->anything());
+        $form->expects($this->never())
+            ->method($this->anything());
 
         $this->assertConfigProviderCalled(true, true);
 
@@ -285,10 +278,7 @@ class AttributeConfigExtensionTest extends FormIntegrationTestCase
         );
     }
 
-    /**
-     * @return array
-     */
-    public function configProvider()
+    public function configProvider(): array
     {
         return [
             'is attribute with default value' => [
@@ -312,26 +302,26 @@ class AttributeConfigExtensionTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * @param bool $hasAttributes
-     * @param bool $isAttribute
-     */
-    protected function assertConfigProviderCalled($hasAttributes, $isAttribute)
+    private function assertConfigProviderCalled(bool $hasAttributes, bool $isAttribute): void
     {
         $entityConfig = $this->createMock(ConfigInterface::class);
-        $entityConfig->expects($this->any())->method('is')->with('has_attributes')->willReturn($hasAttributes);
+        $entityConfig->expects($this->any())
+            ->method('is')
+            ->with('has_attributes')
+            ->willReturn($hasAttributes);
 
         $fieldConfig = $this->createMock(ConfigInterface::class);
-        $fieldConfig->expects($this->any())->method('is')->with('is_attribute')->willReturn($isAttribute);
+        $fieldConfig->expects($this->any())
+            ->method('is')
+            ->with('is_attribute')
+            ->willReturn($isAttribute);
 
         $this->attributeConfigProvider->expects($this->atLeastOnce())
             ->method('getConfig')
-            ->willReturnMap(
-                [
-                    [\stdClass::class, null, $entityConfig],
-                    [\stdClass::class, 'test', $fieldConfig]
-                ]
-            );
+            ->willReturnMap([
+                [\stdClass::class, null, $entityConfig],
+                [\stdClass::class, 'test', $fieldConfig]
+            ]);
     }
 
     /**
@@ -340,50 +330,73 @@ class AttributeConfigExtensionTest extends FormIntegrationTestCase
     protected function getExtensions()
     {
         $this->config = $this->createMock(ConfigInterface::class);
-        $this->config->expects($this->any())->method('get')->willReturn([]);
+        $this->config->expects($this->any())
+            ->method('get')
+            ->willReturn([]);
 
         $fieldConfigId = new FieldConfigId('extend', Product::class, 'test');
 
         $propertyConfig = $this->createMock(PropertyConfigContainer::class);
-        $propertyConfig->expects($this->any())->method('hasForm')->willReturn(true);
-        $propertyConfig->expects($this->any())->method('getFormItems')->willReturn([]);
-        $propertyConfig->expects($this->any())->method('getTranslatableValues')->willReturn([]);
+        $propertyConfig->expects($this->any())
+            ->method('hasForm')
+            ->willReturn(true);
+        $propertyConfig->expects($this->any())
+            ->method('getFormItems')
+            ->willReturn([]);
+        $propertyConfig->expects($this->any())
+            ->method('getTranslatableValues')
+            ->willReturn([]);
 
-        /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject $attributeProvider */
         $attributeProvider = $this->createMock(ConfigProvider::class);
-        $attributeProvider->expects($this->any())->method('getPropertyConfig')->willReturn($propertyConfig);
-        $attributeProvider->expects($this->any())->method('getScope')->willReturn('attribute');
-        $attributeProvider->expects($this->any())->method('getId')->willReturn($fieldConfigId);
+        $attributeProvider->expects($this->any())
+            ->method('getPropertyConfig')
+            ->willReturn($propertyConfig);
+        $attributeProvider->expects($this->any())
+            ->method('getScope')
+            ->willReturn('attribute');
+        $attributeProvider->expects($this->any())
+            ->method('getId')
+            ->willReturn($fieldConfigId);
 
-        /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject $datagridProvider */
         $datagridProvider = $this->createMock(ConfigProvider::class);
-        $datagridProvider->expects($this->any())->method('getPropertyConfig')->willReturn($propertyConfig);
-        $datagridProvider->expects($this->any())->method('getScope')->willReturn('datagrid');
-        $datagridProvider->expects($this->any())->method('getId')->willReturn($fieldConfigId);
+        $datagridProvider->expects($this->any())
+            ->method('getPropertyConfig')
+            ->willReturn($propertyConfig);
+        $datagridProvider->expects($this->any())
+            ->method('getScope')
+            ->willReturn('datagrid');
+        $datagridProvider->expects($this->any())
+            ->method('getId')
+            ->willReturn($fieldConfigId);
 
-        /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject $configProvider */
         $configProvider = $this->createMock(ConfigProvider::class);
-        $configProvider->expects($this->any())->method('getConfigById')->willReturn($this->config);
+        $configProvider->expects($this->any())
+            ->method('getConfigById')
+            ->willReturn($this->config);
 
-        /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject $configManager */
         $configManager = $this->createMock(ConfigManager::class);
-        $configManager->expects($this->any())->method('getProvider')->willReturn($configProvider);
-        $configManager->expects($this->any())->method('getConfig')->willReturn($this->config);
-        $configManager->expects($this->any())->method('getConfigIdByModel')->willReturn($fieldConfigId);
-        $configManager->expects($this->any())->method('getProviders')->willReturn([
-            $attributeProvider,
-            $datagridProvider
-        ]);
+        $configManager->expects($this->any())
+            ->method('getProvider')
+            ->willReturn($configProvider);
+        $configManager->expects($this->any())
+            ->method('getConfig')
+            ->willReturn($this->config);
+        $configManager->expects($this->any())
+            ->method('getConfigIdByModel')
+            ->willReturn($fieldConfigId);
+        $configManager->expects($this->any())
+            ->method('getProviders')
+            ->willReturn([
+                $attributeProvider,
+                $datagridProvider
+            ]);
 
-        /** @var ConfigTranslationHelper|\PHPUnit\Framework\MockObject\MockObject $translatorHelper */
         $translatorHelper = $this->createMock(ConfigTranslationHelper::class);
-        /** @var Translator|\PHPUnit\Framework\MockObject\MockObject $translator */
-        $translator = $this->createMock(Translator::class);
 
         return [
             new PreloadedExtension(
                 [
-                    new ConfigType($translatorHelper, $configManager, $translator),
+                    new ConfigType($translatorHelper, $configManager, $this->translator),
                 ],
                 [
                     ConfigType::class => [
