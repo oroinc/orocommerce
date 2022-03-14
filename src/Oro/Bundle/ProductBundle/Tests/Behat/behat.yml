@@ -821,6 +821,12 @@ oro_behat_extension:
     ProductFrontendGridMassActionMenu:
       selector: 'div.datagrid-massaction__dropdown-menu'
 
+    ProductFrontendGridMassActionSearch:
+      selector: '[data-role="search-container"] .input'
+
+    ProductFrontendGridMassActionDefaultItem:
+      selector: '.dropdown-item[data-label]:first-child'
+
     ProductFrontendGridRow:
       selector: '.grid-row'
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\FrontendProductGridRow

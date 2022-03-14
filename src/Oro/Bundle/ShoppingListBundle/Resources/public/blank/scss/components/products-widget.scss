@@ -87,7 +87,7 @@
 
             .fa {
                 position: absolute;
-                left: $dropdown-item-padding-x;
+                left: $dropdown-search-item-container-icon-offset;
             }
 
             &[data-label]::after {

@@ -95,6 +95,7 @@ define(function(require) {
                     return $(this).is(`[data-group-order="${groupName}"]`);
                 });
 
+                $(this).find('.icon').addClass('fa fa--fw fa--аs-line');
                 if ($group.length === 0) {
                     $groupsList = $groupsList.add(
                         $(`<ul class="items-group" data-group-order="${groupName}" role="menu""></ul>`)
@@ -131,10 +132,6 @@ define(function(require) {
                 minimumResultsForSearch: this.minimumResultsForSearch,
                 searchClassName: 'dropdown-item dropdown-search',
                 el: this.el
-            });
-
-            this.launchers.forEach(launcher => {
-                launcher.$('.icon').addClass('fa fa--fw fa--аs-line');
             });
 
             this.subview('dropdown-search', dropdownSearch);
