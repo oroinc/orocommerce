@@ -815,11 +815,35 @@ oro_behat_extension:
     ProductFrontendMassActionHeadCheckbox:
       selector: 'div.datagrid-massaction button'
 
+    ProductFrontendMassActionHeadButtonTablet:
+      selector: '.product-action-area .product-action > .btn'
+
     ProductFrontendMassActionButton:
       selector: '.datagrid-massaction button.dropdown-toggle:contains("Choose Action")'
 
     ProductFrontendGridMassActionMenu:
       selector: 'div.datagrid-massaction__dropdown-menu'
+
+    ProductFrontendGridMassActionSearch:
+      selector: '[data-role="search-container"] .input'
+
+    ProductFrontendGridMassActionSearchInDialog:
+      selector: '[role="dialog"] [data-role="search-container"] .input'
+
+    ProductFrontendGridMassActionDefaultItem:
+      selector: '.dropdown-item[data-label]:first-child'
+
+    ProductFrontendMassAddPPanelInBottomSticky:
+      selector: '[data-sticky-name="bottom-sticky-panel"] .dropup .action'
+
+    ProductFrontendMassOpenInDialog:
+      selector: '[data-sticky-name="bottom-sticky-panel"] [data-fullscreen-trigger]'
+
+    ProductFrontendMassClosePanel:
+      selector: '[data-sticky-name="bottom-sticky-panel"] [data-undo-selection]'
+
+    ProductFrontendMassPanelInBottomSticky:
+      selector: '[data-sticky-name="bottom-sticky-panel"] .datagrid-massaction'
 
     ProductFrontendGridRow:
       selector: '.grid-row'

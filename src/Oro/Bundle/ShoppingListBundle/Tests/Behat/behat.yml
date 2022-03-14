@@ -213,6 +213,9 @@ oro_behat_extension:
     Shopping List Quick Search Clear:
       selector: '.dropdown-search .clear-search-button'
 
+    Shopping List Quick Search Clear in Dialog:
+      selector: '[role="dialog"] .dropdown-search .clear-search-button'
+
     FrontendLineItemForm:
       selector: 'form[id^="oro_product_frontend_line_item"]'
       class: 'Oro\Bundle\TestFrameworkBundle\Behat\Element\Form'

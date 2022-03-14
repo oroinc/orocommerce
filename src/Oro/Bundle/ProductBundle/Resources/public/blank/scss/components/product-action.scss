@@ -30,6 +30,7 @@
 
     &.in-sticky {
         .product-action {
+            display: block;
             min-width: $product-action-in-sticky-width;
 
             &:first-child {
