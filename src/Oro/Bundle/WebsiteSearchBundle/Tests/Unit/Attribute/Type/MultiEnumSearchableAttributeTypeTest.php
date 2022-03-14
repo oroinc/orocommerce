@@ -49,7 +49,7 @@ class MultiEnumSearchableAttributeTypeTest extends SearchableAttributeTypeTestCa
     public function testGetFilterableFieldNames()
     {
         $this->assertSame(
-            [SearchAttributeTypeInterface::VALUE_MAIN => self::FIELD_NAME . '_' . EnumIdPlaceholder::NAME],
+            [SearchAttributeTypeInterface::VALUE_MAIN => self::FIELD_NAME . '_enum.' . EnumIdPlaceholder::NAME],
             $this->getSearchableAttributeType()->getFilterableFieldNames($this->attribute)
         );
     }

@@ -270,7 +270,7 @@ class FrontendProductGridEventListener
      */
     private function clearName($name)
     {
-        $placeholders = ['_' . LocalizationIdPlaceholder::NAME => '', '_' . EnumIdPlaceholder::NAME => ''];
+        $placeholders = ['_' . LocalizationIdPlaceholder::NAME => '', '_enum.' . EnumIdPlaceholder::NAME => ''];
 
         return strtr($name, $placeholders);
     }

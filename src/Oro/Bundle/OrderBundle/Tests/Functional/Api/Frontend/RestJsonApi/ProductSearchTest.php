@@ -196,6 +196,10 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
 
     public function testMinByOrderedAt()
     {
+        if (!$this->isOrmEngine()) {
+            $this->markTestSkipped('Can be tested only with ORM search engine');
+        }
+
         /** @var \DateTime $orderedAt */
         $orderedAt = $this->getReference('order1')->getCreatedAt();
 
@@ -220,6 +224,10 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
 
     public function testMaxByOrderedAt()
     {
+        if (!$this->isOrmEngine()) {
+            $this->markTestSkipped('Can be tested only with ORM search engine');
+        }
+
         /** @var \DateTime $orderedAt */
         $orderedAt = $this->getReference('order2')->getCreatedAt();
 
@@ -256,6 +264,10 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
 
     public function testMinByOrderedAtWhenNoProductsWithThisValue()
     {
+        if (!$this->isOrmEngine()) {
+            $this->markTestSkipped('Can be tested only with ORM search engine');
+        }
+
         $response = $this->cget(
             ['entity' => 'productsearch'],
             [
@@ -277,6 +289,10 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
 
     public function testMaxByOrderedAtWhenNoProductsWithThisValue()
     {
+        if (!$this->isOrmEngine()) {
+            $this->markTestSkipped('Can be tested only with ORM search engine');
+        }
+
         $response = $this->cget(
             ['entity' => 'productsearch'],
             [
@@ -294,5 +310,23 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
             ],
             $response
         );
+    }
+
+    /**
+     * @return bool
+     */
+    private function isOrmEngine()
+    {
+        return \Oro\Bundle\SearchBundle\Engine\Orm::ENGINE_NAME === $this->getSearchEngine();
+    }
+
+    /**
+     * @return string
+     */
+    private function getSearchEngine()
+    {
+        return self::getContainer()
+            ->get('oro_website_search.engine.parameters')
+            ->getEngineName();
     }
 }

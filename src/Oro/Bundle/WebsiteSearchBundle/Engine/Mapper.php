@@ -3,6 +3,7 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Engine;
 
 use Oro\Bundle\SearchBundle\Engine\Orm\BaseDriver;
+use Oro\Bundle\SearchBundle\Formatter\DateTimeFormatter;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Query;
 
@@ -12,6 +13,10 @@ use Oro\Bundle\SearchBundle\Query\Query;
  */
 class Mapper
 {
+    public function __construct(private DateTimeFormatter $dateTimeFormatter)
+    {
+    }
+
     /**
      * @param Query $query
      * @param array $item
@@ -93,6 +98,10 @@ class Mapper
             } elseif ($type === Query::TYPE_DECIMAL) {
                 $value = (float)$value;
             }
+        }
+
+        if ($value instanceof \DateTime) {
+            $value = $this->dateTimeFormatter->format($value);
         }
 
         return $value;

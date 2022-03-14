@@ -214,7 +214,7 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit\Framework\TestC
                 ),
                 'expected' => [
                     new ProductIndexDataModel(
-                        'inventoryStatus_' . Product::INVENTORY_STATUS_IN_STOCK,
+                        'inventoryStatus_enum.' . Product::INVENTORY_STATUS_IN_STOCK,
                         1,
                         [],
                         false,
@@ -253,7 +253,7 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit\Framework\TestC
                 ),
                 'expected' => [
                     new ProductIndexDataModel(
-                        'inventoryStatus_' . Product::INVENTORY_STATUS_IN_STOCK,
+                        'inventoryStatus_enum.' . Product::INVENTORY_STATUS_IN_STOCK,
                         1,
                         [],
                         false,
@@ -271,7 +271,7 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit\Framework\TestC
                 ),
                 'expected' => [
                     new ProductIndexDataModel(
-                        'inventoryStatus_' . Product::INVENTORY_STATUS_IN_STOCK,
+                        'inventoryStatus_enum.' . Product::INVENTORY_STATUS_IN_STOCK,
                         1,
                         [],
                         false,
@@ -299,7 +299,7 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit\Framework\TestC
                 'attributeConfig' => $this->getConfig(['filterable' => true, 'sortable' => true, 'searchable' => true]),
                 'expected' => [
                     new ProductIndexDataModel(
-                        'inventoryStatus_' . Product::INVENTORY_STATUS_IN_STOCK,
+                        'inventoryStatus_enum.' . Product::INVENTORY_STATUS_IN_STOCK,
                         1,
                         [],
                         false,
@@ -366,8 +366,8 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit\Framework\TestC
                     ['filterable' => true, 'sortable' => false, 'searchable' => true]
                 ),
                 'expected' => [
-                    new ProductIndexDataModel('flags_bestseller', 1, [], false, false),
-                    new ProductIndexDataModel('flags_discounts', 1, [], false, false),
+                    new ProductIndexDataModel('flags_enum.bestseller', 1, [], false, false),
+                    new ProductIndexDataModel('flags_enum.discounts', 1, [], false, false),
                     new ProductIndexDataModel(
                         IndexDataProvider::ALL_TEXT_L10N_FIELD,
                         'Best Sales New Discounts',
@@ -386,7 +386,7 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit\Framework\TestC
                 ),
                 'expected' => [
                     new ProductIndexDataModel(
-                        'inventoryStatus_' . Product::INVENTORY_STATUS_IN_STOCK,
+                        'inventoryStatus_enum.' . Product::INVENTORY_STATUS_IN_STOCK,
                         1,
                         [],
                         false,
@@ -406,7 +406,7 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit\Framework\TestC
                 ),
                 'expected' => [
                     new ProductIndexDataModel(
-                        'inventoryStatus_' . Product::INVENTORY_STATUS_IN_STOCK,
+                        'inventoryStatus_enum.' . Product::INVENTORY_STATUS_IN_STOCK,
                         1,
                         [],
                         false,
@@ -425,7 +425,7 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit\Framework\TestC
                 ),
                 'expected' => [
                     new ProductIndexDataModel(
-                        'inventoryStatus_' . Product::INVENTORY_STATUS_IN_STOCK,
+                        'inventoryStatus_enum.' . Product::INVENTORY_STATUS_IN_STOCK,
                         1,
                         [],
                         false,
@@ -443,8 +443,8 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit\Framework\TestC
                     ['filterable' => true, 'sortable' => false, 'searchable' => true, 'search_boost' => 1.0]
                 ),
                 'expected' => [
-                    new ProductIndexDataModel('flags_bestseller', 1, [], false, false),
-                    new ProductIndexDataModel('flags_discounts', 1, [], false, false),
+                    new ProductIndexDataModel('flags_enum.bestseller', 1, [], false, false),
+                    new ProductIndexDataModel('flags_enum.discounts', 1, [], false, false),
                     new ProductIndexDataModel(
                         IndexDataProvider::ALL_TEXT_L10N_FIELD,
                         'Best Sales New Discounts',

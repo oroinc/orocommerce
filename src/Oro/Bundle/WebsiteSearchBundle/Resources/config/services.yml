@@ -70,6 +70,8 @@ services:
 
     oro_website_search.engine.mapper:
         class: 'Oro\Bundle\WebsiteSearchBundle\Engine\Mapper'
+        arguments:
+            - '@oro_search.formatter.datetime_formatter'
         public: false
 
     oro_website_search.cache.mapping_configuration:

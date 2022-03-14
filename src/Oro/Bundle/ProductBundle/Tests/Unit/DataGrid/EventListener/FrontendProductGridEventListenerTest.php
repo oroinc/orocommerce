@@ -413,7 +413,7 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
                         'columns' => [
                             'internalStatus' => [
                                 'type' => SearchableType\SearchAttributeTypeInterface::FILTER_TYPE_MULTI_ENUM,
-                                'data_name' => Query::TYPE_INTEGER . '.internalStatus_' . EnumIdPlaceholder::NAME,
+                                'data_name' => Query::TYPE_INTEGER . '.internalStatus_enum.' . EnumIdPlaceholder::NAME,
                                 'force_like' => true,
                                 'label' => self::LABEL,
                                 'class' => TestEnumValue::class
@@ -481,7 +481,7 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
                         'columns' => [
                             'internalStatus' => [
                                 'type' => SearchableType\SearchAttributeTypeInterface::FILTER_TYPE_MULTI_ENUM,
-                                'data_name' => Query::TYPE_INTEGER . '.internalStatus_' . EnumIdPlaceholder::NAME,
+                                'data_name' => Query::TYPE_INTEGER . '.internalStatus_enum.' . EnumIdPlaceholder::NAME,
                                 'force_like' => true,
                                 'label' => self::LABEL,
                                 'class' => TestEnumValue::class
@@ -549,7 +549,7 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
                         'columns' => [
                             'internalStatus' => [
                                 'type' => SearchableType\SearchAttributeTypeInterface::FILTER_TYPE_MULTI_ENUM,
-                                'data_name' => Query::TYPE_INTEGER . '.internalStatus_' . EnumIdPlaceholder::NAME,
+                                'data_name' => Query::TYPE_INTEGER . '.internalStatus_enum.' . EnumIdPlaceholder::NAME,
                                 'force_like' => true,
                                 'label' => self::LABEL,
                                 'class' => TestEnumValue::class
@@ -657,7 +657,7 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
                         'columns' => [
                             'internalStatus' => [
                                 'type' => SearchableType\SearchAttributeTypeInterface::FILTER_TYPE_MULTI_ENUM,
-                                'data_name' => Query::TYPE_INTEGER . '.internalStatus_' . EnumIdPlaceholder::NAME,
+                                'data_name' => Query::TYPE_INTEGER . '.internalStatus_enum.' . EnumIdPlaceholder::NAME,
                                 'force_like' => true,
                                 'label' => self::LABEL,
                                 'class' => TestEnumValue::class
@@ -683,7 +683,7 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
                         'columns' => [
                             'internalStatus' => [
                                 'type' => SearchableType\SearchAttributeTypeInterface::FILTER_TYPE_MULTI_ENUM,
-                                'data_name' => Query::TYPE_INTEGER . '.internalStatus_' . EnumIdPlaceholder::NAME,
+                                'data_name' => Query::TYPE_INTEGER . '.internalStatus_enum.' . EnumIdPlaceholder::NAME,
                                 'force_like' => true,
                                 'label' => self::LABEL,
                                 'class' => null
