@@ -91,7 +91,7 @@ class ScalableCombinedPriceListProcessor implements
     {
         $associations = $this->getAssociations($body);
 
-        $jobName = RebuildCombinedPriceListsTopic::getName() . ':' . md5(json_encode($body));
+        $jobName = RebuildCombinedPriceListsTopic::getName() . ':' . md5($message->getBody());
         $this->jobRunner->runUnique(
             $message->getMessageId(),
             $jobName,
