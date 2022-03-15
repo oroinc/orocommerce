@@ -11,6 +11,7 @@ use Oro\Bundle\EmailBundle\Entity\EmailTemplate;
 use Oro\Bundle\EmailBundle\Form\Model\Email;
 use Oro\Bundle\EmailBundle\Sender\EmailModelSender;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Notification\NotificationHelper;
 use Oro\Bundle\TestFrameworkBundle\Test\Logger\LoggerAwareTraitTestTrait;
@@ -72,7 +73,10 @@ class NotificationHelperTest extends \PHPUnit\Framework\TestCase
         $customerUser->setEmail('test@example.com');
 
         /** @var Quote $quote */
-        $quote = $this->getEntity(Quote::class, ['id' => 42, 'customerUser' => $customerUser]);
+        $quote = $this->getEntity(
+            Quote::class,
+            ['id' => 42, 'customerUser' => $customerUser, 'organization' => new Organization()]
+        );
 
         $this->assertRepositoryCalled(EmailTemplate::class);
         self::assertEquals(
@@ -240,6 +244,10 @@ class NotificationHelperTest extends \PHPUnit\Framework\TestCase
             ->setEntityId($entityId)
             ->setContexts([$quote])
             ->setTemplate($emailTemplate);
+
+        if ($quote->getOrganization()) {
+            $emailModel->setOrganization($quote->getOrganization());
+        }
 
         return $emailModel;
     }
