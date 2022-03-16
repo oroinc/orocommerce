@@ -239,6 +239,7 @@ define(function(require, exports, module) {
                 'aria-haspopup': 'true',
                 'aria-expanded': 'false',
                 'data-inherit-parent-width': 'loosely',
+                'data-flip': false,
                 'data-toggle': 'dropdown',
                 'html': $('<span></span>', {
                     'class': 'caret',
