@@ -266,7 +266,7 @@ workflows:
                             message: oro.checkout.workflow.condition.payment_method_was_not_selected.message
                             parameters: $checkout.paymentMethod
                         - '@payment_method_applicable':
-                            message: oro.checkout.workflow.condition.payment_method_is_not_applicable.message
+                            message: oro.checkout.workflow.condition.payment_method_was_not_selected.message
                             payment_method: $checkout.paymentMethod
                             context: $.result.paymentContext
 
