@@ -18,25 +18,16 @@ use Oro\Bundle\PromotionBundle\Datagrid\Extension\MassAction\AbstractCouponMassA
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Component\Exception\UnexpectedTypeException;
-use Oro\Component\Testing\Unit\EntityTrait;
 
 class AbstractCouponMassActionHandlerTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
-
-    /**
-     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     protected $doctrineHelper;
 
-    /**
-     * @var AclHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var AclHelper|\PHPUnit\Framework\MockObject\MockObject */
     protected $aclHelper;
 
-    /**
-     * @var MassActionHandlerInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var MassActionHandlerInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $handler;
 
     protected function setUp(): void
@@ -56,12 +47,9 @@ class AbstractCouponMassActionHandlerTest extends \PHPUnit\Framework\TestCase
 
     public function testExecuteForNonOrmDataSources()
     {
-        /** @var MassActionHandlerArgs|\PHPUnit\Framework\MockObject\MockObject $args */
         $args = $this->createMock(MassActionHandlerArgs::class);
-        /** @var DatagridInterface|\PHPUnit\Framework\MockObject\MockObject $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
 
-        /** @var DatasourceInterface|\PHPUnit\Framework\MockObject\MockObject $datasource */
         $datasource = $this->createMock(DatasourceInterface::class);
         $datagrid->expects($this->once())
             ->method('getDatasource')
@@ -79,18 +67,14 @@ class AbstractCouponMassActionHandlerTest extends \PHPUnit\Framework\TestCase
      */
     public function testHandle(array $iterateData, array $coupons)
     {
-        /** @var MassActionHandlerArgs|\PHPUnit\Framework\MockObject\MockObject $args */
         $args = $this->createMock(MassActionHandlerArgs::class);
-        /** @var DatagridInterface|\PHPUnit\Framework\MockObject\MockObject $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
 
-        /** @var OrmDatasource|\PHPUnit\Framework\MockObject\MockObject $datasource */
         $datasource = $this->createMock(OrmDatasource::class);
         $datagrid->expects($this->once())
             ->method('getDatasource')
             ->willReturn($datasource);
 
-        /** @var DatagridConfiguration|\PHPUnit\Framework\MockObject\MockObject $config */
         $config = $this->createMock(DatagridConfiguration::class);
         $config->expects($this->once())
             ->method('isDatasourceSkipAclApply')
@@ -103,13 +87,11 @@ class AbstractCouponMassActionHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('getDatagrid')
             ->willReturn($datagrid);
 
-        /** @var QueryBuilder|\PHPUnit\Framework\MockObject\MockObject $queryBuilder */
         $queryBuilder = $this->createMock(QueryBuilder::class);
         $this->aclHelper->expects($this->once())
             ->method('apply')
             ->with($queryBuilder, 'EDIT');
 
-        /** @var AbstractQuery|\PHPUnit\Framework\MockObject\MockObject $query */
         $query = $this->createMock(AbstractQuery::class);
         $query->expects($this->once())
             ->method('iterate')
@@ -123,13 +105,12 @@ class AbstractCouponMassActionHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('getQueryBuilder')
             ->willReturn($queryBuilder);
 
-        /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject $em */
         $em = $this->createMock(EntityManager::class);
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityManagerForClass')
             ->with(Coupon::class)
             ->willReturn($em);
-        /** @var EntityRepository|\PHPUnit\Framework\MockObject\MockObject $repo */
+
         $repo = $this->createMock(EntityRepository::class);
         $repo->expects($this->any())
             ->method('find')
@@ -150,39 +131,27 @@ class AbstractCouponMassActionHandlerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($response, $this->handler->handle($args));
     }
 
-    /**
-     * @return array
-     */
-    public function iterateDataProvider()
+    public function iterateDataProvider(): array
     {
         return [
             [
                 [[['id' => 1]], [['id' => 3]]],
-                [
-                    $this->getCouponMock(1),
-                    $this->getCouponMock(3)
-                ]
+                [$this->getCoupon(1), $this->getCoupon(3)]
             ]
         ];
     }
 
-    /**
-     * @param array|\PHPUnit\Framework\MockObject\MockObject|Coupon $coupons
-     * @param MassActionHandlerArgs|\PHPUnit\Framework\MockObject\MockObject $args
-     */
-    protected function assertExecuteCalled(array $coupons, MassActionHandlerArgs $args)
-    {
+    protected function assertExecuteCalled(
+        array $coupons,
+        MassActionHandlerArgs|\PHPUnit\Framework\MockObject\MockObject $args
+    ): void {
         $this->assertNotEmpty($coupons);
         $this->handler->expects($this->exactly(2))
             ->method('execute')
             ->with($this->isInstanceOf(Coupon::class), $args);
     }
 
-    /**
-     * @param int $entitiesCount
-     * @return MassActionResponse
-     */
-    protected function assertGetResponseCalled($entitiesCount)
+    protected function assertGetResponseCalled(int $entitiesCount): MassActionResponse
     {
         $response = new MassActionResponse(true, $entitiesCount . ' processed');
         $this->handler->expects($this->once())
@@ -192,10 +161,7 @@ class AbstractCouponMassActionHandlerTest extends \PHPUnit\Framework\TestCase
         return $response;
     }
 
-    /**
-     * @return \PHPUnit\Framework\MockObject\MockObject
-     */
-    private function getCouponMock($id)
+    private function getCoupon($id): Coupon
     {
         $coupon = $this->createMock(Coupon::class);
         $coupon->expects($this->any())

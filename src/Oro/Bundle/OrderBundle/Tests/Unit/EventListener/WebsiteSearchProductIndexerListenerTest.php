@@ -165,13 +165,13 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
                     ->method('addPlaceholderField')
                     ->withConsecutive(
                         [
-                            1, 'ordered_at_by_CUSTOMER_USER_ID', 20171, [ 'CUSTOMER_USER_ID' => 1 ]
+                            1, 'ordered_at_by.CUSTOMER_USER_ID', 20171, [ 'CUSTOMER_USER_ID' => 1 ]
                         ],
                         [
-                            1, 'ordered_at_by_CUSTOMER_USER_ID', 20172, [ 'CUSTOMER_USER_ID' => 2 ]
+                            1, 'ordered_at_by.CUSTOMER_USER_ID', 20172, [ 'CUSTOMER_USER_ID' => 2 ]
                         ],
                         [
-                            2, 'ordered_at_by_CUSTOMER_USER_ID', 20173, [ 'CUSTOMER_USER_ID' => 1 ]
+                            2, 'ordered_at_by.CUSTOMER_USER_ID', 20173, [ 'CUSTOMER_USER_ID' => 1 ]
                         ]
                     );
             }

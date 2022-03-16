@@ -48,7 +48,7 @@ class MultiEnumSearchableAttributeType extends AbstractSearchableAttributeType
      */
     protected function getFilterableFieldNameMain(FieldConfigModel $attribute): string
     {
-        return $attribute->getFieldName() . '_' . EnumIdPlaceholder::NAME;
+        return $attribute->getFieldName() . '_enum.' . EnumIdPlaceholder::NAME;
     }
 
     /**

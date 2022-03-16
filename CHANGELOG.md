@@ -27,6 +27,9 @@ The current file describes significant changes in the code that may affect the u
 * Changed website search engine configuration: `website_search_engine_dsn` parameter is used instead of `search_engine_name`, `search_engine_host`, `search_engine_port`, `search_engine_index_prefix`, `search_engine_username`, `search_engine_password`, `search_engine_ssl_verification`, `search_engine_ssl_cert`,  `search_engine_ssl_cert_password`, `search_engine_ssl_key`, `search_engine_ssl_key_password`, `website_search_engine_index_prefix`.
 * Separate setup via dedicated DSN-s allows splitting search engine's connections between back-office and storefront.
 
+## 5.0.0 (2022-01-26)
+[Show detailed list of changes](incompatibilities-5-0.md)
+
 ## 5.0.0-rc (2021-12-07)
 [Show detailed list of changes](incompatibilities-5-0-rc.md)
 

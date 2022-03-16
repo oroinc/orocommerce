@@ -126,6 +126,10 @@ class NotificationHelper implements LoggerAwareInterface
                 )
             );
 
+        if ($quote->getOrganization()) {
+            $emailModel->setOrganization($quote->getOrganization());
+        }
+
         return $emailModel;
     }
 
