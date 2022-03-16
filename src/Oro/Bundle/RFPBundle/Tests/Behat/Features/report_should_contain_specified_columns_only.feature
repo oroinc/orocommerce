@@ -1,5 +1,3 @@
-# Should be fixed in BB-21069
-@skip
 @regression
 @ticket-BAP-9665
 @fixture-OroRFPBundle:RFQWorkflows.yml
