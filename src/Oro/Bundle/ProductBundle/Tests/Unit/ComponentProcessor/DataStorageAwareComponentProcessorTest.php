@@ -3,15 +3,17 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\ComponentProcessor;
 
 use Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorFilter;
+use Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorFilterInterface;
 use Oro\Bundle\ProductBundle\ComponentProcessor\DataStorageAwareComponentProcessor;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use Symfony\Component\Translation\Translator;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -19,60 +21,39 @@ use Symfony\Component\Translation\Translator;
  */
 class DataStorageAwareComponentProcessorTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|UrlGeneratorInterface
-     */
-    protected $router;
+    /** @var UrlGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $router;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|ProductDataStorage
-     */
-    protected $storage;
+    /** @var ProductDataStorage|\PHPUnit\Framework\MockObject\MockObject */
+    private $storage;
 
-    /**
-     * @var DataStorageAwareComponentProcessor
-     */
-    protected $processor;
-
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|AuthorizationCheckerInterface
-     */
+    /** @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $authorizationChecker;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|TokenAccessorInterface
-     */
+    /** @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $tokenAccessor;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|ComponentProcessorFilter
-     */
-    protected $componentProcessorFilter;
+    /** @var ComponentProcessorFilter|\PHPUnit\Framework\MockObject\MockObject */
+    private $componentProcessorFilter;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|Session
-     */
-    protected $session;
+    /** @var Session|\PHPUnit\Framework\MockObject\MockObject */
+    private $session;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|Translator
-     */
-    protected $translator;
+    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $translator;
+
+    /** @var DataStorageAwareComponentProcessor */
+    private $processor;
 
     protected function setUp(): void
     {
-        $this->router = $this->createMock('Symfony\Component\Routing\Generator\UrlGeneratorInterface');
-        $this->storage = $this->createMock('Oro\Bundle\ProductBundle\Storage\ProductDataStorage');
-
+        $this->router = $this->createMock(UrlGeneratorInterface::class);
+        $this->storage = $this->createMock(ProductDataStorage::class);
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
-
-        $this->componentProcessorFilter = $this
-            ->getMockBuilder('Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorFilterInterface')
-            ->getMockForAbstractClass();
-
-        $this->session = $this->createMock('Symfony\Component\HttpFoundation\Session\Session');
-        $this->translator = $this->createMock('Symfony\Component\Translation\Translator');
+        $this->componentProcessorFilter = $this->createMock(ComponentProcessorFilterInterface::class);
+        $this->session = $this->createMock(Session::class);
+        $this->translator = $this->createMock(TranslatorInterface::class);
 
         $this->processor = new DataStorageAwareComponentProcessor(
             $this->router,
@@ -83,17 +64,6 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit\Framework\TestCase
             $this->translator
         );
         $this->processor->setComponentProcessorFilter($this->componentProcessorFilter);
-    }
-
-    protected function tearDown(): void
-    {
-        unset(
-            $this->router,
-            $this->storage,
-            $this->session,
-            $this->translator,
-            $this->processor
-        );
     }
 
     public function testProcessWithoutRedirectRoute()
@@ -156,13 +126,9 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param string $acl
-     * @param bool $isGranted
-     * @param bool $hasLoggedUser
-     * @param bool $expected
      * @dataProvider processorIsAllowedProvider
      */
-    public function testProcessorIsAllowed($acl, $isGranted, $hasLoggedUser, $expected)
+    public function testProcessorIsAllowed(?string $acl, bool $isGranted, bool $hasLoggedUser, bool $expected)
     {
         if (null !== $acl) {
             $this->tokenAccessor->expects($this->any())
@@ -177,10 +143,7 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $this->processor->isAllowed());
     }
 
-    /**
-     * @return array
-     */
-    public function processorIsAllowedProvider()
+    public function processorIsAllowedProvider(): array
     {
         return [
             [null, true, false, true],
@@ -202,34 +165,26 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider processorWithScopeDataProvider
-     * @param string $scope
-     * @param array $data
-     * @param array $allowedData
-     * @param string $errorMessageSkus
-     * @param bool $isRedirectRoute
      */
     public function testProcessorWithScope(
-        $scope,
+        string $scope,
         array $data,
         array $allowedData,
-        $errorMessageSkus,
-        $isRedirectRoute = false
+        string $errorMessageSkus,
+        bool $isRedirectRoute = false
     ) {
         $this->setupProcessorScope($scope, $data, $allowedData);
 
         $this->setupErrorMessages($errorMessageSkus);
 
         if ($isRedirectRoute) {
-            $this->assertProcessorReturnRedirectResponse($this->processor, $this->router, $data);
+            $this->assertProcessorReturnRedirectResponse($data);
         } else {
             $this->assertNull($this->processor->process($data, new Request()));
         }
     }
 
-    /**
-     * @return array
-     */
-    public function processorWithScopeDataProvider()
+    public function processorWithScopeDataProvider(): array
     {
         return [
             'restricted several with redirect' => [
@@ -309,22 +264,18 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider processorWithScopeAllRestricted
-     * @param string $scope
-     * @param array $data
-     * @param string|null $errorMessageSkus
-     * @param bool $isRedirectRoute
      */
     public function testProcessorWithScopeAllRestricted(
-        $scope,
+        string $scope,
         array $data,
-        $errorMessageSkus,
-        $isRedirectRoute = false
+        string $errorMessageSkus,
+        bool $isRedirectRoute = false
     ) {
         $filteredData = [ProductDataStorage::ENTITY_ITEMS_DATA_KEY => []];
 
         $this->componentProcessorFilter->expects($this->any())
             ->method('filterData')
-            ->will($this->returnValue($filteredData));
+            ->willReturn($filteredData);
 
         $this->setupProcessorScope($scope, $data, $filteredData);
 
@@ -339,10 +290,7 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit\Framework\TestCase
         $this->assertNull($this->processor->process($data, new Request()));
     }
 
-    /**
-     * @return array
-     */
-    public function processorWithScopeAllRestricted()
+    public function processorWithScopeAllRestricted(): array
     {
         return [
             'with redirect route' => [
@@ -375,11 +323,8 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider processorWithScopeAllAllowedDataProvider
-     * @param string $scope
-     * @param array $data
-     * @param bool $isRedirectRoute
      */
-    public function testProcessorWithScopeAllAllowed($scope, array $data, $isRedirectRoute = false)
+    public function testProcessorWithScopeAllAllowed(string $scope, array $data, bool $isRedirectRoute = false)
     {
         $this->setupProcessorScope($scope, $data, $data);
 
@@ -390,16 +335,13 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('getFlashBag');
 
         if ($isRedirectRoute) {
-            $this->assertProcessorReturnRedirectResponse($this->processor, $this->router, $data);
+            $this->assertProcessorReturnRedirectResponse($data);
         } else {
             $this->assertNull($this->processor->process($data, new Request()));
         }
     }
 
-    /**
-     * @return array
-     */
-    public function processorWithScopeAllAllowedDataProvider()
+    public function processorWithScopeAllAllowedDataProvider(): array
     {
         return [
             'with redirect route' => [
@@ -428,12 +370,7 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @param string $scope
-     * @param array $data
-     * @param array $allowedData
-     */
-    protected function setupProcessorScope($scope, $data, $allowedData)
+    private function setupProcessorScope(string $scope, array $data, array $allowedData): void
     {
         $this->componentProcessorFilter->expects($this->once())
             ->method('filterData')
@@ -447,10 +384,7 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit\Framework\TestCase
         $this->processor->setScope($scope);
     }
 
-    /**
-     * @param string $errorMessageSkus
-     */
-    protected function setupErrorMessages($errorMessageSkus)
+    private function setupErrorMessages(string $errorMessageSkus): void
     {
         $this->translator->expects($this->any())
             ->method('trans')
@@ -459,7 +393,7 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit\Framework\TestCase
                 ['%count%' => count(explode(', ', $errorMessageSkus)), '%sku%' => $errorMessageSkus]
             );
 
-        $flashBag = $this->createMock('Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface');
+        $flashBag = $this->createMock(FlashBagInterface::class);
         $flashBag->expects($this->once())
             ->method('add')
             ->with('warning');
@@ -469,19 +403,14 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit\Framework\TestCase
             ->willReturn($flashBag);
     }
 
-    /**
-     * @param DataStorageAwareComponentProcessor $processor
-     * @param \PHPUnit\Framework\MockObject\MockObject $routerMock
-     * @param array $data
-     * @param string $targetUrl
-     */
-    protected function assertProcessorReturnRedirectResponse($processor, $routerMock, $data, $targetUrl = 'url')
+    private function assertProcessorReturnRedirectResponse(array $data): void
     {
         $redirectRoute = 'route';
+        $targetUrl = 'url';
 
-        $processor->setRedirectRouteName($redirectRoute);
+        $this->processor->setRedirectRouteName($redirectRoute);
 
-        $routerMock->expects($this->once())
+        $this->router->expects($this->once())
             ->method('generate')
             ->with($redirectRoute, [ProductDataStorage::STORAGE_KEY => true])
             ->willReturn($targetUrl);

@@ -9,11 +9,10 @@ use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\EntityBundle\Fallback\EntityFallbackResolver;
 use Oro\Bundle\EntityBundle\Form\Type\EntityFieldFallbackValueType;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
-use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\EntityExtendBundle\Form\Type\EnumSelectType;
 use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
-use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
+use Oro\Bundle\FormBundle\Tests\Unit\Stub\TooltipFormExtensionStub;
 use Oro\Bundle\FrontendBundle\Form\Type\PageTemplateType;
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
@@ -48,7 +47,6 @@ use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType;
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugWithRedirectType;
 use Oro\Bundle\RedirectBundle\Helper\ConfirmSlugChangeFormHelper;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Form\Type\Stub\LocalizedSlugTypeStub;
-use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Oro\Component\Layout\Extension\Theme\Manager\PageTemplatesManager;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
@@ -64,27 +62,15 @@ class ProductTypeTest extends FormIntegrationTestCase
 {
     use EntityTrait;
 
-    const DATA_CLASS = \Oro\Bundle\ProductBundle\Entity\Product::class;
+    private const DATA_CLASS = \Oro\Bundle\ProductBundle\Entity\Product::class;
 
-    /**
-     * @var ProductType
-     */
-    protected $type;
+    /** @var ProductType */
+    private $type;
 
-    /**
-     * @var UrlGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $urlGenerator;
+    /** @var UrlGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $urlGenerator;
 
-    /**
-     * @var ChainDefaultProductUnitProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $defaultProductUnitProvider;
-
-    /**
-     * @var array
-     */
-    protected $submitCustomFields = [
+    private array $submitCustomFields = [
         'size' => [
             'priority' => 0,
             'is_selected' => true,
@@ -95,39 +81,24 @@ class ProductTypeTest extends FormIntegrationTestCase
         ],
     ];
 
-    /**
-     * @var AttributeFamily
-     */
-    protected $attributeFamily;
+    /** @var AttributeFamily */
+    private $attributeFamily;
 
-    /**
-     * @var array
-     */
-    protected $images = [];
+    private array $images = [];
 
-    /**
-     * @var UnitLabelFormatterInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $productUnitLabelFormatter;
+    /** @var UnitLabelFormatterInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $productUnitLabelFormatter;
 
-    /**
-     * {@inheritDoc}
-     */
     protected function setUp(): void
     {
-        $this->defaultProductUnitProvider = $this
-            ->getMockBuilder(ChainDefaultProductUnitProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->defaultProductUnitProvider
-            ->expects($this->any())
+        $defaultProductUnitProvider = $this->createMock(ChainDefaultProductUnitProvider::class);
+        $defaultProductUnitProvider->expects($this->any())
             ->method('getDefaultProductUnitPrecision')
-            ->will($this->returnValue($this->getDefaultProductUnitPrecision()));
+            ->willReturn($this->getDefaultProductUnitPrecision());
 
         $this->urlGenerator = $this->createMock(UrlGeneratorInterface::class);
 
-        $this->type = new ProductType($this->defaultProductUnitProvider, $this->urlGenerator, new ProductImageHelper());
+        $this->type = new ProductType($defaultProductUnitProvider, $this->urlGenerator, new ProductImageHelper());
         $this->type->setDataClass(self::DATA_CLASS);
 
         $image1 = new StubProductImage();
@@ -146,7 +117,7 @@ class ProductTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         $productPrimaryUnitPrecision = new ProductPrimaryUnitPrecisionType();
         $productPrimaryUnitPrecision->setDataClass(ProductUnitPrecision::class);
@@ -154,80 +125,61 @@ class ProductTypeTest extends FormIntegrationTestCase
         $productUnitPrecision = new ProductUnitPrecisionType();
         $productUnitPrecision->setDataClass(ProductUnitPrecision::class);
 
-        $stubEnumSelectType = new EnumSelectTypeStub([
-            new TestEnumValue(Product::INVENTORY_STATUS_IN_STOCK, 'In Stock')
-        ]);
-
-        /** @var \PHPUnit\Framework\MockObject\MockObject|ConfigProvider $configProvider */
-        $configProvider = $this->createMock(ConfigProvider::class);
-        /** @var \PHPUnit\Framework\MockObject\MockObject|Translator $translator */
-        $translator = $this->createMock(Translator::class);
-        /** @var \PHPUnit\Framework\MockObject\MockObject|ImageTypeProvider $imageTypeProvider */
         $imageTypeProvider = $this->createMock(ImageTypeProvider::class);
         $imageTypeProvider->expects($this->any())
             ->method('getImageTypes')
             ->willReturn([]);
-        /** @var \PHPUnit\Framework\MockObject\MockObject|VariantFieldProvider $variantFieldProvider */
+
         $variantFieldProvider = $this->createMock(VariantFieldProvider::class);
         $variantFields = [new VariantField('size', 'Size'), new VariantField('color', 'Color')];
         $variantFieldProvider->expects($this->any())
             ->method('getVariantFields')
             ->willReturn($variantFields);
-        /** @var \PHPUnit\Framework\MockObject\MockObject|EntityFallbackResolver $entityFallbackResolver */
+
         $entityFallbackResolver = $this->createMock(EntityFallbackResolver::class);
         $entityFallbackResolver->expects($this->any())
             ->method('getFallbackConfig')
             ->willReturn([]);
-        /** @var \PHPUnit\Framework\MockObject\MockObject|PageTemplatesManager $pageTemplatesManager */
+
         $pageTemplatesManager = $this->createMock(PageTemplatesManager::class);
         $pageTemplatesManager->expects($this->any())
             ->method('getRoutePageTemplates')
             ->willReturn([]);
 
-        /** @var ConfirmSlugChangeFormHelper $confirmSlugChangeFormHelper */
-        $confirmSlugChangeFormHelper = $this->createMock(ConfirmSlugChangeFormHelper::class);
-
-        $entityType = new EntityTypeStub(
-            [
-                'each' => (new ProductUnit())->setCode('each'),
-                'item' => (new ProductUnit())->setCode('item'),
-                'kg' => (new ProductUnit())->setCode('kg')
-            ]
-        );
-
         return [
             new PreloadedExtension(
                 [
                     $this->type,
-                    EnumSelectType::class => $stubEnumSelectType,
+                    EnumSelectType::class => new EnumSelectTypeStub([
+                        new TestEnumValue(Product::INVENTORY_STATUS_IN_STOCK, 'In Stock')
+                    ]),
                     ImageType::class => new ImageTypeStub(),
-                    ProductPrimaryUnitPrecisionType::class => $productPrimaryUnitPrecision,
-                    ProductUnitPrecisionType::class => $productUnitPrecision,
-                    ProductUnitSelectType::class => new ProductUnitSelectType($this->productUnitLabelFormatter),
-                    EntityType::class => $entityType,
+                    $productPrimaryUnitPrecision,
+                    $productUnitPrecision,
+                    new ProductUnitSelectType($this->productUnitLabelFormatter),
+                    EntityType::class => new EntityTypeStub([
+                        'each' => (new ProductUnit())->setCode('each'),
+                        'item' => (new ProductUnit())->setCode('item'),
+                        'kg' => (new ProductUnit())->setCode('kg')
+                    ]),
                     LocalizedFallbackValueCollectionType::class => new LocalizedFallbackValueCollectionTypeStub(),
-                    ProductCustomVariantFieldsCollectionType::class => new ProductCustomVariantFieldsCollectionType(
-                        $variantFieldProvider
-                    ),
+                    new ProductCustomVariantFieldsCollectionType($variantFieldProvider),
                     EntityIdentifierType::class => new EntityTypeStub([]),
-                    ProductStatusType::class => new ProductStatusType(new ProductStatusProvider()),
-                    ProductImageCollectionType::class => new ProductImageCollectionType($imageTypeProvider),
+                    new ProductStatusType(new ProductStatusProvider()),
+                    new ProductImageCollectionType($imageTypeProvider),
                     LocalizedSlugType::class => new LocalizedSlugTypeStub(),
-                    EntityFieldFallbackValueType::class => new EntityFieldFallbackValueType($entityFallbackResolver),
-                    PageTemplateType::class => new PageTemplateType($pageTemplatesManager),
-                    LocalizedSlugWithRedirectType::class
-                    => new LocalizedSlugWithRedirectType($confirmSlugChangeFormHelper),
+                    new EntityFieldFallbackValueType($entityFallbackResolver),
+                    new PageTemplateType($pageTemplatesManager),
+                    new LocalizedSlugWithRedirectType($this->createMock(ConfirmSlugChangeFormHelper::class)),
                     BrandSelectType::class => new BrandSelectTypeStub(),
-                    EntityTypeStub::class => new EntityTypeStub(
-                        [
-                            'en' => (new Localization())->setName('en'),
-                            'en_US' => (new Localization())->setName('en_US'),
-                        ]
-                    ),
+                    new EntityTypeStub([
+                        'en' => (new Localization())->setName('en'),
+                        'en_US' => (new Localization())->setName('en_US'),
+                    ]),
                 ],
                 [
                     FormType::class => [
-                        new TooltipFormExtension($configProvider, $translator),
+                        new TooltipFormExtensionStub($this),
                         new IntegerExtension()
                     ]
                 ]
@@ -237,12 +189,8 @@ class ProductTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider submitProvider
-     *
-     * @param Product $defaultData
-     * @param array $submittedData
-     * @param Product $expectedData
      */
-    public function testSubmit(Product $defaultData, $submittedData, Product $expectedData)
+    public function testSubmit(Product $defaultData, array $submittedData, Product $expectedData)
     {
         $form = $this->factory->create(ProductType::class, $defaultData);
 
@@ -259,10 +207,8 @@ class ProductTypeTest extends FormIntegrationTestCase
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     *
-     * @return array
      */
-    public function submitProvider()
+    public function submitProvider(): array
     {
         return [
             'simple product' => [
@@ -339,7 +285,7 @@ class ProductTypeTest extends FormIntegrationTestCase
                 'expectedData'  => $this->createExpectedProductEntity(false, true)
             ],
             'simple product without variants' => [
-                'defaultData'   => $this->createDefaultProductEntity(false),
+                'defaultData'   => $this->createDefaultProductEntity(),
                 'submittedData' => [
                     'sku' => 'test sku',
                     'primaryUnitPrecision' => ['unit' => 'each', 'precision' => 0],
@@ -352,10 +298,10 @@ class ProductTypeTest extends FormIntegrationTestCase
                     ],
                     'attributeFamily' => $this->getAttributeFamily()
                 ],
-                'expectedData'  => $this->createExpectedProductEntity(false, false)
+                'expectedData'  => $this->createExpectedProductEntity()
             ],
             'simple product with images' => [
-                'defaultData'   => $this->createDefaultProductEntity(false),
+                'defaultData'   => $this->createDefaultProductEntity(),
                 'submittedData' => [
                     'sku' => 'test sku',
                     'primaryUnitPrecision' => ['unit' => 'each', 'precision' => 0],
@@ -369,7 +315,7 @@ class ProductTypeTest extends FormIntegrationTestCase
                     ],
                     'attributeFamily' => $this->getAttributeFamily()
                 ],
-                'expectedData'  => $this->createExpectedProductEntity(false, false)
+                'expectedData'  => $this->createExpectedProductEntity()
             ],
             'configurable product' => [
                 'defaultData'   => $this->createDefaultProductEntity(true),
@@ -392,19 +338,12 @@ class ProductTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * @param bool $withProductUnitPrecision
-     * @param bool $withNamesAndDescriptions
-     * @param bool $hasVariants
-     * @param bool $hasImages
-     * @return Product
-     */
-    protected function createExpectedProductEntity(
-        $withProductUnitPrecision = false,
-        $withNamesAndDescriptions = false,
-        $hasVariants = false,
-        $hasImages = false
-    ) {
+    private function createExpectedProductEntity(
+        bool $withProductUnitPrecision = false,
+        bool $withNamesAndDescriptions = false,
+        bool $hasVariants = false,
+        bool $hasImages = false
+    ): Product {
         $expectedProduct = new Product();
 
         $expectedProduct
@@ -493,10 +432,7 @@ class ProductTypeTest extends FormIntegrationTestCase
         $this->assertTrue($form->has('additionalUnitPrecisions'));
     }
 
-    /**
-     * @return AttributeFamily
-     */
-    private function getAttributeFamily()
+    private function getAttributeFamily(): AttributeFamily
     {
         if (!$this->attributeFamily) {
             $this->attributeFamily = $this->getEntity(AttributeFamily::class, ['id' => 777]);
@@ -505,11 +441,7 @@ class ProductTypeTest extends FormIntegrationTestCase
         return $this->attributeFamily;
     }
 
-    /**
-     * @param bool $hasVariants
-     * @return Product
-     */
-    protected function createDefaultProductEntity($hasVariants = false)
+    private function createDefaultProductEntity(bool $hasVariants = false): Product
     {
         $defaultProduct = new Product();
         $defaultProduct->setType(Product::TYPE_SIMPLE);
@@ -523,13 +455,11 @@ class ProductTypeTest extends FormIntegrationTestCase
         return $defaultProduct;
     }
 
-    /**
-     * @return ProductUnitPrecision
-     */
-    protected function getDefaultProductUnitPrecision()
+    private function getDefaultProductUnitPrecision(): ProductUnitPrecision
     {
         $productUnit = new ProductUnit();
         $productUnit->setCode('each');
+
         $productUnitPrecision = new ProductUnitPrecision();
         $productUnitPrecision->setUnit($productUnit)->setPrecision('0');
 
@@ -539,8 +469,7 @@ class ProductTypeTest extends FormIntegrationTestCase
     public function testGenerateChangedSlugsUrlOnPresetData()
     {
         $generatedUrl = '/some/url';
-        $this->urlGenerator
-            ->expects($this->once())
+        $this->urlGenerator->expects($this->once())
             ->method('generate')
             ->with('oro_product_get_changed_slugs', ['id' => 1])
             ->willReturn($generatedUrl);

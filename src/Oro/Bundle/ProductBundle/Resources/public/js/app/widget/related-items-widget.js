@@ -123,7 +123,7 @@ define(function(require) {
                 return;
             } else {
                 this.options.limitErrorTemplate = _.template(
-                    '<span class="pull-left validation-failed" <%= dataAttr %>><%= msg %></span>'
+                    '<span class="pull-left validation-failed" <%= dataAttr %>><%- msg %></span>'
                 );
             }
 

@@ -1329,12 +1329,22 @@ oro_behat_extension:
     Drawing Field:
       selector:
         type: xpath
-        locator: '//div[contains(@class, "responsive-cell") and .//label[contains(., "Drawing")]]'
+        locator: '//div[contains(@class, "responsive-cell")]/div[contains(@class, "control-group") and .//label[contains(., "Drawing")]]'
 
     Document Field:
       selector:
         type: xpath
-        locator: '//div[contains(@class, "responsive-cell") and .//label[contains(., "Document")]]'
+        locator: '//div[contains(@class, "responsive-cell")]/div[contains(@class, "control-group") and .//label[contains(., "Document")]]'
+
+    Drawing Backoffice Field:
+      selector:
+        type: xpath
+        locator: '//div[contains(@class, "responsive-cell")]/div[contains(@class, "attribute-item") and .//label[contains(., "Drawing")]]'
+
+    Document Backoffice Field:
+      selector:
+        type: xpath
+        locator: '//div[contains(@class, "responsive-cell")]/div[contains(@class, "attribute-item") and .//label[contains(., "Document")]]'
 
     MultipleFiles Field:
       selector:

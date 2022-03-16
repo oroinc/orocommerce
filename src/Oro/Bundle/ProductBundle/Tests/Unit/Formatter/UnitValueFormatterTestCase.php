@@ -5,16 +5,14 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Formatter;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
 use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatterInterface;
-use Symfony\Component\Translation\Translator;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class UnitValueFormatterTestCase extends \PHPUnit\Framework\TestCase
 {
-    /** @var Translator|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $translator;
 
-    /**
-     * @var NumberFormatter|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var NumberFormatter|\PHPUnit\Framework\MockObject\MockObject */
     protected $numberFormatter;
 
     /** @var UnitValueFormatterInterface */
@@ -22,14 +20,9 @@ abstract class UnitValueFormatterTestCase extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->translator = $this->createMock(Translator::class);
+        $this->translator = $this->createMock(TranslatorInterface::class);
         $this->numberFormatter = $this->createMock(NumberFormatter::class);
         $this->formatter = $this->createFormatter();
-    }
-
-    protected function tearDown(): void
-    {
-        unset($this->formatter, $this->translator);
     }
 
     public function testFormat()
@@ -114,16 +107,10 @@ abstract class UnitValueFormatterTestCase extends \PHPUnit\Framework\TestCase
         $this->assertEquals('N/A', $this->formatter->formatShort('test', $this->createObject('item')));
     }
 
-    /**
-     * @param float $inputNumber
-     * @param string|float $outputNumber
-     */
-    protected function configureFormatter($inputNumber, $outputNumber): void
+    protected function configureFormatter(float|int $inputNumber, string|float $outputNumber): void
     {
-        $method = is_int($inputNumber) ? 'format' : 'formatDecimal';
-        $this->numberFormatter
-            ->expects(self::once())
-            ->method($method)
+        $this->numberFormatter->expects(self::once())
+            ->method(is_int($inputNumber) ? 'format' : 'formatDecimal')
             ->with($inputNumber)
             ->willReturn($outputNumber);
     }
@@ -132,9 +119,5 @@ abstract class UnitValueFormatterTestCase extends \PHPUnit\Framework\TestCase
 
     abstract protected function getTranslationPrefix(): string;
 
-    /**
-     * @param string $code
-     * @return MeasureUnitInterface
-     */
-    abstract protected function createObject($code): MeasureUnitInterface;
+    abstract protected function createObject(string $code): MeasureUnitInterface;
 }

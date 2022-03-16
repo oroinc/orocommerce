@@ -86,7 +86,7 @@ Feature: Product attributes order
       | MultipleImages 1 | cat2.jpg     |
     And I save and close form
     Then I should see "Product has been saved" flash message
-    And I should see "Drawing Field" goes after "Document Field"
+    And I should see "Drawing Backoffice Field" goes after "Document Backoffice Field"
     And I should see "MultipleImages Field" goes after "MultipleFiles Field"
 
   Scenario: Check attributes order on store front
@@ -113,7 +113,7 @@ Feature: Product attributes order
     Then I should see "Document Field" goes after "Drawing Field"
     And I should see "MultipleFiles Field" goes after "MultipleImages Field"
     When I save and close form
-    Then I should see "Document Field" goes after "Drawing Field"
+    Then I should see "Document Backoffice Field" goes after "Drawing Backoffice Field"
     And I should see "MultipleFiles Field" goes after "MultipleImages Field"
 
   Scenario: Check attributes order on store front

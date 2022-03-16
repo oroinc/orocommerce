@@ -64,7 +64,7 @@ class UnitValueFormatterTest extends UnitValueFormatterTestCase
     /**
      * {@inheritdoc}
      */
-    protected function createObject($code): MeasureUnitInterface
+    protected function createObject(string $code): MeasureUnitInterface
     {
         $unit = new ProductUnit();
         $unit->setCode($code);
