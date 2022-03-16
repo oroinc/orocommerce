@@ -2,14 +2,18 @@
 
 namespace Oro\Bundle\RFPBundle\Migrations\Schema;
 
+use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\EntityExtendBundle\Migration\OroOptions;
+use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareInterface;
+use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
+use Oro\Bundle\MigrationBundle\Migration\SqlMigrationQuery;
 use Oro\Bundle\RFPBundle\Migrations\Data\ORM\LoadRequestCustomerStatuses;
 use Oro\Bundle\RFPBundle\Migrations\Data\ORM\LoadRequestInternalStatuses;
 
@@ -18,8 +22,14 @@ use Oro\Bundle\RFPBundle\Migrations\Data\ORM\LoadRequestInternalStatuses;
  *
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
-class OroRFPBundleInstaller implements Installation, ActivityExtensionAwareInterface, ExtendExtensionAwareInterface
+class OroRFPBundleInstaller implements
+    Installation,
+    DatabasePlatformAwareInterface,
+    ActivityExtensionAwareInterface,
+    ExtendExtensionAwareInterface
 {
+    use DatabasePlatformAwareTrait;
+
     /** @var ActivityExtension */
     protected $activityExtension;
 
@@ -47,7 +57,7 @@ class OroRFPBundleInstaller implements Installation, ActivityExtensionAwareInter
      */
     public function getMigrationVersion()
     {
-        return 'v1_12';
+        return 'v1_13';
     }
 
     /**
@@ -59,6 +69,7 @@ class OroRFPBundleInstaller implements Installation, ActivityExtensionAwareInter
         $this->createOroRfpAssignedAccUsersTable($schema);
         $this->createOroRfpAssignedUsersTable($schema);
         $this->createOroRfpRequestTable($schema);
+        $this->createOroRfpRequestTableCaseInsensitiveIndex($queries);
         $this->createOroRfpRequestProductTable($schema);
         $this->createOroRfpRequestProductItemTable($schema);
         $this->createOroRfpRequestAddNoteTable($schema);
@@ -126,6 +137,15 @@ class OroRFPBundleInstaller implements Installation, ActivityExtensionAwareInter
         $table->addIndex(['website_id'], 'idx_de1d53c18f45c82', []);
 
         $this->addOroRfpRequestEnumField($schema);
+    }
+
+    private function createOroRfpRequestTableCaseInsensitiveIndex(QueryBag $queries)
+    {
+        if ($this->platform instanceof PostgreSqlPlatform) {
+            $queries->addPostQuery(new SqlMigrationQuery(
+                'CREATE INDEX idx_rfp_request_email_ci ON oro_rfp_request (LOWER(email))'
+            ));
+        }
     }
 
     protected function addOroRfpRequestEnumField(Schema $schema)
