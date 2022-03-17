@@ -211,10 +211,10 @@ oro_behat_extension:
       selector: '.dropdown-menu [data-role="quick-search"]'
 
     Shopping List Quick Search Clear:
-      selector: '.dropdown-search .clear-search-button'
+      selector: '.dropdown-search-container .clear-search-button'
 
     Shopping List Quick Search Clear in Dialog:
-      selector: '[role="dialog"] .dropdown-search .clear-search-button'
+      selector: '[role="dialog"] .dropdown-search-container .clear-search-button'
 
     FrontendLineItemForm:
       selector: 'form[id^="oro_product_frontend_line_item"]'
