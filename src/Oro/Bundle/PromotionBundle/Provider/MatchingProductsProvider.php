@@ -2,41 +2,26 @@
 
 namespace Oro\Bundle\PromotionBundle\Provider;
 
-use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\ORM\QueryBuilder;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
 use Oro\Bundle\SegmentBundle\Entity\Manager\SegmentManager;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
+use Symfony\Contracts\Cache\CacheInterface;
 
 /**
  * This provider returns products from line items which fit segment's conditions.
  */
 class MatchingProductsProvider
 {
-    /**
-     * @var SegmentManager
-     */
-    private $segmentManager;
+    private SegmentManager $segmentManager;
+    private CacheInterface $matchingProductsCache;
 
-    /**
-     * @var CacheProvider
-     */
-    private $matchingProductsCache;
-
-    public function __construct(SegmentManager $segmentManager, CacheProvider $matchingProductsCache)
+    public function __construct(SegmentManager $segmentManager, CacheInterface $matchingProductsCache)
     {
         $this->segmentManager = $segmentManager;
         $this->matchingProductsCache = $matchingProductsCache;
     }
 
-    /**
-     * @param Segment $segment
-     * @param array|DiscountLineItem[] $lineItems
-     * @return bool
-     *
-     * @throws \RuntimeException
-     */
     public function hasMatchingProducts(Segment $segment, array $lineItems) : bool
     {
         if (empty($lineItems)) {
@@ -51,13 +36,6 @@ class MatchingProductsProvider
         return !empty($queryBuilder->getQuery()->getArrayResult());
     }
 
-    /**
-     * @param Segment $segment
-     * @param array|DiscountLineItem[] $lineItems
-     * @return array|Product[]
-     *
-     * @throws \RuntimeException
-     */
     public function getMatchingProducts(Segment $segment, array $lineItems) : array
     {
         if (empty($lineItems)) {
@@ -65,26 +43,12 @@ class MatchingProductsProvider
         }
 
         $cacheKey = $this->getCacheKey($segment, $lineItems);
-
-        $cachedMatchingProducts = $this->matchingProductsCache->fetch($cacheKey);
-        if ($cachedMatchingProducts !== false) {
-            return $cachedMatchingProducts;
-        }
-
-        $queryBuilder = $this->modifyQueryBuilder($segment, $lineItems);
-
-        $matchingProducts = $queryBuilder->getQuery()->getResult();
-
-        $this->matchingProductsCache->save($cacheKey, $matchingProducts);
-
-        return $matchingProducts;
+        return $this->matchingProductsCache->get($cacheKey, function () use ($segment, $lineItems) {
+            $queryBuilder = $this->modifyQueryBuilder($segment, $lineItems);
+            return $queryBuilder->getQuery()->getResult();
+        });
     }
 
-    /**
-     * @param Segment $segment
-     * @param array|DiscountLineItem[] $lineItems
-     * @return QueryBuilder
-     */
     private function modifyQueryBuilder(Segment $segment, array $lineItems) : QueryBuilder
     {
         $queryBuilder = $this->segmentManager->getEntityQueryBuilder($segment);
@@ -113,12 +77,7 @@ class MatchingProductsProvider
         return $queryBuilder;
     }
 
-    /**
-     * @param Segment $segment
-     * @param array|DiscountLineItem[] $discountLineItems
-     * @return string
-     */
-    private function getCacheKey(Segment $segment, array $discountLineItems)
+    private function getCacheKey(Segment $segment, array $discountLineItems): string
     {
         $lineItemsProductIds = array_map(
             function (DiscountLineItem $discountLineItem) {

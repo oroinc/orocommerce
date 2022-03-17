@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Layout\DataProvider;
 
-use Doctrine\Common\Cache\CacheProvider;
+use Oro\Bundle\CacheBundle\Generator\UniversalCacheKeyGenerator;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Layout\DataProvider\PaymentMethodViewsProvider;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
@@ -11,6 +11,9 @@ use Oro\Bundle\PaymentBundle\Method\View\CompositePaymentMethodViewProvider;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
+use PHPUnit\Framework\MockObject\Stub\ReturnCallback;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 
 class PaymentMethodViewsProviderTest extends \PHPUnit\Framework\TestCase
 {
@@ -39,7 +42,7 @@ class PaymentMethodViewsProviderTest extends \PHPUnit\Framework\TestCase
     protected $provider;
 
     /**
-     * @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject
+     * @var CacheInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $cacheProvider;
 
@@ -52,7 +55,7 @@ class PaymentMethodViewsProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->paymentMethodProvider = $this->createMock(ApplicablePaymentMethodsProvider::class);
 
-        $this->cacheProvider = $this->createMock(CacheProvider::class);
+        $this->cacheProvider = $this->createMock(CacheInterface::class);
 
         $this->paymentTransactionProvider = $this->getMockBuilder(PaymentTransactionProvider::class)
             ->disableOriginalConstructor()->getMock();
@@ -78,12 +81,17 @@ class PaymentMethodViewsProviderTest extends \PHPUnit\Framework\TestCase
         $this->paymentMethodViewProvider->expects(static::never())
             ->method('getPaymentMethodViews');
 
-        $cacheKey = PaymentMethodViewsProvider::class . \md5(\serialize($context));
+        $cacheKey = UniversalCacheKeyGenerator::normalizeCacheKey(
+            PaymentMethodViewsProvider::class . \md5(\serialize($context))
+        );
 
         $this->cacheProvider->expects($this->once())
-            ->method('fetch')
+            ->method('get')
             ->with($cacheKey)
-            ->willReturn(false);
+            ->willReturnCallback(function ($cacheKey, $callback) {
+                $item = $this->createMock(ItemInterface::class);
+                return $callback($item);
+            });
 
         $data = $this->provider->getViews($context);
         $this->assertEmpty($data);
@@ -97,7 +105,9 @@ class PaymentMethodViewsProviderTest extends \PHPUnit\Framework\TestCase
         $methodType = 'payment_method';
         $paymentMethodViews = [$methodType => ['label' => 'label', 'block' => 'block', 'options' => []]];
 
-        $cacheKey = PaymentMethodViewsProvider::class . \md5(\serialize($context));
+        $cacheKey = UniversalCacheKeyGenerator::normalizeCacheKey(
+            PaymentMethodViewsProvider::class . \md5(\serialize($context))
+        );
 
         $paymentMethod = $this->createMock(PaymentMethodInterface::class);
         $paymentMethod->expects(static::once())
@@ -110,13 +120,12 @@ class PaymentMethodViewsProviderTest extends \PHPUnit\Framework\TestCase
             ->willReturn([$paymentMethod]);
 
         $this->cacheProvider->expects($this->once())
-            ->method('fetch')
+            ->method('get')
             ->with($cacheKey)
-            ->willReturn(false);
-
-        $this->cacheProvider->expects($this->once())
-            ->method('save')
-            ->with($cacheKey, $paymentMethodViews);
+            ->willReturnCallback(function ($cacheKey, $callback) {
+                $item = $this->createMock(ItemInterface::class);
+                return $callback($item);
+            });
 
         $view = $this->createMock(PaymentMethodViewInterface::class);
         $view->expects($this->once())->method('getLabel')->willReturn('label');
@@ -146,7 +155,9 @@ class PaymentMethodViewsProviderTest extends \PHPUnit\Framework\TestCase
         $methodType = 'payment_method';
         $paymentMethodViews = [$methodType => ['label' => 'label', 'block' => 'block', 'options' => []]];
 
-        $cacheKey = PaymentMethodViewsProvider::class . \md5(\serialize($context));
+        $cacheKey = UniversalCacheKeyGenerator::normalizeCacheKey(
+            PaymentMethodViewsProvider::class . \md5(\serialize($context))
+        );
 
         $paymentMethod = $this->createMock(PaymentMethodInterface::class);
         $paymentMethod->expects(static::once())
@@ -158,14 +169,14 @@ class PaymentMethodViewsProviderTest extends \PHPUnit\Framework\TestCase
             ->with($context)
             ->willReturn([$paymentMethod]);
 
+        $saveCallback = function ($cacheKey, $callback) {
+            $item = $this->createMock(ItemInterface::class);
+            return $callback($item);
+        };
         $this->cacheProvider->expects($this->exactly(2))
-            ->method('fetch')
+            ->method('get')
             ->with($cacheKey)
-            ->willReturn(false, $paymentMethodViews);
-
-        $this->cacheProvider->expects($this->once())
-            ->method('save')
-            ->with($cacheKey, $paymentMethodViews);
+            ->willReturnOnConsecutiveCalls(new ReturnCallback($saveCallback), $paymentMethodViews);
 
         $view = $this->createMock(PaymentMethodViewInterface::class);
         $view->expects($this->once())->method('getLabel')->willReturn('label');

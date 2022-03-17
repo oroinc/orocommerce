@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Provider;
 
-use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
@@ -10,6 +9,8 @@ use Oro\Bundle\PromotionBundle\Provider\MatchingProductsProvider;
 use Oro\Bundle\SegmentBundle\Entity\Manager\SegmentManager;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 
 class MatchingProductsProviderTest extends \PHPUnit\Framework\TestCase
 {
@@ -26,14 +27,14 @@ class MatchingProductsProviderTest extends \PHPUnit\Framework\TestCase
     private $provider;
 
     /**
-     * @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject
+     * @var CacheInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $matchingProductsCache;
 
     protected function setUp(): void
     {
         $this->segmentManager = $this->createMock(SegmentManager::class);
-        $this->matchingProductsCache = $this->createMock(CacheProvider::class);
+        $this->matchingProductsCache = $this->createMock(CacheInterface::class);
         $this->provider = new MatchingProductsProvider($this->segmentManager, $this->matchingProductsCache);
     }
 
@@ -57,7 +58,7 @@ class MatchingProductsProviderTest extends \PHPUnit\Framework\TestCase
         $hash = md5('some definition_123');
 
         $this->matchingProductsCache->expects($this->once())
-            ->method('fetch')
+            ->method('get')
             ->with($hash)
             ->willReturn([
                 $product
@@ -82,9 +83,12 @@ class MatchingProductsProviderTest extends \PHPUnit\Framework\TestCase
         $hash = md5('some definition_123');
 
         $this->matchingProductsCache->expects($this->once())
-            ->method('fetch')
+            ->method('get')
             ->with($hash)
-            ->willReturn(false);
+            ->willReturnCallback(function ($cacheKey, $callback) {
+                $item = $this->createMock(ItemInterface::class);
+                return $callback($item);
+            });
 
         $this->provider->getMatchingProducts($segment, [(new DiscountLineItem())->setProduct($lineItemProduct)]);
     }
@@ -113,9 +117,12 @@ class MatchingProductsProviderTest extends \PHPUnit\Framework\TestCase
 
         $hash = md5('some definition_123');
         $this->matchingProductsCache->expects($this->once())
-            ->method('fetch')
+            ->method('get')
             ->with($hash)
-            ->willReturn(false);
+            ->willReturnCallback(function ($cacheKey, $callback) {
+                $item = $this->createMock(ItemInterface::class);
+                return $callback($item);
+            });
 
         $this->provider->getMatchingProducts($segment, [(new DiscountLineItem())->setProduct($lineItemProduct)]);
     }

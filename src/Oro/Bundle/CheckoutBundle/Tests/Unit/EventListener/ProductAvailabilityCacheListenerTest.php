@@ -2,17 +2,17 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\EventListener;
 
-use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\UnitOfWork;
 use Oro\Bundle\CheckoutBundle\EventListener\ProductAvailabilityCacheListener;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\Testing\ReflectionUtil;
+use Symfony\Component\Cache\Adapter\AbstractAdapter;
 
 class ProductAvailabilityCacheListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var AbstractAdapter|\PHPUnit\Framework\MockObject\MockObject */
     private $cache;
 
     /** @var ProductAvailabilityCacheListener */
@@ -20,7 +20,7 @@ class ProductAvailabilityCacheListenerTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->cache = $this->createMock(CacheProvider::class);
+        $this->cache = $this->createMock(AbstractAdapter::class);
 
         $this->productAvailabilityCacheListener = new ProductAvailabilityCacheListener($this->cache);
     }
@@ -69,12 +69,9 @@ class ProductAvailabilityCacheListenerTest extends \PHPUnit\Framework\TestCase
             [$firstProduct]
         );
 
-        $this->cache->expects($this->exactly(2))
-            ->method('delete')
-            ->withConsecutive(
-                [$firstProduct->getId()],
-                [$secondProduct->getId()]
-            )
+        $this->cache->expects($this->once())
+            ->method('deleteItems')
+            ->with([$firstProduct->getId(), $secondProduct->getId()])
             ->willReturn(true);
 
         $this->productAvailabilityCacheListener->onFlush(new OnFlushEventArgs($entityManager));

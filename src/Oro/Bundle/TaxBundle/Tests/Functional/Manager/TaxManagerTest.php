@@ -563,7 +563,7 @@ class TaxManagerTest extends WebTestCase
 
     protected function clearCache()
     {
-        $this->getContainer()->get('oro_tax.taxation_provider.cache')->deleteAll();
+        $this->getContainer()->get('oro_tax.taxation_provider.cache')->clear();
         $matchers = self::getContainer()->get('oro_tax.address_matcher_registry')->getMatchers();
         foreach ($matchers as $matcher) {
             if ($matcher instanceof AbstractMatcher) {

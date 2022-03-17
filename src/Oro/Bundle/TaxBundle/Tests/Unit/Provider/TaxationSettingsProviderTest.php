@@ -2,13 +2,16 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Provider;
 
-use Doctrine\Common\Cache\CacheProvider;
+use Oro\Bundle\CacheBundle\Generator\UniversalCacheKeyGenerator;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\TaxBundle\Factory\AddressModelFactory;
 use Oro\Bundle\TaxBundle\Factory\TaxBaseExclusionFactory;
 use Oro\Bundle\TaxBundle\Model\Address;
 use Oro\Bundle\TaxBundle\Model\TaxBaseExclusion;
 use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
+use PHPUnit\Framework\MockObject\Stub\ReturnCallback;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -37,7 +40,7 @@ class TaxationSettingsProviderTest extends \PHPUnit\Framework\TestCase
     protected $provider;
 
     /**
-     * @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject
+     * @var CacheInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $cacheProvider;
 
@@ -49,7 +52,7 @@ class TaxationSettingsProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->addressModelFactory = $this->createMock(AddressModelFactory::class);
 
-        $this->cacheProvider = $this->createMock(CacheProvider::class);
+        $this->cacheProvider = $this->createMock(CacheInterface::class);
 
         $this->provider = new TaxationSettingsProvider(
             $this->configManager,
@@ -74,7 +77,9 @@ class TaxationSettingsProviderTest extends \PHPUnit\Framework\TestCase
         $optionValue,
         $methodName
     ) {
-        $cacheKey = TaxationSettingsProvider::class . '::' . $methodName;
+        $cacheKey = UniversalCacheKeyGenerator::normalizeCacheKey(
+            TaxationSettingsProvider::class . '::' . $methodName
+        );
 
         $this->configManager
             ->expects($this->once())
@@ -82,14 +87,13 @@ class TaxationSettingsProviderTest extends \PHPUnit\Framework\TestCase
             ->with($optionKey)
             ->willReturn($optionValue);
 
-        $this->cacheProvider->expects($this->exactly(1))
-            ->method('contains')
-            ->with($cacheKey)
-            ->willReturnOnConsecutiveCalls(false);
-
         $this->cacheProvider->expects($this->once())
-            ->method('save')
-            ->with($cacheKey, $optionValue);
+            ->method('get')
+            ->with($cacheKey)
+            ->willReturnCallback(function ($cacheKey, $callback) {
+                $item = $this->createMock(ItemInterface::class);
+                return $callback($item);
+            });
     }
 
     public function testGetStartCalculationWith()
@@ -113,11 +117,11 @@ class TaxationSettingsProviderTest extends \PHPUnit\Framework\TestCase
      */
     public function testIsStartCalculationWithUnitPrice($configValue, $expected)
     {
-        $this->configManager
-            ->expects($this->once())
-            ->method('get')
-            ->with('oro_tax.start_calculation_with')
-            ->willReturn($configValue);
+        $this->configureGetCachedExpectations(
+            'oro_tax.start_calculation_with',
+            $configValue,
+            'getStartCalculationWith'
+        );
 
         $this->assertEquals($expected, $this->provider->isStartCalculationWithUnitPrice());
     }
@@ -161,10 +165,17 @@ class TaxationSettingsProviderTest extends \PHPUnit\Framework\TestCase
     public function testIsStartCalculationOnUnitPrice($configValue, $expected)
     {
         $this->configManager
-            ->expects($this->exactly(2))
+            ->expects($this->once())
             ->method('get')
             ->with('oro_tax.start_calculation_on')
             ->willReturn($configValue);
+        $saveCallback = function ($cacheKey, $callback) {
+            $item = $this->createMock(ItemInterface::class);
+            return $callback($item);
+        };
+        $this->cacheProvider->expects($this->exactly(2))
+            ->method('get')
+            ->willReturnOnConsecutiveCalls(new ReturnCallback($saveCallback), $configValue);
 
         $this->assertEquals($expected, $this->provider->isStartCalculationOnTotal());
         $this->assertEquals(!$expected, $this->provider->isStartCalculationOnItem());
@@ -194,11 +205,11 @@ class TaxationSettingsProviderTest extends \PHPUnit\Framework\TestCase
      */
     public function testIsStartCalculationWithRowTotal($configValue, $expected)
     {
-        $this->configManager
-            ->expects($this->once())
-            ->method('get')
-            ->with('oro_tax.start_calculation_with')
-            ->willReturn($configValue);
+        $this->configureGetCachedExpectations(
+            'oro_tax.start_calculation_with',
+            $configValue,
+            'getStartCalculationWith'
+        );
 
         $this->assertEquals($expected, $this->provider->isStartCalculationWithRowTotal());
     }
@@ -299,11 +310,11 @@ class TaxationSettingsProviderTest extends \PHPUnit\Framework\TestCase
      */
     public function testIsBillingAddressDestination($configValue, $expected)
     {
-        $this->configManager
-            ->expects($this->once())
-            ->method('get')
-            ->with('oro_tax.destination')
-            ->willReturn($configValue);
+        $this->configureGetCachedExpectations(
+            'oro_tax.destination',
+            $configValue,
+            'getDestination'
+        );
 
         $this->assertEquals($expected, $this->provider->isBillingAddressDestination());
     }
@@ -332,11 +343,11 @@ class TaxationSettingsProviderTest extends \PHPUnit\Framework\TestCase
      */
     public function testIsShippingAddressDestination($configValue, $expected)
     {
-        $this->configManager
-            ->expects($this->once())
-            ->method('get')
-            ->with('oro_tax.destination')
-            ->willReturn($configValue);
+        $this->configureGetCachedExpectations(
+            'oro_tax.destination',
+            $configValue,
+            'getDestination'
+        );
 
         $this->assertEquals($expected, $this->provider->isShippingAddressDestination());
     }
@@ -378,11 +389,11 @@ class TaxationSettingsProviderTest extends \PHPUnit\Framework\TestCase
      */
     public function testIsOriginBaseByDefaultAddressType($configValue, $expected)
     {
-        $this->configManager
-            ->expects($this->once())
-            ->method('get')
-            ->with('oro_tax.use_as_base_by_default')
-            ->willReturn($configValue);
+        $this->configureGetCachedExpectations(
+            'oro_tax.use_as_base_by_default',
+            $configValue,
+            'getBaseByDefaultAddressType'
+        );
 
         $this->assertEquals($expected, $this->provider->isOriginBaseByDefaultAddressType());
     }
@@ -411,11 +422,11 @@ class TaxationSettingsProviderTest extends \PHPUnit\Framework\TestCase
      */
     public function testIsDestinationBaseByDefaultAddressType($configValue, $expected)
     {
-        $this->configManager
-            ->expects($this->once())
-            ->method('get')
-            ->with('oro_tax.use_as_base_by_default')
-            ->willReturn($configValue);
+        $this->configureGetCachedExpectations(
+            'oro_tax.use_as_base_by_default',
+            $configValue,
+            'getBaseByDefaultAddressType'
+        );
 
         $this->assertEquals($expected, $this->provider->isDestinationBaseByDefaultAddressType());
     }
@@ -546,21 +557,8 @@ class TaxationSettingsProviderTest extends \PHPUnit\Framework\TestCase
     private function mockSettingsCache(string $cacheKey, string $settingKey, $value): void
     {
         $this->cacheProvider->expects(self::exactly(2))
-            ->method('contains')
-            ->with($cacheKey)
-            ->willReturnOnConsecutiveCalls(false, true);
-        $this->cacheProvider->expects(self::once())
-            ->method('save')
-            ->with($cacheKey, $value);
-        $this->cacheProvider->expects(self::once())
-            ->method('fetch')
-            ->with($cacheKey)
-            ->willReturn($value);
-
-        $this->configManager
-            ->expects(self::once())
             ->method('get')
-            ->with($settingKey)
+            ->with(UniversalCacheKeyGenerator::normalizeCacheKey($cacheKey))
             ->willReturn($value);
     }
 }

@@ -598,19 +598,13 @@ services:
         arguments:
             - '@oro_tax.repository.product_tax_code'
             - '@oro_tax.repository.customer_tax_code'
-            - '@oro_tax.cache.tax_codes'
-
-    oro_tax.cache.tax_codes:
-        class: 'Oro\Bundle\TaxBundle\Cache\TaxCodesCache'
-        arguments:
             - '@oro_tax.tax_codes.cache'
             - '@oro_entity.doctrine_helper'
 
     oro_tax.tax_codes.cache:
-        parent: oro_cache.array_cache
-        public: false
-        calls:
-            - [ setNamespace, [ 'oro_tax_tax_codes' ] ]
+        parent: oro.cache.adapter.array
+        tags:
+            - { name: 'cache.pool', namespace: 'oro_tax_tax_codes' }
 
     oro_tax.manager.oro.customer_tax_code_manager:
         public: false
@@ -628,10 +622,9 @@ services:
             - { name: kernel.event_subscriber }
 
     oro_tax.taxation_provider.cache:
-        parent: oro_cache.array_cache
-        public: false
-        calls:
-            - [ setNamespace, [ 'oro_taxation_settings_provider' ] ]
+        parent: oro.cache.adapter.array
+        tags:
+            - { name: 'cache.pool', namespace: 'oro_taxation_settings_provider' }
 
     oro_tax.validator.tax_rate:
         class: Oro\Bundle\TaxBundle\Validator\Constraints\TaxRateValidator

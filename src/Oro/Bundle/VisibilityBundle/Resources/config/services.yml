@@ -1,9 +1,4 @@
 services:
-    oro_visibility.product_visibility_permission.cache:
-        parent: oro_cache.array_cache
-        calls:
-            - [setNamespace, ['product_visibility_permission']]
-
     oro_visibility.event_listener.product_visibility_cache:
         class: Oro\Bundle\VisibilityBundle\EventListener\ProductVisibilityCacheListener
         arguments:

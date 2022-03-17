@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\DataProvider\LineItem;
 
-use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CheckoutBundle\DataProvider\LineItem\CheckoutLineItemsDataProvider;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
@@ -14,6 +13,8 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\VisibilityBundle\Provider\ResolvedProductVisibilityProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 
 class CheckoutLineItemsDataProviderTest extends \PHPUnit\Framework\TestCase
 {
@@ -28,7 +29,7 @@ class CheckoutLineItemsDataProviderTest extends \PHPUnit\Framework\TestCase
     /** @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $authorizationChecker;
 
-    /** @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var CacheInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $productAvailabilityCache;
 
     /** @var ResolvedProductVisibilityProvider */
@@ -41,7 +42,7 @@ class CheckoutLineItemsDataProviderTest extends \PHPUnit\Framework\TestCase
     {
         $this->frontendProductPricesDataProvider = $this->createMock(FrontendProductPricesDataProvider::class);
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
-        $this->productAvailabilityCache = $this->createMock(CacheProvider::class);
+        $this->productAvailabilityCache = $this->createMock(CacheInterface::class);
         $this->resolvedProductVisibilityProvider = $this->createMock(ResolvedProductVisibilityProvider::class);
 
         $this->provider = new CheckoutLineItemsDataProvider(
@@ -79,6 +80,7 @@ class CheckoutLineItemsDataProviderTest extends \PHPUnit\Framework\TestCase
      * @param bool $isPriceFixed
      *
      * @dataProvider priceDataProvider
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function testGetData(Price $price = null, $isPriceFixed = false)
     {
@@ -145,6 +147,13 @@ class CheckoutLineItemsDataProviderTest extends \PHPUnit\Framework\TestCase
         $this->authorizationChecker->expects($this->any())
             ->method('isGranted')
             ->willReturn(true);
+        $this->productAvailabilityCache->expects(self::exactly(2))
+            ->method('get')
+            ->withConsecutive([$product1->getId()], [$product2->getId()])
+            ->willReturnCallback(function ($cacheKey, $callback) {
+                $item = $this->createMock(ItemInterface::class);
+                return $callback($item);
+            });
 
         $this->assertEquals(
             [
@@ -222,29 +231,13 @@ class CheckoutLineItemsDataProviderTest extends \PHPUnit\Framework\TestCase
             ['id' => 2, 'lineItems' => new ArrayCollection([$lineItem])]
         );
 
-        $this->authorizationChecker->expects($this->once())
-            ->method('isGranted')
-            ->with('VIEW', $enabledProduct)
-            ->willReturn(true);
-
         $this->productAvailabilityCache->expects($this->exactly(2))
-            ->method('contains')
+            ->method('get')
             ->withConsecutive(
                 [$enabledProduct->getId()],
                 [$enabledProduct->getId()]
             )
-            ->willReturnOnConsecutiveCalls([
-                [$enabledProduct->getId(), false],
-                [$enabledProduct->getId(), true]
-            ]);
-        $this->productAvailabilityCache->expects($this->once())
-            ->method('save')
-            ->with($enabledProduct->getId())
-            ->willReturn(true);
-        $this->productAvailabilityCache->expects($this->once())
-            ->method('fetch')
-            ->with($enabledProduct->getId())
-            ->willReturn(true);
+            ->willReturnOnConsecutiveCalls(true, true);
 
         $expected = [
             [

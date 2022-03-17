@@ -16,9 +16,9 @@ services:
         parent: oro.cache.provider.memory_cache
 
     oro_checkout.product_availability.cache:
-        parent: oro_cache.array_cache
-        calls:
-            - [ setNamespace, [ 'oro_product_availability' ] ]
+        parent: oro.cache.adapter.array
+        tags:
+            - { name: 'cache.pool', namespace: 'oro_product_availability' }
 
     oro_checkout.event_listener.product_availability_cache:
         class: Oro\Bundle\CheckoutBundle\EventListener\ProductAvailabilityCacheListener

@@ -381,15 +381,14 @@ services:
             - '@oro_promotion.provider.shipping_promotion_discounts_provider'
 
     oro_promotion.promotion_executor.cache:
-        parent: oro_cache.array_cache
-        calls:
-            - [ setNamespace, [ 'oro_promotion_executor' ] ]
+        parent: oro.cache.adapter.array
+        tags:
+            - { name: 'cache.pool', namespace: 'oro_promotion_executor' }
 
     oro_promotion.matching_products.cache:
-        parent: oro_cache.array_cache
-        public: false
-        calls:
-            - [setNamespace, ['oro_promotion_matching_products']]
+        parent: oro.cache.adapter.array
+        tags:
+            - { name: 'cache.pool', namespace: 'oro_promotion_matching_products' }
 
     oro_promotion.provider.matching_products_provider:
         class: Oro\Bundle\PromotionBundle\Provider\MatchingProductsProvider

@@ -48,8 +48,8 @@ class LoadTaxesData extends AbstractFixture implements DependentFixtureInterface
         );
         $manager->flush();
 
-        $this->container->get('oro_tax.tax_codes.cache')->deleteAll();
-        $this->container->get('oro_tax.taxation_provider.cache')->deleteAll();
+        $this->container->get('oro_tax.tax_codes.cache')->clear();
+        $this->container->get('oro_tax.taxation_provider.cache')->clear();
     }
 
     private function createTaxRule(

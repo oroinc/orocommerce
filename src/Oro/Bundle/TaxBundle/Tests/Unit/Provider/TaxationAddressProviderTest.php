@@ -78,7 +78,7 @@ class TaxationAddressProviderTest extends \PHPUnit\Framework\TestCase
         $this->settingsProvider->expects($this->any())->method('getOrigin')->willReturn($origin);
 
         $this->settingsProvider
-            ->expects($exclusions !== null ? $this->once() : $this->never())
+            ->expects($destination && ($shippingAddress || $billingAddress) ? $this->once() : $this->never())
             ->method('getBaseAddressExclusions')
             ->willReturn($exclusions);
 
@@ -143,7 +143,7 @@ class TaxationAddressProviderTest extends \PHPUnit\Framework\TestCase
             'billing address' => [
                 $billingAddress,
                 TaxationSettingsProvider::DESTINATION_BILLING_ADDRESS,
-                null,
+                new Address(),
                 false,
                 $billingAddress,
                 $shippingAddress,
@@ -152,7 +152,7 @@ class TaxationAddressProviderTest extends \PHPUnit\Framework\TestCase
             'shipping address' =>[
                 $shippingAddress,
                 TaxationSettingsProvider::DESTINATION_SHIPPING_ADDRESS,
-                null,
+                new Address(),
                 false,
                 $billingAddress,
                 $shippingAddress,
@@ -161,11 +161,11 @@ class TaxationAddressProviderTest extends \PHPUnit\Framework\TestCase
             'null address' =>[
                 null,
                 null,
-                null,
-                null,
+                new Address(),
+                false,
                 $billingAddress,
                 $shippingAddress,
-                null
+                []
             ],
             'origin address by default' => [
                 $originAddress,
@@ -179,8 +179,8 @@ class TaxationAddressProviderTest extends \PHPUnit\Framework\TestCase
             'billing address with exclusion (use destination as base)' => [
                 $billingAddress,
                 TaxationSettingsProvider::DESTINATION_BILLING_ADDRESS,
-                null,
-                null,
+                new Address(),
+                false,
                 $billingAddress,
                 $shippingAddress,
                 $exclusions
@@ -189,7 +189,7 @@ class TaxationAddressProviderTest extends \PHPUnit\Framework\TestCase
                 $originAddress,
                 TaxationSettingsProvider::DESTINATION_SHIPPING_ADDRESS,
                 $originAddress,
-                null,
+                false,
                 $billingAddress,
                 $shippingAddress,
                 $exclusions
@@ -201,13 +201,13 @@ class TaxationAddressProviderTest extends \PHPUnit\Framework\TestCase
                 true,
                 null,
                 null,
-                null,
+                [],
             ],
             'shipping address with exclusion (use origin as base) region text do not match' => [
                 $usRegionTextAddress,
                 TaxationSettingsProvider::DESTINATION_SHIPPING_ADDRESS,
                 $originAddress,
-                null,
+                false,
                 $billingAddress,
                 $usRegionTextAddress,
                 [
@@ -231,7 +231,7 @@ class TaxationAddressProviderTest extends \PHPUnit\Framework\TestCase
                 $usAlRegionAddress,
                 TaxationSettingsProvider::DESTINATION_SHIPPING_ADDRESS,
                 $originAddress,
-                null,
+                false,
                 $billingAddress,
                 $usAlRegionAddress,
                 [

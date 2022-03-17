@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\CheckoutBundle\DataProvider\LineItem;
 
-use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
@@ -12,6 +11,7 @@ use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\VisibilityBundle\Provider\ResolvedProductVisibilityProvider;
 use Oro\Component\Checkout\DataProvider\AbstractCheckoutProvider;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Contracts\Cache\CacheInterface;
 
 /**
  * Provides info to build collection of line items by given source entity.
@@ -19,30 +19,15 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  */
 class CheckoutLineItemsDataProvider extends AbstractCheckoutProvider
 {
-    /**
-     * @var FrontendProductPricesDataProvider
-     */
-    protected $frontendProductPricesDataProvider;
-
-    /**
-     * @var AuthorizationCheckerInterface
-     */
-    private $authorizationChecker;
-
-    /**
-     * @var CacheProvider
-     */
-    private $productAvailabilityCache;
-
-    /**
-     * @var ResolvedProductVisibilityProvider
-     */
-    private $resolvedProductVisibilityProvider;
+    protected FrontendProductPricesDataProvider $frontendProductPricesDataProvider;
+    private AuthorizationCheckerInterface $authorizationChecker;
+    private CacheInterface $productAvailabilityCache;
+    private ResolvedProductVisibilityProvider $resolvedProductVisibilityProvider;
 
     public function __construct(
         FrontendProductPricesDataProvider $frontendProductPricesDataProvider,
         AuthorizationCheckerInterface $authorizationChecker,
-        CacheProvider $productAvailabilityCache,
+        CacheInterface $productAvailabilityCache,
         ResolvedProductVisibilityProvider $resolvedProductVisibilityProvider
     ) {
         $this->frontendProductPricesDataProvider = $frontendProductPricesDataProvider;
@@ -53,10 +38,8 @@ class CheckoutLineItemsDataProvider extends AbstractCheckoutProvider
 
     /**
      * @param Checkout $entity
-     *
-     * {@inheritDoc}
      */
-    protected function prepareData($entity)
+    protected function prepareData($entity): array
     {
         $lineItems = $entity->getLineItems();
         $lineItemsPrices = $this->getLineItemsPrices($lineItems);
@@ -117,23 +100,15 @@ class CheckoutLineItemsDataProvider extends AbstractCheckoutProvider
         $this->resolvedProductVisibilityProvider->prefetch(array_unique($productIds));
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function isEntitySupported($transformData)
+    public function isEntitySupported($transformData): bool
     {
         return $transformData instanceof Checkout;
     }
 
     /**
      * Is Line Item should be included in the results of data preparation
-     *
-     * @param CheckoutLineItem $lineItem
-     *
-     * @return bool
-     * @throws \InvalidArgumentException
      */
-    protected function isLineItemNeeded($lineItem)
+    protected function isLineItemNeeded(CheckoutLineItem $lineItem): bool
     {
         if (!$lineItem instanceof ProductHolderInterface) {
             return true;
@@ -144,15 +119,9 @@ class CheckoutLineItemsDataProvider extends AbstractCheckoutProvider
             return true;
         }
 
-        if ($this->productAvailabilityCache->contains($product->getId())) {
-            return $this->productAvailabilityCache->fetch($product->getId());
-        }
-
-        $isAvailable = $product->getStatus() === Product::STATUS_ENABLED
-            && $this->authorizationChecker->isGranted('VIEW', $product);
-
-        $this->productAvailabilityCache->save($product->getId(), $isAvailable);
-
-        return $isAvailable;
+        return $this->productAvailabilityCache->get((string) $product->getId(), function () use ($product) {
+            return $product->getStatus() === Product::STATUS_ENABLED
+                && $this->authorizationChecker->isGranted('VIEW', $product);
+        });
     }
 }
