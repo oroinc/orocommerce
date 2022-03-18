@@ -154,9 +154,9 @@ define(function(require) {
             this.$el.trigger('content:changed');
 
             if (this.renderMode === modes.SIMPLE) {
-                this.updateVisibleState();
-            } else {
                 this.updateVisibleState(false);
+            } else {
+                this.updateVisibleState();
                 this.onSelectUnbind();
             }
 

@@ -104,7 +104,7 @@ define(function(require) {
             this.model.trigger('backgrid:isSelected', this.model, state);
             this.model.trigger('backgrid:getVisibleState', visibleState);
             if (!_.isEmpty(visibleState)) {
-                hide = visibleState.visible;
+                hide = !visibleState.visible;
             }
 
             this.$el.html(this.template({

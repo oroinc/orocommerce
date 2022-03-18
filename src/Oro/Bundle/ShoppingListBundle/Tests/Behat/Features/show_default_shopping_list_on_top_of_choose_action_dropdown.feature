@@ -1,4 +1,5 @@
 @fixture-OroShoppingListBundle:ShoppingListFixture.yml
+@fixture-OroProductBundle:products_grid_frontend.yml
 @ticket-BB-20374
 
 Feature: Show default Shopping List on top of Choose Action drop-down
@@ -8,9 +9,9 @@ Feature: Show default Shopping List on top of Choose Action drop-down
 
   Scenario: Product mass actions search is hidden (desktop)
     Given I signed in as AmandaRCole@example.org on the store frontend
-    When type "AA1" in "search"
-    And I click "Search Button"
-    And I check AA1 record in "Product Frontend Grid" grid
+    When open page number test of frontend product grid
+    And I should see "PSKU20"
+    And I check PSKU20 record in "Product Frontend Grid" grid
     And I click "ProductFrontendMassActionButton"
     Then I should see "ProductFrontendGridMassActionDefaultItem" element with text "Add to Shopping List 5" inside "ProductFrontendGridMassActionMenu" element
     And I should not see "ProductFrontendGridMassActionSearch" element inside "ProductFrontendGridMassActionMenu" element
@@ -20,11 +21,11 @@ Feature: Show default Shopping List on top of Choose Action drop-down
     Given I set window size to 992x1024
     Then I should not see "ProductFrontendMassActionButton"
     When I click on "ProductFrontendMassActionHeadButtonTablet"
-    And I check AA1 record in "Product Frontend Grid" grid
+    And I check PSKU20 record in "Product Frontend Grid" grid
     Then I should see "ProductFrontendMassPanelInBottomSticky" element inside "Bottom Active Sticky Panel" element
-    When I uncheck AA1 record in "Product Frontend Grid" grid
+    When I uncheck PSKU20 record in "Product Frontend Grid" grid
     Then I should not see "ProductFrontendMassPanelInBottomSticky" element inside "Bottom Active Sticky Panel" element
-    When I check AA1 record in "Product Frontend Grid" grid
+    When I check PSKU20 record in "Product Frontend Grid" grid
     Then I should see "ProductFrontendMassClosePanel" element inside "Bottom Active Sticky Panel" element
     And I should see "ProductFrontendMassAddPPanelInBottomSticky" element inside "Bottom Active Sticky Panel" element
     When I click "ProductFrontendMassClosePanel"
@@ -33,6 +34,7 @@ Feature: Show default Shopping List on top of Choose Action drop-down
   Scenario: Product mass actions search is hidden (tablet)
     Given I set window size to 992x1024
     When I click on "ProductFrontendMassActionHeadButtonTablet"
+    And I scroll to bottom
     And I check AA1 record in "Product Frontend Grid" grid
     Then I should see "ProductFrontendMassAddPPanelInBottomSticky" element inside "Bottom Active Sticky Panel" element
     And I click "ProductFrontendMassAddPPanelInBottomSticky"
@@ -53,12 +55,13 @@ Feature: Show default Shopping List on top of Choose Action drop-down
     And click on "Flash Message Close Button"
 
   Scenario: Verify that a "Default Shopping List" action is always on the top of the actions list
-    When I check AA1 record in "Product Frontend Grid" grid
+    Given I scroll to top
+    When I check PSKU20 record in "Product Frontend Grid" grid
     And I click "ProductFrontendMassActionButton"
     Then I should see "ProductFrontendGridMassActionDefaultItem" element with text "Add to Shopping List 6" inside "ProductFrontendGridMassActionMenu" element
     And I click "ProductFrontendMassActionButton"
 
-    When I check AA1 record in "Product Frontend Grid" grid
+    When I check PSKU20 record in "Product Frontend Grid" grid
     And I click "Create New Shopping List" link from mass action dropdown in "Product Frontend Grid"
     Then should see an "Create New Shopping List popup" element
     And type "Shopping List 7" in "Shopping List Name"
@@ -66,12 +69,12 @@ Feature: Show default Shopping List on top of Choose Action drop-down
     Then should see 'Shopping list "Shopping List 7" was created successfully' flash message
     And click on "Flash Message Close Button"
     And click on "Flash Message Close Button"
-    When I check AA1 record in "Product Frontend Grid" grid
+    When I check PSKU20 record in "Product Frontend Grid" grid
     And I click "ProductFrontendMassActionButton"
     Then I should see "ProductFrontendGridMassActionDefaultItem" element with text "Add to Shopping List 7" inside "ProductFrontendGridMassActionMenu" element
     And I click "ProductFrontendMassActionButton"
 
-    When I check AA1 record in "Product Frontend Grid" grid
+    When I check PSKU20 record in "Product Frontend Grid" grid
     And I click "Create New Shopping List" link from mass action dropdown in "Product Frontend Grid"
     Then should see an "Create New Shopping List popup" element
     And type "Shopping List 8" in "Shopping List Name"
@@ -81,7 +84,7 @@ Feature: Show default Shopping List on top of Choose Action drop-down
     And click on "Flash Message Close Button"
 
   Scenario: Product mass actions search is visible if number of actions more then 5
-    Given I check AA1 record in "Product Frontend Grid" grid
+    Given I check PSKU20 record in "Product Frontend Grid" grid
     When I click "ProductFrontendMassActionButton"
     Then I should see "ProductFrontendGridMassActionDefaultItem" element with text "Add to Shopping List 8" inside "ProductFrontendGridMassActionMenu" element
     And I should see "ProductFrontendGridMassActionSearch" element inside "ProductFrontendGridMassActionMenu" element
@@ -94,7 +97,7 @@ Feature: Show default Shopping List on top of Choose Action drop-down
   Scenario: Product mass actions search is visible if number of actions more then 5 (tablet)
     Given I set window size to 992x1024
     When I click on "ProductFrontendMassActionHeadButtonTablet"
-    And I check AA1 record in "Product Frontend Grid" grid
+    And I check PSKU20 record in "Product Frontend Grid" grid
     And I click "ProductFrontendMassOpenInDialog"
     Then I should see an "Fullscreen Popup" element
     And I should see "ProductFrontendGridMassActionSearch" element inside "Fullscreen Popup" element
