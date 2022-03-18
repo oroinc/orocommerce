@@ -1,5 +1,6 @@
-@fixture-OroRFPBundle:RFQCustomer.yml
+@fixture-OroRFPBundle:RFQ_with_removed_unit.yml
 @ticket-BB-16463
+@ticket-BB-21064
 Feature: Create RFQ on storefront
   In order to control RFQ content
   As an Administrator
@@ -35,3 +36,17 @@ Feature: Create RFQ on storefront
       | Company    | Company New   |
       | Notes      | <h1>note</h1> |
       | PO Number  | 007           |
+
+  Scenario: Products management in RFQ on storefront
+    Given I continue as the Buyer
+    And I follow "Account"
+    And I click "Requests For Quote"
+    And I click "New Quote"
+    When I open select entity popup for field "Line Item Product" in form "Frontend Request Form"
+    Then I should see following grid:
+      | SKU    | Name     | Inventory Status |
+      | SKU123 | product1 | In Stock         |
+    And click on SKU123 in grid
+    Then I should see "SKU123 product1" in the "RFQ Products List" element
+    When I click "Remove Request Product Edit Line Item"
+    Then I should not see "SKU123 product1" in the "RFQ Products List" element
