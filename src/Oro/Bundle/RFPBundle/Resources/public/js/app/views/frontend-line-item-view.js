@@ -36,6 +36,10 @@ define(function(require) {
 
         formState: null,
 
+        events: {
+            'content:remove [data-role="lineitem"]': 'onSubCollectionItemRemove'
+        },
+
         /**
          * @inheritdoc
          */
@@ -128,6 +132,13 @@ define(function(require) {
 
         remove: function() {
             this.getElement('remove').click();
+        },
+
+        onSubCollectionItemRemove(e) {
+            if ($(e.target).siblings(e.target).length === 0) {
+                // gives time to remove last item of sub-collection before removing product line item
+                _.delay(this.remove.bind(this));
+            }
         },
 
         getData: function() {
