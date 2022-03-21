@@ -13,6 +13,9 @@ use Oro\Bundle\SearchBundle\Provider\SearchMappingProvider;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\IndexDataProvider;
 
+/**
+ * @dbIsolationPerTest
+ */
 class IndexDataProviderTest extends \Oro\Bundle\TestFrameworkBundle\Test\WebTestCase
 {
     /**
