@@ -824,6 +824,9 @@ oro_behat_extension:
     ProductFrontendGridMassActionSearch:
       selector: '[data-role="search-container"] .input'
 
+    ProductFrontendGridMassActionItem:
+      selector: '.dropdown-item'
+
     ProductFrontendGridMassActionDefaultItem:
       selector: '.dropdown-item[data-label]:first-child'
 
