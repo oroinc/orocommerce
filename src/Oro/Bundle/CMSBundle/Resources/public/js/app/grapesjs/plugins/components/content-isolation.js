@@ -25,6 +25,22 @@ const hasIsolation = html => {
     return componentHtmlIdRegexp.test(html);
 };
 
+export const separateContent = html => {
+    const domParser = new DOMParser();
+    const body = domParser.parseFromString(html, 'text/html').body;
+
+    const css = [...body.querySelectorAll('style')].reduce((acc, style) => {
+        acc += style.innerHTML;
+        style.remove();
+        return acc;
+    }, '');
+
+    return {
+        html: body.innerHTML,
+        css
+    };
+};
+
 export const escapeWrapper = html => {
     if (hasIsolation(html)) {
         html = $(html).html();

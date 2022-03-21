@@ -1,7 +1,11 @@
 import BaseView from 'oroui/js/app/views/base/view';
 import template from 'tpl-loader!orocms/templates/grapesjs-import-dialog-template.html';
 import DialogWidget from 'oro/dialog-widget';
-import {stripRestrictedAttrs, escapeWrapper} from 'orocms/js/app/grapesjs/plugins/components/content-isolation';
+import {
+    stripRestrictedAttrs,
+    escapeWrapper,
+    separateContent
+} from 'orocms/js/app/grapesjs/plugins/components/content-isolation';
 import _ from 'underscore';
 import __ from 'orotranslation/js/translator';
 import $ from 'jquery';
@@ -439,6 +443,7 @@ const ImportDialogView = BaseView.extend({
      * Handle import content
      */
     async onImportCode() {
+        const {editor} = this;
         let content = this.viewerEditor.getValue().trim();
 
         REGEXP_TWIG_TAGS.lastIndex = 0;
@@ -447,11 +452,15 @@ const ImportDialogView = BaseView.extend({
         }
 
         if (!this.disabled) {
-            this.editor.CssComposer.clear();
-            this.editor.selectRemove(this.editor.getSelectedAll());
-            this.editor.setComponents(escapeWrapper(content), {
+            const {html, css} = separateContent(content);
+
+            editor.CssComposer.clear();
+            editor.selectRemove(editor.getSelectedAll());
+            editor.setComponents(escapeWrapper(html), {
                 fromImport: true
             });
+            editor.setStyle(editor.getPureStyle(css));
+
             this.closeDialog();
             this.trigger('import:after', escapeWrapper(content));
         }
