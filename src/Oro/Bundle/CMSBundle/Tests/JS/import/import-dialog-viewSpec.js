@@ -18,6 +18,7 @@ describe('orocms/js/app/grapesjs/plugins/import/import-dialog-view', () => {
 
         editor.ComponentRestriction = new ComponentRestriction(editor, {});
         editor.setComponents('<div class="test">Test content</div><style>.test {color: red;}</style>');
+        editor.getPureStyleString = css => css;
     });
 
     afterEach(() => {
