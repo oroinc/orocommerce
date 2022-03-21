@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\PricingBundle\Entity\EntityListener;
 
-use Doctrine\Common\Cache\Cache;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceRulesTopic;
+use Oro\Bundle\PricingBundle\Cache\RuleCache;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
 
@@ -15,13 +15,13 @@ class PriceRuleEntityListener
 {
     const FIELD_QUANTITY = 'quantity';
 
-    /** @var Cache */
+    /** @var RuleCache */
     protected $cache;
 
     /** @var PriceListTriggerHandler */
     protected $priceListTriggerHandler;
 
-    public function __construct(Cache $cache, PriceListTriggerHandler $priceListTriggerHandler)
+    public function __construct(RuleCache $cache, PriceListTriggerHandler $priceListTriggerHandler)
     {
         $this->cache = $cache;
         $this->priceListTriggerHandler = $priceListTriggerHandler;

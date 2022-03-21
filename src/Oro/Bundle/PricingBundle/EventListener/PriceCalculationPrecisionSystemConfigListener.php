@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\PricingBundle\EventListener;
 
-use Doctrine\Common\Cache\Cache;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
+use Oro\Bundle\PricingBundle\Cache\RuleCache;
 use Oro\Bundle\PricingBundle\Command\PriceListScheduleRecalculateCommand;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -20,13 +20,13 @@ class PriceCalculationPrecisionSystemConfigListener
     private const MESSAGE_TYPE = 'warning';
 
     private ManagerRegistry $registry;
-    private Cache $cache;
+    private RuleCache $cache;
     private Session $session;
     private TranslatorInterface $translator;
 
     public function __construct(
         ManagerRegistry $registry,
-        Cache $cache,
+        RuleCache $cache,
         Session $session,
         TranslatorInterface $translator
     ) {

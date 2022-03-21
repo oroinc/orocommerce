@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\CatalogBundle\Migrations\Data\ORM;
 
-use Doctrine\Common\Cache\FlushableCache;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CatalogBundle\Entity\Category;
@@ -11,6 +10,7 @@ use Oro\Bundle\CatalogBundle\Entity\CategoryShortDescription;
 use Oro\Bundle\CatalogBundle\Entity\CategoryTitle;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\RedirectBundle\Cache\FlushableCacheInterface;
 use Oro\Bundle\RedirectBundle\Generator\SlugEntityGenerator;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
@@ -56,7 +56,7 @@ abstract class AbstractCategoryFixture extends AbstractFixture implements Contai
         $this->generateSlugs($this->categories, $this->container->get('oro_redirect.generator.slug_entity'));
 
         $cache = $this->container->get('oro_redirect.url_cache');
-        if ($cache instanceof FlushableCache) {
+        if ($cache instanceof FlushableCacheInterface) {
             $cache->flushAll();
         }
         $manager->flush();

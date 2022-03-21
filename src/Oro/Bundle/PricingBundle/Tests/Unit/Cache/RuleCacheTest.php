@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Cache;
 
-use Doctrine\Common\Cache\Cache;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Expr;
@@ -11,13 +10,24 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PricingBundle\Cache\RuleCache;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
+use Psr\Cache\CacheItemInterface;
+use Psr\Cache\CacheItemPoolInterface;
 
 class RuleCacheTest extends \PHPUnit\Framework\TestCase
 {
+    private const DQL_PARTS_KEY = 'dql_parts';
+    private const PARAMETERS_KEY = 'parameters';
+    private const HASH = 'hash';
+
     /**
-     * @var Cache|\PHPUnit\Framework\MockObject\MockObject
+     * @var CacheItemPoolInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $cache;
+
+    /**
+     * @var CacheItemInterface|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $cacheItem;
 
     /**
      * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
@@ -36,7 +46,8 @@ class RuleCacheTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->cache = $this->createMock(Cache::class);
+        $this->cache = $this->createMock(CacheItemPoolInterface::class);
+        $this->cacheItem = $this->createMock(CacheItemInterface::class);
         $this->registry = $this->createMock(ManagerRegistry::class);
         $this->crypter = $this->createMock(SymmetricCrypterInterface::class);
         $this->ruleCache = new RuleCache($this->cache, $this->registry, $this->crypter);
@@ -61,13 +72,19 @@ class RuleCacheTest extends \PHPUnit\Framework\TestCase
             ->willReturn('encrypted');
 
         $storedData = [
-            RuleCache::DQL_PARTS_KEY => $parts,
-            RuleCache::PARAMETERS_KEY => ['testParam' => 1],
-            RuleCache::HASH => md5('encrypted')
+            self::DQL_PARTS_KEY => $parts,
+            self::PARAMETERS_KEY => ['testParam' => 1],
+            self::HASH => md5('encrypted')
         ];
         $this->cache->expects($this->once())
-            ->method('fetch')
+            ->method('getItem')
             ->with($id)
+            ->willReturn($this->cacheItem);
+        $this->cacheItem->expects($this->once())
+            ->method('isHit')
+            ->willReturn(true);
+        $this->cacheItem->expects($this->once())
+            ->method('get')
             ->willReturn($storedData);
 
         $em->expects($this->once())
@@ -97,14 +114,20 @@ class RuleCacheTest extends \PHPUnit\Framework\TestCase
             ->willReturn('encrypted');
 
         $storedData = [
-            RuleCache::DQL_PARTS_KEY => $parts,
-            RuleCache::PARAMETERS_KEY => ['testParam' => 1],
-            RuleCache::HASH => md5('incorrect')
+            self::DQL_PARTS_KEY => $parts,
+            self::PARAMETERS_KEY => ['testParam' => 1],
+            self::HASH => md5('incorrect')
         ];
 
         $this->cache->expects($this->once())
-            ->method('fetch')
+            ->method('getItem')
             ->with($id)
+            ->willReturn($this->cacheItem);
+        $this->cacheItem->expects($this->once())
+            ->method('isHit')
+            ->willReturn(true);
+        $this->cacheItem->expects($this->once())
+            ->method('get')
             ->willReturn($storedData);
 
         $this->registry->expects($this->never())
@@ -116,7 +139,11 @@ class RuleCacheTest extends \PHPUnit\Framework\TestCase
     {
         $id = 'test';
         $this->cache->expects($this->once())
-            ->method('fetch')
+            ->method('getItem')
+            ->with($id)
+            ->willReturn($this->cacheItem);
+        $this->cacheItem->expects($this->once())
+            ->method('isHit')
             ->willReturn(false);
         $this->assertFalse($this->ruleCache->fetch($id));
     }
@@ -125,7 +152,14 @@ class RuleCacheTest extends \PHPUnit\Framework\TestCase
     {
         $id = 'test';
         $this->cache->expects($this->once())
-            ->method('fetch')
+            ->method('getItem')
+            ->with($id)
+            ->willReturn($this->cacheItem);
+        $this->cacheItem->expects($this->once())
+            ->method('isHit')
+            ->willReturn(true);
+        $this->cacheItem->expects($this->once())
+            ->method('get')
             ->willReturn(['unknown' => 'data']);
         $this->assertFalse($this->ruleCache->fetch($id));
     }
@@ -134,7 +168,7 @@ class RuleCacheTest extends \PHPUnit\Framework\TestCase
     {
         $id = 'test';
         $this->cache->expects($this->once())
-            ->method('contains')
+            ->method('hasItem')
             ->with($id)
             ->willReturn(true);
         $this->assertTrue($this->ruleCache->contains($id));
@@ -158,9 +192,9 @@ class RuleCacheTest extends \PHPUnit\Framework\TestCase
             ->method('getParameters')
             ->willReturn($parameters);
         $expectedData = [
-            RuleCache::DQL_PARTS_KEY => $dqlParts,
-            RuleCache::PARAMETERS_KEY => $parameters,
-            RuleCache::HASH => md5('encrypted')
+            self::DQL_PARTS_KEY => $dqlParts,
+            self::PARAMETERS_KEY => $parameters,
+            self::HASH => md5('encrypted')
         ];
         $lifeTime = 0;
 
@@ -170,8 +204,20 @@ class RuleCacheTest extends \PHPUnit\Framework\TestCase
             ->willReturn('encrypted');
 
         $this->cache->expects($this->once())
+            ->method('getItem')
+            ->with($id)
+            ->willReturn($this->cacheItem);
+        $this->cacheItem->expects($this->once())
+            ->method('set')
+            ->with($expectedData)
+            ->willReturn($this->cacheItem);
+        $this->cacheItem->expects($this->once())
+            ->method('expiresAfter')
+            ->with($lifeTime)
+            ->willReturn($this->cacheItem);
+        $this->cache->expects($this->once())
             ->method('save')
-            ->with($id, $expectedData, $lifeTime)
+            ->with($this->cacheItem)
             ->willReturn(true);
         $this->assertTrue($this->ruleCache->save($id, $data, $lifeTime));
     }
@@ -190,18 +236,9 @@ class RuleCacheTest extends \PHPUnit\Framework\TestCase
     {
         $id = 'test';
         $this->cache->expects($this->once())
-            ->method('delete')
+            ->method('deleteItem')
             ->with($id)
             ->willReturn(true);
         $this->assertTrue($this->ruleCache->delete($id));
-    }
-
-    public function testGetStats()
-    {
-        $stats = [];
-        $this->cache->expects($this->once())
-            ->method('getStats')
-            ->willReturn($stats);
-        $this->assertSame($stats, $this->ruleCache->getStats());
     }
 }

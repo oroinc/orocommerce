@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\CMSBundle\Migrations\Data;
 
-use Doctrine\Common\Cache\FlushableCache;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -11,6 +10,7 @@ use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\DigitalAssetBundle\Entity\DigitalAsset;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\RedirectBundle\Cache\FlushableCacheInterface;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadAdminUserData;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
@@ -78,7 +78,7 @@ abstract class AbstractLoadPageData extends AbstractFixture implements
         }
 
         $cache = $this->container->get('oro_redirect.url_cache');
-        if ($cache instanceof FlushableCache) {
+        if ($cache instanceof FlushableCacheInterface) {
             $cache->flushAll();
         }
         $manager->flush();

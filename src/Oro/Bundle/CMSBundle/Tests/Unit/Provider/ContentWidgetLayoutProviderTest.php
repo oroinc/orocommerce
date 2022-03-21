@@ -2,18 +2,19 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Unit\Provider;
 
-use Doctrine\Common\Cache\Cache;
 use Oro\Bundle\CMSBundle\Provider\ContentWidgetLayoutProvider;
 use Oro\Bundle\CMSBundle\Tests\Unit\ContentWidget\Stub\ContentWidgetTypeStub;
 use Oro\Component\Layout\Extension\Theme\Model\Theme;
 use Oro\Component\Layout\Extension\Theme\Model\ThemeManager;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 
 class ContentWidgetLayoutProviderTest extends \PHPUnit\Framework\TestCase
 {
     /** @var ThemeManager|\PHPUnit\Framework\MockObject\MockObject */
     private $themeManager;
 
-    /** @var Cache|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var CacheInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $cache;
 
     /** @var ContentWidgetLayoutProvider */
@@ -22,7 +23,7 @@ class ContentWidgetLayoutProviderTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->themeManager = $this->createMock(ThemeManager::class);
-        $this->cache = $this->createMock(Cache::class);
+        $this->cache = $this->createMock(CacheInterface::class);
 
         $this->provider = new ContentWidgetLayoutProvider($this->themeManager, $this->cache);
     }
@@ -60,11 +61,11 @@ class ContentWidgetLayoutProviderTest extends \PHPUnit\Framework\TestCase
             ->willReturn([$theme1, $theme2, $theme3]);
 
         $this->cache->expects($this->once())
-            ->method('fetch')
-            ->willReturn(false);
-
-        $this->cache->expects($this->once())
-            ->method('save');
+            ->method('get')
+            ->willReturnCallback(function ($cacheKey, $callback) {
+                $item = $this->createMock(ItemInterface::class);
+                return $callback($item);
+            });
 
         $this->assertEquals(
             ['template2' => 'Template 2', 'template3' => 'Template 3'],
@@ -78,7 +79,7 @@ class ContentWidgetLayoutProviderTest extends \PHPUnit\Framework\TestCase
             ->method('getAllThemes');
 
         $this->cache->expects($this->once())
-            ->method('fetch')
+            ->method('get')
             ->willReturn(
                 [
                     'layouts' => [
@@ -113,11 +114,11 @@ class ContentWidgetLayoutProviderTest extends \PHPUnit\Framework\TestCase
             ->willReturn([$theme]);
 
         $this->cache->expects($this->once())
-            ->method('fetch')
-            ->willReturn(false);
-
-        $this->cache->expects($this->once())
-            ->method('save');
+            ->method('get')
+            ->willReturnCallback(function ($cacheKey, $callback) {
+                $item = $this->createMock(ItemInterface::class);
+                return $callback($item);
+            });
 
         $this->assertEquals(
             'Template 2',
@@ -131,7 +132,7 @@ class ContentWidgetLayoutProviderTest extends \PHPUnit\Framework\TestCase
             ->method('getAllThemes');
 
         $this->cache->expects($this->once())
-            ->method('fetch')
+            ->method('get')
             ->willReturn(
                 [
                     'layouts' => [

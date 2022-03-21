@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\EventListener;
 
-use Doctrine\Common\Cache\Cache;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
+use Oro\Bundle\PricingBundle\Cache\RuleCache;
 use Oro\Bundle\PricingBundle\Command\PriceListScheduleRecalculateCommand;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceRuleRepository;
@@ -22,7 +22,7 @@ class PriceCalculationPrecisionSystemConfigListenerTest extends \PHPUnit\Framewo
     private $registry;
 
     /**
-     * @var Cache|MockObject
+     * @var RuleCache|MockObject
      */
     private $cache;
 
@@ -41,7 +41,7 @@ class PriceCalculationPrecisionSystemConfigListenerTest extends \PHPUnit\Framewo
     protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
-        $this->cache = $this->createMock(Cache::class);
+        $this->cache = $this->createMock(RuleCache::class);
         $this->session = $this->createMock(Session::class);
         $this->translator = $this->createMock(TranslatorInterface::class);
 

@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\PricingBundle\Entity\EntityListener;
 
-use Doctrine\Common\Cache\Cache;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceListAssignedProductsTopic;
+use Oro\Bundle\PricingBundle\Cache\RuleCache;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerHandler;
@@ -22,7 +22,7 @@ class PriceListEntityListener
     /** @var PriceListRelationTriggerHandler */
     protected $triggerHandler;
 
-    /** @var Cache */
+    /** @var RuleCache */
     protected $cache;
 
     /** @var PriceListTriggerHandler */
@@ -33,7 +33,7 @@ class PriceListEntityListener
 
     public function __construct(
         PriceListRelationTriggerHandler $triggerHandler,
-        Cache $cache,
+        RuleCache $cache,
         PriceListTriggerHandler $priceListTriggerHandler,
         PriceRuleLexemeTriggerHandler $priceRuleLexemeTriggerHandler
     ) {

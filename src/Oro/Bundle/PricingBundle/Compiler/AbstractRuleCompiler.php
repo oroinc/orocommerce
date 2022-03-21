@@ -2,14 +2,17 @@
 
 namespace Oro\Bundle\PricingBundle\Compiler;
 
-use Doctrine\Common\Cache\Cache;
 use Doctrine\ORM\QueryBuilder;
+use Oro\Bundle\PricingBundle\Cache\RuleCache;
 use Oro\Bundle\ProductBundle\Expression\NodeToQueryDesignerConverter;
 use Oro\Bundle\ProductBundle\Expression\QueryConverter;
 use Oro\Component\Expression\ExpressionParser;
 use Oro\Component\Expression\Preprocessor\ExpressionPreprocessorInterface;
 use Oro\Component\Expression\QueryExpressionBuilder;
 
+/**
+ * Abstract class for price rule compilers
+ */
 abstract class AbstractRuleCompiler
 {
     /**
@@ -38,7 +41,7 @@ abstract class AbstractRuleCompiler
     protected $expressionBuilder;
 
     /**
-     * @var Cache
+     * @var RuleCache
      */
     protected $cache;
 
@@ -48,7 +51,7 @@ abstract class AbstractRuleCompiler
         NodeToQueryDesignerConverter $nodeConverter,
         QueryConverter $queryConverter,
         QueryExpressionBuilder $expressionBuilder,
-        Cache $cache
+        RuleCache $cache
     ) {
         $this->expressionParser = $parser;
         $this->expressionPreprocessor = $preprocessor;

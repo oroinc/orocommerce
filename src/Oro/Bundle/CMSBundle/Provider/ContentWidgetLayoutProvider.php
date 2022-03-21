@@ -2,24 +2,20 @@
 
 namespace Oro\Bundle\CMSBundle\Provider;
 
-use Doctrine\Common\Cache\Cache;
 use Oro\Component\Layout\Extension\Theme\Model\ThemeManager;
+use Symfony\Contracts\Cache\CacheInterface;
 
 /**
  * Provides configuration of widgets defined for a particular layout theme.
  */
 class ContentWidgetLayoutProvider
 {
-    /** @var string */
     private const WIDGETS_CACHE_KEY = 'oro_cms.provider.content_widget_layout';
 
-    /** @var ThemeManager */
-    private $themeManager;
+    private ThemeManager $themeManager;
+    private CacheInterface $cache;
 
-    /** @var Cache */
-    private $cache;
-
-    public function __construct(ThemeManager $themeManager, Cache $cache)
+    public function __construct(ThemeManager $themeManager, CacheInterface $cache)
     {
         $this->themeManager = $themeManager;
         $this->cache = $cache;
@@ -27,11 +23,9 @@ class ContentWidgetLayoutProvider
 
     public function getWidgetLayouts(string $widgetType): array
     {
-        $widgets = $this->cache->fetch(self::WIDGETS_CACHE_KEY);
-        if (false === $widgets) {
-            $widgets = $this->collectWidgets();
-            $this->cache->save(self::WIDGETS_CACHE_KEY, $widgets);
-        }
+        $widgets = $this->cache->get(self::WIDGETS_CACHE_KEY, function () {
+            return $this->collectWidgets();
+        });
 
         return $widgets['layouts'][$widgetType] ?? [];
     }

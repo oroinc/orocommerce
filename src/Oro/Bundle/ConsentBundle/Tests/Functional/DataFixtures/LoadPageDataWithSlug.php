@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\ConsentBundle\Tests\Functional\DataFixtures;
 
-use Doctrine\Common\Cache\FlushableCache;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\RedirectBundle\Cache\FlushableCacheInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
@@ -50,7 +50,7 @@ class LoadPageDataWithSlug extends AbstractFixture implements ContainerAwareInte
             $slugGenerator->generate($entity);
 
             $cache = $this->container->get('oro_redirect.url_cache');
-            if ($cache instanceof FlushableCache) {
+            if ($cache instanceof FlushableCacheInterface) {
                 $cache->flushAll();
             }
 

@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Entity\EntityListener;
 
-use Doctrine\Common\Cache\Cache;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceListAssignedProductsTopic;
+use Oro\Bundle\PricingBundle\Cache\RuleCache;
 use Oro\Bundle\PricingBundle\Entity\EntityListener\PriceListEntityListener;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
@@ -21,7 +21,7 @@ class PriceListEntityListenerTest extends \PHPUnit\Framework\TestCase
     /** @var PriceListRelationTriggerHandler|\PHPUnit\Framework\MockObject\MockObject */
     private $triggerHandler;
 
-    /** @var Cache|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var RuleCache|\PHPUnit\Framework\MockObject\MockObject */
     private $cache;
 
     /** @var PriceListTriggerHandler|\PHPUnit\Framework\MockObject\MockObject */
@@ -36,7 +36,7 @@ class PriceListEntityListenerTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->triggerHandler = $this->createMock(PriceListRelationTriggerHandler::class);
-        $this->cache = $this->createMock(Cache::class);
+        $this->cache = $this->createMock(RuleCache::class);
         $this->priceListTriggerHandler = $this->createMock(PriceListTriggerHandler::class);
         $this->priceRuleLexemeTriggerHandler = $this->createMock(PriceRuleLexemeTriggerHandler::class);
 

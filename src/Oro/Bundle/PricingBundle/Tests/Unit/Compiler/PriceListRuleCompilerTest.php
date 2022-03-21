@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Compiler;
 
-use Doctrine\Common\Cache\Cache;
+use Oro\Bundle\PricingBundle\Cache\RuleCache;
 use Oro\Bundle\PricingBundle\Compiler\PriceListRuleCompiler;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\ProductBundle\Expression\NodeToQueryDesignerConverter;
@@ -22,7 +22,7 @@ class PriceListRuleCompilerTest extends \PHPUnit\Framework\TestCase
         $nodeConverter = $this->createMock(NodeToQueryDesignerConverter::class);
         $queryConverter = $this->createMock(QueryConverter::class);
         $expressionBuilder = $this->createMock(QueryExpressionBuilder::class);
-        $cache = $this->createMock(Cache::class);
+        $cache = $this->createMock(RuleCache::class);
 
         $this->compiler = new PriceListRuleCompiler(
             $expressionParser,

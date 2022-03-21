@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Entity\EntityListener;
 
-use Doctrine\Common\Cache\Cache;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceRulesTopic;
+use Oro\Bundle\PricingBundle\Cache\RuleCache;
 use Oro\Bundle\PricingBundle\Entity\EntityListener\PriceRuleEntityListener;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
@@ -15,7 +15,7 @@ class PriceRuleEntityListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var Cache|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var RuleCache|\PHPUnit\Framework\MockObject\MockObject */
     private $cache;
 
     /** @var PriceListTriggerHandler|\PHPUnit\Framework\MockObject\MockObject */
@@ -26,7 +26,7 @@ class PriceRuleEntityListenerTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->cache = $this->createMock(Cache::class);
+        $this->cache = $this->createMock(RuleCache::class);
         $this->priceRuleChangeTriggerHandler = $this->createMock(PriceListTriggerHandler::class);
         $this->listener = new PriceRuleEntityListener(
             $this->cache,

@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Entity\EntityListener;
 
-use Doctrine\Common\Cache\Cache;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\PricingBundle\Async\Topic\ResolveCombinedPriceListCurrenciesTopic;
 use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceRulesTopic;
+use Oro\Bundle\PricingBundle\Cache\RuleCache;
 use Oro\Bundle\PricingBundle\Entity\EntityListener\PriceListCurrencyEntityListener;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListCurrency;
@@ -17,7 +17,7 @@ class PriceListCurrencyEntityListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var Cache|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var RuleCache|\PHPUnit\Framework\MockObject\MockObject */
     private $cache;
 
     /** @var PriceListTriggerHandler|\PHPUnit\Framework\MockObject\MockObject */
@@ -36,7 +36,7 @@ class PriceListCurrencyEntityListenerTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp(): void
     {
-        $this->cache = $this->createMock(Cache::class);
+        $this->cache = $this->createMock(RuleCache::class);
         $this->priceListTriggerHandler = $this->createMock(PriceListTriggerHandler::class);
         $this->featureChecker = $this->createMock(FeatureChecker::class);
 

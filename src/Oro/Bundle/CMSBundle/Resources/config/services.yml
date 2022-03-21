@@ -290,11 +290,16 @@ services:
         tags:
             - { name: oro_entity.name_provider, priority: 100 }
 
+    oro_cms.content_widget_layout_cache:
+        parent: oro.data.cache
+        tags:
+            - { name: 'cache.pool', namespace: 'content_widget_layout_cache' }
+
     oro_cms.provider.content_widget_layout:
         class: Oro\Bundle\CMSBundle\Provider\ContentWidgetLayoutProvider
         arguments:
             - '@oro_layout.theme_manager'
-            - '@oro.cache.memory_cache_chain'
+            - '@oro_cms.content_widget_layout_cache'
 
     Oro\Bundle\CMSBundle\Provider\ContentWidgetLayoutProvider:
         alias: oro_cms.provider.content_widget_layout

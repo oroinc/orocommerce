@@ -8,14 +8,11 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
-use Oro\Component\Testing\Unit\Cache\CacheTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Contracts\Cache\CacheInterface;
 
 class ProductUnitsProviderTest extends \PHPUnit\Framework\TestCase
 {
-    use CacheTrait;
-
     private const UNITS = [
         [
             'code' => 'each',

@@ -2,13 +2,13 @@
 
 namespace Oro\Bundle\PricingBundle\Entity\EntityListener;
 
-use Doctrine\Common\Cache\Cache;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerTrait;
 use Oro\Bundle\PricingBundle\Async\Topic\ResolveCombinedPriceListCurrenciesTopic;
 use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceRulesTopic;
+use Oro\Bundle\PricingBundle\Cache\RuleCache;
 use Oro\Bundle\PricingBundle\Entity\PriceListCurrency;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerHandler;
@@ -27,14 +27,14 @@ class PriceListCurrencyEntityListener implements OptionalListenerInterface, Feat
     /** @var PriceListRelationTriggerHandler */
     protected $triggerHandler;
 
-    /** @var Cache */
+    /** @var RuleCache */
     protected $cache;
 
     /** @var PriceListTriggerHandler */
     protected $priceListTriggerHandler;
 
     public function __construct(
-        Cache $cache,
+        RuleCache $cache,
         PriceListTriggerHandler $priceListTriggerHandler
     ) {
         $this->cache = $cache;
