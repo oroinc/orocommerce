@@ -43,7 +43,8 @@ Feature: Product Gallery Popup On Products Catalog
 
   Scenario: Default state - "Enable Image Preview On Product Listing" is On
     Given I proceed as the User
-    When I am on the homepage
+    When I signed in as AmandaRCole@example.org on the store frontend
+    And I am on the homepage
     And I click "NewCategory"
     And I should see preview image with alt "Product1`\"'&йёщ®&reg;>" for "PSKU1" product
     And I should see picture for "PSKU1" product in the "ProductFrontendGrid"
@@ -52,6 +53,18 @@ Feature: Product Gallery Popup On Products Catalog
     Then I should see gallery image with alt "Product1`\"'&йёщ®&reg;>"
     And I click "Popup Gallery Widget Close"
     Then I should not see an "Popup Gallery Widget" element
+
+  Scenario: Default state - "Enable Image Preview On Product Listing" is On (tablet view)
+    Given I set window size to 992x1024
+    And I should see an "Product Item Gallery Trigger" element
+    When I click "Product Item Gallery Trigger"
+    Then I should see gallery image with alt "Product1`\"'&йёщ®&reg;>"
+    When I click "Popup Gallery Widget Close"
+    Then I should not see an "Popup Gallery Widget" element
+    When I click on "ProductFrontendMassActionHeadButtonTablet"
+    Then I should not see an "Product Item Gallery Trigger" element
+    When I click on "ProductFrontendMassActionHeadButtonTablet"
+    Then I should see an "Product Item Gallery Trigger" element
 
   Scenario: Check that alt attribute in product image is localized
     Given I click "Localization Switcher"
