@@ -24,11 +24,15 @@ define(function(require) {
          * @return {*}
          */
         render: function() {
+            const addActionsCount = this.launchers.filter(launcher => {
+                return launcher.action.type === 'addproducts';
+            }).length;
+
             this.launchers.forEach(launcher => {
                 const props = launcher.getTemplateData();
                 const attributes = props.attributes || {};
 
-                if (launcher.action.is_current) {
+                if (addActionsCount > 1 && launcher.action.is_current) {
                     attributes['data-label'] = __('oro.product.frontend.actions_panel.action_postfix');
                 }
 
@@ -42,7 +46,7 @@ define(function(require) {
         },
 
         renderMainLauncher() {
-            const launcher = this.launchers[0];
+            const launcher = this.launchers.filter(launcher => launcher.action.is_current)[0] || this.launchers[0];
 
             this.$el.empty();
             this.$el.append(launcher.render().$el);

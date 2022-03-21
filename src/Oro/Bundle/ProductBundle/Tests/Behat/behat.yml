@@ -830,10 +830,13 @@ oro_behat_extension:
     ProductFrontendGridMassActionSearchInDialog:
       selector: '[role="dialog"] [data-role="search-container"] .input'
 
+    ProductFrontendGridMassActionItem:
+      selector: '.dropdown-item'
+
     ProductFrontendGridMassActionDefaultItem:
       selector: '.dropdown-item[data-label]:first-child'
 
-    ProductFrontendMassAddPPanelInBottomSticky:
+    ProductFrontendMassAddPanelInBottomSticky:
       selector: '[data-sticky-name="bottom-sticky-panel"] .dropup .action'
 
     ProductFrontendMassOpenInDialog:

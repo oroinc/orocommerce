@@ -98,13 +98,14 @@ define(function(require) {
          */
         render: function() {
             const visibleState = {};
-            let hide = this._isSimple();
+            let hideCheckboxes = this._isSimple();
             const state = {selected: false};
 
             this.model.trigger('backgrid:isSelected', this.model, state);
             this.model.trigger('backgrid:getVisibleState', visibleState);
             if (!_.isEmpty(visibleState)) {
-                hide = !visibleState.visible;
+                // Mobile view row selection is turned on
+                hideCheckboxes = !visibleState.visible;
             }
 
             this.$el.html(this.template({
@@ -115,7 +116,7 @@ define(function(require) {
 
             this.$checkbox = this.$el.find(this.checkboxSelector);
             this.$container.append(this.$el);
-            this.hideView(hide);
+            this.hideView(hideCheckboxes);
 
             return this;
         },
@@ -135,10 +136,10 @@ define(function(require) {
         },
 
         /**
-         * @param {Boolean} bool
+         * @param {Boolean} isHidden
          */
-        hideView: function(bool) {
-            this.$el.toggleClass('hidden', bool);
+        hideView: function(isHidden) {
+            this.$el.toggleClass('hidden', isHidden);
         },
 
         dispose: function() {
