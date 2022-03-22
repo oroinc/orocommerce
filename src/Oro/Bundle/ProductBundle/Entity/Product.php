@@ -164,6 +164,7 @@ class Product extends ExtendProduct implements
 
     const TYPE_SIMPLE = 'simple';
     const TYPE_CONFIGURABLE = 'configurable';
+    const TYPE_KIT = 'kit';
 
     /**
      * @ORM\Id
@@ -644,6 +645,29 @@ class Product extends ExtendProduct implements
     protected $denormalizedDefaultNameUppercase;
 
     /**
+     * @var Collection<ProductKitItem>|null
+     *
+     * @ORM\OneToMany(
+     *     targetEntity="ProductKitItem",
+     *     mappedBy="productKit",
+     *     cascade={"ALL"},
+     *     orphanRemoval=true,
+     *     fetch="EXTRA_LAZY"
+     * )
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          },
+     *          "importexport"={
+     *               "excluded"=true
+     *          }
+     *      }
+     * )
+     */
+    protected ?Collection $kitItems = null;
+
+    /**
      * {@inheritdoc}
      */
     public function __construct()
@@ -660,6 +684,7 @@ class Product extends ExtendProduct implements
         $this->slugPrototypes = new ArrayCollection();
         $this->slugs = new ArrayCollection();
         $this->slugPrototypesWithRedirect = new SlugPrototypesWithRedirect($this->slugPrototypes);
+        $this->kitItems = new ArrayCollection();
     }
 
     /**
@@ -1607,5 +1632,38 @@ class Product extends ExtendProduct implements
     public function getDenormalizedDefaultNameUppercase()
     {
         return $this->denormalizedDefaultNameUppercase;
+    }
+
+    public function addKitItem(ProductKitItem $productKitItem): self
+    {
+        if (!$productKitItem->getProductKit()) {
+            $productKitItem->setProductKit($this);
+        }
+
+        $kitItems = $this->getKitItems();
+        if (!$kitItems->contains($productKitItem)) {
+            $kitItems->add($productKitItem);
+        }
+
+        return $this;
+    }
+
+    public function removeKitItem(ProductKitItem $productKitItem): self
+    {
+        $kitItems = $this->getKitItems();
+        if ($kitItems->contains($productKitItem)) {
+            $kitItems->removeElement($productKitItem);
+        }
+
+        return $this;
+    }
+
+    public function getKitItems(): Collection
+    {
+        if ($this->kitItems === null) {
+            $this->kitItems = new ArrayCollection();
+        }
+
+        return $this->kitItems;
     }
 }

@@ -22,6 +22,10 @@ use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtensionAwareInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings(PHPMD.ExcessiveClassLength)
+ * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+ * @SuppressWarnings(PHPMD.NPathComplexity)
  */
 class OroProductBundleInstaller implements
     Installation,
@@ -91,7 +95,7 @@ class OroProductBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_26';
+        return 'v1_27';
     }
 
     /**
@@ -120,6 +124,11 @@ class OroProductBundleInstaller implements
         $this->createOroBrandSlugTable($schema);
         $this->createOroBrandSlugPrototypeTable($schema);
 
+        $this->createOroProductKitItemTable($schema);
+        $this->createOroProductKitItemLabelTable($schema);
+        $this->createOroProductKitItemProductsTable($schema);
+        $this->createOroProductKitItemReferencedProductUnitPrecisionsTable($schema);
+
         $this->createOroProductWebsiteReindexRequestItem($schema);
 
         $this->addOroProductForeignKeys($schema);
@@ -134,6 +143,11 @@ class OroProductBundleInstaller implements
         $this->addOroBrandDescriptionForeignKeys($schema);
         $this->addOroBrandNameForeignKeys($schema);
         $this->addOroBrandShortDescForeignKeys($schema);
+        $this->addOroProductKitItemForeignKeys($schema);
+        $this->addOroProductKitItemLabelForeignKeys($schema);
+        $this->addOroProductKitItemProductsForeignKeys($schema);
+        $this->addOroProductKitItemReferencedProductUnitPrecisionsForeignKeys($schema);
+
         $this->addProductToBrand($schema);
 
         $this->updateProductTable($schema);
@@ -823,6 +837,120 @@ class OroProductBundleInstaller implements
             ['brand_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+    }
+
+    protected function createOroProductKitItemTable(Schema $schema): void
+    {
+        $table = $schema->createTable('oro_product_kit_item');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->setPrimaryKey(['id']);
+        $table->addColumn('created_at', 'datetime');
+        $table->addColumn('updated_at', 'datetime');
+
+        $table->addColumn('optional', 'boolean', ['default' => false]);
+        $table->addColumn('sort_order', 'integer', ['default' => 0]);
+        $table->addColumn('minimum_quantity', 'integer', ['notnull' => false]);
+        $table->addColumn('maximum_quantity', 'integer', ['notnull' => false]);
+
+        $table->addColumn('unit_code', 'string', ['notnull' => false]);
+        $table->addColumn('product_kit_id', 'integer', ['notnull' => false]);
+    }
+
+    protected function addOroProductKitItemForeignKeys(Schema $schema): void
+    {
+        $table = $schema->getTable('oro_product_kit_item');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_product'),
+            ['product_kit_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_product_unit'),
+            ['unit_code'],
+            ['code'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+    }
+
+    protected function createOroProductKitItemLabelTable(Schema $schema): void
+    {
+        $table = $schema->createTable('oro_product_prod_kit_item_label');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('product_kit_item_id', 'integer', ['notnull' => false]);
+        $table->addColumn('localization_id', 'integer', ['notnull' => false]);
+        $table->addColumn('fallback', 'string', ['notnull' => false, 'length' => 64]);
+        $table->addColumn('string', 'string', ['notnull' => false, 'length' => 255]);
+        $table->setPrimaryKey(['id']);
+        $table->addIndex(['fallback'], 'idx_product_prod_kit_fallback', []);
+        $table->addIndex(['string'], 'idx_product_prod_kit_string', []);
+    }
+
+    protected function addOroProductKitItemLabelForeignKeys(Schema $schema): void
+    {
+        $table = $schema->getTable('oro_product_prod_kit_item_label');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_product_kit_item'),
+            ['product_kit_item_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_localization'),
+            ['localization_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+    }
+
+    protected function createOroProductKitItemProductsTable(Schema $schema): void
+    {
+        $table = $schema->createTable('oro_product_kit_item_products');
+        $table->addColumn('product_kit_item_id', 'integer', []);
+        $table->addColumn('product_id', 'integer', []);
+        $table->setPrimaryKey(['product_kit_item_id', 'product_id']);
+    }
+
+    protected function addOroProductKitItemProductsForeignKeys(Schema $schema): void
+    {
+        $table = $schema->getTable('oro_product_kit_item_products');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_product_kit_item'),
+            ['product_kit_item_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_product'),
+            ['product_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+    }
+
+    protected function createOroProductKitItemReferencedProductUnitPrecisionsTable(Schema $schema): void
+    {
+        $table = $schema->createTable('oro_product_kit_unit_precisions');
+        $table->addColumn('product_kit_item_id', 'integer', []);
+        $table->addColumn('product_unit_precision_id', 'integer', []);
+        $table->setPrimaryKey(['product_kit_item_id', 'product_unit_precision_id']);
+    }
+
+    protected function addOroProductKitItemReferencedProductUnitPrecisionsForeignKeys(Schema $schema): void
+    {
+        $table = $schema->getTable('oro_product_kit_unit_precisions');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_product_kit_item'),
+            ['product_kit_item_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_product_unit_precision'),
+            ['product_unit_precision_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
     }
 }

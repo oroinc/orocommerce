@@ -44,6 +44,9 @@ class OroProductBundle extends Bundle
                 'shortDescription' => 'shortDescriptions',
                 'slugPrototype' => 'slugPrototypes'
             ],
+            'Oro\Bundle\ProductBundle\Entity\ProductKitItem' => [
+                'label' => 'labels',
+            ],
             'Oro\Bundle\ProductBundle\Entity\Brand' => [
                 'name' => 'names',
                 'description' => 'descriptions',
