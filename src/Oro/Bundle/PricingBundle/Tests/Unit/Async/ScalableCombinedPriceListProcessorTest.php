@@ -139,16 +139,15 @@ class ScalableCombinedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider messageDataProvider
-     * @param array $body
-     * @param Website|null $website
-     * @param Customer|CustomerGroup|null $targetEntity
      */
     public function testProcess(array $body, ?Website $website, ?object $targetEntity)
     {
+        $jsonBody = JSON::encode($body);
+
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')
-            ->willReturn(JSON::encode($body));
+            ->willReturn($jsonBody);
 
         $associations = [
             [
@@ -176,7 +175,9 @@ class ScalableCombinedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
         $this->jobRunner->expects($this->once())
             ->method('runUnique')
             ->willReturnCallback(
-                function ($ownerId, $name, $closure) use ($job) {
+                function ($ownerId, $name, $closure) use ($job, $jsonBody) {
+                    $this->assertEquals('oro_pricing.price_lists.cpl.rebuild:'. md5($jsonBody), $name);
+
                     return $closure($this->jobRunner, $job);
                 }
             );
@@ -218,6 +219,7 @@ class ScalableCombinedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
     public function messageDataProvider(): \Generator
     {
         $website = $this->getEntity(Website::class, ['id' => 1]);
+        $website2 = $this->getEntity(Website::class, ['id' => 2]);
         $customer = $this->getEntity(Customer::class, ['id' => 10]);
         $customerGroup = $this->getEntity(CustomerGroup::class, ['id' => 100]);
 
@@ -230,6 +232,12 @@ class ScalableCombinedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
         yield 'per website' => [
             ['force' => false, 'website' => 1, 'customer' => null, 'customerGroup' => null],
             $website,
+            null
+        ];
+
+        yield 'per website2' => [
+            ['force' => false, 'website' => 2, 'customer' => null, 'customerGroup' => null],
+            $website2,
             null
         ];
 
