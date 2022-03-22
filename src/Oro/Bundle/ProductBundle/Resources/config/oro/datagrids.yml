@@ -823,6 +823,7 @@ datagrids:
             displayOptions:
                 selector: '.catalog__filter-controls__item_display-options'
             jsmodules:
+                - oroproduct/js/app/datagrid/frontend-product-process-options-builder
                 - oroproduct/js/app/datagrid/frontend-product-display-options-builder
                 - oroproduct/js/app/datagrid/frontend-product-filters-events-dispatcher-builder
             frontend: true

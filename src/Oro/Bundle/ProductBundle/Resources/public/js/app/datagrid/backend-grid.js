@@ -15,9 +15,8 @@ define(function(require, exports, module) {
     let config = require('module-config').default(module.id);
     config = _.extend({
         asapInitComponentsList: '[data-popup-gallery]',
-        massActionsInSticky: _.isMobile(),
-        massActionsContainer: $('[data-mass-actions-container]'),
-        massActionsStickyContainer: $('[data-mass-actions-sticky-container]')
+        massActionsContainer: '[data-mass-actions-container]',
+        massActionsStickyContainer: '[data-mass-actions-sticky-container]'
     }, config);
 
     const BackendGrid = Grid.extend({
@@ -43,9 +42,6 @@ define(function(require, exports, module) {
             visible: null
         },
 
-        /** @property */
-        massActionsInSticky: config.massActionsInSticky,
-
         /**
          * @inheritdoc
          */
@@ -61,6 +57,7 @@ define(function(require, exports, module) {
             this.footer = null;
             this.body = null;
             this.multiSelectRowEnabled = options.multiSelectRowEnabled;
+            this.optimizedScreenSize = options.metadata.options.optimizedScreenSize || 'tablet';
 
             mediator.on('grid-content-loaded', function(params) {
                 this.updateGridContent(params);
@@ -119,7 +116,6 @@ define(function(require, exports, module) {
                 'backgrid:checkUnSavedData': this.checkUnSavedData,
                 'backgrid:hasMassActions': this.hasMassActions
             });
-            this.listenTo(this.selectState, 'change', _.debounce(this.showStickyContainer.bind(this), 50));
         },
 
         /**
@@ -199,33 +195,30 @@ define(function(require, exports, module) {
 
             this.selectAllHeaderCell = new BackendSelectAllHeaderCell({
                 collection: this.collection,
-                selectState: this.selectState
+                selectState: this.selectState,
+                optimizedScreenSize: this.optimizedScreenSize
             });
+
+            $(this.massActionsContainer).append(this.selectAllHeaderCell.$el);
 
             this.selectHeaderActionCell = new BackendActionHeaderCell({
                 collection: this.collection,
                 column: this.columns.findWhere('massActions'),
                 selectState: this.selectState,
-                massActionsInSticky: this.massActionsInSticky
+                optimizedScreenSize: this.optimizedScreenSize,
+                attributes: {
+                    'data-dom-relocation-options': JSON.stringify({
+                        responsive: [{
+                            viewport: {
+                                maxScreenType: this.optimizedScreenSize
+                            },
+                            moveTo: this.massActionsStickyContainer
+                        }]
+                    })
+                }
             });
 
-            this.massActionsContainer.append(this.selectAllHeaderCell.$el);
-            if (this.massActionsInSticky) {
-                this.additionalSelectAllHeaderCell = new BackendSelectAllHeaderCell({
-                    collection: this.collection,
-                    selectState: this.selectState,
-                    additionalTpl: true
-                });
-
-                this.massActionsStickyContainer.append(this.additionalSelectAllHeaderCell.$el);
-                this.massActionsStickyContainer.append(this.selectHeaderActionCell.$el);
-            } else {
-                this.massActionsContainer.append(this.selectHeaderActionCell.$el);
-            }
-        },
-
-        showStickyContainer: function(selectState) {
-            this.massActionsStickyContainer[selectState.isEmpty() ? 'addClass' : 'removeClass']('hidden');
+            $(this.massActionsContainer).append(this.selectHeaderActionCell.$el);
         },
 
         asapInitComponentsForVisibleState: function() {

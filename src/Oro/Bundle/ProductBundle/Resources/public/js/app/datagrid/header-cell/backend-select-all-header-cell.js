@@ -4,8 +4,13 @@ define(function(require) {
     const _ = require('underscore');
     const $ = require('jquery');
     const template = require('tpl-loader!oroproduct/templates/datagrid/backend-select-all-header-cell.html');
-    const additionalTpl = require('tpl-loader!oroproduct/templates/datagrid/backend-select-all-header-cell-short.html');
     const SelectAllHeaderCell = require('orodatagrid/js/datagrid/header-cell/select-all-header-cell');
+    const viewportManager = require('oroui/js/viewport-manager');
+
+    const modes = {
+        DROPDOWN: 'Dropdown',
+        SIMPLE: 'Simple'
+    };
 
     const BackendSelectAllHeaderCell = SelectAllHeaderCell.extend({
         /** @property */
@@ -20,6 +25,10 @@ define(function(require) {
         /** @property */
         template: template,
 
+        listen: {
+            'viewport:change mediator': 'defineRenderingStrategy'
+        },
+
         /**
          * @inheritdoc
          */
@@ -31,13 +40,26 @@ define(function(require) {
          * @inheritdoc
          */
         initialize: function(options) {
+            if (!options.optimizedScreenSize) {
+                throw new Error('The "optimizedScreenSize" option is required.');
+            }
+
+            this.optimizedScreenSize = options.optimizedScreenSize;
             this.collection = options.collection;
             this.selectState = options.selectState;
-
-            if (options.additionalTpl) {
-                this.template = additionalTpl;
-            }
+            this.defineRenderingStrategy();
         },
+
+        /**
+         * @inheritdoc
+         */
+        delegateListeners: function() {
+            this.listenTo(this.selectState, 'undo-selection', this.onSelectUnbind.bind(this));
+            this.listenTo(this, 'render-mode:changed', state => this.render());
+
+            return BackendSelectAllHeaderCell.__super__.delegateListeners.call(this);
+        },
+
 
         /**
          * @inheritdoc
@@ -45,13 +67,27 @@ define(function(require) {
         delegateEvents: function(events) {
             this.$('[data-checkbox-change-visible]')
                 .on('change' + this.eventNamespace(), _.debounce(this.onCheckboxChange.bind(this), 50));
-            this.$('[data-select-unbind]')
-                .on('click' + this.eventNamespace(), _.debounce(this.onSelectUnbind.bind(this), 50));
-
             this.collection.on('backgrid:visible-changed', _.debounce(this.unCheckCheckbox.bind(this), 50));
             this.listenTo(this.selectState, 'change', _.debounce(this.updateState.bind(this), 50));
 
-            BackendSelectAllHeaderCell.__super__.delegateEvents.call(this, events);
+            return BackendSelectAllHeaderCell.__super__.delegateEvents.call(this, events);
+        },
+
+        defineRenderingStrategy() {
+            const prevRenderMode = this.renderMode;
+
+            if (this._isSimple()) {
+                this.renderMode = modes.SIMPLE;
+            } else {
+                this.renderMode = modes.DROPDOWN;
+            }
+
+            if (prevRenderMode !== this.renderMode) {
+                this.trigger('render-mode:changed', {
+                    prevRenderMode,
+                    renderMode: this.renderMode
+                });
+            }
         },
 
         onCheckboxClick: function(e) {
@@ -64,16 +100,18 @@ define(function(require) {
         },
 
         onCheckboxChange: function(event) {
-            const checked = $(event.currentTarget).is(':checked');
+            this.updateVisibleState($(event.currentTarget).is(':checked'));
+        },
 
-            if (!checked) {
+        updateVisibleState(state = true) {
+            if (!state) {
                 this.collection.trigger('backgrid:selectNone');
             }
 
             this.collection.trigger('backgrid:selectNone');
-            this.collection.trigger('backgrid:setVisibleState', checked);
+            this.collection.trigger('backgrid:setVisibleState', state);
 
-            this.canSelect(checked);
+            this.canSelect(state);
         },
 
         onSelectUnbind: function() {
@@ -93,6 +131,36 @@ define(function(require) {
                 .prop('checked', false)
                 .parent()
                 .removeClass('checked');
+        },
+
+        _isSimple() {
+            return viewportManager.isApplicable({maxScreenType: this.optimizedScreenSize});
+        },
+
+        /**
+         * @inheritdoc
+         */
+        getTemplateData() {
+            const data = BackendSelectAllHeaderCell.__super__.getTemplateData.call(this);
+
+            data.isSimple = this._isSimple();
+
+            return data;
+        },
+
+        render() {
+            BackendSelectAllHeaderCell.__super__.render.call(this);
+
+            this.$el.trigger('content:changed');
+
+            if (this.renderMode === modes.SIMPLE) {
+                this.updateVisibleState(false);
+            } else {
+                this.updateVisibleState();
+                this.onSelectUnbind();
+            }
+
+            return this;
         }
     });
 

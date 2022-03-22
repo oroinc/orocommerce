@@ -10,7 +10,6 @@ styles:
         - 'bundles/oroshoppinglist/blank/scss/variables/shopping-list-widget-config.scss'
         - 'bundles/oroshoppinglist/blank/scss/variables/shopping-lists-units-config.scss'
         - 'bundles/oroshoppinglist/blank/scss/variables/shopping-lists-outer-config.scss'
-        - 'bundles/oroshoppinglist/blank/scss/variables/products-widget-config.scss'
 
         - 'bundles/oroshoppinglist/blank/scss/variables/responsive-shopping-list-grid/grid-line-items-config.scss'
         - 'bundles/oroshoppinglist/blank/scss/variables/responsive-shopping-list-grid/grid-side-effects-config.scss'

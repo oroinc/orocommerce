@@ -3,11 +3,15 @@ define(function(require, exports, module) {
 
     const _ = require('underscore');
     const $ = require('jquery');
+    const mediator = require('oroui/js/mediator');
     const routing = require('routing');
+    const __ = require('orotranslation/js/translator');
     const template = require('tpl-loader!oroproduct/templates/datagrid/backend-action-header-cell.html');
+    const viewportManager = require('oroui/js/viewport-manager');
     const ActionHeaderCell = require('orodatagrid/js/datagrid/header-cell/action-header-cell');
     const ShoppingListCollectionService = require('oroshoppinglist/js/shoppinglist-collection-service');
     const ActionsPanel = require('oroproduct/js/app/datagrid/backend-actions-panel');
+    const FullscreenPopupView = require('orofrontend/blank/js/app/views/fullscreen-popup-view');
     const config = require('module-config').default(module.id);
 
     const shoppingListAddAction = config.shoppingListAddAction || {
@@ -25,6 +29,11 @@ define(function(require, exports, module) {
         launcherOptions: {
             iconClassName: 'fa-shopping-cart'
         }
+    };
+    const modes = {
+        DROPDOWN: 'Dropdown',
+        GROUP: 'Group',
+        FULLSCREEN: 'Fullscreen'
     };
 
     const BackendActionHeaderCell = ActionHeaderCell.extend({
@@ -45,7 +54,16 @@ define(function(require, exports, module) {
          */
         actionsPanel: ActionsPanel,
 
-        shoppingListCollection: null,
+        events: {
+            'click [data-fullscreen-trigger]': 'showFullScreen',
+            'click [data-undo-selection]': 'undoSelection'
+        },
+
+        /**
+         * Possible way to render actions
+         * {string}
+         */
+        renderMode: modes.DROPDOWN,
 
         /**
          * @inheritdoc
@@ -54,33 +72,83 @@ define(function(require, exports, module) {
             BackendSelectHeaderCell.__super__.constructor.call(this, options);
         },
 
+
         /**
          * @inheritdoc
          */
         initialize: function(options) {
-            BackendActionHeaderCell.__super__.initialize.call(this, options);
+            if (!options.optimizedScreenSize) {
+                throw new Error('The "optimizedScreenSize" option is required.');
+            }
+
+            this.optimizedScreenSize = options.optimizedScreenSize;
             this.selectState = options.selectState;
-            this.massActionsInSticky = options.massActionsInSticky;
-            this.listenTo(this.selectState, 'change', _.debounce(this.canUse.bind(this), 50));
+
+            BackendActionHeaderCell.__super__.initialize.call(this, options);
 
             ShoppingListCollectionService.shoppingListCollection.done(collection => {
-                this.shoppingListCollection = collection;
                 this.listenTo(collection, 'change', this._onShoppingListsRefresh.bind(this));
-
-                this._onShoppingListsRefresh();
             });
+
+            this.defineRenderingStrategy();
+        },
+
+        /**
+         * @inheritdoc
+         */
+        delegateListeners: function() {
+            this.listenTo(this.selectState, 'change', _.debounce(this._doActivate.bind(this), 50));
+            this.listenTo(mediator, {
+                'sticky-panel:toggle-state': this.onStickyPanelToggle.bind(this),
+                'viewport:change': this.defineRenderingStrategy.bind(this)
+            });
+            this.listenTo(this, 'render-mode:changed', state => this.onRenderModeIsChanged());
+
+            return BackendActionHeaderCell.__super__.delegateListeners.call(this);
+        },
+
+        _showMassActionsInSticky() {
+            return viewportManager.isApplicable({maxScreenType: this.optimizedScreenSize});
+        },
+
+        _showMassActionsInFullscreen() {
+            return this.subviewsByName['fullscreen'] && !this.subviewsByName['fullscreen'].disposed;
+        },
+
+        defineRenderingStrategy() {
+            const prevRenderMode = this.renderMode;
+
+            if (this._showMassActionsInSticky()) {
+                if (this._showMassActionsInFullscreen()) {
+                    this.renderMode = modes.FULLSCREEN;
+                } else {
+                    this.renderMode = modes.GROUP;
+                }
+            } else {
+                this.renderMode = modes.DROPDOWN;
+            }
+
+            if (prevRenderMode !== this.renderMode) {
+                this.trigger('render-mode:changed', {
+                    prevRenderMode,
+                    renderMode: this.renderMode
+                });
+            }
         },
 
         /**
          * @inheritdoc
          */
         dispose: function() {
-            delete this.shoppingListCollection;
             return BackendActionHeaderCell.__super__.dispose.call(this);
         },
 
-        canUse: function(selectState) {
-            this[(selectState.isEmpty() && selectState.get('inset')) ? 'disable' : 'enable']();
+        _doActivate: function(selectState) {
+            try {
+                this[`_doActivate${this.renderMode}`](selectState);
+            } catch (e) {
+                throw e;
+            }
         },
 
         _onShoppingListsRefresh: function() {
@@ -109,27 +177,195 @@ define(function(require, exports, module) {
         getTemplateData: function() {
             const data = BackendActionHeaderCell.__super__.getTemplateData.call(this);
 
-            data.massActionsInSticky = this.massActionsInSticky;
-            data.actionsLength = this.subview('actionsPanel').actions.length;
+            data.inSticky = this._showMassActionsInSticky();
+
             return data;
+        },
+
+        getActionContainer() {
+            return this.$('[data-action-panel]');
         },
 
         render: function() {
             this.$el.empty();
+            this.$el.append(this.getTemplateFunction()(this.getTemplateData()));
             this.renderActionsPanel();
-            this.canUse(this.selectState);
+            this._doActivate(this.selectState);
             return this;
         },
 
         renderActionsPanel: function() {
             const panel = this.subview('actionsPanel');
 
-            panel.massActionsInSticky = this.massActionsInSticky;
-            if (panel.haveActions()) {
-                this.$el.append(this.getTemplateFunction()(this.getTemplateData()));
-                panel.setElement(this.$('[data-action-panel]'));
-                panel.render();
+            if (!panel.haveActions()) {
+                return;
             }
+
+            panel.$el.removeClass(this._replaceablePanelClasses);
+            switch (this.renderMode) {
+                case modes.DROPDOWN:
+                    this._renderAsDropdown();
+                    break;
+                case modes.GROUP:
+                    return this._renderAsGroup();
+                    break;
+                case modes.FULLSCREEN:
+                    return this._renderAsFullscreen();
+                    break;
+                default:
+                    break;
+            }
+        },
+
+        _renderAsDropdown() {
+            const panel = this.subview('actionsPanel');
+            const togglerId = _.uniqueId('dropdown-');
+
+            this.getActionContainer().append(
+                panel.render().$el
+            );
+            panel.launchers.forEach(launcher => {
+                launcher.$el.addClass('dropdown-item');
+                launcher.$('.icon').addClass('fa fa--fw fa--аs-line');
+            });
+            panel.$el.children().wrapAll($('<div></div>', {
+                'class': 'dropdown-menu datagrid-massaction__dropdown-menu',
+                'aria-labelledby': togglerId
+            }));
+            $('<button></button>', {
+                'id': togglerId,
+                'type': 'button',
+                'class': 'btn btn--default btn--size-s dropdown-toggle',
+                'aria-haspopup': 'true',
+                'aria-expanded': 'false',
+                'data-inherit-parent-width': 'loosely',
+                'data-flip': false,
+                'data-toggle': 'dropdown',
+                'html': $('<span></span>', {
+                    'class': 'caret',
+                    'aria-hidden': 'true',
+                    'text': _.escape(__('oro.product.frontend.choose_action'))
+                })
+            }).prependTo(panel.$el);
+
+            return panel;
+        },
+
+        _doActivateDropdown(selectState) {
+            this[(selectState.isEmpty() && selectState.get('inset')) ? 'disable' : 'enable']();
+        },
+
+        _renderAsGroup() {
+            const panel = this.subview('actionsPanel');
+            const extraClasses = 'btn-group--full dropup';
+
+            this.getActionContainer().append(
+                panel.renderMainLauncher().$el
+            );
+            panel.launchers.forEach(launcher => {
+                launcher.$el.addClass('btn btn--full btn--info btn--size-s btn--clip-text');
+            });
+            panel.$el.addClass(extraClasses);
+            if (panel.actions.length > 1) {
+                panel.$el.append($('<button></button>', {
+                    'type': 'button',
+                    'class': 'btn btn--info btn--size-s dropdown-toggle',
+                    'data-fullscreen-trigger': '',
+                    'aria-label': __('oro.product.frontend.choose_action')
+                }));
+            }
+
+            this._replaceablePanelClasses = `${extraClasses} show`;
+
+            return panel;
+        },
+
+        _doActivateGroup(selectState) {
+            if (selectState.isEmpty()) {
+                this.getActionContainer().addClass('hidden');
+                this.subview('actionsPanel').disable();
+            } else {
+                this.getActionContainer().removeClass('hidden');
+                this.subview('actionsPanel').enable();
+            }
+        },
+
+        _renderAsFullscreen() {
+            const panel = this.subview('actionsPanel');
+
+            this._replaceablePanelClasses = 'dropdown-menu fullscreen';
+            panel.render();
+            panel.$el.addClass(this._replaceablePanelClasses);
+            panel.launchers.forEach(launcher => {
+                launcher.$el.addClass('dropdown-item');
+                launcher.$('.icon').addClass('fa fa--fw fa--аs-line');
+            });
+
+            return panel;
+        },
+
+        _doActivateFullscreen() {
+            // nothing to do
+        },
+
+        undoSelection() {
+            this.selectState.trigger('undo-selection');
+        },
+
+        showFullScreen() {
+            const fullscreen = new FullscreenPopupView({
+                contentElement: document.createElement('div'),
+                popupIcon: 'fa-chevron-left',
+                popupLabel: __('oro.product.frontend.choose_action')
+            });
+
+            this.subview('fullscreen', fullscreen);
+            this.listenToOnce(fullscreen, {
+                show: this.onShowFullScreen,
+                beforeclose: this.onBeforeCloseFullScreen,
+                close: this.onCloseFullScreen
+            });
+            this.defineRenderingStrategy();
+            fullscreen.show();
+        },
+
+        onShowFullScreen() {
+            const fullscreen = this.subview('fullscreen');
+
+            fullscreen.content.$el.append(this.renderActionsPanel().$el);
+            fullscreen.$popup.on(`click${fullscreen.eventNamespace()}`, '.action', e => fullscreen.close());
+        },
+
+        onBeforeCloseFullScreen() {
+            const fullscreen = this.subview('fullscreen');
+
+            fullscreen.$popup.off(fullscreen.eventNamespace());
+        },
+
+        onCloseFullScreen() {
+            const fullscreen = this.subview('fullscreen');
+
+            fullscreen.dispose();
+            this.defineRenderingStrategy();
+        },
+
+        onStickyPanelToggle(state) {
+            // Verify that $el is rendered is sticky panel
+            if (state.$element.find(this.$el).length) {
+                this.defineRenderingStrategy();
+            }
+        },
+
+        onRenderModeIsChanged() {
+            const fullscreen = this.subview('fullscreen');
+
+            // Remove fullscreen popup in large screen
+            if (fullscreen && !this._showMassActionsInSticky()) {
+                this.stopListening(fullscreen);
+                this.removeSubview('fullscreen');
+            }
+
+            this.render();
         }
     });
 

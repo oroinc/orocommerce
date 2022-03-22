@@ -1,6 +1,10 @@
 /* @theme: blank; */
 
 .product-action-area {
+    &:empty {
+        display: none;
+    }
+
     .product-action {
         display: inline-block;
 
@@ -25,13 +29,8 @@
     }
 
     &.in-sticky {
-        display: flex;
-
-        padding: $product-action-area-in-sticky-inner-offset;
-
-        background-color: $product-action-area-in-sticky-inner-bg-color;
-
         .product-action {
+            display: block;
             min-width: $product-action-in-sticky-width;
 
             &:first-child {

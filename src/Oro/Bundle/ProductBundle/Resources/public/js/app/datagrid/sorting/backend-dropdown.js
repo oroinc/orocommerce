@@ -41,7 +41,7 @@ define(function(require) {
          * Viewports for switch to FullScreen mode
          */
         fullscreenMode: {
-            maxScreenType: 'mobile-landscape'
+            maxScreenType: 'tablet'
         },
 
         /**

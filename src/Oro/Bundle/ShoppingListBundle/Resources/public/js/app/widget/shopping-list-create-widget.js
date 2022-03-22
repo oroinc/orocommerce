@@ -34,7 +34,8 @@ define(function(require) {
             options.dialogOptions = {
                 modal: true,
                 resizable: false,
-                width: '480',
+                width: 604,
+                minWidth: 375,
                 autoResize: true,
                 dialogClass: 'shopping-list-dialog'
             };
