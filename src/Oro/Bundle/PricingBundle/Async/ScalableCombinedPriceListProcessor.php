@@ -83,10 +83,9 @@ class ScalableCombinedPriceListProcessor implements
         $body = $message->getBody();
         $associations = $this->getAssociations($body);
 
-        $jobName = RebuildCombinedPriceListsTopic::getName() . ':' . md5(json_encode($body));
         $this->jobRunner->runUnique(
             $message->getMessageId(),
-            $jobName,
+            $this->getJobName($body),
             function (JobRunner $jobRunner, Job $job) use ($associations) {
                 $this->schedulePostCplJobs($job);
 
@@ -135,5 +134,22 @@ class ScalableCombinedPriceListProcessor implements
             $body['website'],
             $targetEntity
         );
+    }
+
+    private function getJobName(array $body): string
+    {
+        $data = [];
+        foreach ($body as $key => $value) {
+            if (is_object($value)) {
+                if (method_exists($value, 'getId')) {
+                    $value = $value->getId();
+                } else {
+                    $value = serialize($value);
+                }
+            }
+            $data[$key] = $value;
+        }
+
+        return RebuildCombinedPriceListsTopic::getName() . ':' . md5(json_encode($data));
     }
 }
