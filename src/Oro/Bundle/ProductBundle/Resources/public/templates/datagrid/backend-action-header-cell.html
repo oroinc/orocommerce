@@ -5,12 +5,11 @@
     <div class="btn-group btn-group--full dropup">
         <span class="btn btn--full btn--info btn--size-s btn--clip-text" data-toggle data-action-extra-panel></span>
         <a href="#" class="btn btn--info btn--size-s dropdown-toggle" role="button" id="<%- togglerId %>"
-           data-toggle="dropdown" data-popper="false"
+           data-toggle="dropdown" data-popper="false" data-fullscreen-trigger
            aria-haspopup="true" aria-expanded="false" aria-label="<%- _.__('oro.product.frontend.choose_action') %>"></a>
-        <div class="dropdown-menu dropdown-menu-right datagrid-massaction__dropdown-menu datagrid-massaction__dropdown-menu--stretch"
+        <div class="dropdown-menu hidden"
              data-action-main-panel aria-labelledby="<%- togglerId %>"
-        >
-        </div>
+        ></div>
     </div>
     <% } else { %>
     <span class="btn btn--block btn--info btn--size-s btn--clip-text" data-action-extra-panel></span>
@@ -21,6 +20,8 @@
     <div class="btn-group">
         <button class="btn btn--default btn--size-s disabled dropdown-toggle" type="button" id="<%- togglerId %>"
                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                data-inherit-parent-width="loosely"
+                data-flip="false"
         >
             <%- _.__('oro.product.frontend.choose_action') %>
             <span class="caret" aria-hidden="true"></span>

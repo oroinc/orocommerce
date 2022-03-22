@@ -1,21 +1,10 @@
-define([
-    'oroui/js/content-processor/pinned-dropdown-button',
-    'underscore',
-    'oroui/js/mediator',
-    'oroui/js/tools',
-    'oroui/js/app/components/base/component-container-mixin'
-], function($, _, mediator, tools, componentContainerMixin) {
+define(function(require) {
     'use strict';
 
-    const BUTTON_ORDER = {
-        'search': 0,
-        'important': 10,
-        'update': 20,
-        'remove': 30,
-        'new': 40,
-        'add': 50,
-        'direct': 60
-    };
+    const $ = require('oroui/js/content-processor/pinned-dropdown-button');
+    const _ = require('underscore');
+    const componentContainerMixin = require('oroui/js/app/components/base/component-container-mixin');
+    const BUTTONS_ORDER = require('oroproduct/js/app/buttons-order').default;
 
     $.widget(
         'oroui.productAddToDropdownButtonProcessor',
@@ -90,7 +79,7 @@ define([
                         ? $(this).data('intention') || 'add'
                         : 'direct';
                     $(this).attr('data-button-index', '')
-                        .data('order', BUTTON_ORDER[intention])
+                        .data('order', BUTTONS_ORDER[intention])
                         .data('button-index', i);
                 });
 

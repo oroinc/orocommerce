@@ -1,3 +1,13 @@
 /* @theme: blank; */
 
 $product-item-qty-items-group-border: 1px solid get-color('additional', 'light') !default;
+
+$product-item-item-container-offset: $offset-x-s !default;
+
+$product-item-item-container-item-offset: $product-item-item-container-offset + 28px !default;
+$dropdown-search-item-container-icon-offset: $dropdown-item-padding-x - $product-item-item-container-offset !default;
+
+$product-item-container-item-content-offset: $offset-y-s !default;
+$product-item-container-item-color: get-color('additional', 'middle') !default;
+$product-item-container-item-font-size: $base-font-size--xs !default;
+$product-item-container-item-font-style: $offset-y-s !default;
