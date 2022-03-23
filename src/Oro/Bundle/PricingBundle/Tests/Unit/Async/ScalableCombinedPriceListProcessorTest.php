@@ -119,11 +119,8 @@ class ScalableCombinedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider messageDataProvider
-     * @param array $body
-     * @param Website|null $website
-     * @param Customer|CustomerGroup|null $targetEntity
      */
-    public function testProcess(array $body, ?Website $website, ?object $targetEntity)
+    public function testProcess(array $body, array $jobNameData, ?Website $website, ?object $targetEntity)
     {
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->any())
@@ -156,7 +153,9 @@ class ScalableCombinedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
         $this->jobRunner->expects($this->once())
             ->method('runUnique')
             ->willReturnCallback(
-                function ($ownerId, $name, $closure) use ($job) {
+                function ($ownerId, $name, $closure) use ($job, $jobNameData) {
+                    $this->assertEquals('oro_pricing.price_lists.cpl.rebuild:'. md5(json_encode($jobNameData)), $name);
+
                     return $closure($this->jobRunner, $job);
                 }
             );
@@ -198,10 +197,12 @@ class ScalableCombinedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
     public function messageDataProvider(): \Generator
     {
         $website = $this->getEntity(Website::class, ['id' => 1]);
+        $website2 = $this->getEntity(Website::class, ['id' => 2]);
         $customer = $this->getEntity(Customer::class, ['id' => 10]);
-        $customerGroup = $this->getEntity(CustomerGroup::class, ['id' => 10]);
+        $customerGroup = $this->getEntity(CustomerGroup::class, ['id' => 100]);
 
         yield 'full rebuild' => [
+            ['force' => true, 'website' => null, 'customer' => null, 'customerGroup' => null],
             ['force' => true, 'website' => null, 'customer' => null, 'customerGroup' => null],
             null,
             null
@@ -209,18 +210,28 @@ class ScalableCombinedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
 
         yield 'per website' => [
             ['force' => false, 'website' => $website, 'customer' => null, 'customerGroup' => null],
+            ['force' => false, 'website' => 1, 'customer' => null, 'customerGroup' => null],
             $website,
+            null
+        ];
+
+        yield 'per website2' => [
+            ['force' => false, 'website' => $website2, 'customer' => null, 'customerGroup' => null],
+            ['force' => false, 'website' => 2, 'customer' => null, 'customerGroup' => null],
+            $website2,
             null
         ];
 
         yield 'per website and customer' => [
             ['force' => false, 'website' => $website, 'customer' => $customer, 'customerGroup' => null],
+            ['force' => false, 'website' => 1, 'customer' => 10, 'customerGroup' => null],
             $website,
             $customer
         ];
 
         yield 'per website and customer group' => [
             ['force' => false, 'website' => $website, 'customer' => null, 'customerGroup' => $customerGroup],
+            ['force' => false, 'website' => 1, 'customer' => null, 'customerGroup' => 100],
             $website,
             $customerGroup
         ];

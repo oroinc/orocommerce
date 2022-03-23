@@ -6,25 +6,22 @@ use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
-use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\FallbackBundle\Form\Type\WebsiteCollectionType;
 use Oro\Bundle\FallbackBundle\Form\Type\WebsitePropertyType;
 use Oro\Bundle\FallbackBundle\Tests\Unit\Form\Type\Stub\CheckboxTypeStub;
-use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
+use Oro\Bundle\FormBundle\Tests\Unit\Stub\TooltipFormExtensionStub;
 use Oro\Bundle\LocaleBundle\Form\Type\FallbackPropertyType;
 use Oro\Bundle\LocaleBundle\Form\Type\FallbackValueType;
 use Oro\Bundle\LocaleBundle\Model\FallbackType;
-use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class WebsitePropertyTypeTest extends FormIntegrationTestCase
 {
-    private const WEBSITE_CLASS = Website::class;
-
     /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $registry;
 
@@ -35,42 +32,39 @@ class WebsitePropertyTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
-    protected function getExtensions()
+    /**
+     * {@inheritDoc}
+     */
+    protected function getExtensions(): array
     {
         $websiteCollection = new WebsiteCollectionType($this->registry);
-        $websiteCollection->setWebsiteClass(self::WEBSITE_CLASS);
-
-        $entityConfigProvider = $this->createMock(ConfigProvider::class);
-
-        $translator = $this->createMock(Translator::class);
+        $websiteCollection->setWebsiteClass(Website::class);
 
         return [
             new PreloadedExtension(
                 [
-                    FallbackPropertyType::class => new FallbackPropertyType($translator),
-                    FallbackValueType::class => new FallbackValueType(),
-                    WebsiteCollectionType::class => $websiteCollection,
-                    CheckboxTypeStub::class => new CheckboxTypeStub(),
+                    new FallbackPropertyType($this->createMock(TranslatorInterface::class)),
+                    new FallbackValueType(),
+                    $websiteCollection,
+                    new CheckboxTypeStub(),
                 ],
                 [
-                    FormType::class => [
-                        new TooltipFormExtension($entityConfigProvider, $translator),
-                    ],
+                    FormType::class => [new TooltipFormExtensionStub($this)]
                 ]
             )
         ];
     }
 
     /**
-     * @param array $options
-     * @param mixed $defaultData
-     * @param mixed $viewData
-     * @param mixed $submittedData
-     * @param mixed $expectedData
      * @dataProvider submitDataProvider
      */
-    public function testSubmit(array $options, $defaultData, $viewData, $submittedData, $expectedData)
-    {
+    public function testSubmit(
+        array $options,
+        ?array $defaultData,
+        array $viewData,
+        ?array $submittedData,
+        array $expectedData
+    ) {
         $this->setRegistryExpectations();
 
         $form = $this->factory->create(WebsitePropertyType::class, $defaultData, $options);
@@ -166,14 +160,14 @@ class WebsitePropertyTypeTest extends FormIntegrationTestCase
 
         $this->registry->expects($this->once())
             ->method('getRepository')
-            ->with(self::WEBSITE_CLASS)
+            ->with(Website::class)
             ->willReturn($repository);
     }
 
     /**
      * @return Website[]
      */
-    private function getWebsites()
+    private function getWebsites(): array
     {
         $first  = $this->createWebsite(1, 'first');
         $second = $this->createWebsite(2, 'second');

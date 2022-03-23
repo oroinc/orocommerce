@@ -304,17 +304,3 @@
         margin-top: -28px;
     }
 }
-
-form[name*='product'] {
-    .container-fluid {
-        > .responsive-section {
-            &:not(.responsive-small) {
-                .responsive-cell {
-                    &:last-child {
-                        padding-left: 0;
-                    }
-                }
-            }
-        }
-    }
-}

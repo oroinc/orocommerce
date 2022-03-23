@@ -4,14 +4,14 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Layout\DataProvider;
 
 use Oro\Bundle\ProductBundle\Handler\SearchProductHandler;
 use Oro\Bundle\ProductBundle\Layout\DataProvider\SearchProductDataProvider;
-use Symfony\Component\Translation\Translator;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SearchProductDataProviderTest extends \PHPUnit\Framework\TestCase
 {
     /** @var SearchProductHandler|\PHPUnit\Framework\MockObject\MockObject */
     private $searchProductHandler;
 
-    /** @var Translator|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $translator;
 
     /** @var SearchProductDataProvider */
@@ -20,7 +20,7 @@ class SearchProductDataProviderTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->searchProductHandler = $this->createMock(SearchProductHandler::class);
-        $this->translator = $this->createMock(Translator::class);
+        $this->translator = $this->createMock(TranslatorInterface::class);
 
         $this->provider = new SearchProductDataProvider($this->searchProductHandler, $this->translator);
     }
@@ -32,8 +32,7 @@ class SearchProductDataProviderTest extends \PHPUnit\Framework\TestCase
     {
         $testString = 'Some Test String';
 
-        $this->searchProductHandler
-            ->expects(self::once())
+        $this->searchProductHandler->expects(self::once())
             ->method('getSearchString')
             ->willReturn($testString);
 
@@ -50,17 +49,15 @@ class SearchProductDataProviderTest extends \PHPUnit\Framework\TestCase
         $testString = 'Some Test String';
         $testTitle = 'Translated Title';
 
-        $this->searchProductHandler
-            ->expects(self::once())
+        $this->searchProductHandler->expects(self::once())
             ->method('getSearchString')
             ->willReturn($testString);
 
-        $this->translator
-            ->expects(self::once())
+        $this->translator->expects(self::once())
             ->method('trans')
             ->with(
-                self::equalTo('oro.product.search.search_title.title'),
-                self::equalTo(['%count%' => strlen($testString), '%text%' => $testString])
+                'oro.product.search.search_title.title',
+                ['%count%' => strlen($testString), '%text%' => $testString]
             )
             ->willReturn($testTitle);
 

@@ -91,6 +91,8 @@ class AddLineItemMassActionProvider implements MassActionProviderInterface
                     $shoppingLists = $this->currentShoppingListManager->getShoppingLists(['list.id' => Criteria::ASC]);
                 }
 
+                $currentShoppingList = $this->currentShoppingListManager->getCurrent();
+
                 /** @var ShoppingList $shoppingList */
                 foreach ($shoppingLists as $shoppingList) {
                     $name = 'list' . $shoppingList->getId();
@@ -100,6 +102,10 @@ class AddLineItemMassActionProvider implements MassActionProviderInterface
                         'route_parameters' => [
                             'shoppingList' => $shoppingList->getId(),
                         ],
+                        'is_current' => $currentShoppingList?->getId() === $shoppingList->getId(),
+                        'attributes' => [
+                            'data-order' => $shoppingList->isCurrent() ? 'new' : 'add'
+                        ]
                     ]);
                 }
             }
@@ -109,7 +115,6 @@ class AddLineItemMassActionProvider implements MassActionProviderInterface
             $actions['new'] = $this->getConfig([
                 'type' => 'window',
                 'label' => $this->translator->trans('oro.shoppinglist.product.create_new_shopping_list.label'),
-                'icon' => 'plus',
                 'route' => 'oro_shopping_list_add_products_to_new_massaction',
                 'frontend_handle' => 'shopping-list-create',
                 'frontend_options' => [
@@ -125,6 +130,12 @@ class AddLineItemMassActionProvider implements MassActionProviderInterface
                     ],
                     'alias' => 'add_products_to_new_shopping_list_mass_action',
                 ],
+                'launcherOptions' => [
+                    'iconClassName' => 'fa-plus'
+                ],
+                'attributes' => [
+                    'data-order' => 'new'
+                ]
             ]);
         }
 
@@ -153,11 +164,13 @@ class AddLineItemMassActionProvider implements MassActionProviderInterface
     {
         return array_merge([
             'type' => 'addproducts',
-            'icon' => 'shopping-cart',
             'data_identifier' => 'product.id',
             'frontend_type' => 'add-products-mass',
             'handler' => 'oro_shopping_list.mass_action.add_products_handler',
-            'is_current' => false
+            'is_current' => false,
+            'launcherOptions' => [
+                'iconClassName' => 'fa-shopping-cart'
+            ]
         ], $options);
     }
 
