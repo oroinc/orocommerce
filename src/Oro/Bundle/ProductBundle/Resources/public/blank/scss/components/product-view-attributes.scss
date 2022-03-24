@@ -150,22 +150,22 @@
     }
 }
 
-@include breakpoint('mobile-small') {
+@include breakpoint('mobile') {
     .product-view {
         &__attribute-image {
-            max-height: $mobile-small-product-view-attribute-image-size;
+            max-height: $mobile-product-view-attribute-image-size;
         }
 
         &__attribute-images {
             &-container {
                 &.show-less {
-                    height: $mobile-small-product-view-attribute-image-size;
+                    height: $mobile-product-view-attribute-image-size;
                 }
             }
 
             &-item {
-                width: $mobile-small-product-view-attribute-image-size;
-                height: $mobile-small-product-view-attribute-image-size;
+                width: $mobile-product-view-attribute-image-size;
+                height: $mobile-product-view-attribute-image-size;
             }
 
             .show-more-link {

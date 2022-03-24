@@ -66,7 +66,7 @@ Feature: Product segment content widget
     And I should see "Add to Shopping List"
 
   Scenario: Check content widget on storefront rendered in slider (mobile view)
-    Given I set window size to 320x640
+    Given I set window size to 375x640
     When I reload the page
     Then Page title equals to "Product Segment Page"
     And I should see "Additional test data"

@@ -28,8 +28,7 @@ define(function(require) {
             'tablet-small',
             'mobile-big',
             'mobile-landscape',
-            'mobile',
-            'mobile-small'
+            'mobile'
         ],
 
         /**

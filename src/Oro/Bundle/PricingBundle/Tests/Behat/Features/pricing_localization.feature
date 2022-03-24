@@ -19,6 +19,6 @@ Feature: Pricing Localization
     And I should see "Your Price: US$4.00 / item (lang1)" for "PSKU1" product
 
   Scenario: Check translation of product unit in product catalog in mobile view
-    Given I set window size to 320x640
+    Given I set window size to 375x640
     Then I should see "Listed Price: US$4.00 / item (short, lang1)" for "PSKU1" product
     And I should see "Your Price: US$4.00 / item (short, lang1)" for "PSKU1" product

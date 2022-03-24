@@ -10,8 +10,7 @@ Default allow breakpoints list:
     	'tablet-small',
     	'mobile-big',
     	'mobile-landscape',
-    	'mobile',
-    	'mobile-small'
+    	'mobile'
     ],
 
 #### Global module config
@@ -37,4 +36,3 @@ Also you can use put props directly component
     		'disableDeviceManager': true
     	]
     ]
-

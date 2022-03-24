@@ -339,7 +339,7 @@
     }
 }
 
-@include breakpoint('mobile-small') {
+@include breakpoint('mobile') {
     .responsive-shopping-list-grid-edit {
         .select-row-cell {
             width: $responsive-shopping-list-edit-select-row-cell-width-mobile-s;

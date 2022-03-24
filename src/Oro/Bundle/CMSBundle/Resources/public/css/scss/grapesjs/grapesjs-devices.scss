@@ -24,7 +24,6 @@
         &.tablet,
         &.tablet-small,
         &.mobile,
-        &.mobile-small,
         &.mobile-big,
         &.mobile-landscape {
             overflow: auto;
@@ -107,8 +106,7 @@
             }
 
             &.mobile,
-            &.mobile-big,
-            &.mobile-small {
+            &.mobile-big {
                 &::before {
                     content: $fa-var-mobile;
                 }
