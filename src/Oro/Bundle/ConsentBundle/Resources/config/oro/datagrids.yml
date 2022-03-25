@@ -87,7 +87,7 @@ datagrids:
                 id:
                     type:       number
                     data_name:  consent.id
-                    enabled:    false
+                    renderable: false
                 consentName:
                     type:       string
                     data_name:  consent_name_localized

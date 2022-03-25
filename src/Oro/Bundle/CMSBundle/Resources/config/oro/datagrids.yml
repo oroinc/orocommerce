@@ -359,11 +359,11 @@ datagrids:
         filters:
             columns:
                 enabled:
-                    enabled: false
+                    renderable: false
                 createdAt:
-                    enabled: false
+                    renderable: false
                 updatedAt:
-                    enabled: false
+                    renderable: false
 
     cms-page-drafts-grid:
         extends: base-cms-page-grid
