@@ -167,7 +167,7 @@ const FilterApplierComponent = BaseComponent.extend({
         const rawValue = this.getRawFilterValue(filter);
         const isValid = _.isFunction(filter._isValid) ? filter._isValid() : true;
 
-        return filter.enabled &&
+        return filter.renderable &&
             isValid &&
             filter._isDOMValueChanged() &&
             filter.isUpdatable(rawValue, filter.value) &&
@@ -221,7 +221,7 @@ const FilterApplierComponent = BaseComponent.extend({
      */
     showButton(filter) {
         // Do not show button if filter has checkboxes or disposed or disabled
-        if (filter.selectWidget || filter.disposed || !filter.enabled) {
+        if (filter.selectWidget || filter.disposed || !filter.renderable) {
             return;
         }
 
@@ -306,7 +306,7 @@ const FilterApplierComponent = BaseComponent.extend({
                 const appliedSate = this.getAppliedSate();
 
                 _.each(this.filterManager.filters, filter => {
-                    if (appliedSate[filter.name] && filter.enabled) {
+                    if (appliedSate[filter.name] && filter.renderable) {
                         filter._writeDOMValue(appliedSate[filter.name]);
                     }
                 });

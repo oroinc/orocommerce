@@ -335,10 +335,10 @@ datagrids:
                      type:      string
                      data_name: customerUserName
                 customerStatusName:
-                    type:      enum
-                    data_name: customerStatusId
-                    enum_code: quote_customer_status
-                    enabled: false
+                    type:       enum
+                    data_name:  customerStatusId
+                    enum_code:  quote_customer_status
+                    renderable: false
                 poNumber:
                     type:      string
                     data_name: quote.poNumber

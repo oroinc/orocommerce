@@ -165,7 +165,7 @@ datagrids:
                 subtotal:
                     type:      currency
                     data_name: subtotal
-                    enabled:   false
+                    renderable: false
                 total:
                     type:      currency
                     data_name: total
@@ -335,7 +335,7 @@ datagrids:
                 subtotal:
                     type:      currency
                     data_name: subtotal
-                    enabled:   false
+                    renderable:   false
                 total:
                     type:      currency
                     data_name: total
@@ -499,7 +499,7 @@ datagrids:
                 subtotal:
                     type:      currency
                     data_name: subtotal
-                    enabled:   false
+                    renderable: false
                 currency:
                     type:      choice
                     data_name: order1.currency
