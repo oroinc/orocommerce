@@ -17,7 +17,7 @@
                         <select data-action="add-filter-select" multiple data-skip-input-widgets>
                             <% _.each(filters, function (filter, name) { %>
                                 <% if (filter.visible) { %>
-                                    <option title="<%- filter.label %>" value="<%- name %>" <% if (filter.enabled) { %>selected<% } %>>
+                                    <option title="<%- filter.label %>" value="<%- name %>" <% if (filter.renderable) { %>selected<% } %>>
                                         <%- filter.label %>
                                     </option>
                                 <% } %>
@@ -59,7 +59,7 @@
                             >
                                 <% _.each(filters, function (filter, name) { %>
                                     <% if (filter.visible) { %>
-                                        <option title="<%- filter.label %>" value="<%- name %>" <% if (filter.enabled) { %>selected<% } %>>
+                                        <option title="<%- filter.label %>" value="<%- name %>" <% if (filter.renderable) { %>selected<% } %>>
                                             <%- filter.label %>
                                         </option>
                                     <% } %>
@@ -92,7 +92,7 @@
                     >
                         <% _.each(filters, function (filter, name) { %>
                             <% if (filter.visible) { %>
-                                <option title="<%- filter.label %>" value="<%- name %>" <% if (filter.enabled) { %>selected<% } %>>
+                                <option title="<%- filter.label %>" value="<%- name %>" <% if (filter.renderable) { %>selected<% } %>>
                                     <%- filter.label %>
                                 </option>
                             <% } %>

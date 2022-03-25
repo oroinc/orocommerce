@@ -15,7 +15,7 @@
                                         <option class="<%- filter.visible ? '' : 'hidden' %>"
                                             title="<%- filter.label %>"
                                             value="<%- name %>"
-                                        <% if (filter.enabled) { %>selected<% } %>
+                                        <% if (filter.renderable) { %>selected<% } %>
                                         ><%- filter.label %></option>
                                     <% } %>
                                 <% }); %>

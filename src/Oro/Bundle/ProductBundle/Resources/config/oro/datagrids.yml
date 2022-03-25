@@ -105,7 +105,7 @@ datagrids:
                             choices:
                                 oro.product.new_arrival.yes: 1
                                 oro.product.new_arrival.no: 2
-                    enabled: false
+                    renderable: false
                 createdAt:
                     type:      datetime
                     data_name: product.createdAt
@@ -424,7 +424,7 @@ datagrids:
                     renderedPropertyName: 'defaultLabel'
                     className: 'Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily'
                 createdAt:
-                    enabled: false
+                    renderable: false
 
     product-product-variants-base:
         acl_resource: oro_product_view

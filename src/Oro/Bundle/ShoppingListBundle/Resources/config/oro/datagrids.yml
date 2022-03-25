@@ -253,7 +253,7 @@ datagrids:
                 owner:
                     type:      string
                     data_name: customerUserName
-                    enabled:   false
+                    renderable: false
                 createdAt:
                     type:      datetime
                     data_name: shopping_list.createdAt
