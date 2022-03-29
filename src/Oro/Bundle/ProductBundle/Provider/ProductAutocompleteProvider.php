@@ -10,6 +10,7 @@ use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Event\ProcessAutocompleteDataEvent;
 use Oro\Bundle\ProductBundle\Search\ProductRepository;
 use Oro\Bundle\SearchBundle\Query\Result\Item;
+use Oro\Bundle\UIBundle\Tools\UrlHelper;
 use Oro\Bundle\UIBundle\Twig\HtmlTagExtension;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,6 +28,7 @@ class ProductAutocompleteProvider
     protected ConfigManager $configManager;
     protected EnumValueProvider $enumValueProvider;
     protected EventDispatcherInterface $eventDispatcher;
+    protected UrlHelper $urlHelper;
 
     public function __construct(
         UrlGeneratorInterface $urlGenerator,
@@ -35,7 +37,8 @@ class ProductAutocompleteProvider
         ImagePlaceholderProviderInterface $imagePlaceholderProvider,
         ConfigManager $configManager,
         EnumValueProvider $enumValueProvider,
-        EventDispatcherInterface $eventDispatcher
+        EventDispatcherInterface $eventDispatcher,
+        UrlHelper $urlHelper
     ) {
         $this->urlGenerator = $urlGenerator;
         $this->searchRepository = $searchRepository;
@@ -44,6 +47,7 @@ class ProductAutocompleteProvider
         $this->configManager = $configManager;
         $this->enumValueProvider = $enumValueProvider;
         $this->eventDispatcher = $eventDispatcher;
+        $this->urlHelper = $urlHelper;
     }
 
     /**
@@ -88,7 +92,7 @@ class ProductAutocompleteProvider
             );
 
             if (!empty($productData['image'])) {
-                $productData['image'] = $request->getUriForPath($productData['image']);
+                $productData['image'] = $this->urlHelper->getAbsolutePath($productData['image']);
             } else {
                 $productData['image'] = $defaultImage;
             }

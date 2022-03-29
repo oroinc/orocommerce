@@ -77,13 +77,13 @@
     {% if productImages|length > 0 %}
         {% set galleryImages = [] %}
         {% for productImage in productImages %}
-            {% set sources = product_filtered_picture_sources(productImage.image, 'product_gallery_popup') %}
-            {% set thumbSources = product_filtered_picture_sources(productImage.image, 'product_small') %}
+            {% set pictureSources = product_filtered_picture_sources(productImage.image, 'product_gallery_popup') %}
+            {% set thumbPictureSources = product_filtered_picture_sources(productImage.image, 'product_small') %}
             {% set galleryImages = galleryImages|merge([{
-                src: (sources|last).srcset,
-                sources: sources|slice(0, -1),
-                thumb: (thumbSources|last).srcset,
-                thumbSources: thumbSources|slice(0, -1),
+                src: pictureSources.src,
+                sources: pictureSources.sources,
+                thumb: thumbPictureSources.src,
+                thumbSources: thumbPictureSources.sources,
                 alt: product.names|localized_value
             }]) %}
         {% endfor %}

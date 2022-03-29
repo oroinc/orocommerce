@@ -276,8 +276,8 @@
     {% set collection = value %}
     {% set galleryImages = [] %}
     {% for item in collection %}
-        {% set sources = product_filtered_picture_sources(item.file, 'product_gallery_popup') %}
-        {% set galleryImages = galleryImages|merge([{src: (sources|last).srcset, sources: sources|slice(0, -1)}]) %}
+        {% set pictureSources = product_filtered_picture_sources(item.file, 'product_gallery_popup') %}
+        {% set galleryImages = galleryImages|merge([pictureSources]) %}
     {% endfor %}
 
     {% set popupGalleryAttr = {
@@ -316,14 +316,14 @@
 {% block product_view_attribute_image_widget %}
     {% import '@OroUI/macros.html.twig' as UI %}
 
-    {% set sources = product_filtered_picture_sources(value, 'product_gallery_popup') %}
+    {% set pictureSources = product_filtered_picture_sources(value, 'product_gallery_popup') %}
     {% set popupGalleryAttr = {
         'data-page-component-view': {
             view: 'oroproduct/js/app/widget/product-popup-gallery-widget',
             bindWithSlider: false,
             galleryImages: [{
-                src: (sources|last).srcset,
-                sources: sources|slice(0, -1)
+                src: pictureSources.src,
+                sources: pictureSources.sources
             }],
         }|json_encode
     } %}

@@ -13,34 +13,30 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
  */
 class EntityExtendFieldTypePass implements CompilerPassInterface
 {
-    private const WYSIWYG_FIELD_TYPE_KEY = DBALWYSIWYGType::TYPE;
-    private const ENTITY_EXTEND_FIELD_TYPE_PROVIDER_SERVICE_ID = 'oro_entity_extend.field_type_provider';
-    private const ENTITY_EXTEND_FIELD_FORM_GUESSER_SERVICE_ID = 'oro_entity_extend.form.guesser.extend_field';
-
     /**
      * {@inheritdoc}
      */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $this->addFieldType($container);
         $this->addFieldGuesser($container);
     }
 
-    private function addFieldType(ContainerBuilder $container)
+    private function addFieldType(ContainerBuilder $container): void
     {
-        if ($container->hasDefinition(self::ENTITY_EXTEND_FIELD_TYPE_PROVIDER_SERVICE_ID)) {
-            $definition = $container->getDefinition(self::ENTITY_EXTEND_FIELD_TYPE_PROVIDER_SERVICE_ID);
+        if ($container->hasDefinition('oro_entity_extend.field_type_provider')) {
+            $definition = $container->getDefinition('oro_entity_extend.field_type_provider');
             $defaultFieldTypes = $definition->getArgument(1);
-            $defaultFieldTypes[] = self::WYSIWYG_FIELD_TYPE_KEY;
+            $defaultFieldTypes[] = DBALWYSIWYGType::TYPE;
             $definition->replaceArgument(1, $defaultFieldTypes);
         }
     }
 
-    private function addFieldGuesser(ContainerBuilder $container)
+    private function addFieldGuesser(ContainerBuilder $container): void
     {
-        if ($container->hasDefinition(self::ENTITY_EXTEND_FIELD_FORM_GUESSER_SERVICE_ID)) {
-            $definition = $container->getDefinition(self::ENTITY_EXTEND_FIELD_FORM_GUESSER_SERVICE_ID);
-            $definition->addMethodCall('addExtendTypeMapping', [self::WYSIWYG_FIELD_TYPE_KEY, WYSIWYGType::class]);
+        if ($container->hasDefinition('oro_entity_extend.provider.extend_field_form_type')) {
+            $definition = $container->getDefinition('oro_entity_extend.provider.extend_field_form_type');
+            $definition->addMethodCall('addExtendTypeMapping', [DBALWYSIWYGType::TYPE, WYSIWYGType::class]);
         }
     }
 }

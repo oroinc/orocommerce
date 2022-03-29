@@ -6,27 +6,27 @@ use Oro\Bundle\AttachmentBundle\Tools\WebpConfiguration;
 use Oro\Bundle\LayoutBundle\Provider\Image\ImagePlaceholderProviderInterface;
 use Oro\Bundle\ProductBundle\Event\CollectAutocompleteFieldsEvent;
 use Oro\Bundle\ProductBundle\Event\ProcessAutocompleteDataEvent;
-use Symfony\Component\HttpFoundation\RequestStack;
+use Oro\Bundle\UIBundle\Tools\UrlHelper;
 
 /**
  * Adds small product image in webp format to the search autocomplete data.
  */
 class WebpAwareProductAutocompleteListener
 {
-    private RequestStack $requestStack;
-
     private WebpConfiguration $webpConfiguration;
 
     private ImagePlaceholderProviderInterface $imagePlaceholderProvider;
 
+    private UrlHelper $urlHelper;
+
     public function __construct(
-        RequestStack $requestStack,
         WebpConfiguration $webpConfiguration,
-        ImagePlaceholderProviderInterface $imagePlaceholderProvider
+        ImagePlaceholderProviderInterface $imagePlaceholderProvider,
+        UrlHelper $urlHelper
     ) {
-        $this->requestStack = $requestStack;
         $this->webpConfiguration = $webpConfiguration;
         $this->imagePlaceholderProvider = $imagePlaceholderProvider;
+        $this->urlHelper = $urlHelper;
     }
 
     public function onCollectAutocompleteFields(CollectAutocompleteFieldsEvent $event): void
@@ -42,13 +42,10 @@ class WebpAwareProductAutocompleteListener
     {
         $defaultImage = $this->imagePlaceholderProvider->getPath('product_small', 'webp');
         $data = $event->getData();
-        $request = $this->requestStack->getCurrentRequest();
         foreach ($data as $sku => $productData) {
             if (isset($productData['imageWebp'])) {
                 if ($productData['imageWebp']) {
-                    $productData['imageWebp'] = $request
-                        ? $request->getUriForPath($productData['imageWebp'])
-                        : $productData['imageWebp'];
+                    $productData['imageWebp'] = $this->urlHelper->getAbsolutePath($productData['imageWebp']);
                 } else {
                     $productData['imageWebp'] = $defaultImage;
                 }

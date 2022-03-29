@@ -7,6 +7,7 @@ use Oro\Bundle\LayoutBundle\Provider\Image\ImagePlaceholderProviderInterface;
 use Oro\Bundle\ProductBundle\Event\CollectAutocompleteFieldsEvent;
 use Oro\Bundle\ProductBundle\Event\ProcessAutocompleteDataEvent;
 use Oro\Bundle\ProductBundle\EventListener\WebpAwareProductAutocompleteListener;
+use Oro\Bundle\UIBundle\Tools\UrlHelper;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -16,10 +17,18 @@ class WebpAwareProductAutocompleteListenerTest extends \PHPUnit\Framework\TestCa
 
     private ImagePlaceholderProviderInterface|\PHPUnit\Framework\MockObject\MockObject $imagePlaceholderProvider;
 
+    private UrlHelper|\PHPUnit\Framework\MockObject\MockObject $urlHelper;
+
     protected function setUp(): void
     {
         $this->webpConfiguration = $this->createMock(WebpConfiguration::class);
         $this->imagePlaceholderProvider = $this->createMock(ImagePlaceholderProviderInterface::class);
+
+        $this->urlHelper = $this->createMock(UrlHelper::class);
+        $this->urlHelper
+            ->expects(self::any())
+            ->method('getAbsolutePath')
+            ->willReturnCallback(static fn (string $path) => '/absolute' . $path);
     }
 
     /**
@@ -34,9 +43,9 @@ class WebpAwareProductAutocompleteListenerTest extends \PHPUnit\Framework\TestCa
             ->willReturn($webpSupported);
 
         $listener = new WebpAwareProductAutocompleteListener(
-            new RequestStack(),
             $this->webpConfiguration,
-            $this->imagePlaceholderProvider
+            $this->imagePlaceholderProvider,
+            $this->urlHelper
         );
         $listener->onCollectAutocompleteFields($event);
 
@@ -60,30 +69,6 @@ class WebpAwareProductAutocompleteListenerTest extends \PHPUnit\Framework\TestCa
         ];
     }
 
-    public function testOnProcessAutocompleteDataNoRequest(): void
-    {
-        $data = [
-            'SKU1' => [],
-            'SKU2' => ['imageWebp' => '/image/webp'],
-        ];
-        $event = new ProcessAutocompleteDataEvent($data);
-
-        $this->imagePlaceholderProvider->expects(self::once())
-            ->method('getPath')
-            ->with('product_small', 'webp')
-            ->willReturn('/product_small_webp/no_image');
-
-        $requestStack = new RequestStack();
-        $listener = new WebpAwareProductAutocompleteListener(
-            $requestStack,
-            $this->webpConfiguration,
-            $this->imagePlaceholderProvider
-        );
-        $listener->onProcessAutocompleteData($event);
-
-        self::assertEquals($data, $event->getData());
-    }
-
     public function testOnProcessAutocompleteDataDefaultImage(): void
     {
         $data = [
@@ -103,9 +88,9 @@ class WebpAwareProductAutocompleteListenerTest extends \PHPUnit\Framework\TestCa
             ->willReturn($defaultImageUrl);
 
         $listener = new WebpAwareProductAutocompleteListener(
-            $requestStack,
             $this->webpConfiguration,
-            $this->imagePlaceholderProvider
+            $this->imagePlaceholderProvider,
+            $this->urlHelper
         );
         $listener->onProcessAutocompleteData($event);
 
@@ -124,19 +109,15 @@ class WebpAwareProductAutocompleteListenerTest extends \PHPUnit\Framework\TestCa
         ];
         $event = new ProcessAutocompleteDataEvent($data);
 
-        $requestStack = new RequestStack();
-        $request = Request::create('https://localhost/');
-        $requestStack->push($request);
-
         $listener = new WebpAwareProductAutocompleteListener(
-            $requestStack,
             $this->webpConfiguration,
-            $this->imagePlaceholderProvider
+            $this->imagePlaceholderProvider,
+            $this->urlHelper
         );
         $listener->onProcessAutocompleteData($event);
 
         $expectedData = $data;
-        $expectedData['SKU2']['imageWebp'] = 'https://localhost' . $imageUrl;
+        $expectedData['SKU2']['imageWebp'] = '/absolute' . $imageUrl;
 
         self::assertEquals($expectedData, $event->getData());
     }

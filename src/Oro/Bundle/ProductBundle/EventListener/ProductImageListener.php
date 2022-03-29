@@ -136,6 +136,10 @@ class ProductImageListener
             $this->productIdsToReindex[$productId] = $productId;
         }
 
+        if ($productImage->getImage()?->getExternalUrl() !== null) {
+            return;
+        }
+
         $this->eventDispatcher->dispatch(
             new ProductImageResizeEvent($productImage->getId(), true),
             ProductImageResizeEvent::NAME

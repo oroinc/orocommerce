@@ -163,6 +163,12 @@
         .checkbox-view {
             margin-top: $content-padding-small;
         }
+
+        .image-widget-preview {
+            .controls:first-child {
+                margin-left: 0;
+            }
+        }
     }
 
     th {

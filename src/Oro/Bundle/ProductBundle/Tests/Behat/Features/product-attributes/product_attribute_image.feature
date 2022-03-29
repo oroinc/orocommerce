@@ -1,7 +1,7 @@
 @regression
 @ticket-BB-9989
 @fixture-OroProductBundle:ProductAttributesFixture.yml
-@skip
+
 Feature: Product attribute image
   In order to have custom attributes for Product entity
   As an Administrator
@@ -46,7 +46,10 @@ Feature: Product attribute image
 
   Scenario: Update product
     Given I go to Products/ Products
-    When I click "Edit" on row "SKU123" in grid
+    When I click "View" on row "SKU123" in grid
+    Then I should see product with:
+      | ImageField | N/A |
+    When I click "Edit"
     And I fill "Product Form" with:
       | ImageField | cat1.jpg |
     And I set Images with:

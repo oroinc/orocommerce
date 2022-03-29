@@ -108,7 +108,7 @@
         'data-object-fit': ''
     }) %}
 
-    {% if product.imageWebp is defined and product.imageWebp %}
+    {% if product.imageWebp is defined and product.imageWebp and product.imageWebp != product.image %}
         {% set sources = [{
             srcset: product.imageWebp,
             type: 'image/webp'

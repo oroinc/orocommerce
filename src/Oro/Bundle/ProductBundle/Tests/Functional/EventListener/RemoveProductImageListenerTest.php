@@ -16,22 +16,51 @@ class RemoveProductImageListenerTest extends WebTestCase
 {
     use MessageQueueExtension;
 
-    /** @var EntityManagerInterface */
-    private $em;
+    private EntityManagerInterface $entityManager;
 
     protected function setUp(): void
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
 
-        $this->em = $this->getContainer()->get('doctrine')->getManagerForClass(ProductImage::class);
+        $this->entityManager = self::getContainer()->get('doctrine')->getManagerForClass(ProductImage::class);
 
         $this->loadFixtures([LoadProductData::class]);
     }
 
-    public function testRemoveProductImage()
+    public function testRemoveProductImageWhenStoredExternally(): void
     {
-        $fileRepository = $this->getContainer()->get('doctrine')->getRepository(File::class);
+        $fileRepository = self::getContainer()->get('doctrine')->getRepository(File::class);
+
+        /** @var Product $product */
+        $product = $this->getReference(LoadProductData::PRODUCT_1);
+
+        $imageFile = new File();
+        $imageFile->setFilename('123.jpg');
+        $imageFile->setOriginalFilename('123-original.jpg');
+        $imageFile->setParentEntityClass(ProductImage::class);
+        $imageFile->setExternalUrl('http://example.org/image.png');
+
+        $productImage = new ProductImage();
+        $productImage->addType(ProductImageType::TYPE_MAIN);
+        $productImage->setProduct($product);
+        $productImage->setImage($imageFile);
+
+        $this->entityManager->persist($productImage);
+        $this->entityManager->flush();
+
+        $files = $fileRepository->findAll();
+        self::assertContains($imageFile, $files);
+
+        $this->entityManager->remove($productImage);
+        $this->entityManager->flush();
+
+        self::assertMessagesCount(Topics::ATTACHMENT_REMOVE_IMAGE, 0);
+    }
+
+    public function testRemoveProductImage(): void
+    {
+        $fileRepository = self::getContainer()->get('doctrine')->getRepository(File::class);
 
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_1);
@@ -46,17 +75,17 @@ class RemoveProductImageListenerTest extends WebTestCase
         $productImage->setProduct($product);
         $productImage->setImage($imageFile);
 
-        $this->em->persist($productImage);
-        $this->em->flush();
+        $this->entityManager->persist($productImage);
+        $this->entityManager->flush();
 
         $files = $fileRepository->findAll();
-        $this->assertContains($imageFile, $files);
+        self::assertContains($imageFile, $files);
 
-        $this->em->remove($productImage);
-        $this->em->flush();
+        $this->entityManager->remove($productImage);
+        $this->entityManager->flush();
 
-        $this->assertMessagesCount(Topics::ATTACHMENT_REMOVE_IMAGE, 1);
-        $this->assertMessageSent(
+        self::assertMessagesCount(Topics::ATTACHMENT_REMOVE_IMAGE, 1);
+        self::assertMessageSent(
             Topics::ATTACHMENT_REMOVE_IMAGE,
             [
                 [

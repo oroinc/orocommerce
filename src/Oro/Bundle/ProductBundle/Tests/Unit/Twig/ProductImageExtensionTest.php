@@ -4,6 +4,8 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Twig;
 
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
+use Oro\Bundle\AttachmentBundle\Provider\PictureSourcesProvider;
+use Oro\Bundle\AttachmentBundle\Provider\PictureSourcesProviderInterface;
 use Oro\Bundle\LayoutBundle\Provider\Image\ImagePlaceholderProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Helper\ProductImageHelper;
@@ -19,15 +21,20 @@ class ProductImageExtensionTest extends \PHPUnit\Framework\TestCase
 
     private AttachmentManager|\PHPUnit\Framework\MockObject\MockObject $attachmentManager;
 
+    private PictureSourcesProviderInterface|\PHPUnit\Framework\MockObject\MockObject
+        $pictureSourcesProvider;
+
     private ProductImageExtension $extension;
 
     protected function setUp(): void
     {
         $this->attachmentManager = $this->createMock(AttachmentManager::class);
+        $this->pictureSourcesProvider = $this->createMock(PictureSourcesProviderInterface::class);
         $imagePlaceholderProvider = $this->createMock(ImagePlaceholderProviderInterface::class);
 
         $container = self::getContainerBuilder()
             ->add(AttachmentManager::class, $this->attachmentManager)
+            ->add(PictureSourcesProvider::class, $this->pictureSourcesProvider)
             ->add('oro_product.provider.product_image_placeholder', $imagePlaceholderProvider)
             ->add('oro_product.helper.product_image_helper', new ProductImageHelper())
             ->getContainer($this);
@@ -184,13 +191,15 @@ class ProductImageExtensionTest extends \PHPUnit\Framework\TestCase
         return [
             'returns regular source when webp is not enabled is supported' => [
                 'isWebpEnabledIfSupported' => false,
-                'expected' => [['srcset' => '/original/placeholder/image.png']],
+                'expected' => ['src' => '/original/placeholder/image.png', 'sources' => []],
             ],
             'returns regular and webp source when webp is enabled is supported' => [
                 'isWebpEnabledIfSupported' => true,
                 'expected' => [
-                    ['srcset' => '/original/placeholder/image.png.webp', 'type' => 'image/webp'],
-                    ['srcset' => '/original/placeholder/image.png'],
+                    'src' => '/original/placeholder/image.png',
+                    'sources' => [
+                        ['srcset' => '/original/placeholder/image.png.webp', 'type' => 'image/webp'],
+                    ],
                 ],
             ],
         ];
@@ -198,27 +207,16 @@ class ProductImageExtensionTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getProductFilteredPictureSourcesDataProvider
-     *
-     * @param string $fileExtension
-     * @param bool $isWebpEnabledIfSupported
-     * @param array $expected
      */
-    public function testGetProductFilteredPictureSources(
-        string $fileExtension,
-        bool $isWebpEnabledIfSupported,
-        array $attrs,
-        array $expected
-    ): void {
+    public function testGetProductFilteredPictureSources(array $attrs, array $expected): void
+    {
         $file = new File();
-        $file->setFilename('image.' . $fileExtension);
-        $file->setExtension($fileExtension);
-        $file->setMimeType('image/mime');
         $filterName = 'sample_filter';
 
-        $this->attachmentManager
-            ->expects(self::any())
-            ->method('isWebpEnabledIfSupported')
-            ->willReturn($isWebpEnabledIfSupported);
+        $this->pictureSourcesProvider->expects(self::once())
+            ->method('getFilteredPictureSources')
+            ->with($file)
+            ->willReturn($expected);
 
         $result = self::callTwigFunction(
             $this->extension,
@@ -233,58 +231,27 @@ class ProductImageExtensionTest extends \PHPUnit\Framework\TestCase
     {
         return [
             'returns sources without webp if webp is not enabled if supported' => [
-                'fileExtension' => 'png',
-                'isWebpEnabledIfSupported' => false,
                 'attrs' => ['sample_key' => 'sample_value'],
                 'expected' => [
-                    [
-                        'srcset' => '/sample_filter/image.png',
-                        'type' => 'image/mime',
-                        'sample_key' => 'sample_value',
-                    ],
-                ],
-            ],
-            'returns sources with webp if webp is enabled if supported' => [
-                'fileExtension' => 'png',
-                'isWebpEnabledIfSupported' => true,
-                'attrs' => ['sample_key' => 'sample_value'],
-                'expected' => [
-                    [
-                        'srcset' => '/sample_filter/image.png.webp',
-                        'type' => 'image/webp',
-                        'sample_key' => 'sample_value',
-                    ],
-                    [
-                        'srcset' => '/sample_filter/image.png',
-                        'type' => 'image/mime',
-                        'sample_key' => 'sample_value',
-                    ],
-                ],
-            ],
-            'returns sources without webp if webp is enabled if supported but file is already webp' => [
-                'fileExtension' => 'webp',
-                'isWebpEnabledIfSupported' => true,
-                'attrs' => ['sample_key' => 'sample_value'],
-                'expected' => [
-                    [
-                        'srcset' => '/sample_filter/image.webp',
-                        'type' => 'image/mime',
-                        'sample_key' => 'sample_value',
+                    'src' => '/original/image.mime',
+                    'sources' => [
+                        [
+                            'srcset' => '/original/image.mime.webp',
+                            'type' => 'image/webp',
+                            'sample_key' => 'sample_value',
+                        ],
                     ],
                 ],
             ],
             'attrs take precedence over srcset and type' => [
-                'fileExtension' => 'png',
-                'isWebpEnabledIfSupported' => true,
                 'attrs' => ['srcset' => 'sample_value', 'type' => 'sample/type'],
                 'expected' => [
-                    [
-                        'srcset' => 'sample_value',
-                        'type' => 'sample/type',
-                    ],
-                    [
-                        'srcset' => 'sample_value',
-                        'type' => 'sample/type',
+                    'src' => '/original/image.mime',
+                    'sources' => [
+                        [
+                            'srcset' => 'sample_value',
+                            'type' => 'sample/type',
+                        ],
                     ],
                 ],
             ],

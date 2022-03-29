@@ -8,37 +8,38 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class EntityExtendFieldTypePassTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var EntityExtendFieldTypePass */
-    private $compiler;
+    private EntityExtendFieldTypePass $compiler;
 
     protected function setUp(): void
     {
         $this->compiler = new EntityExtendFieldTypePass();
     }
 
-    public function testProcessWithoutTargetServices()
+    public function testProcessWithoutTargetServices(): void
     {
         $container = new ContainerBuilder();
+
+        $this->expectNotToPerformAssertions();
 
         $this->compiler->process($container);
     }
 
-    public function testProcess()
+    public function testProcess(): void
     {
         $container = new ContainerBuilder();
         $fieldTypeProviderDef = $container->register('oro_entity_extend.field_type_provider')
             ->setArguments(['', ['integer', 'boolean']]);
-        $fieldGuesserDef = $container->register('oro_entity_extend.form.guesser.extend_field');
+        $fieldGuesserDef = $container->register('oro_entity_extend.provider.extend_field_form_type');
 
         $this->compiler->process($container);
 
-        $this->assertEquals(
+        self::assertEquals(
             ['integer', 'boolean', 'wysiwyg'],
             $fieldTypeProviderDef->getArgument(1)
         );
-        $this->assertEquals(
+        self::assertEquals(
             [
-                ['addExtendTypeMapping', ['wysiwyg', WYSIWYGType::class]]
+                ['addExtendTypeMapping', ['wysiwyg', WYSIWYGType::class]],
             ],
             $fieldGuesserDef->getMethodCalls()
         );
