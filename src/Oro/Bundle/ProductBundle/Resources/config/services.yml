@@ -1936,6 +1936,8 @@ services:
             - '@oro_config.manager'
             - '@oro_entity_extend.enum_value_provider'
             - '@event_dispatcher'
+        calls:
+            - [setUrlHelper, ['@oro_ui.tools.url_helper']]
 
     Oro\Bundle\ProductBundle\Provider\ProductAutocompleteProvider:
         alias: oro_product.provider.product_autocomplete
@@ -1963,6 +1965,8 @@ services:
             - '@request_stack'
             - '@oro_attachment.tools.webp_configuration'
             - '@oro_product.provider.product_image_placeholder'
+        calls:
+            - [setUrlHelper, ['@oro_ui.tools.url_helper']]
         tags:
             - { name: kernel.event_listener, event: Oro\Bundle\ProductBundle\Event\CollectAutocompleteFieldsEvent, method: onCollectAutocompleteFields }
             - { name: kernel.event_listener, event: Oro\Bundle\ProductBundle\Event\ProcessAutocompleteDataEvent, method: onProcessAutocompleteData }

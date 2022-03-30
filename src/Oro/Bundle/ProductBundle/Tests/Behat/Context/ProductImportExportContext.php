@@ -68,13 +68,48 @@ class ProductImportExportContext extends OroFeatureContext
         $sourcePath = sprintf('%s%s', __DIR__, '/../Features/Fixtures/files_import');
         // used for test a relative path
         $this->copyFilesToStorage($sourcePath, $this->getProductImportImagesFileManager());
-        // used for test an URL
+        // used for test a URL
         $this->copyFilesToStorage($sourcePath, $this->getPublicMediaCacheFileManager(), 'test_import');
         // used for test an absolute path
         $this->copyFiles(
             $sourcePath,
             $this->getAppContainer()->getParameter('kernel.project_dir') . '/var/data/test_import/'
         );
+    }
+
+    /**
+     * This method copies fixture images to public dir.
+     *
+     * @Given I copy product fixture files to public directory
+     */
+    public function copyProductFixtureFilesToPublicDir(): void
+    {
+        $sourcePath = sprintf('%s%s', __DIR__, '/../Features/Fixtures/files_import');
+        $this->copyFiles(
+            $sourcePath,
+            $this->getAppContainer()->getParameter('kernel.project_dir') . '/public/media/cache/fixtures/'
+        );
+    }
+
+    //@codingStandardsIgnoreStart
+    /**
+     * Example: Given I copy product fixture "000.png" to public directory as "091.png"
+     *
+     * @Given /^I copy product fixture "(?P<filename>(?:[^"]|\\")*)" to public directory as "(?P<newFilename>(?:[^"]|\\")*)"$/
+     */
+    //@codingStandardsIgnoreEnd
+    public function copyProductFixtureFileToPublicDir(string $filename, string $newFilename): void
+    {
+        $sourcePath = sprintf(
+            '%s/%s/%s',
+            __DIR__,
+            '../Features/Fixtures/files_import',
+            $this->fixStepArgument($filename)
+        );
+        $targetPath = $this->getAppContainer()->getParameter('kernel.project_dir')
+            . '/public/media/cache/fixtures/' . $this->fixStepArgument($newFilename);
+
+        $this->copyFiles($sourcePath, $targetPath);
     }
 
     //@codingStandardsIgnoreStart

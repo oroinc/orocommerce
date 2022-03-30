@@ -4,6 +4,8 @@ namespace Oro\Bundle\CatalogBundle\Twig;
 
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
+use Oro\Bundle\AttachmentBundle\Provider\PictureSourcesProvider;
+use Oro\Bundle\AttachmentBundle\Provider\PictureSourcesProviderInterface;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\LayoutBundle\Provider\Image\ImagePlaceholderProviderInterface;
 use Psr\Container\ContainerInterface;
@@ -17,7 +19,11 @@ use Twig\TwigFunction;
 class CategoryImageExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
     private ContainerInterface $container;
+
     private ?AttachmentManager $attachmentManager = null;
+
+    private ?PictureSourcesProviderInterface $pictureSourcesProvider = null;
+
     private ?ImagePlaceholderProviderInterface $imagePlaceholderProvider = null;
 
     public function __construct(ContainerInterface $container)
@@ -61,11 +67,14 @@ class CategoryImageExtension extends AbstractExtension implements ServiceSubscri
      *
      * @return array
      *  [
-     *      [
-     *          'srcset' => '/url/for/image.png',
-     *          'type' => 'image/png',
+     *      'src' => '/url/for/default_image.png',
+     *      'sources' => [
+     *          [
+     *              'srcset' => '/url/for/image.png',
+     *              'type' => 'image/png',
+     *          ],
+     *          // ...
      *      ],
-     *      // ...
      *  ]
      */
     public function getCategoryFilteredPictureSources(
@@ -73,33 +82,29 @@ class CategoryImageExtension extends AbstractExtension implements ServiceSubscri
         string $filterName = 'original',
         array $attrs = []
     ): array {
-        $sources = [];
-        $isWebpEnabledIfSupported = $this->getAttachmentManager()->isWebpEnabledIfSupported();
+        $pictureSources = [];
         if ($file) {
-            if ($isWebpEnabledIfSupported && $file->getExtension() !== 'webp') {
-                $sources[] = $attrs + [
-                        'srcset' => $this->getAttachmentManager()->getFilteredImageUrl($file, $filterName, 'webp'),
-                        'type' => 'image/webp',
-                    ];
-            }
-            $sources[] = $attrs + [
-                    'srcset' => $this->getAttachmentManager()->getFilteredImageUrl($file, $filterName),
-                    'type' => $file?->getMimeType(),
-                ];
+            $pictureSources = $this->getPictureSourcesProvider()->getFilteredPictureSources($file, $filterName);
         } else {
+            $pictureSources['src'] = $this->getCategoryImagePlaceholder($filterName);
+
+            $isWebpEnabledIfSupported = $this->getAttachmentManager()->isWebpEnabledIfSupported();
             if ($isWebpEnabledIfSupported) {
-                $sources[] = $attrs + [
+                $pictureSources['sources'] = [
+                    [
                         'srcset' => $this->getCategoryImagePlaceholder($filterName, 'webp'),
                         'type' => 'image/webp',
-                    ];
-            }
-
-            $sources[] = $attrs + [
-                    'srcset' => $this->getCategoryImagePlaceholder($filterName),
+                    ],
                 ];
+            }
         }
 
-        return $sources;
+        $pictureSources['sources'] = array_map(
+            static fn (array $source) => array_merge($source, $attrs),
+            $pictureSources['sources'] ?? []
+        );
+
+        return $pictureSources;
     }
 
     /**
@@ -109,6 +114,7 @@ class CategoryImageExtension extends AbstractExtension implements ServiceSubscri
     {
         return [
             AttachmentManager::class,
+            PictureSourcesProvider::class,
             'oro_catalog.provider.category_image_placeholder' => ImagePlaceholderProviderInterface::class,
         ];
     }
@@ -120,6 +126,15 @@ class CategoryImageExtension extends AbstractExtension implements ServiceSubscri
         }
 
         return $this->attachmentManager;
+    }
+
+    private function getPictureSourcesProvider(): PictureSourcesProviderInterface
+    {
+        if (null === $this->pictureSourcesProvider) {
+            $this->pictureSourcesProvider = $this->container->get(PictureSourcesProvider::class);
+        }
+
+        return $this->pictureSourcesProvider;
     }
 
     private function getImagePlaceholderProvider(): ImagePlaceholderProviderInterface

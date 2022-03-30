@@ -8,6 +8,7 @@ use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\EntityConfigBundle\Entity\EntityConfigModel;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
+use Oro\Bundle\EntityConfigBundle\Form\Type\ConfigScopeType;
 use Oro\Bundle\EntityConfigBundle\Form\Type\ConfigType;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\EntityConfigBundle\Provider\PropertyConfigContainer;
@@ -17,9 +18,11 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Extension\AttributeConfigExtension;
 use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Oro\Component\Testing\ReflectionUtil;
+use Oro\Component\Testing\Unit\Form\Extension\Stub\FormTypeValidatorExtensionStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
@@ -397,12 +400,14 @@ class AttributeConfigExtensionTest extends FormIntegrationTestCase
             new PreloadedExtension(
                 [
                     new ConfigType($translatorHelper, $configManager, $this->translator),
+                    new ConfigScopeType($configManager),
                 ],
                 [
                     ConfigType::class => [
                         new AttributeConfigExtension($this->attributeConfigProvider, $this->translator)
                     ],
-                    FormType::class => [new DataBlockExtension()]
+                    FormType::class => [new DataBlockExtension(), new FormTypeValidatorExtensionStub()],
+                    SubmitType::class => [new FormTypeValidatorExtensionStub()],
                 ]
             ),
         ];

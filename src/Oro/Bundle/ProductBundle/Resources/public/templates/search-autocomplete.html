@@ -20,7 +20,7 @@ function highlightWords(inputString, value) {
                     <a href="<%- product.url %>" class="search-autocomplete-product" title="<%- product.name %>">
                         <div class="search-autocomplete-product__image">
                             <picture>
-                                <% if (product.imageWebp) { %>
+                                <% if (product.imageWebp && product.imageWebp !== product.image) { %>
                                 <source srcset="<%- product.imageWebp %>" type="image/webp">
                                 <% } %>
                                 <img src="<%- product.image %>" alt="<%- product.name %>">

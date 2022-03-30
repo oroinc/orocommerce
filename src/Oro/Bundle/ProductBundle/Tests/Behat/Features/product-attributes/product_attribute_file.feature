@@ -58,7 +58,7 @@ Feature: Product attribute file
       | FileField | tiger.svg |
     And I save and close form
     Then I should see "Product Form" validation errors:
-      | FileField | The mime type of the file is invalid ("image/svg+xml"). Allowed mime types are "application/pdf", "image/png", "image/jpeg". |
+      | FileField | The MIME type of the file is invalid ("image/svg+xml"). Allowed MIME types are "application/pdf", "image/png", "image/jpeg". |
     Then I fill "Product Form" with:
       | FileField | cat1.jpg |
     And I save and close form
@@ -98,7 +98,7 @@ Feature: Product attribute file
     Given I go to Products/ Products
     When I click "View" on row "SKU123" in grid
     Then I should see product with:
-      | FileField | |
+      | FileField | N/A |
 
   Scenario: Delete product attribute
     Given I go to Products/ Product Attributes

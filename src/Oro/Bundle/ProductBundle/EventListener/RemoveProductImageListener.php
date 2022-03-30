@@ -51,6 +51,11 @@ class RemoveProductImageListener
         $imagesBatch = [];
         $count = 0;
         foreach ($this->imagesToRemove as $id => $imageFile) {
+            if ($imageFile->getExternalUrl() !== null) {
+                // Externally stored files cannot be managed.
+                continue;
+            }
+
             $imagesBatch[] = [
                 'id' => $id,
                 'fileName' => $imageFile->getFilename(),
