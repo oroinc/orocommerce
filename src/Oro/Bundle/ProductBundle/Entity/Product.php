@@ -769,6 +769,11 @@ class Product extends ExtendProduct implements
         return $this->getType() === self::TYPE_CONFIGURABLE;
     }
 
+    public function isKit(): bool
+    {
+        return $this->getType() === self::TYPE_KIT;
+    }
+
     /**
      * @return array
      */

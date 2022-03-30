@@ -46,9 +46,10 @@ oro:
             description: The status of the inventory of this product, in stock if there is a minimum quantity that can be ordered.
         type:
             label: Type
-            description: Defines the type of product, "simple" / "configurable".
+            description: Defines the type of product, "simple" / "configurable" / "kit".
             simple: Simple
             configurable: Configurable
+            kit: Kit
             please_select_option: Please select option
         owner.label: Owner
         organization.label: Organization

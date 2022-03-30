@@ -85,18 +85,18 @@ class ProductKitItem extends ExtendProductKitItem implements DatesAwareInterface
     protected bool $optional = false;
 
     /**
-     * @var int|null
+     * @var float|null
      *
-     * @ORM\Column(name="minimum_quantity", type="integer", nullable=true)
+     * @ORM\Column(name="minimum_quantity", type="float", nullable=true)
      */
-    protected ?int $minimumQuantity = null;
+    protected ?float $minimumQuantity = null;
 
     /**
-     * @var int|null
+     * @var float|null
      *
-     * @ORM\Column(name="maximum_quantity", type="integer", nullable=true)
+     * @ORM\Column(name="maximum_quantity", type="float", nullable=true)
      */
-    protected ?int $maximumQuantity = null;
+    protected ?float $maximumQuantity = null;
 
     /**
      * @ORM\ManyToOne(targetEntity="ProductUnit")
@@ -229,6 +229,9 @@ class ProductKitItem extends ExtendProductKitItem implements DatesAwareInterface
         return $this;
     }
 
+    /**
+     * @return Collection<Product>
+     */
     public function getProducts(): Collection
     {
         return $this->products;
@@ -264,26 +267,26 @@ class ProductKitItem extends ExtendProductKitItem implements DatesAwareInterface
         return $this->optional;
     }
 
-    public function setMinimumQuantity(?int $minimumQuantity): self
+    public function setMinimumQuantity(?float $minimumQuantity): self
     {
         $this->minimumQuantity = $minimumQuantity;
 
         return $this;
     }
 
-    public function getMinimumQuantity(): ?int
+    public function getMinimumQuantity(): ?float
     {
         return $this->minimumQuantity;
     }
 
-    public function setMaximumQuantity(?int $maximumQuantity): self
+    public function setMaximumQuantity(?float $maximumQuantity): self
     {
         $this->maximumQuantity = $maximumQuantity;
 
         return $this;
     }
 
-    public function getMaximumQuantity(): ?int
+    public function getMaximumQuantity(): ?float
     {
         return $this->maximumQuantity;
     }

@@ -13,6 +13,13 @@ class ProductKitItemStub extends BaseProductKitItem
         'label' => 'labels',
     ];
 
+    public function __construct(?int $id = null)
+    {
+        parent::__construct();
+
+        $this->id = $id;
+    }
+
     public function __call($name, $arguments)
     {
         return $this->localizedMethodCall($this->localizedFields, $name, $arguments);

@@ -33,8 +33,8 @@ class CreateProductKitItem implements Migration
 
         $table->addColumn('optional', 'boolean', ['default' => false]);
         $table->addColumn('sort_order', 'integer', ['default' => 0]);
-        $table->addColumn('minimum_quantity', 'integer', ['notnull' => false]);
-        $table->addColumn('maximum_quantity', 'integer', ['notnull' => false]);
+        $table->addColumn('minimum_quantity', 'float', ['notnull' => false]);
+        $table->addColumn('maximum_quantity', 'float', ['notnull' => false]);
 
         $table->addColumn('unit_code', 'string', ['notnull' => false]);
         $table->addColumn('product_kit_id', 'integer', ['notnull' => false]);
