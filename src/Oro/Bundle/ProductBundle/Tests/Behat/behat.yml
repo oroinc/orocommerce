@@ -1472,6 +1472,10 @@ oro_behat_extension:
     Product View Media Gallery:
       selector: 'div.product-view-media-gallery'
 
+    MSRP Product Price Attributes Grid:
+      selector: '.product-price-attributes-grid'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
   pages:
     Product View:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Page\ProductView

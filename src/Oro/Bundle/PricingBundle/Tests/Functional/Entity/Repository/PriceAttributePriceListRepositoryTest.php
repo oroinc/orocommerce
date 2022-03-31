@@ -46,21 +46,12 @@ class PriceAttributePriceListRepositoryTest extends WebTestCase
             [
                 'currencies' => ['USD'],
                 'expectedPriceAttributes' => [
+                    ['name' => 'Shipping Cost', 'currency' => 'USD'],
                     ['name' => 'priceAttributePriceList1', 'currency' => 'USD'],
                     ['name' => 'priceAttributePriceList2', 'currency' => 'USD'],
                     ['name' => 'priceAttributePriceList6', 'currency' => 'USD'],
                 ],
-            ],
-            [
-                'currencies' => ['USD', 'EUR'],
-                'expectedPriceAttributes' => [
-                    ['name' => 'priceAttributePriceList1', 'currency' => 'USD'],
-                    ['name' => 'priceAttributePriceList2', 'currency' => 'USD'],
-                    ['name' => 'priceAttributePriceList6', 'currency' => 'USD'],
-                    ['name' => 'priceAttributePriceList5', 'currency' => 'EUR'],
-                    ['name' => 'priceAttributePriceList1', 'currency' => 'EUR'],
-                ],
-            ],
+            ]
         ];
     }
 

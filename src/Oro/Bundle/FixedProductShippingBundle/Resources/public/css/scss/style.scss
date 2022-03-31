@@ -1,0 +1,27 @@
+/* @theme: admin.oro; */
+.fixed-product-shipping-cost,
+.shipping-cost-attribute-view {
+    margin-top: 25px;
+}
+
+.shipping-cost-attribute-view {
+    max-width: 800px;
+}
+
+.fixed-product-shipping-cost {
+    .control-group {
+        display: block;
+
+        .control-label.wrap label {
+            display: block;
+            font-weight: bold;
+            line-height: 26px;
+            margin-bottom: 8px;
+            text-align: left;
+        }
+
+        .controls {
+            margin-left: 0;
+        }
+    }
+}

@@ -1,0 +1,14 @@
+services:
+    oro_fixed_product_shipping.form.type.fixed_product_options:
+        class: 'Oro\Bundle\FixedProductShippingBundle\Form\Type\FixedProductOptionsType'
+        arguments:
+            - '@oro_currency.rounding.price_rounding_service'
+        tags:
+            - { name: form.type }
+
+    oro_fixed_product_shipping.form.extension.product_type:
+        class: 'Oro\Bundle\FixedProductShippingBundle\Form\Extension\ProductFormExtension'
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: form.type_extension, alias: oro_product, extended_type: Oro\Bundle\ProductBundle\Form\Type\ProductType }

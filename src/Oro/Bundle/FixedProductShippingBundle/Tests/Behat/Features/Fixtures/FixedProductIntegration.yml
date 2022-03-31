@@ -1,0 +1,20 @@
+parameters:
+    fixed_product_type: 'fixed_product'
+    fixed_product_label: 'Fixed Product'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    fixedProductLabel:
+        string: '<{fixed_product_label}>'
+
+Oro\Bundle\FixedProductShippingBundle\Entity\FixedProductSettings:
+    fixedProductSettings:
+        __calls:
+            - addLabel: ['@fixedProductLabel']
+
+Oro\Bundle\IntegrationBundle\Entity\Channel:
+    fixedProductIntegration:
+        type: '<{fixed_product_type}>'
+        name: '<{fixed_product_label}>'
+        enabled: true
+        organization: '@organization'
+        transport: '@fixedProductSettings'

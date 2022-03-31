@@ -1,7 +1,11 @@
 {% import '@OroDataGrid/macros.html.twig' as dataGrid %}
 <h5>{{ priceList.name }}</h5>
 {% if priceList.currencies|length > 2 %}
-    {{ dataGrid.renderGrid('product-price-attributes-grid:' ~ priceList.id, {product_id: product.id, price_list_id: priceList.id}) }}
+    {{ dataGrid.renderGrid(
+        'product-price-attributes-grid:' ~ priceList.id,
+        {product_id: product.id, price_list_id: priceList.id},
+        {cssClass: 'product-price-attributes-grid'}
+    ) }}
 {% else %}
     <div class="controls">
         <div class="control-label">

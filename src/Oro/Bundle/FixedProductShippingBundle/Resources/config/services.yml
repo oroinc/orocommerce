@@ -1,0 +1,45 @@
+parameters:
+    oro_fixed_product_shipping.integration.channel.type: 'fixed_product'
+    oro_fixed_product_shipping.integration.transport.type: 'fixed_product'
+
+services:
+    oro_fixed_product_shipping.integration.channel:
+        class: 'Oro\Bundle\FixedProductShippingBundle\Integration\FixedProductChannelType'
+        public: false
+        tags:
+            - { name: oro_integration.channel, type: '%oro_fixed_product_shipping.integration.channel.type%' }
+
+    oro_fixed_product_shipping.integration.transport:
+        class: 'Oro\Bundle\FixedProductShippingBundle\Integration\FixedProductTransport'
+        public: false
+        tags:
+            - { name: oro_integration.transport, type: '%oro_fixed_product_shipping.integration.transport.type%', channel_type: '%oro_fixed_product_shipping.integration.channel.type%' }
+
+    oro_fixed_product_shipping.method.provider:
+        class: 'Oro\Bundle\FixedProductShippingBundle\Method\FixedProductMethodProvider'
+        arguments:
+            - '%oro_fixed_product_shipping.integration.channel.type%'
+            - '@oro_entity.doctrine_helper'
+            - '@oro_fixed_product_shipping.factory.method'
+        tags:
+            - { name: oro_shipping_method_provider }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\IntegrationBundle\Entity\Channel', event: postLoad }
+
+    oro_fixed_product_shipping.method.identifier_generator.method:
+        parent: oro_integration.generator.prefixed_identifier_generator
+        public: true
+        arguments:
+            - '%oro_fixed_product_shipping.integration.channel.type%'
+
+    # Access Rule
+    oro_fixed_product_shipping.acl.access_rule.price_attribute_price_list_access_rule:
+        class: 'Oro\Bundle\FixedProductShippingBundle\Acl\AccessRule\PriceAttributePriceListAccessRule'
+        tags:
+            - { name: oro_security.access_rule, entityClass: Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList }
+
+    # Provider
+    oro_fixed_product_shipping.shipping_cost.provider:
+        class: 'Oro\Bundle\FixedProductShippingBundle\Provider\ShippingCostProvider'
+        arguments:
+            - '@oro_pricing.providers.price_attribute_prices'
+            - '@doctrine'

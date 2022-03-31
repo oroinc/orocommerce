@@ -207,6 +207,10 @@ define(function(require) {
             const currency = this.$currency.find('option:selected').text();
             _.each(this.$(this.options.currencyFieldsSelector), function(field) {
                 const $field = $(field);
+                if ($field.data('no-price')) {
+                    return;
+                }
+
                 $field.data('currency', currency);
 
                 let $label = this.$('label[for="' + field.id + '"]');

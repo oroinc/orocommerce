@@ -225,7 +225,7 @@ class CustomerViewListenerTest extends \PHPUnit\Framework\TestCase
 
         $expectedData = [
             ScrollData::DATA_BLOCKS => [
-                0 => [
+                'shipping' => [
                     ScrollData::SUB_BLOCKS => [
                         0 => [
                             ScrollData::DATA => [
@@ -261,7 +261,7 @@ class CustomerViewListenerTest extends \PHPUnit\Framework\TestCase
 
         $expectedData = [
             ScrollData::DATA_BLOCKS => [
-                0 => [
+                'shipping' => [
                     ScrollData::SUB_BLOCKS => [
                         0 => [
                             ScrollData::DATA => [

@@ -10,6 +10,7 @@ use Oro\Bundle\PricingBundle\Entity\Repository\PriceAttributePriceListRepository
 use Oro\Bundle\PricingBundle\Form\Type\ProductAttributePriceCollectionType;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductType;
+use Oro\Bundle\SecurityBundle\Acl\BasicPermission;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
@@ -69,32 +70,10 @@ class PriceAttributesProductFormExtension extends AbstractTypeExtension
         /** @var Product $product */
         $product = $event->getData();
 
-        $neededPrices = $this->getAvailablePricesForProduct($product);
-        $existingPrices = $this->getProductExistingPrices($product);
+        $attributes = $this->getAvailablePriceListForProduct();
+        $existingPrices = $this->getProductExistingPrices($product, $attributes);
 
-        $formData = [];
-        foreach ($existingPrices as $price) {
-            $formData[$price->getPriceList()->getId()][] = $price;
-            $neededPricesKey = array_search(
-                [
-                    'attribute' => $price->getPriceList(),
-                    'currency' => $price->getPrice()->getCurrency(),
-                    'unit' => $price->getUnit()
-                ],
-                $neededPrices,
-                true
-            );
-
-            if (false !== $neededPricesKey) {
-                unset($neededPrices[$neededPricesKey]);
-            }
-        }
-
-        foreach ($neededPrices as $newPriceInstanceData) {
-            $price = $this->createPrice($newPriceInstanceData, $product);
-            $formData[$price->getPriceList()->getId()][] = $price;
-        }
-
+        $formData = $this->transformPriceAttributes($product, $attributes, $existingPrices);
         $event->getForm()->get(self::PRODUCT_PRICE_ATTRIBUTES_PRICES)->setData($formData);
     }
 
@@ -137,23 +116,16 @@ class PriceAttributesProductFormExtension extends AbstractTypeExtension
 
     /**
      * @param Product $product
+     * @param array $attributes
+     * @param array $existingPrices
+     *
      * @return array
      */
-    private function getAvailablePricesForProduct(Product $product)
+    private function transformPriceAttributes(Product $product, array $attributes, array $existingPrices): array
     {
         $neededPrices = [];
         $unites = $product->getAvailableUnits();
-
-        /** @var PriceAttributePriceListRepository $priceAttributeRepository */
-        $priceAttributeRepository = $this->registry
-            ->getManagerForClass(PriceAttributePriceList::class)
-            ->getRepository(PriceAttributePriceList::class);
-
-        $qb = $priceAttributeRepository->getPriceAttributesQueryBuilder();
-        /** @var PriceAttributePriceList[] $priceAttributes */
-        $priceAttributes = $this->aclHelper->apply($qb)->getResult();
-
-        foreach ($priceAttributes as $attribute) {
+        foreach ($attributes as $attribute) {
             foreach ($attribute->getCurrencies() as $currency) {
                 foreach ($unites as $unit) {
                     $neededPrices[] = ['attribute' => $attribute, 'currency' => $currency, 'unit' => $unit];
@@ -161,18 +133,61 @@ class PriceAttributesProductFormExtension extends AbstractTypeExtension
             }
         }
 
-        return $neededPrices;
+        $formData = [];
+        foreach ($existingPrices as $price) {
+            $formData[$price->getPriceList()->getId()][] = $price;
+            $neededPricesKey = array_search(
+                [
+                    'attribute' => $price->getPriceList(),
+                    'currency' => $price->getPrice()->getCurrency(),
+                    'unit' => $price->getUnit()
+                ],
+                $neededPrices,
+                true
+            );
+
+            if (false !== $neededPricesKey) {
+                unset($neededPrices[$neededPricesKey]);
+            }
+        }
+
+        foreach ($neededPrices as $newPriceInstanceData) {
+            $price = $this->createPrice($newPriceInstanceData, $product);
+            $formData[$price->getPriceList()->getId()][] = $price;
+        }
+
+        return $formData;
     }
 
     /**
-     * @param $product
+     * @return array
+     */
+    private function getAvailablePriceListForProduct()
+    {
+        /** @var PriceAttributePriceListRepository $priceAttributeRepository */
+        $priceAttributeRepository = $this->registry
+            ->getManagerForClass(PriceAttributePriceList::class)
+            ->getRepository(PriceAttributePriceList::class);
+
+        $qb = $priceAttributeRepository->getPriceAttributesQueryBuilder();
+        $options = [self::PRODUCT_PRICE_ATTRIBUTES_PRICES => true];
+
+        return $this->aclHelper->apply($qb, BasicPermission::VIEW, $options)->getResult() ?? [];
+    }
+
+    /**
+     * @param Product $product
+     * @param array $priceLists
+     *
      * @return array|PriceAttributeProductPrice[]
      */
-    private function getProductExistingPrices($product)
+    private function getProductExistingPrices(Product $product, array $priceLists)
     {
-        return $this->registry
+        $result = $this->registry
             ->getManagerForClass(PriceAttributeProductPrice::class)
             ->getRepository(PriceAttributeProductPrice::class)
-            ->findBy(['product' => $product]);
+            ->findBy(['product' => $product, 'priceList' => $priceLists]);
+
+        return $result ?? [];
     }
 }

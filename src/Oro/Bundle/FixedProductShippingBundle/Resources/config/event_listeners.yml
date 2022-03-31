@@ -1,0 +1,40 @@
+parameters:
+    oro_fixed_product_shipping.admin_view.method_template: '@@OroFixedProductShipping/method/fixedProductMethodWithOptions.html.twig'
+
+services:
+    oro_fixed_product_shipping.event_listener.shipping_method_config_data:
+        parent: oro_shipping.admin_view.method_template.listener
+        arguments:
+            - '%oro_fixed_product_shipping.admin_view.method_template%'
+            - '@oro_fixed_product_shipping.method.provider'
+        tags:
+            - { name: kernel.event_listener, event: oro_shipping_method.config_data, method: onGetConfigData }
+
+    oro_fixed_product_shipping.entity_listener.integration:
+        parent: oro_shipping.remove_integration_listener
+        arguments:
+            - '%oro_fixed_product_shipping.integration.channel.type%'
+            - '@oro_fixed_product_shipping.method.identifier_generator.method'
+            - '@oro_shipping.method.event.dispatcher.method_removal'
+        tags:
+            - { name: kernel.event_listener, event: oro_integration.channel_delete, method: onRemove }
+
+    oro_fixed_product_shipping.disable_integration_listener:
+         parent: oro_shipping.disable_integration_listener
+         arguments:
+             - '%oro_fixed_product_shipping.integration.channel.type%'
+             - '@oro_fixed_product_shipping.method.identifier_generator.method'
+             - '@oro_shipping.method_disable_handler.decorator'
+         tags:
+             - { name: kernel.event_listener, event: oro_integration.channel_disable, method: onIntegrationDisable }
+
+    oro_fixed_product_shipping.event_listener.form_view:
+        class: 'Oro\Bundle\FixedProductShippingBundle\EventListener\FormViewListener'
+        arguments:
+            - '@translator'
+            - '@doctrine'
+            - '@oro_pricing.providers.price_attribute_prices'
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onProductView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-create-step-two, method: onProductEdit }
