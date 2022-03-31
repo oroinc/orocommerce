@@ -123,6 +123,7 @@ class LoadFlatRateIntegration extends AbstractFixture implements
 
         $rule = new Rule();
         $rule->setName('Default')
+            ->setExpression('lineItems.all(lineItem.product.id > 21)')
             ->setEnabled(true)
             ->setSortOrder(1);
 
