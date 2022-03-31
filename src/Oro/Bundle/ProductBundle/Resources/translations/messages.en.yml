@@ -46,9 +46,10 @@ oro:
             description: The status of the inventory of this product, in stock if there is a minimum quantity that can be ordered.
         type:
             label: Type
-            description: Defines the type of product, "simple" / "configurable".
+            description: Defines the type of product, "simple" / "configurable" / "kit".
             simple: Simple
             configurable: Configurable
+            kit: Kit
             please_select_option: Please select option
         owner.label: Owner
         organization.label: Organization
@@ -119,6 +120,7 @@ oro:
             label:              'URL Slug'
             description:        Specifies the url slugs used for product (it is a list of localized entities to hold the localized text for each localization)
             singular_label:     'Slug Prototype'
+        kit_items.label: Kit Items
 
         content_variant:
             product_page.label: Product Page
@@ -328,6 +330,42 @@ oro:
             id.label: Id
             type.label: Type
             product_image.label: Type
+
+        productkititem:
+            entity_label: Product Kit Item
+            entity_plural_label: Product Kit Items
+            entity_grid_all_view_label: 'All %entity_plural_label%'
+            entity_description: 'Stores product kit items.'
+            id.label: ID
+            labels.label: Label
+            minimum_quantity.label: Minimum Quantity
+            maximum_quantity.label: Maximum Quantity
+            product_unit.label: Unit of Quantity
+            optional.label: Optional
+            product_kit.label: Product Kit
+            products.label: Products
+            sort_order.label: Sort Order
+            referenced_unit_precisions.label: Referenced Unit Precisions
+
+        productkititemlabel:
+            entity_label: 'Product Kit Item Label'
+            entity_plural_label: 'Product Kit Item Labels'
+            entity_grid_all_view_label: 'All %entity_plural_label%'
+            entity_description: 'Stores labels for the product kit items.'
+            id.label: 'ID'
+            fallback:
+                label: 'Fallback'
+                description: 'The value for the fallback'
+            localization:
+                label: 'Localization'
+                description: 'The value for the localization, selected language'
+            string:
+                label: 'String value'
+                description: 'The string value for the current localization'
+            product_kit_item:
+                label: 'Product Kit Item'
+                description: 'Related product kit item'
+
         related_products:
             label: Related Products
             no_entities: No records found
