@@ -27,7 +27,7 @@ const cssLines = {
     '@media screen { body{display: none;}}': `@media screen { #${TEST_ID} body{display: none;}}`,
     '@media(max-width: 767px){ #testId{color:red;}}': `@media(max-width: 767px){ #${TEST_ID} #testId{color:red;}}`,
     // eslint-disable-next-line
-    '@media(max-width: 767px){ .div > .div{color:red;} .test, .test2{color:red;}}': `@media(max-width: 767px){ #${TEST_ID} .div > .div{color:red;} #${TEST_ID} .test, #${TEST_ID} .test2{color:red;}}`,
+    '    @media(max-width: 767px){ .div > .div{color:red;} .test, .test2{color:red;}}': `    @media(max-width: 767px){ #${TEST_ID} .div > .div{color:red;} #${TEST_ID} .test, #${TEST_ID} .test2{color:red;}}`,
     ':scope, *{display: none;}': `${SCOPE_ATTR}, #${TEST_ID} *{display: none;}`,
     ':root, *{display: none;}': `${ROOT_ATTR}, #${TEST_ID} *{display: none;}`,
     ':root ~ *{display: none;}': `${ROOT_ATTR} ~ *{display: none;}`,
