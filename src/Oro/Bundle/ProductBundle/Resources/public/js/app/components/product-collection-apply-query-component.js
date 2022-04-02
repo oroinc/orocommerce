@@ -402,7 +402,7 @@ define(function(require) {
 
             const $conditionBuilder = this.options._sourceElement.find('.condition-builder');
             const conditionBuilderInvalidElements = _.filter(invalidElements, value => {
-                return $.contains($conditionBuilder[0], value);
+                return $conditionBuilder[0] && $.contains($conditionBuilder[0], value);
             });
 
             return !conditionBuilderInvalidElements.length;
