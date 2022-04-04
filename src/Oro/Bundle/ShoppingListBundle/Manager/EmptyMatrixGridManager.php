@@ -125,21 +125,20 @@ class EmptyMatrixGridManager implements EmptyMatrixGridInterface
     public function hasEmptyMatrix(ShoppingList $shoppingList): bool
     {
         $lineItemsCollection = $shoppingList->getLineItems();
-        $result = false;
         if ($this->isTooManyUninitializedProducts($lineItemsCollection)) {
             /** @var ShoppingListRepository $repository */
             $repository = $this->doctrineHelper->getEntityRepositoryForClass(ShoppingList::class);
-            $result = $repository->hasEmptyConfigurableLineItems($shoppingList);
-        } else {
-            foreach ($lineItemsCollection as $lineItem) {
-                if ($lineItem->getProduct()->isConfigurable()) {
-                    $result = true;
-                    break;
-                }
+
+            return $repository->hasEmptyConfigurableLineItems($shoppingList);
+        }
+
+        foreach ($lineItemsCollection as $lineItem) {
+            if ($lineItem->getProduct()->isConfigurable()) {
+                return true;
             }
         }
 
-        return $result;
+        return false;
     }
 
     private function isTooManyUninitializedProducts(Collection $lineItemsCollection): bool
