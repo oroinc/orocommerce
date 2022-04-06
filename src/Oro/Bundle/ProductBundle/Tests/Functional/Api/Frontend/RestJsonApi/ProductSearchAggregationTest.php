@@ -415,7 +415,7 @@ class ProductSearchAggregationTest extends FrontendRestJsonApiTestCase
         $response = $this->cget(
             ['entity' => 'productsearch'],
             [
-                'filter' => ['aggregations' => 'testAttrFloat sum', 'searchQuery' => 'testAttrFloat >= 1.2'],
+                'filter' => ['aggregations' => 'testAttrFloat sum', 'searchQuery' => 'testAttrFloat >= 1.23'],
                 'fields' => ['productsearch' => 'sku']
             ]
         );
@@ -423,7 +423,7 @@ class ProductSearchAggregationTest extends FrontendRestJsonApiTestCase
             [
                 'meta' => [
                     'aggregatedData' => [
-                        'testAttrFloatSum' => 3.93
+                        'testAttrFloatSum' => 2.73
                     ]
                 ]
             ],
@@ -751,7 +751,7 @@ class ProductSearchAggregationTest extends FrontendRestJsonApiTestCase
         $response = $this->cget(
             ['entity' => 'productsearch'],
             [
-                'filter' => ['aggregations' => 'testAttrFloat avg', 'searchQuery' => 'testAttrFloat >= 1.2'],
+                'filter' => ['aggregations' => 'testAttrFloat avg', 'searchQuery' => 'testAttrFloat >= 1.23'],
                 'fields' => ['productsearch' => 'sku']
             ]
         );
@@ -759,7 +759,7 @@ class ProductSearchAggregationTest extends FrontendRestJsonApiTestCase
             [
                 'meta' => [
                     'aggregatedData' => [
-                        'testAttrFloatAvg' => 1.31
+                        'testAttrFloatAvg' => 1.365
                     ]
                 ]
             ],

@@ -9,8 +9,10 @@ use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceAttributePriceListRepository;
+use Oro\Bundle\PricingBundle\Form\Extension\PriceAttributesProductFormExtension;
 use Oro\Bundle\PricingBundle\Provider\PriceAttributePricesProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\SecurityBundle\Acl\BasicPermission;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Component\Exception\UnexpectedTypeException;
@@ -103,8 +105,9 @@ class FormViewListener implements FeatureToggleableInterface
     protected function getProductAttributesPriceLists()
     {
         $qb = $this->getPriceAttributePriceListRepository()->getPriceAttributesQueryBuilder();
+        $options = [PriceAttributesProductFormExtension::PRODUCT_PRICE_ATTRIBUTES_PRICES => true];
 
-        return $this->aclHelper->apply($qb)->getResult();
+        return $this->aclHelper->apply($qb, BasicPermission::VIEW, $options)->getResult();
     }
 
     /**

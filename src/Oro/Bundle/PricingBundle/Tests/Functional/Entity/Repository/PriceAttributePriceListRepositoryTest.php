@@ -22,48 +22,6 @@ class PriceAttributePriceListRepositoryTest extends WebTestCase
         $this->assertCount(0, $priceAttributesWithCurrencies);
     }
 
-    /**
-     * @dataProvider currencyDataProvider
-     * @param string[] $currencies
-     * @param string[] $expectedPriceAttributes
-     */
-    public function testGetAttributesWithCurrencies($currencies, $expectedPriceAttributes)
-    {
-        $qb = $this->getRepository()->getAttributesWithCurrenciesQueryBuilder($currencies);
-        $priceAttributesWithCurrencies = $qb->getQuery()->getResult();
-        $this->assertCount(count($expectedPriceAttributes), $priceAttributesWithCurrencies);
-        foreach ($priceAttributesWithCurrencies as $attribute) {
-            $this->assertTrue($this->checkExistPair($attribute, $expectedPriceAttributes));
-        }
-    }
-
-    /**
-     * @return array
-     */
-    public function currencyDataProvider()
-    {
-        return [
-            [
-                'currencies' => ['USD'],
-                'expectedPriceAttributes' => [
-                    ['name' => 'priceAttributePriceList1', 'currency' => 'USD'],
-                    ['name' => 'priceAttributePriceList2', 'currency' => 'USD'],
-                    ['name' => 'priceAttributePriceList6', 'currency' => 'USD'],
-                ],
-            ],
-            [
-                'currencies' => ['USD', 'EUR'],
-                'expectedPriceAttributes' => [
-                    ['name' => 'priceAttributePriceList1', 'currency' => 'USD'],
-                    ['name' => 'priceAttributePriceList2', 'currency' => 'USD'],
-                    ['name' => 'priceAttributePriceList6', 'currency' => 'USD'],
-                    ['name' => 'priceAttributePriceList5', 'currency' => 'EUR'],
-                    ['name' => 'priceAttributePriceList1', 'currency' => 'EUR'],
-                ],
-            ],
-        ];
-    }
-
     public function testGetFieldNames()
     {
         $actual = $this->getRepository()->getFieldNames();

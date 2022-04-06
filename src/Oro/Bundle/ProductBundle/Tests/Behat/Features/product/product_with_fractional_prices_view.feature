@@ -105,6 +105,6 @@ Feature: Product with fractional prices view
 
     And I go to Products/ Products
     When I click View "PSKU1" in grid
-    Then I should see following "Product Price Attributes Grid 1" grid:
+    Then I should see following "MSRP Product Price Attributes Grid" grid:
       | Unit | EUR | GBP | USD   |
       | each | N/A | N/A | 10,88 |

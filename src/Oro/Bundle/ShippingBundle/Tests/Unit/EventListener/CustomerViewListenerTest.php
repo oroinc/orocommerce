@@ -209,7 +209,7 @@ class CustomerViewListenerTest extends \PHPUnit\Framework\TestCase
         $this->env->expects($this->once())
             ->method('render')
             ->with(
-                'OroShippingBundle:Product:shipping_options_view.html.twig',
+                '@OroShipping/Product/shipping_options_view.html.twig',
                 [
                     'entity' => $product,
                     'shippingOptions' => [new ProductShippingOptions(), new ProductShippingOptions()]
@@ -225,7 +225,7 @@ class CustomerViewListenerTest extends \PHPUnit\Framework\TestCase
 
         $expectedData = [
             ScrollData::DATA_BLOCKS => [
-                0 => [
+                'shipping' => [
                     ScrollData::SUB_BLOCKS => [
                         0 => [
                             ScrollData::DATA => [
@@ -250,7 +250,7 @@ class CustomerViewListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->env->expects($this->once())
             ->method('render')
-            ->with('OroShippingBundle:Product:shipping_options_update.html.twig', ['form' => $formView])
+            ->with('@OroShipping/Product/shipping_options_update.html.twig', ['form' => $formView])
             ->willReturn($renderedHtml);
 
         $scrollData = new ScrollData();
@@ -261,7 +261,7 @@ class CustomerViewListenerTest extends \PHPUnit\Framework\TestCase
 
         $expectedData = [
             ScrollData::DATA_BLOCKS => [
-                0 => [
+                'shipping' => [
                     ScrollData::SUB_BLOCKS => [
                         0 => [
                             ScrollData::DATA => [

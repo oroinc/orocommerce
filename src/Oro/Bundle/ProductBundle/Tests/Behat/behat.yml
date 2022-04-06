@@ -1406,6 +1406,10 @@ oro_behat_extension:
     Multi Images Gallery Trigger:
       selector: 'div[class*="product-view__multipleimages"] [data-trigger-gallery-open]'
 
+    MSRP Product Price Attributes Grid:
+      selector: '.product-price-attributes-grid'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
   pages:
     Product View:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Page\ProductView
