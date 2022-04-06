@@ -82,8 +82,15 @@ describe('orocms/js/app/grapesjs/type-builders/content-block-type-builder', () =
             beforeEach(done => {
                 editor.addComponents([{
                     type: 'content-block',
+                    components: [
+                        {
+                            type: 'textnode',
+                            content: '{{ content_block("content-block-alias-default") }}'
+                        }
+                    ],
                     attributes: {
-                        id: 'test'
+                        'class': ['content-block'],
+                        'id': 'test'
                     }
                 }]);
 
@@ -98,7 +105,8 @@ describe('orocms/js/app/grapesjs/type-builders/content-block-type-builder', () =
 
             it('check "toHTML"', () => {
                 expect(contentBlockComponent.toHTML()).toEqual(
-                    '<div id="test" class="content-block content-placeholder"></div>'
+                    // eslint-disable-next-line
+                    '<div class="content-block content-placeholder" id="test">{{ content_block(&quot;content-block-alias-default&quot;) }}</div>'
                 );
             });
 
@@ -113,7 +121,7 @@ describe('orocms/js/app/grapesjs/type-builders/content-block-type-builder', () =
 
                 expect(contentBlockComponent.toHTML()).toEqual(
                     // eslint-disable-next-line
-                    '<div data-title="Content block title" id="test" class="content-block content-placeholder">{{ content_block("content-block-alias") }}</div>'
+                    '<div data-title="Content block title" id="test" class="content-block content-placeholder">{{ content_block(&quot;content-block-alias&quot;) }}</div>'
                 );
             });
         });
