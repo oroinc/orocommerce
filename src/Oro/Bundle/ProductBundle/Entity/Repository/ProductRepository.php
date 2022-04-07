@@ -395,7 +395,7 @@ class ProductRepository extends ServiceEntityRepository
             ->join('variant_links.parentProduct', 'parent_product')
             ->where($qb->expr()->in('attr', ':attributeOptions'))
             ->andWhere('p.type = :type')
-            ->andWhere($qb->expr()->isNotNull($aliasedFieldName))
+            ->andWhere($qb->expr()->isNotNull('attr'))
             ->orderBy('parent_product.sku')
             ->setParameter('attributeOptions', $attributeOptions)
             ->setParameter('type', $type)
