@@ -3,6 +3,7 @@
 @ticket-BB-14755
 @ticket-BB-7152
 @ticket-BB-21056
+@ticket-BB-20955
 @fixture-OroProductBundle:ProductAttributesFixture.yml
 Feature: Product attribute select
   In order to have custom attributes for Product entity
@@ -26,6 +27,13 @@ Feature: Product attribute select
     Then I should see that "Product Attribute Frontend Options" contains "Searchable"
     And I should see that "Product Attribute Frontend Options" contains "Filterable"
     And I should see that "Product Attribute Frontend Options" contains "Sortable"
+
+    When I set Options with:
+      | Label |
+      |       |
+    And I save and close form
+    Then I should see validation errors:
+      | Option First | This value should not be blank. |
 
     When I fill form with:
       | Searchable | Yes |

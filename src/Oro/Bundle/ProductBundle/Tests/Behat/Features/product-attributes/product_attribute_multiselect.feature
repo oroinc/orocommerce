@@ -44,11 +44,23 @@ Feature: Product attribute multiselect
       | TestMultiValueOne   |
       | TestMultiValueTwo   |
       | TestMultiValueThree |
+      | TestMultiValueFour  |
     And I save and close form
     Then I should see "Attribute was successfully saved" flash message
 
     When I click update schema
     Then I should see "Schema updated" flash message
+
+  Scenario: Delete option from attribute
+    Given I go to Products/ Product Attributes
+    And click edit MultiSelectField in grid
+    And I set Options with:
+      | Label               |
+      | TestMultiValueOne   |
+      | TestMultiValueTwo   |
+      | TestMultiValueThree |
+    And I save and close form
+    Then I should see "Attribute was successfully saved" flash message
 
   Scenario: Update product family with new attribute
     Given I go to Products/ Product Families
