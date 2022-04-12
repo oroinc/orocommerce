@@ -9,6 +9,7 @@ Feature: Create product with image when workflow enabled
 
   Scenario: Feature Background
     Given complete workflow fixture loading
+    And I set configuration property "oro_attachment.original_file_names_enabled" to "0"
 
   Scenario: Create different window session
     Given sessions active:

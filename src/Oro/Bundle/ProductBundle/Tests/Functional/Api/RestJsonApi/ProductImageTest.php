@@ -95,6 +95,7 @@ class ProductImageTest extends RestJsonApiTestCase
     public function testGetWithIncludedImageAndOnlyFilePathIsRequestedAndOriginalNamesEnabled()
     {
         $configManager = self::getConfigManager();
+        $configManager->set('oro_attachment.original_file_names_enabled', false);
         $configManager->set('oro_product.original_file_names_enabled', true);
         $configManager->flush();
 

@@ -15,27 +15,44 @@ class ImageRemovalManagerTest extends WebTestCase
 
     private const PRODUCT_ORIGINAL_FILE_NAMES_ENABLED = 'oro_product.original_file_names_enabled';
 
+    private const ATTACHMENT_ORIGINAL_FILE_NAMES_ENABLED = 'oro_attachment.original_file_names_enabled';
+
     /** @var bool */
-    private $initialOriginalFileNames;
+    private $productInitialOriginalFileNames;
+
+    /** @var bool */
+    private $attachmentInitialOriginalFileNames;
 
     protected function setUp(): void
     {
         $this->initClient([], self::generateBasicAuthHeader());
 
-        $this->initialOriginalFileNames = self::getConfigManager('global')
+        $globalConfigManager = self::getConfigManager();
+        $this->productInitialOriginalFileNames = $globalConfigManager
             ->get(self::PRODUCT_ORIGINAL_FILE_NAMES_ENABLED);
+        $this->attachmentInitialOriginalFileNames = $globalConfigManager
+            ->get(self::ATTACHMENT_ORIGINAL_FILE_NAMES_ENABLED);
+
+        $this->setOriginalFileNames(self::ATTACHMENT_ORIGINAL_FILE_NAMES_ENABLED, false);
     }
 
     protected function tearDown(): void
     {
-        $this->setOriginalFileNames($this->initialOriginalFileNames);
+        $this->setOriginalFileNames(
+            self::PRODUCT_ORIGINAL_FILE_NAMES_ENABLED,
+            $this->productInitialOriginalFileNames
+        );
+        $this->setOriginalFileNames(
+            self::ATTACHMENT_ORIGINAL_FILE_NAMES_ENABLED,
+            $this->attachmentInitialOriginalFileNames
+        );
     }
 
-    private function setOriginalFileNames(bool $enabled): void
+    private function setOriginalFileNames(string $configName, bool $enabled): void
     {
         $configManager = self::getConfigManager(null);
-        if ($configManager->get(self::PRODUCT_ORIGINAL_FILE_NAMES_ENABLED) !== $enabled) {
-            $configManager->set(self::PRODUCT_ORIGINAL_FILE_NAMES_ENABLED, $enabled);
+        if ($configManager->get($configName) !== $enabled) {
+            $configManager->set($configName, $enabled);
             $configManager->flush();
         }
     }
@@ -55,7 +72,7 @@ class ImageRemovalManagerTest extends WebTestCase
     {
         $file = $this->createProductImage();
 
-        $this->setOriginalFileNames(false);
+        $this->setOriginalFileNames(self::PRODUCT_ORIGINAL_FILE_NAMES_ENABLED, false);
         $this->applyImageFilter($file, 'product_small');
         $this->applyImageFilter($file, 'product_medium');
 
@@ -70,7 +87,7 @@ class ImageRemovalManagerTest extends WebTestCase
     {
         $file = $this->createProductImage();
 
-        $this->setOriginalFileNames(true);
+        $this->setOriginalFileNames(self::PRODUCT_ORIGINAL_FILE_NAMES_ENABLED, true);
         $this->applyImageFilter($file, 'product_small');
         $this->applyImageFilter($file, 'product_medium');
 
@@ -94,12 +111,12 @@ class ImageRemovalManagerTest extends WebTestCase
     {
         $file = $this->createProductImage();
 
-        $this->setOriginalFileNames(true);
+        $this->setOriginalFileNames(self::PRODUCT_ORIGINAL_FILE_NAMES_ENABLED, true);
         $this->applyImageFilter($file, 'product_small');
         $this->applyImageFilter($file, 'product_medium');
         $fileNames = $this->getImageFileNames($file);
 
-        $this->setOriginalFileNames(false);
+        $this->setOriginalFileNames(self::PRODUCT_ORIGINAL_FILE_NAMES_ENABLED, false);
         $this->applyImageFilter($file, 'product_small');
         $this->applyImageFilter($file, 'product_medium');
 
@@ -114,12 +131,12 @@ class ImageRemovalManagerTest extends WebTestCase
     {
         $file = $this->createProductImage();
 
-        $this->setOriginalFileNames(false);
+        $this->setOriginalFileNames(self::PRODUCT_ORIGINAL_FILE_NAMES_ENABLED, false);
         $this->applyImageFilter($file, 'product_small');
         $this->applyImageFilter($file, 'product_medium');
         $fileNames = $this->getImageFileNames($file);
 
-        $this->setOriginalFileNames(true);
+        $this->setOriginalFileNames(self::PRODUCT_ORIGINAL_FILE_NAMES_ENABLED, true);
         $this->applyImageFilter($file, 'product_small');
         $this->applyImageFilter($file, 'product_medium');
 

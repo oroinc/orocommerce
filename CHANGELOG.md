@@ -13,11 +13,17 @@ The current file describes significant changes in the code that may affect the u
 * Added entity name provider for `Consent` entity
 
 #### ProductBundle
-* `Brand` entity now has its own search result template for the backend search  
+* `Brand` entity now has its own search result template for the backend search
+* Added `product_original_filenames` feature. This feature is enabled when `oro_attachment.original_file_names_enabled`
+  is disabled and `oro_product.original_file_names_enabled` is enabled.
 
 #### PromotionBundle
 * Added entity name provider for `Promotion` entity
 
+### Changed
+
+#### ProductBundle
+* `Oro\Bundle\ProductBundle\Provider\ProductImageFileNameProvider` is applicable if `product_original_filenames` feature is enabled.
 
 ## 5.0.0
 
