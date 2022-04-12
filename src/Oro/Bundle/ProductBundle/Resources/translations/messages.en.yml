@@ -456,7 +456,9 @@ oro:
                 filters_sorters.title: 'Filters and Sorters'
                 limit_filters_sorters.title: 'Limit Filters and Sorters'
                 filters_display_settings.title: 'Display Settings'
-                images_general.title: 'General'
+                images_general:
+                    title: 'General'
+                    description: Modification of the default value may cause temporary storefront slow-down until all images are renamed. The URLs in the search index will not be updated immediately and will require manual start of the search re-index. Make sure that the harddrive has at least 50% space available as the renamed images will be stored alongside the existing ones.
                 product_search.title: 'Product Search'
                 product_fulltext_search.title: 'Product Fulltext Search'
                 product_search_autocomplete.title: 'Global Search Autocomplete'
@@ -1047,6 +1049,10 @@ oro:
         simple_variations_view_restriction_bc:
             label: Exclude Simple Variations from Sitemap and Disable Direct Link Access
             description: When enabled, this feature enabled emulation of the behavior of OroCommerce version 5 and above which uses "Hide Completely" option in "Display Simple Variations" to also exclude product variations from the generated sitemap and prevents the individual product variation pages access through direct links. Please note that this feature has no effect and is ignored with any other selections in "Display Simple Variations".
+        original_file_names_enabled:
+            label: 'Enable Original File Names'
+        original_file_names_configuration_enabled:
+            label: 'Enable Original File Names Configuration Options'
 
     importexport:
         export:

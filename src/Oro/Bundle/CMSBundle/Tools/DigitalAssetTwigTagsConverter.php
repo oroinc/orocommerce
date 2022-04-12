@@ -43,10 +43,10 @@ class DigitalAssetTwigTagsConverter
             [
                 '/(?P<schema>https?:\/\/|\/\/)?(?:[a-z0-9_~:\.\/-]+?)?'
                 . '\/media\/cache\/attachment\/(?:resize|filter)\/[a-z0-9\/_-]+'
-                . '\/(?P<fileId>\d+?)\/[a-z0-9]+?\.[a-z0-9-]+/is' => [$this, 'replaceImageUrlToTwigTag'],
+                . '\/(?P<fileId>\d+?)\/[\w|-]+?\.[a-z0-9-]+/isu' => [$this, 'replaceImageUrlToTwigTag'],
                 '/(?P<schema>https?:\/\/|\/\/)?(?:[a-z0-9_~:\.\/-]+?)?'
                 . '\/attachment\/(?:get|download)'
-                . '\/(?P<fileId>\d+?)\/[a-z0-9]+?\.[a-z0-9-]+/is' => [$this, 'replaceFileUrlToTwigTag'],
+                . '\/(?P<fileId>\d+?)\/[\w|-]+?\.[a-z0-9-]+/isu' => [$this, 'replaceFileUrlToTwigTag'],
             ],
             $data
         );

@@ -2,6 +2,19 @@ The upgrade instructions are available at [Oro documentation website](https://do
 
 The current file describes significant changes in the code that may affect the upgrade of your customizations.
 
+## Not released
+
+### Added
+
+#### ProductBundle
+* Added `product_original_filenames` feature. This feature is enabled when `oro_attachment.original_file_names_enabled`
+  is disabled and `oro_product.original_file_names_enabled` is enabled.
+
+### Changed
+
+#### ProductBundle
+* `Oro\Bundle\ProductBundle\Provider\ProductImageFileNameProvider` is applicable if `product_original_filenames` feature is enabled.
+
 ## 4.2.5
 
 ### Added

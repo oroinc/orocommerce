@@ -80,6 +80,8 @@ system_configuration:
             title: oro.product.system_configuration.groups.filters_display_settings.title
         images_general:
             title: oro.product.system_configuration.groups.images_general.title
+            description: oro.product.system_configuration.groups.images_general.description
+            description_style: warning
         product_search:
             title: oro.product.system_configuration.groups.product_search.title
             icon: 'fa-search'

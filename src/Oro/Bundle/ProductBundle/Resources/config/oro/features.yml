@@ -52,3 +52,14 @@ features:
         toggle: oro_product.display_simple_variations_hide_completely_bc
         dependencies:
             - 'simple_variations_view_restriction'
+
+    product_original_filenames_configuration:
+        label: oro.product.feature.original_file_names_configuration_enabled.label
+        configuration:
+            - oro_product.original_file_names_enabled
+
+    product_original_filenames:
+        label: oro.product.feature.original_file_names_enabled.label
+        toggle: oro_product.original_file_names_enabled
+        dependencies:
+            - 'product_original_filenames_configuration'

@@ -1387,6 +1387,11 @@ oro_behat_extension:
         type: 'xpath'
         locator: '//img[contains(@alt,"cat2_wysiwyg_image")]'
 
+    ImageField Image:
+      selector:
+        type: 'xpath'
+        locator: '//div[contains (@class,"product-view__imagefield")]//img[contains(@src,"/media/cache/attachment")]'
+
     More Link:
       selector: 'a.toggle-more'
 
