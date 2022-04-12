@@ -6,134 +6,136 @@ use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\CatalogBundle\Layout\DataProvider\FeaturedCategoriesProvider;
 use Oro\Bundle\CatalogBundle\Provider\CategoryTreeProvider;
 use Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Category;
-use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Tests\Unit\Stub\CustomerUserStub;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
+use Oro\Bundle\LocaleBundle\Tests\Unit\Entity\Stub\Localization;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessor;
+use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
+use Oro\Bundle\WebsiteBundle\Tests\Unit\Stub\WebsiteStub;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class FeaturedCategoriesProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var CategoryTreeProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $categoryTreeProvider;
+    private CategoryTreeProvider|\PHPUnit\Framework\MockObject\MockObject $categoryTreeProvider;
 
-    /**
-     * @var TokenAccessor|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $tokenAccessor;
+    private TokenAccessor|\PHPUnit\Framework\MockObject\MockObject $tokenAccessor;
 
-    /**
-     * @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $localizationHelper;
+    private CacheProvider|\PHPUnit\Framework\MockObject\MockObject $cache;
 
-    /**
-     * @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $cache;
+    private WebsiteManager|\PHPUnit\Framework\MockObject\MockObject $websiteManager;
 
-    /**
-     * @var FeaturedCategoriesProvider
-     */
-    protected $featuredCategoriesProvider;
+    private FeaturedCategoriesProvider $featuredCategoriesProvider;
 
     protected function setUp(): void
     {
-        $this->categoryTreeProvider = $this->getMockBuilder(CategoryTreeProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->categoryTreeProvider = $this->createMock(CategoryTreeProvider::class);
         $this->tokenAccessor = $this->createMock(TokenAccessor::class);
-        $this->localizationHelper = $this->createMock(LocalizationHelper::class);
+
+        $localizationHelper = $this->createMock(LocalizationHelper::class);
+        $localization = new Localization();
+        $localization->setId(1);
+
+        $localizationHelper
+            ->expects(self::any())
+            ->method('getCurrentLocalization')
+            ->willReturn($localization);
 
         $this->featuredCategoriesProvider = new FeaturedCategoriesProvider(
             $this->categoryTreeProvider,
             $this->tokenAccessor,
-            $this->localizationHelper
+            $localizationHelper
         );
 
         $this->cache = $this->createMock(CacheProvider::class);
         $this->featuredCategoriesProvider->setCache($this->cache);
+
+        $this->websiteManager = $this->createMock(WebsiteManager::class);
+        $this->featuredCategoriesProvider->setWebsiteManager($this->websiteManager);
     }
 
     /**
      * @dataProvider categoriesDataProvider
-     *
-     * @param array $data
-     * @param array $categoryIds
-     * @param array $result
      */
-    public function testGetAll($data, $categoryIds, $result)
+    public function testGetAll(array $data, array $categoryIds, array $result): void
     {
         $categories = [];
         foreach ($data as $categoryData) {
             $categories[] = $this->getEntity(Category::class, $categoryData);
         }
 
-        $this->cache->expects($this->once())
+        $this->websiteManager
+            ->expects(self::once())
+            ->method('getCurrentWebsite')
+            ->willReturn(null);
+
+        $this->cache->expects(self::once())
             ->method('fetch')
+            ->with('featured_categories_100_1_0_0__' . implode('_', $categoryIds) . '__7_0')
             ->willReturn(false);
 
-        $user = new CustomerUser();
+        $user = new CustomerUserStub(100);
         $organization = $this->getEntity(Organization::class, ['id' => 7]);
 
-        $this->tokenAccessor->expects($this->once())
+        $this->tokenAccessor->expects(self::once())
             ->method('getUser')
             ->willReturn($user);
 
-        $this->tokenAccessor->expects($this->once())
+        $this->tokenAccessor->expects(self::once())
             ->method('getOrganization')
             ->willReturn($organization);
 
-        $this->categoryTreeProvider->expects($this->once())
+        $this->categoryTreeProvider->expects(self::once())
             ->method('getCategories')
             ->with($user)
             ->willReturn($categories);
 
-        $this->cache->expects($this->once())
+        $this->cache->expects(self::once())
             ->method('save');
 
         $actual = $this->featuredCategoriesProvider->getAll($categoryIds);
-        $this->assertEquals($result, $actual);
+        self::assertEquals($result, $actual);
     }
 
-    public function testGetAllCached()
+    public function testGetAllCached(): void
     {
         $result = ['id' => 1, 'title' => '', 'small_image' => null];
 
-        $this->cache->expects($this->once())
+        $website = new WebsiteStub(42);
+        $this->websiteManager
+            ->expects(self::once())
+            ->method('getCurrentWebsite')
+            ->willReturn($website);
+
+        $this->cache->expects(self::once())
             ->method('fetch')
-            ->with('featured_categories__0_0_0_1_7')
+            ->with('featured_categories_100_1_0_0__1__7_42')
             ->willReturn($result);
 
-        $user = new CustomerUser();
+        $user = new CustomerUserStub(100);
         $organization = $this->getEntity(Organization::class, ['id' => 7]);
 
-        $this->tokenAccessor->expects($this->once())
+        $this->tokenAccessor->expects(self::once())
             ->method('getUser')
             ->willReturn($user);
 
-        $this->tokenAccessor->expects($this->once())
+        $this->tokenAccessor->expects(self::once())
             ->method('getOrganization')
             ->willReturn($organization);
 
-        $this->categoryTreeProvider->expects($this->never())
+        $this->categoryTreeProvider->expects(self::never())
             ->method('getCategories');
 
-        $this->cache->expects($this->never())
+        $this->cache->expects(self::never())
             ->method('save');
 
         $actual = $this->featuredCategoriesProvider->getAll([1]);
-        $this->assertEquals($result, $actual);
+        self::assertEquals($result, $actual);
     }
 
-    /**
-     * @return array
-     */
-    public function categoriesDataProvider()
+    public function categoriesDataProvider(): array
     {
         return [
             'level is equal zero' => [
@@ -158,8 +160,8 @@ class FeaturedCategoriesProviderTest extends \PHPUnit\Framework\TestCase
                 ],
                 'categoryIds' => [1, 2],
                 'result' => [
-                    ['id' => 1, 'title' => '', 'small_image' => null, 'short' => '']
-                ]
+                    ['id' => 1, 'title' => '', 'small_image' => null, 'short' => ''],
+                ],
             ],
         ];
     }

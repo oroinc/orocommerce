@@ -45,3 +45,14 @@ features:
     simple_variations_view_restriction:
         label: oro.product.feature.simple_variations_view_restriction.label
         description: oro.product.feature.simple_variations_view_restriction.description
+
+    product_original_filenames_configuration:
+        label: oro.product.feature.original_file_names_configuration_enabled.label
+        configuration:
+            - oro_product.original_file_names_enabled
+
+    product_original_filenames:
+        label: oro.product.feature.original_file_names_enabled.label
+        toggle: oro_product.original_file_names_enabled
+        dependencies:
+            - 'product_original_filenames_configuration'
