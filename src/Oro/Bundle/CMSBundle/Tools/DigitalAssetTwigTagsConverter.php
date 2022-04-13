@@ -59,11 +59,11 @@ class DigitalAssetTwigTagsConverter
             [
                 '/(?P<schema>https?:\/\/|\/\/)?(?:[a-z0-9_~:\.\/-]+?)?'
                 . '\/media\/cache\/attachment\/(?:resize|filter)\/(?P<filterName>[a-z0-9_-]+)\/[0-9a-f]{32}'
-                . '\/(?P<fileId>\d+?)\/[a-z0-9]+?\.(?P<extension>[a-z0-9-]+)'
-                . '(?:\.(?P<extraExtension>[a-z0-9-]+))?/is' => [$this, 'replaceImageUrlToTwigTag'],
+                . '\/(?P<fileId>\d+?)\/[\w|-]+?\.(?P<extension>[a-z0-9-]+)'
+                . '(?:\.(?P<extraExtension>[a-z0-9-]+))?/isu' => [$this, 'replaceImageUrlToTwigTag'],
                 '/(?P<schema>https?:\/\/|\/\/)?(?:[a-z0-9_~:\.\/-]+?)?'
                 . '\/attachment\/(?:get|download)'
-                . '\/(?P<fileId>\d+?)\/[a-z0-9]+?\.[a-z0-9-]+/is' => [$this, 'replaceFileUrlToTwigTag'],
+                . '\/(?P<fileId>\d+?)\/[\w|-]+?\.[a-z0-9-]+/isu' => [$this, 'replaceFileUrlToTwigTag'],
             ],
             $data
         );

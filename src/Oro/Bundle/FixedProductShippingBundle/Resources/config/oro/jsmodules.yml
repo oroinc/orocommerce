@@ -1,0 +1,3 @@
+dynamic-imports:
+    orofixedproductshipping:
+        - orofixedproductshipping/js/app/views/fixed-product-shipping-options-view

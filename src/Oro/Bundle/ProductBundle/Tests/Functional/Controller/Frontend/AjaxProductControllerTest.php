@@ -26,7 +26,7 @@ class AjaxProductControllerTest extends WebTestCase
     /**
      * @dataProvider productNamesBySkusDataProvider
      */
-    public function testProductNamesBySkus(array $skus, array $expectedData)
+    public function testProductNamesBySkus(array $skus, array $expectedData): void
     {
         $this->client->request(
             'POST',
@@ -34,13 +34,13 @@ class AjaxProductControllerTest extends WebTestCase
             ['skus' => $skus]
         );
         $result = $this->client->getResponse();
-        $this->assertJsonResponseStatusCodeEquals($result, 200);
+        self::assertJsonResponseStatusCodeEquals($result, 200);
 
         $data = json_decode($result->getContent(), true);
-        $this->assertEquals($expectedData, $data);
+        self::assertEquals($expectedData, $data);
     }
 
-    public function productNamesBySkusDataProvider()
+    public function productNamesBySkusDataProvider(): array
     {
         return [
             'restricted' => [
@@ -71,7 +71,7 @@ class AjaxProductControllerTest extends WebTestCase
         ];
     }
 
-    public function testProductImagesById()
+    public function testProductImagesById(): void
     {
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_1);
@@ -86,25 +86,25 @@ class AjaxProductControllerTest extends WebTestCase
             )
         );
         $result = $this->client->getResponse();
-        $this->assertJsonResponseStatusCodeEquals($result, 200);
+        self::assertJsonResponseStatusCodeEquals($result, 200);
 
         $data = json_decode($result->getContent(), true);
 
-        $this->assertNotEmpty($data);
-        $this->assertArrayHasKey(0, $data);
-        $this->assertArrayHasKey('isInitial', $data[0]);
-        $this->assertArrayHasKey('product_gallery_popup', $data[0]);
-        $this->assertStringMatchesFormat(
-            '/media/cache/attachment/%s/product_gallery_popup/%s/%d/product-1.jpg.webp',
+        self::assertNotEmpty($data);
+        self::assertArrayHasKey(0, $data);
+        self::assertArrayHasKey('isInitial', $data[0]);
+        self::assertArrayHasKey('product_gallery_popup', $data[0]);
+        self::assertStringMatchesFormat(
+            '/media/cache/attachment/%s/product_gallery_popup/%s/%d/product-1-product-1-original.jpg.webp',
             $data[0]['product_gallery_popup'][0]['srcset']
         );
-        $this->assertStringMatchesFormat(
-            '/media/cache/attachment/%s/product_gallery_popup/%s/%d/product-1.jpg',
+        self::assertStringMatchesFormat(
+            '/media/cache/attachment/%s/product_gallery_popup/%s/%d/product-1-product-1-original.jpg',
             $data[0]['product_gallery_popup'][1]['srcset']
         );
     }
 
-    public function testProductImagesByIdWhenProductHasNoImages()
+    public function testProductImagesByIdWhenProductHasNoImages(): void
     {
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_4);
@@ -119,13 +119,13 @@ class AjaxProductControllerTest extends WebTestCase
             )
         );
         $result = $this->client->getResponse();
-        $this->assertJsonResponseStatusCodeEquals($result, 200);
+        self::assertJsonResponseStatusCodeEquals($result, 200);
 
         $data = json_decode($result->getContent(), true);
-        $this->assertSame([], $data);
+        self::assertSame([], $data);
     }
 
-    public function testProductImagesByIdWhenProductIsMissing()
+    public function testProductImagesByIdWhenProductIsMissing(): void
     {
         $this->client->request(
             'GET',
@@ -138,13 +138,13 @@ class AjaxProductControllerTest extends WebTestCase
             )
         );
         $result = $this->client->getResponse();
-        $this->assertJsonResponseStatusCodeEquals($result, 200);
+        self::assertJsonResponseStatusCodeEquals($result, 200);
 
         $data = json_decode($result->getContent(), true);
-        $this->assertEquals([], $data);
+        self::assertEquals([], $data);
     }
 
-    public function testProductImagesByIdWhenFiltersNamesAreMissing()
+    public function testProductImagesByIdWhenFiltersNamesAreMissing(): void
     {
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_1);
@@ -158,10 +158,10 @@ class AjaxProductControllerTest extends WebTestCase
             )
         );
         $result = $this->client->getResponse();
-        $this->assertJsonResponseStatusCodeEquals($result, 200);
+        self::assertJsonResponseStatusCodeEquals($result, 200);
 
         $data = json_decode($result->getContent(), true);
-        $this->assertEquals([], $data);
+        self::assertEquals([], $data);
     }
 
     /**

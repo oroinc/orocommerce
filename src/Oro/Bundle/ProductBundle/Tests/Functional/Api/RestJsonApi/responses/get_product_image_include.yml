@@ -23,14 +23,14 @@ included:
             mimeType: 'image/jpeg'
             filePath:
                 -
-                    url: '/media/cache/attachment/filter/product_small/09499886b9fe19ea2560622082d43093/{fileId}/product-1.jpg'
+                    url: '/media/cache/attachment/filter/product_small/09499886b9fe19ea2560622082d43093/{fileId}/product-1-product-1-original.jpg'
                     dimension: 'product_small'
-                    url_webp: '/media/cache/attachment/filter/product_small/0430df4fe419ef8f86126998d83a639e/{fileId}/product-1.jpg.webp'
+                    url_webp: '/media/cache/attachment/filter/product_small/0430df4fe419ef8f86126998d83a639e/{fileId}/product-1-product-1-original.jpg.webp'
                 -
-                    url: '/media/cache/attachment/filter/product_large/f8ad5f04db8a20c593bca34d27fd6799/{fileId}/product-1.jpg'
+                    url: '/media/cache/attachment/filter/product_large/f8ad5f04db8a20c593bca34d27fd6799/{fileId}/product-1-product-1-original.jpg'
                     dimension: 'product_large'
-                    url_webp: '/media/cache/attachment/filter/product_large/ca048c1dad6aff04975c90c926869a37/{fileId}/product-1.jpg.webp'
+                    url_webp: '/media/cache/attachment/filter/product_large/ca048c1dad6aff04975c90c926869a37/{fileId}/product-1-product-1-original.jpg.webp'
                 -
-                    url: '/media/cache/attachment/filter/product_extra_large/b607be0384c24f69df0b84ba1a210ec8/{fileId}/product-1.jpg'
+                    url: '/media/cache/attachment/filter/product_extra_large/b607be0384c24f69df0b84ba1a210ec8/{fileId}/product-1-product-1-original.jpg'
                     dimension: 'product_extra_large'
-                    url_webp: '/media/cache/attachment/filter/product_extra_large/de49a9f899e6dc68356803fcbffb2688/{fileId}/product-1.jpg.webp'
+                    url_webp: '/media/cache/attachment/filter/product_extra_large/de49a9f899e6dc68356803fcbffb2688/{fileId}/product-1-product-1-original.jpg.webp'

@@ -97,10 +97,15 @@ class ContentIsolation {
     }
 
     isolateCss(css) {
+        const spacesBefore = css.match(/^\s+/g);
         css = this.beforeIsolateHook(css);
 
-        css = css.replace(cssSelectorRegexp, substr =>
-            substr.split(',').map(selector => {
+        css = css.replace(cssSelectorRegexp, substr => {
+            if (/^\s+@[\w\-]+/g.test(substr)) {
+                return substr;
+            }
+
+            return substr.split(',').map(selector => {
                 if (/(\:scope)/.test(selector)) {
                     return selector.trim().replace(/(\:scope)/g, ` #${this.scopeId}[id*="scope"]`);
                 }
@@ -108,10 +113,10 @@ class ContentIsolation {
                     return selector.trim().replace(/(\:root)/g, ` #${this.scopeId}[id*="isolation"]`);
                 }
                 return ` #${this.scopeId}${(selector.trim().indexOf(':') === 0 ? '' : ' ')}${selector.trim()}`;
-            }).join(',')
-        );
+            }).join(',');
+        });
 
-        return this.afterIsolateHook(css);
+        return (spacesBefore ? spacesBefore[0] : '') + this.afterIsolateHook(css);
     }
 
     escapeCssIsolation(css) {

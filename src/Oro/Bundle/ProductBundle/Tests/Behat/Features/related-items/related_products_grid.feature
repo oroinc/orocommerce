@@ -34,7 +34,7 @@ Feature: Related Products Grid
   Scenario: Check Inventory Status filter
     Given records in "RelatedProductsViewGrid" should be 4
     When I choose filter for Inventory Status as Is Any Of "Out of Stock" in "RelatedProductsViewGrid"
-    Then there is no records in grid
+    Then there is no records in "RelatedProductsViewGrid"
     And I reset "Inventory Status" filter in "RelatedProductsViewGrid"
 
   Scenario: Check Status filter
@@ -46,7 +46,7 @@ Feature: Related Products Grid
   Scenario: Check Type filter
     Given records in "RelatedProductsViewGrid" should be 4
     When I check "Configurable" in "Type: All" filter in "RelatedProductsViewGrid" strictly
-    Then there is no records in grid
+    Then there is no records in "RelatedProductsViewGrid"
     And I reset "Type: Configurable" filter in "RelatedProductsViewGrid"
 
   Scenario: Sort by SKU

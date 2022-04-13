@@ -105,8 +105,15 @@ describe('orocms/js/app/grapesjs/type-builders/content-widget-type-builder', () 
             beforeEach(done => {
                 editor.addComponents([{
                     type: 'content-widget',
+                    components: [
+                        {
+                            type: 'textnode',
+                            content: '{{ widget("content-widget-name-default") }}'
+                        }
+                    ],
                     attributes: {
-                        id: 'test'
+                        'class': ['content-widget'],
+                        'id': 'test'
                     }
                 }]);
 
@@ -121,7 +128,8 @@ describe('orocms/js/app/grapesjs/type-builders/content-widget-type-builder', () 
 
             it('check "toHTML"', () => {
                 expect(contentWidgetComponent.toHTML()).toEqual(
-                    '<div id="test" class="content-widget content-placeholder"></div>'
+                    // eslint-disable-next-line
+                    '<div class="content-widget content-placeholder" id="test">{{ widget(&quot;content-widget-name-default&quot;) }}</div>'
                 );
             });
 
@@ -136,7 +144,7 @@ describe('orocms/js/app/grapesjs/type-builders/content-widget-type-builder', () 
 
                 expect(contentWidgetComponent.toHTML()).toEqual(
                     // eslint-disable-next-line
-                    '<div data-title="content-widget-name" id="test" class="content-widget content-placeholder">{{ widget("content-widget-name") }}</div>'
+                    '<div data-title="content-widget-name" id="test" class="content-widget content-placeholder">{{ widget(&quot;content-widget-name&quot;) }}</div>'
                 );
             });
         });

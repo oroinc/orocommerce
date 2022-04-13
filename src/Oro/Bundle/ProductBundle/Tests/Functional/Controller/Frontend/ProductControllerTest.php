@@ -57,13 +57,13 @@ class ProductControllerTest extends WebTestCase
         return $this->getReference($reference);
     }
 
-    public function testIndexAction()
+    public function testIndexAction(): void
     {
         $this->client->request('GET', $this->getUrl('oro_product_frontend_product_search'));
         $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        self::assertHtmlResponseStatusCodeEquals($result, 200);
         $content = $result->getContent();
-        $this->assertNotEmpty($content);
+        self::assertNotEmpty($content);
         self::assertStringContainsString(LoadProductData::PRODUCT_1, $content);
         self::assertStringContainsString(LoadProductData::PRODUCT_2, $content);
         self::assertStringContainsString(LoadProductData::PRODUCT_3, $content);
@@ -73,9 +73,9 @@ class ProductControllerTest extends WebTestCase
     {
         $this->client->request('GET', $this->getUrl('oro_product_frontend_product_search'));
         $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        self::assertHtmlResponseStatusCodeEquals($result, 200);
         $content = $result->getContent();
-        $this->assertNotEmpty($content);
+        self::assertNotEmpty($content);
         self::assertStringContainsString(LoadProductData::PRODUCT_1, $content);
         self::assertStringContainsString(LoadProductData::PRODUCT_2, $content);
         self::assertStringContainsString(LoadProductData::PRODUCT_3, $content);
@@ -97,7 +97,7 @@ class ProductControllerTest extends WebTestCase
         );
 
         $response = $this->client->getResponse();
-        $this->assertJsonResponseStatusCodeEquals($response, 200);
+        self::assertJsonResponseStatusCodeEquals($response, 200);
 
         $data = json_decode($response->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
@@ -143,7 +143,7 @@ class ProductControllerTest extends WebTestCase
         $configManager->flush();
     }
 
-    public function testIndexActionInSubfolder()
+    public function testIndexActionInSubfolder(): void
     {
         //Emulate subfolder request
         /** @var RequestContext $requestContext */
@@ -163,18 +163,18 @@ class ProductControllerTest extends WebTestCase
             sprintf('img.product-item__preview-image[alt="%s"]', LoadProductData::PRODUCT_1_DEFAULT_NAME)
         );
 
-        $this->assertStringMatchesFormat(
-            '%s/product_large/%s/' . $images[0]->getImage()->getId() . '/product-1.jpg%A',
+        self::assertStringMatchesFormat(
+            '%s/product_large/%s/' . $images[0]->getImage()->getId() . '/product-1-product-1-original.jpg%A',
             $firstProductImage->attr('src')
         );
     }
 
-    public function testIndexDatagridViews()
+    public function testIndexDatagridViews(): void
     {
         // default view is DataGridThemeHelper::VIEW_GRID
         $response = $this->client->requestFrontendGrid(self::PRODUCT_GRID_NAME, [], true);
         $result = $this->getJsonResponseContent($response, 200);
-        $this->assertArrayHasKey('image', $result['data'][0]);
+        self::assertArrayHasKey('image', $result['data'][0]);
 
         $response = $this->client->requestFrontendGrid(
             self::PRODUCT_GRID_NAME,
@@ -185,7 +185,7 @@ class ProductControllerTest extends WebTestCase
         );
 
         $result = $this->getJsonResponseContent($response, 200);
-        $this->assertArrayHasKey('image', $result['data'][0]);
+        self::assertArrayHasKey('image', $result['data'][0]);
 
         $response = $this->client->requestFrontendGrid(
             self::PRODUCT_GRID_NAME,
@@ -196,7 +196,7 @@ class ProductControllerTest extends WebTestCase
         );
 
         $result = $this->getJsonResponseContent($response, 200);
-        $this->assertArrayHasKey('image', $result['data'][0]);
+        self::assertArrayHasKey('image', $result['data'][0]);
 
         $response = $this->client->requestFrontendGrid(
             self::PRODUCT_GRID_NAME,
@@ -207,15 +207,15 @@ class ProductControllerTest extends WebTestCase
         );
 
         $result = $this->getJsonResponseContent($response, 200);
-        $this->assertArrayHasKey('image', $result['data'][0]);
+        self::assertArrayHasKey('image', $result['data'][0]);
 
         // view saves to session so current view is DataGridThemeHelper::VIEW_TILES
         $response = $this->client->requestFrontendGrid(self::PRODUCT_GRID_NAME, [], true);
         $result = $this->getJsonResponseContent($response, 200);
-        $this->assertArrayHasKey('image', $result['data'][0]);
+        self::assertArrayHasKey('image', $result['data'][0]);
     }
 
-    public function testFrontendProductGridFilterBySku()
+    public function testFrontendProductGridFilterBySku(): void
     {
         $product = $this->getReference(LoadProductData::PRODUCT_1);
 
@@ -228,22 +228,22 @@ class ProductControllerTest extends WebTestCase
             true
         );
         $result = $this->getJsonResponseContent($response, 200);
-        $this->assertCount(1, $result['data']);
-        $this->assertEquals($product->getSku(), $result['data'][0]['sku']);
+        self::assertCount(1, $result['data']);
+        self::assertEquals($product->getSku(), $result['data'][0]['sku']);
     }
 
-    public function testViewProductWithRequestQuoteAvailable()
+    public function testViewProductWithRequestQuoteAvailable(): void
     {
         $product = $this->getProduct(LoadProductData::PRODUCT_1);
 
-        $this->assertInstanceOf(Product::class, $product);
+        self::assertInstanceOf(Product::class, $product);
 
         $this->client->request(
             'GET',
             $this->getUrl('oro_product_frontend_product_view', ['id' => $product->getId()])
         );
         $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        self::assertHtmlResponseStatusCodeEquals($result, 200);
         self::assertStringContainsString($product->getSku(), $result->getContent());
         self::assertStringContainsString($product->getDefaultName()->getString(), $result->getContent());
 

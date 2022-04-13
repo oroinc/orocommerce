@@ -1558,7 +1558,8 @@ services:
         decorates: oro_attachment.provider.file_name
         arguments:
             - '@.inner'
-            - '@oro_config.manager'
+        tags:
+            - { name: oro_featuretogle.feature, feature: product_original_filenames }
 
     oro_product.provider.product_image_file_names:
         class: Oro\Bundle\ProductBundle\Provider\ProductImageFileNamesProvider
@@ -1965,6 +1966,12 @@ services:
         class: Oro\Bundle\ProductBundle\Driver\ProductWebsiteReindexRequestDbalDriver
         arguments:
             - '@doctrine'
+
+    oro_product.voter.product_original_filenames_configuration_voter:
+        class: Oro\Bundle\ProductBundle\Voter\ProductOriginalFileNamesConfigurationVoter
+        tags:
+            - { name: oro_featuretogle.voter }
+            - { name: oro_featuretogle.feature, feature: attachment_original_filenames }
 
     oro_product.event_listener.doctrine.product_kit_item_unit_of_quantity:
         class: Oro\Bundle\ProductBundle\EventListener\Doctrine\ProductKitUnitOfQuantityDoctrineListener

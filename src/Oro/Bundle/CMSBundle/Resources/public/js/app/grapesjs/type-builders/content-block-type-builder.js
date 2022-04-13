@@ -131,7 +131,13 @@ const ContentBlockTypeBuilder = BaseTypeBuilder.extend({
                 'data-title': contentBlock.get('title')
             });
 
-            this.set('content', '{{ content_block("' + contentBlock.get('alias') + '") }}');
+            const contentBlockExp = `{{ content_block("${contentBlock.get('alias')}") }}`;
+            if (this.findType('textnode').length) {
+                this.findType('textnode')[0].set('content', contentBlockExp);
+            } else {
+                this.set('content', contentBlockExp);
+            }
+
             this.view.render();
         }
     },
