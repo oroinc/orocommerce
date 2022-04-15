@@ -13,6 +13,10 @@
 .zoomContainer {
     z-index: z('base') + 9;
     pointer-events: none;
+
+    .modal-open & {
+        display: none;
+    }
 }
 
 .zoomLens {
