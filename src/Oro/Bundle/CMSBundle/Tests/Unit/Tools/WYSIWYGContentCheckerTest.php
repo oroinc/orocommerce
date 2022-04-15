@@ -119,10 +119,12 @@ class WYSIWYGContentCheckerTest extends \PHPUnit\Framework\TestCase
                 ],
                 [
                     'message' => 'oro.htmlpurifier.formatted_error_line {{ line }} => 1001, {{ message }} => message 1',
+                    'messageRaw' => 'message 1',
                     'line' => 1001,
                 ],
                 [
                     'message' => 'oro.htmlpurifier.formatted_error_line {{ line }} => 2002, {{ message }} => message 2',
+                    'messageRaw' => 'message 2',
                     'line' => 2002,
                 ],
             ],
