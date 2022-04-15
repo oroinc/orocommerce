@@ -1,0 +1,22 @@
+<td>
+    <% if (sortable) { %>
+    <span class="fa-arrows-v" data-name="sortable-handle"></span>
+    <% } %>
+</td>
+<td>
+    <div class="preview">
+        <img class="thumbnail" src="<%- preview %>">
+        <span class="fa-edit" aria-hidden="true"></span>
+    </div>
+    <input type="hidden" name="srcset" value="<%- attributes.srcset %>">
+</td>
+<td><%- attributes.type.replace('image/', '') %></td>
+<td class="media-field-container actions-panel"></td>
+<td>
+    <button type="button" class="editRow btn btn-icon btn-square-lighter" title="<%- _.__('oro.cms.wysiwyg.dialog.picture_settings.actions.update') %>" aria-label="<%- _.__('oro.cms.wysiwyg.dialog.picture_settings.actions.update') %>">
+        <span class="fa-edit"></span>
+    </button>
+    <button type="button" class="removeRow btn btn-icon btn-square-lighter" title="<%- _.__('oro.cms.wysiwyg.dialog.picture_settings.actions.remove') %>" aria-label="<%- _.__('oro.cms.wysiwyg.dialog.picture_settings.actions.remove') %>">
+        <span class="fa-trash-o"></span>
+    </button>
+</td>

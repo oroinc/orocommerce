@@ -122,6 +122,7 @@ oro.cms:
             widgetSetting: 'Widget Settings'
             blockSetting: 'Block Settings'
             fileSetting: 'File Settings'
+            pictureSettings: 'Picture sources manager'
         asset_manager:
             add_button: 'Add image'
             input_plh: 'http://path/to/the/image.jpg'
@@ -465,7 +466,21 @@ oro.cms:
             add_edit_link: 'Edit a Link'
         mobile:
             flash_message: 'The visual editor cannot be displayed on the current device.'
-
+        dialog:
+            picture_settings:
+                not_created: 'No created source'
+                add: 'Add Source'
+                type: 'Type'
+                media: 'Media Query'
+                sizes: 'Sizes'
+                media_hint: 'The media attribute accepts any valid media query that would normally be defined in a CSS. <a href="{{ url }}" target="_blank">More about media query</a>'
+                save: 'Save'
+                cancel: 'Cancel'
+                actions:
+                    update: 'Update source'
+                    remove: 'Remove source'
+                main_image: 'Main image'
+                select_breakpoints: 'Click to select breakpoint'
     change_type:
         confirmation:
             title: 'Change Type'

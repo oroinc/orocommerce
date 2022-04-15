@@ -75,7 +75,7 @@ define(function(require) {
          * Fetch breakpoints from theme stylesheet
          * @private
          */
-        _getCSSBreakpoint() {
+        _getCSSBreakpoint(allowBreakpoints = this.allowBreakpoints) {
             if (this.disposed) {
                 return;
             }
@@ -90,7 +90,7 @@ define(function(require) {
             const breakpoints = mediator.execute('fetch:head:computedVars', contentDocument.head);
 
             this.breakpoints = viewportManager._collectCSSBreakpoints(breakpoints)
-                .filter(({name}) => this.allowBreakpoints.includes(name))
+                .filter(({name}) => !allowBreakpoints.length || allowBreakpoints.includes(name))
                 .map(breakpoint => {
                     breakpoint = {...breakpoint};
 
@@ -107,6 +107,21 @@ define(function(require) {
 
                     return breakpoint;
                 });
+
+            return this.breakpoints;
+        },
+
+        collectBreakpoints() {
+            const contentDocument = this.$builderIframe[0].contentDocument;
+
+            // If the iframe and the iframe's parent document are Same Origin, returns a Document else returns null.
+            if (contentDocument === null) {
+                return;
+            }
+
+            const breakpoints = mediator.execute('fetch:head:computedVars', contentDocument.head);
+
+            return viewportManager._collectCSSBreakpoints(breakpoints);
         },
 
         getBreakpoints() {
@@ -228,7 +243,7 @@ define(function(require) {
          * @returns {string}
          */
         concatTitle(breakpoint) {
-            let str = __(`oro.cms.wysiwyg.device_manager.devices.${breakpoint.name.replace('-', '_')}`);
+            let str = __(`oro.cms.wysiwyg.device_manager.devices.${breakpoint.name.replace(/-/g, '_')}`);
 
             if (breakpoint.max) {
                 str += ': ' + breakpoint.max;
