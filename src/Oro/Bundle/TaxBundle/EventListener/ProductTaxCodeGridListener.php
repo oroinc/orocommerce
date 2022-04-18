@@ -42,6 +42,6 @@ class ProductTaxCodeGridListener extends TaxCodeGridListener
     {
         parent::addFilter($config);
 
-        $config->offsetSetByPath(sprintf('[filters][columns][%s][enabled]', $this->getDataName()), false);
+        $config->offsetSetByPath(sprintf('[filters][columns][%s][renderable]', $this->getDataName()), false);
     }
 }

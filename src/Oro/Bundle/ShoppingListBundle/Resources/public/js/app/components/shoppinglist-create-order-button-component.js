@@ -95,7 +95,7 @@ define(function(require) {
                 skipConfirm = !mediator.execute('shoppinglist:hasEmptyMatrix');
             } catch (e) {
                 // handler isn't defined in mediator, check empty matrix in old way
-                skipConfirm = !!this.hasEmptyMatrix;
+                skipConfirm = !this.hasEmptyMatrix;
             }
 
             return skipConfirm;

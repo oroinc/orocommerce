@@ -137,7 +137,7 @@ class EnumVariantFieldValueHandler implements ProductVariantFieldValueHandlerInt
             }
 
             $this->logger->error(
-                'Can not find configurable attribute "{attributeValue}" in list of available attributes.' .
+                'Can not find configurable attribute "{attribute}" in list of available attributes.' .
                 'Available: "{availableAttributes}"',
                 [
                     'attribute' => (string)$fieldIdentifier,

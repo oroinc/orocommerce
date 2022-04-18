@@ -214,7 +214,7 @@ class ProductPriceDatagridExtensionTest extends AbstractProductsGridPricesExtens
                         'price_column_usd_item' => [
                             'type' => 'number-range',
                             'data_name' => 'price_column_usd_item__value',
-                            'enabled' => false
+                            'renderable' => false
                         ],
                     ],
                 ],

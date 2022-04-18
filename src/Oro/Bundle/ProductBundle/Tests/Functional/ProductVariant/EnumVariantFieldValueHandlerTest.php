@@ -8,6 +8,7 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityExtendBundle\Provider\EnumValueProvider;
+use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -131,5 +132,53 @@ class EnumVariantFieldValueHandlerTest extends WebTestCase
         return $this
             ->getContainer()
             ->get('oro_product.product_variant_field.field_value_handler.enum_type_handler.cache');
+    }
+
+    public function testGetHumanReadableValueWithLoggedError(): void
+    {
+        $fieldConfigModel = new FieldConfigModel(self::FIELD_NAME);
+        $fieldConfigModel->fromArray('extend', ['target_entity' => Product::class]);
+
+        $this->configManager
+            ->expects($this->exactly(1))
+            ->method('getConfigFieldModel')
+            ->with(Product::class, self::FIELD_NAME)
+            ->willReturn($fieldConfigModel);
+
+        $availableValues = ['cache_data_en'];
+        $this->enumValueProvider
+            ->expects($this->exactly(1))
+            ->method('getEnumChoicesWithNonUniqueTranslation')
+            ->with(Product::class)
+            ->willReturnOnConsecutiveCalls($availableValues);
+
+        $this->localeSettings
+            ->expects($this->exactly(1))
+            ->method('getLocale')
+            ->willReturnOnConsecutiveCalls('en_US');
+
+        $this->doctrineHelper
+            ->expects($this->exactly(1))
+            ->method('getSingleEntityIdentifier')
+            ->willReturn('1');
+
+        $this->logger
+            ->expects($this->exactly(1))
+            ->method('error')
+            ->with(
+                'Can not find configurable attribute "{attribute}" in list of available attributes.' .
+                'Available: "{availableAttributes}"',
+                [
+                    'attribute' => '1',
+                    'availableAttributes' => implode(', ', array_keys([$availableValues])),
+                ]
+            );
+
+        $enData = $this->enumVarianFieldValueHandler->getHumanReadableValue(self::FIELD_NAME, new TestEnumValue(
+            1,
+            'test'
+        ));
+
+        $this->assertEquals('N/A', $enData);
     }
 }

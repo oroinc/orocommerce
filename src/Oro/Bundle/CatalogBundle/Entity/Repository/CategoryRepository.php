@@ -286,4 +286,21 @@ class CategoryRepository extends NestedTreeRepository
 
         return $qb->getQuery()->getOneOrNullResult();
     }
+
+    /**
+     * EAGAR fetch mode will prevent associated entities like parent category
+     * be fetched as Proxy implementation.
+     */
+    public function getCategoryEagerMode(Category $category): Category
+    {
+        $queryBuilder = $this->createQueryBuilder('category');
+        $queryBuilder->select('category, parentCategory')
+            ->leftJoin('category.parentCategory', 'parentCategory')
+            ->where($queryBuilder->expr()->eq('category.id', ':category'))
+            ->setParameter('category', $category);
+
+        return $queryBuilder->getQuery()
+            ->setFetchMode(Category::class, "parentCategory", "EAGER")
+            ->getSingleResult();
+    }
 }

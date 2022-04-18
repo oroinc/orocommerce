@@ -40,10 +40,12 @@ class ProductImageFileNamesProvider implements FileNamesProviderInterface
         $fileNames = [$this->innerProvider->getFileNames($file)];
         $initialOptionValue = $this->configManager->get(self::PRODUCT_ORIGINAL_FILE_NAMES_ENABLED);
         $this->configManager->set(self::PRODUCT_ORIGINAL_FILE_NAMES_ENABLED, !$initialOptionValue);
+        $this->configManager->flush();
         try {
             $fileNames[] = $this->innerProvider->getFileNames($file);
         } finally {
             $this->configManager->set(self::PRODUCT_ORIGINAL_FILE_NAMES_ENABLED, $initialOptionValue);
+            $this->configManager->flush();
         }
 
         return array_values(array_unique(array_merge(...$fileNames)));

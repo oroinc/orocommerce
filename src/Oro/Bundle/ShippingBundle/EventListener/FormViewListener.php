@@ -14,6 +14,10 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class FormViewListener
 {
+    public const SHIPPING_BLOCK_NAME     = 'shipping';
+    public const SHIPPING_BLOCK_LABEL    = 'oro.shipping.product.section.shipping_options';
+    public const SHIPPING_BLOCK_PRIORITY = 1800;
+
     /** @var TranslatorInterface */
     protected $translator;
 
@@ -60,35 +64,35 @@ class FormViewListener
         }
 
         $template = $event->getEnvironment()->render(
-            'OroShippingBundle:Product:shipping_options_view.html.twig',
+            '@OroShipping/Product/shipping_options_view.html.twig',
             [
                 'entity' => $product,
                 'shippingOptions' => $shippingOptions
             ]
         );
-        $this->addBlock($event->getScrollData(), $template, 'oro.shipping.product.section.shipping_options', 1800);
+        $this->addBlock($event->getScrollData(), $template, self::SHIPPING_BLOCK_LABEL, self::SHIPPING_BLOCK_PRIORITY);
     }
 
     public function onProductEdit(BeforeListRenderEvent $event)
     {
         $template = $event->getEnvironment()->render(
-            'OroShippingBundle:Product:shipping_options_update.html.twig',
+            '@OroShipping/Product/shipping_options_update.html.twig',
             ['form' => $event->getFormView()]
         );
-        $this->addBlock($event->getScrollData(), $template, 'oro.shipping.product.section.shipping_options', 1800);
+        $this->addBlock($event->getScrollData(), $template, self::SHIPPING_BLOCK_LABEL, self::SHIPPING_BLOCK_PRIORITY);
     }
 
     /**
      * @param ScrollData $scrollData
-     * @param string $html
-     * @param string $label
-     * @param int $priority
+     * @param $html
+     * @param $label
+     * @param $priority
      */
     protected function addBlock(ScrollData $scrollData, $html, $label, $priority)
     {
         $blockLabel = $this->translator->trans($label);
-        $blockId    = $scrollData->addBlock($blockLabel, $priority);
-        $subBlockId = $scrollData->addSubBlock($blockId);
-        $scrollData->addSubBlockData($blockId, $subBlockId, $html);
+        $scrollData->addNamedBlock(self::SHIPPING_BLOCK_NAME, $blockLabel, $priority);
+        $subBlockId = $scrollData->addSubBlock(self::SHIPPING_BLOCK_NAME);
+        $scrollData->addSubBlockData(self::SHIPPING_BLOCK_NAME, $subBlockId, $html);
     }
 }

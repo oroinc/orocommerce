@@ -75,7 +75,7 @@ class ProductTaxCodeGridListenerTest extends AbstractTaxCodeGridListenerTest
                                         'choice_label' => 'code',
                                     ]
                                 ],
-                                'enabled' => false
+                                'renderable' => false
                             ],
                         ]
                 ],

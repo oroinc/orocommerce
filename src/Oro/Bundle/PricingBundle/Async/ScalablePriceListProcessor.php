@@ -12,6 +12,7 @@ use Oro\Bundle\PricingBundle\Entity\CombinedPriceListBuildActivity;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListBuildActivityRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToPriceListRepository;
+use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Model\CombinedPriceListActivationStatusHelperInterface;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
@@ -39,6 +40,7 @@ class ScalablePriceListProcessor implements MessageProcessorInterface, TopicSubs
     private MessageProducerInterface $producer;
     private JobRunner $jobRunner;
     private DependentJobService $dependentJob;
+    private int $productsBatchSize = ProductPriceRepository::BUFFER_SIZE;
 
     public function __construct(
         ManagerRegistry $doctrine,
@@ -53,6 +55,11 @@ class ScalablePriceListProcessor implements MessageProcessorInterface, TopicSubs
         $this->jobRunner = $jobRunner;
         $this->dependentJob = $dependentJob;
         $this->logger = new NullLogger();
+    }
+
+    public function setProductsBatchSize(int $productsBatchSize): void
+    {
+        $this->productsBatchSize = $productsBatchSize;
     }
 
     /**
@@ -95,14 +102,17 @@ class ScalablePriceListProcessor implements MessageProcessorInterface, TopicSubs
                                     $cpl,
                                     $allProducts
                                 );
-                                $this->producer->send(
-                                    CombineSingleCombinedPriceListPricesTopic::getName(),
-                                    [
-                                        'cpl' => $cpl->getId(),
-                                        'products' => $products,
-                                        'jobId' => $child->getId()
-                                    ]
-                                );
+
+                                foreach ($this->getProductBatches($products) as $productBatch) {
+                                    $this->producer->send(
+                                        CombineSingleCombinedPriceListPricesTopic::getName(),
+                                        [
+                                            'cpl' => $cpl->getId(),
+                                            'products' => $productBatch,
+                                            'jobId' => $child->getId()
+                                        ]
+                                    );
+                                }
                             }
                         );
                     }
@@ -162,5 +172,16 @@ class ScalablePriceListProcessor implements MessageProcessorInterface, TopicSubs
         /** @var CombinedPriceListBuildActivityRepository $repo */
         $repo = $this->doctrine->getRepository(CombinedPriceListBuildActivity::class);
         $repo->addBuildActivities($activeCpls, $job->getRootJob()->getId());
+    }
+
+    private function getProductBatches(array $products): \Generator
+    {
+        if (!$products) {
+            yield [];
+        } else {
+            foreach (array_chunk($products, $this->productsBatchSize) as $batch) {
+                yield $batch;
+            }
+        }
     }
 }

@@ -22,6 +22,20 @@ class ProductImageTest extends FrontendRestJsonApiTestCase
         ]);
     }
 
+    private static function updateExpectedData(array $expectedData, array $replace): array
+    {
+        array_walk_recursive(
+            $expectedData,
+            function (&$val) use ($replace) {
+                if (is_string($val)) {
+                    $val = strtr($val, $replace);
+                }
+            }
+        );
+
+        return self::processTemplateData($expectedData);
+    }
+
     public function testGetList()
     {
         $response = $this->cget(
@@ -39,6 +53,33 @@ class ProductImageTest extends FrontendRestJsonApiTestCase
         );
 
         $this->assertResponseContains('cget_product_image_filter_by_product.yml', $response);
+    }
+
+    public function testGetListFilteredByProductOriginalFilenamesEnabled()
+    {
+        $configManager = self::getConfigManager();
+
+        $originalFilenamesStatus = $configManager->get('oro_attachment.original_file_names_enabled');
+        $configManager->set('oro_attachment.original_file_names_enabled', true);
+        $configManager->flush();
+
+        $response = $this->cget(
+            ['entity' => 'productimages'],
+            ['filter' => ['product' => '<toString(@product1->id)>']]
+        );
+
+        $file1Id = $this->getReference('product1_image1')->getImage()->getId();
+        $file2Id = $this->getReference('product1_image2')->getImage()->getId();
+
+        $expectedData = self::updateExpectedData(
+            $this->getResponseData('cget_product_image_filter_by_product_original_filenames_enabled.yml'),
+            ['{file1Id}' => (string)$file1Id, '{file2Id}' => (string)$file2Id]
+        );
+
+        $this->assertResponseContains($expectedData, $response);
+
+        $configManager->set('oro_attachment.original_file_names_enabled', $originalFilenamesStatus);
+        $configManager->flush();
     }
 
     public function testGetListFilteredByTypesWithOperatorEquals()

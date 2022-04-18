@@ -346,3 +346,12 @@ services:
         parent: oro_entity.event_listener.default_preloading
         tags:
             - { name: kernel.event_listener, event: oro_entity.preload_entity.category, method: onPreload }
+
+    oro_catalog.event_listener.config.original_filenames_config_update:
+        class: Oro\Bundle\ConfigBundle\EventListener\ClearCacheOnConfigUpdateListener
+        arguments:
+            - 'oro_attachment.original_file_names_enabled'
+        calls:
+            - [addCacheToClear, ['@oro_catalog.layout.data_provider.category.cache']]
+        tags:
+            - { name: kernel.event_listener, event: oro_config.update_after, method: onUpdateAfter }

@@ -7,6 +7,7 @@ use Oro\Bundle\CatalogBundle\Provider\CategoryTreeProvider as CategoriesProvider
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessor;
+use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
 /**
  * Provides Featured Category data for layouts
@@ -24,6 +25,9 @@ class FeaturedCategoriesProvider
 
     /** @var CacheProvider */
     private $cache;
+
+    /** @var WebsiteManager|null */
+    private $websiteManager;
 
     /** @var int */
     private $cacheLifeTime;
@@ -46,6 +50,11 @@ class FeaturedCategoriesProvider
     {
         $this->cache = $cache;
         $this->cacheLifeTime = $lifeTime;
+    }
+
+    public function setWebsiteManager(WebsiteManager $websiteManager): void
+    {
+        $this->websiteManager = $websiteManager;
     }
 
     /**
@@ -91,14 +100,21 @@ class FeaturedCategoriesProvider
         $customer = $user ? $user->getCustomer() : null;
         $customerGroup = $customer ? $customer->getGroup() : null;
 
+        $websiteId = 0;
+        if ($this->websiteManager) {
+            $website = $this->websiteManager->getCurrentWebsite();
+            $websiteId = $website ? $website->getId() : 0;
+        }
+
         return sprintf(
-            'featured_categories_%s_%s_%s_%s_%s_%s',
+            'featured_categories_%s_%s_%s_%s__%s__%s_%s',
             $user ? $user->getId() : 0,
             $this->getCurrentLocalizationId(),
             $customer ? $customer->getId() : 0,
             $customerGroup ? $customerGroup->getId() : 0,
             implode('_', $categoryIds),
-            $this->tokenAccessor->getOrganization()->getId()
+            $this->tokenAccessor->getOrganization()->getId(),
+            $websiteId
         );
     }
 

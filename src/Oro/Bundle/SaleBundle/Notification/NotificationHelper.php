@@ -116,6 +116,10 @@ class NotificationHelper
                 )
             );
 
+        if ($quote->getOrganization()) {
+            $emailModel->setOrganization($quote->getOrganization());
+        }
+
         return $emailModel;
     }
 

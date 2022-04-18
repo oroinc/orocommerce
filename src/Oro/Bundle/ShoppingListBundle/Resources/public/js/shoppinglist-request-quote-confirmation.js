@@ -33,7 +33,7 @@ define(function(require) {
          * @deprecated
          */
         isConfirmationNeededFromOldShoppingList: function() {
-            return !!this.options.hasEmptyMatrix;
+            return !this.options.hasEmptyMatrix;
         }
     });
 
