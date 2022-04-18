@@ -22,26 +22,19 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ProductImageListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var ProductImageListener */
-    protected $listener;
+    private EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject $eventDispatcher;
 
-    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $eventDispatcher;
+    private ImageTypeProvider|\PHPUnit\Framework\MockObject\MockObject $imageTypeProvider;
 
-    /** @var ImageTypeProvider|\PHPUnit\Framework\MockObject\MockObject */
-    protected $imageTypeProvider;
+    private ProductImageHelper|\PHPUnit\Framework\MockObject\MockObject $productImageHelper;
 
-    /** @var ProductImageHelper|\PHPUnit\Framework\MockObject\MockObject */
-    protected $productImageHelper;
+    private EntityManager|\PHPUnit\Framework\MockObject\MockObject $productImageEntityManager;
 
-    /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject */
-    protected $productImageEntityManager;
+    private LifecycleEventArgs|\PHPUnit\Framework\MockObject\MockObject $lifecycleArgs;
 
-    /** @var LifecycleEventArgs|\PHPUnit\Framework\MockObject\MockObject */
-    protected $lifecycleArgs;
+    private ProductRepository|\PHPUnit\Framework\MockObject\MockObject $productRepository;
 
-    /** @var ProductRepository|\PHPUnit\Framework\MockObject\MockObject */
-    protected $productRepository;
+    private ProductImageListener $listener;
 
     protected function setUp(): void
     {
@@ -51,7 +44,7 @@ class ProductImageListenerTest extends \PHPUnit\Framework\TestCase
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
 
         $this->lifecycleArgs = $this->createMock(LifecycleEventArgs::class);
-        $this->lifecycleArgs->expects($this->any())
+        $this->lifecycleArgs->expects(self::any())
             ->method('getEntityManager')
             ->willReturn($this->productImageEntityManager);
 
@@ -66,7 +59,7 @@ class ProductImageListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testPostPersist(): void
     {
-        $this->imageTypeProvider->expects($this->any())
+        $this->imageTypeProvider->expects(self::any())
             ->method('getMaxNumberByType')
             ->willReturn(
                 [
@@ -81,7 +74,7 @@ class ProductImageListenerTest extends \PHPUnit\Framework\TestCase
                 ]
             );
 
-        $this->productImageHelper->expects($this->once())
+        $this->productImageHelper->expects(self::once())
             ->method('countImagesByType')
             ->willReturn(
                 [
@@ -92,7 +85,7 @@ class ProductImageListenerTest extends \PHPUnit\Framework\TestCase
 
         $productImage = $this->prepareProductImage(35, 101);
 
-        $this->eventDispatcher->expects($this->once())
+        $this->eventDispatcher->expects(self::once())
             ->method('dispatch')
             ->with(
                 new ProductImageResizeEvent($productImage->getId(), true),
@@ -102,9 +95,91 @@ class ProductImageListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->postPersist($productImage, $this->lifecycleArgs);
     }
 
-    public function testPostPersistForNotMAinAndListingImage(): void
+    public function testPostPersistWhenStoredExternally(): void
     {
-        $this->imageTypeProvider->expects($this->any())
+        $this->imageTypeProvider->expects(self::any())
+            ->method('getMaxNumberByType')
+            ->willReturn(
+                [
+                    'main' => [
+                        'max' => 1,
+                        'label' => 'Main'
+                    ],
+                    'listing' => [
+                        'max' => 1,
+                        'label' => 'Listing'
+                    ]
+                ]
+            );
+
+        $this->productImageHelper->expects(self::once())
+            ->method('countImagesByType')
+            ->willReturn(
+                [
+                    'main' => 1,
+                    'listing' => 1,
+                ]
+            );
+
+        $productImage = $this->prepareProductImage(35, 101);
+        $productImage->getImage()->setExternalUrl('http://example.org/image.png');
+
+        $this->eventDispatcher->expects(self::never())
+            ->method('dispatch');
+
+        $this->listener->postPersist($productImage, $this->lifecycleArgs);
+    }
+
+    public function testPostFlushDispatchReindexationRequestEventWhenStoredExternally(): void
+    {
+        $this->imageTypeProvider->expects(self::any())
+            ->method('getMaxNumberByType')
+            ->willReturn(
+                [
+                    'main' => [
+                        'max' => 1,
+                        'label' => 'Main'
+                    ],
+                    'listing' => [
+                        'max' => 1,
+                        'label' => 'Listing'
+                    ]
+                ]
+            );
+
+        $this->productImageHelper->expects(self::once())
+            ->method('countImagesByType')
+            ->willReturn(
+                [
+                    'main' => 1,
+                    'listing' => 1,
+                ]
+            );
+
+        $productImage = $this->prepareProductImage(35, 101);
+        $productImage->getImage()->setExternalUrl('http://example.org/image.png');
+
+        $this->eventDispatcher->expects(self::once())
+            ->method('dispatch')
+            ->with(
+                new ReindexationRequestEvent(
+                    [Product::class],
+                    [],
+                    [
+                        101 => 101,
+                    ]
+                ),
+                ReindexationRequestEvent::EVENT_NAME
+            );
+
+        $this->listener->postPersist($productImage, $this->lifecycleArgs);
+
+        $this->listener->postFlush(new PostFlushEventArgs($this->productImageEntityManager));
+    }
+
+    public function testPostPersistForNotMainAndListingImage(): void
+    {
+        $this->imageTypeProvider->expects(self::any())
             ->method('getMaxNumberByType')
             ->willReturn(
                 [
@@ -123,7 +198,7 @@ class ProductImageListenerTest extends \PHPUnit\Framework\TestCase
                 ]
             );
 
-        $this->productImageHelper->expects($this->once())
+        $this->productImageHelper->expects(self::once())
             ->method('countImagesByType')
             ->willReturn(
                 [
@@ -188,14 +263,14 @@ class ProductImageListenerTest extends \PHPUnit\Framework\TestCase
             $productImage->getTypes()->toArray()
         );
 
-        $this->assertEquals($expected, $types);
+        self::assertEquals($expected, $types);
     }
 
     public function testPostUpdate(): void
     {
         $productImage = $this->prepareProductImage(24, 102);
 
-        $this->eventDispatcher->expects($this->once())
+        $this->eventDispatcher->expects(self::once())
             ->method('dispatch')
             ->with(
                 new ProductImageResizeEvent($productImage->getId(), true),
@@ -206,19 +281,30 @@ class ProductImageListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->postUpdate($productImage, $this->lifecycleArgs);
     }
 
+    public function testPostUpdateWhenStoredExternally(): void
+    {
+        $productImage = $this->prepareProductImage(24, 102);
+        $productImage->getImage()->setExternalUrl('http://example.org/image.png');
+
+        $this->eventDispatcher->expects(self::never())
+            ->method('dispatch');
+
+        $this->listener->postUpdate($productImage, $this->lifecycleArgs);
+    }
+
     public function testFilePostUpdate(): void
     {
         $productImage = $this->prepareProductImage(76, 103);
 
-        $this->productRepository->expects($this->once())
+        $this->productRepository->expects(self::once())
             ->method('findOneBy')
             ->willReturn($productImage);
 
-        $this->productImageEntityManager->expects($this->once())
+        $this->productImageEntityManager->expects(self::once())
             ->method('getRepository')
             ->willReturn($this->productRepository);
 
-        $this->eventDispatcher->expects($this->once())
+        $this->eventDispatcher->expects(self::once())
             ->method('dispatch')
             ->with(
                 new ProductImageResizeEvent($productImage->getId(), true),
@@ -229,6 +315,25 @@ class ProductImageListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->filePostUpdate(new File(), $this->lifecycleArgs);
     }
 
+    public function testFilePostUpdateWhenStoredExternally(): void
+    {
+        $productImage = $this->prepareProductImage(76, 103);
+        $productImage->getImage()->setExternalUrl('http://example.org/image.png');
+
+        $this->productRepository->expects(self::once())
+            ->method('findOneBy')
+            ->willReturn($productImage);
+
+        $this->productImageEntityManager->expects(self::once())
+            ->method('getRepository')
+            ->willReturn($this->productRepository);
+
+        $this->eventDispatcher->expects(self::never())
+            ->method('dispatch');
+
+        $this->listener->filePostUpdate($productImage->getImage(), $this->lifecycleArgs);
+    }
+
     public function testPostFlush(): void
     {
         $this->listener->postUpdate($this->prepareProductImage(10, 101), $this->lifecycleArgs);
@@ -237,7 +342,7 @@ class ProductImageListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->postUpdate($this->prepareProductImage(13, 103), $this->lifecycleArgs);
         $this->listener->postUpdate($this->prepareProductImage(14, 103), $this->lifecycleArgs);
 
-        $this->eventDispatcher->expects($this->once())
+        $this->eventDispatcher->expects(self::once())
             ->method('dispatch')
             ->with(
                 new ReindexationRequestEvent(

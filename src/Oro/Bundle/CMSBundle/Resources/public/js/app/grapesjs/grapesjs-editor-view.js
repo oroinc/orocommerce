@@ -474,6 +474,7 @@ const GrapesjsEditorView = BaseView.extend({
 
         this.builder.parentView = this;
         this.builder.getState = this.getState.bind(this);
+        this.builder.getBreakpoints = this.getBreakpoints.bind(this);
 
         this.builderDelegateEvents();
 
@@ -755,7 +756,7 @@ const GrapesjsEditorView = BaseView.extend({
         });
 
         if (!this.disableDeviceManager) {
-            this._devicesModule = new DevicesModule({
+            this._devicesModule = this.builder._devicesModule = new DevicesModule({
                 builder: this.builder,
                 allowBreakpoints: this.allowBreakpoints
             });
@@ -847,7 +848,7 @@ const GrapesjsEditorView = BaseView.extend({
      * @private
      */
     _updateInitialField() {
-        if (!this.builder || this.builder.CodeValidator.isInvalid()) {
+        if (!this.builder || this.builder.CodeValidator.isInvalid() || this.renderStart) {
             return;
         }
 
@@ -1021,6 +1022,14 @@ const GrapesjsEditorView = BaseView.extend({
             });
             return root;
         });
+    },
+
+    getBreakpoints(allowBreakpoints = []) {
+        if (this.disableDeviceManager) {
+            return [];
+        }
+
+        return this._devicesModule._getCSSBreakpoint(allowBreakpoints);
     }
 });
 

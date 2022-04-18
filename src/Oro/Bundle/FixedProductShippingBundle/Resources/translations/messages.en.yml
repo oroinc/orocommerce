@@ -1,0 +1,28 @@
+oro:
+    fixed_product:
+        settings:
+            label: Fixed Product Transport Settings
+            labels:
+                label: Label
+                tooltip: This label will be displayed during checkout on the storefront.
+
+        channel_type:
+            label: Fixed Product Shipping Cost
+        form:
+            oro_fixed_product_options_type:
+                label: Fixed Product
+
+        method:
+            surcharge_type:
+                label: Surcharge Type
+                values:
+                    percent: Percent
+                    fixed_amount: Fixed Amount
+            surcharge_on:
+                label: Surcharge On
+                values:
+                    product_price: Product Price
+                    product_shipping_cost: Product Shipping Cost
+            surcharge_amount:
+                label: Surcharge Amount
+                percent_label: 'Surcharge Amount, %'

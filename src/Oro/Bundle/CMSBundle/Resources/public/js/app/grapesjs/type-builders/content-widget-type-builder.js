@@ -107,7 +107,13 @@ const ContentWidgetTypeBuilder = BaseTypeBuilder.extend({
                 'data-type': contentWidget.get('widgetType')
             });
 
-            this.set('content', '{{ widget("' + contentWidget.get('name') + '") }}');
+            const contentWidgetExp = `{{ widget("${contentWidget.get('name')}") }}`;
+            if (this.findType('textnode').length) {
+                this.findType('textnode')[0].set('content', contentWidgetExp);
+            } else {
+                this.set('content', contentWidgetExp);
+            }
+
             this.view.render();
         },
 

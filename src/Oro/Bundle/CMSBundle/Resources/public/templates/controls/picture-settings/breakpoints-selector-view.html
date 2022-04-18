@@ -1,0 +1,21 @@
+<div class="media-container">
+    <% if (breakpoints.length) { %>
+    <div class="dropdown breakpoint-selector">
+        <button class="btn btn-icon mode-icon-only" type="button" title="<%- _.__('oro.cms.wysiwyg.dialog.picture_settings.select_breakpoints') %>" data-toggle="dropdown">
+            <span class="icon fa-mobile fa--no-offset" aria-hidden="true"></span>
+        </button>
+
+        <ul class="dropdown-menu">
+            <% _.each(breakpoints, function(breakpoint) { %>
+                <li class="dropdown-item" data-value="<%- breakpoint.id %>"><%- breakpoint.name %></li>
+            <% }); %>
+        </ul>
+    </div>
+    <% } %>
+    <div class="user-value-control">
+        <input type="text" name="media" class="<%- invalid ? 'error' : '' %>" data-validation-ignore-onblur placeholder="(max-width: 999px)" value="<%- normalizeValue %>" aria-invalid="<%- invalid %>">
+        <% if (invalid) { %>
+            <span class="validation-failed"><%- errorMessage %></span>
+        <% } %>
+    </div>
+</div>

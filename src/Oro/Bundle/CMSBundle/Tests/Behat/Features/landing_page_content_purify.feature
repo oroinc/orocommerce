@@ -46,7 +46,7 @@ Feature: Landing Page content purify
       | Titles  | Other page                      |
       | Content | Secure content <img src=\"#\"/> |
     And I save and close form
-    Then I should see only "Please remove not permitted HTML-tags in the content field: - Attributes on \"<img>\" should be transformed from src to src and alt (near <img src=\"#\"></div>...)." error message
+    Then I should see only "Please remove not permitted HTML-tags in the content field: - Attributes on \"<img>\" should be transformed from src to src and alt (near <img src=\"#\"/>...)." error message
     When I fill "CMS Page Form" with:
       | Content | <div>Some Content</div> |
     And I save and close form

@@ -1,6 +1,7 @@
 import {isMatch, omit} from 'underscore';
 import __ from 'orotranslation/js/translator';
 import BaseTypeBuilder from 'orocms/js/app/grapesjs/type-builders/base-type-builder';
+import PictureSettingsDialog from 'orocms/js/app/grapesjs/dialogs/picture-settings-dialog';
 
 const PictureTypeBuilder = BaseTypeBuilder.extend({
     button: {
@@ -12,6 +13,25 @@ const PictureTypeBuilder = BaseTypeBuilder.extend({
         },
         options: {
             at: 6
+        }
+    },
+
+    commands: {
+        'open-picture-settings': (editor, sender, {setSources, setMain, ...props}) => {
+            const dialog = new PictureSettingsDialog({
+                props,
+                editor,
+                autoRender: true
+            });
+
+            dialog.show();
+
+            dialog.on('saveSources', () => {
+                const {sources, main} = dialog.getSources();
+                setSources(sources);
+                setMain(main);
+                dialog.hide();
+            });
         }
     },
 
@@ -37,6 +57,7 @@ const PictureTypeBuilder = BaseTypeBuilder.extend({
             };
 
             this.constructor.__super__.initialize.apply(this, args);
+            this.updateToolbar();
 
             const components = this.get('components');
             if (!components.length) {
@@ -55,8 +76,41 @@ const PictureTypeBuilder = BaseTypeBuilder.extend({
             this.listenTo(this, 'change:sources', this.updateSources);
         },
 
+        updateToolbar() {
+            const getSources = () => this.get('sources');
+            const getMainImage = () => {
+                return this.image.toJSON();
+            };
+            const setSources = sources => {
+                this.set('sources', sources);
+                this.updateSources();
+            };
+            const setMain = ({attributes}) => this.image.set('src', attributes.src);
+
+            if (!this.get('toolbar').find(toolbar => toolbar.id === 'picture-settings')) {
+                this.set('toolbar', [
+                    {
+                        id: 'picture-settings',
+                        attributes: {
+                            'class': 'fa fa-gear',
+                            'label': __('oro.cms.wysiwyg.toolbar.pictureSettings')
+                        },
+                        command(editor) {
+                            editor.Commands.run('open-picture-settings', {
+                                sources: getSources(),
+                                mainImage: getMainImage(),
+                                setSources,
+                                setMain
+                            });
+                        }
+                    },
+                    ...this.get('toolbar')
+                ]);
+            }
+        },
+
         setSource(key, props) {
-            const sources = this.get('sources');
+            let sources = this.get('sources');
             const findIndex = sources.findIndex(({key: sourceKey, attributes}) => {
                 if (!sourceKey) {
                     return isMatch(omit(attributes, 'srcset'), omit(props, 'srcset'));
@@ -67,7 +121,10 @@ const PictureTypeBuilder = BaseTypeBuilder.extend({
             if (findIndex !== -1) {
                 sources[findIndex] = {key, attributes: props};
             } else {
-                sources.push({key, attributes: props});
+                sources = [
+                    ...sources,
+                    {key, attributes: props}
+                ];
             }
 
             this.set('sources', sources);

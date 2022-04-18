@@ -173,17 +173,23 @@ define(function(require) {
             const originalUrl = collection.url;
             const query = originalUrl.substring(originalUrl.indexOf('?'), originalUrl.length);
             const url = routing.generate(this.options.counterRoute, {gridName: collection.inputName});
+            const tabType = `tab${type.charAt(0).toUpperCase() + type.slice(1)}`;
+            const $tab = this.options._sourceElement.find(this.options.selectors[tabType]);
 
             if (tabData.request) {
                 tabData.request.abort();
             }
             tabData.request = $.getJSON(
                 url + query,
-                tabData.counter.html.bind(tabData.counter)
+                count => {
+                    $tab.find(this.options.selectors.counter).each((i, el) => {
+                        $(el).html(count);
+                    });
+                }
             );
             tabData.request
                 .done(() => {
-                    tabData.tab.effect('highlight', {color: this.options.highlightColor}, 1000);
+                    $tab.effect('highlight', {color: this.options.highlightColor}, 1000);
                 })
                 .always(() => {
                     tabData.update--;

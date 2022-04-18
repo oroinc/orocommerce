@@ -31,7 +31,7 @@ class ProductImageFileNamesProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetFileNamesForStandaloneFileEntity()
+    public function testGetFileNamesForStandaloneFileEntity(): void
     {
         $file = $this->createMock(File::class);
         $file->expects(self::once())
@@ -44,6 +44,8 @@ class ProductImageFileNamesProviderTest extends \PHPUnit\Framework\TestCase
             ->method('get');
         $this->configManager->expects(self::never())
             ->method('set');
+        $this->configManager->expects(self::never())
+            ->method('flush');
 
         $fileNames = ['attachment/filter/filter1/file.jpg', 'attachment/filter/filter2/file.jpg'];
         $this->innerProvider->expects(self::once())
@@ -54,7 +56,7 @@ class ProductImageFileNamesProviderTest extends \PHPUnit\Framework\TestCase
         self::assertSame($fileNames, $this->fileNamesProvider->getFileNames($file));
     }
 
-    public function testGetFileNamesForNotProductImageFileEntity()
+    public function testGetFileNamesForNotProductImageFileEntity(): void
     {
         $file = $this->createMock(File::class);
         $file->expects(self::once())
@@ -67,6 +69,8 @@ class ProductImageFileNamesProviderTest extends \PHPUnit\Framework\TestCase
             ->method('get');
         $this->configManager->expects(self::never())
             ->method('set');
+        $this->configManager->expects(self::never())
+            ->method('flush');
 
         $fileNames = ['attachment/filter/filter1/file.jpg', 'attachment/filter/filter2/file.jpg'];
         $this->innerProvider->expects(self::once())
@@ -77,7 +81,7 @@ class ProductImageFileNamesProviderTest extends \PHPUnit\Framework\TestCase
         self::assertSame($fileNames, $this->fileNamesProvider->getFileNames($file));
     }
 
-    public function testGetFileNamesForProductImageFileEntityButWithoutOriginalFilename()
+    public function testGetFileNamesForProductImageFileEntityButWithoutOriginalFilename(): void
     {
         $file = $this->createMock(File::class);
         $file->expects(self::once())
@@ -91,6 +95,8 @@ class ProductImageFileNamesProviderTest extends \PHPUnit\Framework\TestCase
             ->method('get');
         $this->configManager->expects(self::never())
             ->method('set');
+        $this->configManager->expects(self::never())
+            ->method('flush');
 
         $fileNames = ['attachment/filter/filter1/file.jpg', 'attachment/filter/filter2/file.jpg'];
         $this->innerProvider->expects(self::once())
@@ -101,7 +107,7 @@ class ProductImageFileNamesProviderTest extends \PHPUnit\Framework\TestCase
         self::assertSame($fileNames, $this->fileNamesProvider->getFileNames($file));
     }
 
-    public function testGetFileNamesForProductImageFileEntityAndOriginalFileNamesEnabled()
+    public function testGetFileNamesForProductImageFileEntityAndOriginalFileNamesEnabled(): void
     {
         $file = $this->createMock(File::class);
         $file->expects(self::once())
@@ -121,6 +127,8 @@ class ProductImageFileNamesProviderTest extends \PHPUnit\Framework\TestCase
                 ['oro_product.original_file_names_enabled', false],
                 ['oro_product.original_file_names_enabled', true]
             );
+        $this->configManager->expects(self::exactly(2))
+            ->method('flush');
 
         $this->innerProvider->expects(self::exactly(2))
             ->method('getFileNames')
@@ -150,7 +158,7 @@ class ProductImageFileNamesProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetFileNamesForProductImageFileEntityAndOriginalFileNamesDisabled()
+    public function testGetFileNamesForProductImageFileEntityAndOriginalFileNamesDisabled(): void
     {
         $file = $this->createMock(File::class);
         $file->expects(self::once())
@@ -170,6 +178,8 @@ class ProductImageFileNamesProviderTest extends \PHPUnit\Framework\TestCase
                 ['oro_product.original_file_names_enabled', true],
                 ['oro_product.original_file_names_enabled', false]
             );
+        $this->configManager->expects(self::exactly(2))
+            ->method('flush');
 
         $this->innerProvider->expects(self::exactly(2))
             ->method('getFileNames')
@@ -199,7 +209,7 @@ class ProductImageFileNamesProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetFileNamesShouldRestoreOriginalFileNamesIdExceptionOccurred()
+    public function testGetFileNamesShouldRestoreOriginalFileNamesIdExceptionOccurred(): void
     {
         $file = $this->createMock(File::class);
         $file->expects(self::once())
@@ -221,6 +231,8 @@ class ProductImageFileNamesProviderTest extends \PHPUnit\Framework\TestCase
                 ['oro_product.original_file_names_enabled', true],
                 ['oro_product.original_file_names_enabled', false]
             );
+        $this->configManager->expects(self::exactly(2))
+            ->method('flush');
 
         $this->innerProvider->expects(self::exactly(2))
             ->method('getFileNames')

@@ -2,6 +2,7 @@
 @ticket-BB-9989
 @ticket-BB-14989
 @ticket-BB-17055
+@ticket-BB-21220
 @fixture-OroProductBundle:ProductAttributesFixture.yml
 Feature: Product attribute multiselect
   In order to have custom attributes for Product entity
@@ -43,11 +44,23 @@ Feature: Product attribute multiselect
       | TestMultiValueOne   |
       | TestMultiValueTwo   |
       | TestMultiValueThree |
+      | TestMultiValueFour  |
     And I save and close form
     Then I should see "Attribute was successfully saved" flash message
 
     When I click update schema
     Then I should see "Schema updated" flash message
+
+  Scenario: Delete option from attribute
+    Given I go to Products/ Product Attributes
+    And click edit MultiSelectField in grid
+    And I set Options with:
+      | Label               |
+      | TestMultiValueOne   |
+      | TestMultiValueTwo   |
+      | TestMultiValueThree |
+    And I save and close form
+    Then I should see "Attribute was successfully saved" flash message
 
   Scenario: Update product family with new attribute
     Given I go to Products/ Product Families
@@ -148,9 +161,19 @@ Feature: Product attribute multiselect
     When I reload the page
     Then I should see "MultiSelectField: TestMultiValueOne, TestMultiValueThree"
 
-  Scenario: Delete product attribute
+  Scenario: Delete product attribute options
     Given I proceed as the Admin
-    And I go to Products/ Product Attributes
+    And go to Products/ Product Attributes
+    When I click edit "MultiSelectField" in grid
+    And set Options with:
+      | Label               |
+      | TestMultiValueOne   |
+      | TestMultiValueTwo   |
+    And save and close form
+    Then I should see "Attribute was successfully saved" flash message
+
+  Scenario: Delete product attribute
+    Given I go to Products/ Product Attributes
     When I click Remove "MultiSelectField" in grid
     Then I should see "Are you sure you want to delete this attribute?"
     And I click "Yes"

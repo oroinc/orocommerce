@@ -1,6 +1,8 @@
 @regression
 @fixture-OroProductBundle:products_grid.yml
 @ticket-BAP-17648
+@skip
+#Issue should be resolved in BB-21070
 
 Feature: Products Grid
 

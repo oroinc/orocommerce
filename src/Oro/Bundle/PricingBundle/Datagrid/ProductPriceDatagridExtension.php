@@ -256,7 +256,7 @@ class ProductPriceDatagridExtension extends AbstractExtension implements Feature
                 'type' => 'number-range',
                 'data_name' => $columnName . self::UNIT_FILTER_SUFFIX,
                 // Filters for price / unit pairs must be disabled by default.
-                'enabled' => false,
+                'renderable' => false,
             ];
         } else {
             $filter = ['type' => 'product-price', 'data_name' => $currencyIsoCode];

@@ -19,7 +19,7 @@ define(function(require) {
             try {
                 skipConfirm = !mediator.execute('shoppinglist:hasEmptyMatrix');
             } catch (e) {
-                skipConfirm = !!this.options.hasEmptyMatrix;
+                skipConfirm = !this.options.hasEmptyMatrix;
             }
 
             return skipConfirm;

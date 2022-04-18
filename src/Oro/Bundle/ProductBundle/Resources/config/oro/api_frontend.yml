@@ -33,7 +33,7 @@ api:
                 files:
                     data_type: objects
                     property_path: _
-                    depends_on: [ types.type, image.id, image.filename ]
+                    depends_on: [ types.type, image.id, image.filename, image.originalFilename, image.parentEntityClass ]
             filters:
                 fields:
                     types:

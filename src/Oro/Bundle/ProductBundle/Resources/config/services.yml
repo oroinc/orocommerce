@@ -1585,6 +1585,8 @@ services:
         arguments:
             - '@.inner'
             - '@oro_config.manager'
+        tags:
+            - { name: oro_featuretogle.feature, feature: product_original_filenames }
 
     oro_product.provider.product_image_file_names:
         class: Oro\Bundle\ProductBundle\Provider\ProductImageFileNamesProvider
@@ -1936,6 +1938,8 @@ services:
             - '@oro_config.manager'
             - '@oro_entity_extend.enum_value_provider'
             - '@event_dispatcher'
+        calls:
+            - [setUrlHelper, ['@oro_ui.tools.url_helper']]
 
     Oro\Bundle\ProductBundle\Provider\ProductAutocompleteProvider:
         alias: oro_product.provider.product_autocomplete
@@ -1963,6 +1967,8 @@ services:
             - '@request_stack'
             - '@oro_attachment.tools.webp_configuration'
             - '@oro_product.provider.product_image_placeholder'
+        calls:
+            - [setUrlHelper, ['@oro_ui.tools.url_helper']]
         tags:
             - { name: kernel.event_listener, event: Oro\Bundle\ProductBundle\Event\CollectAutocompleteFieldsEvent, method: onCollectAutocompleteFields }
             - { name: kernel.event_listener, event: Oro\Bundle\ProductBundle\Event\ProcessAutocompleteDataEvent, method: onProcessAutocompleteData }
@@ -1990,3 +1996,9 @@ services:
         class: Oro\Bundle\ProductBundle\Driver\ProductWebsiteReindexRequestDbalDriver
         arguments:
             - '@doctrine'
+
+    oro_product.voter.product_original_filenames_configuration_voter:
+        class: Oro\Bundle\ProductBundle\Voter\ProductOriginalFileNamesConfigurationVoter
+        tags:
+            - { name: oro_featuretogle.voter }
+            - { name: oro_featuretogle.feature, feature: attachment_original_filenames }

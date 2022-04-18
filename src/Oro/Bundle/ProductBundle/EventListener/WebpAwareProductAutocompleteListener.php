@@ -6,6 +6,7 @@ use Oro\Bundle\AttachmentBundle\Tools\WebpConfiguration;
 use Oro\Bundle\LayoutBundle\Provider\Image\ImagePlaceholderProviderInterface;
 use Oro\Bundle\ProductBundle\Event\CollectAutocompleteFieldsEvent;
 use Oro\Bundle\ProductBundle\Event\ProcessAutocompleteDataEvent;
+use Oro\Bundle\UIBundle\Tools\UrlHelper;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
@@ -19,6 +20,8 @@ class WebpAwareProductAutocompleteListener
 
     private ImagePlaceholderProviderInterface $imagePlaceholderProvider;
 
+    private ?UrlHelper $urlHelper = null;
+
     public function __construct(
         RequestStack $requestStack,
         WebpConfiguration $webpConfiguration,
@@ -27,6 +30,11 @@ class WebpAwareProductAutocompleteListener
         $this->requestStack = $requestStack;
         $this->webpConfiguration = $webpConfiguration;
         $this->imagePlaceholderProvider = $imagePlaceholderProvider;
+    }
+
+    public function setUrlHelper(?UrlHelper $urlHelper): void
+    {
+        $this->urlHelper = $urlHelper;
     }
 
     public function onCollectAutocompleteFields(CollectAutocompleteFieldsEvent $event): void
@@ -46,9 +54,11 @@ class WebpAwareProductAutocompleteListener
         foreach ($data as $sku => $productData) {
             if (isset($productData['imageWebp'])) {
                 if ($productData['imageWebp']) {
-                    $productData['imageWebp'] = $request
-                        ? $request->getUriForPath($productData['imageWebp'])
-                        : $productData['imageWebp'];
+                    if ($this->urlHelper) {
+                        $productData['imageWebp'] = $this->urlHelper->getAbsolutePath($productData['imageWebp']);
+                    } elseif ($request) {
+                        $productData['imageWebp'] = $request->getUriForPath($productData['imageWebp']);
+                    }
                 } else {
                     $productData['imageWebp'] = $defaultImage;
                 }

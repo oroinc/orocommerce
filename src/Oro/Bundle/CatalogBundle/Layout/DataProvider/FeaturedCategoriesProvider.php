@@ -7,26 +7,24 @@ use Oro\Bundle\CatalogBundle\Provider\CategoryTreeProvider as CategoriesProvider
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessor;
+use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
 /**
  * Provides Featured Category data for layouts
  */
 class FeaturedCategoriesProvider
 {
-    /** @var CategoriesProvider */
-    private $categoryTreeProvider;
+    private CategoriesProvider $categoryTreeProvider;
 
-    /** @var TokenAccessor */
-    private $tokenAccessor;
+    private TokenAccessor $tokenAccessor;
 
-    /** @var LocalizationHelper */
-    private $localizationHelper;
+    private LocalizationHelper $localizationHelper;
 
-    /** @var CacheProvider */
-    private $cache;
+    private ?WebsiteManager $websiteManager = null;
 
-    /** @var int */
-    private $cacheLifeTime;
+    private ?CacheProvider $cache = null;
+
+    private int $cacheLifeTime = 0;
 
     public function __construct(
         CategoriesProvider $categoryTreeProvider,
@@ -46,6 +44,11 @@ class FeaturedCategoriesProvider
     {
         $this->cache = $cache;
         $this->cacheLifeTime = $lifeTime;
+    }
+
+    public function setWebsiteManager(?WebsiteManager $websiteManager): void
+    {
+        $this->websiteManager = $websiteManager;
     }
 
     /**
@@ -81,31 +84,29 @@ class FeaturedCategoriesProvider
     }
 
     /**
-     * @param int[]             $categoryIds
+     * @param int[] $categoryIds
      * @param CustomerUser|null $user
      *
      * @return string
      */
     private function getCacheKey(array $categoryIds, ?CustomerUser $user): string
     {
-        $customer = $user ? $user->getCustomer() : null;
-        $customerGroup = $customer ? $customer->getGroup() : null;
+        $customer = $user?->getCustomer();
+        $customerGroup = $customer?->getGroup();
 
         return sprintf(
-            'featured_categories_%s_%s_%s_%s_%s_%s',
+            'featured_categories_%s_%s_%s_%s__%s__%s_%s',
             $user ? $user->getId() : 0,
             $this->getCurrentLocalizationId(),
             $customer ? $customer->getId() : 0,
             $customerGroup ? $customerGroup->getId() : 0,
             implode('_', $categoryIds),
-            $this->tokenAccessor->getOrganization()->getId()
+            (int) $this->tokenAccessor->getOrganization()?->getId(),
+            (int) $this->websiteManager?->getCurrentWebsite()?->getId()
         );
     }
 
-    /**
-     * @return CustomerUser|null
-     */
-    private function getCurrentUser()
+    private function getCurrentUser(): ?CustomerUser
     {
         $tokenUser = $this->tokenAccessor->getUser();
         if ($tokenUser instanceof CustomerUser) {
@@ -115,13 +116,8 @@ class FeaturedCategoriesProvider
         return null;
     }
 
-    /**
-     * @return int
-     */
-    private function getCurrentLocalizationId()
+    private function getCurrentLocalizationId(): int
     {
-        $localization = $this->localizationHelper->getCurrentLocalization();
-
-        return $localization ? $localization->getId() : 0;
+        return (int) $this->localizationHelper->getCurrentLocalization()?->getId();
     }
 }

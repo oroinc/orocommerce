@@ -616,7 +616,7 @@ Oro\Bundle\AttachmentBundle\Entity\File:
     file_product1_image1:
         mimeType: 'image/jpeg'
         fileName: 'testFile1.jpg'
-        originalFileName: 'testFile1.jpg'
+        originalFileName: 'originalFilenameTestFile1.jpg'
         fileSize: 123456
     file_product1_image2:
         mimeType: 'image/jpeg'

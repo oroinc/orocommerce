@@ -1,0 +1,113 @@
+data:
+    -
+        type: productimages
+        id: '<toString(@product1_image1->id)>'
+        attributes:
+            updatedAt: '@product1_image1->updatedAt->format("Y-m-d\TH:i:s\Z")'
+            mimeType: image/jpeg
+            types:
+                - main
+                - additional
+            files:
+                -
+                    url: '/media/cache/attachment/filter/product_original/11c00c6d0bd6b875afe655d3c9d4f942/{file1Id}/testFile1-originalFilenameTestFile1.jpg'
+                    maxWidth: null
+                    maxHeight: null
+                    dimension: product_original
+                    types:
+                        - main
+                        - additional
+                -
+                    url: '/media/cache/attachment/filter/product_gallery_popup/d9939fa6a79b1980529dac6d86951f2d/{file1Id}/testFile1-originalFilenameTestFile1.jpg'
+                    maxWidth: 610
+                    maxHeight: 610
+                    dimension: product_gallery_popup
+                    types:
+                        - main
+                -
+                    url: '/media/cache/attachment/filter/product_gallery_main/b6d3b12a2194f276376d682d2e7e6bd1/{file1Id}/testFile1-originalFilenameTestFile1.jpg'
+                    maxWidth: 378
+                    maxHeight: auto
+                    dimension: product_gallery_main
+                    types:
+                        - main
+                -
+                    url: '/media/cache/attachment/filter/product_large/f8ad5f04db8a20c593bca34d27fd6799/{file1Id}/testFile1-originalFilenameTestFile1.jpg'
+                    maxWidth: 316
+                    maxHeight: auto
+                    dimension: product_large
+                    types:
+                        - main
+                -
+                    url: '/media/cache/attachment/filter/product_extra_large/b607be0384c24f69df0b84ba1a210ec8/{file1Id}/testFile1-originalFilenameTestFile1.jpg'
+                    maxWidth: 378
+                    maxHeight: 378
+                    dimension: product_extra_large
+                    types:
+                        - main
+                        - additional
+                -
+                    url: '/media/cache/attachment/filter/product_medium/44da77981c5c904650ac24bfa6a7cf7c/{file1Id}/testFile1-originalFilenameTestFile1.jpg'
+                    maxWidth: 262
+                    maxHeight: auto
+                    dimension: product_medium
+                    types:
+                        - main
+                -
+                    url: '/media/cache/attachment/filter/product_small/09499886b9fe19ea2560622082d43093/{file1Id}/testFile1-originalFilenameTestFile1.jpg'
+                    maxWidth: 82
+                    maxHeight: 82
+                    dimension: product_small
+                    types:
+                        - main
+                        - additional
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product1->id)>'
+    -
+        type: productimages
+        id: '<toString(@product1_image2->id)>'
+        attributes:
+            updatedAt: '@product1_image2->updatedAt->format("Y-m-d\TH:i:s\Z")'
+            mimeType: image/jpeg
+            types:
+                - additional
+                - listing
+            files:
+                -
+                    url: '/media/cache/attachment/filter/product_original/11c00c6d0bd6b875afe655d3c9d4f942/{file2Id}/testFile2.jpg'
+                    maxWidth: null
+                    maxHeight: null
+                    dimension: product_original
+                    types:
+                        - additional
+                -
+                    url: '/media/cache/attachment/filter/product_extra_large/b607be0384c24f69df0b84ba1a210ec8/{file2Id}/testFile2.jpg'
+                    maxWidth: 378
+                    maxHeight: 378
+                    dimension: product_extra_large
+                    types:
+                        - additional
+                        - listing
+                -
+                    url: '/media/cache/attachment/filter/product_small/09499886b9fe19ea2560622082d43093/{file2Id}/testFile2.jpg'
+                    maxWidth: 82
+                    maxHeight: 82
+                    dimension: product_small
+                    types:
+                        - additional
+                        - listing
+                -
+                    url: '/media/cache/attachment/filter/product_large/f8ad5f04db8a20c593bca34d27fd6799/{file2Id}/testFile2.jpg'
+                    maxWidth: 316
+                    maxHeight: auto
+                    dimension: product_large
+                    types:
+                        - listing
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product1->id)>'
