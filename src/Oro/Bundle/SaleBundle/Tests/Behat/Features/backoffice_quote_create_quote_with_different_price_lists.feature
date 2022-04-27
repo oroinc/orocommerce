@@ -4,9 +4,6 @@
 @fixture-OroSaleBundle:QuoteProductFixture.yml
 
 Feature: Backoffice quote create quote with different price lists
-  In order to ...
-  As an ...
-  I should be able to ...
 
   Scenario: Create window sessions
     Given sessions active:

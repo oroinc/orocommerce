@@ -1,9 +1,7 @@
 @fixture-OroShoppingListBundle:ShoppingListFixture.yml
 
 Feature: Check shopping list quick search
-  In order to ...
-  As an ...
-  I should be able to ...
+
   Scenario: Quick search doesn't display
     Given I signed in as AmandaRCole@example.org on the store frontend
     And type "AA1" in "search"

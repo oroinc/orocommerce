@@ -3,9 +3,6 @@
 @ticket-BB-16482
 @ticket-BB-20790
 Feature: Visibility of product variants
-  In order to ...
-  As an ...
-  I should be able to ...
 
   Scenario: Create different window session
       Given sessions active:
