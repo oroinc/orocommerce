@@ -15,6 +15,9 @@ layout:
                     blockType: container
                 __product_content:
                     blockType: container
+                    options:
+                        vars:
+                            microdataWithoutPricesDisabled: '=data["system_config_provider"].getValue("oro_product.microdata_without_prices_disabled")'
                 __product_sticker_new:
                     blockType: product_sticker
                 __product_sticker_new_text:

@@ -19,6 +19,11 @@ layout:
                         product: '=data["oro_product_variant"].getProductVariantOrProduct(data)'
                         parentProduct: '=data["parentProduct"]'
                         productTheme: '=context["page_template"]'
+                product_view_microdata_container:
+                    blockType: product_view_microdata_container
+                    options:
+                        microdataWithoutPricesDisabled: '=data["system_config_provider"].getValue("oro_product.microdata_without_prices_disabled")'
+                        productPrices: '=data["frontend_product_prices"].getByProduct(data["oro_product_variant"].getProductVariantOrProduct(data))'
                 product_view_primary_wrapper:
                     blockType: container
                 product_view_primary_container:
@@ -59,19 +64,20 @@ layout:
             tree:
                 page_content:
                     product_view_container:
-                        product_view_primary_wrapper:
-                            product_view_primary_container:
-                                product_sticker_new: ~
-                            product_view_aside_container: ~
-                        product_view_main_container:
-                            product_view_content_container:
-                                product_view_specification_container:
-                                    product_view_attribute_group_general: ~
-                                product_view_description_container:
-                                    product_view_line_item_container: ~
-                                product_view_brand_container: ~
-                                product_view_main_attributes_container: ~
-                        product_view_additional_container: ~
+                        product_view_microdata_container:
+                            product_view_primary_wrapper:
+                                product_view_primary_container:
+                                    product_sticker_new: ~
+                                product_view_aside_container: ~
+                            product_view_main_container:
+                                product_view_content_container:
+                                    product_view_specification_container:
+                                        product_view_attribute_group_general: ~
+                                    product_view_description_container:
+                                        product_view_line_item_container: ~
+                                    product_view_brand_container: ~
+                                    product_view_main_attributes_container: ~
+                            product_view_additional_container: ~
         - '@move':
             id: product_view_attribute_group_general_attribute_text_sku
             parentId: product_view_primary_container

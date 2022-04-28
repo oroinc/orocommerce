@@ -248,6 +248,10 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                 'product_price_tiers_export_enabled' => [
                     'value' => false,
                     'scope' => 'app'
+                ],
+                'microdata_without_prices_disabled' => [
+                    'value' => true,
+                    'scope' => 'app'
                 ]
             ]
         ];

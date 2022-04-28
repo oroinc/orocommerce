@@ -466,6 +466,8 @@ oro:
                 product_search_autocomplete.title: 'Global Search Autocomplete'
                 customer_settings.title: 'Customer Settings'
                 product_data_export.title: 'Product Data Export'
+                product_seo.title: 'SEO'
+                schema_org.title: 'Schema.org'
             fields:
                 original_file_names_enabled:
                     label: 'Enable Original File Names'
@@ -646,6 +648,9 @@ oro:
                 product_price_tiers_export_enabled:
                     label: 'Include Price Tiers'
                     tooltip: 'Price tiers (if defined) will be exported into a single additional column as multi-line text value along with the starting quantity and product unit for each price tier. The product units that have no prices defined will be omitted in the exported file.'
+                microdata_without_prices_disabled:
+                    label: 'Disable Product Microdata Without Prices'
+                    tooltip: 'Some search crawlers (e.g. Google) mark pages containing embedded Schema.org Microdata without price information as invalid pages and may exclude them from search index. Unless you have an alternative custom solution (e.g. reviews or aggregated ratings system) in place, we recommend to disable Schema.org Microdata on product pages that do not include any pricing information available to such crawlers (anonymous/guest users).'
             notice:
                 product_image_watermark: >
                    The updated product image watermark settings will be used for the newly uploaded images only.
