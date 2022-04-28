@@ -2002,3 +2002,10 @@ services:
         tags:
             - { name: oro_featuretogle.voter }
             - { name: oro_featuretogle.feature, feature: attachment_original_filenames }
+
+    oro_checkout.layout.extension.product_seo_context_configurator:
+        class: Oro\Bundle\ProductBundle\Layout\Extension\ProductSEOContextConfigurator
+        arguments:
+            - '@oro_config.manager'
+        tags:
+            - { name: layout.context_configurator }

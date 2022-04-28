@@ -1476,6 +1476,9 @@ oro_behat_extension:
       selector: '.product-price-attributes-grid'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
 
+    Product Type Microdata Declaration:
+      selector: '[itemtype="http://schema.org/Product"]'
+
   pages:
     Product View:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Page\ProductView

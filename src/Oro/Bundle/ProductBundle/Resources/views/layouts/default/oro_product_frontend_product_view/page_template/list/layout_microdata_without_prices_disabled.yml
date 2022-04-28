@@ -1,0 +1,7 @@
+layout:
+    actions:
+        - '@move':
+            id: product_main_container
+            parentId: product_view_microdata_container
+
+    conditions: '!context["is_mobile"] and context["microdata_without_prices_disabled"]'
