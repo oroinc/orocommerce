@@ -1,0 +1,24 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes:
+                - '@OroProduct/layouts/blank/oro_product_frontend_product_view/layout.html.twig'
+                - '@OroProduct/layouts/blank/oro_product_frontend_product_view/layout_microdata_without_prices_disabled.html.twig'
+        - '@add':
+            id: product_view_microdata_container
+            parentId: product_view_container
+            blockType: product_view_microdata_container
+            prepend: true
+            options:
+                productPrices: '=data["frontend_product_prices"].getByProduct(data["oro_product_variant"].getProductVariantOrProduct(data))'
+        - '@move':
+            id: product_view_primary_wrapper
+            parentId: product_view_microdata_container
+        - '@move':
+            id: product_view_main_container
+            parentId: product_view_microdata_container
+        - '@move':
+            id: product_view_additional_container
+            parentId: product_view_microdata_container
+
+    conditions: 'context["microdata_without_prices_disabled"]'

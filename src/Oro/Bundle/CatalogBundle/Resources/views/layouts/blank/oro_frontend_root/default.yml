@@ -13,7 +13,6 @@ layout:
                     siblingId: featured_menu_container
                     options:
                         attr:
-                            itemprop: 'hasOfferCatalog'
                             itemscope: ~
                             itemtype: 'http://schema.org/OfferCatalog'
                 featured_categories:

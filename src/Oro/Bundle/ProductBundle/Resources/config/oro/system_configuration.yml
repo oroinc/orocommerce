@@ -94,6 +94,13 @@ system_configuration:
             icon: 'fa-cogs'
         product_data_export:
             title: oro.product.system_configuration.groups.product_data_export.title
+        product_seo:
+            title: oro.product.system_configuration.groups.product_seo.title
+            icon: 'fa-columns'
+        schema_org:
+            title: oro.product.system_configuration.groups.schema_org.title
+            description: oro.product.system_configuration.groups.schema_org.description
+            description_style: warning
     fields:
         oro_product.related_products_enabled:
             data_type: boolean
@@ -655,6 +662,14 @@ system_configuration:
             options:
                 label: oro.product.system_configuration.fields.product_price_tiers_export_enabled.label
                 tooltip: oro.product.system_configuration.fields.product_price_tiers_export_enabled.tooltip
+        oro_product.microdata_without_prices_disabled:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            priority: 100
+            options:
+                label: oro.product.system_configuration.fields.microdata_without_prices_disabled.label
+                tooltip: oro.product.system_configuration.fields.microdata_without_prices_disabled.tooltip
+                required: false
 
     tree:
         system_configuration:
@@ -815,7 +830,16 @@ system_configuration:
                                     theme_settings:
                                         children:
                                             - oro_product.product_image_placeholder
-
+                    guests:
+                        priority: 2000
+                        children:
+                            product_seo:
+                                priority: 90
+                                children:
+                                    schema_org:
+                                        priority: 100
+                                        children:
+                                            - oro_product.microdata_without_prices_disabled
         organization_configuration:
             commerce:
                 children:

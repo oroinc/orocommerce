@@ -79,6 +79,7 @@ class Configuration implements ConfigurationInterface
     const PRODUCT_DATA_EXPORT_ENABLED = 'product_data_export_enabled';
     const PRODUCT_PRICES_EXPORT_ENABLED = 'product_prices_export_enabled';
     const PRODUCT_PRICE_TIERS_ENABLED = 'product_price_tiers_export_enabled';
+    const MICRODATA_WITHOUT_PRICES_DISABLED = 'microdata_without_prices_disabled';
 
     /**
      * {@inheritDoc}
@@ -203,6 +204,10 @@ class Configuration implements ConfigurationInterface
                     'value' => false
                 ],
                 static::PRODUCT_PRICE_TIERS_ENABLED => [
+                    'type' => 'boolean',
+                    'value' => false
+                ],
+                static::MICRODATA_WITHOUT_PRICES_DISABLED => [
                     'type' => 'boolean',
                     'value' => false
                 ]

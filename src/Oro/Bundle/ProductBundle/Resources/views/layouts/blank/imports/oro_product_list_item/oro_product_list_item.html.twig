@@ -39,9 +39,17 @@
 {% block __oro_product_list_item__product_content_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' product-item__content product-item__content--{{ class_prefix }}',
-        'itemscope': '',
-        'itemtype': 'http://schema.org/Product'
     }) %}
+    {% if
+        microdataWithoutPricesDisabled == false or
+        productPrices is defined and productPrices is not empty or
+        product is defined and product.prices is defined and matrixFormType == 'none' and product.prices is not empty
+    %}
+        {% set attr = layout_attr_defaults(attr, {
+            'itemscope': '',
+            'itemtype': 'http://schema.org/Product'
+        }) %}
+    {% endif %}
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
