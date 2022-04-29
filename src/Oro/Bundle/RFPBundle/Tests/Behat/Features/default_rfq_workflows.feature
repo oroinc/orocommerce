@@ -3,9 +3,6 @@
 @ticket-BB-7962
 @regression
 Feature: Default RFQ Workflows
-  In order to ...
-  As an ...
-  I should be able to ...
 
   Scenario: Create RFQ from Quick Order Form and Check Internal status: Open and Customer status: Submitted
     Given I login as administrator and use in "first_session" as "Admin"

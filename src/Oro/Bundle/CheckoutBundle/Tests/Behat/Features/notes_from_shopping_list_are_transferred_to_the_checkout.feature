@@ -4,9 +4,6 @@
 @fixture-OroCheckoutBundle:Checkout.yml
 
 Feature: Notes from shopping list are transferred to the checkout
-  In order to ...
-  As an ...
-  I should be able to ...
 
   Scenario: Create different window sessions
     Given sessions active:

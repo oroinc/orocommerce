@@ -1,9 +1,6 @@
 @regression
 @fixture-OroShoppingListBundle:unique_sku_in_shopping_list.yml
 Feature: Unique SKU in shopping list
-  In order to ...
-  As an ...
-  I should be able to ...
 
   Scenario: Create different window session
     Given sessions active:

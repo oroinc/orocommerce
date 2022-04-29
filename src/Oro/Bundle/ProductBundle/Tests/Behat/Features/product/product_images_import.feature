@@ -3,9 +3,6 @@
 @ticket-BB-17506
 
 Feature: Product Images Import
-  In order to ...
-  As an ...
-  I should be able to ...
 
 #  Would be good to add possibility to import product images via CSV file - e.g. there might be full paths to required images.
 #  EDIT: Images will be uploaded though ftp or other method. Import process will parse the csv file with the image paths and link the images to the corresponding product.

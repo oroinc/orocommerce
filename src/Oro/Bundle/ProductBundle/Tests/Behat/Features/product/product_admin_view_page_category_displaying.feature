@@ -2,9 +2,6 @@
 @ticket-BB-9199
 @fixture-OroProductBundle:product_check_category.yml
 Feature: Product admin view page category displaying
-  In order to ...
-  As an ...
-  I should be able to ...
 
   Scenario: Displaying only one category
     Given I login as administrator
