@@ -4,9 +4,6 @@
 @fixture-OroOrderBundle:OrderAddressesFixture.yml
 @fixture-OroCustomerBundle:CustomerUserAddressAmericanSamoaFixture.yml
 Feature: Order Addresses
-  In order to ...
-  As an ...
-  I should be able to ...
 
   Scenario: Check Order Billing and Shipping Address Labels
     Given I login as administrator

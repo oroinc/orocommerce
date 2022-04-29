@@ -2,9 +2,6 @@
 @ticket-BB-15402
 @fixture-OroLocaleBundle:ZuluLocalization.yml
 Feature: Preview of alphabetic coupon code in coupon generation form
-  In order to ...
-  As an ...
-  I should be able to ...
 
   Scenario: Preview of alphabetic code with custom length and without dashes
     Given I login as administrator

@@ -1,9 +1,7 @@
 @regression
 @ticket-BB-19842
 Feature: Product columns should not be renamed in entity management import export section
-  In order to ...
-  As an ...
-  I should be able to ...
+
   Scenario: Ensure there is no Column Name input for Product columns in Import Export section
     Given I login as administrator
     And I go to System/ Entities/ Entity Management

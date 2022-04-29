@@ -1,7 +1,6 @@
 @ticket-BB-7225
 @fixture-OroProductBundle:product_frontend.yml
 Feature: Product Filters On Products Catalog
-  Check Product Filters on Products Catalog
 
   Scenario: Feature Background
     Given sessions active:
