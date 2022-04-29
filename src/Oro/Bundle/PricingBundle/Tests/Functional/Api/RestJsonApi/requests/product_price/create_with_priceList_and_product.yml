@@ -1,0 +1,102 @@
+data:
+    type: 'productprices'
+    attributes:
+        quantity: 250
+        value: '150.0000'
+        currency: 'CAD'
+    relationships:
+        priceList:
+            data:
+                type: 'pricelists'
+                id: 'new_price_list'
+        product:
+            data:
+                type: 'products'
+                id: 'new_product'
+        unit:
+            data:
+                type: 'productunits'
+                id: '<toString(@product_unit.box->code)>'
+included:
+    -
+        type: 'products'
+        id: 'new_product'
+        attributes:
+            sku: 'test-api-2'
+            status: 'enabled'
+            variantFields: []
+            productType: 'simple'
+            featured: false
+            newArrival: false
+            availability_date: '2018-01-01'
+        relationships:
+            owner:
+                data:
+                    type: 'businessunits'
+                    id: '1'
+            organization:
+                data:
+                    type: 'organizations'
+                    id: '1'
+            names:
+                data:
+                    -
+                        type: 'productnames'
+                        id: 'names-1'
+            primaryUnitPrecision:
+                data:
+                    type: 'productunitprecisions'
+                    id: 'primary-unit-precision'
+            unitPrecisions:
+                data:
+                    -
+                        type: 'productunitprecisions'
+                        id: 'primary-unit-precision'
+            attributeFamily:
+                data:
+                    type: 'attributefamilies'
+                    id: '<toString(@default_family->getId())>'
+            inventory_status:
+                data:
+                    type: 'prodinventorystatuses'
+                    id: 'out_of_stock'
+            pageTemplate:
+                data:
+                    type: 'entityfieldfallbackvalues'
+                    id: '1xyz'
+    -
+        type: 'entityfieldfallbackvalues'
+        id: '1xyz'
+        attributes:
+            fallback:
+            scalarValue: 'short'
+            arrayValue:
+    -
+        type: 'pricelists'
+        id: 'new_price_list'
+        attributes:
+            default: false
+            active: true
+            name: 'New Price List 1'
+            priceListCurrencies: ['CAD']
+    -
+        type: 'productnames'
+        id: 'names-1'
+        attributes:
+            fallback: null
+            string: 'Test product'
+        relationships:
+            localization:
+                data: null
+    -
+        type: 'productunitprecisions'
+        id: 'primary-unit-precision'
+        attributes:
+            precision: 1
+            conversionRate: 1
+            sell: true
+        relationships:
+            unit:
+                data:
+                    type: 'productunits'
+                    id: '<toString(@product_unit.box->getCode())>'
