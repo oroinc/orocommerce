@@ -2,9 +2,6 @@
 
 namespace Oro\Bundle\ProductBundle\Api\Processor;
 
-use Oro\Bundle\ApiBundle\Processor\FormContext;
-use Oro\Bundle\FrontendBundle\Form\DataTransformer\PageTemplateEntityFieldFallbackValueTransformer;
-use Oro\Bundle\ProductBundle\Form\Type\ProductType;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
@@ -18,15 +15,6 @@ class AddProductTypeDataTransformers implements ProcessorInterface
      */
     public function process(ContextInterface $context)
     {
-        /** @var FormContext $context */
-
-        $formBuilder = $context->getFormBuilder();
-
-        if ($formBuilder->has('pageTemplate')) {
-            $formBuilder->get('pageTemplate')
-                ->addModelTransformer(
-                    new PageTemplateEntityFieldFallbackValueTransformer(ProductType::PAGE_TEMPLATE_ROUTE_NAME)
-                );
-        }
+        // The implementation moved to the SetProductPageTemplate class.
     }
 }

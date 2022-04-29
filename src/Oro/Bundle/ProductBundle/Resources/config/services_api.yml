@@ -387,11 +387,6 @@ services:
             - { name: oro.api.processor, action: create, group: transform_data, class: Oro\Bundle\ProductBundle\Entity\Product, priority: 90 }
             - { name: oro.api.processor, action: update, group: transform_data, class: Oro\Bundle\ProductBundle\Entity\Product, priority: 90 }
 
-    oro_product.api.create.add_product_type_data_transformers:
-        class: Oro\Bundle\ProductBundle\Api\Processor\AddProductTypeDataTransformers
-        tags:
-            - { name: oro.api.processor, action: create, group: transform_data, class: Oro\Bundle\ProductBundle\Entity\Product, priority: 95 }
-
     oro_product.api.create.related_product.validate_access:
         class: Oro\Bundle\ProductBundle\Api\Processor\ValidateRelatedItemAccess
         arguments:
@@ -466,3 +461,14 @@ services:
             - '@oro_layout.provider.image_type'
         tags:
             - { name: oro.api.processor, action: customize_loaded_data, class: Oro\Bundle\AttachmentBundle\Entity\File }
+
+    oro_product.api.create.set_product_primary_unit_precision:
+        class: Oro\Bundle\ProductBundle\Api\Processor\SetProductPrimaryUnitPrecision
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: pre_validate, parentAction: create, class: Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision, priority: -10 }
+
+    oro_product.api.set_product_page_template:
+        class: Oro\Bundle\ProductBundle\Api\Processor\SetProductPageTemplate
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: pre_validate, parentAction: create, class: Oro\Bundle\ProductBundle\Entity\Product, priority: -10 }
+            - { name: oro.api.processor, action: customize_form_data, event: pre_validate, parentAction: update, class: Oro\Bundle\ProductBundle\Entity\Product, priority: -10 }
