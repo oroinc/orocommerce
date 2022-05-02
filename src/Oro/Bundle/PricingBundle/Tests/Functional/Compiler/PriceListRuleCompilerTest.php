@@ -52,6 +52,8 @@ class PriceListRuleCompilerTest extends WebTestCase
             ]
         );
 
+        // Clear rules cache before tests
+        $this->getContainer()->get('oro_pricing.tests.cache.rule_cache.storage')->deleteAll();
         $this->registry = $this->getContainer()->get('doctrine');
         $this->compiler = $this->getContainer()->get('oro_pricing.compiler.price_list_rule_compiler');
     }
@@ -61,6 +63,10 @@ class PriceListRuleCompilerTest extends WebTestCase
         $configManager = $this->getContainer()->get('oro_config.global');
         $configManager->set('oro_pricing.price_calculation_precision', null);
         $configManager->flush();
+
+        // Clear rules cache after tests
+        $this->getContainer()->get('oro_pricing.tests.cache.rule_cache.storage')->deleteAll();
+
         parent::tearDown();
     }
 
