@@ -32,13 +32,4 @@ class OroProductExtensionTest extends ExtensionTestCase
         ];
         $this->assertExtensionConfigsLoaded($expectedExtensionConfigs);
     }
-
-    /**
-     * Test Get Alias
-     */
-    public function testGetAlias(): void
-    {
-        $extension = new OroProductExtension();
-        self::assertEquals('oro_product', $extension->getAlias());
-    }
 }

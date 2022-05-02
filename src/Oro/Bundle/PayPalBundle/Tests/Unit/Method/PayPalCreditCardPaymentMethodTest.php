@@ -5,8 +5,6 @@ namespace Oro\Bundle\PayPalBundle\Tests\Unit\Method;
 use Oro\Bundle\PaymentBundle\Context\PaymentContext;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\PaymentBundle\Tests\Unit\Method\ConfigTestTrait;
-use Oro\Bundle\PayPalBundle\DependencyInjection\OroPayPalExtension;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalCreditCardConfigInterface;
 use Oro\Bundle\PayPalBundle\Method\PayPalCreditCardPaymentMethod;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway;
@@ -14,7 +12,6 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\Response;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\ResponseStatusMap;
 use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
-use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
 
@@ -24,45 +21,28 @@ use Symfony\Component\Routing\RouterInterface;
  */
 class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
 {
-    use ConfigTestTrait, EntityTrait;
-
-    const PROXY_HOST = '112.33.44.55';
-    const PROXY_PORT = 7777;
+    private const PROXY_HOST = '112.33.44.55';
+    private const PROXY_PORT = 7777;
 
     /** @var Gateway|\PHPUnit\Framework\MockObject\MockObject */
-    protected $gateway;
+    private $gateway;
 
     /** @var RouterInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $router;
-
-    /** @var PayPalCreditCardPaymentMethod */
-    protected $method;
+    private $router;
 
     /** @var PayPalCreditCardConfigInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $paymentConfig;
+    private $paymentConfig;
+
+    /** @var PayPalCreditCardPaymentMethod */
+    private $method;
 
     protected function setUp(): void
     {
-        $this->gateway = $this->getMockBuilder('Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->router = $this->getMockBuilder('Symfony\Component\Routing\RouterInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->paymentConfig =
-            $this->createMock('Oro\Bundle\PayPalBundle\Method\Config\PayPalCreditCardConfigInterface');
+        $this->gateway = $this->createMock(Gateway::class);
+        $this->router = $this->createMock(RouterInterface::class);
+        $this->paymentConfig = $this->createMock(PayPalCreditCardConfigInterface::class);
 
         $this->method = new PayPalCreditCardPaymentMethod($this->gateway, $this->paymentConfig, $this->router);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getExtensionAlias()
-    {
-        return OroPayPalExtension::ALIAS;
     }
 
     public function testExecute()
@@ -107,20 +87,14 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param bool $expected
-     * @param string $actionName
-     *
      * @dataProvider supportsDataProvider
      */
-    public function testSupports($expected, $actionName)
+    public function testSupports(bool $expected, string $actionName)
     {
         $this->assertEquals($expected, $this->method->supports($actionName));
     }
 
-    /**
-     * @return array
-     */
-    public function supportsDataProvider()
+    public function supportsDataProvider(): array
     {
         return [
             [true, PaymentMethodInterface::AUTHORIZE],
@@ -132,12 +106,9 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param bool $expected
-     * @param bool $configValue
-     *
      * @dataProvider validateSupportsDataProvider
      */
-    public function testSupportsValidate($expected, $configValue)
+    public function testSupportsValidate(bool $expected, bool $configValue)
     {
         $this->paymentConfig->expects($this->once())
             ->method('isZeroAmountAuthorizationEnabled')
@@ -146,10 +117,7 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $this->method->supports(PaymentMethodInterface::VALIDATE));
     }
 
-    /**
-     * @return array
-     */
-    public function validateSupportsDataProvider()
+    public function validateSupportsDataProvider(): array
     {
         return [
             [true, true],
@@ -157,7 +125,7 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    protected function configureCredentials()
+    private function configureCredentials(): void
     {
         $this->paymentConfig->expects($this->once())
             ->method('getCredentials')
@@ -308,11 +276,8 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider responseWithErrorDataProvider
-     *
-     * @param string $responseMessage
-     * @param string $expectedMessage
      */
-    public function testChargeWithError($responseMessage, $expectedMessage)
+    public function testChargeWithError(string $responseMessage, string $expectedMessage)
     {
         $this->configureCredentials();
 
@@ -383,11 +348,8 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider responseWithErrorDataProvider
-     *
-     * @param string $responseMessage
-     * @param string $expectedMessage
      */
-    public function testCaptureWithError($responseMessage, $expectedMessage)
+    public function testCaptureWithError(string $responseMessage, string $expectedMessage)
     {
         $this->configureCredentials();
 
@@ -420,10 +382,7 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($sourceTransaction->isActive());
     }
 
-    /**
-     * @return array
-     */
-    public function responseWithErrorDataProvider()
+    public function responseWithErrorDataProvider(): array
     {
         return [
             'RESPMSG is filled' => [
@@ -735,10 +694,7 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
         $this->assertArrayNotHasKey('PARTNER', $transaction->getRequest());
     }
 
-    /**
-     * @param bool $useProxy
-     */
-    protected function configureProxyOptions($useProxy)
+    private function configureProxyOptions(bool $useProxy): void
     {
         $this->configureCredentials();
 
@@ -838,10 +794,7 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
         $this->method->execute($transaction->getAction(), $transaction);
     }
 
-    /**
-     * @return array
-     */
-    public function sslVerificationEnabledDataProvider()
+    public function sslVerificationEnabledDataProvider(): array
     {
         return [
             [true],
@@ -851,10 +804,8 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider sslVerificationEnabledDataProvider
-     *
-     * @param bool $sslVerificationEnabled
      */
-    public function testSslVerificationOptionValueIsPassedToPayFlow($sslVerificationEnabled)
+    public function testSslVerificationOptionValueIsPassedToPayFlow(bool $sslVerificationEnabled)
     {
         $this->configureCredentials();
 
@@ -882,7 +833,6 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
      */
     public function testIsApplicable(int $value, bool $expectedResult)
     {
-        /** @var PaymentContext|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->createMock(PaymentContext::class);
         $context->expects($this->once())
             ->method('getTotal')
@@ -891,10 +841,7 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedResult, $this->method->isApplicable($context));
     }
 
-    /**
-     * @return array
-     */
-    public function isApplicableProvider()
+    public function isApplicableProvider(): array
     {
         return [
             [0, false],

@@ -8,7 +8,6 @@ use Oro\Bundle\AttachmentBundle\Manager\FileManager;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\LayoutBundle\Model\ThemeImageTypeDimension;
-use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Provider\WatermarkImageFilterProvider;
 
 class WatermarkImageFilterProviderTest extends \PHPUnit\Framework\TestCase
@@ -49,21 +48,21 @@ class WatermarkImageFilterProviderTest extends \PHPUnit\Framework\TestCase
             ->method('get')
             ->willReturnMap([
                 [
-                    Configuration::ROOT_NODE . '.' . Configuration::PRODUCT_IMAGE_WATERMARK_FILE,
+                    'oro_product.product_image_watermark_file',
                     false,
                     false,
                     null,
                     self::IMAGE_ID
                 ],
                 [
-                    Configuration::ROOT_NODE . '.' . Configuration::PRODUCT_IMAGE_WATERMARK_SIZE,
+                    'oro_product.product_image_watermark_size',
                     false,
                     false,
                     null,
                     self::SIZE
                 ],
                 [
-                    Configuration::ROOT_NODE . '.' . Configuration::PRODUCT_IMAGE_WATERMARK_POSITION,
+                    'oro_product.product_image_watermark_position',
                     false,
                     false,
                     null,

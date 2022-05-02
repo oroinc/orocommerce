@@ -7,21 +7,18 @@ use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
-/**
- * Configuration builder for ConsentBundle
- */
 class Configuration implements ConfigurationInterface
 {
-    const ROOT_NODE = OroConsentExtension::ALIAS;
-    const CONSENT_FEATURE_ENABLED = 'consent_feature_enabled';
-    const ENABLED_CONSENTS = 'enabled_consents';
+    public const ROOT_NODE = 'oro_consent';
+    public const CONSENT_FEATURE_ENABLED = 'consent_feature_enabled';
+    public const ENABLED_CONSENTS = 'enabled_consents';
 
     /**
      * {@inheritdoc}
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder(static::ROOT_NODE);
+        $treeBuilder = new TreeBuilder(self::ROOT_NODE);
         $rootNode = $treeBuilder->getRootNode();
 
         SettingsBuilder::append(

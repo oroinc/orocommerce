@@ -3,7 +3,6 @@
 namespace Oro\Bundle\CheckoutBundle\EventListener;
 
 use Oro\Bundle\CheckoutBundle\DependencyInjection\Configuration;
-use Oro\Bundle\CheckoutBundle\DependencyInjection\OroCheckoutExtension;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
@@ -35,7 +34,7 @@ class CheckoutListener
             && null === $checkout->getOwner()
         ) {
             $checkout->setOwner($this->defaultUserProvider->getDefaultUser(
-                OroCheckoutExtension::ALIAS,
+                Configuration::ROOT_NODE,
                 Configuration::DEFAULT_GUEST_CHECKOUT_OWNER
             ));
 

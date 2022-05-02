@@ -8,12 +8,14 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
+    public const ROOT_NODE = 'oro_web_catalog';
+
     /**
      * {@inheritdoc}
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder(OroWebCatalogExtension::ALIAS);
+        $treeBuilder = new TreeBuilder(self::ROOT_NODE);
         $rootNode = $treeBuilder->getRootNode();
 
         SettingsBuilder::append(

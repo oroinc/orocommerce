@@ -15,7 +15,7 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder(OroVisibilityExtension::ALIAS);
+        $treeBuilder = new TreeBuilder('oro_visibility');
         $rootNode = $treeBuilder->getRootNode();
 
         SettingsBuilder::append(

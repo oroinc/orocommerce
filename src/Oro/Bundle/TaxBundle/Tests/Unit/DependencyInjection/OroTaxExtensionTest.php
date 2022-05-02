@@ -22,11 +22,4 @@ class OroTaxExtensionTest extends ExtensionTestCase
 
         $this->assertDefinitionsLoaded($expectedDefinitions);
     }
-
-    public function testGetAlias(): void
-    {
-        $extension = new OroTaxExtension();
-
-        self::assertSame('oro_tax', $extension->getAlias());
-    }
 }

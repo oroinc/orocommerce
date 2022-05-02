@@ -23,10 +23,4 @@ class OroConsentExtensionTest extends ExtensionTestCase
         ];
         $this->assertExtensionConfigsLoaded($expectedExtensionConfigs);
     }
-
-    public function testGetAlias()
-    {
-        $extension = new OroConsentExtension();
-        $this->assertEquals('oro_consent', $extension->getAlias());
-    }
 }

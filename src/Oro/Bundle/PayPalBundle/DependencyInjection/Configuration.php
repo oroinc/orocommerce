@@ -6,17 +6,14 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
-/**
- * Configuration class for OroPayPalBundle.
- */
 class Configuration implements ConfigurationInterface
 {
-    const CONFIG_SECTION = 'oro_paypal';
-    const CONFIG_KEY_ALLOWED_IPS = 'allowed_ips';
+    public const ROOT_NODE = 'oro_paypal';
+    public const CONFIG_KEY_ALLOWED_IPS = 'allowed_ips';
 
     public function getConfigTreeBuilder(): TreeBuilder
     {
-        $treeBuilder = new TreeBuilder(self::CONFIG_SECTION);
+        $treeBuilder = new TreeBuilder(self::ROOT_NODE);
         $rootNode = $treeBuilder->getRootNode();
         $rootNode
             ->children()
@@ -73,6 +70,6 @@ class Configuration implements ConfigurationInterface
      */
     public static function getConfigKey($key): string
     {
-        return sprintf('%s%s%s', static::CONFIG_SECTION, ConfigManager::SECTION_MODEL_SEPARATOR, $key);
+        return self::ROOT_NODE . ConfigManager::SECTION_MODEL_SEPARATOR . $key;
     }
 }

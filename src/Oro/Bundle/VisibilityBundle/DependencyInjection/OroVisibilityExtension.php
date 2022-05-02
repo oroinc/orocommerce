@@ -10,20 +10,14 @@ use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
-/**
- * This is the class that loads and manages VisibilityBundle service configuration
- */
 class OroVisibilityExtension extends Extension implements PrependExtensionInterface
 {
-    const ALIAS = 'oro_visibility';
-
     /**
      * {@inheritDoc}
      */
     public function load(array $configs, ContainerBuilder $container)
     {
-        $configuration = new Configuration();
-        $config = $this->processConfiguration($configuration, $configs);
+        $config = $this->processConfiguration(new Configuration(), $configs);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.yml');
@@ -44,13 +38,5 @@ class OroVisibilityExtension extends Extension implements PrependExtensionInterf
         /** @var ExtendedContainerBuilder $container */
         SecurityExtensionHelper::makeFirewallLatest($container, 'frontend_secure');
         SecurityExtensionHelper::makeFirewallLatest($container, 'frontend');
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getAlias()
-    {
-        return self::ALIAS;
     }
 }

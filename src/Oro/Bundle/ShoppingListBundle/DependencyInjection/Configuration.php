@@ -9,6 +9,7 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
+    const ROOT_NODE = 'oro_shopping_list';
     const DEFAULT_GUEST_SHOPPING_LIST_OWNER = 'default_guest_shopping_list_owner';
 
     /**
@@ -16,7 +17,7 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder('oro_shopping_list');
+        $treeBuilder = new TreeBuilder(self::ROOT_NODE);
 
         $rootNode = $treeBuilder->getRootNode();
 

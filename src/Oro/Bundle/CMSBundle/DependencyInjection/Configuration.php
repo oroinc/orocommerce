@@ -6,28 +6,13 @@ use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
-/**
- * This class merge configuration from your config files
- */
 class Configuration implements ConfigurationInterface
 {
-    /**
-     * @var string
-     */
     public const DIRECT_EDITING = 'direct_editing';
-
-    /**
-     * @var string
-     */
     public const LOGIN_PAGE_CSS_FIELD_OPTION = 'login_page_css_field';
-
-    /**
-     * @var string
-     */
     public const DIRECT_URL_PREFIX = 'landing_page_direct_url_prefix';
 
-    /** @var array */
-    private $contentRestrictionModes = [];
+    private array $contentRestrictionModes;
 
     public function __construct(array $contentRestrictionModes)
     {
@@ -39,7 +24,7 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder(): TreeBuilder
     {
-        $treeBuilder = new TreeBuilder(OroCMSExtension::ALIAS);
+        $treeBuilder = new TreeBuilder('oro_cms');
         $rootNode = $treeBuilder->getRootNode();
         $rootNode
             ->children()

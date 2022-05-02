@@ -6,8 +6,6 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
-use Oro\Bundle\PricingBundle\DependencyInjection\OroPricingExtension;
 use Oro\Bundle\PricingBundle\Model\CombinedPriceListTreeHandler;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadGuestCombinedPriceLists;
@@ -86,12 +84,8 @@ class CombinedPriceListTreeHandlerTest extends WebTestCase
     ) {
         $customerUser = new CustomerUser();
         $customerUser->setCustomer($this->getCustomer($customerReference));
-        $key = implode(
-            ConfigManager::SECTION_MODEL_SEPARATOR,
-            [OroPricingExtension::ALIAS, Configuration::COMBINED_PRICE_LIST]
-        );
         $configPriceList = $this->getReference($configPriceListReference);
-        $this->configManager->set($key, $configPriceList->getId());
+        $this->configManager->set('oro_pricing.combined_price_list', $configPriceList->getId());
         $this->websiteManager->expects($this->any())->method('getCurrentWebsite')
             ->willReturn($this->getReference(LoadWebsiteData::WEBSITE1));
 

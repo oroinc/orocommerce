@@ -7,11 +7,10 @@ use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
-/**
- * Redirect bundle configuration definition.
- */
 class Configuration implements ConfigurationInterface
 {
+    public const ROOT_NODE = 'oro_redirect';
+
     public const ENABLE_DIRECT_URL = 'enable_direct_url';
     public const CANONICAL_URL_TYPE = 'canonical_url_type';
     public const USE_LOCALIZED_CANONICAL = 'use_localized_canonical';
@@ -33,8 +32,7 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder(OroRedirectExtension::ALIAS);
-
+        $treeBuilder = new TreeBuilder(self::ROOT_NODE);
         $rootNode = $treeBuilder->getRootNode();
 
         SettingsBuilder::append(
@@ -53,6 +51,6 @@ class Configuration implements ConfigurationInterface
 
     public static function getConfigKey(string $key): string
     {
-        return sprintf('%s%s%s', OroRedirectExtension::ALIAS, ConfigManager::SECTION_MODEL_SEPARATOR, $key);
+        return self::ROOT_NODE . ConfigManager::SECTION_MODEL_SEPARATOR . $key;
     }
 }

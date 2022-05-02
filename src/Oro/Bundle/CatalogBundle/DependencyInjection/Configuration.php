@@ -9,7 +9,7 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
-    const ROOT_NODE = OroCatalogExtension::ALIAS;
+    const ROOT_NODE = 'oro_catalog';
     const DIRECT_URL_PREFIX = 'category_direct_url_prefix';
     const ALL_PRODUCTS_PAGE_ENABLED = 'all_products_page_enabled';
     const CATEGORY_IMAGE_PLACEHOLDER = 'category_image_placeholder';

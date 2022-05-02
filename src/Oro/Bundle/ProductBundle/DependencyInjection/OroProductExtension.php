@@ -9,15 +9,12 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 class OroProductExtension extends Extension
 {
-    const ALIAS = 'oro_product';
-
     /**
      * {@inheritDoc}
      */
     public function load(array $configs, ContainerBuilder $container)
     {
-        $configuration = new Configuration();
-        $config = $this->processConfiguration($configuration, $configs);
+        $config = $this->processConfiguration(new Configuration(), $configs);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.yml');
@@ -39,13 +36,5 @@ class OroProductExtension extends Extension
         }
 
         $container->prependExtensionConfig($this->getAlias(), $config);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getAlias()
-    {
-        return self::ALIAS;
     }
 }

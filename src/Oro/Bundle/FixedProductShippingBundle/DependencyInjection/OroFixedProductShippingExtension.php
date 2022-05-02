@@ -10,11 +10,6 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 class OroFixedProductShippingExtension extends Extension
 {
     /**
-     * Alias for system configuration
-     */
-    public const ALIAS = 'oro_fixed_product_shipping';
-
-    /**
      * {@inheritDoc}
      */
     public function load(array $configs, ContainerBuilder $container): void
@@ -24,13 +19,5 @@ class OroFixedProductShippingExtension extends Extension
         $loader->load('factories.yml');
         $loader->load('event_listeners.yml');
         $loader->load('form_types.yml');
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getAlias(): string
-    {
-        return self::ALIAS;
     }
 }

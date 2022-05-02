@@ -7,13 +7,8 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
-/**
- * This is the class that loads and manages PaymentTermBundle service configuration
- */
 class OroPaymentTermExtension extends Extension
 {
-    const ALIAS = 'oro_payment_term';
-
     /**
      * {@inheritDoc}
      */
@@ -25,13 +20,5 @@ class OroPaymentTermExtension extends Extension
         $loader->load('services.yml');
         $loader->load('integration.yml');
         $loader->load('controllers.yml');
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getAlias()
-    {
-        return self::ALIAS;
     }
 }

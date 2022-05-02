@@ -8,7 +8,7 @@ use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CatalogBundle\Migrations\Data\Demo\ORM\LoadCategoryDemoData;
 use Oro\Bundle\CMSBundle\Migrations\Data\Demo\ORM\LoadPageDemoData;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
-use Oro\Bundle\WebCatalogBundle\DependencyInjection\OroWebCatalogExtension;
+use Oro\Bundle\WebCatalogBundle\DependencyInjection\Configuration;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -75,7 +75,7 @@ class LoadWebCatalogDemoData extends AbstractLoadWebCatalogDemoData implements D
     protected function enableWebCatalog(WebCatalog $webCatalog)
     {
         $configManager = $this->container->get('oro_config.global');
-        $configManager->set(OroWebCatalogExtension::ALIAS . '.web_catalog', $webCatalog->getId());
+        $configManager->set(Configuration::ROOT_NODE . '.web_catalog', $webCatalog->getId());
 
         $configManager->flush();
     }

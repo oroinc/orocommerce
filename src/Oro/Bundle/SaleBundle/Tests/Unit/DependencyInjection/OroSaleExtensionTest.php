@@ -53,11 +53,6 @@ class OroSaleExtensionTest extends ExtensionTestCase
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
 
-        $this->assertExtensionConfigsLoaded([OroSaleExtension::ALIAS]);
-    }
-
-    public function testGetAlias(): void
-    {
-        static::assertEquals(OroSaleExtension::ALIAS, (new OroSaleExtension())->getAlias());
+        $this->assertExtensionConfigsLoaded(['oro_sale']);
     }
 }

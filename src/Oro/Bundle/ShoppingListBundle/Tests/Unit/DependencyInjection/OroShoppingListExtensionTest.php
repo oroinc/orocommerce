@@ -38,11 +38,6 @@ class OroShoppingListExtensionTest extends ExtensionTestCase
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
 
-        $this->assertExtensionConfigsLoaded([OroShoppingListExtension::ALIAS]);
-    }
-
-    public function testGetAlias(): void
-    {
-        static::assertEquals(OroShoppingListExtension::ALIAS, (new OroShoppingListExtension())->getAlias());
+        $this->assertExtensionConfigsLoaded(['oro_shopping_list']);
     }
 }

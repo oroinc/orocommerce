@@ -3,12 +3,10 @@
 namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Api\Frontend\RestJsonApi;
 
 use Oro\Bundle\AddressBundle\Tests\Functional\DataFixtures\LoadCountriesAndRegions;
-use Oro\Bundle\CustomerBundle\DependencyInjection\OroCustomerExtension;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
-use Oro\Bundle\CustomerBundle\EventListener\SystemConfigListener;
 use Oro\Bundle\CustomerBundle\Provider\CustomerUserRelationsProvider;
 use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\CustomerBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadCustomerData;
@@ -90,10 +88,7 @@ class CustomerUserForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTes
         /** @var DefaultUserProvider $defaultUserProvider */
         $defaultUserProvider = self::getContainer()->get('oro_user.provider.default_user');
 
-        return $defaultUserProvider->getDefaultUser(
-            OroCustomerExtension::ALIAS,
-            SystemConfigListener::SETTING
-        );
+        return $defaultUserProvider->getDefaultUser('oro_customer', 'default_customer_owner');
     }
 
     private function getGuestCustomerGroup(): ?CustomerGroup

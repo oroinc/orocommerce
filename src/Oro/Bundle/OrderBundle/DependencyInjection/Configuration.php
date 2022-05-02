@@ -11,22 +11,20 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
-    const CONFIG_SECTION = 'oro_order';
-
-    const CONFIG_KEY_ENABLE_CANCELLATION = 'order_automation_enable_cancellation';
-    const CONFIG_KEY_APPLICABLE_INTERNAL_STATUSES = 'order_automation_applicable_statuses';
-    const CONFIG_KEY_TARGET_INTERNAL_STATUS = 'order_automation_target_status';
-    const CONFIG_KEY_NEW_ORDER_INTERNAL_STATUS = 'order_creation_new_internal_order_status';
-    const CONFIG_KEY_PREVIOUSLY_PURCHASED_PERIOD = 'order_previously_purchased_period';
-    const CONFIG_KEY_ENABLE_PURCHASE_HISTORY = 'enable_purchase_history';
+    public const ROOT_NODE = 'oro_order';
+    public const CONFIG_KEY_ENABLE_CANCELLATION = 'order_automation_enable_cancellation';
+    public const CONFIG_KEY_APPLICABLE_INTERNAL_STATUSES = 'order_automation_applicable_statuses';
+    public const CONFIG_KEY_TARGET_INTERNAL_STATUS = 'order_automation_target_status';
+    public const CONFIG_KEY_NEW_ORDER_INTERNAL_STATUS = 'order_creation_new_internal_order_status';
+    public const CONFIG_KEY_PREVIOUSLY_PURCHASED_PERIOD = 'order_previously_purchased_period';
+    public const CONFIG_KEY_ENABLE_PURCHASE_HISTORY = 'enable_purchase_history';
 
     /**
      * {@inheritDoc}
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder('oro_order');
-
+        $treeBuilder = new TreeBuilder(self::ROOT_NODE);
         $rootNode = $treeBuilder->getRootNode();
 
         SettingsBuilder::append(
@@ -74,6 +72,6 @@ class Configuration implements ConfigurationInterface
      */
     public static function getConfigKey($key)
     {
-        return sprintf('%s%s%s', static::CONFIG_SECTION, ConfigManager::SECTION_MODEL_SEPARATOR, $key);
+        return self::ROOT_NODE . ConfigManager::SECTION_MODEL_SEPARATOR . $key;
     }
 }

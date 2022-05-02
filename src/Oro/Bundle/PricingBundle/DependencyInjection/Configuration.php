@@ -9,9 +9,6 @@ use Oro\Bundle\PricingBundle\PricingStrategy\MinimalPricesCombiningStrategy;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
-/**
- * Configuration structure and default values for PricingBundle.
- */
 class Configuration implements ConfigurationInterface
 {
     const ROOT_NODE = 'oro_pricing';
@@ -53,7 +50,7 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder(OroPricingExtension::ALIAS);
+        $treeBuilder = new TreeBuilder(self::ROOT_NODE);
 
         $rootNode = $treeBuilder->getRootNode();
 
@@ -84,7 +81,7 @@ class Configuration implements ConfigurationInterface
     public static function getConfigKeyToPriceList()
     {
         if (!self::$configKeyToPriceList) {
-            self::$configKeyToPriceList = self::getConfigKeyByName(Configuration::COMBINED_PRICE_LIST);
+            self::$configKeyToPriceList = self::getConfigKeyByName(self::COMBINED_PRICE_LIST);
         }
 
         return self::$configKeyToPriceList;
@@ -96,7 +93,7 @@ class Configuration implements ConfigurationInterface
     public static function getConfigKeyToFullPriceList()
     {
         if (!self::$configKeyToFullPriceList) {
-            self::$configKeyToFullPriceList = self::getConfigKeyByName(Configuration::FULL_COMBINED_PRICE_LIST);
+            self::$configKeyToFullPriceList = self::getConfigKeyByName(self::FULL_COMBINED_PRICE_LIST);
         }
 
         return self::$configKeyToFullPriceList;
@@ -108,6 +105,6 @@ class Configuration implements ConfigurationInterface
      */
     public static function getConfigKeyByName($key)
     {
-        return implode(ConfigManager::SECTION_MODEL_SEPARATOR, [OroPricingExtension::ALIAS, $key]);
+        return self::ROOT_NODE . ConfigManager::SECTION_MODEL_SEPARATOR . $key;
     }
 }

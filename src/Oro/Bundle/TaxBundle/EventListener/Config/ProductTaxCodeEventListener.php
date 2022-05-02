@@ -6,7 +6,7 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
-use Oro\Bundle\TaxBundle\DependencyInjection\OroTaxExtension;
+use Oro\Bundle\TaxBundle\DependencyInjection\Configuration;
 use Oro\Bundle\TaxBundle\Entity\AbstractTaxCode;
 use Oro\Bundle\TaxBundle\Entity\Repository\AbstractTaxCodeRepository;
 
@@ -57,7 +57,7 @@ class ProductTaxCodeEventListener
     {
         $settings = $event->getSettings();
 
-        $key = OroTaxExtension::ALIAS . ConfigManager::SECTION_VIEW_SEPARATOR . $this->settingsKey;
+        $key = Configuration::ROOT_NODE . ConfigManager::SECTION_VIEW_SEPARATOR . $this->settingsKey;
         if (!array_key_exists($key, $settings)) {
             return;
         }

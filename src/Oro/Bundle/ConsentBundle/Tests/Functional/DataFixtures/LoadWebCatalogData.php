@@ -5,7 +5,7 @@ namespace Oro\Bundle\ConsentBundle\Tests\Functional\DataFixtures;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\WebCatalogBundle\DependencyInjection\OroWebCatalogExtension;
+use Oro\Bundle\WebCatalogBundle\DependencyInjection\Configuration;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
@@ -47,7 +47,7 @@ class LoadWebCatalogData extends AbstractFixture implements ContainerAwareInterf
             if ($catalogData['use_in_routing']) {
                 $configManager = $this->container->get('oro_config.global');
                 $configManager->set(
-                    OroWebCatalogExtension::ALIAS. ConfigManager::SECTION_MODEL_SEPARATOR . 'web_catalog',
+                    Configuration::ROOT_NODE. ConfigManager::SECTION_MODEL_SEPARATOR . 'web_catalog',
                     $this->getReference($catalogReference)->getId()
                 );
             }

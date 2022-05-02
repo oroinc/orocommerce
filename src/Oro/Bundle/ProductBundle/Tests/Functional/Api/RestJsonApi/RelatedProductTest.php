@@ -5,7 +5,6 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\Api\RestJsonApi;
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadUserData as CatalogLoadUserData;
 use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
-use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadRelatedProductData;
@@ -44,17 +43,15 @@ class RelatedProductTest extends RestJsonApiTestCase
     private function setRelatedProductsEnabled(bool $enabled): void
     {
         $configManager = self::getConfigManager();
-        $name = sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::RELATED_PRODUCTS_ENABLED);
-        $configManager->set($name, $enabled);
+        $configManager->set('oro_product.related_products_enabled', $enabled);
         $configManager->flush();
     }
 
     private function setRelatedProductsLimit(int $limit): void
     {
         $configManager = self::getConfigManager();
-        $name = sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::MAX_NUMBER_OF_RELATED_PRODUCTS);
-        $configManager->set($name, $limit, 0);
-        $configManager->set($name, $limit, 1);
+        $configManager->set('oro_product.max_number_of_related_products', $limit, 0);
+        $configManager->set('oro_product.max_number_of_related_products', $limit, 1);
         $configManager->flush();
     }
 

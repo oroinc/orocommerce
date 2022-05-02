@@ -8,12 +8,14 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
+    public const ROOT_NODE = 'oro_shipping';
+
     /**
      * {@inheritdoc}
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder(OroShippingExtension::ALIAS);
+        $treeBuilder = new TreeBuilder(self::ROOT_NODE);
 
         $rootNode = $treeBuilder->getRootNode();
 

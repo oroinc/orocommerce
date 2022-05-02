@@ -6,12 +6,17 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\TaxBundle\DependencyInjection\OroTaxExtension;
+use Oro\Bundle\TaxBundle\DependencyInjection\Configuration;
 use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
-class LoadTaxConfigurationDemoData extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
+/**
+ * Loads TAX configuration.
+ */
+class LoadTaxConfigurationDemoData extends AbstractFixture implements
+    DependentFixtureInterface,
+    ContainerAwareInterface
 {
     use ContainerAwareTrait;
 
@@ -29,23 +34,23 @@ class LoadTaxConfigurationDemoData extends AbstractFixture implements DependentF
     /**
      * {@inheritdoc}
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
-            'Oro\Bundle\TaxBundle\Migrations\Data\Demo\ORM\LoadTaxTableRatesDemoData'
+            LoadTaxTableRatesDemoData::class
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $configManager = $this->container->get('oro_config.global');
 
         foreach (self::$configurations as $option => $value) {
             $configManager->set(
-                OroTaxExtension::ALIAS . ConfigManager::SECTION_MODEL_SEPARATOR . $option,
+                Configuration::ROOT_NODE . ConfigManager::SECTION_MODEL_SEPARATOR . $option,
                 $value
             );
         }

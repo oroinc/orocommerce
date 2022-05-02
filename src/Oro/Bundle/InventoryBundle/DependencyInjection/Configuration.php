@@ -9,7 +9,7 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
-    const ROOT_NODE = OroInventoryExtension::ALIAS;
+    const ROOT_NODE = 'oro_inventory';
     const MANAGE_INVENTORY = 'manage_inventory';
     const HIGHLIGHT_LOW_INVENTORY = 'highlight_low_inventory';
     const INVENTORY_THRESHOLD = 'inventory_threshold';
@@ -42,7 +42,7 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder(OroInventoryExtension::ALIAS);
+        $treeBuilder = new TreeBuilder(self::ROOT_NODE);
         $rootNode = $treeBuilder->getRootNode();
         SettingsBuilder::append(
             $rootNode,
@@ -73,6 +73,6 @@ class Configuration implements ConfigurationInterface
      */
     public static function getConfigKeyByName($name)
     {
-        return OroInventoryExtension::ALIAS . ConfigManager::SECTION_MODEL_SEPARATOR . $name;
+        return self::ROOT_NODE . ConfigManager::SECTION_MODEL_SEPARATOR . $name;
     }
 }

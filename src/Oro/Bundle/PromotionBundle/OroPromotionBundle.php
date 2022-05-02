@@ -5,33 +5,19 @@ namespace Oro\Bundle\PromotionBundle;
 use Oro\Bundle\LocaleBundle\DependencyInjection\Compiler\EntityFallbackFieldsStoragePass;
 use Oro\Bundle\PromotionBundle\DependencyInjection\Compiler\PromotionProductsGridCompilerPass;
 use Oro\Bundle\PromotionBundle\DependencyInjection\Compiler\TwigSandboxConfigurationPass;
-use Oro\Bundle\PromotionBundle\DependencyInjection\OroPromotionExtension;
 use Oro\Component\DependencyInjection\Compiler\PriorityNamedTaggedServiceCompilerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-/**
- * The PromotionBundle bundle class.
- */
 class OroPromotionBundle extends Bundle
 {
     /**
      * {@inheritdoc}
      */
-    public function getContainerExtension()
+    public function build(ContainerBuilder $container): void
     {
-        if (!$this->extension) {
-            $this->extension = new OroPromotionExtension();
-        }
+        parent::build($container);
 
-        return $this->extension;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function build(ContainerBuilder $container)
-    {
         $container->addCompilerPass(new EntityFallbackFieldsStoragePass([
             'Oro\Bundle\PromotionBundle\Entity\Promotion' => [
                 'label' => 'labels',

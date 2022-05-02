@@ -5,7 +5,6 @@ namespace Oro\Bundle\RedirectBundle\Tests\Unit\Generator;
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\RedirectBundle\DependencyInjection\Configuration;
-use Oro\Bundle\RedirectBundle\DependencyInjection\OroRedirectExtension;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
@@ -326,9 +325,9 @@ class CanonicalUrlGeneratorTest extends AbstractCanonicalUrlGeneratorTestCase
         $this->cache->expects($this->exactly(3))
             ->method('delete')
             ->withConsecutive(
-                [sprintf('%s.%s', OroRedirectExtension::ALIAS, Configuration::CANONICAL_URL_TYPE)],
-                [sprintf('%s.%s', OroRedirectExtension::ALIAS, Configuration::CANONICAL_URL_SECURITY_TYPE)],
-                [sprintf('%s.%s', OroRedirectExtension::ALIAS, Configuration::USE_LOCALIZED_CANONICAL)]
+                ['oro_redirect.canonical_url_type'],
+                ['oro_redirect.canonical_url_security_type'],
+                ['oro_redirect.use_localized_canonical']
             );
         $this->canonicalUrlGenerator->clearCache();
     }
@@ -339,23 +338,9 @@ class CanonicalUrlGeneratorTest extends AbstractCanonicalUrlGeneratorTestCase
         $this->cache->expects($this->exactly(3))
             ->method('delete')
             ->withConsecutive(
-                [
-                    sprintf(
-                        '%s.%s.%s',
-                        OroRedirectExtension::ALIAS,
-                        Configuration::CANONICAL_URL_TYPE,
-                        777
-                    )
-                ],
-                [
-                    sprintf(
-                        '%s.%s.%s',
-                        OroRedirectExtension::ALIAS,
-                        Configuration::CANONICAL_URL_SECURITY_TYPE,
-                        777
-                    )
-                ],
-                [sprintf('%s.%s', OroRedirectExtension::ALIAS, Configuration::USE_LOCALIZED_CANONICAL)]
+                [sprintf('oro_redirect.canonical_url_type.%s', 777)],
+                [sprintf('oro_redirect.canonical_url_security_type.%s', 777)],
+                ['oro_redirect.use_localized_canonical']
             );
 
         $this->canonicalUrlGenerator->clearCache($website);

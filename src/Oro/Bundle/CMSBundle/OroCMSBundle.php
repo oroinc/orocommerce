@@ -11,32 +11,28 @@ use Oro\Bundle\LocaleBundle\DependencyInjection\Compiler\EntityFallbackFieldsSto
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-/**
- * The CMSBundle bundle class.
- */
 class OroCMSBundle extends Bundle
 {
     /**
      * {@inheritdoc}
      */
-    public function build(ContainerBuilder $container)
+    public function build(ContainerBuilder $container): void
     {
         parent::build($container);
 
-        $container
-            ->addCompilerPass(new EntityExtendFieldTypePass())
-            ->addCompilerPass(new DbalTypeDefaultValuePass())
-            ->addCompilerPass(new ExtendFieldValidationLoaderPass())
-            ->addCompilerPass(new AttributeBlockTypeMapperPass())
-            ->addCompilerPass(new LayoutManagerPass())
-            ->addCompilerPass(new EntityFallbackFieldsStoragePass([
-                'Oro\Bundle\CMSBundle\Entity\Page' => [
-                    'slugPrototype' => 'slugPrototypes',
-                    'title' => 'titles'
-                ],
-                'Oro\Bundle\CMSBundle\Entity\ContentBlock' => [
-                    'title' => 'titles'
-                ]
-            ]));
+        $container->addCompilerPass(new EntityExtendFieldTypePass());
+        $container->addCompilerPass(new DbalTypeDefaultValuePass());
+        $container->addCompilerPass(new ExtendFieldValidationLoaderPass());
+        $container->addCompilerPass(new AttributeBlockTypeMapperPass());
+        $container->addCompilerPass(new LayoutManagerPass());
+        $container->addCompilerPass(new EntityFallbackFieldsStoragePass([
+            'Oro\Bundle\CMSBundle\Entity\Page' => [
+                'slugPrototype' => 'slugPrototypes',
+                'title' => 'titles'
+            ],
+            'Oro\Bundle\CMSBundle\Entity\ContentBlock' => [
+                'title' => 'titles'
+            ]
+        ]));
     }
 }

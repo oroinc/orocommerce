@@ -9,8 +9,6 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 class OroWebsiteSearchExtension extends Extension
 {
-    const ALIAS = 'oro_website_search';
-
     /**
      * {@inheritdoc}
      */
@@ -31,13 +29,5 @@ class OroWebsiteSearchExtension extends Extension
         if ($container->getParameter('kernel.environment') === 'test') {
             $loader->load('services_test.yml');
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getAlias()
-    {
-        return self::ALIAS;
     }
 }

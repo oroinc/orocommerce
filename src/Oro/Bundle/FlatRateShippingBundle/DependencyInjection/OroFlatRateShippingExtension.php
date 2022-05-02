@@ -9,11 +9,8 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 class OroFlatRateShippingExtension extends Extension
 {
-    /** @internal */
-    const ALIAS = 'oro_flat_rate_shipping';
-
     /**
-     * @throws \Exception
+     * {@inheritDoc}
      */
     public function load(array $configs, ContainerBuilder $container)
     {
@@ -22,13 +19,5 @@ class OroFlatRateShippingExtension extends Extension
         $loader->load('form_types.yml');
         $loader->load('event_listeners.yml');
         $loader->load('factories.yml');
-    }
-
-    /**
-     * @return string
-     */
-    public function getAlias()
-    {
-        return static::ALIAS;
     }
 }

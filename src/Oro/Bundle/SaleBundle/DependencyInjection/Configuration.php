@@ -9,11 +9,9 @@ use Oro\Bundle\SaleBundle\Provider\ContactInfoSourceOptionsProvider;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
-/**
- * This is the class that validates and merges configuration from your config files
- */
 class Configuration implements ConfigurationInterface
 {
+    const ROOT_NODE = 'oro_sale';
     const CONTACT_INFO_SOURCE_DISPLAY = 'contact_info_source_display';
     const CONTACT_DETAILS = 'contact_details';
     const ALLOW_USER_CONFIGURATION = 'allow_user_configuration';
@@ -29,7 +27,7 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder('oro_sale');
+        $treeBuilder = new TreeBuilder(self::ROOT_NODE);
 
         $rootNode = $treeBuilder->getRootNode();
 
@@ -63,6 +61,6 @@ class Configuration implements ConfigurationInterface
      */
     public static function getConfigKeyByName($key)
     {
-        return implode(ConfigManager::SECTION_MODEL_SEPARATOR, [OroSaleExtension::ALIAS, $key]);
+        return self::ROOT_NODE . ConfigManager::SECTION_MODEL_SEPARATOR . $key;
     }
 }

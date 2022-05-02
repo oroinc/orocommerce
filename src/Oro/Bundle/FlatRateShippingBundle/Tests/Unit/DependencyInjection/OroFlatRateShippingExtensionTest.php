@@ -32,9 +32,4 @@ class OroFlatRateShippingExtensionTest extends ExtensionTestCase
 
         $this->assertDefinitionsLoaded($expectedDefinitions);
     }
-
-    public function testGetAliasReturnsString()
-    {
-        $this->assertTrue(is_string($this->extension->getAlias()));
-    }
 }

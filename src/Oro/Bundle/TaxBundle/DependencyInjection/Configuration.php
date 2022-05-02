@@ -8,20 +8,17 @@ use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
-/**
- * OroTaxBundle configuration.
- */
 class Configuration implements ConfigurationInterface
 {
-    const ADDRESS_RESOLVER_GRANULARITY = 'address_resolver_granularity';
+    public const ROOT_NODE = 'oro_tax';
+    public const ADDRESS_RESOLVER_GRANULARITY = 'address_resolver_granularity';
 
     /**
      * {@inheritDoc}
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder(OroTaxExtension::ALIAS);
-
+        $treeBuilder = new TreeBuilder(self::ROOT_NODE);
         $rootNode = $treeBuilder->getRootNode();
 
         SettingsBuilder::append(
