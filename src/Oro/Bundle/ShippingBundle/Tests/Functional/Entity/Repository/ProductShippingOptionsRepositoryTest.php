@@ -2,8 +2,10 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Functional\Entity\Repository;
 
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
 use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 use Oro\Bundle\ShippingBundle\Entity\Repository\ProductShippingOptionsRepository;
+use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadCustomProductUnits;
 use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadProductShippingOptions;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
@@ -19,6 +21,7 @@ class ProductShippingOptionsRepositoryTest extends WebTestCase
         $this->initClient([], self::generateBasicAuthHeader());
         $this->loadFixtures([
             LoadProductShippingOptions::class,
+            LoadCustomProductUnits::class,
         ]);
 
         $this->repository = self::getContainer()->get('doctrine')
@@ -62,13 +65,15 @@ class ProductShippingOptionsRepositoryTest extends WebTestCase
     public function testFindIndexedByProductsAndUnitsDifferentUnits(): void
     {
         $product1 = $this->getReference('product-1');
-        $unit1 = $this->getReference('product_unit.box');
+        $unit1 = $this->getReference(LoadProductUnits::BOX);
         $product2 = $this->getReference('product-2');
-        $unit2 = $this->getReference('product_unit.bottle');
+        $unit2 = $this->getReference(LoadProductUnits::BOTTLE);
+        $unit3 = $this->getReference(LoadCustomProductUnits::WITH_SPECIAL_CHAR);
 
         $unitsByProductIds = [
             $product1->getId() => ['box' => $unit1],
             $product2->getId() => ['bottle' => $unit2],
+            $product2->getId() => ['mètre' => $unit3],
         ];
 
         $shippingOptionsArray = $this->repository->findIndexedByProductsAndUnits($unitsByProductIds);
