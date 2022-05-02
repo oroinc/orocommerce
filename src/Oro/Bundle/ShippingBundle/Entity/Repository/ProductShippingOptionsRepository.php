@@ -24,9 +24,9 @@ class ProductShippingOptionsRepository extends ServiceEntityRepository
 
             $expressions = [];
             $params = [];
-            foreach ($unit as $unitCode => $unitArr) {
+            foreach ($unit as $unitArr) {
                 $productParam = 'product_' . $productId;
-                $unitParam = 'unit_' . $unitCode;
+                $unitParam = QueryBuilderUtil::generateParameterName('unit_');
 
                 $expressions[] = sprintf('(o.product = :%s AND o.productUnit = :%s)', $productParam, $unitParam);
                 $params[] = [$productParam => $productId, $unitParam => $unitArr];
