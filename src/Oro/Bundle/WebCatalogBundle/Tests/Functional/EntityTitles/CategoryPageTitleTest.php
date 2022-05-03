@@ -21,12 +21,12 @@ class CategoryPageTitleTest extends WebTestCase
                 LoadWebCatalogCategoryData::class,
             ]
         );
-        $this->getContainer()->get('oro_catalog.layout.data_provider.category.cache')->deleteAll();
+        $this->getContainer()->get('oro_catalog.tests.layout.data_provider.category.cache')->deleteAll();
     }
 
     protected function tearDown(): void
     {
-        $this->getContainer()->get('oro_catalog.layout.data_provider.category.cache')->deleteAll();
+        $this->getContainer()->get('oro_catalog.tests.layout.data_provider.category.cache')->deleteAll();
         parent::tearDown();
     }
 

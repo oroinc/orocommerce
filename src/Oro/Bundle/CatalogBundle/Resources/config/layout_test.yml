@@ -1,0 +1,10 @@
+services:
+    oro_catalog.tests.layout.data_provider.category.cache:
+        decorates: oro_catalog.layout.data_provider.category.cache
+        parent: oro_catalog.layout.data_provider.category.cache
+        public: true
+
+    oro_catalog.tests.layout.data_provider.featured_categories_products:
+        decorates: oro_catalog.layout.data_provider.featured_categories_products
+        parent: oro_catalog.layout.data_provider.featured_categories_products
+        public: true

@@ -33,6 +33,10 @@ class OroCatalogExtension extends Extension
         $loader->load('controllers.yml');
         $loader->load('importexport.yml');
 
+        if ($container->getParameter('kernel.environment') === 'test') {
+            $loader->load('layout_test.yml');
+        }
+
         $container->prependExtensionConfig($this->getAlias(), array_intersect_key($config, array_flip(['settings'])));
     }
 
