@@ -21,6 +21,13 @@ class CategoryPageTitleTest extends WebTestCase
                 LoadWebCatalogCategoryData::class,
             ]
         );
+        $this->getContainer()->get('oro_catalog.layout.data_provider.category.cache')->deleteAll();
+    }
+
+    protected function tearDown(): void
+    {
+        $this->getContainer()->get('oro_catalog.layout.data_provider.category.cache')->deleteAll();
+        parent::tearDown();
     }
 
     public function testWebCatalogTitles()
@@ -28,7 +35,7 @@ class CategoryPageTitleTest extends WebTestCase
         $crawler = $this->client->request('GET', AbstractLoadWebCatalogData::CONTENT_NODE_SLUG);
 
         $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        $this->assertHtmlResponseStatusCodeEquals($result, 200, $result->getContent());
 
         static::assertStringContainsString(
             AbstractLoadWebCatalogData::CONTENT_NODE_TITLE,

@@ -36,6 +36,14 @@ class CategoriesProductsProviderTest extends FrontendWebTestCase
 
         $this->getContainer()->get('request_stack')->push(Request::create(''));
         $this->setCurrentWebsite('default');
+
+        $this->getContainer()->get('oro_catalog.layout.data_provider.category.cache')->deleteAll();
+    }
+
+    protected function tearDown(): void
+    {
+        $this->getContainer()->get('oro_catalog.layout.data_provider.category.cache')->deleteAll();
+        parent::tearDown();
     }
 
     public function testGetCountByCategories()
@@ -50,7 +58,6 @@ class CategoriesProductsProviderTest extends FrontendWebTestCase
             $this->getCategoryId(LoadCategoryData::FOURTH_LEVEL2),
         ];
 
-        $this->getContainer()->get('oro_catalog.layout.data_provider.category.cache')->deleteAll();
         $provider = $this->getContainer()->get('oro_catalog.layout.data_provider.featured_categories_products');
         $result = $provider->getCountByCategories($categoryIds);
 
