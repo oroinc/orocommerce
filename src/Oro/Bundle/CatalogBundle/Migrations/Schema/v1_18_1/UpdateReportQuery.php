@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CatalogBundle\Migrations\Schema\v1_19;
+namespace Oro\Bundle\CatalogBundle\Migrations\Schema\v1_18_1;
 
 use Doctrine\DBAL\DBALException;
 use Oro\Bundle\CatalogBundle\Entity\Category;

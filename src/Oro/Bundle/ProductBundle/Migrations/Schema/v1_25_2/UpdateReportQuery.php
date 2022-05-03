@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Migrations\Schema\v1_26;
+namespace Oro\Bundle\ProductBundle\Migrations\Schema\v1_25_2;
 
 use Doctrine\DBAL\DBALException;
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
