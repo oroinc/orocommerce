@@ -3,9 +3,6 @@
 @ticket-BB-10412
 @automatically-ticket-tagged
 Feature: Pricing configuration validation CPL
-  In order to ...
-  As an ...
-  I should be able to ...
 
   Scenario: Offset of processing CPL Prices should validate wrong data
     Given I login as administrator

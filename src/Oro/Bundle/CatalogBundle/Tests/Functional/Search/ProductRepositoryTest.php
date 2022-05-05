@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CatalogBundle\Tests\Functional\Search;
 
 use Doctrine\Common\Collections\Criteria;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Search\ProductRepository;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadFrontendCategoryProductData;
@@ -67,6 +68,37 @@ class ProductRepositoryTest extends WebTestCase
         $this->assertEmpty($this->getRepository()->getCategoryCountsByCategory($category, $query));
     }
 
+    public function testGetCategoriesCounts()
+    {
+        $categoriesIds = [
+            $this->getCategoryId(LoadCategoryData::FIRST_LEVEL),
+            $this->getCategoryId(LoadCategoryData::SECOND_LEVEL1),
+            $this->getCategoryId(LoadCategoryData::SECOND_LEVEL2),
+            $this->getCategoryId(LoadCategoryData::THIRD_LEVEL1),
+            $this->getCategoryId(LoadCategoryData::THIRD_LEVEL2),
+            $this->getCategoryId(LoadCategoryData::FOURTH_LEVEL1),
+            $this->getCategoryId(LoadCategoryData::FOURTH_LEVEL2),
+        ];
+
+        $categories = $this->getContainer()->get('doctrine')->getManagerForClass(Category::class)
+            ->getRepository(Category::class)
+            ->findBy(['id' => $categoriesIds]);
+
+        $result = $this->getRepository()->getCategoriesCounts($categories);
+
+        $expectedResult = [
+            $this->getCategoryId(LoadCategoryData::FIRST_LEVEL) => 6,
+            $this->getCategoryId(LoadCategoryData::SECOND_LEVEL1) => 3,
+            $this->getCategoryId(LoadCategoryData::SECOND_LEVEL2) => 2,
+            $this->getCategoryId(LoadCategoryData::THIRD_LEVEL1) => 2,
+            $this->getCategoryId(LoadCategoryData::THIRD_LEVEL2) => 2,
+            $this->getCategoryId(LoadCategoryData::FOURTH_LEVEL1) => 1,
+            $this->getCategoryId(LoadCategoryData::FOURTH_LEVEL2) => 2,
+        ];
+
+        $this->assertEquals($expectedResult, $result);
+    }
+
     /**
      * @return WebsiteQueryFactory
      */
@@ -81,5 +113,15 @@ class ProductRepositoryTest extends WebTestCase
     protected function getRepository()
     {
         return $this->getContainer()->get('oro_catalog.website_search.repository.product');
+    }
+
+    /**
+     * @param string $reference
+     *
+     * @return int
+     */
+    private function getCategoryId($reference)
+    {
+        return $this->getReference($reference)->getId();
     }
 }

@@ -283,6 +283,19 @@ class ProductPriceTest extends RestJsonApiTestCase
         $this->assertMessagesSentForCreateRequest($priceListId);
     }
 
+    public function testCreateWithPriceListAndProduct(): void
+    {
+        $response = $this->post(
+            ['entity' => 'productprices'],
+            'product_price/create_with_priceList_and_product.yml'
+        );
+
+        $this->assertResponseContains(
+            'product_price/get_with_priceList_and_product.yml',
+            $response
+        );
+    }
+
     public function testDeleteList()
     {
         $priceList = $this->getReference('price_list_1');

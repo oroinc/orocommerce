@@ -16,3 +16,8 @@ services:
         calls:
             - [addSkippedEntity, ['Oro\Bundle\PricingBundle\Entity\ProductPrice']]
             - [addSkippedEntity, ['Oro\Bundle\PricingBundle\Entity\PriceListSchedule', ['create']]]
+
+    oro_pricing.tests.cache.rule_cache.storage:
+        decorates: oro_pricing.cache.rule_cache.storage
+        parent: oro_pricing.cache.rule_cache.storage
+        public: true

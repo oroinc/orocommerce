@@ -2,9 +2,6 @@
 @ticket-BB-11463
 @regression
 Feature: Generation of long coupon code
-  In order to ...
-  As an ...
-  I should be able to ...
 
   Scenario: Trying to generate coupons exceeding max length
     Given I login as administrator

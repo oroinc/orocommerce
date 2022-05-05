@@ -3,7 +3,6 @@
 @fixture-OroProductBundle:ProductAttributesFixture.yml
 
 Feature: Gallery for Product image attributes
-  Check attributes of images for Product gallery
 
   Scenario: Feature Background
     Given sessions active:

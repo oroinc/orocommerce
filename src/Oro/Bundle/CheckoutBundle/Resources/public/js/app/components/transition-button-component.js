@@ -136,20 +136,23 @@ define(function(require) {
             data.url = url + (-1 !== _.indexOf(url, '?') ? '&' : '?') + '_widgetContainer=ajax&_wid=ajax_checkout';
             data.errorHandlerMessage = false;
             if (this.$form) {
-                data.data = this.serializeForm();
+                data.data = this.getFormData();
             }
+
+            data.contentType = false;
+            data.processData = false;
 
             return data;
         },
 
         /**
-         * @returns {String}
+         * @returns FormData
          */
-        serializeForm: function() {
+        getFormData: function() {
             this.$form.find(this.options.selectors.stateToken)
                 .prop('disabled', false)
                 .removeAttr('disabled');
-            return this.$form.serialize();
+            return new FormData(this.$form[0]);
         },
 
         onSuccess: function(response) {
