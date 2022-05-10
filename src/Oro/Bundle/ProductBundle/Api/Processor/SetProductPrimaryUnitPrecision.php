@@ -10,7 +10,6 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
 /**
  * Under normal conditions, entity dependencies are passed as relation between objects and they correspond
  * to the metadata described in the entity schema.
- *
  * In this case, we have additional processing for the dependent entity.
  * Therefore, we cannot guarantee that the reference to the dependent entity will be correct
  * as the entity may not be initiated (form data are not mapped to the entity).
@@ -18,14 +17,19 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
  */
 class SetProductPrimaryUnitPrecision implements ProcessorInterface
 {
-    public function process(CustomizeFormDataContext|ContextInterface $context): void
+    /**
+     * {@inheritdoc}
+     */
+    public function process(ContextInterface $context): void
     {
+        /** @var CustomizeFormDataContext $context */
+
         $form = $context->getForm();
 
         /** @var ProductUnitPrecision $productUnitPrecision */
         $productUnitPrecision = $form->getData();
         $product = $productUnitPrecision->getProduct();
-        if ($product && null == $product->getPrimaryUnitPrecision()) {
+        if (null !== $product && null === $product->getPrimaryUnitPrecision()) {
             $product->setPrimaryUnitPrecision($productUnitPrecision);
         }
     }
