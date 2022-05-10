@@ -164,6 +164,70 @@ class WebCatalogCacheProcessorTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
+    public function testProcessWithProperScopeResolvedWebsiteForCeApp(): void
+    {
+        $session = $this->createMock(SessionInterface::class);
+        $message = $this->createMessage('mid-42', '1');
+
+        $webCatalog = $this->getEntity(WebCatalog::class, ['id' => 1]);
+        $websites = [$this->getEntity(Website::class, ['id' => 1])];
+        $node = $this->getEntity(ContentNode::class, ['id' => 3]);
+        $webCatalogRepository = $this->createMock(WebCatalogRepository::class);
+        $webCatalogRepository->expects($this->once())
+            ->method('findOneBy')
+            ->with(['id' => '1'])
+            ->willReturn($webCatalog);
+        $websiteRepository = $this->createMock(WebsiteRepository::class);
+        $websiteRepository->expects($this->once())
+            ->method('getAllWebsites')
+            ->willReturn($websites);
+        $contentNodeRepo = $this->createMock(ContentNodeRepository::class);
+        $contentNodeRepo->expects($this->once())
+            ->method('findOneBy')
+            ->with(['id' => 3])
+            ->willReturn($node);
+        $contentNodeRepo->expects($this->once())
+            ->method('findBy')
+            ->with(['id' => [3]])
+            ->willReturn([$node]);
+
+        $this->configManager
+            ->expects($this->once())
+            ->method('getValues')
+            ->with('oro_web_catalog.web_catalog', $websites)
+            ->willReturn([0 => 1]);
+
+        // Bellow is the main aim of the test, its propose is to have scope identifier
+        // of only website resolved to NULL value for CE application.
+        $this->configManager
+            ->expects($this->once())
+            ->method('get')
+            ->with('oro_web_catalog.navigation_root', false, false, null)
+            ->willReturn(3);
+
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->expects($this->any())
+            ->method('getRepository')
+            ->withConsecutive(
+                [WebCatalog::class],
+                [Website::class],
+                [ContentNode::class],
+                [ContentNode::class]
+            )
+            ->willReturnOnConsecutiveCalls(
+                $webCatalogRepository,
+                $websiteRepository,
+                $contentNodeRepo,
+                $contentNodeRepo
+            );
+        $this->registry->expects($this->any())
+            ->method('getManagerForClass')
+            ->willReturn($em);
+
+        $this->assertProcessCalled($node);
+        $this->assertEquals(MessageProcessorInterface::ACK, $this->processor->process($message, $session));
+    }
+
     private function assertProcessCalled(ContentNode $node)
     {
         $this->producer->expects($this->once())
