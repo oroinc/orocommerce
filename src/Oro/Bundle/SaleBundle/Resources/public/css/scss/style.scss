@@ -1,7 +1,6 @@
 /* @theme: admin.oro; */
 
 /* stylelint-disable no-descending-specificity */
-
 .grid-container {
     .table-bordered {
         tbody {
@@ -19,6 +18,10 @@
             border-top: 0;
         }
     }
+}
+
+.quote-lineitem td {
+    vertical-align: top;
 }
 
 .quote-lineitem-requested-quantity,

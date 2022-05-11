@@ -67,7 +67,7 @@
 
     {% set ownerSelectors %}
         <div data-page-component-module="orosale/js/app/components/related-data-component"
-             data-page-component-options="{{ {formName: form.vars.name}|json_encode }}">
+            data-page-component-options="{{ {formName: form.vars.name}|json_encode }}">
             <div data-page-component-module="orocustomer/js/app/components/customer-selection-component">
                 {{ form_row(form.customer) }}
                 {{ form_row(form.customerUser) }}
@@ -77,15 +77,15 @@
 
     {% set lineItems %}
         <div class="quote-lineitems"
-             data-page-component-module="oroui/js/app/components/view-component"
-             data-page-component-options="{{ {
-                 view: 'orosale/js/app/views/line-items-view',
-                 tierPrices: tierPrices|default({}),
-                 tierPricesRoute: 'oro_pricing_price_by_customer',
-                 customer: entity.customer is null ? null : entity.customer.id,
-                 currency: entity.currency
-             }|json_encode }}"
-             data-layout="separate">
+            data-page-component-module="oroui/js/app/components/view-component"
+            data-page-component-options="{{ {
+                view: 'orosale/js/app/views/line-items-view',
+                tierPrices: tierPrices|default({}),
+                tierPricesRoute: 'oro_pricing_price_by_customer',
+                customer: entity.customer is null ? null : entity.customer.id,
+                currency: entity.currency
+            }|json_encode }}"
+            data-layout="separate">
             {{ form_widget(form.quoteProducts) }}
             {{ form_errors(form.quoteProducts) }}
         </div>
@@ -101,10 +101,10 @@
             data-page-component-module="oroui/js/app/components/view-component"
             data-page-component-options="{{ {
                 'view': 'orofrontend/js/app/views/form-view',
-                 selectors: {
-                     customer: 'input[name$="[customer]"]'
-                 }
-             }|json_encode }}"
+                selectors: {
+                    customer: 'input[name$="[customer]"]'
+                }
+            }|json_encode }}"
             class="control-group-container"
         >
             {{ form_row(form.owner) }}
@@ -186,7 +186,8 @@
             <div
                 data-layout="separate"
                 data-page-component-module="oroui/js/app/components/view-component"
-                data-page-component-options="{{ options|json_encode }}">
+                data-page-component-options="{{ options|json_encode }}"
+                class="control-group">
                 {{ form_row(form.overriddenShippingCostAmount) }}
             </div>
 
