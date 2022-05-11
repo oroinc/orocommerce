@@ -289,7 +289,7 @@ Feature: Single Page Checkout With Line Items Grid From Shopping List
     Then I should see following grid:
       | Item                                                               | Qty | Unit  | Price  | Subtotal               |
       | Configurable Product 1 BB4 In Stock Color: Red Size: M Note 4 text | 10  | items | $11.00 | $110.00 -$55.00 $55.00 |
-    And I should see "1 total records"
+    And I should see "1 total record"
 
   Scenario: Check Show All and Group similar
     Given I open Order History page on the store frontend
