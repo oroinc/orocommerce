@@ -14,8 +14,7 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
  */
 class LoadContentNodes implements ProcessorInterface
 {
-    /** @var ContentNodeRepository */
-    private $contentNodeRepository;
+    private ContentNodeRepository $contentNodeRepository;
 
     public function __construct(ContentNodeRepository $contentNodeRepository)
     {

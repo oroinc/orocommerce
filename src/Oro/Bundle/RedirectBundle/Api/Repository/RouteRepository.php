@@ -16,24 +16,19 @@ use Symfony\Component\Routing\Matcher\UrlMatcherInterface;
  */
 class RouteRepository
 {
-    private const ATTR_ROUTE_NAME           = '_route';
-    private const ATTR_ROUTE_PARAMS         = '_route_params';
-    private const ATTR_PATH                 = 'path';
-    private const ATTR_URL                  = '_url';
-    private const ATTR_REDIRECT_URL         = '_redirect_url';
+    private const ATTR_ROUTE_NAME = '_route';
+    private const ATTR_ROUTE_PARAMS = '_route_params';
+    private const ATTR_PATH = 'path';
+    private const ATTR_URL = '_url';
+    private const ATTR_REDIRECT_URL = '_redirect_url';
     private const ATTR_REDIRECT_STATUS_CODE = '_redirect_status_code';
-    private const ATTR_USED_SLUG            = '_used_slug';
+    private const ATTR_USED_SLUG = '_used_slug';
 
     private const SYSTEM_ATTRIBUTES = ['path', 'permanent', 'scheme', 'httpPort', 'httpsPort'];
 
-    /** @var FrontendHelper */
-    private $frontendHelper;
-
-    /** @var UrlMatcherInterface */
-    private $urlMatcher;
-
-    /** @var SlugRedirectMatcher */
-    private $redirectMatcher;
+    private FrontendHelper $frontendHelper;
+    private UrlMatcherInterface $urlMatcher;
+    private SlugRedirectMatcher $redirectMatcher;
 
     public function __construct(
         FrontendHelper $frontendHelper,
@@ -67,13 +62,13 @@ class RouteRepository
 
         try {
             return $this->createRoute($id, $url, $this->matchUrl($pathInfo, $baseUrl));
-        } catch (ResourceNotFoundException $e) {
+        } catch (ResourceNotFoundException) {
             $attributes = $this->matchRedirect($pathInfo, $baseUrl);
 
             return $attributes
                 ? $this->createRoute($id, $url, $attributes)
                 : null;
-        } catch (RoutingException $e) {
+        } catch (RoutingException) {
             // nothing to do here
         }
 
@@ -117,7 +112,7 @@ class RouteRepository
                     $attributes[self::ATTR_REDIRECT_URL] = UrlUtil::getAbsolutePath($targetPathInfo, $baseUrl);
                     $attributes[self::ATTR_REDIRECT_STATUS_CODE] = $redirectAttributes['statusCode'];
                 }
-            } catch (RoutingException $e) {
+            } catch (RoutingException) {
                 // nothing to do here
             }
         }

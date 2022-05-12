@@ -3,12 +3,11 @@
 namespace Oro\Bundle\ProductBundle\Api\Model;
 
 /**
- * The model for the product search API resource.
+ * Represents the product search result.
  */
 class ProductSearch implements \ArrayAccess
 {
-    /** @var array [name => value, ...] */
-    private $properties = [];
+    private array $properties = [];
 
     public function __construct(int $id)
     {
@@ -20,7 +19,7 @@ class ProductSearch implements \ArrayAccess
      */
     public function offsetExists($offset): bool
     {
-        return array_key_exists($offset, $this->properties);
+        return \array_key_exists($offset, $this->properties);
     }
 
     /**
@@ -28,7 +27,7 @@ class ProductSearch implements \ArrayAccess
      */
     public function offsetGet($offset): mixed
     {
-        if (!array_key_exists($offset, $this->properties)) {
+        if (!\array_key_exists($offset, $this->properties)) {
             throw new \InvalidArgumentException(sprintf('The "%s" property does not exist.', $offset));
         }
 

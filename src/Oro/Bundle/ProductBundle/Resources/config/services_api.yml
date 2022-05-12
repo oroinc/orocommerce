@@ -219,7 +219,6 @@ services:
 
     oro_product.api.product_attribute_value_loader:
         class: Oro\Bundle\ProductBundle\Api\ProductAttributeValueLoader
-        public: false
         arguments:
             - '@oro_api.doctrine_helper'
             - '@oro_api.get_config.processor'

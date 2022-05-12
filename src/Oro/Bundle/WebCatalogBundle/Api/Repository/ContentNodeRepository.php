@@ -15,14 +15,9 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  */
 class ContentNodeRepository
 {
-    /** @var ContentNodeProvider */
-    private $contentNodeProvider;
-
-    /** @var DoctrineHelper */
-    private $doctrineHelper;
-
-    /** @var EntitySerializer */
-    private $entitySerializer;
+    private ContentNodeProvider $contentNodeProvider;
+    private DoctrineHelper $doctrineHelper;
+    private EntitySerializer $entitySerializer;
 
     public function __construct(
         ContentNodeProvider $contentNodeProvider,
@@ -59,12 +54,6 @@ class ContentNodeRepository
     /**
      * Gets a node by its ID.
      *
-     * @param int                    $id
-     * @param EntityDefinitionConfig $config
-     * @param array                  $normalizationContext
-     *
-     * @return array|null The normalized data for the requested node or NULL if the node does not exist
-     *
      * @throws AccessDeniedException if the requested node is not available for the storefront
      */
     public function getContentNode(
@@ -89,10 +78,6 @@ class ContentNodeRepository
 
     /**
      * Gets a node entity by its ID.
-     *
-     * @param int $id
-     *
-     * @return ContentNode|null The requested node or NULL if the node does not exist
      *
      * @throws AccessDeniedException if the requested node is not available for the storefront
      */

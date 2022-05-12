@@ -13,8 +13,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class LoadSystemPageContentVariantSubresource implements ProcessorInterface
 {
-    /** @var SystemPageRepository */
-    private $systemPageRepository;
+    private SystemPageRepository $systemPageRepository;
 
     public function __construct(SystemPageRepository $systemPageRepository)
     {

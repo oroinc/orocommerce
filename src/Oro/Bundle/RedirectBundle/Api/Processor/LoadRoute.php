@@ -13,8 +13,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class LoadRoute implements ProcessorInterface
 {
-    /** @var RouteRepository */
-    private $routeRepository;
+    private RouteRepository $routeRepository;
 
     public function __construct(RouteRepository $slugRepository)
     {

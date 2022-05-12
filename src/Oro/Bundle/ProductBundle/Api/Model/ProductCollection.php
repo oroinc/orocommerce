@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Api\Model;
 
 /**
- * The model for the product collection content variant API resource.
+ * Represents a product collection.
  */
 class ProductCollection
 {

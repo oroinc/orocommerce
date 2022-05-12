@@ -15,11 +15,8 @@ use Symfony\Component\Routing\RouterInterface;
  */
 class SystemPageRepository
 {
-    /** @var RouterInterface */
-    private $router;
-
-    /** @var FrontendHelper */
-    private $frontendHelper;
+    private RouterInterface $router;
+    private FrontendHelper $frontendHelper;
 
     public function __construct(
         RouterInterface $router,
@@ -36,7 +33,7 @@ class SystemPageRepository
     {
         try {
             $url = $this->getUrl($routeName);
-        } catch (RoutingException $e) {
+        } catch (RoutingException) {
             return null;
         }
 
@@ -70,7 +67,7 @@ class SystemPageRepository
     {
         try {
             UrlMatcherUtil::matchForGetMethod($pathInfo, $this->router);
-        } catch (RoutingException $e) {
+        } catch (RoutingException) {
             return false;
         }
 

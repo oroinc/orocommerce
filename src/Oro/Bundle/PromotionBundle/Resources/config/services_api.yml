@@ -6,7 +6,6 @@ services:
 
     oro_promotion.api.order_line_item_discount_provider:
         class: Oro\Bundle\PromotionBundle\Api\OrderLineItemDiscountProvider
-        public: false
         arguments:
             - '@oro_api.doctrine_helper'
 

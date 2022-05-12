@@ -65,11 +65,9 @@ class LoadProductSearchData implements ProcessorInterface
         $context->setResult($this->loadData($searchRecords, $config));
 
         // set callback to be used to calculate total count
-        $context->setTotalCountCallback(
-            function () use ($searchResult) {
-                return $searchResult->getRecordsCount();
-            }
-        );
+        $context->setTotalCountCallback(function () use ($searchResult) {
+            return $searchResult->getRecordsCount();
+        });
     }
 
     /**
@@ -127,7 +125,7 @@ class LoadProductSearchData implements ProcessorInterface
             );
             // unserialize product units here to avoid doing it several times
             // in different "customize_loaded_data" processors
-            if (array_key_exists($unitsFieldName, $selectedData)) {
+            if (\array_key_exists($unitsFieldName, $selectedData)) {
                 $serializedUnits = $selectedData[$unitsFieldName];
                 $selectedData[$unitsFieldName] = $serializedUnits
                     ? unserialize($serializedUnits, ['allowed_classes' => false])
