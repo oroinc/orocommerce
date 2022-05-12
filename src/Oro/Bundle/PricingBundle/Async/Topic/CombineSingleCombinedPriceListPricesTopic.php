@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\PricingBundle\Async\Topic;
 
+use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
+use Doctrine\DBAL\Exception\RetryableException;
 use Doctrine\ORM\EntityNotFoundException;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
@@ -73,10 +75,15 @@ class CombineSingleCombinedPriceListPricesTopic extends AbstractTopic
             ->allowedTypes('array');
 
         $resolver->define('cpl')
-            ->info('ID of existing Combined Price List for which combined prices should be rebuilt.')
+            ->info(
+                'ID (optional) of existing Combined Price List for which combined prices should be rebuilt.'
+                . 'May either be resolved as CombinedPriceList instance when CPL found,'
+                . ' null when CPL not found,'
+                . ' and false when there was retryable error during CPL fetch/creation.'
+            )
             ->default(null)
             ->allowedTypes('int', 'null')
-            ->normalize(function (Options $options, $value): ?CombinedPriceList {
+            ->normalize(function (Options $options, $value): CombinedPriceList|bool|null {
                 if ($value) {
                     return $this->combinedPriceListProvider->getCombinedPriceListById($value);
                 }
@@ -86,6 +93,8 @@ class CombineSingleCombinedPriceListPricesTopic extends AbstractTopic
                         return $this->combinedPriceListProvider->getCombinedPriceListByCollectionInformation(
                             $options['collection']
                         );
+                    } catch (RetryableException|ForeignKeyConstraintViolationException $e) {
+                        return false;
                     } catch (EntityNotFoundException $e) {
                         // CPL cannot be retrieved if any of price lists in the chain do not exist.
                         return null;
