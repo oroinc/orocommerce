@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Async;
 
 use Doctrine\DBAL\Exception\DeadlockException;
+use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\MessageQueueBundle\Entity\Job;
@@ -90,14 +91,8 @@ class SingleCplProcessorTest extends TestCase
         );
         $this->processor->setLogger($this->logger);
 
-        $combinedPriceListProvider = $this->createMock(CombinedPriceListProvider::class);
-        $combinedPriceListProvider->expects($this->any())
-            ->method('getCombinedPriceListById')
-            ->willReturn($this->getEntity(CombinedPriceList::class, ['id' => 1]));
-        $combinedPriceListProvider->expects($this->any())
-            ->method('getCombinedPriceListByCollectionInformation')
-            ->willReturn($this->getEntity(CombinedPriceList::class, ['id' => 1]));
-        $this->processor->setTopic(new CombineSingleCombinedPriceListPricesTopic($combinedPriceListProvider));
+        $this->combinedPriceListProvider = $this->createMock(CombinedPriceListProvider::class);
+        $this->processor->setTopic(new CombineSingleCombinedPriceListPricesTopic($this->combinedPriceListProvider));
     }
 
     public function testGetSubscribedTopics()
@@ -110,14 +105,16 @@ class SingleCplProcessorTest extends TestCase
 
     public function testProcessUnexpectedException()
     {
+        $this->assertCombinedPriceListProviderCalls();
+        $body = JSON::encode([
+            'cpl' => 1,
+            'jobId' => 100,
+            'products' => []
+        ]);
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')
-            ->willReturn(JSON::encode([
-                'cpl' => 1,
-                'jobId' => 100,
-                'products' => []
-            ]));
+            ->willReturn($body);
 
         $e = new \Exception();
         $rootJob = $this->createMock(Job::class);
@@ -163,7 +160,11 @@ class SingleCplProcessorTest extends TestCase
             ->method('error')
             ->with(
                 'Unexpected exception occurred during Combined Price Lists build.',
-                ['exception' => $e]
+                [
+                    'topic' => CombineSingleCombinedPriceListPricesTopic::getName(),
+                    'message' => $body,
+                    'exception' => $e
+                ]
             );
 
         $this->assertEquals(
@@ -172,8 +173,114 @@ class SingleCplProcessorTest extends TestCase
         );
     }
 
+    public function testProcessUnexpectedDatabaseException()
+    {
+        $this->assertCombinedPriceListProviderCalls();
+        $body = JSON::encode([
+            'cpl' => 1,
+            'jobId' => 100,
+            'products' => []
+        ]);
+        $message = $this->createMock(MessageInterface::class);
+        $message->expects($this->any())
+            ->method('getBody')
+            ->willReturn($body);
+
+        $e = $this->createMock(ForeignKeyConstraintViolationException::class);
+        $rootJob = $this->createMock(Job::class);
+        $rootJob->expects($this->any())
+            ->method('getId')
+            ->willReturn(42);
+        $job = $this->createMock(Job::class);
+        $job->expects($this->any())
+            ->method('getRootJob')
+            ->willReturn($rootJob);
+
+        $this->jobRunner->expects($this->once())
+            ->method('runDelayed')
+            ->willReturnCallback(
+                function ($ownerId, $closure) use ($job) {
+                    return $closure($this->jobRunner, $job);
+                }
+            );
+
+        $em = $this->createMock(EntityManagerInterface::class);
+        $this->doctrine->expects($this->once())
+            ->method('getManagerForClass')
+            ->willReturn($em);
+
+        $em->expects($this->once())
+            ->method('beginTransaction');
+        $em->expects($this->once())
+            ->method('rollback');
+        $this->indexationTriggerHandler->expects($this->once())
+            ->method('startCollectVersioned');
+        $this->indexationTriggerHandler->expects($this->once())
+            ->method('rollback');
+        $this->activationStatusHelper->expects($this->any())
+            ->method('isReadyForBuild')
+            ->willReturn(true);
+        $this->combinedPriceListsBuilderFacade->expects($this->any())
+            ->method('rebuildWithoutTriggers')
+            ->willThrowException($e);
+        $this->dispatcher->expects($this->never())
+            ->method('dispatch');
+
+        $this->logger->expects($this->once())
+            ->method('warning')
+            ->with(
+                'Unexpected retryable database exception occurred during Combined Price Lists build.',
+                [
+                    'topic' => CombineSingleCombinedPriceListPricesTopic::getName(),
+                    'message' => $body,
+                    'exception' => $e
+                ]
+            );
+
+        $this->assertEquals(
+            $this->processor::REQUEUE,
+            $this->processor->process($message, $this->createMock(SessionInterface::class))
+        );
+    }
+
+    public function testProcessUnexpectedDatabaseExceptionDuringMessageResolve()
+    {
+        $body = JSON::encode([
+            'cpl' => 1,
+            'jobId' => 100,
+            'products' => []
+        ]);
+        $message = $this->createMock(MessageInterface::class);
+        $message->expects($this->any())
+            ->method('getBody')
+            ->willReturn($body);
+
+        $e = $this->createMock(ForeignKeyConstraintViolationException::class);
+
+        $this->combinedPriceListProvider->expects($this->once())
+            ->method('getCombinedPriceListById')
+            ->willThrowException($e);
+
+        $this->logger->expects($this->once())
+            ->method('warning')
+            ->with(
+                'Unexpected retryable database exception occurred during Combined Price Lists build.',
+                [
+                    'topic' => CombineSingleCombinedPriceListPricesTopic::getName(),
+                    'message' => $body,
+                    'exception' => $e
+                ]
+            );
+
+        $this->assertEquals(
+            $this->processor::REQUEUE,
+            $this->processor->process($message, $this->createMock(SessionInterface::class))
+        );
+    }
+
     public function testProcessUnexpectedRetryableException()
     {
+        $this->assertCombinedPriceListProviderCalls();
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')
@@ -226,9 +333,10 @@ class SingleCplProcessorTest extends TestCase
         $this->logger->expects($this->never())
             ->method('error');
 
-        $this->expectException(DeadlockException::class);
-
-        $this->processor->process($message, $this->createMock(SessionInterface::class));
+        $this->assertEquals(
+            $this->processor::REQUEUE,
+            $this->processor->process($message, $this->createMock(SessionInterface::class))
+        );
     }
 
     /**
@@ -236,6 +344,7 @@ class SingleCplProcessorTest extends TestCase
      */
     public function testProcess(array $products)
     {
+        $this->assertCombinedPriceListProviderCalls();
         $cpl = $this->getEntity(CombinedPriceList::class, ['id' => 1]);
         $assignTo = ['config' => true];
         $message = $this->createMock(MessageInterface::class);
@@ -317,6 +426,7 @@ class SingleCplProcessorTest extends TestCase
      */
     public function testProcessNotReadyCpl(array $products)
     {
+        $this->assertCombinedPriceListProviderCalls();
         $cpl = $this->getEntity(CombinedPriceList::class, ['id' => 1]);
         $assignTo = ['config' => true];
         $message = $this->createMock(MessageInterface::class);
@@ -415,5 +525,18 @@ class SingleCplProcessorTest extends TestCase
             ->method('getRepository')
             ->with(CombinedPriceListBuildActivity::class)
             ->willReturn($repo);
+    }
+
+    /**
+     * @return void
+     */
+    protected function assertCombinedPriceListProviderCalls(): void
+    {
+        $this->combinedPriceListProvider->expects($this->any())
+            ->method('getCombinedPriceListById')
+            ->willReturn($this->getEntity(CombinedPriceList::class, ['id' => 1]));
+        $this->combinedPriceListProvider->expects($this->any())
+            ->method('getCombinedPriceListByCollectionInformation')
+            ->willReturn($this->getEntity(CombinedPriceList::class, ['id' => 1]));
     }
 }

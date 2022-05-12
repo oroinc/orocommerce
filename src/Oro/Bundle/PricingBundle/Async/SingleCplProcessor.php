@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Async;
 
+use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\DBAL\Exception\RetryableException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -15,6 +16,7 @@ use Oro\Bundle\PricingBundle\Model\CombinedPriceListActivationStatusHelperInterf
 use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
+use Oro\Component\MessageQueue\Exception\JobRedeliveryException;
 use Oro\Component\MessageQueue\Job\Job;
 use Oro\Component\MessageQueue\Job\JobRunner;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
@@ -70,56 +72,97 @@ class SingleCplProcessor implements MessageProcessorInterface, TopicSubscriberIn
      */
     public function process(MessageInterface $message, SessionInterface $session)
     {
-        $messageData = $this->getResolvedBody($message, $this->logger);
-        if ($messageData === null) {
-            return self::REJECT;
+        try {
+            $messageData = $this->getResolvedBody($message, $this->logger);
+            if ($messageData === null) {
+                return self::REJECT;
+            }
+        } catch (ForeignKeyConstraintViolationException|RetryableException $e) {
+            // Redeliver message to process it again if there was retryable database exception or
+            // when some record was removed by another transaction and foreign key constraint failed on insert
+            $this->logger->warning(
+                'Unexpected retryable database exception occurred during Combined Price Lists build.',
+                [
+                    'topic' => CombineSingleCombinedPriceListPricesTopic::getName(),
+                    'message' => $message->getBody(),
+                    'exception' => $e
+                ]
+            );
+
+            return self::REQUEUE;
         }
 
-        $jobId = $messageData['jobId'];
-        $result = $this->jobRunner->runDelayed($jobId, function (JobRunner $jobRunner, Job $job) use ($messageData) {
-            if (empty($messageData['cpl'])) {
-                return true;
-            }
-
-            /** @var CombinedPriceList $cpl */
-            $cpl = $messageData['cpl'];
-            $products = $messageData['products'];
-            $assignTo = $messageData['assign_to'];
-
-            /** @var EntityManagerInterface $em */
-            $em = $this->doctrine->getManagerForClass(CombinedPriceList::class);
-            $em->beginTransaction();
-            $this->indexationTriggerHandler->startCollectVersioned($job->getRootJob()->getId());
-            try {
-                $this->buildCombinedPriceList($cpl, $products, $assignTo);
-                $this->combinedPriceListsBuilderFacade->processAssignments($cpl, $assignTo);
-                $this->removeActivityRecords($cpl, $job->getRootJob()->getId(), empty($products));
-
-                // Indexation requests are collected here and not triggered immediately, so we should write these
-                // requests within an active DB transaction. If the actual indexation will be triggered here this call
-                // should be moved after DB transaction commit to be sure that all prices are written.
-                $this->indexationTriggerHandler->commit();
-                $em->commit();
-
-                return true;
-            } catch (\Exception $e) {
-                $this->indexationTriggerHandler->rollback();
-                $em->rollback();
-
-                if ($e instanceof RetryableException) {
-                    // Job runner will mark job as fail redelivered if exception is unprocessed.
-                    throw $e;
+        try {
+            $result = $this->jobRunner->runDelayed(
+                $messageData['jobId'],
+                function (JobRunner $jobRunner, Job $job) use ($messageData, $message) {
+                    return $this->processJob($job, $message, $messageData);
                 }
-                $this->logger->error(
-                    'Unexpected exception occurred during Combined Price Lists build.',
-                    ['exception' => $e]
+            );
+
+            return $result ? self::ACK : self::REJECT;
+        } catch (JobRedeliveryException $e) {
+            return self::REQUEUE;
+        }
+    }
+
+    private function processJob(Job $job, MessageInterface $message, array $messageData): bool
+    {
+        if (empty($messageData['cpl'])) {
+            return true;
+        }
+
+        /** @var CombinedPriceList $cpl */
+        $cpl = $messageData['cpl'];
+        $products = $messageData['products'];
+        $assignTo = $messageData['assign_to'];
+
+        /** @var EntityManagerInterface $em */
+        $em = $this->doctrine->getManagerForClass(CombinedPriceList::class);
+        $em->beginTransaction();
+        $this->indexationTriggerHandler->startCollectVersioned($job->getRootJob()->getId());
+        try {
+            $this->buildCombinedPriceList($cpl, $products, $assignTo);
+            $this->combinedPriceListsBuilderFacade->processAssignments($cpl, $assignTo);
+            $this->removeActivityRecords($cpl, $job->getRootJob()->getId(), empty($products));
+
+            // Indexation requests are collected here and not triggered immediately, so we should write these
+            // requests within an active DB transaction. If the actual indexation will be triggered here this call
+            // should be moved after DB transaction commit to be sure that all prices are written.
+            $this->indexationTriggerHandler->commit();
+            $em->commit();
+
+            return true;
+        } catch (\Exception $e) {
+            $this->indexationTriggerHandler->rollback();
+            $em->rollback();
+
+            // Redeliver message to process it again if there was retryable database exception or
+            // when some record was removed by another transaction and foreign key constraint failed on insert
+            if ($e instanceof RetryableException || $e instanceof ForeignKeyConstraintViolationException) {
+                $this->logger->warning(
+                    'Unexpected retryable database exception occurred during Combined Price Lists build.',
+                    [
+                        'topic' => CombineSingleCombinedPriceListPricesTopic::getName(),
+                        'message' => $message->getBody(),
+                        'exception' => $e
+                    ]
                 );
 
-                return false;
+                throw JobRedeliveryException::create();
             }
-        });
 
-        return $result ? self::ACK : self::REJECT;
+            $this->logger->error(
+                'Unexpected exception occurred during Combined Price Lists build.',
+                [
+                    'topic' => CombineSingleCombinedPriceListPricesTopic::getName(),
+                    'message' => $message->getBody(),
+                    'exception' => $e
+                ]
+            );
+        }
+
+        return false;
     }
 
     /**
