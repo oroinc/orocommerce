@@ -39,6 +39,7 @@ class CombinedPriceListGarbageCollector
         $this->deleteInvalidRelations();
         $this->cleanActivationRules();
         $this->scheduleUnusedPriceListsRemoval();
+        $this->removeDuplicatePrices();
     }
 
     private function deleteInvalidRelations(): void
@@ -104,5 +105,12 @@ class CombinedPriceListGarbageCollector
             $this->getConfigPriceLists(),
             $this->getConfigFullChainPriceLists()
         );
+    }
+
+    private function removeDuplicatePrices()
+    {
+        /** @var CombinedPriceListRepository $cplRepository */
+        $cplRepository = $this->registry->getRepository(CombinedPriceList::class);
+        $cplRepository->removeDuplicatePrices();
     }
 }

@@ -13,7 +13,9 @@ use Oro\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomer;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite;
+use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadDuplicateCombinedProductPrices;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
@@ -26,11 +28,6 @@ class CombinedPriceListRepositoryGCTest extends WebTestCase
     protected function setUp(): void
     {
         $this->initClient();
-        $this->loadFixtures([
-            LoadWebsiteData::class,
-            LoadCustomers::class,
-            LoadGroups::class
-        ]);
     }
 
     /**
@@ -40,6 +37,12 @@ class CombinedPriceListRepositoryGCTest extends WebTestCase
      */
     public function testGetUnusedPriceListsIdsForRelation($relationClass, $hasFullChain = false)
     {
+        $this->loadFixtures([
+            LoadWebsiteData::class,
+            LoadCustomers::class,
+            LoadGroups::class
+        ]);
+
         /** @var ObjectManager $em */
         $em = $this->getContainer()->get('doctrine')
             ->getManagerForClass(CombinedPriceList::class);
@@ -109,6 +112,12 @@ class CombinedPriceListRepositoryGCTest extends WebTestCase
      */
     public function testGetUnusedPriceListsIdsForActivationRule($hasFullChain = false)
     {
+        $this->loadFixtures([
+            LoadWebsiteData::class,
+            LoadCustomers::class,
+            LoadGroups::class
+        ]);
+
         /** @var ObjectManager $em */
         $em = $this->getContainer()->get('doctrine')
             ->getManagerForClass(CombinedPriceList::class);
@@ -161,6 +170,33 @@ class CombinedPriceListRepositoryGCTest extends WebTestCase
             [true],
             [false]
         ];
+    }
+
+    public function testRemoveDuplicatePrices()
+    {
+        $this->loadFixtures([LoadDuplicateCombinedProductPrices::class]);
+        $doctrine = $this->getContainer()->get('doctrine');
+
+        // Check initial number of prices
+        $priceRepo = $doctrine->getRepository(CombinedProductPrice::class);
+        $this->assertCount(5, $priceRepo->findAll());
+
+        /** @var CombinedPriceListRepository $plRepo */
+        $plRepo = $doctrine->getRepository(CombinedPriceList::class);
+        $plRepo->removeDuplicatePrices();
+
+        // Check that two duplicate records were removed
+        $this->assertCount(3, $priceRepo->findAll());
+
+        // Check that price for second product wasn't removed
+        /** @var CombinedProductPrice $price2 */
+        $price2 = $this->getReference('cpl_price.2');
+        $this->assertNotNull($priceRepo->findOneBy(['id' => $price2->getId()]));
+
+        // Check that price for another CPL wasn't removed
+        /** @var CombinedProductPrice $price3 */
+        $price3 = $this->getReference('cpl_price.3');
+        $this->assertNotNull($priceRepo->findOneBy(['id' => $price3->getId()]));
     }
 
     /**
