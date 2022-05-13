@@ -1,5 +1,5 @@
 css:
     inputs:
-        - 'bundles/oropromotion/css/scss/variables/variables'
+        - 'bundles/oropromotion/css/scss/variables/variables.scss'
 
         - 'bundles/oropromotion/css/scss/main.scss'
