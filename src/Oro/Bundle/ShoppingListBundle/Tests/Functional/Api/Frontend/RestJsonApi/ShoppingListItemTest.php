@@ -929,12 +929,7 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
             [],
             false
         );
-
-        $this->assertResponseValidationError(
-            ['title' => 'relationship constraint', 'detail' => 'Unsupported subresource.'],
-            $response,
-            Response::HTTP_NOT_FOUND
-        );
+        $this->assertUnsupportedSubresourceResponse($response);
     }
 
     public function testTryToGetRelationshipShoppingList()
@@ -945,12 +940,7 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
             [],
             false
         );
-
-        $this->assertResponseValidationError(
-            ['title' => 'relationship constraint', 'detail' => 'Unsupported subresource.'],
-            $response,
-            Response::HTTP_NOT_FOUND
-        );
+        $this->assertUnsupportedSubresourceResponse($response);
     }
 
     public function testTryToUpdateRelationshipShoppingList()
@@ -961,12 +951,7 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
             [],
             false
         );
-
-        $this->assertResponseValidationError(
-            ['title' => 'relationship constraint', 'detail' => 'Unsupported subresource.'],
-            $response,
-            Response::HTTP_NOT_FOUND
-        );
+        $this->assertUnsupportedSubresourceResponse($response);
     }
 
     public function testTryToGetSubresourceParentProduct()
@@ -977,12 +962,7 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
             [],
             false
         );
-
-        $this->assertResponseValidationError(
-            ['title' => 'relationship constraint', 'detail' => 'Unsupported subresource.'],
-            $response,
-            Response::HTTP_NOT_FOUND
-        );
+        $this->assertUnsupportedSubresourceResponse($response);
     }
 
     public function testTryToGetRelationshipParentProduct()
@@ -993,12 +973,7 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
             [],
             false
         );
-
-        $this->assertResponseValidationError(
-            ['title' => 'relationship constraint', 'detail' => 'Unsupported subresource.'],
-            $response,
-            Response::HTTP_NOT_FOUND
-        );
+        $this->assertUnsupportedSubresourceResponse($response);
     }
 
     public function testTryToUpdateRelationshipParentProduct()
@@ -1009,12 +984,7 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
             [],
             false
         );
-
-        $this->assertResponseValidationError(
-            ['title' => 'relationship constraint', 'detail' => 'Unsupported subresource.'],
-            $response,
-            Response::HTTP_NOT_FOUND
-        );
+        $this->assertUnsupportedSubresourceResponse($response);
     }
 
     public function testTryToGetSubresourceProduct()
@@ -1025,12 +995,7 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
             [],
             false
         );
-
-        $this->assertResponseValidationError(
-            ['title' => 'relationship constraint', 'detail' => 'Unsupported subresource.'],
-            $response,
-            Response::HTTP_NOT_FOUND
-        );
+        $this->assertUnsupportedSubresourceResponse($response);
     }
 
     public function testTryToGetRelationshipProduct()
@@ -1041,12 +1006,7 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
             [],
             false
         );
-
-        $this->assertResponseValidationError(
-            ['title' => 'relationship constraint', 'detail' => 'Unsupported subresource.'],
-            $response,
-            Response::HTTP_NOT_FOUND
-        );
+        $this->assertUnsupportedSubresourceResponse($response);
     }
 
     public function testTryToUpdateRelationshipProduct()
@@ -1057,12 +1017,7 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
             [],
             false
         );
-
-        $this->assertResponseValidationError(
-            ['title' => 'relationship constraint', 'detail' => 'Unsupported subresource.'],
-            $response,
-            Response::HTTP_NOT_FOUND
-        );
+        $this->assertUnsupportedSubresourceResponse($response);
     }
 
     public function testTryToGetSubresourceUnit()
@@ -1073,12 +1028,7 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
             [],
             false
         );
-
-        $this->assertResponseValidationError(
-            ['title' => 'relationship constraint', 'detail' => 'Unsupported subresource.'],
-            $response,
-            Response::HTTP_NOT_FOUND
-        );
+        $this->assertUnsupportedSubresourceResponse($response);
     }
 
     public function testTryToGetRelationshipUnit()
@@ -1089,12 +1039,7 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
             [],
             false
         );
-
-        $this->assertResponseValidationError(
-            ['title' => 'relationship constraint', 'detail' => 'Unsupported subresource.'],
-            $response,
-            Response::HTTP_NOT_FOUND
-        );
+        $this->assertUnsupportedSubresourceResponse($response);
     }
 
     public function testTryToUpdateRelationshipUnit()
@@ -1105,11 +1050,6 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
             [],
             false
         );
-
-        $this->assertResponseValidationError(
-            ['title' => 'relationship constraint', 'detail' => 'Unsupported subresource.'],
-            $response,
-            Response::HTTP_NOT_FOUND
-        );
+        $this->assertUnsupportedSubresourceResponse($response);
     }
 }
