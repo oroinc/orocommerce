@@ -10,6 +10,7 @@ use Oro\Bundle\RFPBundle\Layout\DataProvider\RFPFormProvider;
 use Oro\Bundle\RFPBundle\Model\RequestManager;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Util\SameSiteUrlHelper;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
@@ -211,11 +212,10 @@ class RequestController extends AbstractController
             $this->get(TranslatorInterface::class)->trans('oro.rfp.controller.request.saved.message'),
             null,
             function (RFPRequest $rfpRequest, FormInterface $form, Request $request) {
-                $url = $request->headers->get('referer', $request->getUri());
-
                 return [
-                    'backToUrl' => $url,
-                    'form' => $form->createView()
+                    'backToUrl' => $this->get(SameSiteUrlHelper::class)
+                        ->getSameSiteReferer($request, $request->getUri()),
+                    'form' => $form->createView(),
                 ];
             }
         );
@@ -277,7 +277,8 @@ class RequestController extends AbstractController
                 RequestUpdateHandler::class,
                 RFPFormProvider::class,
                 WebsiteManager::class,
-                RequestManager::class
+                RequestManager::class,
+                SameSiteUrlHelper::class,
             ]
         );
     }

@@ -7,6 +7,7 @@ use Oro\Bundle\FrontendImportExportBundle\Async\Topics;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
+use Oro\Bundle\SecurityBundle\Util\SameSiteUrlHelper;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Bundle\WebsiteBundle\Resolver\WebsiteUrlResolver;
@@ -82,7 +83,7 @@ class ExportController extends AbstractController
 
     private function getRefererUrl(Request $request, Website $website): string
     {
-        $referer = $request->headers->get('referer');
+        $referer = $this->get(SameSiteUrlHelper::class)->getSameSiteReferer($request);
         $baseUrl = $this->get(WebsiteUrlResolver::class)->getWebsiteUrl($website, true);
 
         return str_replace($baseUrl, '', $referer);
@@ -110,7 +111,8 @@ class ExportController extends AbstractController
                 MessageProducerInterface::class,
                 LocalizationHelper::class,
                 UserCurrencyManager::class,
-                WebsiteUrlResolver::class
+                WebsiteUrlResolver::class,
+                SameSiteUrlHelper::class,
             ]
         );
     }
