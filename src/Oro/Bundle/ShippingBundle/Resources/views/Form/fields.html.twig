@@ -205,8 +205,8 @@
                     <i class="fa-plus-square-o"></i>
                     {% set icon = methods_icons[form.method.vars.value]|default('') %}
                     {% set label = methods_labels[form.method.vars.value]|trans %}
-                    {% if icon %}<img src="{{ asset(icon) }}" alt="{{ label }}" title="{{ label }}"/>{% endif %}
-                    {{ label }}
+                    {% if icon %}<img src="{{ asset(icon) }}" alt="{{ label }}" title="{{ label }}">{% endif %}
+                    {{- label -}}
                     {{ ShipRuleMacro.renderShippingMethodDisabledFlag(form.method.vars.value) }}
                 </div>
                 <div class="shipping-method-config__info" data-role="method-preview"></div>
@@ -312,7 +312,7 @@
                 <div class="shipping-methods-grid__header-method"
                      data-page-component-jquery="{{ collapseView|json_encode }}">
                     <i class="fa-plus-square-o"></i>
-                    {{ 'oro.shipping.shipping_methods_table.method.label'|trans }}
+                    {{- 'oro.shipping.shipping_methods_table.method.label'|trans -}}
                 </div>
                 <div>{{ 'oro.shipping.shipping_methods_table.options.label'|trans }}</div>
             </div>

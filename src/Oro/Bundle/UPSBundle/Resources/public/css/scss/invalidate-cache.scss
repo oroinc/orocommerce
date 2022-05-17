@@ -12,7 +12,17 @@
     }
 
     .invalidate-cache-td-fields {
-        padding-top: 10px;
+        .selector {
+            width: auto;
+        }
+
+        .datepicker-input {
+            width: 120px;
+        }
+
+        .timepicker-input {
+            width: 100px;
+        }
     }
 
     .cache-invalidate-type {
