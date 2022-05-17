@@ -36,7 +36,7 @@
         margin: 5px 6px 5px 0;
     }
 
-    [class*='fa-'] {
+    [class*='fa-']:not(.tooltip-icon) {
         display: inline-flex;
         align-items: center;
 
@@ -115,6 +115,7 @@
         img {
             max-height: 16px;
             max-width: 16px;
+            margin-right: 5px;
 
             vertical-align: text-top;
         }
@@ -130,17 +131,10 @@
     }
 
     &__global-options {
-        margin: -10px 0 26px -36px;
+        margin: 0 0 26px -36px;
 
         input {
             width: 290px;
-        }
-
-        .tooltip-icon {
-            position: absolute;
-            margin-top: 1px;
-            left: 51px;
-            color: $secondary;
         }
     }
 }
@@ -242,6 +236,19 @@
             .control-label.wrap {
                 text-align: left;
                 width: 40%;
+            }
+
+            &-collection_entry {
+                max-width: none;
+                padding: 0 20px;
+
+                &:first-child {
+                    margin-top: 16px;
+                }
+
+                &:last-child {
+                    margin-bottom: 16px;
+                }
             }
         }
 
