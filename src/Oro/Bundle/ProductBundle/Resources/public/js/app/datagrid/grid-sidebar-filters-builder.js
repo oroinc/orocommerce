@@ -61,7 +61,11 @@ export default {
                 'data-filters-state-container': grid.name
             });
             const initExtraHits = filters => {
+                // Add an extra hint only for rendered and visible filters
                 for (const filter of filters) {
+                    if (filter.$el.length === 0) {
+                        continue;
+                    }
                     filter.subview('sidebar-filters:extra-hint', new FilterExtraHintView({
                         filter: filter,
                         autoRender: true
