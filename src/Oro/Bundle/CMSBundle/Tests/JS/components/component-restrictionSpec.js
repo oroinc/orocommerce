@@ -242,9 +242,9 @@ describe('orocms/js/app/grapesjs/plugins/components/component-restriction', () =
         });
 
         it('check editor resolve not allowed types', () => {
-            expect(componentRestriction.editor.DomComponents.componentTypes.length).toEqual(6);
+            expect(componentRestriction.editor.DomComponents.componentTypes.length).toEqual(5);
             expect(componentRestriction.editor.DomComponents.componentTypes.map(({id}) => id)).toEqual(
-                ['table', 'comment', 'textnode', 'text', 'wrapper', 'default']
+                ['table', 'comment', 'textnode', 'text', 'default']
             );
         });
     });

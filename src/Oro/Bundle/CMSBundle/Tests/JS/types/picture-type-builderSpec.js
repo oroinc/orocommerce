@@ -100,7 +100,6 @@ describe('orocms/js/app/grapesjs/type-builders/image-type-builder', () => {
             expect(pictureTypeBuilder.Model.prototype.defaults.sources).toEqual([]);
             expect(pictureTypeBuilder.Model.prototype.defaults.editable).toEqual(true);
             expect(pictureTypeBuilder.Model.prototype.defaults.droppable).toEqual(false);
-            expect(pictureTypeBuilder.Model.prototype.defaults.resizable.ratioDefault).toEqual(true);
 
             expect(pictureTypeBuilder.Model.prototype.editor).toEqual(editor);
         });

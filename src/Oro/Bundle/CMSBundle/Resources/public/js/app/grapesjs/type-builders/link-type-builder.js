@@ -92,6 +92,8 @@ const LinkTypeBuilder = BaseTypeBuilder.extend({
         }
     },
 
+    parentType: 'link',
+
     modelMixin: {
         defaults: {
             tagName: 'a',
@@ -100,7 +102,8 @@ const LinkTypeBuilder = BaseTypeBuilder.extend({
             components: [{
                 type: 'textnode',
                 content: __('oro.cms.wysiwyg.component.link.content')
-            }]
+            }],
+            editable: false
         },
 
         tempAttr: TEMP_ATTR,

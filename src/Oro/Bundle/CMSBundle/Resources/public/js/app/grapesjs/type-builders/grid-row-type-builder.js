@@ -1,8 +1,8 @@
 import BaseTypeBuilder from 'orocms/js/app/grapesjs/type-builders/base-type-builder';
 
-const RowTypeBuilder = BaseTypeBuilder.extend({
-    constructor: function RowTypeBuilder(options) {
-        RowTypeBuilder.__super__.constructor.call(this, options);
+const GridRowTypeBuilder = BaseTypeBuilder.extend({
+    constructor: function GridRowTypeBuilder(options) {
+        GridRowTypeBuilder.__super__.constructor.call(this, options);
     },
 
     editorEvents: {
@@ -23,6 +23,19 @@ const RowTypeBuilder = BaseTypeBuilder.extend({
                 br: 0,
                 minDim: 50
             }
+        },
+
+        init() {
+            setTimeout(() => {
+                this.components().each((component, index, collection) => {
+                    const styles = component.getStyle();
+                    if (!styles.width) {
+                        component.setStyle({
+                            width: (100 / collection.length).toFixed(2) + '%'
+                        });
+                    }
+                });
+            }, 0);
         }
     },
 
@@ -44,4 +57,4 @@ const RowTypeBuilder = BaseTypeBuilder.extend({
     }
 });
 
-export default RowTypeBuilder;
+export default GridRowTypeBuilder;

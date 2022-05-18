@@ -9,6 +9,11 @@ const ImageTypeBuilder = BaseTypeBuilder.extend({
         defaults: {
             tagName: 'img',
             previewMetadata: {}
+        },
+
+        removed() {
+            const picture = this.closestType('picture');
+            picture && picture.remove();
         }
     },
 

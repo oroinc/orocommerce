@@ -125,54 +125,28 @@ const FileTypeBuilder = BaseTypeBuilder.extend({
     },
 
     onInit: function() {
-        const {StyleManager} = this.editor;
-
-        const DefaultPropertyType = StyleManager.getType('file');
-        const DefaultView = DefaultPropertyType.view;
-        const self = this;
-
-        StyleManager.addType(
+        this.editor.StyleManager.addType(
             'file',
             {
-                view: DefaultView.extend({
-                    init: function(...args) {
-                        DefaultView.prototype.init.apply(this, args);
-                    },
+                openAssetManager() {
+                    this.em.get('Commands').run(
+                        'open-digital-assets',
+                        {
+                            target: this.model,
+                            title: __('oro.cms.wysiwyg.digital_asset.image.title'),
+                            routeName: 'oro_digital_asset_widget_choose_image',
+                            onSelect: this._onSelect.bind(this)
+                        }
+                    );
+                },
 
-                    constructor: function DigitalAssetPropertyFileView(...args) {
-                        DefaultView.prototype.constructor.apply(this, args);
-                    },
-
-                    /**
-                     * @inheritdoc
-                     */
-                    openAssetManager: function() {
-                        self.editor.Commands.run(
-                            'open-digital-assets',
-                            {
-                                target: this.getTargetModel(),
-                                title: __('oro.cms.wysiwyg.digital_asset.image.title'),
-                                routeName: 'oro_digital_asset_widget_choose_image',
-                                onSelect: this._onSelect.bind(this)
-                            }
-                        );
-                    },
-
-                    /**
-                     * @param {Backbone.Model} digitalAssetModel
-                     * @private
-                     */
-                    _onSelect: function(digitalAssetModel) {
-                        this.spreadUrl(digitalAssetModel.get('previewMetadata').url);
-                    },
-
-                    /**
-                     * @inheritdoc
-                     */
-                    setValue: function(value, f) {
-                        DefaultView.prototype.setValue.apply(this, [value, f]);
-                    }
-                })
+                /**
+                 * @param {Backbone.Model} digitalAssetModel
+                 * @private
+                 */
+                _onSelect(digitalAssetModel) {
+                    this.model.upValue(digitalAssetModel.get('previewMetadata').url);
+                }
             }
         );
     },
