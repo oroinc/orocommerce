@@ -55,12 +55,13 @@ define(function(require) {
         /**
          * Update model of product
          * @param {Object} data
+         * @param {Boolean} silent
          */
-        updateProductModel: function(data = {id: 0}) {
+        updateProductModel: function(data = {id: 0}, silent = false) {
             if (_.isObject(data)) {
                 data.id = data.id ? parseInt(data.id, 10) : 0;
 
-                this.model.set(data);
+                this.model.set(data, {silent});
             }
         },
 
