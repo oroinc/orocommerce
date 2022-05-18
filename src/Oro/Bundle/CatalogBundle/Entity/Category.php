@@ -717,4 +717,11 @@ class Category extends ExtendCategory implements
     {
         return $this->denormalizedDefaultTitle;
     }
+
+    public function __clone()
+    {
+        if ($this->id) {
+            $this->cloneLocalizedFallbackValueAssociations();
+        }
+    }
 }

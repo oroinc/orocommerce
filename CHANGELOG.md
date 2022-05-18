@@ -2,7 +2,7 @@ The upgrade instructions are available at [Oro documentation website](https://do
 
 The current file describes significant changes in the code that may affect the upgrade of your customizations.
 
-## Not released
+## UNRELEASED
 
 ### Added
 
@@ -14,6 +14,9 @@ The current file describes significant changes in the code that may affect the u
 
 #### ProductBundle
 * `Oro\Bundle\ProductBundle\Provider\ProductImageFileNameProvider` is applicable if `product_original_filenames` feature is enabled.
+
+#### SEOBundle
+* Enabled `orphanRemoval` option for SEO fields: metaDescriptions, metaKeywords, metaTitles
 
 ## 4.2.5
 
