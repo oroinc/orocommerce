@@ -190,6 +190,7 @@ function parseNodes(el, config, ct = '', parent = {}) {
 
         if (!model.type && _.some(model.components, ({type}) => type === 'text')) {
             model.type = 'text';
+
             model.components = model.components.map(comp => {
                 if (comp.type && comp.type !== 'text') {
                     return comp;
@@ -207,7 +208,7 @@ function parseNodes(el, config, ct = '', parent = {}) {
             });
         }
 
-        if (model.type === 'text' && parent.type === 'text') {
+        if (model.type === 'text' && (parent.type === 'text' || parent.textComponent)) {
             model = {
                 ...model,
                 layerable: 0,
@@ -293,5 +294,12 @@ export default function ContentParser(editor) {
 
     editor.Parser.parseTextBlockContentFromString = html => {
         return editor.Parser.parseHtml(`<div>${html}</div>`).html[0].components;
+    };
+
+    const originDestroy = editor.destroy;
+    editor.destroy = () => {
+        const Parser = {...editor.Parser};
+        originDestroy.call(editor);
+        editor.Parser = Parser;
     };
 }

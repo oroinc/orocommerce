@@ -6,8 +6,6 @@ import __ from 'orotranslation/js/translator';
  * Create responsive table component type for builder
  */
 const TableResponsiveTypeBuilder = BaseTypeBuilder.extend({
-    componentType: 'table-responsive',
-
     button: {
         label: __('oro.cms.wysiwyg.component.table.label'),
         category: 'Basic',

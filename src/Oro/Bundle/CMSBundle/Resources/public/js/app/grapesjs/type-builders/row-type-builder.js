@@ -23,6 +23,19 @@ const RowTypeBuilder = BaseTypeBuilder.extend({
                 br: 0,
                 minDim: 50
             }
+        },
+
+        init() {
+            setTimeout(() => {
+                this.components().each((component, index, collection) => {
+                    const styles = component.getStyle();
+                    if (!styles.width) {
+                        component.setStyle({
+                            width: (100 / collection.length).toFixed(2) + '%'
+                        });
+                    }
+                });
+            }, 0);
         }
     },
 

@@ -1,11 +1,12 @@
 import ComponentManager from 'orocms/js/app/grapesjs/plugins/components/component-manager';
-import DefaultTypeBuilder from 'orocms/js/app/grapesjs/type-builders/default-type-builder';
+import WrapperTypeBuilder from 'orocms/js/app/grapesjs/type-builders/wrapper-type-builder';
 import ContentBlockTypeBuilder from 'orocms/js/app/grapesjs/type-builders/content-block-type-builder';
 import ContentWidgetTypeBuilder from 'orocms/js/app/grapesjs/type-builders/content-widget-type-builder';
 import FileTypeBuilder from 'orocms/js/app/grapesjs/type-builders/file-type-builder';
 import ImageTypeBuilder from 'orocms/js/app/grapesjs/type-builders/image-type-builder';
 import QuoteTypeBuilder from 'orocms/js/app/grapesjs/type-builders/quote-type-builder';
 import TableTypeBuilder from 'orocms/js/app/grapesjs/type-builders/table-type-builder';
+import TableRowTypeBuilder from 'orocms/js/app/grapesjs/type-builders/table-row-type-builder';
 import TableResponsiveTypeBuilder from 'orocms/js/app/grapesjs/type-builders/table-responsive-type-builder';
 import LinkBLockTypeBuilder from 'orocms/js/app/grapesjs/type-builders/link-block-builder';
 import LinkButtonTypeBuilder from 'orocms/js/app/grapesjs/type-builders/link-button-type-builder';
@@ -22,11 +23,14 @@ import PictureTypeBuilder from 'orocms/js/app/grapesjs/type-builders/picture-typ
 import SourceTypeBuilder from 'orocms/js/app/grapesjs/type-builders/source-type-builder';
 
 ComponentManager.registerComponentTypes({
-    'default': {
-        Constructor: DefaultTypeBuilder
+    'wrapper': {
+        Constructor: WrapperTypeBuilder
     },
     'quote': {
         Constructor: QuoteTypeBuilder
+    },
+    'row': {
+        Constructor: TableRowTypeBuilder
     },
     'table': {
         Constructor: TableTypeBuilder
@@ -78,10 +82,10 @@ ComponentManager.registerComponentTypes({
     'map': {
         Constructor: MapTypeBuilder
     },
-    'row': {
+    'grid-row': {
         Constructor: RowTypeBuilder
     },
-    'column': {
+    'grid-column': {
         Constructor: ColumnTypeBuilder
     },
     'grid': {

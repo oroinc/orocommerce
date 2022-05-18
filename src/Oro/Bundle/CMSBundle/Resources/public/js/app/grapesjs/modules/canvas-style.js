@@ -68,8 +68,9 @@ export default `
     
     .gjs-dashed *[data-highlightable] {
         outline-offset: -1px;
+        outline: 1px dashed rgba(170,170,170,0.7);
     }
-    
+
     [data-gjs-type="video"] {
         max-width: 100%;
     }

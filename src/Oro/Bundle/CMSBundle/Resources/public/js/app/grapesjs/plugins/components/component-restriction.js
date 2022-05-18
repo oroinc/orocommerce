@@ -109,7 +109,7 @@ define(function(require) {
                 }
             }, this);
 
-            _.each(_res, BlockManager.remove);
+            _.each(_res, id => BlockManager.remove(id));
         },
 
         /**

@@ -129,10 +129,6 @@
         }
     }
 
-    &sm-clear {
-        font-size: $base-font-size--xl;
-    }
-
     &sm-sector {
         ##{$app-prefix}sm-caret {
             font-size: $base-font-size--m;
@@ -145,16 +141,22 @@
         }
     }
 
+    &sm-sectors,
     &sm-sector,
     &block-category {
         margin-bottom: 8px;
         border-bottom: none;
+
+        svg {
+            vertical-align: inherit;
+        }
 
         &.#{$app-prefix}sm-open,
         &.#{$app-prefix}open {
             border-bottom: none;
         }
 
+        .#{$app-prefix}sm-sector-title,
         .#{$app-prefix}sm-title,
         .#{$app-prefix}title {
             border-bottom: none;
@@ -165,6 +167,12 @@
             color: $primary-100;
             background-color: $primary-860;
             border-radius: 4px;
+        }
+
+        .#{$app-prefix}sm-sector-caret {
+            width: 22px;
+            height: 22px;
+            min-width: 22px;
         }
 
         .#{$sm-prefix}field.#{$sm-prefix}composite {
@@ -274,6 +282,8 @@
             border-right: none;
             padding: 0;
             margin-right: 8px;
+            min-width: 25px;
+            width: auto;
 
             &:last-child {
                 margin-right: 0;
