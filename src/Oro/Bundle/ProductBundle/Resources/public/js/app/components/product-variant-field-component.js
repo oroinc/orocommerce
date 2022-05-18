@@ -6,6 +6,7 @@ define(function(require) {
     const ViewComponent = require('oroui/js/app/components/view-component');
     const error = require('oroui/js/error');
     const tools = require('oroui/js/tools');
+    const {validator} = require('jquery.validate');
 
     const ProductVariantFieldComponent = ViewComponent.extend({
         /**
@@ -136,6 +137,10 @@ define(function(require) {
         _initVariantInstances: function() {
             const onChangeHandler = _.bind(this._onVariantFieldChange, this, this.simpleProductVariants);
 
+            // Reset the form of attributes to prevent set null value in fields,
+            // when user do back navigation in chrome
+            this.view.el.reset();
+
             if (this.$el.find('select').length) {
                 this.$el.find('select').each(_.bind(function(index, select) {
                     const $select = $(select);
@@ -261,6 +266,16 @@ define(function(require) {
          */
         _updateProduct: function() {
             const variants = this.simpleProductVariants;
+            const isValidVariant = !Object.values(this.getState()).some(value => !value);
+
+            if (this.view.$el.data('validator')) {
+                validator.preloadMethods().then(() => this.view.$el.valid());
+            }
+
+            if (!isValidVariant) {
+                this.view.updateProductModel({id: 0}, true);
+                return;
+            }
 
             for (const variant in variants) {
                 if (variants.hasOwnProperty(variant) && _.isEqual(this.getState(), variants[variant])) {

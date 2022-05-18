@@ -48,6 +48,8 @@ class CategoriesProductsProviderTest extends FrontendWebTestCase
 
     public function testGetCountByCategories()
     {
+        $this->markTestSkipped('will be unskipped in BB-21287');
+
         $categoryIds = [
             $this->getCategoryId(LoadCategoryData::FIRST_LEVEL),
             $this->getCategoryId(LoadCategoryData::SECOND_LEVEL1),

@@ -297,7 +297,7 @@ define(function(require) {
             return this.shoppingListCollection.find({id: id}).toJSON() || null;
         },
 
-        validate: function(intention, url, urlOptions, formData) {
+        validate: function() {
             return this.dropdownWidget.validateForm();
         },
 
@@ -313,14 +313,18 @@ define(function(require) {
             const urlOptions = {
                 shoppingListId: $button.data('shoppinglist').id
             };
+
+            let isValidProduct = true;
+
             if (this.model) {
                 urlOptions.productId = this.model.get('id');
+                isValidProduct = urlOptions.productId !== 0;
                 if (this.model.has('parentProduct')) {
                     urlOptions.parentProductId = this.model.get('parentProduct');
                 }
             }
 
-            if (!this.validate(intention, url, urlOptions, formData)) {
+            if (!this.validate() || !isValidProduct) {
                 return;
             }
 
