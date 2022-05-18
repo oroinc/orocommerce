@@ -30,6 +30,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductShortDescription;
  * @method LocalizedFallbackValue getMetaKeyword(Localization $localization = null)
  * @method EntityFieldFallbackValue getPageTemplate()
  * @method ExtendProduct setPageTemplate(EntityFieldFallbackValue $pageTemplate)
+ * @method $this cloneLocalizedFallbackValueAssociations()
  */
 class ExtendProduct
 {

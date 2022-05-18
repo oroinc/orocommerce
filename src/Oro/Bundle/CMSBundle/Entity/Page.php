@@ -241,4 +241,11 @@ class Page extends ExtendPage implements
     {
         return (string)$this->getDefaultTitle();
     }
+
+    public function __clone()
+    {
+        if ($this->id) {
+            $this->cloneLocalizedFallbackValueAssociations();
+        }
+    }
 }

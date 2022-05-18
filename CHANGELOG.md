@@ -2,9 +2,12 @@ The upgrade instructions are available at [Oro documentation website](https://do
 
 The current file describes significant changes in the code that may affect the upgrade of your customizations.
 
-## Not released
+## UNRELEASED
 
 ### Added
+
+#### SEOBundle
+* Enabled `orphanRemoval` option for SEO fields: metaDescriptions, metaKeywords, metaTitles.
 
 #### CMSBundle
 * Added entity name provider for `Page` entity
