@@ -15,6 +15,12 @@ Feature: Quote Send Email
     Then "Email Form" must contains values:
       | From    | "John Doe" <admin@example.com>                            |
       | ToField | ["Amanda Cole" <AmandaRCole@example.org> (Customer User)] |
+    And I click "Remove Email To Field"
+    And I type "Amanda" in "Email To Field"
+    And Email To Field field should have "Amanda" value
+    And I press "ArrowDown" key on "Email To Field" element
+    And I press "ArrowDown" key on "Email To Field" element
+    And I press "Enter" key on "Email To Field" element
     When I fill "Email Form" with:
       | Subject | Test      |
       | Body    | Test body |

@@ -5,32 +5,18 @@ namespace Oro\Bundle\PaymentBundle;
 use Oro\Bundle\PaymentBundle\DBAL\Types\SecureArrayType;
 use Oro\Bundle\PaymentBundle\DependencyInjection\Compiler\PaymentGuestAccessUrlPass;
 use Oro\Bundle\PaymentBundle\DependencyInjection\Compiler\TwigSandboxConfigurationPass;
-use Oro\Bundle\PaymentBundle\DependencyInjection\OroPaymentExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-/**
- * This class is setting up bundle configuration
- */
 class OroPaymentBundle extends Bundle
 {
-    /** {@inheritdoc} */
-    public function getContainerExtension()
+    /**
+     * {@inheritdoc}
+     */
+    public function boot(): void
     {
-        return new OroPaymentExtension();
-    }
+        parent::boot();
 
-    /** {@inheritdoc} */
-    public function build(ContainerBuilder $container)
-    {
-        $container->addCompilerPass(new TwigSandboxConfigurationPass());
-        $container->addCompilerPass(new PaymentGuestAccessUrlPass());
-        parent::build($container);
-    }
-
-    /** {@inheritdoc} */
-    public function boot()
-    {
         if (!SecureArrayType::hasType(SecureArrayType::TYPE)) {
             SecureArrayType::addType(
                 SecureArrayType::TYPE,
@@ -43,5 +29,16 @@ class OroPaymentBundle extends Bundle
             $secureArrayType = SecureArrayType::getType(SecureArrayType::TYPE);
             $secureArrayType->setCrypter($crypter);
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function build(ContainerBuilder $container): void
+    {
+        parent::build($container);
+
+        $container->addCompilerPass(new TwigSandboxConfigurationPass());
+        $container->addCompilerPass(new PaymentGuestAccessUrlPass());
     }
 }

@@ -14,8 +14,7 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
  */
 class LoadCategoryNodes implements ProcessorInterface
 {
-    /** @var CategoryNodeRepository */
-    private $categoryNodeRepository;
+    private CategoryNodeRepository $categoryNodeRepository;
 
     public function __construct(CategoryNodeRepository $categoryNodeRepository)
     {

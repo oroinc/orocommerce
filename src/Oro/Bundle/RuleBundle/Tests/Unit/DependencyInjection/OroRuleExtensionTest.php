@@ -7,10 +7,8 @@ use Oro\Bundle\TestFrameworkBundle\Test\DependencyInjection\ExtensionTestCase;
 
 class OroRuleExtensionTest extends ExtensionTestCase
 {
-    /**
-     * @var OroRuleExtension
-     */
-    protected $extension;
+    /** @var OroRuleExtension */
+    private $extension;
 
     protected function setUp(): void
     {
@@ -31,10 +29,5 @@ class OroRuleExtensionTest extends ExtensionTestCase
             'oro_rule.action.visibility_provider',
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
-    }
-
-    public function testGetAlias()
-    {
-        $this->assertEquals(OroRuleExtension::ALIAS, $this->extension->getAlias());
     }
 }

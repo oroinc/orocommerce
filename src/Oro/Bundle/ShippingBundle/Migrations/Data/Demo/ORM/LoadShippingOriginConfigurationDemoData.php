@@ -5,10 +5,13 @@ namespace Oro\Bundle\ShippingBundle\Migrations\Data\Demo\ORM;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\ShippingBundle\DependencyInjection\OroShippingExtension;
+use Oro\Bundle\ShippingBundle\DependencyInjection\Configuration;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
+/**
+ * Loads configuration for shipping origins.
+ */
 class LoadShippingOriginConfigurationDemoData extends AbstractFixture implements ContainerAwareInterface
 {
     use ContainerAwareTrait;
@@ -35,7 +38,7 @@ class LoadShippingOriginConfigurationDemoData extends AbstractFixture implements
 
         foreach (self::$configurations as $option => $value) {
             $configManager->set(
-                OroShippingExtension::ALIAS . ConfigManager::SECTION_MODEL_SEPARATOR . $option,
+                Configuration::ROOT_NODE . ConfigManager::SECTION_MODEL_SEPARATOR . $option,
                 $value
             );
         }

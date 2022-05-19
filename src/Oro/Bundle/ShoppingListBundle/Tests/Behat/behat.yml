@@ -534,6 +534,19 @@ oro_behat_extension:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
       selector: 'table.shopping-lists-popup'
 
+    Attributes_1:
+      selector:
+        type: 'xpath'
+        locator: '//*[starts-with(@id,"oro_product_product_variant_frontend_variant_field_Attribute_1")]'
+    Attributes_2:
+      selector:
+        type: 'xpath'
+        locator: '//*[starts-with(@id,"oro_product_product_variant_frontend_variant_field_Attribute_2")]'
+    Attributes_3:
+      selector:
+        type: 'xpath'
+        locator: '//*[starts-with(@id,"oro_product_product_variant_frontend_variant_field_Attribute_3")]'
+
   suites:
     OroShoppingListBundle:
       contexts:

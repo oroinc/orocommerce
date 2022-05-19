@@ -702,14 +702,7 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
             [],
             false
         );
-        $this->assertResponseValidationError(
-            [
-                'title'  => 'relationship constraint',
-                'detail' => 'Unsupported subresource.'
-            ],
-            $response,
-            Response::HTTP_NOT_FOUND
-        );
+        $this->assertUnsupportedSubresourceResponse($response);
     }
 
     public function testTryToGetRelationshipForProduct()
@@ -721,14 +714,7 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
             [],
             false
         );
-        $this->assertResponseValidationError(
-            [
-                'title'  => 'relationship constraint',
-                'detail' => 'Unsupported subresource.'
-            ],
-            $response,
-            Response::HTTP_NOT_FOUND
-        );
+        $this->assertUnsupportedSubresourceResponse($response);
     }
 
     public function testTryToUpdateRelationshipForProduct()
@@ -740,14 +726,7 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
             [],
             false
         );
-        $this->assertResponseValidationError(
-            [
-                'title'  => 'relationship constraint',
-                'detail' => 'Unsupported subresource.'
-            ],
-            $response,
-            Response::HTTP_NOT_FOUND
-        );
+        $this->assertUnsupportedSubresourceResponse($response);
     }
 
     public function testTryToGetSubresourceForCustomerGroup()
@@ -759,14 +738,7 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
             [],
             false
         );
-        $this->assertResponseValidationError(
-            [
-                'title'  => 'relationship constraint',
-                'detail' => 'Unsupported subresource.'
-            ],
-            $response,
-            Response::HTTP_NOT_FOUND
-        );
+        $this->assertUnsupportedSubresourceResponse($response);
     }
 
     public function testTryToGetRelationshipForCustomerGroup()
@@ -778,14 +750,7 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
             [],
             false
         );
-        $this->assertResponseValidationError(
-            [
-                'title'  => 'relationship constraint',
-                'detail' => 'Unsupported subresource.'
-            ],
-            $response,
-            Response::HTTP_NOT_FOUND
-        );
+        $this->assertUnsupportedSubresourceResponse($response);
     }
 
     public function testTryToUpdateRelationshipForCustomerGroup()
@@ -797,13 +762,6 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
             [],
             false
         );
-        $this->assertResponseValidationError(
-            [
-                'title'  => 'relationship constraint',
-                'detail' => 'Unsupported subresource.'
-            ],
-            $response,
-            Response::HTTP_NOT_FOUND
-        );
+        $this->assertUnsupportedSubresourceResponse($response);
     }
 }

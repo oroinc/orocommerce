@@ -21,12 +21,26 @@
             view: 'oroproduct/js/app/views/base-product-view',
             modelAttr: modelAttr
         },
-        'itemscope': '',
-        'itemtype': 'http://schema.org/Product',
         'data-layout': 'separate',
         'data-role': 'product-item',
         '~class': ' product-view ' ~ productTheme|default('default') ~ '-theme'
     }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _product_view_microdata_container_widget %}
+    {% if
+        microdataWithoutPricesDisabled == false or
+        productPrices is defined and productPrices is not empty
+    %}
+        {% set attr = layout_attr_defaults(attr, {
+            'itemscope': '',
+            'itemtype': 'http://schema.org/Product'
+        }) %}
+    {% endif %}
 
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
@@ -201,11 +215,11 @@
 
 {% block _product_view_attribute_group_general_attribute_product_brand_brand_widget %}
     {% set attr = layout_attr_defaults(attr, {'~class': ' brand'}) %}
-    <div {{ block('block_attributes') }}>
+    <div {{ block('block_attributes') }} itemprop="brand" itemscope itemtype="http://schema.org/Brand">
         {% if label|trans|first != '_' %}
             <span class="product-view-brand">{{ label|trans }}:</span>
         {% endif %}
-        <span class="product-view-brand-title" itemprop="brand">{{ block('attribute_localized_fallback_widget') }}</span>
+        <span class="product-view-brand-title" itemprop="name">{{ block('attribute_localized_fallback_widget') }}</span>
     </div>
 {% endblock %}
 

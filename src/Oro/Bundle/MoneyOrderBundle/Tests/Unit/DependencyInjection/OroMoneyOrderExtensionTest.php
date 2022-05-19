@@ -34,10 +34,4 @@ class OroMoneyOrderExtensionTest extends ExtensionTestCase
         ];
         $this->assertParametersLoaded($expectedParameters);
     }
-
-    public function testGetAlias(): void
-    {
-        $extension = new OroMoneyOrderExtension();
-        self::assertEquals(OroMoneyOrderExtension::ALIAS, $extension->getAlias());
-    }
 }

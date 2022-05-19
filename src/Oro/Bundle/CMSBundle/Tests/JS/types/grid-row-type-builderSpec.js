@@ -1,11 +1,11 @@
 import 'jasmine-jquery';
 import grapesJS from 'grapesjs';
-import RowTypeBuilder from 'orocms/js/app/grapesjs/type-builders/row-type-builder';
+import GridRowTypeBuilder from 'orocms/js/app/grapesjs/type-builders/grid-row-type-builder';
 import ComponentRestriction from 'orocms/js/app/grapesjs/plugins/components/component-restriction';
 import html from 'text-loader!../fixtures/grapesjs-editor-view-fixture.html';
 
-describe('orocms/js/app/grapesjs/type-builders/row-type-builder', () => {
-    let rowTypeBuilder;
+describe('orocms/js/app/grapesjs/type-builders/grid-row-type-builder', () => {
+    let gridRowTypeBuilder;
     let editor;
 
     beforeEach(() => {
@@ -23,26 +23,26 @@ describe('orocms/js/app/grapesjs/type-builders/row-type-builder', () => {
 
     describe('component "RowTypeBuilder"', () => {
         beforeEach(() => {
-            rowTypeBuilder = new RowTypeBuilder({
+            gridRowTypeBuilder = new GridRowTypeBuilder({
                 editor,
-                componentType: 'row'
+                componentType: 'grid-row'
             });
 
-            rowTypeBuilder.execute();
+            gridRowTypeBuilder.execute();
         });
 
         afterEach(() => {
-            rowTypeBuilder.dispose();
+            gridRowTypeBuilder.dispose();
         });
 
         it('check to be defined', () => {
-            expect(rowTypeBuilder.componentType).toEqual('row');
+            expect(gridRowTypeBuilder.componentType).toEqual('grid-row');
         });
 
         it('check is component type defined', () => {
-            const type = rowTypeBuilder.editor.DomComponents.getType('row');
+            const type = gridRowTypeBuilder.editor.DomComponents.getType('grid-row');
             expect(type).toEqual(jasmine.objectContaining({
-                id: 'row'
+                id: 'grid-row'
             }));
         });
 
@@ -50,15 +50,15 @@ describe('orocms/js/app/grapesjs/type-builders/row-type-builder', () => {
             const mockElement = document.createElement('DIV');
             mockElement.classList.add('grid-row');
 
-            expect(rowTypeBuilder.Model.isComponent).toBeDefined();
-            expect(rowTypeBuilder.Model.isComponent(mockElement)).toEqual({
-                type: rowTypeBuilder.componentType
+            expect(gridRowTypeBuilder.Model.isComponent).toBeDefined();
+            expect(gridRowTypeBuilder.Model.isComponent(mockElement)).toEqual({
+                type: gridRowTypeBuilder.componentType
             });
 
-            expect(rowTypeBuilder.Model.componentType).toEqual(rowTypeBuilder.componentType);
-            expect(rowTypeBuilder.Model.prototype.defaults.classes).toEqual(['grid-row']);
-            expect(rowTypeBuilder.Model.prototype.defaults.droppable).toEqual('.grid-cell');
-            expect(rowTypeBuilder.Model.prototype.defaults.resizable).toEqual({
+            expect(gridRowTypeBuilder.Model.componentType).toEqual(gridRowTypeBuilder.componentType);
+            expect(gridRowTypeBuilder.Model.prototype.defaults.classes).toEqual(['grid-row']);
+            expect(gridRowTypeBuilder.Model.prototype.defaults.droppable).toEqual('.grid-cell');
+            expect(gridRowTypeBuilder.Model.prototype.defaults.resizable).toEqual({
                 tl: 0,
                 tc: 0,
                 tr: 0,
@@ -69,11 +69,11 @@ describe('orocms/js/app/grapesjs/type-builders/row-type-builder', () => {
                 minDim: 50
             });
 
-            expect(rowTypeBuilder.Model.prototype.editor).toEqual(editor);
+            expect(gridRowTypeBuilder.Model.prototype.editor).toEqual(editor);
         });
 
         it('check editor events', () => {
-            expect(rowTypeBuilder.editorEvents['selector:add']).toBeDefined();
+            expect(gridRowTypeBuilder.editorEvents['selector:add']).toBeDefined();
         });
     });
 });

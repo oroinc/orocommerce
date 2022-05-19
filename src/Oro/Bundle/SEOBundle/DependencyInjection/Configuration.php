@@ -6,9 +6,6 @@ use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
-/**
- * Configuration Seo bundle
- */
 class Configuration implements ConfigurationInterface
 {
     const CHANGEFREQ_ALWAYS = 'always';

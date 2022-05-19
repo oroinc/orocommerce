@@ -70,6 +70,8 @@ class CombinedPriceListGarbageCollectorTest extends \PHPUnit\Framework\TestCase
         $cplRepository->expects($this->once())
             ->method('deletePriceLists')
             ->with($invalidCPLs);
+        $cplRepository->expects($this->once())
+            ->method('removeDuplicatePrices');
 
         $customerRelationRepository = $this->createMock(CombinedPriceListToCustomerRepository::class);
         $customerRelationRepository->expects($this->once())

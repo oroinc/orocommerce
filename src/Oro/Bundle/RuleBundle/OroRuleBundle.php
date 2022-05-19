@@ -8,8 +8,13 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class OroRuleBundle extends Bundle
 {
-    public function build(ContainerBuilder $container)
+    /**
+     * {@inheritdoc}
+     */
+    public function build(ContainerBuilder $container): void
     {
+        parent::build($container);
+
         $container->addCompilerPass(new ExpressionLanguageFunctionCompilerPass());
     }
 }

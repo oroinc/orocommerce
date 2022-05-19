@@ -10,7 +10,6 @@ use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\PersistentCollection;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
@@ -226,10 +225,7 @@ class EmptyMatrixGridManagerTest extends TestCase
         $this->manager->addEmptyMatrix($shoppingList, $product);
     }
 
-    /**
-     * @return array
-     */
-    public function isAddEmptyMatrixAllowedDataProvider()
+    public function isAddEmptyMatrixAllowedDataProvider(): array
     {
         return [
             'empty line items, config disabled' => [
@@ -268,16 +264,13 @@ class EmptyMatrixGridManagerTest extends TestCase
     }
 
     /**
-     * @param LineItem[] $lineItems
-     * @param bool $configAllowEmpty
-     * @param bool $expected
      * @dataProvider isAddEmptyMatrixAllowedDataProvider
      */
-    public function testIsAddEmptyMatrixAllowed(array $lineItems, $configAllowEmpty, $expected)
+    public function testIsAddEmptyMatrixAllowed(array $lineItems, bool $configAllowEmpty, bool $expected)
     {
         $this->configManager->expects($this->any())
             ->method('get')
-            ->with(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::MATRIX_FORM_ALLOW_TO_ADD_EMPTY))
+            ->with('oro_product.matrix_form_allow_empty')
             ->willReturn($configAllowEmpty);
 
         $this->assertEquals($expected, $this->manager->isAddEmptyMatrixAllowed($lineItems));

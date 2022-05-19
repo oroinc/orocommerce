@@ -3,12 +3,11 @@
 namespace Oro\Bundle\CatalogBundle\Api\Model;
 
 /**
- * The model for the master catalog tree node API resource.
+ * Represents the master catalog tree node.
  */
 class CategoryNode
 {
-    /** @var int */
-    private $id;
+    private int $id;
 
     public function __construct(int $id)
     {

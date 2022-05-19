@@ -7,9 +7,9 @@ const openDigitalAssetsCommand = {
         title: null,
         routeName: null,
         routeParams: null,
+        loadingElement: null,
         target: null,
-        onSelect: function() {
-        }
+        onSelect: function() {}
     },
 
     dialog: null,
@@ -63,7 +63,7 @@ const openDigitalAssetsCommand = {
                 this.options.routeName,
                 _.extend(editor.Config.requestParams, this.options.routeParams || {})
             ),
-            loadingElement: container,
+            loadingElement: this.options.loadingElement || container,
             dialogOptions: {
                 appendTo: container
             }

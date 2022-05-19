@@ -5,49 +5,46 @@ namespace Oro\Bundle\WebCatalogBundle\EventListener;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent;
-use Oro\Bundle\WebCatalogBundle\DependencyInjection\OroWebCatalogExtension;
+use Oro\Bundle\WebCatalogBundle\DependencyInjection\Configuration;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 
+/**
+ * Transforms web catalog ID to WebCatalog entity and vise versa for the "web catalog" configuration option.
+ */
 class SystemConfigListener
 {
-    const SETTING = 'web_catalog';
+    private const KEY = 'web_catalog';
 
-    /**
-     * @var ManagerRegistry
-     */
-    protected $registry;
+    private ManagerRegistry $doctrine;
 
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $doctrine)
     {
-        $this->registry = $registry;
+        $this->doctrine = $doctrine;
     }
 
-    public function onFormPreSetData(ConfigSettingsUpdateEvent $event)
+    public function onFormPreSetData(ConfigSettingsUpdateEvent $event): void
     {
-        $settingsKey = implode(ConfigManager::SECTION_VIEW_SEPARATOR, [OroWebCatalogExtension::ALIAS, self::SETTING]);
+        $settingsKey = Configuration::ROOT_NODE . ConfigManager::SECTION_VIEW_SEPARATOR . self::KEY;
         $settings = $event->getSettings();
-        if (is_array($settings) && isset($settings[$settingsKey]['value'])) {
-            $settings[$settingsKey]['value'] = $this->registry
+        if (\is_array($settings) && isset($settings[$settingsKey]['value'])) {
+            $settings[$settingsKey]['value'] = $this->doctrine
                 ->getManagerForClass(WebCatalog::class)
                 ->find(WebCatalog::class, $settings[$settingsKey]['value']);
             $event->setSettings($settings);
         }
     }
 
-    public function onSettingsSaveBefore(ConfigSettingsUpdateEvent $event)
+    public function onSettingsSaveBefore(ConfigSettingsUpdateEvent $event): void
     {
         $settings = $event->getSettings();
-
-        if (!array_key_exists('value', $settings)) {
+        if (!\array_key_exists('value', $settings)) {
             return;
         }
-
         if (!$settings['value'] instanceof WebCatalog) {
             return;
         }
 
-        $webCatalog = $settings['value'];
-        $settings['value'] = $webCatalog->getId();
+        $settings['value'] = $settings['value']->getId();
         $event->setSettings($settings);
     }
 }

@@ -5,7 +5,6 @@ namespace Oro\Bundle\RFPBundle\EventListener;
 use Oro\Bundle\CustomerBundle\Entity\GuestCustomerUserManager;
 use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\RFPBundle\DependencyInjection\Configuration;
-use Oro\Bundle\RFPBundle\DependencyInjection\OroRFPExtension;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\UserBundle\Provider\DefaultUserProvider;
@@ -50,7 +49,7 @@ class RFPListener
         if (null === $request->getOwner()) {
             $request->setOwner(
                 $this->defaultUserProvider->getDefaultUser(
-                    OroRFPExtension::ALIAS,
+                    Configuration::ROOT_NODE,
                     Configuration::DEFAULT_GUEST_RFP_OWNER
                 )
             );

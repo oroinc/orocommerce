@@ -7,31 +7,23 @@ use Oro\Bundle\LocaleBundle\DependencyInjection\Compiler\EntityFallbackFieldsSto
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-/**
- * The CatalogBundle bundle class.
- */
 class OroCatalogBundle extends Bundle
 {
     /**
      * {@inheritdoc}
      */
-    public function build(ContainerBuilder $container)
+    public function build(ContainerBuilder $container): void
     {
         parent::build($container);
 
-        $container
-            ->addCompilerPass(
-                new EntityFallbackFieldsStoragePass(
-                    [
-                        'Oro\Bundle\CatalogBundle\Entity\Category' => [
-                            'title' => 'titles',
-                            'shortDescription' => 'shortDescriptions',
-                            'longDescription' => 'longDescriptions',
-                            'slugPrototype' => 'slugPrototypes'
-                        ]
-                    ]
-                )
-            )
-            ->addCompilerPass(new AttributeBlockTypeMapperPass());
+        $container->addCompilerPass(new EntityFallbackFieldsStoragePass([
+            'Oro\Bundle\CatalogBundle\Entity\Category' => [
+                'title' => 'titles',
+                'shortDescription' => 'shortDescriptions',
+                'longDescription' => 'longDescriptions',
+                'slugPrototype' => 'slugPrototypes'
+            ]
+        ]));
+        $container->addCompilerPass(new AttributeBlockTypeMapperPass());
     }
 }

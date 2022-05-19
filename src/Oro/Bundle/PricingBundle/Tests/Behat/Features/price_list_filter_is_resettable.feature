@@ -1,9 +1,6 @@
 @fixture-OroPricingBundle:PriceListFilter.yml
 
 Feature: Price list filter is resettable
-  In order to ...
-  As an ...
-  I should be able to ...
 
   Scenario: Check that Product Prices datagrid is filtered by default price list, but it can resetted to show all
     Given I login as administrator

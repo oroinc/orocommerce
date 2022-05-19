@@ -16,7 +16,7 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder(OroWebsiteSearchExtension::ALIAS);
+        $treeBuilder = new TreeBuilder('oro_website_search');
         $rootNode = $treeBuilder->getRootNode();
 
         $rootNode->children()

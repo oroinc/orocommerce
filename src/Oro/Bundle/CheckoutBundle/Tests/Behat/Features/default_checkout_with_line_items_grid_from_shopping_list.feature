@@ -284,7 +284,7 @@ Feature: Default Checkout With Line Items Grid From Shopping List
     Then I should see following grid:
       | SKU | Item                                                  |          | Qty | Unit  | Price  | Subtotal               |
       | BB4 | Configurable Product 1 Color: Red Size: M Note 4 text | In Stock | 10  | items | $11.00 | $110.00 -$55.00 $55.00 |
-    And I should see "1 total records"
+    And I should see "1 total record"
 
   Scenario: Sort by SKU
     Given I open Order History page on the store frontend

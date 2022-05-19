@@ -5,7 +5,6 @@ namespace Oro\Bundle\PaymentTermBundle\Tests\Functional\Api\Frontend\RestJsonApi
 use Oro\Bundle\CustomerBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadAdminCustomerUserData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\Api\FrontendRestJsonApiTestCase;
 use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
-use Symfony\Component\HttpFoundation\Response;
 
 class PaymentTermTest extends FrontendRestJsonApiTestCase
 {
@@ -26,11 +25,7 @@ class PaymentTermTest extends FrontendRestJsonApiTestCase
             [],
             false
         );
-        $this->assertResponseValidationError(
-            ['title' => 'resource not accessible exception'],
-            $response,
-            Response::HTTP_NOT_FOUND
-        );
+        $this->assertResourceNotAccessibleResponse($response);
     }
 
     public function testTryToGet()
@@ -41,11 +36,7 @@ class PaymentTermTest extends FrontendRestJsonApiTestCase
             [],
             false
         );
-        $this->assertResponseValidationError(
-            ['title' => 'resource not accessible exception'],
-            $response,
-            Response::HTTP_NOT_FOUND
-        );
+        $this->assertResourceNotAccessibleResponse($response);
     }
 
     public function testTryToCreate()
@@ -56,11 +47,7 @@ class PaymentTermTest extends FrontendRestJsonApiTestCase
             [],
             false
         );
-        $this->assertResponseValidationError(
-            ['title' => 'resource not accessible exception'],
-            $response,
-            Response::HTTP_NOT_FOUND
-        );
+        $this->assertResourceNotAccessibleResponse($response);
     }
 
     public function testTryToUpdate()
@@ -71,11 +58,7 @@ class PaymentTermTest extends FrontendRestJsonApiTestCase
             [],
             false
         );
-        $this->assertResponseValidationError(
-            ['title' => 'resource not accessible exception'],
-            $response,
-            Response::HTTP_NOT_FOUND
-        );
+        $this->assertResourceNotAccessibleResponse($response);
     }
 
     public function testTryToDelete()
@@ -86,11 +69,7 @@ class PaymentTermTest extends FrontendRestJsonApiTestCase
             [],
             false
         );
-        $this->assertResponseValidationError(
-            ['title' => 'resource not accessible exception'],
-            $response,
-            Response::HTTP_NOT_FOUND
-        );
+        $this->assertResourceNotAccessibleResponse($response);
     }
 
     public function testTryToDeleteList()
@@ -101,10 +80,6 @@ class PaymentTermTest extends FrontendRestJsonApiTestCase
             [],
             false
         );
-        $this->assertResponseValidationError(
-            ['title' => 'resource not accessible exception'],
-            $response,
-            Response::HTTP_NOT_FOUND
-        );
+        $this->assertResourceNotAccessibleResponse($response);
     }
 }

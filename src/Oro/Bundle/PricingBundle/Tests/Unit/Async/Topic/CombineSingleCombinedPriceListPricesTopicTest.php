@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Async\Topic;
 
+use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\ORM\EntityNotFoundException;
 use Oro\Bundle\PricingBundle\Async\Topic\CombineSingleCombinedPriceListPricesTopic;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
@@ -36,6 +37,38 @@ class CombineSingleCombinedPriceListPricesTopicTest extends AbstractTopicTestCas
         return new CombineSingleCombinedPriceListPricesTopic($this->combinedPriceListProvider);
     }
 
+    public function testConfigureMessageBodyForUnexpectedDbException()
+    {
+        $e = $this->createMock(ForeignKeyConstraintViolationException::class);
+
+        /** @var MockObject|CombinedPriceListProvider $combinedPriceListProvider */
+        $combinedPriceListProvider = $this->createMock(CombinedPriceListProvider::class);
+        $combinedPriceListProvider->expects($this->any())
+            ->method('getCombinedPriceListByCollectionInformation')
+            ->willThrowException($e);
+
+        $topic = new CombineSingleCombinedPriceListPricesTopic($combinedPriceListProvider);
+        $optionsResolver = new OptionsResolver();
+
+        $topic->configureMessageBody($optionsResolver);
+
+        $body = [
+            'jobId' => 100,
+            'collection' => [['p' => 1, 'm' => true]],
+            'assign_to' => ['config' => true]
+        ];
+        $expectedBody = [
+            'jobId' => 100,
+            'cpl' => false,
+            'assign_to' => ['config' => true],
+            'products' => [],
+            'collection' => [['p' => 1, 'm' => true]]
+        ];
+        $actual = $optionsResolver->resolve($body);
+        self::assertEquals($expectedBody, $actual);
+        self::assertFalse($actual['cpl']);
+    }
+
     public function testConfigureMessageBodyForEntityNotFoundException()
     {
         /** @var MockObject|CombinedPriceListProvider $combinedPriceListProvider */
@@ -61,7 +94,9 @@ class CombineSingleCombinedPriceListPricesTopicTest extends AbstractTopicTestCas
             'products' => [],
             'collection' => [['p' => 1, 'm' => true]],
         ];
-        self::assertEquals($expectedBody, $optionsResolver->resolve($body));
+        $actual = $optionsResolver->resolve($body);
+        self::assertEquals($expectedBody, $actual);
+        self::assertNull($actual['cpl']);
     }
 
     public function validBodyDataProvider(): array

@@ -28,9 +28,4 @@ class OroFixedProductShippingExtensionTest extends ExtensionTestCase
 
         $this->assertDefinitionsLoaded($expectedDefinitions);
     }
-
-    public function testGetAliasReturnsString(): void
-    {
-        $this->assertTrue(is_string($this->extension->getAlias()));
-    }
 }

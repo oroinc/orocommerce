@@ -12,8 +12,7 @@ class OroCheckoutExtensionTest extends ExtensionTestCase
     protected function buildContainerMock(): ContainerBuilder
     {
         $containerBuilder = parent::buildContainerMock();
-        $containerBuilder
-            ->expects(static::once())
+        $containerBuilder->expects(self::once())
             ->method('getParameter')
             ->with('kernel.bundles')
             ->willReturn(['OroSaleBundle' => []]);
@@ -34,11 +33,6 @@ class OroCheckoutExtensionTest extends ExtensionTestCase
         ];
 
         $this->assertDefinitionsLoaded($expectedDefinitions);
-        $this->assertExtensionConfigsLoaded([OroCheckoutExtension::ALIAS]);
-    }
-
-    public function testGetAlias(): void
-    {
-        static::assertEquals(OroCheckoutExtension::ALIAS, (new OroCheckoutExtension())->getAlias());
+        $this->assertExtensionConfigsLoaded(['oro_checkout']);
     }
 }

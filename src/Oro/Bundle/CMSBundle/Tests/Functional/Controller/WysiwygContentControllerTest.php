@@ -85,18 +85,22 @@ HTML;
                     [
                         'message' => 'Line #14: Unrecognized "<style>" meta tag and all descendants should be removed',
                         'line' => 14,
+                        'messageRaw' => 'Unrecognized "<style>" meta tag and all descendants should be removed',
                     ],
                     [
                         'message' => 'Line #15: Unrecognized "</style>" meta tag and all descendants should be removed',
                         'line' => 15,
+                        'messageRaw' => 'Unrecognized "</style>" meta tag and all descendants should be removed',
                     ],
                     [
                         'message' => 'Line #7: "src" attribute on "<iframe>" should be removed',
                         'line' => 7,
+                        'messageRaw' => '"src" attribute on "<iframe>" should be removed',
                     ],
                     [
                         'message' => 'Line #11: "href" attribute on "<a>" should be removed',
                         'line' => 11,
+                        'messageRaw' => '"href" attribute on "<a>" should be removed',
                     ],
                 ],
             ],

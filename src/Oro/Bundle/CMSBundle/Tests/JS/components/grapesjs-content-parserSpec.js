@@ -155,6 +155,7 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                 attributes: {},
                 classes: ['quote'],
                 type: 'quote',
+                textComponent: true,
                 components: [
                     {
                         tagName: 'i',
@@ -186,8 +187,7 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                     type: 'text',
                     components: [
                         {
-                            tagName: 'br',
-                            ...textBlockOptions
+                            tagName: 'br'
                         },
                         {
                             content: ' test2 ',
@@ -195,8 +195,7 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                             tagName: ''
                         },
                         {
-                            tagName: 'br',
-                            ...textBlockOptions
+                            tagName: 'br'
                         },
                         {
                             content: ' a b ',

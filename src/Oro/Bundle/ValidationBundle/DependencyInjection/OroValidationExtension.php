@@ -9,8 +9,6 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 class OroValidationExtension extends Extension
 {
-    const ALIAS = 'oro_validation';
-
     /**
      * {@inheritDoc}
      */
@@ -18,11 +16,5 @@ class OroValidationExtension extends Extension
     {
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.yml');
-    }
-
-    /** {@inheritdoc} */
-    public function getAlias()
-    {
-        return self::ALIAS;
     }
 }

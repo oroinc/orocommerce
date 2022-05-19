@@ -15,7 +15,7 @@
     }
 }
 
-@include breakpoint('responsive-shopping-list-grid-ovreflow') {
+@include breakpoint('responsive-shopping-list-grid-overflow') {
     .responsive-shopping-list-layout {
         .page-content {
             &--has-sidebar {

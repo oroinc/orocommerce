@@ -4,7 +4,6 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\DependencyInjection;
 
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
-use Oro\Bundle\PricingBundle\DependencyInjection\OroPricingExtension;
 use Oro\Bundle\PricingBundle\PricingStrategy\MinimalPricesCombiningStrategy;
 use Symfony\Component\Config\Definition\Processor;
 
@@ -82,10 +81,11 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
 
     public function testGetConfigKeyByName()
     {
-        $configKey = Configuration::getConfigKeyToPriceList();
-        $this->assertSame(
-            OroPricingExtension::ALIAS . '.' .Configuration::COMBINED_PRICE_LIST,
-            $configKey
-        );
+        $this->assertEquals('oro_pricing.combined_price_list', Configuration::getConfigKeyToPriceList());
+    }
+
+    public function testGetConfigKeyToFullPriceList()
+    {
+        $this->assertEquals('oro_pricing.full_combined_price_list', Configuration::getConfigKeyToFullPriceList());
     }
 }

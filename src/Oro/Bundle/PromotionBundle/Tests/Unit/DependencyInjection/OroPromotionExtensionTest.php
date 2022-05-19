@@ -41,13 +41,4 @@ class OroPromotionExtensionTest extends ExtensionTestCase
         ];
         $this->assertExtensionConfigsLoaded($expectedExtensionConfigs);
     }
-
-    /**
-     * Test Get Alias
-     */
-    public function testGetAlias()
-    {
-        $extension = new OroPromotionExtension();
-        $this->assertEquals('oro_promotion', $extension->getAlias());
-    }
 }

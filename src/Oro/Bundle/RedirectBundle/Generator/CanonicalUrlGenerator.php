@@ -7,7 +7,6 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Provider\LocalizationProviderInterface;
 use Oro\Bundle\RedirectBundle\DependencyInjection\Configuration;
-use Oro\Bundle\RedirectBundle\DependencyInjection\OroRedirectExtension;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Entity\SlugAwareInterface;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
@@ -244,7 +243,7 @@ class CanonicalUrlGenerator
      */
     private function getConfigKey($configField)
     {
-        return sprintf('%s.%s', OroRedirectExtension::ALIAS, $configField);
+        return Configuration::ROOT_NODE . '.' . $configField;
     }
 
     private function getCacheKey(string $configKey, WebsiteInterface $website = null) : string

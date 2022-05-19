@@ -6,7 +6,7 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\ApiBundle\Config\EntityDefinitionConfig;
 use Oro\Bundle\ApiBundle\Normalizer\ObjectNormalizer;
-use Oro\Bundle\ApiBundle\Processor\Context;
+use Oro\Bundle\ApiBundle\Processor\ApiContext;
 use Oro\Bundle\ApiBundle\Request\RequestType;
 use Oro\Bundle\ApiBundle\Util\CriteriaConnector;
 use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
@@ -20,17 +20,10 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  */
 class CategoryNodeRepository
 {
-    /** @var DoctrineHelper */
-    private $doctrineHelper;
-
-    /** @var ObjectNormalizer */
-    private $objectNormalizer;
-
-    /** @var CriteriaConnector */
-    private $criteriaConnector;
-
-    /** @var QueryAclHelper */
-    private $queryAclHelper;
+    private DoctrineHelper $doctrineHelper;
+    private ObjectNormalizer $objectNormalizer;
+    private CriteriaConnector $criteriaConnector;
+    private QueryAclHelper $queryAclHelper;
 
     public function __construct(
         DoctrineHelper $doctrineHelper,
@@ -46,19 +39,13 @@ class CategoryNodeRepository
 
     /**
      * Gets all nodes filtered by the given criteria and available for the storefront.
-     *
-     * @param Criteria               $criteria
-     * @param EntityDefinitionConfig $config
-     * @param array                  $normalizationContext
-     *
-     * @return array The normalized data for the requested nodes
      */
     public function getCategoryNodes(
         Criteria $criteria,
         EntityDefinitionConfig $config,
         array $normalizationContext
     ): array {
-        $nodes = $this->getAvailableCategoryNodes($criteria, $config, $normalizationContext[Context::REQUEST_TYPE]);
+        $nodes = $this->getAvailableCategoryNodes($criteria, $config, $normalizationContext[ApiContext::REQUEST_TYPE]);
         if (!$nodes) {
             return [];
         }
@@ -69,12 +56,6 @@ class CategoryNodeRepository
     /**
      * Gets a node by its ID.
      *
-     * @param int                    $id
-     * @param EntityDefinitionConfig $config
-     * @param array                  $normalizationContext
-     *
-     * @return array|null The normalized data for the requested node or NULL if the node does not exist
-     *
      * @throws AccessDeniedException if the requested node is not available for the storefront
      */
     public function getCategoryNode(
@@ -82,7 +63,7 @@ class CategoryNodeRepository
         EntityDefinitionConfig $config,
         array $normalizationContext
     ): ?array {
-        $node = $this->getCategoryNodeEntity($id, $config, $normalizationContext[Context::REQUEST_TYPE]);
+        $node = $this->getCategoryNodeEntity($id, $config, $normalizationContext[ApiContext::REQUEST_TYPE]);
         if (null === $node) {
             return null;
         }
@@ -98,12 +79,6 @@ class CategoryNodeRepository
 
     /**
      * Gets a node entity by its ID.
-     *
-     * @param int                    $id
-     * @param EntityDefinitionConfig $config
-     * @param RequestType            $requestType
-     *
-     * @return CategoryNode|null The requested node or NULL if the node does not exist
      *
      * @throws AccessDeniedException if the requested node is not available for the storefront
      */

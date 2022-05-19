@@ -9,17 +9,12 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 class OroPayPalExtension extends Extension
 {
-    const ALIAS = 'oro_paypal';
-
     /**
      * {@inheritDoc}
-     *
-     * @throws \Exception
      */
     public function load(array $configs, ContainerBuilder $container): void
     {
-        $configuration = new Configuration();
-        $config = $this->processConfiguration($configuration, $configs);
+        $config = $this->processConfiguration(new Configuration(), $configs);
         $container->setParameter(
             Configuration::getConfigKey(Configuration::CONFIG_KEY_ALLOWED_IPS),
             $config[Configuration::CONFIG_KEY_ALLOWED_IPS]
@@ -42,6 +37,6 @@ class OroPayPalExtension extends Extension
      */
     public function getAlias(): string
     {
-        return self::ALIAS;
+        return Configuration::ROOT_NODE;
     }
 }

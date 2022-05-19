@@ -5,7 +5,6 @@ namespace Oro\Bundle\ConsentBundle\Migrations\Data\Demo\ORM;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\ConsentBundle\DependencyInjection\Configuration;
-use Oro\Bundle\ConsentBundle\DependencyInjection\OroConsentExtension;
 use Oro\Bundle\ConsentBundle\Entity\Consent;
 use Oro\Bundle\ConsentBundle\SystemConfig\ConsentConfig;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
@@ -51,7 +50,7 @@ class LoadConsentDemoData extends AbstractLoadWebCatalogDemoData implements Depe
         $configArray = $consentConfigConverter->convertBeforeSave($consentConfigs);
 
         $configManager = $this->container->get('oro_config.global');
-        $configManager->set(OroConsentExtension::ALIAS . '.' . Configuration::ENABLED_CONSENTS, $configArray);
+        $configManager->set(Configuration::ROOT_NODE . 'oro_consent.' . Configuration::ENABLED_CONSENTS, $configArray);
 
         $configManager->flush();
     }

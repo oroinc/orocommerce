@@ -2,49 +2,44 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\EventListener;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebCatalogBundle\EventListener\SystemConfigListener;
-use Oro\Component\Testing\Unit\EntityTrait;
 
 class SystemConfigListenerTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrine;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry
-     */
-    protected $registry;
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $configManager;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|ConfigManager
-     */
-    protected $configManager;
-
-    /**
-     * @var SystemConfigListener
-     */
-    protected $listener;
+    /** @var SystemConfigListener */
+    private $listener;
 
     protected function setUp(): void
     {
-        $this->registry = $this->createMock(ManagerRegistry::class);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->configManager = $this->createMock(ConfigManager::class);
-        $this->listener = new SystemConfigListener($this->registry);
+        $this->listener = new SystemConfigListener($this->doctrine);
+    }
+
+    private function getEvent(array $settings): ConfigSettingsUpdateEvent
+    {
+        return new ConfigSettingsUpdateEvent($this->configManager, $settings);
     }
 
     /**
      * @dataProvider invalidSettingsDataProvider
-     * @param mixed $settings
      */
-    public function testOnFormPreSetDataInvalidSettings($settings)
+    public function testOnFormPreSetDataInvalidSettings(array $settings)
     {
-        $event = new ConfigSettingsUpdateEvent($this->configManager, $settings);
+        $event = $this->getEvent($settings);
 
-        $this->registry->expects($this->never())
+        $this->doctrine->expects($this->never())
             ->method($this->anything());
 
         $this->listener->onFormPreSetData($event);
@@ -52,22 +47,18 @@ class SystemConfigListenerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider invalidSettingsDataProvider
-     * @param mixed $settings
      */
-    public function testOnSettingsSaveBeforeInvalidSettings($settings)
+    public function testOnSettingsSaveBeforeInvalidSettings(array $settings)
     {
-        $event = new ConfigSettingsUpdateEvent($this->configManager, $settings);
+        $event = $this->getEvent($settings);
 
-        $this->registry->expects($this->never())
+        $this->doctrine->expects($this->never())
             ->method($this->anything());
 
         $this->listener->onSettingsSaveBefore($event);
     }
 
-    /**
-     * @return array
-     */
-    public function invalidSettingsDataProvider()
+    public function invalidSettingsDataProvider(): array
     {
         return [
             [[null]],
@@ -82,26 +73,20 @@ class SystemConfigListenerTest extends \PHPUnit\Framework\TestCase
         $id = 42;
         $key = 'oro_web_catalog___web_catalog';
 
-        $webCatalog = $this->getEntity(WebCatalog::class, ['id' => $id]);
+        $webCatalog = $this->createMock(WebCatalog::class);
 
-        $settings = [
-            $key => ['value' => $id],
-        ];
+        $event = $this->getEvent([$key => ['value' => $id]]);
 
-        $event = new ConfigSettingsUpdateEvent($this->configManager, $settings);
-
-        $manager = $this->getMockBuilder(ObjectManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $manager->expects($this->once())
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->expects($this->once())
             ->method('find')
             ->with(WebCatalog::class, $id)
-            ->will($this->returnValue($webCatalog));
+            ->willReturn($webCatalog);
 
-        $this->registry->expects($this->once())
+        $this->doctrine->expects($this->once())
             ->method('getManagerForClass')
             ->with(WebCatalog::class)
-            ->will($this->returnValue($manager));
+            ->willReturn($em);
 
         $this->listener->onFormPreSetData($event);
 
@@ -111,13 +96,12 @@ class SystemConfigListenerTest extends \PHPUnit\Framework\TestCase
     public function testOnSettingsSaveBefore()
     {
         $id = 42;
-        $webCatalog = $this->getEntity(WebCatalog::class, ['id' => $id]);
+        $webCatalog = $this->createMock(WebCatalog::class);
+        $webCatalog->expects($this->once())
+            ->method('getId')
+            ->willReturn($id);
 
-        $settings = [
-            'value' => $webCatalog,
-        ];
-
-        $event = new ConfigSettingsUpdateEvent($this->configManager, $settings);
+        $event = $this->getEvent(['value' => $webCatalog]);
 
         $this->listener->onSettingsSaveBefore($event);
 

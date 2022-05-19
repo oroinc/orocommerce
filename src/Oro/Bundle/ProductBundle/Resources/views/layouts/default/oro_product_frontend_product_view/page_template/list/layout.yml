@@ -16,7 +16,7 @@ layout:
             prepend: true
         - '@add':
             id: product_main_container
-            parentId: product_view_container
+            parentId: product_view_microdata_container
             blockType: container
         - '@add':
             id: product_aside_container

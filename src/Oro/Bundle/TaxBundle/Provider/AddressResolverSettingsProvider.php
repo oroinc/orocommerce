@@ -3,7 +3,6 @@ namespace Oro\Bundle\TaxBundle\Provider;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\TaxBundle\DependencyInjection\Configuration;
-use Oro\Bundle\TaxBundle\DependencyInjection\OroTaxExtension;
 
 /**
  * Get Address Resolver Granularity settings.
@@ -30,7 +29,7 @@ class AddressResolverSettingsProvider
      */
     public function getAddressResolverGranularity()
     {
-        $key = OroTaxExtension::ALIAS
+        $key = Configuration::ROOT_NODE
             . ConfigManager::SECTION_MODEL_SEPARATOR
             . Configuration::ADDRESS_RESOLVER_GRANULARITY;
 

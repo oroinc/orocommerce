@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
+use Doctrine\DBAL\Platforms\PostgreSQL94Platform;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
@@ -141,6 +142,38 @@ class CombinedPriceListRepository extends BasePriceListRepository
         }
     }
 
+    public function removeDuplicatePrices()
+    {
+        $connection = $this->_em->getConnection();
+        if ($connection->getDatabasePlatform() instanceof PostgreSQL94Platform) {
+            $sql = 'DELETE 
+                    FROM oro_price_product_combined p1
+                    USING oro_price_product_combined p2
+                    WHERE 
+                        p1.id < p2.id
+                        AND p1.combined_price_list_id = p2.combined_price_list_id
+                        AND p1.product_id = p2.product_id
+                        AND p1.value = p2.value
+                        AND p1.currency = p2.currency
+                        AND p1.quantity = p2.quantity
+                        AND p1.unit_code = p2.unit_code';
+        } else {
+            $sql = 'DELETE p1.*
+                FROM oro_price_product_combined p1 
+                INNER JOIN oro_price_product_combined p2
+                WHERE
+                    p1.id < p2.id
+                    AND p1.combined_price_list_id = p2.combined_price_list_id
+                    AND p1.product_id = p2.product_id
+                    AND p1.value = p2.value
+                    AND p1.currency = p2.currency
+                    AND p1.quantity = p2.quantity
+                    AND p1.unit_code = p2.unit_code';
+        }
+
+        $connection->executeQuery($sql);
+    }
+
     /**
      * @return int
      */
@@ -278,10 +311,10 @@ class CombinedPriceListRepository extends BasePriceListRepository
             $subQb = $this->getEntityManager()->createQueryBuilder();
             $subQb->select('1')
                 ->from($class, $alias)
-                ->where($subQb->expr()->eq($alias.'.priceList', ':cpl'))
-                ->andWhere($subQb->expr()->eq($alias.'.website', ':website'));
+                ->where($subQb->expr()->eq($alias . '.priceList', ':cpl'))
+                ->andWhere($subQb->expr()->eq($alias . '.website', ':website'));
             if (is_a($exceptRelation, $class)) {
-                $subQb->andWhere($subQb->expr()->neq($alias.'.id', ':exceptRelation'));
+                $subQb->andWhere($subQb->expr()->neq($alias . '.id', ':exceptRelation'));
                 $mainQb->setParameter('exceptRelation', $exceptRelation->getId());
             }
             $expr->add($mainQb->expr()->exists($subQb->getDQL()));

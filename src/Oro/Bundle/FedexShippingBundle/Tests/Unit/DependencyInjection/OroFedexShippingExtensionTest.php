@@ -7,9 +7,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\DependencyInjection\ExtensionTestCase;
 
 class OroFedexShippingExtensionTest extends ExtensionTestCase
 {
-    /**
-     * @var OroFedexShippingExtension
-     */
+    /** @var OroFedexShippingExtension */
     private $extension;
 
     protected function setUp(): void
@@ -65,10 +63,5 @@ class OroFedexShippingExtensionTest extends ExtensionTestCase
         ];
 
         $this->assertParametersLoaded($expectedParameters);
-    }
-
-    public function testGetAlias()
-    {
-        static::assertSame('oro_fedex_shipping', $this->extension->getAlias());
     }
 }

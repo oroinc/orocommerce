@@ -66,6 +66,73 @@ class SingleCplProcessorTest extends TestCase
         );
     }
 
+    public function testProcessUnresolvedRetryableCplCollection()
+    {
+        $message = $this->createMock(MessageInterface::class);
+        $message->expects($this->any())
+            ->method('getBody')
+            ->willReturn([
+                'cpl' => false,
+                'jobId' => 100,
+                'products' => [],
+                'assign_to' => []
+            ]);
+
+        $this->logger->expects($this->once())
+            ->method('warning')
+            ->with(
+                'Unexpected retryable exception occurred during Combined Price Lists message resolving.',
+                ['topic' => CombineSingleCombinedPriceListPricesTopic::getName()]
+            );
+
+        $this->assertEquals(
+            $this->processor::REQUEUE,
+            $this->processor->process($message, $this->createMock(SessionInterface::class))
+        );
+    }
+
+    public function testProcessNotFoundCpl()
+    {
+        $message = $this->createMock(MessageInterface::class);
+        $message->expects($this->any())
+            ->method('getBody')
+            ->willReturn([
+                'cpl' => null,
+                'jobId' => 100,
+                'products' => [],
+                'assign_to' => []
+            ]);
+
+        $rootJob = $this->createMock(Job::class);
+        $rootJob->expects($this->any())
+            ->method('getId')
+            ->willReturn(42);
+        $job = $this->createMock(Job::class);
+        $job->expects($this->any())
+            ->method('getRootJob')
+            ->willReturn($rootJob);
+
+        $this->jobRunner->expects($this->once())
+            ->method('runDelayed')
+            ->willReturnCallback(
+                function ($ownerId, $closure) use ($job) {
+                    return $closure($this->jobRunner, $job);
+                }
+            );
+
+        $this->indexationTriggerHandler->expects($this->never())
+            ->method($this->anything());
+        $this->combinedPriceListsBuilderFacade->expects($this->never())
+            ->method($this->anything());
+        $this->dispatcher->expects($this->never())
+            ->method($this->anything());
+
+        $this->assertEquals(
+            $this->processor::ACK,
+            $this->processor->process($message, $this->createMock(SessionInterface::class))
+        );
+    }
+
     public function testProcessUnexpectedException()
     {
         $message = $this->createMock(MessageInterface::class);
@@ -122,11 +189,41 @@ class SingleCplProcessorTest extends TestCase
             ->method('error')
             ->with(
                 'Unexpected exception occurred during Combined Price Lists build.',
-                ['exception' => $e]
+                [
+                    'topic' => CombineSingleCombinedPriceListPricesTopic::getName(),
+                    'exception' => $e
+                ]
             );
 
         $this->assertEquals(
             $this->processor::REJECT,
+            $this->processor->process($message, $this->createMock(SessionInterface::class))
+        );
+    }
+
+    public function testProcessUnexpectedDatabaseExceptionDuringMessageResolve()
+    {
+        $message = $this->createMock(MessageInterface::class);
+        $message->expects($this->any())
+            ->method('getBody')
+            ->willReturn([
+                'cpl' => false,
+                'jobId' => 100,
+                'products' => [],
+                'assign_to' => []
+            ]);
+
+        $this->logger->expects($this->once())
+            ->method('warning')
+            ->with(
+                'Unexpected retryable exception occurred during Combined Price Lists message resolving.',
+                [
+                    'topic' => CombineSingleCombinedPriceListPricesTopic::getName()
+                ]
+            );
+
+        $this->assertEquals(
+            $this->processor::REQUEUE,
             $this->processor->process($message, $this->createMock(SessionInterface::class))
         );
     }
@@ -183,12 +280,20 @@ class SingleCplProcessorTest extends TestCase
         $this->dispatcher->expects($this->never())
             ->method('dispatch');
 
-        $this->logger->expects($this->never())
-            ->method('error');
+        $this->logger->expects($this->once())
+            ->method('warning')
+            ->with(
+                'Unexpected retryable database exception occurred during Combined Price Lists build.',
+                [
+                    'exception' => $e,
+                    'topic' => CombineSingleCombinedPriceListPricesTopic::getName()
+                ]
+            );
 
-        $this->expectException(DeadlockException::class);
-
-        $this->processor->process($message, $this->createMock(SessionInterface::class));
+        $this->assertEquals(
+            $this->processor::REQUEUE,
+            $this->processor->process($message, $this->createMock(SessionInterface::class))
+        );
     }
 
     /**

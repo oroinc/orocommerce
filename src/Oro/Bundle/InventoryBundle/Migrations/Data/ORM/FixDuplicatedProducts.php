@@ -36,7 +36,7 @@ class FixDuplicatedProducts extends AbstractFixture implements ContainerAwareInt
      */
     public function load(ObjectManager $manager)
     {
-        $duplicateListener = $this->container->get('oro_seo.event_listener.product_duplicate');
+        $duplicateListener = $this->container->get('oro_inventory.event_listener.product_duplicate');
 
         $productIds = $this->getAffectedProductIds($manager);
 

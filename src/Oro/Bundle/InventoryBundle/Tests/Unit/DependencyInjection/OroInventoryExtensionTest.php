@@ -20,9 +20,4 @@ class OroInventoryExtensionTest extends ExtensionTestCase
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
     }
-
-    public function testGetAlias(): void
-    {
-        static::assertEquals('oro_inventory', (new OroInventoryExtension())->getAlias());
-    }
 }

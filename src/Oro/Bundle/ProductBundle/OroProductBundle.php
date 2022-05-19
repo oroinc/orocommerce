@@ -7,31 +7,15 @@ use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\AttributeBlockType
 use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\ComponentProcessorPass;
 use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\ProductCollectionCompilerPass;
 use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\TwigSandboxConfigurationPass;
-use Oro\Bundle\ProductBundle\DependencyInjection\OroProductExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-/**
- * The ProductBundle bundle class.
- */
 class OroProductBundle extends Bundle
 {
     /**
      * {@inheritdoc}
      */
-    public function getContainerExtension()
-    {
-        if (!$this->extension) {
-            $this->extension = new OroProductExtension();
-        }
-
-        return $this->extension;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function build(ContainerBuilder $container)
+    public function build(ContainerBuilder $container): void
     {
         parent::build($container);
 

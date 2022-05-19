@@ -1,11 +1,11 @@
 import 'jasmine-jquery';
 import grapesJS from 'grapesjs';
-import ColumnTypeBuilder from 'orocms/js/app/grapesjs/type-builders/column-type-builder';
+import GridColumnTypeBuilder from 'orocms/js/app/grapesjs/type-builders/grid-column-type-builder';
 import ComponentRestriction from 'orocms/js/app/grapesjs/plugins/components/component-restriction';
 import html from 'text-loader!../fixtures/grapesjs-editor-view-fixture.html';
 
 describe('orocms/js/app/grapesjs/type-builders/column-type-builder', () => {
-    let columnTypeBuilder;
+    let gridColumnTypeBuilder;
     let editor;
 
     beforeEach(() => {
@@ -23,26 +23,26 @@ describe('orocms/js/app/grapesjs/type-builders/column-type-builder', () => {
 
     describe('component "ColumnTypeBuilder"', () => {
         beforeEach(() => {
-            columnTypeBuilder = new ColumnTypeBuilder({
+            gridColumnTypeBuilder = new GridColumnTypeBuilder({
                 editor,
-                componentType: 'column'
+                componentType: 'grid-column'
             });
 
-            columnTypeBuilder.execute();
+            gridColumnTypeBuilder.execute();
         });
 
         afterEach(() => {
-            columnTypeBuilder.dispose();
+            gridColumnTypeBuilder.dispose();
         });
 
         it('check to be defined', () => {
-            expect(columnTypeBuilder.componentType).toEqual('column');
+            expect(gridColumnTypeBuilder.componentType).toEqual('grid-column');
         });
 
         it('check is component type defined', () => {
-            const type = columnTypeBuilder.editor.DomComponents.getType('column');
+            const type = gridColumnTypeBuilder.editor.DomComponents.getType('grid-column');
             expect(type).toEqual(jasmine.objectContaining({
-                id: 'column'
+                id: 'grid-column'
             }));
         });
 
@@ -50,33 +50,34 @@ describe('orocms/js/app/grapesjs/type-builders/column-type-builder', () => {
             const mockElement = document.createElement('DIV');
             mockElement.classList.add('grid-cell');
 
-            expect(columnTypeBuilder.Model.isComponent).toBeDefined();
-            expect(columnTypeBuilder.Model.isComponent(mockElement)).toEqual({
-                type: columnTypeBuilder.componentType
+            expect(gridColumnTypeBuilder.Model.isComponent).toBeDefined();
+            expect(gridColumnTypeBuilder.Model.isComponent(mockElement)).toEqual({
+                type: gridColumnTypeBuilder.componentType
             });
 
-            expect(columnTypeBuilder.Model.componentType).toEqual(columnTypeBuilder.componentType);
-            expect(columnTypeBuilder.Model.prototype.defaults.classes).toEqual(['grid-cell']);
-            expect(columnTypeBuilder.Model.prototype.defaults.draggable).toEqual('.grid-row');
-            expect(columnTypeBuilder.Model.prototype.defaults.resizable).toEqual({
+            expect(gridColumnTypeBuilder.Model.componentType).toEqual(gridColumnTypeBuilder.componentType);
+            expect(gridColumnTypeBuilder.Model.prototype.defaults.classes).toEqual(['grid-cell']);
+            expect(gridColumnTypeBuilder.Model.prototype.defaults.draggable).toEqual('.grid-row');
+            expect(gridColumnTypeBuilder.Model.prototype.defaults.resizable).toEqual({
                 tl: 0,
                 tc: 0,
                 tr: 0,
                 bl: 0,
                 br: 0,
                 bc: 0,
-                minDim: 25,
-                maxDim: 75,
+                minDim: 10,
+                maxDim: 90,
                 step: 0.2,
                 currentUnit: 0,
-                unitWidth: '%'
+                unitWidth: '%',
+                updateTarget: jasmine.any(Function)
             });
 
-            expect(columnTypeBuilder.Model.prototype.editor).toEqual(editor);
+            expect(gridColumnTypeBuilder.Model.prototype.editor).toEqual(editor);
         });
 
         it('check editor events', () => {
-            expect(columnTypeBuilder.editorEvents['selector:add']).toBeDefined();
+            expect(gridColumnTypeBuilder.editorEvents['selector:add']).toBeDefined();
         });
     });
 });

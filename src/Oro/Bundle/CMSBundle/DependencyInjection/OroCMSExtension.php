@@ -3,28 +3,21 @@
 namespace Oro\Bundle\CMSBundle\DependencyInjection;
 
 use Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetTypeInterface;
+use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
-/**
- * This is the class that loads and manages bundle configuration
- */
 class OroCMSExtension extends Extension
 {
-    const ALIAS = 'oro_cms';
     const CONTENT_RESTRICTIONS_MODE = 'mode';
     const LAX_CONTENT_RESTRICTIONS = 'lax_restrictions';
 
-    /** @var array */
-    private $contentRestrictionModes = ['secure', 'selective', 'unsecure'];
+    private array $contentRestrictionModes = ['secure', 'selective', 'unsecure'];
 
-    /**
-     * @param string $value
-     */
-    public function addContentRestrictionMode($value)
+    public function addContentRestrictionMode(string $value): void
     {
         $this->contentRestrictionModes[] = $value;
     }
@@ -34,8 +27,7 @@ class OroCMSExtension extends Extension
      */
     public function load(array $configs, ContainerBuilder $container)
     {
-        $configuration = new Configuration($this->contentRestrictionModes);
-        $config = $this->processConfiguration($configuration, $configs);
+        $config = $this->processConfiguration(new Configuration($this->contentRestrictionModes), $configs);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
@@ -51,11 +43,16 @@ class OroCMSExtension extends Extension
         $container->prependExtensionConfig($this->getAlias(), array_intersect_key($config, array_flip(['settings'])));
 
         $container->setParameter(
-            sprintf('%s.%s.%s', self::ALIAS, Configuration::DIRECT_EDITING, Configuration::LOGIN_PAGE_CSS_FIELD_OPTION),
+            sprintf(
+                '%s.%s.%s',
+                $this->getAlias(),
+                Configuration::DIRECT_EDITING,
+                Configuration::LOGIN_PAGE_CSS_FIELD_OPTION
+            ),
             $config[Configuration::DIRECT_EDITING][Configuration::LOGIN_PAGE_CSS_FIELD_OPTION]
         );
 
-        $contentRestrictions = isset($config['content_restrictions']) ? $config['content_restrictions'] : [];
+        $contentRestrictions = $config['content_restrictions'] ?? [];
         $contentRestrictionsMode = 'default';
         $laxContentRestrictions = [];
         if (array_key_exists(self::CONTENT_RESTRICTIONS_MODE, $contentRestrictions)) {
@@ -74,23 +71,11 @@ class OroCMSExtension extends Extension
 
     /**
      * {@inheritdoc}
-     *
-     * @return Configuration
      */
-    public function getConfiguration(array $config, ContainerBuilder $container)
+    public function getConfiguration(array $config, ContainerBuilder $container): ?ConfigurationInterface
     {
-        $rc = new \ReflectionClass(Configuration::class);
-
-        $container->addResource(new FileResource($rc->getFileName()));
+        $container->addResource(new FileResource((new \ReflectionClass(Configuration::class))->getFileName()));
 
         return new Configuration($this->contentRestrictionModes);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getAlias()
-    {
-        return self::ALIAS;
     }
 }

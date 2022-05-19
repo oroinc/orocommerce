@@ -75,7 +75,6 @@ describe('orocms/js/app/grapesjs/type-builders/link-type-builder', () => {
             );
             expect(linkTypeBuilder.Model.prototype.defaults.components.length).toEqual(1);
             expect(linkTypeBuilder.Model.prototype.defaults.editable).toBeFalsy();
-            expect(linkTypeBuilder.Model.prototype.defaults.droppable).toBeTruthy();
 
             expect(linkTypeBuilder.Model.prototype.editor).toEqual(editor);
         });

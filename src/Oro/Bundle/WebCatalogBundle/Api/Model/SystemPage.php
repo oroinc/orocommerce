@@ -3,15 +3,12 @@
 namespace Oro\Bundle\WebCatalogBundle\Api\Model;
 
 /**
- * The model for the system page content variant API resource.
+ * Represents the system page content variant.
  */
 class SystemPage
 {
-    /** @var string */
-    private $id;
-
-    /** @var string */
-    private $url;
+    private string $id;
+    private string $url;
 
     public function __construct(string $id, string $url)
     {

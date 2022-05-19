@@ -31,7 +31,7 @@ const CodeValidator = BaseClass.extend({
         });
         this.invalid = false;
 
-        this.listenToOnce(this.editor, 'load', this.onLoadEditor.bind(this));
+        this.editor.once('load', this.onLoadEditor.bind(this));
     },
 
     /**

@@ -7,15 +7,9 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Symfony\Component\HttpKernel\KernelInterface;
 
-/**
- * This class configures compiler passes for container builder.
- */
 class OroFedexShippingBundle extends Bundle
 {
-    /**
-     * @var KernelInterface
-     */
-    protected $kernel;
+    private KernelInterface $kernel;
 
     public function __construct(KernelInterface $kernel)
     {
@@ -25,7 +19,7 @@ class OroFedexShippingBundle extends Bundle
     /**
      * {@inheritdoc}
      */
-    public function build(ContainerBuilder $container)
+    public function build(ContainerBuilder $container): void
     {
         parent::build($container);
 

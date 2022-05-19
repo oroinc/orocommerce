@@ -10,15 +10,12 @@ use Oro\Bundle\SEOBundle\DependencyInjection\Compiler\UrlItemsProviderCompilerPa
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-/**
- * The SEOBundle bundle class.
- */
 class OroSEOBundle extends Bundle
 {
     /**
      * {@inheritdoc}
      */
-    public function build(ContainerBuilder $container)
+    public function build(ContainerBuilder $container): void
     {
         parent::build($container);
 

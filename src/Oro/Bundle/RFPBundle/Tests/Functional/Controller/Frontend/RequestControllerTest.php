@@ -577,6 +577,25 @@ class RequestControllerTest extends WebTestCase
         ];
     }
 
+    public function testCreatePageHasSameSiteBackUrl(): void
+    {
+        $this->loginUser(LoadUserData::ACCOUNT1_USER1);
+
+        $referer = 'http://example.org';
+        $crawler = $this->client->request(
+            'GET',
+            $this->getUrl('oro_rfp_frontend_request_create'),
+            [],
+            [],
+            ['HTTP_REFERER' => $referer]
+        );
+
+        self::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+
+        $backToUrl = $crawler->selectLink('Back')->attr('href');
+        self::assertNotEquals($referer, $backToUrl);
+    }
+
     /**
      * @dataProvider createProvider
      */

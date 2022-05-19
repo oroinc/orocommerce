@@ -9,8 +9,6 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 class OroRuleExtension extends Extension
 {
-    const ALIAS = 'oro_rule';
-
     /**
      * {@inheritDoc}
      */
@@ -18,13 +16,5 @@ class OroRuleExtension extends Extension
     {
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.yml');
-    }
-
-    /**
-     * @return string
-     */
-    public function getAlias()
-    {
-        return static::ALIAS;
     }
 }

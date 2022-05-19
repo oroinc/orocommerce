@@ -15,7 +15,7 @@ class OroVisibilityExtensionTest extends \PHPUnit\Framework\TestCase
         $extension = new OroVisibilityExtension();
         $extension->load([], $container);
 
-        $extensionConfig = $container->getExtensionConfig($extension->getAlias());
+        $extensionConfig = $container->getExtensionConfig('oro_visibility');
         self::assertSame(
             [
                 [
@@ -58,11 +58,5 @@ class OroVisibilityExtensionTest extends \PHPUnit\Framework\TestCase
             ],
             $container->getExtensionConfig('security')
         );
-    }
-
-    public function testGetAlias(): void
-    {
-        $extension = new OroVisibilityExtension();
-        $this->assertEquals(OroVisibilityExtension::ALIAS, $extension->getAlias());
     }
 }

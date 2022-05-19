@@ -94,6 +94,7 @@ class WYSIWYGContentChecker
                             '{{ message }}' => $error[\HTMLPurifier_ErrorCollector::MESSAGE],
                         ]
                     ),
+                    'messageRaw' => $error[\HTMLPurifier_ErrorCollector::MESSAGE],
                     'line' => $error[\HTMLPurifier_ErrorCollector::LINENO]
                 ];
             },

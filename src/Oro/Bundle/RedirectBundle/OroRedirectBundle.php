@@ -8,16 +8,15 @@ use Oro\Component\DependencyInjection\Compiler\PriorityTaggedLocatorCompilerPass
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-/**
- * The RedirectBundle bundle class.
- */
 class OroRedirectBundle extends Bundle
 {
     /**
      * {@inheritdoc}
      */
-    public function build(ContainerBuilder $container)
+    public function build(ContainerBuilder $container): void
     {
+        parent::build($container);
+
         $container->addCompilerPass(new PriorityNamedTaggedServiceCompilerPass(
             'oro_redirect.provider.routing_information_provider',
             'oro_redirect.routing_information_provider',

@@ -3,9 +3,6 @@
 @fixture-OroCheckoutBundle:Shipping.yml
 @fixture-OroPaymentBundle:ProductsAndShoppingListsForPayments.yml
 Feature: Order submission with PayPal PayFlow Gateway and zero "authorization amount" option and "authorize required amount" options
-  In order to ...
-  As an ...
-  I should be able to ...
 
   Scenario: Create new PayPal PayFlow Gateway Integration
     Given I login as AmandaRCole@example.org the "Buyer" at "first_session" session

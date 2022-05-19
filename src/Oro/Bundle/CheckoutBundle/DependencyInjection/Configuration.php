@@ -6,19 +6,17 @@ use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
-/**
- * This is the class that validates and merges configuration from your app/config files
- */
 class Configuration implements ConfigurationInterface
 {
-    const DEFAULT_GUEST_CHECKOUT_OWNER = 'default_guest_checkout_owner';
+    public const ROOT_NODE = 'oro_checkout';
+    public const DEFAULT_GUEST_CHECKOUT_OWNER = 'default_guest_checkout_owner';
 
     /**
      * {@inheritDoc}
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder('oro_checkout');
+        $treeBuilder = new TreeBuilder(self::ROOT_NODE);
 
         $rootNode = $treeBuilder->getRootNode();
 

@@ -100,12 +100,14 @@ const GrapesjsEditorView = BaseView.extend({
         avoidInlineStyle: true,
         avoidFrameOffset: true,
         allowScripts: 1,
-        wrapperIsBody: 0,
-        exportWrapper: 0,
         pasteStyles: false,
         requestParams: {},
         noticeOnUnload: false,
         cssIcons: false,
+        selectorManager: {
+            // This option allows to apply styles by id attribute, therefore will affect only actual element
+            componentFirst: true
+        },
 
         /**
          * Color picker options
@@ -168,7 +170,8 @@ const GrapesjsEditorView = BaseView.extend({
      * @property {Object}
      */
     styleManager: {
-        clearProperties: 1
+        clearProperties: 1,
+        sectors: []
     },
 
     /**
@@ -274,7 +277,6 @@ const GrapesjsEditorView = BaseView.extend({
             countdownOpts: false,
             importViewerOptions: {},
             codeViewerOptions: {},
-            customStyleManager: styleManagerModule,
             exportOpts: {
                 btnLabel: __('oro.cms.wysiwyg.export.btn_label')
             }
@@ -474,6 +476,8 @@ const GrapesjsEditorView = BaseView.extend({
 
         this.builder.parentView = this;
         this.builder.getState = this.getState.bind(this);
+        this.builder.getBreakpoints = this.getBreakpoints.bind(this);
+        this.builder.StyleManager.getSectors().reset(styleManagerModule);
 
         this.builderDelegateEvents();
 
@@ -507,7 +511,7 @@ const GrapesjsEditorView = BaseView.extend({
         this.listenTo(this.builder, 'component:update', this._onComponentUpdatedBuilder.bind(this));
         this.listenTo(this.builder, 'changeTheme', this._updateTheme.bind(this));
         this.listenTo(this.builder, 'component:selected', this.componentSelected.bind(this));
-        this.listenTo(this.builder, 'component:deselected}', this.componentDeselected.bind(this));
+        this.listenTo(this.builder, 'component:deselected', this.componentDeselected.bind(this));
         this.listenTo(this.builder, 'rteToolbarPosUpdate', this.updateRtePosition.bind(this));
         this.listenTo(this.state, 'change', this.updatePropertyField.bind(this));
 
@@ -677,27 +681,34 @@ const GrapesjsEditorView = BaseView.extend({
 
     componentSelected(model) {
         let toolbar = model.get('toolbar');
-
         if (_.isArray(toolbar)) {
             toolbar = toolbar.map(tool => {
-                if (_.isFunction(tool.command) && !tool.attributes.label) {
-                    tool.attributes.label = __('oro.cms.wysiwyg.toolbar.selectParent');
+                const attributes = tool.attributes || {};
+                tool.label = '';
+                if (_.isFunction(tool.command) && !attributes.label) {
+                    attributes.label = __('oro.cms.wysiwyg.toolbar.selectParent');
+                    attributes.class = 'fa fa-arrow-up';
 
+                    tool.attributes = attributes;
                     return tool;
                 }
 
                 switch (tool.command) {
                     case 'tlb-move':
-                        tool.attributes.label = __('oro.cms.wysiwyg.toolbar.move');
+                        attributes.label = __('oro.cms.wysiwyg.toolbar.move');
+                        attributes.class = 'fa fa-arrows';
                         break;
                     case 'tlb-clone':
-                        tool.attributes.label = __('oro.cms.wysiwyg.toolbar.clone');
+                        attributes.label = __('oro.cms.wysiwyg.toolbar.clone');
+                        attributes.class = 'fa fa-clone';
                         break;
                     case 'tlb-delete':
-                        tool.attributes.label = __('oro.cms.wysiwyg.toolbar.delete');
+                        attributes.label = __('oro.cms.wysiwyg.toolbar.delete');
+                        attributes.class = 'fa fa-trash';
                         break;
                 }
 
+                tool.attributes = attributes;
                 return tool;
             });
 
@@ -753,7 +764,7 @@ const GrapesjsEditorView = BaseView.extend({
         });
 
         if (!this.disableDeviceManager) {
-            this._devicesModule = new DevicesModule({
+            this._devicesModule = this.builder._devicesModule = new DevicesModule({
                 builder: this.builder,
                 allowBreakpoints: this.allowBreakpoints
             });
@@ -846,7 +857,7 @@ const GrapesjsEditorView = BaseView.extend({
      * @private
      */
     _updateInitialField() {
-        if (!this.builder || this.builder.CodeValidator.isInvalid()) {
+        if (!this.builder || this.builder.CodeValidator.isInvalid() || this.renderStart) {
             return;
         }
 
@@ -1020,6 +1031,14 @@ const GrapesjsEditorView = BaseView.extend({
             });
             return root;
         });
+    },
+
+    getBreakpoints(allowBreakpoints = []) {
+        if (this.disableDeviceManager) {
+            return [];
+        }
+
+        return this._devicesModule._getCSSBreakpoint(allowBreakpoints);
     }
 });
 

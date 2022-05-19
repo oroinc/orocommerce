@@ -9,6 +9,9 @@ use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterf
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
+/**
+ * Handles all migrations logic executed during installation.
+ */
 class OroSEOBundleInstaller implements Installation, ExtendExtensionAwareInterface
 {
     const PRODUCT_TABLE_NAME = 'oro_product';
@@ -38,7 +41,7 @@ class OroSEOBundleInstaller implements Installation, ExtendExtensionAwareInterfa
      */
     public function getMigrationVersion()
     {
-        return 'v1_8';
+        return 'v1_9';
     }
 
     /**
@@ -69,7 +72,7 @@ class OroSEOBundleInstaller implements Installation, ExtendExtensionAwareInterfa
     }
 
     /**
-     * Adds metaTitle, metaDescription and metaKeywords relations to entitiy.
+     * Adds metaTitle, metaDescription and metaKeywords relations to entity.
      *
      * @param Schema $schema
      * @param string $ownerTable
@@ -78,6 +81,7 @@ class OroSEOBundleInstaller implements Installation, ExtendExtensionAwareInterfa
     private function addMetaInformation(Schema $schema, $ownerTable, array $options)
     {
         if ($schema->hasTable($ownerTable)) {
+            $options['extend']['orphanRemoval'] = true;
             $options['importexport']['fallback_field'] = 'string';
             $this->addMetaInformationField($schema, $ownerTable, self::METAINFORMATION_TITLES, $options);
 

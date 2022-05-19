@@ -1,28 +1,32 @@
-import grapesJS from 'grapesjs';
 import 'jasmine-jquery';
 import ImportDialogView from 'orocms/js/app/grapesjs/plugins/import/import-dialog-view';
-import ComponentRestriction from 'orocms/js/app/grapesjs/plugins/components/component-restriction';
-import CodeValidator from 'orocms/js/app/grapesjs/plugins/code-validator';
+import GrapesjsEditorView from 'orocms/js/app/grapesjs/grapesjs-editor-view';
 import html from 'text-loader!../fixtures/grapesjs-editor-view-fixture.html';
 
 describe('orocms/js/app/grapesjs/plugins/import/import-dialog-view', () => {
     let editor;
+    let grapesjsEditorView;
 
-    beforeEach(() => {
+    beforeEach(done => {
         window.setFixtures(html);
         window.nodeType = 1;
-        editor = grapesJS.init({
-            container: document.querySelector('.page-content-editor'),
-            plugins: [CodeValidator]
+        grapesjsEditorView = new GrapesjsEditorView({
+            el: '#grapesjs-view',
+            themes: [{
+                label: 'Test',
+                stylesheet: '',
+                active: true
+            }],
+            disableDeviceManager: true
         });
 
-        editor.ComponentRestriction = new ComponentRestriction(editor, {});
+        grapesjsEditorView.builder.on('editor:rendered', () => done());
+        editor = grapesjsEditorView.builder;
         editor.setComponents('<div class="test">Test content</div><style>.test {color: red;}</style>');
-        editor.getPureStyleString = css => css;
     });
 
     afterEach(() => {
-        editor.destroy();
+        grapesjsEditorView.dispose();
     });
 
     describe('module "ImportDialogView"', () => {
@@ -61,14 +65,14 @@ describe('orocms/js/app/grapesjs/plugins/import/import-dialog-view', () => {
         it('check "getImportContent"', () => {
             expect(importDialogView.getImportContent()).toEqual(
                 // eslint-disable-next-line
-                '<div class="test">Test content</div><style>* { box-sizing: border-box; } body {margin: 0;}.test{color:red;}</style>'
+                '<div class="test">Test content</div><style>.test{color:red;}</style>'
             );
         });
 
         it('check "onImportCode"', () => {
             importDialogView.onImportCode();
             expect(editor.getHtml()).toEqual('<div class="test">New test content</div>');
-            expect(editor.getCss()).toEqual('* { box-sizing: border-box; } body {margin: 0;}.test{color:green;}');
+            expect(editor.getCss()).toEqual('.test{color:green;}');
         });
 
         it('check "isChange"', () => {

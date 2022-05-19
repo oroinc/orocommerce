@@ -6,7 +6,6 @@ use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\PaymentBundle\DependencyInjection\OroPaymentExtension;
 
 class OroPaymentBundle implements Migration
 {
@@ -29,7 +28,7 @@ class OroPaymentBundle implements Migration
     {
         $queries->addQuery(new ParametrizedSqlMigrationQuery(
             'DELETE FROM oro_config_value WHERE name = :name AND section = :section',
-            ['name' => $name, 'section' => OroPaymentExtension::ALIAS]
+            ['name' => $name, 'section' => 'oro_payment']
         ));
     }
 

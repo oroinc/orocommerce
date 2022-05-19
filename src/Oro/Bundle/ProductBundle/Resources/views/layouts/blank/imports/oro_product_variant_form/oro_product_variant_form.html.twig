@@ -2,6 +2,14 @@
     {%- if form.parent is empty -%}
         {{ form_errors(form) }}
     {%- endif -%}
-    {{- block('form_rows') -}}
+    {% set contextAttr = attr %}
+    {% for child in form.children %}
+        {% set attr = child.vars.attr %}
+        {% set attr = layout_attr_defaults(attr, {
+            'data-validation': (form.vars.required ? { NotBlank: null } : {})|json_encode
+        }) %}
+        {{ form_row(child, {attr: attr}) }}
+    {% endfor %}
+    {% set attr = contextAttr %}
     {{- form_rest(form) -}}
 {% endblock %}

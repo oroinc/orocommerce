@@ -102,7 +102,7 @@ export default GrapesJS.plugins.add('grapesjs-code-mode', (editor, {editorView} 
     };
 
     const enableCodeMode = () => {
-        editor.StyleManager.destroy();
+        editor.StyleManager.getSectors().reset([]);
 
         editor.getIsolatedCss = () => {
             return editor.getIsolatedCssFromString(editor.storeProtectedCss);

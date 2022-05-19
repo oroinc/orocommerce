@@ -8,7 +8,6 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\RedirectBundle\DependencyInjection\Configuration;
-use Oro\Bundle\RedirectBundle\DependencyInjection\OroRedirectExtension;
 use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
 use Oro\Bundle\WebCatalogBundle\Provider\ContentNodeProvider;
 use Oro\Bundle\WebsiteBundle\Resolver\WebsiteUrlResolver;
@@ -113,6 +112,6 @@ class CategoryCanonicalUrlDataProvider implements FeatureToggleableInterface
 
     private function getConfigKey(string $configField): string
     {
-        return sprintf('%s.%s', OroRedirectExtension::ALIAS, $configField);
+        return Configuration::ROOT_NODE . '.' . $configField;
     }
 }
