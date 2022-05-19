@@ -113,7 +113,7 @@ class ProductSearchIndexListener
      */
     private function cleanUpString($string)
     {
-        return preg_replace('/[[:cntrl:]]/', '', $string);
+        return preg_replace('/[[:cntrl:]]/', '', (string)$string);
     }
 
     /**

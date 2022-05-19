@@ -171,7 +171,7 @@ class ManuallyAddedProductCollectionIndexerListener
             $definitionParts = $this->productCollectionDefinitionConverter->getDefinitionParts($item['definition']);
             $manuallyAddedByVariantId[$item['id']] = array_filter(array_map(
                 'intval',
-                explode(',', $definitionParts[ProductCollectionDefinitionConverter::INCLUDED_FILTER_KEY])
+                explode(',', (string)$definitionParts[ProductCollectionDefinitionConverter::INCLUDED_FILTER_KEY])
             ));
         }
 
