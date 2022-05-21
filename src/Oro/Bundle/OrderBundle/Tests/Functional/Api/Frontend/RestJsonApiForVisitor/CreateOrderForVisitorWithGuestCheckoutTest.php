@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\OrderBundle\Tests\Functional\Api\Frontend\RestJsonApi;
+namespace Oro\Bundle\OrderBundle\Tests\Functional\Api\Frontend\RestJsonApiForVisitor;
 
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
@@ -25,6 +25,8 @@ use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTestCase
 {
     use RolePermissionExtension;
+
+    private const COMMON_REQUESTS_PATH = '@OroOrderBundle/Tests/Functional/Api/Frontend/RestJsonApi/requests/';
 
     /** @var bool */
     private $originalGuestCheckoutOptionValue;
@@ -630,7 +632,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
 
     public function testTryToCreateWithCustomerUserAddressesAsOrderAddresses(): void
     {
-        $data = $this->getRequestData('create_order_customer_user_addresses.yml');
+        $data = $this->getRequestData(self::COMMON_REQUESTS_PATH . 'create_order_customer_user_addresses.yml');
         $data = $this->addGuestCustomerUserToRequestData($data);
         $response = $this->post(['entity' => 'orders'], $data, [], false);
 
@@ -653,7 +655,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
 
     public function testTryToCreateWithNotAccessibleCustomerUserAddressAsOrderAddresses(): void
     {
-        $data = $this->getRequestData('create_order_customer_user_addresses.yml');
+        $data = $this->getRequestData(self::COMMON_REQUESTS_PATH . 'create_order_customer_user_addresses.yml');
         $data['included'][1]['relationships']['customerUserAddress']['data']['id'] =
             (string)$this->getReference('customer_user_address')->getId();
         $data = $this->addGuestCustomerUserToRequestData($data);
@@ -678,7 +680,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
 
     public function testTryToCreateWithNotExistingCustomerUserAddressAsOrderAddresses(): void
     {
-        $data = $this->getRequestData('create_order_customer_user_addresses.yml');
+        $data = $this->getRequestData(self::COMMON_REQUESTS_PATH . 'create_order_customer_user_addresses.yml');
         $data['included'][1]['relationships']['customerUserAddress']['data']['id'] = '1000000';
         $data = $this->addGuestCustomerUserToRequestData($data);
         $response = $this->post(['entity' => 'orders'], $data, [], false);
@@ -695,7 +697,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
 
     public function testTryToCreateWithNotExistingCustomerUserAddressAsOrderAddressesAndNoCustomerUser(): void
     {
-        $data = $this->getRequestData('create_order_customer_user_addresses.yml');
+        $data = $this->getRequestData(self::COMMON_REQUESTS_PATH . 'create_order_customer_user_addresses.yml');
         $data['included'][1]['relationships']['customerUserAddress']['data']['id'] = '1000000';
         $response = $this->post(['entity' => 'orders'], $data, [], false);
 
