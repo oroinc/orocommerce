@@ -6,7 +6,6 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\FeatureToggleBundle\Checker\Voter\ConfigVoter;
 use Oro\Bundle\FeatureToggleBundle\Configuration\ConfigurationManager as FeatureConfigurationManager;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
@@ -87,7 +86,7 @@ class FeatureContext extends OroFeatureContext implements FixtureLoaderAwareInte
     {
         /** @var FeatureConfigurationManager $featureConfigManager */
         $featureConfigManager = $this->getAppContainer()->get('oro_featuretoggle.configuration.manager');
-        $toggleConfigOption = $featureConfigManager->get($feature, ConfigVoter::TOGGLE_KEY);
+        $toggleConfigOption = $featureConfigManager->get($feature, 'toggle');
 
         /* @var ConfigManager $configManager */
         $configManager = $this->getAppContainer()->get('oro_config.global');
