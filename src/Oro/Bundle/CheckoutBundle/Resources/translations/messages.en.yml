@@ -284,6 +284,9 @@ oro:
                 checkout_max_line_items_per_page:
                     label: 'Maximum Line Items Per Page'
                     tooltip: 'The provided value will be used as the implied maximum number of checkout line items to display at once. If the number of checkout line items exceeds this value, the "Show All Items" will no longer be available and this number will be shown as the maximum pager value.'
+                new_checkout_shopping_list_item_changed:
+                    title: 'Start New Checkout If Shopping List Items Changed'
+                    tooltip: 'If this option is enabled and the content of the shopping list has changed, an attempt to resume checkout process from the shopping list view page will result in a new checkout process started.'
             groups:
                 open_orders.title: 'Open Orders'
                 checkout.title: 'Checkout'

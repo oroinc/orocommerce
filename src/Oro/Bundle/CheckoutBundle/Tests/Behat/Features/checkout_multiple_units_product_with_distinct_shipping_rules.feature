@@ -19,12 +19,11 @@ Feature: Checkout multiple units product with distinct shipping rules
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Shipping Information" checkout step and press Continue
     And I should see "Flat Rate: <shippingPrice>"
     Then I should see Checkout Totals with data:
-      | Shipping | <shippingPrice>   |
-      | Total    | <total>           |
-    And I should see "Total <total>"
+      | Subtotal | <subtotal>      |
+      | Shipping | <shippingPrice> |
     Examples:
-      | shoppingList | shippingPrice | total   |
-      | List 1       | $100.00       | $100.00 |
-      | List 2       | $100.00       | $100.00 |
-      | List 3       | $10.00        | $10.00  |
-      | List 4       | $100.00       | $100.00 |
+      | shoppingList | subtotal | shippingPrice |
+      | List 1       | $130.00  | $100.00       |
+      | List 2       | $130.00  | $100.00       |
+      | List 3       | $20.00   | $10.00        |
+      | List 4       | $240.00  | $100.00       |
