@@ -99,12 +99,12 @@ HELP
             ->getRepository(CombinedPriceList::class)
             ->getCPLsForPriceCollectByTimeOffset($offsetHours);
 
-        $this->registry
-            ->getRepository(CombinedPriceListBuildActivity::class)
-            ->addBuildActivities($combinedPriceLists);
+        $buildActivityRepo = $this->registry->getRepository(CombinedPriceListBuildActivity::class);
+        $buildActivityRepo->addBuildActivities($combinedPriceLists);
 
         $this->builder->rebuild($combinedPriceLists);
         foreach ($combinedPriceLists as $combinedPriceList) {
+            $buildActivityRepo->deleteActivityRecordsForCombinedPriceList($combinedPriceList);
             $this->builder->triggerProductIndexation($combinedPriceList);
         }
     }

@@ -8,7 +8,10 @@ use Oro\Bundle\EntityBundle\EntityProperty\CreatedAtAwareTrait;
 
 /**
  * ORM entity for storing information about current build status of combined price list.
- * Presence of records indicated scheduled not finished changes.
+ * Presence of records indicated scheduled not finished changes and that CPL can't be used as fallback CPL.
+ *
+ * @see Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToPriceListRepository::findFallbackCpl
+ * @see Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToPriceListRepository::findFallbackCplUsingMergeFlag
  *
  * @ORM\Table(
  *     name="oro_price_list_combined_build_activity",
