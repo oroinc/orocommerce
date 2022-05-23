@@ -37,7 +37,7 @@ class CombinedPriceListRepository extends BasePriceListRepository
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->select('partial cpl.{id, priceList, mergeAllowed}')
-            ->from('OroPricingBundle:CombinedPriceListToPriceList', 'cpl')
+            ->from(CombinedPriceListToPriceList::class, 'cpl')
             ->where($qb->expr()->eq('cpl.combinedPriceList', ':combinedPriceList'))
             ->setParameter('combinedPriceList', $combinedPriceList)
             ->orderBy('cpl.sortOrder');
@@ -57,7 +57,7 @@ class CombinedPriceListRepository extends BasePriceListRepository
         $qb = $this->createQueryBuilder('priceList');
         $qb
             ->innerJoin(
-                'OroPricingBundle:CombinedPriceListToCustomer',
+                CombinedPriceListToCustomer::class,
                 'priceListToCustomer',
                 Join::WITH,
                 'priceListToCustomer.priceList = priceList'
@@ -85,7 +85,7 @@ class CombinedPriceListRepository extends BasePriceListRepository
         $qb = $this->createQueryBuilder('priceList');
         $qb
             ->innerJoin(
-                'OroPricingBundle:CombinedPriceListToCustomerGroup',
+                CombinedPriceListToCustomerGroup::class,
                 'priceListToCustomerGroup',
                 Join::WITH,
                 'priceListToCustomerGroup.priceList = priceList'
@@ -112,7 +112,7 @@ class CombinedPriceListRepository extends BasePriceListRepository
 
         $qb
             ->innerJoin(
-                'OroPricingBundle:CombinedPriceListToWebsite',
+                CombinedPriceListToWebsite::class,
                 'priceListToWebsite',
                 Join::WITH,
                 'priceListToWebsite.priceList = priceList'
@@ -336,7 +336,7 @@ class CombinedPriceListRepository extends BasePriceListRepository
 
         $qb->select('DISTINCT cpl')
             ->innerJoin(
-                'OroPricingBundle:CombinedPriceListToPriceList',
+                CombinedPriceListToPriceList::class,
                 'priceListRelations',
                 Join::WITH,
                 $qb->expr()->eq('cpl', 'priceListRelations.combinedPriceList')

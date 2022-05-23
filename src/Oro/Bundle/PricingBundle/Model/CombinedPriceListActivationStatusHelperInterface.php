@@ -11,5 +11,8 @@ interface CombinedPriceListActivationStatusHelperInterface
 {
     public function isReadyForBuild(CombinedPriceList $cpl): bool;
 
+    /**
+     * @deprecated
+     */
     public function getActivateDate(): \DateTime;
 }
