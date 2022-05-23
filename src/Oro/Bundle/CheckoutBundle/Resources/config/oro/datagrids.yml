@@ -156,7 +156,7 @@ datagrids:
             id: ~
             view_link:
                 type: url
-                route: oro_checkout_frontend_checkout
+                route: oro_order_frontend_to_checkout
                 params:
                     - id
             view_aria_label:

@@ -598,8 +598,10 @@ Feature: Default Checkout With Line Items Grid From Shopping List
     Then I should not see an "Popover Image" element
 
   Scenario: Process checkout
-    When I select "ORO, Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
-    And I select "ORO, Fifth avenue, 10115 Berlin, Germany" on the "Shipping Information" checkout step and press Continue
+    When I open page with shopping list Shopping List 3
+    And I click "Create Order"
+    And on the "Billing Information" checkout step I press Continue
+    And on the "Shipping Information" checkout step I press Continue
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     And I check "Payment Terms" on the "Payment" checkout step and press Continue
     And I check "Delete this shopping list after submitting order" on the "Order Review" checkout step and press Submit Order

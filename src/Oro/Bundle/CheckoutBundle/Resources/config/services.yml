@@ -820,3 +820,22 @@ services:
             - '@oro_order.manager.order_address'
             - '@property_accessor'
             - ['street', 'city', 'country', 'region', 'postalCode']
+
+    oro_checkout.helper.check_compare:
+        class: Oro\Bundle\CheckoutBundle\Helper\CheckoutCompareHelper
+        public: true
+        arguments:
+            - '@oro_checkout.workflow_state.storage.checkout_state_diff_storage'
+            - '@oro_checkout.workflow_state.mapper.shopping_list_line_item'
+            - '@oro_workflow.manager'
+            - '@oro_action.action_group_registry'
+
+    Oro\Bundle\CheckoutBundle\Helper\CheckoutCompareHelper:
+        alias: oro_checkout.helper.check_compare
+
+    oro_checkout.workflow_state.mapper.shopping_list_line_item:
+        class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\ShoppingListLineItemDiffMapper'
+        arguments:
+            - '@oro_checkout.provider.shipping_context'
+        tags:
+            - { name: checkout.workflow_state.mapper }
