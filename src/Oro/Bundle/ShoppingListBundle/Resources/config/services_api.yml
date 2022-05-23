@@ -43,6 +43,24 @@ services:
         tags:
             - { name: oro_frontend.api.resource_api_url_resolver, routeName: oro_shopping_list_frontend_view, requestType: rest }
 
+    oro_shopping_list.api.guest_shopping_list_association_access_exclusion_provider_for_shopping_list:
+        class: Oro\Bundle\ShoppingListBundle\Api\GuestShoppingListAssociationAccessExclusionProvider
+        arguments:
+            - '@security.token_storage'
+            - 'Oro\Bundle\ShoppingListBundle\Entity\ShoppingList'
+            - ['lineItem']
+        tags:
+            - { name: oro_api.association_access_exclusion_provider, requestType: frontend }
+
+    oro_shopping_list.api.guest_shopping_list_association_access_exclusion_provider_for_shopping_list_line_item:
+        class: Oro\Bundle\ShoppingListBundle\Api\GuestShoppingListAssociationAccessExclusionProvider
+        arguments:
+            - '@security.token_storage'
+            - 'Oro\Bundle\ShoppingListBundle\Entity\LineItem'
+            - ['shoppingList']
+        tags:
+            - { name: oro_api.association_access_exclusion_provider, requestType: frontend }
+
     oro_shopping_list.api.subresources.ensure_default_shopping_list_exists:
         class: Oro\Bundle\ShoppingListBundle\Api\Processor\EnsureDefaultShoppingListExistsForParent
         arguments:
