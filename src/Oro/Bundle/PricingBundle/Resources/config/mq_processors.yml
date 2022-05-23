@@ -28,6 +28,7 @@ services:
             - '@oro_pricing.model.combined_price_list_trigger_handler'
             - '@oro_pricing.combined_price_list_status_handler'
             - '@event_dispatcher'
+            - '@oro_pricing.resolver.combined_product_schedule_resolver'
 
     oro_pricing.async.combined_price_list_post_processing_steps_processor:
         class: Oro\Bundle\PricingBundle\Async\CombinedPriceListPostProcessingStepsProcessor
