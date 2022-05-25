@@ -11,32 +11,27 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\EventListener\FlatPriceListSystemConfigListener;
 use Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerHandlerInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Oro\Component\Testing\Unit\EntityTrait;
-use PHPUnit\Framework\MockObject\MockObject;
+use Oro\Component\Testing\ReflectionUtil;
 
 class FlatPriceListSystemConfigListenerTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
-
-    /**
-     * @var ManagerRegistry|MockObject
-     */
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $registry;
 
-    /**
-     * @var PriceListRelationTriggerHandlerInterface|MockObject
-     */
+    /** @var PriceListRelationTriggerHandlerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $triggerHandler;
 
-    /**
-     * @var FlatPriceListSystemConfigListener
-     */
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $configManager;
+
+    /** @var FlatPriceListSystemConfigListener */
     private $listener;
 
     protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
         $this->triggerHandler = $this->createMock(PriceListRelationTriggerHandlerInterface::class);
+        $this->configManager = $this->createMock(ConfigManager::class);
 
         $this->listener = new FlatPriceListSystemConfigListener(
             $this->registry,
@@ -44,16 +39,27 @@ class FlatPriceListSystemConfigListenerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    private function getPriceList(int $id): PriceList
+    {
+        $priceList = new PriceList();
+        ReflectionUtil::setId($priceList, $id);
+
+        return $priceList;
+    }
+
+    private function getWebsite(int $id): Website
+    {
+        $website = new Website();
+        ReflectionUtil::setId($website, $id);
+
+        return $website;
+    }
+
     public function testOnFormPreSetData()
     {
-        $priceList = $this->getEntity(PriceList::class, ['id' => 1]);
+        $priceList = $this->getPriceList(1);
         $settingsKey = implode(ConfigManager::SECTION_VIEW_SEPARATOR, ['oro_pricing', 'default_price_list']);
         $settings = [$settingsKey => ['value' => 1]];
-
-        $event = $this->createMock(ConfigSettingsUpdateEvent::class);
-        $event->expects($this->once())
-            ->method('getSettings')
-            ->willReturn($settings);
 
         $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->once())
@@ -65,30 +71,24 @@ class FlatPriceListSystemConfigListenerTest extends \PHPUnit\Framework\TestCase
             ->with(PriceList::class)
             ->willReturn($em);
 
-        $event->expects($this->once())
-            ->method('setSettings')
-            ->with([$settingsKey => ['value' => $priceList]]);
-
+        $event = new ConfigSettingsUpdateEvent($this->configManager, $settings);
         $this->listener->onFormPreSetData($event);
+
+        self::assertEquals([$settingsKey => ['value' => $priceList]], $event->getSettings());
     }
 
     /**
      * @dataProvider unsupportedSettingsDataProvider
-     * @param mixed $settings
      */
-    public function testOnFormPreSetDataUnsupportedSettings($settings)
+    public function testOnFormPreSetDataUnsupportedSettings(array $settings)
     {
-        $event = $this->createMock(ConfigSettingsUpdateEvent::class);
-        $event->expects($this->once())
-            ->method('getSettings')
-            ->willReturn($settings);
-
         $this->registry->expects($this->never())
             ->method('getManagerForClass');
-        $event->expects($this->never())
-            ->method('setSettings');
 
+        $event = new ConfigSettingsUpdateEvent($this->configManager, $settings);
         $this->listener->onFormPreSetData($event);
+
+        self::assertEquals($settings, $event->getSettings());
     }
 
     public function unsupportedSettingsDataProvider(): array
@@ -96,9 +96,7 @@ class FlatPriceListSystemConfigListenerTest extends \PHPUnit\Framework\TestCase
         $settingsKey = implode(ConfigManager::SECTION_VIEW_SEPARATOR, ['oro_pricing', 'default_price_list']);
 
         return [
-            [null],
             [[]],
-            [[$settingsKey => null]],
             [[$settingsKey => []]],
             [[$settingsKey => ['a' => true]]],
             [[$settingsKey => ['value' => null]]],
@@ -107,38 +105,29 @@ class FlatPriceListSystemConfigListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnSettingsSaveBefore()
     {
-        $priceList = $this->getEntity(PriceList::class, ['id' => 1]);
+        $priceList = $this->getPriceList(1);
         $settings = ['value' => $priceList];
 
-        $event = $this->createMock(ConfigSettingsUpdateEvent::class);
-        $event->expects($this->once())
-            ->method('getSettings')
-            ->willReturn($settings);
-        $event->expects($this->once())
-            ->method('setSettings')
-            ->with(['value' => 1]);
-
+        $event = new ConfigSettingsUpdateEvent($this->configManager, $settings);
         $this->listener->onSettingsSaveBefore($event);
+
+        self::assertEquals(['value' => 1], $event->getSettings());
     }
 
     /**
      * @dataProvider unsupportedSettingsDataProvider
      */
-    public function testOnSettingsSaveBeforeUnsupported($settings)
+    public function testOnSettingsSaveBeforeUnsupported(array $settings)
     {
         $settingsKey = implode(ConfigManager::SECTION_VIEW_SEPARATOR, ['oro_pricing', 'default_price_list']);
-        if (is_array($settings) && array_key_exists($settingsKey, $settings)) {
+        if (array_key_exists($settingsKey, $settings)) {
             $settings = $settings[$settingsKey];
         }
 
-        $event = $this->createMock(ConfigSettingsUpdateEvent::class);
-        $event->expects($this->once())
-            ->method('getSettings')
-            ->willReturn($settings);
-        $event->expects($this->never())
-            ->method('setSettings');
-
+        $event = new ConfigSettingsUpdateEvent($this->configManager, $settings);
         $this->listener->onSettingsSaveBefore($event);
+
+        self::assertEquals($settings, $event->getSettings());
     }
 
     public function testUpdateAfterWebsiteScope()
@@ -156,7 +145,7 @@ class FlatPriceListSystemConfigListenerTest extends \PHPUnit\Framework\TestCase
             ->method('getScopeId')
             ->willReturn(1);
 
-        $website = $this->getEntity(Website::class, ['id' => 1]);
+        $website = $this->getWebsite(1);
         $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->once())
             ->method('find')
