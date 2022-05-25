@@ -1567,6 +1567,7 @@ services:
         arguments:
             - '@.inner'
             - '@oro_config.manager'
+            - '@oro_featuretoggle.checker.feature_checker'
 
     oro_product.event_listener.attribute_changes:
         class: 'Oro\Bundle\ProductBundle\EventListener\AttributeChangesListener'
