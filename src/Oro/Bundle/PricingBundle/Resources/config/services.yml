@@ -277,15 +277,23 @@ services:
         tags:
             - { name: oro_featuretogle.voter }
 
-    oro_pricing.event_listener.system_config.flat_price_list:
-        class: Oro\Bundle\PricingBundle\EventListener\FlatPriceListSystemConfigListener
+    oro_pricing.event_listener.system_config.default_price_list:
+        class: Oro\Bundle\ConfigBundle\EventListener\EntitySystemConfigListener
+        arguments:
+            - '@doctrine'
+            - 'Oro\Bundle\PricingBundle\Entity\PriceList'
+            - 'oro_pricing.default_price_list'
+        tags:
+            - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: onFormPreSetData }
+            - { name: kernel.event_listener, event: oro_config.settings_before_save, method: onSettingsSaveBefore }
+
+    oro_pricing.event_listener.update_flat_price_list_system_config:
+        class: Oro\Bundle\PricingBundle\EventListener\UpdateFlatPriceListSystemConfigListener
         arguments:
             - '@doctrine'
             - '@oro_pricing.price_list_relation_trigger_handler.flat'
         tags:
-            - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: onFormPreSetData }
-            - { name: kernel.event_listener, event: oro_config.settings_before_save.oro_pricing.default_price_list, method: onSettingsSaveBefore }
-            - { name: kernel.event_listener, event: oro_config.update_after, method: updateAfter }
+            - { name: kernel.event_listener, event: oro_config.update_after, method: onUpdateAfter }
 
     oro_pricing.event_listener.price_calculation_precision_system_config_listener:
         class: 'Oro\Bundle\PricingBundle\EventListener\PriceCalculationPrecisionSystemConfigListener'

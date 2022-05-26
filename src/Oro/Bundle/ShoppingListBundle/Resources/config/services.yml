@@ -384,14 +384,15 @@ services:
         tags:
             - { name: oro_action.action, alias: add_string_suffix }
 
-    oro_shopping_list.event_listener.system_config:
-        parent: oro_user.event_listener.default_user_system_config
-        calls:
-            - [setAlias, ['oro_shopping_list']]
-            - [setConfigKey, ['default_guest_shopping_list_owner']]
+    oro_shopping_list.event_listener.system_config.default_guest_shopping_list_owner:
+        class: Oro\Bundle\UserBundle\EventListener\DefaultUserSystemConfigListener
+        arguments:
+            - '@oro_user.provider.default_user'
+            - '@doctrine'
+            - 'oro_shopping_list.default_guest_shopping_list_owner'
         tags:
             - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: onFormPreSetData }
-            - { name: kernel.event_listener, event: oro_config.settings_before_save.oro_shopping_list.default_guest_shopping_list_owner, method: onSettingsSaveBefore }
+            - { name: kernel.event_listener, event: oro_config.settings_before_save, method: onSettingsSaveBefore }
 
     oro_shopping_list.entity_listener.shopping_list:
         class: 'Oro\Bundle\ShoppingListBundle\Entity\EntityListener\ShoppingListEntityListener'

@@ -88,7 +88,7 @@ class CustomerUserForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTes
         /** @var DefaultUserProvider $defaultUserProvider */
         $defaultUserProvider = self::getContainer()->get('oro_user.provider.default_user');
 
-        return $defaultUserProvider->getDefaultUser('oro_customer', 'default_customer_owner');
+        return $defaultUserProvider->getDefaultUser('oro_customer.default_customer_owner');
     }
 
     private function getGuestCustomerGroup(): ?CustomerGroup
