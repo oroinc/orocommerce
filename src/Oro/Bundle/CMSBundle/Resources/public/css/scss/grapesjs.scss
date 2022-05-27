@@ -307,6 +307,16 @@
             .#{$rte-prefix}select2 {
                 text-align: left;
             }
+
+            &.#{$rte-prefix}disabled {
+                color: $primary-700;
+                cursor: default;
+
+                &:hover {
+                    background: none;
+                    color: $primary-700;
+                }
+            }
         }
 
         .unlink {

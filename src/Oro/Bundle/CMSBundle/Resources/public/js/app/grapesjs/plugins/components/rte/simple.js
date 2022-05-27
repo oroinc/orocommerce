@@ -38,24 +38,6 @@ export default [
             title: __('oro.cms.wysiwyg.simple_actions.strikethrough.title')
         }
     }, {
-        name: 'insertOrderedList',
-        command: 'insertOrderedList',
-        order: 30,
-        group: 'list-style',
-        icon: '<span class="fa fa-list-ol" aria-hidden="true"></span>',
-        attributes: {
-            title: __('oro.cms.wysiwyg.simple_actions.insert_ordered_list.title')
-        }
-    }, {
-        name: 'insertUnorderedList',
-        command: 'insertUnorderedList',
-        order: 30,
-        group: 'list-style',
-        icon: '<span class="fa fa-list-ul" aria-hidden="true"></span>',
-        attributes: {
-            title: __('oro.cms.wysiwyg.simple_actions.insert_unordered_list.title')
-        }
-    }, {
         name: 'subscript',
         command: 'subscript',
         order: 40,

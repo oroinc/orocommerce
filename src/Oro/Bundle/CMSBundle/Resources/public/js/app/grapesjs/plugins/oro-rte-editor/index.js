@@ -21,7 +21,10 @@ function getTextNodesIn(element) {
 
 function selectElementContents(el, doc) {
     const range = doc.createRange();
-    range.selectNodeContents(getTextNodesIn(el)[0]);
+    const node = getTextNodesIn(el)[0];
+    if (node) {
+        range.selectNodeContents(node);
+    }
     const sel = doc.getSelection();
     sel.removeAllRanges();
     sel.addRange(range);

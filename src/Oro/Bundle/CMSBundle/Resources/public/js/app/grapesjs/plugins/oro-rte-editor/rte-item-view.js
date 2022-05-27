@@ -41,8 +41,15 @@ const RteItemView = BaseView.extend({
 
     onRender() {
         const init = this.model.get('init');
+        const handlers = this.model.get('handlers');
         if (init && typeof init === 'function') {
             init(this.getRteParams());
+        }
+
+        if (handlers) {
+            for (const [name, callback] of Object.entries(handlers)) {
+                this.listenTo(this.collection, name, callback.bind(this, this.getRteParams()));
+            }
         }
     },
 
@@ -71,8 +78,13 @@ const RteItemView = BaseView.extend({
             exec(name, value = null) {
                 doc.execCommand(name, false, value);
             },
-            insertHTML: this.insertHTML.bind(this)
+            insertHTML: this.insertHTML.bind(this),
+            execute: this.executeHandler.bind(this)
         };
+    },
+
+    executeHandler(name) {
+        this.collection.trigger(name);
     },
 
     /**
@@ -100,19 +112,27 @@ const RteItemView = BaseView.extend({
      * Execute action when click on button
      */
     onAction() {
-        const doc = this.getDoc();
-        if (this.model.get('result')) {
-            this.model.get('result').call(this, this.getRteParams(), {
-                ...this.model.attributes,
-                btn: this.el
-            });
-        }
+        if (!this.$el.hasClass(this.model.getClass('disabled'))) {
+            const doc = this.getDoc();
+            if (this.model.get('result')) {
+                this.model.get('result').call(this, this.getRteParams(), {
+                    ...this.model.attributes,
+                    btn: this.el
+                });
+            }
 
-        if (this.model.get('command')) {
-            doc.execCommand(this.model.get('command'), false, null);
+            if (this.model.get('command')) {
+                doc.execCommand(this.model.get('command'), false, null);
+            }
         }
 
         this.updateActiveState();
+    },
+
+    onKeyDown(event) {
+        if (this.model.get('onKeyDown')) {
+            this.model.get('onKeyDown').call(this, this.getRteParams(), event);
+        }
     },
 
     /**
@@ -128,7 +148,7 @@ const RteItemView = BaseView.extend({
         this.el.className = model.getClass('button');
 
         if (state) {
-            switch (state(this, doc)) {
+            switch (state(this, doc, this.getRteParams())) {
                 case btnState.ACTIVE:
                     this.$el.addClass(model.getClass('active'));
                     break;
