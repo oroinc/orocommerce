@@ -447,6 +447,10 @@ oro.cms:
                 title: 'Superscript'
             inline_widget:
                 title: 'Inline widget'
+            indent:
+                title: 'Increase indent'
+            outdent:
+                title: 'Decrease indent'
         color_picker:
             choose_text: 'Ok'
             cancel_text: '⨯'

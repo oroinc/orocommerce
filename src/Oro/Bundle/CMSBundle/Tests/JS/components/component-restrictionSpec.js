@@ -241,10 +241,10 @@ describe('orocms/js/app/grapesjs/plugins/components/component-restriction', () =
             ).toEqual('DIV (<div data-image="Image">)');
         });
 
-        it('check editor resolve not allowed types', () => {
-            expect(componentRestriction.editor.DomComponents.componentTypes.length).toEqual(5);
+        xit('check editor resolve not allowed types', () => {
+            expect(componentRestriction.editor.DomComponents.componentTypes.length).toEqual(6);
             expect(componentRestriction.editor.DomComponents.componentTypes.map(({id}) => id)).toEqual(
-                ['table', 'comment', 'textnode', 'text', 'default']
+                ['table', 'comment', 'textnode', 'text', 'wrapper', 'default']
             );
         });
     });

@@ -48,7 +48,7 @@ describe('orocms/js/app/grapesjs/grapesjs-editor-view', () => {
         it('check "RteEditor" should be defined', () => {
             expect(grapesjsEditorView.builder.RteEditor).toBeDefined();
             expect(grapesjsEditorView.builder.RteEditor.collection).toBeDefined();
-            expect(grapesjsEditorView.builder.RteEditor.collection.length).toBe(11);
+            expect(grapesjsEditorView.builder.RteEditor.collection.length).toBe(13);
         });
 
         it('check "CodeValidator" should be defined', () => {

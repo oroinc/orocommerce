@@ -147,7 +147,7 @@ function parseNodes(el, config, ct = '', parent = {}) {
             let nodeValue = attrs[j].nodeValue;
 
             // Isolate attributes
-            if (nodeName === 'style') {
+            if (nodeName === 'style' && model.type !== 'text') {
                 model.style = parseStyle(nodeValue);
             } else if (nodeName === 'class') {
                 model.classes = parseClass(nodeValue);

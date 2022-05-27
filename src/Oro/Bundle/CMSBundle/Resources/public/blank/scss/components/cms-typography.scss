@@ -73,6 +73,11 @@
     ol {
         margin: $cms-typography-list-offset;
         padding: $cms-typography-list-inner-offset;
+
+        ul,
+        ol {
+            margin-bottom: 0;
+        }
     }
 
     dt {
@@ -163,6 +168,10 @@
 
     .video-container {
         width: 100%;
+    }
+
+    .list-style-none {
+        list-style-type: none;
     }
 
     .list-style-disc {

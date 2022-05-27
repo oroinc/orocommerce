@@ -24,7 +24,7 @@ describe('orocms/js/app/grapesjs/plugins/oro-rte-editor', () => {
 
     describe('feature "GrapesjsRteEditor"', () => {
         it('initialize', () => {
-            expect(editor.RteEditor.collection.length).toEqual(10);
+            expect(editor.RteEditor.collection.length).toEqual(12);
         });
 
         it('check "addAction"', () => {
@@ -36,7 +36,7 @@ describe('orocms/js/app/grapesjs/plugins/oro-rte-editor', () => {
             });
             const added = editor.RteEditor.collection.find(model => model.get('name') === 'test');
 
-            expect(editor.RteEditor.collection.length).toEqual(11);
+            expect(editor.RteEditor.collection.length).toEqual(13);
             expect(added.get('event')).toEqual('click');
         });
 
@@ -44,7 +44,7 @@ describe('orocms/js/app/grapesjs/plugins/oro-rte-editor', () => {
             editor.RteEditor.removeAction('formatBlock');
             const added = editor.RteEditor.collection.find(model => model.get('name') === 'formatBlock');
 
-            expect(editor.RteEditor.collection.length).toEqual(9);
+            expect(editor.RteEditor.collection.length).toEqual(11);
             expect(added).toBeFalsy();
         });
     });
