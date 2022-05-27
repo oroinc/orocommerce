@@ -4,6 +4,8 @@
 @fixture-OroCheckoutBundle:Shipping.yml
 @fixture-OroTaxBundle:OrderTaxCurrencies.yml
 @ticket-BB-16690
+@ticket-BB-21025
+@ticket-BB-21329
 
 Feature: Tax for overridden shipping cost
   In order to be able to override order shipping cost
@@ -62,3 +64,40 @@ Feature: Tax for overridden shipping cost
     And I should see "1" in grid with following data:
       | Order Number | 1      |
       | Total        | $10.90 |
+
+  Scenario: Create order without shipping method and edit order again
+    And I go to Sales/Orders
+    When I click "Create Order"
+    And click "Add Product"
+    And fill "Order Form" with:
+      | Customer User | Amanda Cole |
+      | Product       | SKU123      |
+    And I type "5" in "First Product Quantity Field In Order"
+    When I save and close form
+    And I click "Save" in modal window
+    Then I should see "Order has been saved" flash message
+    When I click "Edit"
+    And I click "Shipping Information"
+    And I click "Shipping Method Flat Rate Radio Button"
+    Then I should see "Subtotal $10.00"
+    And I should see "Shipping $3.00"
+    And I should see "Tax $1.15"
+    And I should see "Total $14.15"
+    When I type "0" in "Overridden Shipping Cost Amount"
+    And I click on empty space
+    Then I should see "Subtotal $10.00"
+    And I should see "Shipping $0.00"
+    And I should see "Tax $0.90"
+    And I should see "Total $10.90"
+    When I save and close form
+    Then I should see "Order has been saved" flash message
+    And I should see "Subtotal $10.00"
+    And I should see "Shipping $0.00"
+    And I should see "Tax $0.90"
+    And I should see "Total $10.90"
+    When I go to Sales/Orders
+    Then there are 2 records in grid
+    And I should see following grid containing rows:
+      | Order Number | Total  |
+      |            1 | $10.90 |
+      |            2 | $10.90 |
