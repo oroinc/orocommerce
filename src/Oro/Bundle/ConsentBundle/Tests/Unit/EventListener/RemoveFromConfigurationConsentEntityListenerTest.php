@@ -2,34 +2,30 @@
 
 namespace Oro\Bundle\ConsentBundle\Tests\Unit\EventListener;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Persistence\ObjectRepository;
 use Oro\Bundle\ConsentBundle\Entity\Consent;
 use Oro\Bundle\ConsentBundle\EventListener\RemoveFromConfigurationConsentEntityListener;
 use Oro\Bundle\ConsentBundle\SystemConfig\ConsentConfigManager;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 class RemoveFromConfigurationConsentEntityListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ConsentConfigManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ConsentConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     private $consentConfigManager;
 
-    /**
-     * @var RemoveFromConfigurationConsentEntityListener
-     */
-    private $listener;
-
-    /**
-     * @var ObjectRepository|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ObjectRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $repository;
+
+    /** @var RemoveFromConfigurationConsentEntityListener */
+    private $listener;
 
     protected function setUp(): void
     {
+        $this->consentConfigManager = $this->createMock(ConsentConfigManager::class);
         $this->repository = $this->createMock(ObjectRepository::class);
+
         $objectManager = $this->createMock(ObjectManager::class);
         $objectManager->expects($this->once())
             ->method('getRepository')
@@ -40,7 +36,6 @@ class RemoveFromConfigurationConsentEntityListenerTest extends \PHPUnit\Framewor
             ->method('getManagerForClass')
             ->with(Website::class)
             ->willReturn($objectManager);
-        $this->consentConfigManager = $this->createMock(ConsentConfigManager::class);
 
         $this->listener = new RemoveFromConfigurationConsentEntityListener(
             $doctrine,
@@ -48,31 +43,19 @@ class RemoveFromConfigurationConsentEntityListenerTest extends \PHPUnit\Framewor
         );
     }
 
-    protected function tearDown(): void
-    {
-        unset(
-            $this->listener,
-            $this->consentConfigManager,
-            $this->repository
-        );
-    }
-
-    /**
-     * @return array
-     */
-    public function preRemoveProvider()
+    public function preRemoveProvider(): array
     {
         return [
-            "two websites changes" => [
-                "websites" => [
+            'two websites changes' => [
+                'websites' => [
                     new Website(),
                     new Website()
                 ],
-                "expected_method_call" => 2
+                'expected_method_call' => 2
             ],
-            "no websites changes" => [
-                "websites" => [],
-                "expected_method_call" => 0
+            'no websites changes' => [
+                'websites' => [],
+                'expected_method_call' => 0
             ]
         ];
     }
@@ -80,7 +63,7 @@ class RemoveFromConfigurationConsentEntityListenerTest extends \PHPUnit\Framewor
     /**
      * @dataProvider preRemoveProvider
      */
-    public function testPreRemove($websites, $expectedCalls)
+    public function testPreRemove(array $websites, int $expectedCalls)
     {
         $this->repository->expects($this->once())
             ->method('findAll')

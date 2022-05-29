@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Form\Type;
 
 use Doctrine\ORM\QueryBuilder;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
@@ -18,7 +17,6 @@ use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -26,10 +24,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
 {
     use QuantityTypeTrait;
-
-    private const DATA_CLASS = LineItem::class;
-    private const PRODUCT_CLASS = Product::class;
-    private const SHOPPING_LIST_CLASS = ShoppingList::class;
 
     /** @var TranslatorInterface */
     private $translator;
@@ -52,12 +46,9 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
         $this->currentShoppingListManager = $this->createMock(CurrentShoppingListManager::class);
 
         $this->type = new FrontendLineItemWidgetType(
-            $this->createMock(ManagerRegistry::class),
             $this->translator,
             $this->currentShoppingListManager
         );
-
-        $this->type->setShoppingListClass(self::SHOPPING_LIST_CLASS);
         parent::setUp();
     }
 

@@ -8,113 +8,101 @@ use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderShippingTracking;
 use Oro\Bundle\OrderBundle\Handler\OrderShippingTrackingHandler;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\Request;
 
 class OrderShippingTrackingHandlerTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
+    /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $form;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|FormInterface
-     */
-    protected $form;
+    /** @var ObjectManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $manager;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|ObjectManager
-     */
-    protected $manager;
+    /** @var Order|\PHPUnit\Framework\MockObject\MockObject */
+    private $order;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|Order
-     */
-    protected $order;
-
-    /**
-     * @var Request
-     */
-    protected $request;
-
-    /**
-     * @var OrderShippingTrackingHandler
-     */
-    protected $handler;
+    /** @var OrderShippingTrackingHandler */
+    private $handler;
 
     protected function setUp(): void
     {
-        $this->manager = $this->createMock('Doctrine\Persistence\ObjectManager');
-        /** @var \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry $managerRegistry */
-        $managerRegistry = $this->getMockBuilder('Doctrine\Bundle\DoctrineBundle\Registry')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->manager = $this->createMock(ObjectManager::class);
+        $this->form = $this->createMock(FormInterface::class);
+        $this->order = $this->createMock(Order::class);
 
-        $managerRegistry->expects($this->any())
+        $doctrine = $this->createMock(ManagerRegistry::class);
+        $doctrine->expects(self::any())
             ->method('getManagerForClass')
             ->willReturn($this->manager);
 
-        $this->form = $this->createMock('Symfony\Component\Form\FormInterface');
-        $this->order = $this->createMock('Oro\Bundle\OrderBundle\Entity\Order');
+        $this->handler = new OrderShippingTrackingHandler($doctrine);
+    }
 
-        $this->handler = new OrderShippingTrackingHandler($managerRegistry);
+    private function createShippingTracking(
+        int $id,
+        string $method,
+        string $number,
+        ?Order $order
+    ): OrderShippingTracking {
+        $orderShippingTracking = new OrderShippingTracking();
+        ReflectionUtil::setId($orderShippingTracking, $id);
+        $orderShippingTracking->setMethod($method);
+        $orderShippingTracking->setNumber($number);
+        $orderShippingTracking->setOrder($order);
+
+        return $orderShippingTracking;
     }
 
     /**
-     * @param mixed $formData
-     * @param ArrayCollection $existingEntities
-     * @param int $persistedQty
-     * @param int $removedQty
      * @dataProvider processDataProvider
      */
-    public function testProcess($formData, ArrayCollection $existingEntities, $persistedQty, $removedQty)
-    {
-        $this->form->expects(static::once())
+    public function testProcess(
+        mixed $formData,
+        ArrayCollection $existingEntities,
+        int $persistedQty,
+        int $removedQty
+    ) {
+        $this->form->expects(self::once())
             ->method('get')
             ->with('shippingTrackings')
             ->willReturnSelf();
 
-        $this->form->expects(static::once())
+        $this->form->expects(self::once())
             ->method('getData')
             ->willReturn($formData);
 
         $persistedEntities = [];
         $removedEntities = [];
 
-        $this->order->expects(static::any())
+        $this->order->expects(self::any())
             ->method('addShippingTracking')
-            ->with(static::isInstanceOf('Oro\Bundle\OrderBundle\Entity\OrderShippingTracking'))
-            ->willReturnCallback(
-                function ($entity) use (&$persistedEntities) {
-                    $persistedEntities[] = $entity;
-                }
-            );
+            ->with(self::isInstanceOf(OrderShippingTracking::class))
+            ->willReturnCallback(function ($entity) use (&$persistedEntities) {
+                $persistedEntities[] = $entity;
+            });
 
-        $this->order->expects(static::any())
+        $this->order->expects(self::any())
             ->method('removeShippingTracking')
-            ->with(static::isInstanceOf('Oro\Bundle\OrderBundle\Entity\OrderShippingTracking'))
-            ->willReturnCallback(
-                function ($entity) use (&$removedEntities) {
-                    $removedEntities[] = $entity;
-                }
-            );
+            ->with(self::isInstanceOf(OrderShippingTracking::class))
+            ->willReturnCallback(function ($entity) use (&$removedEntities) {
+                $removedEntities[] = $entity;
+            });
 
-        $this->order->expects(static::any())
+        $this->order->expects(self::any())
             ->method('getShippingTrackings')
             ->willReturn($existingEntities);
 
-        $this->manager->expects($formData ? static::once() : static::never())
+        $this->manager->expects($formData ? self::once() : self::never())
             ->method('flush');
 
         $this->handler->process($this->order, $this->form);
 
-        static::assertCount($persistedQty, $persistedEntities);
-        static::assertCount($removedQty, $removedEntities);
+        self::assertCount($persistedQty, $persistedEntities);
+        self::assertCount($removedQty, $removedEntities);
     }
 
-    /**
-     * @return array
-     */
-    public function processDataProvider()
+    public function processDataProvider(): array
     {
         return [
             'no data' => [
@@ -153,25 +141,5 @@ class OrderShippingTrackingHandlerTest extends \PHPUnit\Framework\TestCase
                 'removedQty' => 1
             ]
         ];
-    }
-
-    /**
-     * @param int $id
-     * @param string $method
-     * @param string $number
-     * @param Order $order
-     * @return OrderShippingTracking
-     */
-    protected function createShippingTracking($id, $method, $number, $order)
-    {
-        return $this->getEntity(
-            'Oro\Bundle\OrderBundle\Entity\OrderShippingTracking',
-            [
-                'id' => $id,
-                'method' => $method,
-                'number' => $number,
-                'order' => $order,
-            ]
-        );
     }
 }

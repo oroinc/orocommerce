@@ -15,17 +15,11 @@ use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CustomerCat
  */
 class CustomerCategoryRepositoryTest extends AbstractCategoryRepositoryTest
 {
-    /** @var CustomerCategoryRepository */
-    protected $repository;
-
     /**
      * @dataProvider getVisibilitiesForCustomersDataProvider
-     * @param string $categoryName
-     * @param array $customers
-     * @param array $visibilities
      */
     public function testGetVisibilitiesForCustomers(
-        $categoryName,
+        string $categoryName,
         array $customers,
         array $visibilities
     ) {
@@ -40,7 +34,7 @@ class CustomerCategoryRepositoryTest extends AbstractCategoryRepositoryTest
         );
 
         $actualVisibility = $this->getRepository()
-            ->getVisibilitiesForCustomers($this->scopeManager, $category, $customers);
+            ->getVisibilitiesForCustomers($this->getScopeManager(), $category, $customers);
 
         $expectedVisibilities = [];
         foreach ($visibilities as $customer => $expectedVisibility) {
@@ -52,10 +46,7 @@ class CustomerCategoryRepositoryTest extends AbstractCategoryRepositoryTest
         $this->assertEquals($expectedVisibilities, $actualVisibility);
     }
 
-    /**
-     * @return array
-     */
-    public function getVisibilitiesForCustomersDataProvider()
+    public function getVisibilitiesForCustomersDataProvider(): array
     {
         return [
             [
@@ -100,32 +91,29 @@ class CustomerCategoryRepositoryTest extends AbstractCategoryRepositoryTest
 
     /**
      * @dataProvider isCategoryVisibleDataProvider
-     * @param string $categoryName
-     * @param string $customerName
-     * @param int $configValue
-     * @param bool $expectedVisibility
      */
-    public function testIsCategoryVisible($categoryName, $customerName, $configValue, $expectedVisibility)
-    {
+    public function testIsCategoryVisible(
+        string $categoryName,
+        string $customerName,
+        int $configValue,
+        bool $expectedVisibility
+    ) {
         /** @var Category $category */
         $category = $this->getReference($categoryName);
 
         /** @var Customer $customer */
         $customer = $this->getReference($customerName);
-        $scope = $this->scopeManager->findOrCreate('customer_category_visibility', ['customer' => $customer]);
-        $groupScope = $this->scopeManager->findOrCreate(
+        $scope = $this->getScopeManager()->findOrCreate('customer_category_visibility', ['customer' => $customer]);
+        $groupScope = $this->getScopeManager()->findOrCreate(
             'customer_group_category_visibility',
             ['customerGroup' => $customer->getGroup()]
         );
-        $actualVisibility = $this->repository->isCategoryVisible($category, $configValue, $scope, $groupScope);
+        $actualVisibility = $this->getRepository()->isCategoryVisible($category, $configValue, $scope, $groupScope);
 
-        $this->assertEquals($expectedVisibility, $actualVisibility);
+        $this->assertSame($expectedVisibility, $actualVisibility);
     }
 
-    /**
-     * @return array
-     */
-    public function isCategoryVisibleDataProvider()
+    public function isCategoryVisibleDataProvider(): array
     {
         return [
             [
@@ -191,7 +179,7 @@ class CustomerCategoryRepositoryTest extends AbstractCategoryRepositoryTest
 //        /** @var Customer $customer */
 //        $customer = $this->getReference($customerName);
 //
-//        $categoryIds = $this->repository->getCategoryIdsByVisibility($visibility, $customer, $configValue);
+//        $categoryIds = $this->getRepository()->getCategoryIdsByVisibility($visibility, $customer, $configValue);
 //
 //        $expectedCategoryIds = [];
 //        foreach ($expected as $categoryName) {
@@ -208,10 +196,7 @@ class CustomerCategoryRepositoryTest extends AbstractCategoryRepositoryTest
 //        $this->assertEquals($expectedCategoryIds, $categoryIds);
 //    }
 
-    /**
-     * @return array
-     */
-    public function getCategoryIdsByVisibilityDataProvider()
+    public function getCategoryIdsByVisibilityDataProvider(): array
     {
         return [
             [
@@ -326,22 +311,19 @@ class CustomerCategoryRepositoryTest extends AbstractCategoryRepositoryTest
 //            }
 //        );
 //
-//        $this->repository->updateCustomerCategoryVisibilityByCategory(
+//        $this->getRepository()->updateCustomerCategoryVisibilityByCategory(
 //            $customer,
 //            $categoryIdsForUpdate,
 //            $visibility
 //        );
 //
 //        foreach ($categoriesForUpdate as $category) {
-//            $visibilityResolved = $this->repository->findByPrimaryKey($category, $customer);
+//            $visibilityResolved = $this->getRepository()->findByPrimaryKey($category, $customer);
 //            $this->assertEquals($visibility, $visibilityResolved->getVisibility());
 //        }
 //    }
 
-    /**
-     * @return array
-     */
-    public function updateCustomerCategoryVisibilityByCategoryDataProvider()
+    public function updateCustomerCategoryVisibilityByCategoryDataProvider(): array
     {
         return [
             'Change visibility to visible' => [
@@ -368,12 +350,12 @@ class CustomerCategoryRepositoryTest extends AbstractCategoryRepositoryTest
     public function testFindByPrimaryKey()
     {
         /** @var CustomerCategoryVisibilityResolved $actualEntity */
-        $actualEntity = $this->repository->findOneBy([]);
+        $actualEntity = $this->getRepository()->findOneBy([]);
         if (!$actualEntity) {
             $this->markTestSkipped('Can\'t test method because fixture was not loaded.');
         }
 
-        $expectedEntity = $this->repository->findByPrimaryKey(
+        $expectedEntity = $this->getRepository()->findByPrimaryKey(
             $actualEntity->getCategory(),
             $actualEntity->getScope()
         );
@@ -384,9 +366,8 @@ class CustomerCategoryRepositoryTest extends AbstractCategoryRepositoryTest
     public function testInsertStaticValues()
     {
         /** @var CustomerCategoryVisibility[] $visibilities */
-        $visibilities = $this->getManagerRegistry()
-            ->getManagerForClass('OroVisibilityBundle:Visibility\CustomerCategoryVisibility')
-            ->getRepository('OroVisibilityBundle:Visibility\CustomerCategoryVisibility')
+        $visibilities = $this->getDoctrine()
+            ->getRepository(CustomerCategoryVisibility::class)
             ->createQueryBuilder('entity')
             ->andWhere('entity.visibility IN (:scalarVisibilities)')
             ->setParameter(
@@ -403,8 +384,8 @@ class CustomerCategoryRepositoryTest extends AbstractCategoryRepositoryTest
             $indexedVisibilities[$visibility->getId()] = $visibility;
         }
 
-        $this->repository->clearTable();
-        $this->repository->insertStaticValues($this->getInsertExecutor());
+        $this->getRepository()->clearTable();
+        $this->getRepository()->insertStaticValues($this->getInsertExecutor());
 
         $resolvedVisibilities = $this->getResolvedVisibilities();
 
@@ -434,9 +415,8 @@ class CustomerCategoryRepositoryTest extends AbstractCategoryRepositoryTest
     public function testInsertCategoryValues()
     {
         /** @var CustomerCategoryVisibility[] $visibilities */
-        $visibilities = $this->getManagerRegistry()
-            ->getManagerForClass('OroVisibilityBundle:Visibility\CustomerCategoryVisibility')
-            ->getRepository('OroVisibilityBundle:Visibility\CustomerCategoryVisibility')
+        $visibilities = $this->getDoctrine()
+            ->getRepository(CustomerCategoryVisibility::class)
             ->createQueryBuilder('entity')
             ->andWhere('entity.visibility = :categoryVisibility')
             ->setParameter('categoryVisibility', CustomerCategoryVisibility::CATEGORY)
@@ -450,9 +430,9 @@ class CustomerCategoryRepositoryTest extends AbstractCategoryRepositoryTest
             $indexedVisibilities[$visibility->getId()] = $visibility;
         }
 
-        $this->repository->clearTable();
+        $this->getRepository()->clearTable();
         $insertExecutor = $this->getContainer()->get('oro_entity.orm.insert_from_select_query_executor');
-        $this->repository->insertCategoryValues($insertExecutor);
+        $this->getRepository()->insertCategoryValues($insertExecutor);
 
         $resolvedVisibilities = $this->getResolvedVisibilities();
 
@@ -465,7 +445,7 @@ class CustomerCategoryRepositoryTest extends AbstractCategoryRepositoryTest
             $this->assertEquals($visibility->getCategory()->getId(), $resolvedVisibility['category']);
             $this->assertEquals($visibility->getScope()->getId(), $resolvedVisibility['scope']);
             $this->assertEquals(CustomerCategoryVisibilityResolved::SOURCE_STATIC, $resolvedVisibility['source']);
-            $this->assertEquals($visibility->getVisibility(), CustomerCategoryVisibility::CATEGORY);
+            $this->assertEquals(CustomerCategoryVisibility::CATEGORY, $visibility->getVisibility());
         }
     }
 
@@ -473,7 +453,7 @@ class CustomerCategoryRepositoryTest extends AbstractCategoryRepositoryTest
     {
         /** @var Customer $customer */
         $customer = $this->getReference('customer.level_1.1');
-        $scope = $this->scopeManager->find('customer_category_visibility', ['customer' => $customer]);
+        $scope = $this->getScopeManager()->find('customer_category_visibility', ['customer' => $customer]);
         $parentCategoryFallbackCategories = ['category_1_2','category_1_2_3'];
         $parentCategoryFallbackCategoryIds = [];
         foreach ($parentCategoryFallbackCategories as $categoryReference) {
@@ -491,8 +471,8 @@ class CustomerCategoryRepositoryTest extends AbstractCategoryRepositoryTest
         $staticCategoryVisibilities = $this->getCategoryVisibilities([$staticCategoryId]);
 
         $visibility = CategoryVisibilityResolved::VISIBILITY_VISIBLE;
-        $this->repository->clearTable();
-        $this->repository->insertParentCategoryValues(
+        $this->getRepository()->clearTable();
+        $this->getRepository()->insertParentCategoryValues(
             $this->getContainer()->get('oro_entity.orm.insert_from_select_query_executor'),
             array_merge($parentCategoryVisibilities, $staticCategoryVisibilities),
             $visibility
@@ -514,16 +494,11 @@ class CustomerCategoryRepositoryTest extends AbstractCategoryRepositoryTest
         }
     }
 
-    /**
-     * @param array $visibilities
-     * @param $scopeId
-     * @return array
-     */
-    protected function filterVisibilitiesByCustomer(array $visibilities, $scopeId)
+    private function filterVisibilitiesByCustomer(array $visibilities, int $scopeId): array
     {
         $currentCustomerVisibilities = [];
         foreach ($visibilities as $visibility) {
-            if ($visibility['scope'] == $scopeId) {
+            if ($visibility['scope'] === $scopeId) {
                 $currentCustomerVisibilities[] = $visibility;
             }
         }
@@ -531,17 +506,13 @@ class CustomerCategoryRepositoryTest extends AbstractCategoryRepositoryTest
         return $currentCustomerVisibilities;
     }
 
-    /**
-     * @param array $categoryIds
-     * @return array
-     */
-    protected function getCategoryVisibilities(array $categoryIds)
+    private function getCategoryVisibilities(array $categoryIds): array
     {
-        $groupVisibilities = $this->repository->getParentCategoryVisibilities();
+        $groupVisibilities = $this->getRepository()->getParentCategoryVisibilities();
 
         $visibilities = [];
         foreach ($groupVisibilities as $groupVisibility) {
-            if (in_array($groupVisibility['category_id'], $categoryIds)) {
+            if (in_array($groupVisibility['category_id'], $categoryIds, true)) {
                 $visibilities[] = $groupVisibility['visibility_id'];
             }
         }
@@ -549,20 +520,14 @@ class CustomerCategoryRepositoryTest extends AbstractCategoryRepositoryTest
         return $visibilities;
     }
 
-    /**
-     * @return CustomerCategoryRepository
-     */
-    protected function getRepository()
+    protected function getRepository(): CustomerCategoryRepository
     {
         return $this->getContainer()->get('oro_visibility.customer_category_repository');
     }
 
-    /**
-     * @return array
-     */
-    protected function getResolvedVisibilities()
+    private function getResolvedVisibilities(): array
     {
-        return $this->repository->createQueryBuilder('entity')
+        return $this->getRepository()->createQueryBuilder('entity')
             ->select(
                 'IDENTITY(entity.sourceCategoryVisibility) as sourceCategoryVisibility',
                 'IDENTITY(entity.category) as category',

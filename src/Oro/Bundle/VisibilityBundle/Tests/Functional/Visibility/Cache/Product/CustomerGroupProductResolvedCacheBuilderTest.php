@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Visibility\Cache\Product;
 
-use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;
 use Oro\Bundle\ProductBundle\Search\Reindex\ProductReindexManager;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerGroupProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CustomerGroupProductRepository;
+use Oro\Bundle\VisibilityBundle\Visibility\Cache\CacheBuilderInterface;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\CustomerGroupProductResolvedCacheBuilder;
 
 class CustomerGroupProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
@@ -14,7 +14,7 @@ class CustomerGroupProductResolvedCacheBuilderTest extends AbstractCacheBuilderT
     /**
      * {@inheritdoc}
      */
-    public function buildCacheDataProvider()
+    public function buildCacheDataProvider(): array
     {
         return [
             [
@@ -25,9 +25,9 @@ class CustomerGroupProductResolvedCacheBuilderTest extends AbstractCacheBuilderT
     }
 
     /**
-     * @return CustomerGroupProductRepository|EntityRepository
+     * {@inheritdoc}
      */
-    protected function getRepository()
+    protected function getRepository(): CustomerGroupProductRepository
     {
         return $this->getContainer()->get('oro_visibility.customer_group_product_repository');
     }
@@ -35,7 +35,7 @@ class CustomerGroupProductResolvedCacheBuilderTest extends AbstractCacheBuilderT
     /**
      * {@inheritdoc}
      */
-    protected function getCacheBuilder()
+    protected function getCacheBuilder(): CacheBuilderInterface
     {
         $container = $this->getContainer();
 

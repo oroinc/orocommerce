@@ -6,12 +6,10 @@ use Oro\Bundle\ActionBundle\Tests\Functional\OperationAwareTestTrait;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Tests\Functional\CatalogTrait;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
-use Oro\Bundle\OrganizationBundle\Tests\Functional\OrganizationTrait;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class CategoryActionTest extends WebTestCase
 {
-    use OrganizationTrait;
     use CatalogTrait;
     use OperationAwareTestTrait;
 
@@ -19,11 +17,7 @@ class CategoryActionTest extends WebTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
-        $this->loadFixtures(
-            [
-                LoadCategoryData::class
-            ]
-        );
+        $this->loadFixtures([LoadCategoryData::class]);
     }
 
     public function testDelete()

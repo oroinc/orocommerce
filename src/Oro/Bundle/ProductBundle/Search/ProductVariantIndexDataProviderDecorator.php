@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Search;
 
-use Oro\Bundle\EntityBundle\ORM\Registry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
@@ -14,10 +14,15 @@ use Oro\Bundle\WebsiteSearchBundle\Engine\IndexDataProvider;
  */
 class ProductVariantIndexDataProviderDecorator implements ProductIndexDataProviderInterface
 {
+    private ProductIndexDataProviderInterface $originalProvider;
+    private ManagerRegistry $doctrine;
+
     public function __construct(
-        private ProductIndexDataProviderInterface $originalProvider,
-        private Registry $registry
+        ProductIndexDataProviderInterface $originalProvider,
+        ManagerRegistry $doctrine
     ) {
+        $this->originalProvider = $originalProvider;
+        $this->doctrine = $doctrine;
     }
 
     /**
@@ -41,7 +46,7 @@ class ProductVariantIndexDataProviderDecorator implements ProductIndexDataProvid
         \ArrayIterator $data
     ): void {
         /** @var ProductRepository $productRepository */
-        $productRepository = $this->registry->getRepository(Product::class);
+        $productRepository = $this->doctrine->getRepository(Product::class);
         if ($product->getType() === Product::TYPE_CONFIGURABLE) {
             foreach ($productRepository->getVariantsLinksProducts($product) as $variantProduct) {
                 if ($variantProduct->getType() === Product::TYPE_SIMPLE) {

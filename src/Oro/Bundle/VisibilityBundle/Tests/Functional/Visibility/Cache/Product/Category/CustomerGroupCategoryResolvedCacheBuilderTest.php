@@ -3,16 +3,13 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Visibility\Cache\Product\Category;
 
 use Doctrine\ORM\AbstractQuery;
-use Doctrine\ORM\EntityManager;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
-use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\ProductBundle\Search\Reindex\ProductReindexManager;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
-use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
@@ -26,72 +23,54 @@ class CustomerGroupCategoryResolvedCacheBuilderTest extends AbstractProductResol
     use ConfigManagerAwareTestTrait;
 
     /** @var Category */
-    protected $category;
-
-    /** @var CustomerGroup */
-    protected $customerGroup;
+    private $category;
 
     /** @var CustomerGroupCategoryResolvedCacheBuilder */
-    protected $builder;
+    private $builder;
 
-    /**
-     * @var ScopeManager
-     */
-    protected $scopeManager;
-
-    /**
-     * @var InsertFromSelectQueryExecutor
-     */
-    protected $insertExecutor;
-
-    /**
-     * @var Scope
-     */
+    /** @var Scope */
     protected $scope;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->category = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
-        $this->customerGroup = $this->getReference('customer_group.group3');
 
-        $container = $this->getContainer();
+        $this->category = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
 
         $productReindexManager = new ProductReindexManager(
-            $container->get('event_dispatcher')
+            self::getContainer()->get('event_dispatcher')
         );
 
         $indexScheduler = new ProductIndexScheduler(
-            $container->get('oro_entity.doctrine_helper'),
+            self::getContainer()->get('oro_entity.doctrine_helper'),
             $productReindexManager
         );
 
-        $this->insertExecutor = $container->get('oro_entity.orm.insert_from_select_query_executor');
-        $this->scopeManager = $container->get('oro_scope.scope_manager');
-        $this->scope = $this->scopeManager->findOrCreate(
+        $scopeManager = self::getContainer()->get('oro_scope.scope_manager');
+        $this->scope = $scopeManager->findOrCreate(
             CustomerGroupCategoryVisibility::VISIBILITY_TYPE,
-            ['customerGroup' => $this->customerGroup]
+            ['customerGroup' => $this->getReference('customer_group.group3')]
         );
         $this->builder = new CustomerGroupCategoryResolvedCacheBuilder(
-            $container->get('doctrine'),
-            $this->scopeManager,
+            $this->doctrine,
+            $scopeManager,
             $indexScheduler,
-            $this->insertExecutor,
+            self::getContainer()->get('oro_entity.orm.insert_from_select_query_executor'),
             $productReindexManager
         );
         $this->builder->setCacheClass(CustomerGroupCategoryVisibilityResolved::class);
         $this->builder->setRepository(
-            $container->get('oro_visibility.category_repository')
+            self::getContainer()->get('oro_visibility.category_repository')
         );
         $this->builder->setCustomerGroupCategoryVisibilityRepository(
-            $container->get('oro_visibility.customer_group_category_repository')
+            self::getContainer()->get('oro_visibility.customer_group_category_repository')
         );
 
         $subtreeBuilder = new VisibilityChangeGroupSubtreeCacheBuilder(
-            $container->get('doctrine'),
-            $container->get('oro_visibility.visibility.resolver.category_visibility_resolver'),
+            $this->doctrine,
+            self::getContainer()->get('oro_visibility.visibility.resolver.category_visibility_resolver'),
             self::getConfigManager(null),
-            $container->get('oro_scope.scope_manager')
+            self::getContainer()->get('oro_scope.scope_manager')
         );
 
         $this->builder->setVisibilityChangeCustomerSubtreeCacheBuilder($subtreeBuilder);
@@ -104,7 +83,7 @@ class CustomerGroupCategoryResolvedCacheBuilderTest extends AbstractProductResol
         $visibility->setScope($this->scope);
         $visibility->setVisibility(CategoryVisibility::HIDDEN);
 
-        $em = $this->registry->getManagerForClass('OroVisibilityBundle:Visibility\CustomerGroupCategoryVisibility');
+        $em = $this->doctrine->getManagerForClass(CustomerGroupCategoryVisibility::class);
         $em->persist($visibility);
         $em->flush();
         $this->builder->buildCache();
@@ -120,7 +99,7 @@ class CustomerGroupCategoryResolvedCacheBuilderTest extends AbstractProductResol
         $visibility = $this->getVisibility();
         $visibility->setVisibility(CategoryVisibility::VISIBLE);
 
-        $em = $this->registry->getManagerForClass('OroVisibilityBundle:Visibility\CustomerGroupCategoryVisibility');
+        $em = $this->doctrine->getManagerForClass(CustomerGroupCategoryVisibility::class);
         $em->flush();
         $this->builder->buildCache();
         $visibilityResolved = $this->getVisibilityResolved();
@@ -135,7 +114,7 @@ class CustomerGroupCategoryResolvedCacheBuilderTest extends AbstractProductResol
         $visibility = $this->getVisibility();
         $visibility->setVisibility(CustomerGroupCategoryVisibility::PARENT_CATEGORY);
 
-        $em = $this->registry->getManagerForClass('OroVisibilityBundle:Visibility\CustomerGroupCategoryVisibility');
+        $em = $this->doctrine->getManagerForClass(CustomerGroupCategoryVisibility::class);
         $em->flush();
         $this->builder->buildCache();
         $visibilityResolved = $this->getVisibilityResolved();
@@ -159,24 +138,19 @@ class CustomerGroupCategoryResolvedCacheBuilderTest extends AbstractProductResol
         $visibility = $this->getVisibility();
         $visibility->setVisibility(CustomerGroupCategoryVisibility::CATEGORY);
 
-        $em = $this->registry->getManagerForClass('OroVisibilityBundle:Visibility\CustomerGroupCategoryVisibility');
+        $em = $this->doctrine->getManagerForClass(CustomerGroupCategoryVisibility::class);
         $em->flush();
 
         $visibilityResolved = $this->getVisibilityResolved();
         $this->assertNull($visibilityResolved);
     }
 
-    /**
-     * @return array
-     */
-    protected function getVisibilityResolved()
+    private function getVisibilityResolved(): ?array
     {
-        /** @var EntityManager $em */
-        $em = $this->registry
-            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\CustomerGroupCategoryVisibilityResolved');
-        $qb = $em->getRepository('OroVisibilityBundle:VisibilityResolved\CustomerGroupCategoryVisibilityResolved')
+        $qb = $this->doctrine->getRepository(CustomerGroupCategoryVisibilityResolved::class)
             ->createQueryBuilder('customerCategoryVisibilityResolved');
-        $entity = $qb->select('customerCategoryVisibilityResolved', 'customerCategoryVisibility')
+
+        return $qb->select('customerCategoryVisibilityResolved', 'customerCategoryVisibility')
             ->leftJoin('customerCategoryVisibilityResolved.sourceCategoryVisibility', 'customerCategoryVisibility')
             ->where(
                 $qb->expr()->andX(
@@ -190,29 +164,18 @@ class CustomerGroupCategoryResolvedCacheBuilderTest extends AbstractProductResol
             ])
             ->getQuery()
             ->getOneOrNullResult(AbstractQuery::HYDRATE_ARRAY);
-
-        return $entity;
     }
 
-    /**
-     * @return null|CustomerGroupCategoryVisibility
-     */
-    protected function getVisibility()
+    private function getVisibility(): ?CustomerGroupCategoryVisibility
     {
-        return $this->registry->getManagerForClass('OroVisibilityBundle:Visibility\CustomerGroupCategoryVisibility')
-            ->getRepository('OroVisibilityBundle:Visibility\CustomerGroupCategoryVisibility')
+        return $this->doctrine->getRepository(CustomerGroupCategoryVisibility::class)
             ->findOneBy(['category' => $this->category, 'scope' => $this->scope]);
     }
 
-    /**
-     * @param array $categoryVisibilityResolved
-     * @param VisibilityInterface $categoryVisibility
-     * @param integer $expectedVisibility
-     */
-    protected function assertStatic(
+    private function assertStatic(
         array $categoryVisibilityResolved,
         VisibilityInterface $categoryVisibility,
-        $expectedVisibility
+        int $expectedVisibility
     ) {
         $this->assertNotNull($categoryVisibilityResolved);
         $this->assertEquals($this->category->getId(), $categoryVisibilityResolved['category_id']);
@@ -245,11 +208,9 @@ class CustomerGroupCategoryResolvedCacheBuilderTest extends AbstractProductResol
     }
 
     /**
-     * @return array
-     *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function buildCacheDataProvider()
+    public function buildCacheDataProvider(): array
     {
         return [
             [
@@ -355,30 +316,20 @@ class CustomerGroupCategoryResolvedCacheBuilderTest extends AbstractProductResol
         ];
     }
 
-    /**
-     * @param array $a
-     * @param array $b
-     * @return int
-     */
-    protected function sortByCategoryAndCustomerGroup(array $a, array $b)
+    private function sortByCategoryAndCustomerGroup(array $a, array $b): int
     {
-        if ($a['category'] == $b['category']) {
+        if ($a['category'] === $b['category']) {
             return $a['customerGroup'] <=> $b['customerGroup'];
         }
 
         return $a['category'] <=> $b['category'];
     }
 
-    /**
-     * @param array $visibilities
-     * @return array
-     */
-    protected function replaceReferencesWithIds(array $visibilities)
+    private function replaceReferencesWithIds(array $visibilities): array
     {
         $rootCategory = $this->getRootCategory();
         foreach ($visibilities as $key => $row) {
             $category = $row['category'];
-            /** @var Category $category */
             if ($category === self::ROOT) {
                 $category = $rootCategory;
             } else {
@@ -391,17 +342,13 @@ class CustomerGroupCategoryResolvedCacheBuilderTest extends AbstractProductResol
             $customerGroup = $this->getReference($row['customerGroup']);
             $visibilities[$key]['customerGroup'] = $customerGroup->getId();
         }
+
         return $visibilities;
     }
 
-    /**
-     * @return array
-     */
-    protected function getResolvedVisibilities()
+    private function getResolvedVisibilities(): array
     {
-        return $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\CustomerGroupCategoryVisibilityResolved')
-            ->getRepository('OroVisibilityBundle:VisibilityResolved\CustomerGroupCategoryVisibilityResolved')
+        return $this->doctrine->getRepository(CustomerGroupCategoryVisibilityResolved::class)
             ->createQueryBuilder('entity')
             ->select(
                 'IDENTITY(entity.category) as category',

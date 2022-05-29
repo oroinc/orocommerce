@@ -4,27 +4,18 @@ namespace Oro\Bundle\CatalogBundle\Tests\Functional\ImportExport\Helper;
 
 use Oro\Bundle\CatalogBundle\ImportExport\Helper\CategoryImportExportHelper;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryImportExportHelperData;
-use Oro\Bundle\OrganizationBundle\Tests\Functional\OrganizationTrait;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
 
 class CategoryImportExportHelperTest extends WebTestCase
 {
-    use OrganizationTrait;
-
-    /** @var CategoryImportExportHelper */
-    private $helper;
-
     protected function setUp(): void
     {
         $this->initClient();
-
-        $this->loadFixtures(
-            [
-                LoadCategoryImportExportHelperData::class,
-            ]
-        );
-
-        $this->helper = new CategoryImportExportHelper($this->getContainer()->get('doctrine'));
+        $this->loadFixtures([
+            LoadOrganization::class,
+            LoadCategoryImportExportHelperData::class
+        ]);
     }
 
     /**
@@ -32,9 +23,10 @@ class CategoryImportExportHelperTest extends WebTestCase
      */
     public function testFindCategoryByPath(string $categoryPath, ?string $expectedCategory): void
     {
+        $helper = new CategoryImportExportHelper(self::getContainer()->get('doctrine'));
         $this->assertSame(
             $expectedCategory ? $this->getReference($expectedCategory) : null,
-            $this->helper->findCategoryByPath($categoryPath, $this->getOrganization())
+            $helper->findCategoryByPath($categoryPath, $this->getReference(LoadOrganization::ORGANIZATION))
         );
     }
 

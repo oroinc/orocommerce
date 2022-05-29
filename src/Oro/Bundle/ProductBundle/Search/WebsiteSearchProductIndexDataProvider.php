@@ -18,13 +18,24 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
  */
 class WebsiteSearchProductIndexDataProvider implements ProductIndexDataProviderInterface
 {
+    private AttributeTypeRegistry $attributeTypeRegistry;
+    private AttributeConfigurationProviderInterface $configurationProvider;
+    private ProductIndexFieldsProvider $indexFieldsProvider;
+    private PropertyAccessor $propertyAccessor;
+    private SearchableInformationProvider $searchableProvider;
+
     public function __construct(
-        protected AttributeTypeRegistry $attributeTypeRegistry,
-        protected AttributeConfigurationProviderInterface $configurationProvider,
-        protected ProductIndexFieldsProvider $indexFieldsProvider,
-        protected PropertyAccessor $propertyAccessor,
-        private SearchableInformationProvider $searchableProvider
+        AttributeTypeRegistry $attributeTypeRegistry,
+        AttributeConfigurationProviderInterface $configurationProvider,
+        ProductIndexFieldsProvider $indexFieldsProvider,
+        PropertyAccessor $propertyAccessor,
+        SearchableInformationProvider $searchableProvider
     ) {
+        $this->attributeTypeRegistry = $attributeTypeRegistry;
+        $this->configurationProvider = $configurationProvider;
+        $this->indexFieldsProvider = $indexFieldsProvider;
+        $this->propertyAccessor = $propertyAccessor;
+        $this->searchableProvider = $searchableProvider;
     }
 
     /**
@@ -171,7 +182,7 @@ class WebsiteSearchProductIndexDataProvider implements ProductIndexDataProviderI
         }
     }
 
-    protected function getAttributeType(FieldConfigModel $attribute): ?SearchAttributeTypeInterface
+    private function getAttributeType(FieldConfigModel $attribute): ?SearchAttributeTypeInterface
     {
         if (!$this->configurationProvider->isAttributeActive($attribute)) {
             return null;

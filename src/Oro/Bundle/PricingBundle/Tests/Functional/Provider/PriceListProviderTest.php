@@ -7,22 +7,18 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class PriceListProviderTest extends WebTestCase
 {
-    const DEFAULT_PRICE_LIST = 1;
-    /**
-     * @var PriceListProvider
-     */
-    protected $priceListProvider;
+    private const DEFAULT_PRICE_LIST = 1;
 
     protected function setUp(): void
     {
         $this->initClient([]);
-        $this->priceListProvider = $this->getContainer()->get('oro_pricing.provider.price_list_provider');
-        $this->priceListProvider;
     }
 
     public function testGetDefaultPriceListId()
     {
-        $actualDefaultPriceList = $this->priceListProvider->getDefaultPriceListId();
+        /** @var PriceListProvider $priceListProvider */
+        $priceListProvider = $this->getContainer()->get('oro_pricing.provider.price_list_provider');
+        $actualDefaultPriceList = $priceListProvider->getDefaultPriceListId();
         $this->assertEquals(self::DEFAULT_PRICE_LIST, $actualDefaultPriceList);
     }
 }

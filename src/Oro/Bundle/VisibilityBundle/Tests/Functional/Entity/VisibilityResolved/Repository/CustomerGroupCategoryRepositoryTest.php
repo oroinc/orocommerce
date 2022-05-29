@@ -3,7 +3,6 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Entity\VisibilityResolved\Repository;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\CatalogBundle\Tests\Functional\CatalogTrait;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
@@ -13,23 +12,13 @@ use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CustomerGro
 
 class CustomerGroupCategoryRepositoryTest extends AbstractCategoryRepositoryTest
 {
-    use CatalogTrait;
-
-    /**
-     * @var CustomerGroupCategoryRepository
-     */
-    protected $repository;
-
     /**
      * @dataProvider getVisibilitiesForCustomerGroupsDataProvider
-     * @param string $categoryName
-     * @param array $customerGroups
-     * @param array $visibilities
      */
     public function testGetVisibilitiesForCustomerGroups(
-        $categoryName,
-        $customerGroups,
-        $visibilities
+        string $categoryName,
+        array $customerGroups,
+        array $visibilities
     ) {
         /** @var Category $category */
         $category = $this->getReference($categoryName);
@@ -42,7 +31,7 @@ class CustomerGroupCategoryRepositoryTest extends AbstractCategoryRepositoryTest
         );
 
         $actualVisibility = $this->getRepository()
-            ->getVisibilitiesForCustomerGroups($this->scopeManager, $category, $customerGroups);
+            ->getVisibilitiesForCustomerGroups($this->getScopeManager(), $category, $customerGroups);
 
         $expectedVisibilities = [];
         foreach ($visibilities as $customer => $expectedVisibility) {
@@ -54,10 +43,7 @@ class CustomerGroupCategoryRepositoryTest extends AbstractCategoryRepositoryTest
         $this->assertEquals($expectedVisibilities, $actualVisibility);
     }
 
-    /**
-     * @return array
-     */
-    public function getVisibilitiesForCustomerGroupsDataProvider()
+    public function getVisibilitiesForCustomerGroupsDataProvider(): array
     {
         return [
             [
@@ -98,31 +84,28 @@ class CustomerGroupCategoryRepositoryTest extends AbstractCategoryRepositoryTest
 
     /**
      * @dataProvider isCategoryVisibleDataProvider
-     * @param string $categoryName
-     * @param string $customerGroupName
-     * @param int $configValue
-     * @param bool $expectedVisibility
      */
-    public function testIsCategoryVisible($categoryName, $customerGroupName, $configValue, $expectedVisibility)
-    {
+    public function testIsCategoryVisible(
+        string $categoryName,
+        string $customerGroupName,
+        int $configValue,
+        bool $expectedVisibility
+    ) {
         /** @var Category $category */
         $category = $this->getReference($categoryName);
 
         /** @var CustomerGroup $customerGroup */
         $customerGroup = $this->getReference($customerGroupName);
-        $scope = $this->scopeManager->findOrCreate(
+        $scope = $this->getScopeManager()->findOrCreate(
             CustomerGroupCategoryVisibility::VISIBILITY_TYPE,
             ['customerGroup' => $customerGroup]
         );
-        $actualVisibility = $this->repository->isCategoryVisible($category, $configValue, $scope);
+        $actualVisibility = $this->getRepository()->isCategoryVisible($category, $configValue, $scope);
 
-        $this->assertEquals($expectedVisibility, $actualVisibility);
+        $this->assertSame($expectedVisibility, $actualVisibility);
     }
 
-    /**
-     * @return array
-     */
-    public function isCategoryVisibleDataProvider()
+    public function isCategoryVisibleDataProvider(): array
     {
         return [
             [
@@ -166,20 +149,20 @@ class CustomerGroupCategoryRepositoryTest extends AbstractCategoryRepositoryTest
 
     /**
      * @dataProvider getCategoryIdsByVisibilityDataProvider
-     * @param int $visibility
-     * @param string $customerGroupName
-     * @param int $configValue
-     * @param array $expected
      */
-    public function testGetCategoryIdsByVisibility($visibility, $customerGroupName, $configValue, array $expected)
-    {
+    public function testGetCategoryIdsByVisibility(
+        int $visibility,
+        string $customerGroupName,
+        int $configValue,
+        array $expected
+    ) {
         /** @var CustomerGroup $customerGroup */
         $customerGroup = $this->getReference($customerGroupName);
-        $scope = $this->scopeManager->findOrCreate(
+        $scope = $this->getScopeManager()->findOrCreate(
             CustomerGroupCategoryVisibility::VISIBILITY_TYPE,
             ['customerGroup' => $customerGroup]
         );
-        $categoryIds = $this->repository->getCategoryIdsByVisibility($visibility, $scope, $configValue);
+        $categoryIds = $this->getRepository()->getCategoryIdsByVisibility($visibility, $scope, $configValue);
 
         $expectedCategoryIds = [];
         foreach ($expected as $categoryName) {
@@ -188,7 +171,7 @@ class CustomerGroupCategoryRepositoryTest extends AbstractCategoryRepositoryTest
             $expectedCategoryIds[] = $category->getId();
         }
 
-        if ($visibility == BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE) {
+        if ($visibility === BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE) {
             $masterCatalogId = $this->getMasterCatalog()->getId();
             array_unshift($expectedCategoryIds, $masterCatalogId);
         }
@@ -196,10 +179,7 @@ class CustomerGroupCategoryRepositoryTest extends AbstractCategoryRepositoryTest
         $this->assertEquals($expectedCategoryIds, $categoryIds);
     }
 
-    /**
-     * @return array
-     */
-    public function getCategoryIdsByVisibilityDataProvider()
+    public function getCategoryIdsByVisibilityDataProvider(): array
     {
         return [
             [
@@ -274,7 +254,7 @@ class CustomerGroupCategoryRepositoryTest extends AbstractCategoryRepositoryTest
     public function testGetParentCategoryVisibilities(array $expectedVisibilities)
     {
         $expectedVisibilities = $this->convertReferences($expectedVisibilities);
-        $actualVisibilities = $this->repository->getParentCategoryVisibilities();
+        $actualVisibilities = $this->getRepository()->getParentCategoryVisibilities();
 
         $this->assertSameSize($expectedVisibilities, $actualVisibilities);
         foreach ($actualVisibilities as $actualVisibility) {
@@ -287,11 +267,9 @@ class CustomerGroupCategoryRepositoryTest extends AbstractCategoryRepositoryTest
     }
 
     /**
-     * @return array
-     *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function getParentCategoryVisibilitiesDataProvider()
+    public function getParentCategoryVisibilitiesDataProvider(): array
     {
         return [
             'all parent category visibilities' => [[
@@ -395,11 +373,7 @@ class CustomerGroupCategoryRepositoryTest extends AbstractCategoryRepositoryTest
         ];
     }
 
-    /**
-     * @param array $data
-     * @return array
-     */
-    protected function convertReferences(array $data)
+    private function convertReferences(array $data): array
     {
         foreach ($data as $key => $row) {
             if (is_string($row['visibility_id'])) {
@@ -415,14 +389,11 @@ class CustomerGroupCategoryRepositoryTest extends AbstractCategoryRepositoryTest
                 $data[$key]['parent_category_id'] = $this->getCategoryId($row['parent_category_id']);
             }
         }
+
         return $data;
     }
 
-    /**
-     * @param string $reference
-     * @return int
-     */
-    protected function getVisibilityId($reference)
+    private function getVisibilityId(string $reference): int
     {
         /** @var CustomerGroupCategoryVisibility $visibility */
         $visibility = $this->getReference($reference);
@@ -430,11 +401,7 @@ class CustomerGroupCategoryRepositoryTest extends AbstractCategoryRepositoryTest
         return $visibility->getId();
     }
 
-    /**
-     * @param string $reference
-     * @return integer
-     */
-    protected function getCategoryId($reference)
+    private function getCategoryId(?string $reference): ?int
     {
         if ($reference === self::ROOT_CATEGORY) {
             return $this->getRootCategory()->getId();
@@ -446,16 +413,15 @@ class CustomerGroupCategoryRepositoryTest extends AbstractCategoryRepositoryTest
     public function testClearTable()
     {
         $this->assertGreaterThan(0, $this->getEntitiesCount());
-        $this->repository->clearTable();
+        $this->getRepository()->clearTable();
         $this->assertEquals(0, $this->getEntitiesCount());
     }
 
     public function testInsertStaticValues()
     {
         /** @var CustomerGroupCategoryVisibility[] $visibilities */
-        $visibilities = $this->getManagerRegistry()
-            ->getManagerForClass('OroVisibilityBundle:Visibility\CustomerGroupCategoryVisibility')
-            ->getRepository('OroVisibilityBundle:Visibility\CustomerGroupCategoryVisibility')
+        $visibilities = $this->getDoctrine()
+            ->getRepository(CustomerGroupCategoryVisibility::class)
             ->createQueryBuilder('entity')
             ->andWhere('entity.visibility IN (:scalarVisibilities)')
             ->setParameter(
@@ -472,8 +438,8 @@ class CustomerGroupCategoryRepositoryTest extends AbstractCategoryRepositoryTest
             $indexedVisibilities[$visibility->getId()] = $visibility;
         }
 
-        $this->repository->clearTable();
-        $this->repository->insertStaticValues($this->getInsertExecutor());
+        $this->getRepository()->clearTable();
+        $this->getRepository()->insertStaticValues($this->getInsertExecutor());
 
         $resolvedVisibilities = $this->getResolvedVisibilities();
 
@@ -523,8 +489,8 @@ class CustomerGroupCategoryRepositoryTest extends AbstractCategoryRepositoryTest
         $staticCategoryVisibilities = $this->getCategoryVisibilities([$staticCategoryId]);
 
         $visibility = CategoryVisibilityResolved::VISIBILITY_VISIBLE;
-        $this->repository->clearTable();
-        $this->repository->insertParentCategoryValues(
+        $this->getRepository()->clearTable();
+        $this->getRepository()->insertParentCategoryValues(
             $this->getInsertExecutor(),
             array_merge($parentCategoryVisibilities, $staticCategoryVisibilities),
             $visibility
@@ -549,17 +515,13 @@ class CustomerGroupCategoryRepositoryTest extends AbstractCategoryRepositoryTest
         }
     }
 
-    /**
-     * @param array $categoryIds
-     * @return array
-     */
-    protected function getCategoryVisibilities(array $categoryIds)
+    private function getCategoryVisibilities(array $categoryIds): array
     {
-        $groupVisibilities = $this->repository->getParentCategoryVisibilities();
+        $groupVisibilities = $this->getRepository()->getParentCategoryVisibilities();
 
         $visibilities = [];
         foreach ($groupVisibilities as $groupVisibility) {
-            if (in_array($groupVisibility['category_id'], $categoryIds)) {
+            if (in_array($groupVisibility['category_id'], $categoryIds, true)) {
                 $visibilities[] = $groupVisibility['visibility_id'];
             }
         }
@@ -567,16 +529,11 @@ class CustomerGroupCategoryRepositoryTest extends AbstractCategoryRepositoryTest
         return $visibilities;
     }
 
-    /**
-     * @param array $visibilities
-     * @param $customerGroupId
-     * @return array
-     */
-    protected function filterVisibilitiesByCustomerGroup(array $visibilities, $customerGroupId)
+    private function filterVisibilitiesByCustomerGroup(array $visibilities, int $customerGroupId): array
     {
         $currentCustomerGroupVisibilities = [];
         foreach ($visibilities as $visibility) {
-            if ($visibility['customerGroup'] == $customerGroupId) {
+            if ($visibility['customerGroup'] === $customerGroupId) {
                 $currentCustomerGroupVisibilities[] = $visibility;
             }
         }
@@ -584,20 +541,14 @@ class CustomerGroupCategoryRepositoryTest extends AbstractCategoryRepositoryTest
         return $currentCustomerGroupVisibilities;
     }
 
-    /**
-     * @return CustomerGroupCategoryRepository
-     */
-    protected function getRepository()
+    protected function getRepository(): CustomerGroupCategoryRepository
     {
         return $this->getContainer()->get('oro_visibility.customer_group_category_repository');
     }
 
-    /**
-     * @return array
-     */
-    protected function getResolvedVisibilities()
+    private function getResolvedVisibilities(): array
     {
-        return $this->repository->createQueryBuilder('entity')
+        return $this->getRepository()->createQueryBuilder('entity')
             ->select(
                 'IDENTITY(entity.sourceCategoryVisibility) as sourceCategoryVisibility',
                 'IDENTITY(entity.category) as category',

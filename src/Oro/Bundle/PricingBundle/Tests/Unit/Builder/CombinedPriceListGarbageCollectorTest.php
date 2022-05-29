@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Builder;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\PricingBundle\Builder\CombinedPriceListGarbageCollector;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
@@ -19,34 +19,26 @@ use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
 
 class CombinedPriceListGarbageCollectorTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|ConfigManager
-     */
-    protected $configManager;
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrine;
 
-    /**
-     * @var CombinedPriceListGarbageCollector
-     */
-    protected $garbageCollector;
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $configManager;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|Registry
-     */
-    protected $registry;
+    /** @var CombinedPriceListTriggerHandler|\PHPUnit\Framework\MockObject\MockObject */
+    private $triggerHandler;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|CombinedPriceListTriggerHandler
-     */
-    protected $triggerHandler;
+    /** @var CombinedPriceListGarbageCollector */
+    private $garbageCollector;
 
     protected function setUp(): void
     {
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->configManager = $this->createMock(ConfigManager::class);
-        $this->registry = $this->createMock(Registry::class);
         $this->triggerHandler = $this->createMock(CombinedPriceListTriggerHandler::class);
 
         $this->garbageCollector = new CombinedPriceListGarbageCollector(
-            $this->registry,
+            $this->doctrine,
             $this->configManager,
             $this->triggerHandler
         );
@@ -91,7 +83,7 @@ class CombinedPriceListGarbageCollectorTest extends \PHPUnit\Framework\TestCase
             ->method('deleteUnlinkedRules')
             ->with([2]);
 
-        $this->registry->expects($this->any())
+        $this->doctrine->expects($this->any())
             ->method('getRepository')
             ->willReturnMap([
                 [CombinedPriceList::class, null, $cplRepository],

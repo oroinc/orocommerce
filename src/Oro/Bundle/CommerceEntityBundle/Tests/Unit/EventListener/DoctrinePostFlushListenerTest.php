@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\CommerceEntityBundle\Tests\Unit\EventListener;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManager;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CommerceEntityBundle\EventListener\DoctrinePostFlushListener;
 use Oro\Bundle\CommerceEntityBundle\Storage\ExtraActionEntityStorage;
 use Oro\Bundle\CommerceEntityBundle\Tests\Stub\Entity1;
@@ -15,7 +15,7 @@ class DoctrinePostFlushListenerTest extends \PHPUnit\Framework\TestCase
 {
     public function testPostFlush()
     {
-        $registry = $this->createMock(Registry::class);
+        $doctrine = $this->createMock(ManagerRegistry::class);
 
         $testEntity1 = new Entity1();
         $testEntity2 = new Entity1();
@@ -43,7 +43,7 @@ class DoctrinePostFlushListenerTest extends \PHPUnit\Framework\TestCase
         $em2->expects($this->once())
             ->method('flush');
 
-        $registry->expects($this->exactly(3))
+        $doctrine->expects($this->exactly(3))
             ->method('getManagerForClass')
             ->willReturnMap([
                 [ClassUtils::getClass($testEntity1), $em1],
@@ -51,7 +51,7 @@ class DoctrinePostFlushListenerTest extends \PHPUnit\Framework\TestCase
                 [ClassUtils::getClass($testEntity3), $em2]
             ]);
 
-        $doctrineHelper = $this->getDoctrineHelper($registry);
+        $doctrineHelper = $this->getDoctrineHelper($doctrine);
         $listener = new DoctrinePostFlushListener($doctrineHelper, $storage);
         $listener->postFlush();
         $this->assertEmpty($storage->getScheduledForInsert());
@@ -69,8 +69,8 @@ class DoctrinePostFlushListenerTest extends \PHPUnit\Framework\TestCase
         $this->assertNotEmpty($storage->getScheduledForInsert());
     }
 
-    private function getDoctrineHelper(Registry $registry = null): DoctrineHelper
+    private function getDoctrineHelper(ManagerRegistry $doctrine = null): DoctrineHelper
     {
-        return new DoctrineHelper($registry ?: $this->createMock(Registry::class));
+        return new DoctrineHelper($doctrine ?: $this->createMock(ManagerRegistry::class));
     }
 }

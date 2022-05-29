@@ -2,21 +2,22 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Visibility\Cache\Product\Category;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Tests\Functional\CatalogTrait;
-use Oro\Bundle\OrganizationBundle\Tests\Functional\OrganizationTrait;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData;
 
 abstract class AbstractProductResolvedCacheBuilderTest extends WebTestCase
 {
-    use OrganizationTrait, CatalogTrait;
+    use CatalogTrait;
 
-    const ROOT = 'root';
+    protected const ROOT = 'root';
 
-    /** @var Registry */
-    protected $registry;
+    /** @var ManagerRegistry */
+    protected $doctrine;
 
     /** @var Scope */
     protected $scope;
@@ -25,17 +26,20 @@ abstract class AbstractProductResolvedCacheBuilderTest extends WebTestCase
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
-        $this->loadFixtures([
-            LoadCategoryVisibilityData::class,
-        ]);
+        $this->loadFixtures([LoadOrganization::class, LoadCategoryVisibilityData::class]);
 
-        $this->getContainer()->get('oro_visibility.visibility.cache.cache_builder')->buildCache();
-        $this->registry = $this->client->getContainer()->get('doctrine');
+        self::getContainer()->get('oro_visibility.visibility.cache.cache_builder')->buildCache();
+        $this->doctrine = self::getContainer()->get('doctrine');
     }
 
     protected function tearDown(): void
     {
-        $this->getContainer()->get('doctrine')->getManager()->clear();
+        $this->doctrine->getManager()->clear();
         parent::tearDown();
+    }
+
+    protected function getOrganization(): Organization
+    {
+        return $this->getReference(LoadOrganization::ORGANIZATION);
     }
 }

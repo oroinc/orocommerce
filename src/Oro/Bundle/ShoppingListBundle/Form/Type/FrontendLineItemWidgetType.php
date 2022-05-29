@@ -5,9 +5,9 @@ namespace Oro\Bundle\ShoppingListBundle\Form\Type;
 use Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -23,34 +23,13 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class FrontendLineItemWidgetType extends AbstractType
 {
-    const NAME = 'oro_shopping_list_frontend_line_item_widget';
-
-    /**
-     * @var CurrentShoppingListManager
-     */
-    protected $currentShoppingListManager;
-
-    /**
-     * @var ManagerRegistry
-     */
-    protected $registry;
-
-    /**
-     * @var string
-     */
-    protected $shoppingListClass;
-
-    /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
+    private TranslatorInterface $translator;
+    private CurrentShoppingListManager $currentShoppingListManager;
 
     public function __construct(
-        ManagerRegistry $registry,
         TranslatorInterface $translator,
         CurrentShoppingListManager $currentShoppingListManager
     ) {
-        $this->registry = $registry;
         $this->translator = $translator;
         $this->currentShoppingListManager = $currentShoppingListManager;
     }
@@ -68,11 +47,9 @@ class FrontendLineItemWidgetType extends AbstractType
                     'mapped' => false,
                     'required' => false,
                     'label' => 'oro.shoppinglist.lineitem.shopping_list.label',
-                    'class' => $this->shoppingListClass,
+                    'class' => ShoppingList::class,
                     'query_builder' => function (ShoppingListRepository $repository) {
-                        $qb = $repository->createQueryBuilder('shoppingList');
-
-                        return $qb;
+                        return $repository->createQueryBuilder('shoppingList');
                     },
                     'placeholder' => 'oro.shoppinglist.lineitem.create_new_shopping_list',
                     'acl_options'  => ['permission' => 'EDIT']
@@ -93,7 +70,7 @@ class FrontendLineItemWidgetType extends AbstractType
 
     public function postSetData(FormEvent $event)
     {
-        /* @var $lineItem LineItem */
+        /* @var LineItem $lineItem */
         $lineItem = $event->getData();
 
         $event->getForm()->get('shoppingList')->setData($lineItem->getShoppingList());
@@ -132,7 +109,7 @@ class FrontendLineItemWidgetType extends AbstractType
      */
     public function getBlockPrefix()
     {
-        return self::NAME;
+        return 'oro_shopping_list_frontend_line_item_widget';
     }
 
     /**
@@ -141,13 +118,5 @@ class FrontendLineItemWidgetType extends AbstractType
     public function getParent()
     {
         return FrontendLineItemType::class;
-    }
-
-    /**
-     * @param string $shoppingListClass
-     */
-    public function setShoppingListClass($shoppingListClass)
-    {
-        $this->shoppingListClass = $shoppingListClass;
     }
 }

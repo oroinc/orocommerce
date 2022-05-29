@@ -3,7 +3,7 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Engine\ORM;
 
 use Doctrine\ORM\EntityRepository;
-use Oro\Bundle\EntityBundle\ORM\Registry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\SearchBundle\Provider\SearchMappingProvider;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestDepartment;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestEmployee;
@@ -31,15 +31,11 @@ use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadProductsToI
  */
 class OrmIndexerTest extends AbstractSearchWebTestCase
 {
-    /**
-     * @var OrmIndexer
-     */
+    /** @var OrmIndexer */
     protected $indexer;
 
-    /**
-     * @var Registry
-     */
-    protected $doctrine;
+    /** @var ManagerRegistry */
+    private $doctrine;
 
     public static function checkSearchEngine(WebTestCase $webTestCase)
     {
@@ -61,7 +57,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
         $this->checkEngine();
     }
 
-    protected function checkEngine()
+    private function checkEngine()
     {
         self::checkSearchEngine($this);
     }
@@ -87,9 +83,9 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
         $websiteProvider = $this->createMock(WebsiteProviderInterface::class);
         $websiteProvider->expects($this->any())
             ->method('getWebsiteIds')
-            ->will($this->returnCallback(function () use ($repo) {
+            ->willReturnCallback(function () use ($repo) {
                 return $repo->getWebsiteIdentifiers();
-            }));
+            });
 
         $inputValidator = new IndexerInputValidator(
             $websiteProvider,
@@ -123,11 +119,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
         $this->assertEntityCount($expectedCount, Item::class);
     }
 
-    /**
-     * @param int $expectedCount
-     * @param string $class
-     */
-    private function assertEntityCount($expectedCount, $class)
+    private function assertEntityCount(int $expectedCount, string $class)
     {
         $repository = $this->getRepository($class);
         $actualCount = $this->makeCountQuery($repository);
@@ -135,11 +127,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
         $this->assertEquals($expectedCount, $actualCount);
     }
 
-    /**
-     * @param EntityRepository $repository
-     * @return mixed
-     */
-    private function makeCountQuery(EntityRepository $repository)
+    private function makeCountQuery(EntityRepository $repository): mixed
     {
         return $repository->createQueryBuilder('t')
             ->select('COUNT(t)')
@@ -147,11 +135,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
             ->getSingleScalarResult();
     }
 
-    /**
-     * @param string $entity
-     * @return EntityRepository
-     */
-    protected function getRepository($entity)
+    private function getRepository(string $entity): EntityRepository
     {
         return $this->doctrine->getRepository($entity, 'search');
     }
@@ -338,7 +322,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
         $this->loadFixtures([LoadItemData::class]);
 
         $this->mappingProviderMock
-            ->expects($this->exactly(1))
+            ->expects($this->once())
             ->method('getEntityClasses')
             ->willReturn([TestProduct::class, TestEmployee::class]);
 

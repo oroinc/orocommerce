@@ -2,40 +2,30 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\VirtualFields;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\EntityBundle\Helper\FieldHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\VirtualFields\QueryDesigner\VirtualFieldsSelectQueryConverter;
 use Oro\Bundle\ProductBundle\VirtualFields\VirtualFieldsProductDecorator;
 use Oro\Bundle\ProductBundle\VirtualFields\VirtualFieldsProductDecoratorFactory;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Contracts\Cache\CacheInterface;
 
 class VirtualFieldsProductDecoratorFactoryTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var VirtualFieldsProductDecoratorFactory
-     */
-    private $testedVirtualFieldsProductDecoratorFactory;
-
-    /**
-     * @var VirtualFieldsSelectQueryConverter|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var VirtualFieldsSelectQueryConverter|\PHPUnit\Framework\MockObject\MockObject */
     private $converterMock;
 
-    /**
-     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineMock;
 
-    /**
-     * @var FieldHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var FieldHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $fieldHelperMock;
 
-    /**
-     * @var CacheInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var CacheInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $cacheProvider;
+
+    /** @var VirtualFieldsProductDecoratorFactory */
+    private $testedVirtualFieldsProductDecoratorFactory;
 
     protected function setUp(): void
     {
@@ -52,15 +42,16 @@ class VirtualFieldsProductDecoratorFactoryTest extends \PHPUnit\Framework\TestCa
         );
     }
 
-    /**
-     * @param Product[] $products
-     * @param Product $product
-     *
-     * @return VirtualFieldsProductDecorator
-     */
-    private function createExpectedProductDecorator(array $products, $product)
+    public function testCreateDecoratedProduct()
     {
-        return new VirtualFieldsProductDecorator(
+        $product = $this->createMock(Product::class);
+        $products = [
+            $this->createMock(Product::class),
+            $this->createMock(Product::class),
+            $this->createMock(Product::class),
+        ];
+
+        $expectedProduct = new VirtualFieldsProductDecorator(
             $this->converterMock,
             $this->doctrineMock,
             $this->fieldHelperMock,
@@ -68,22 +59,9 @@ class VirtualFieldsProductDecoratorFactoryTest extends \PHPUnit\Framework\TestCa
             $products,
             $product
         );
-    }
-
-    public function testCreateDecoratedProduct()
-    {
-        $productMock = $this->createMock(Product::class);
-
-        $productsMocks = [
-            $this->createMock(Product::class),
-            $this->createMock(Product::class),
-            $this->createMock(Product::class),
-        ];
-
-        $expectedProduct = $this->createExpectedProductDecorator($productsMocks, $productMock);
 
         $actualProduct = $this->testedVirtualFieldsProductDecoratorFactory
-            ->createDecoratedProduct($productsMocks, $productMock);
+            ->createDecoratedProduct($products, $product);
 
         $this->assertEquals($expectedProduct, $actualProduct);
     }

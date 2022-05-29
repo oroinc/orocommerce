@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\PricingStrategy;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\ORM\QueryExecutorProviderInterface;
 use Oro\Bundle\PricingBundle\PricingStrategy\MinimalPricesCombiningStrategy;
@@ -14,34 +14,26 @@ class MinimalPricesCombiningStrategyTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var Registry|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $registry;
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrine;
 
-    /**
-     * @var QueryExecutorProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var QueryExecutorProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $insertFromSelectQueryExecutor;
 
-    /**
-     * @var ShardManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ShardManager|\PHPUnit\Framework\MockObject\MockObject */
     private $shardManager;
 
-    /**
-     * @var MinimalPricesCombiningStrategy
-     */
+    /** @var MinimalPricesCombiningStrategy */
     private $strategy;
 
     protected function setUp(): void
     {
-        $this->registry = $this->createMock(Registry::class);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->insertFromSelectQueryExecutor = $this->createMock(QueryExecutorProviderInterface::class);
         $this->shardManager = $this->createMock(ShardManager::class);
 
         $this->strategy = new MinimalPricesCombiningStrategy(
-            $this->registry,
+            $this->doctrine,
             $this->insertFromSelectQueryExecutor,
             $this->shardManager
         );
