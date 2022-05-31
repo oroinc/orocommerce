@@ -7,11 +7,11 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 use Oro\Bundle\ProductBundle\Model\ProductLineItem;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\PreloadedExtension;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -19,22 +19,11 @@ class FrontendLineItemTypeTest extends FormIntegrationTestCase
 {
     use QuantityTypeTrait;
 
-    /**
-     * @var FrontendLineItemType
-     */
-    protected $type;
+    private const UNITS = ['item', 'kg'];
 
-    /**
-     * @var array
-     */
-    protected $units = [
-        'item',
-        'kg'
-    ];
+    /** @var FrontendLineItemType */
+    private $type;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->type = new FrontendLineItemType();
@@ -43,7 +32,7 @@ class FrontendLineItemTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
     protected function getExtensions()
     {
@@ -54,16 +43,13 @@ class FrontendLineItemTypeTest extends FormIntegrationTestCase
                 [
                     $this->type,
                     ProductUnitSelectionType::class => $productUnitSelection,
-                    QuantityTypeTrait::$name => $this->getQuantityType(),
+                    QuantityType::class => $this->getQuantityType(),
                 ],
                 []
             )
         ];
     }
 
-    /**
-     * Method testBuildForm
-     */
     public function testBuildForm()
     {
         $lineItem = (new ProductLineItem(1))
@@ -75,9 +61,6 @@ class FrontendLineItemTypeTest extends FormIntegrationTestCase
         $this->assertTrue($form->has('unit'));
     }
 
-    /**
-     * Method testConfigureOptions
-     */
     public function testConfigureOptions()
     {
         $resolver = new OptionsResolver();
@@ -89,12 +72,8 @@ class FrontendLineItemTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider submitDataProvider
-     *
-     * @param mixed $defaultData
-     * @param mixed $submittedData
-     * @param mixed $expectedData
      */
-    public function testSubmit($defaultData, $submittedData, $expectedData)
+    public function testSubmit(ProductLineItem $defaultData, array $submittedData, ProductLineItem $expectedData)
     {
         $form = $this->factory->create(FrontendLineItemType::class, $defaultData, []);
 
@@ -106,10 +85,7 @@ class FrontendLineItemTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expectedData, $form->getData());
     }
 
-    /**
-     * @return array
-     */
-    public function submitDataProvider()
+    public function submitDataProvider(): array
     {
         $product = $this->getProductEntityWithPrecision(1, 'kg', 3);
 
@@ -133,14 +109,7 @@ class FrontendLineItemTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * @param integer $productId
-     * @param string  $unitCode
-     * @param integer $precision
-     *
-     * @return Product
-     */
-    protected function getProductEntityWithPrecision($productId, $unitCode, $precision = 0)
+    private function getProductEntityWithPrecision(int $productId, string $unitCode, int $precision = 0): Product
     {
         $product = new Product();
         ReflectionUtil::setId($product, $productId);
@@ -157,36 +126,15 @@ class FrontendLineItemTypeTest extends FormIntegrationTestCase
         return $product->addUnitPrecision($unitPrecision);
     }
 
-    /**
-     * @return array
-     */
-    protected function prepareProductUnitSelectionChoices()
+    private function prepareProductUnitSelectionChoices(): array
     {
         $choices = [];
-        foreach ($this->units as $unitCode) {
+        foreach (self::UNITS as $unitCode) {
             $unit = new ProductUnit();
             $unit->setCode($unitCode);
             $choices[$unitCode] = $unit;
         }
 
         return $choices;
-    }
-
-    /**
-     * @param ProductLineItem $lineItem
-     *
-     * @return \PHPUnit\Framework\MockObject\MockObject|FormInterface
-     */
-    protected function getForm(ProductLineItem $lineItem)
-    {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|FormInterface $form */
-        $form = $this->getMockBuilder('Symfony\Component\Form\FormInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $form->expects($this->once())
-            ->method('getData')
-            ->will($this->returnValue($lineItem));
-
-        return $form;
     }
 }

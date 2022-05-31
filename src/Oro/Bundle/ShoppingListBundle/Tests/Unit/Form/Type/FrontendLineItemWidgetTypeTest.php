@@ -6,6 +6,7 @@ use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -70,7 +71,7 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
                     FrontendLineItemType::class       => new FrontendLineItemType(),
                     EntityType::class                 => $entityType,
                     ProductUnitSelectionType::class   => $productUnitSelection,
-                    QuantityTypeTrait::$name          => $this->getQuantityType(),
+                    QuantityType::class               => $this->getQuantityType(),
                 ],
                 []
             )

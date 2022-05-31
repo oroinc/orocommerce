@@ -16,6 +16,7 @@ use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\PriceListSelectTypeStub;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use Oro\Component\Testing\ReflectionUtil;
@@ -35,12 +36,9 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
     private $formType;
 
     private array $priceLists = ['Test', 'Test 01'];
-    private array$units = ['item', 'kg' ];
+    private array $units = ['item', 'kg' ];
     private string $locale;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->locale = \Locale::getDefault();
@@ -49,9 +47,6 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function tearDown(): void
     {
         \Locale::setDefault($this->locale);
@@ -87,7 +82,7 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
                     ProductPriceUnitSelectorType::class => $productUnitSelection,
                     PriceType::class => $priceType,
                     CurrencySelectionType::class => new CurrencySelectionTypeStub(),
-                    QuantityTypeTrait::$name => $this->getQuantityType(),
+                    QuantityType::class => $this->getQuantityType(),
                 ],
                 []
             ),
