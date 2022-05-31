@@ -24,8 +24,6 @@ Feature: Quote translations
     And I edit "oro.rfp.requestproductitem.note.label" Translated Value as "Note - Zulu"
     And I should see following records in grid:
       | Note - Zulu |
-    When I click "Update Cache"
-    Then I should see "Translation Cache has been updated" flash message
 
   Scenario: Create request for quote with empty and zero price as buyer
     Given I proceed as the Buyer

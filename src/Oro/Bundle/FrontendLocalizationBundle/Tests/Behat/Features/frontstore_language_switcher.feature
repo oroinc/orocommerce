@@ -28,11 +28,6 @@ Feature: FrontStore language switcher
       | Dutch (Netherlands) - nl_NL | Dutch               |
       | Japanese (Japan) - ja_JP    | Japanese            |
 
-  Scenario: Update cache
-    Given go to System/ Localization/ Translations
-    When click "Update Cache"
-    Then I should see "Translation Cache has been updated" flash message
-
   Scenario Outline: Add Localizations
     Given I go to System/ Localization/ Localizations
     And click "Create Localization"

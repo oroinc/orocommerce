@@ -58,8 +58,6 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     When I go to System / Localization / Translations
     And I filter Key as equal to "oro.frontend.shoppinglist.lineitem.unit.label"
     And I edit "oro.frontend.shoppinglist.lineitem.unit.label" Translated Value as "Unit"
-    And I click "Update Cache"
-    Then I should see "Translation Cache has been updated" flash message
 
   Scenario: Check prices container on configurable product view is visible only when there are prices
     Given I proceed as the User

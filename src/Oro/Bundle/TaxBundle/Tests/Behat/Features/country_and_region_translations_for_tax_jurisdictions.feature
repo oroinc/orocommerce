@@ -14,9 +14,6 @@ Feature: Country and region translations for tax jurisdictions
       | Enabled Localizations | [English, Zulu_Loc] |
       | Default Localization  | Zulu_Loc            |
     And I submit form
-    When I go to System / Localization / Translations
-    And I click "Update Cache"
-    Then I should see "Translation Cache has been updated" flash message
 
   Scenario: Check tax jurisdictions UI
     Given go to Taxes/ Tax Jurisdictions

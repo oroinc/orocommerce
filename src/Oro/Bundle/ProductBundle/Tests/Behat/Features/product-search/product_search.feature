@@ -66,8 +66,6 @@ Feature: Product search
     And I go to System / Localization / Translations
     And I filter Key as equal to "oro.product.search.search_title.title"
     And I edit "oro.product.search.search_title.title" Translated Value as "{0} All Products|]1,Inf] Search Results for %text%"
-    And I click "Update Cache"
-    Then I should see "Translation Cache has been updated" flash message
 
   Scenario: Check the search by one symbol with incorrect transchoice
     Given I proceed as the User

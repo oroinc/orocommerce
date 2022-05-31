@@ -7,34 +7,26 @@ use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\TranslationBundle\Async\Topic\DumpJsTranslationsTopic;
 use Oro\Bundle\TranslationBundle\Entity\Translation;
 use Oro\Bundle\TranslationBundle\Manager\TranslationManager;
-use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
+use Symfony\Contracts\Translation\LocaleAwareInterface;
 
 /**
  * Saves changed product unit translatable labels using the translation manager.
  */
 class SaveProductUnitLabels implements ProcessorInterface
 {
-    /** @var array [domain => [translation_key => translation_template, ...], ...] */
-    private $mapping;
-
-    /** @var TranslationManager */
-    private $translationManager;
-
-    /** @var Translator */
-    private $translator;
-
-    /** @var UnitLabelFormatterInterface */
-    private $formatter;
-
-    /** @var MessageProducerInterface */
-    protected $producer;
+    private TranslationManager $translationManager;
+    private LocaleAwareInterface $translator;
+    private UnitLabelFormatterInterface $formatter;
+    private MessageProducerInterface $producer;
+    /** @var array [domain => [translation key => translation template, ...], ...] */
+    private array $mapping;
 
     public function __construct(
         TranslationManager $translationManager,
-        Translator $translator,
+        LocaleAwareInterface $translator,
         UnitLabelFormatterInterface $formatter,
         MessageProducerInterface $producer,
         array $mapping
@@ -101,22 +93,13 @@ class SaveProductUnitLabels implements ProcessorInterface
 
     private function getExistingLabel(string $placeholder, string $productUnitCode): string
     {
-        $value = '';
-        switch ($placeholder) {
-            case '{full}':
-                $value = $this->formatter->format($productUnitCode);
-                break;
-            case '{short}':
-                $value = $this->formatter->format($productUnitCode, true);
-                break;
-            case '{full_plural}':
-                $value = $this->formatter->format($productUnitCode, false, true);
-                break;
-            case '{short_plural}':
-                $value = $this->formatter->format($productUnitCode, true, true);
-        }
-
-        return $value;
+        return match ($placeholder) {
+            '{full}' => $this->formatter->format($productUnitCode),
+            '{short}' => $this->formatter->format($productUnitCode, true),
+            '{full_plural}' => $this->formatter->format($productUnitCode, false, true),
+            '{short_plural}' => $this->formatter->format($productUnitCode, true, true),
+            default => ''
+        };
     }
 
     private function modifyTranslatableLabels(array $data, string $productUnitCode): void
@@ -124,19 +107,13 @@ class SaveProductUnitLabels implements ProcessorInterface
         $search = array_keys($data);
         $replace = array_values($data);
         $locale = $this->translator->getLocale();
-        $catalogue = $this->translator->getCatalogue($locale);
         foreach ($this->mapping as $domain => $templates) {
             foreach ($templates as $key => $template) {
                 $key = str_replace('{unit}', $productUnitCode, $key);
                 $value = str_replace($search, $replace, $template);
-
                 $this->translationManager->saveTranslation($key, $value, $locale, $domain, Translation::SCOPE_UI);
-                $catalogue->set($key, $value, $domain);
             }
         }
-
-        // mark translation cache dirty
-        $this->translationManager->invalidateCache($locale);
         $this->translationManager->flush();
 
         // send MQ message to dump JS translations

@@ -119,7 +119,7 @@ services:
         class: Oro\Bundle\ProductBundle\Api\Processor\SaveProductUnitLabels
         arguments:
             - '@oro_translation.manager.translation'
-            - '@translator.default'
+            - '@translator'
             - '@oro_product.formatter.product_unit_label'
             - '@oro_message_queue.client.message_producer'
             - '%oro_product.product_unit.translations_mapping%'

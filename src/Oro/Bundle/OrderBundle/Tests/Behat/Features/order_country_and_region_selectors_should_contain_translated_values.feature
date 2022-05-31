@@ -16,9 +16,6 @@ Feature: Order Country and region selectors should contain translated values
       | Enabled Localizations | [English, Zulu_Loc] |
       | Default Localization  | Zulu_Loc            |
     And I submit form
-    When I go to System / Localization / Translations
-    And I click "Update Cache"
-    Then I should see "Translation Cache has been updated" flash message
 
   Scenario: Create Order - Country/region selector should contain translated values
     Given I go to Sales / Orders
