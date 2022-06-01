@@ -269,8 +269,7 @@ class IndexDataProvider
      */
     private function getIndexValue(array &$preparedIndexData, $entityId, $fieldName, $type = Query::TYPE_TEXT)
     {
-        return isset($preparedIndexData[$entityId][$type][$fieldName])
-            ? $preparedIndexData[$entityId][$type][$fieldName] : '';
+        return $preparedIndexData[$entityId][$type][$fieldName] ?? '';
     }
 
     /**
@@ -339,12 +338,16 @@ class IndexDataProvider
             foreach ($value as $key => $element) {
                 $value[$key] = $this->clearValue($type, $fieldName, $element);
             }
+
             return $value;
         }
 
         if ($type === Query::TYPE_TEXT && str_starts_with($fieldName, self::ALL_TEXT_PREFIX)) {
-            $value = $this->htmlTagHelper->stripTags((string)$value);
-            $value = $this->htmlTagHelper->stripLongWords($value);
+            $value = (string)$value;
+            if ($value) {
+                $value = $this->htmlTagHelper->stripTags((string)$value);
+                $value = $this->htmlTagHelper->stripLongWords($value);
+            }
         }
 
         return $value;
