@@ -1581,6 +1581,7 @@ services:
             - 'PriceList'
             - '@doctrine'
             - '@oro_security.token_accessor'
+            - '@logger'
 
     Oro\Bundle\PricingBundle\EntityConfig\ShardingEntityConfiguration:
         tags:
