@@ -1,0 +1,7 @@
+/* @theme: custom; */
+
+$oro-single-page-checkout-breakpoints: (
+    'single-page-checkout-overflow': '(min-width: #{$breakpoint-mobile-landscape + 1})'
+);
+
+$breakpoints: update-default($breakpoints, merge-breakpoints($breakpoints, $oro-single-page-checkout-breakpoints));
