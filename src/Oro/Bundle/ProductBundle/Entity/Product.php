@@ -723,7 +723,9 @@ class Product extends ExtendProduct implements
     public function setSku($sku)
     {
         $this->sku = $sku;
-        $this->skuUppercase = mb_strtoupper($this->sku);
+        $this->skuUppercase = $this->sku
+            ? mb_strtoupper($this->sku)
+            : $this->sku;
 
         return $this;
     }
@@ -1389,13 +1391,17 @@ class Product extends ExtendProduct implements
 
     public function updateDenormalizedProperties(): void
     {
-        $this->skuUppercase = mb_strtoupper($this->sku);
+        $this->skuUppercase = $this->sku
+            ? mb_strtoupper($this->sku)
+            : $this->sku;
 
         if (!$this->getDefaultName()) {
             throw new \RuntimeException('Product has to have a default name');
         }
         $this->denormalizedDefaultName = $this->getDefaultName()->getString();
-        $this->denormalizedDefaultNameUppercase = mb_strtoupper($this->denormalizedDefaultName);
+        $this->denormalizedDefaultNameUppercase = $this->denormalizedDefaultName
+            ? mb_strtoupper($this->denormalizedDefaultName)
+            : $this->denormalizedDefaultName;
     }
 
     public function __clone()
