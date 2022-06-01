@@ -2,7 +2,8 @@ The upgrade instructions are available at [Oro documentation website](https://do
 
 The current file describes significant changes in the code that may affect the upgrade of your customizations.
 
-## UNRELEASED
+## 5.1.0-alpha.1 (2022-05-31)
+[Show detailed list of changes](incompatibilities-5-1-alpha.md)
 
 ### Added
 
@@ -28,11 +29,7 @@ The current file describes significant changes in the code that may affect the u
 #### ProductBundle
 * `Oro\Bundle\ProductBundle\Provider\ProductImageFileNameProvider` is applicable if `product_original_filenames` feature is enabled.
 
-## 5.0.0
-
-### Changed
-
-#### OroSearchBundle
+#### SearchBundle
 * Changed website search engine configuration: `website_search_engine_dsn` parameter is used instead of `search_engine_name`, `search_engine_host`, `search_engine_port`, `search_engine_index_prefix`, `search_engine_username`, `search_engine_password`, `search_engine_ssl_verification`, `search_engine_ssl_cert`,  `search_engine_ssl_cert_password`, `search_engine_ssl_key`, `search_engine_ssl_key_password`, `website_search_engine_index_prefix`.
 * Separate setup via dedicated DSN-s allows splitting search engine's connections between back-office and storefront.
 
