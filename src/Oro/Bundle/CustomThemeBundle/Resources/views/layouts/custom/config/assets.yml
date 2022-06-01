@@ -1,5 +1,7 @@
 styles:
     inputs:
+        - 'bundles/orocustomtheme/CheckoutBundle/scss/settings/global-settings.scss'
+
         - 'bundles/orocustomtheme/FrontendBundle/scss/settings/main/global-settings.scss'
 
         - 'bundles/orocatalog/default/scss/styles.scss'

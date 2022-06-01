@@ -1,0 +1,8 @@
+layout:
+    actions:
+        - '@setOption':
+              id: payment_methods
+              optionName: attr.class
+              optionValue: 'grid__column grid__column--offset-y grid__column--10 grid__column--gutter-l-none'
+
+    conditions: 'context["workflowName"]!="b2b_flow_checkout_single_page"'

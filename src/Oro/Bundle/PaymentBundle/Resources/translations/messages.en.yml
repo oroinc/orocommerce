@@ -55,6 +55,7 @@ oro:
             partially: Paid partially
             invoiced: Invoiced
             canceled: Payment canceled
+            canceled_partially: Canceled partially
 
         message:
             error: 'General error. We were unable to process action.'

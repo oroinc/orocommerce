@@ -1,6 +1,7 @@
 /* @theme: default; */
 
-$checkout-padding: 30px 32px !default;
+$checkout-padding: 24px !default;
+$checkout-padding-narrow: 12px 8px !default;
 $checkout-border-radius: $base-ui-element-border-radius !default;
 $checkout-background-color: get-color('additional', 'base') !default;
 
