@@ -226,7 +226,7 @@ class WebsiteSearchProductIndexerListener
             return $data;
         }
 
-        return \is_string($data)
+        return \is_string($data) && $data
             ? preg_replace(['/[[:cntrl:]]/', '/\s+/'], ' ', $data)
             : $data;
     }

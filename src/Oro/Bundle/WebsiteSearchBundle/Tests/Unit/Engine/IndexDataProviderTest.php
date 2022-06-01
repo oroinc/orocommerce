@@ -140,6 +140,7 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
         $this->tagHelper->expects($this->any())
             ->method('stripTags')
             ->willReturnCallback(function ($value) {
+                self::assertNotSame('', $value, 'The value for stripTags() must not be empty string.');
                 return trim(strip_tags($value));
             });
         $this->tagHelper->expects($this->any())
