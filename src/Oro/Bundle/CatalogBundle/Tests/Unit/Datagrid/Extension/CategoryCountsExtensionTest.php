@@ -94,45 +94,45 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
         $this->configManager = $this->createMock(ConfigManager::class);
 
         $searchDatasource = $this->createMock(SearchDatasource::class);
-        $searchDatasource->expects($this->any())
+        $searchDatasource->expects(self::any())
             ->method('getSearchQuery')
             ->willReturn($this->searchQuery);
 
         $this->datagrid = $this->createMock(DatagridInterface::class);
-        $this->datagrid->expects($this->any())
+        $this->datagrid->expects(self::any())
             ->method('acceptDatasource')
             ->willReturnSelf();
-        $this->datagrid->expects($this->any())
+        $this->datagrid->expects(self::any())
             ->method('getDatasource')
             ->willReturn($searchDatasource);
 
         $searchDatasourceWithoutFilters = $this->createMock(SearchDatasource::class);
-        $searchDatasourceWithoutFilters->expects($this->any())
+        $searchDatasourceWithoutFilters->expects(self::any())
             ->method('getSearchQuery')
             ->willReturn($this->searchQueryWithoutFilters);
 
         $this->datagridWithoutFilters = $this->createMock(DatagridInterface::class);
-        $this->datagridWithoutFilters->expects($this->any())
+        $this->datagridWithoutFilters->expects(self::any())
             ->method('acceptDatasource')
             ->willReturnSelf();
-        $this->datagridWithoutFilters->expects($this->any())
+        $this->datagridWithoutFilters->expects(self::any())
             ->method('getDatasource')
             ->willReturn($searchDatasourceWithoutFilters);
 
         $manager = $this->createMock(ObjectManager::class);
-        $manager->expects($this->any())
+        $manager->expects(self::any())
             ->method('getRepository')
             ->with(Category::class)
             ->willReturn($this->categoryRepository);
 
         $this->registry = $this->createMock(ManagerRegistry::class);
-        $this->registry->expects($this->any())
+        $this->registry->expects(self::any())
             ->method('getManagerForClass')
             ->with(Category::class)
             ->willReturn($manager);
 
         $datagridManagerLink = $this->createMock(ServiceLink::class);
-        $datagridManagerLink->expects($this->any())
+        $datagridManagerLink->expects(self::any())
             ->method('getService')
             ->willReturn($this->datagridManager);
 
@@ -158,13 +158,13 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
             ],
         ]);
 
-        $this->assertTrue($this->extension->isApplicable($config));
+        self::assertTrue($this->extension->isApplicable($config));
     }
 
     public function testIsApplicableSkipped(): void
     {
         $this->extension->addApplicableGrid(self::GRID_NAME);
-        $this->datagridParametersHelper->expects($this->once())
+        $this->datagridParametersHelper->expects(self::once())
             ->method('isDatagridExtensionSkipped')
             ->with($this->extension->getParameters())
             ->willReturn(true);
@@ -176,7 +176,7 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
             ],
         ]);
 
-        $this->assertFalse($this->extension->isApplicable($config));
+        self::assertFalse($this->extension->isApplicable($config));
     }
 
     public function testIsApplicableWithUnknownDatasource(): void
@@ -187,7 +187,7 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
             'name' => self::GRID_NAME,
         ]);
 
-        $this->assertFalse($this->extension->isApplicable($config));
+        self::assertFalse($this->extension->isApplicable($config));
     }
 
     public function testIsApplicableWithUnknownGrid(): void
@@ -199,7 +199,7 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
             ],
         ]);
 
-        $this->assertFalse($this->extension->isApplicable($config));
+        self::assertFalse($this->extension->isApplicable($config));
     }
 
     /**
@@ -208,7 +208,7 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
     public function testVisitMetadata(): void
     {
         $datagridManagerLink = $this->createMock(ServiceLink::class);
-        $datagridManagerLink->expects($this->any())
+        $datagridManagerLink->expects(self::any())
             ->method('getService')
             ->willReturn($this->datagridManager);
 
@@ -232,7 +232,7 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
             ]
         ]);
 
-        $this->categoryRepository->expects($this->any())
+        $this->categoryRepository->expects(self::any())
             ->method('find')
             ->with(self::CATEGORY_ID)
             ->willReturn($category);
@@ -261,7 +261,7 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
             'dataGridSkipExtensionParam' => true
         ]);
 
-        $this->datagridManager->expects($this->exactly(2))
+        $this->datagridManager->expects(self::exactly(2))
             ->method('getDatagrid')
             ->withConsecutive(
                 [self::GRID_NAME, $parametersWithoutSubcategory],
@@ -272,7 +272,7 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
                 $this->datagridWithoutFilters
             );
 
-        $this->productSearchRepository->expects($this->exactly(2))
+        $this->productSearchRepository->expects(self::exactly(2))
             ->method('getCategoryCountsByCategory')
             ->willReturnMap([
                 [$category, $this->searchQuery, [1 => 2]],
@@ -283,21 +283,21 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
             = 'grid1|{"_filter":{"filter1":[]},"categoryId":42,"dataGridSkipExtensionParam":true}';
         $keyWithoutFilters = 'grid1|{"categoryId":42,"dataGridSkipExtensionParam":true}';
 
-        $this->cache->expects($this->exactly(2))
+        $this->cache->expects(self::exactly(2))
             ->method('getCounts')
             ->willReturnMap([
                 [$keyWithoutSubCategories, null],
                 [$keyWithoutFilters, null]
             ]);
 
-        $this->cache->expects($this->exactly(2))
+        $this->cache->expects(self::exactly(2))
             ->method('setCounts')
             ->withConsecutive(
                 [$this->equalTo($keyWithoutSubCategories)],
                 [$this->equalTo($keyWithoutFilters)]
             );
 
-        $this->configManager->expects($this->any())
+        $this->configManager->expects(self::any())
             ->method('get')
             ->willReturn(true);
 
@@ -325,7 +325,7 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
             ]
         ];
 
-        $this->assertEquals($metadataArray, $metadata->toArray());
+        self::assertEquals($metadataArray, $metadata->toArray());
     }
 
     public function testVisitMetadataWhenExtensionAlreadyApplied(): void
@@ -356,20 +356,20 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
             ],
         ]);
 
-        $this->categoryRepository->expects($this->exactly(2))
+        $this->categoryRepository->expects(self::exactly(2))
             ->method('find')
             ->with(self::CATEGORY_ID)
             ->willReturn($category);
 
-        $this->datagridManager->expects($this->never())
+        $this->datagridManager->expects(self::never())
             ->method('getDatagrid');
 
-        $this->productSearchRepository->expects($this->never())
+        $this->productSearchRepository->expects(self::never())
             ->method('getCategoryCountsByCategory');
 
         $key = 'grid1|{"_filter":{"filter1":[],"subcategory":{"value":[1,2,3]}},"categoryId":42}';
 
-        $this->cache->expects($this->exactly(2))
+        $this->cache->expects(self::exactly(2))
             ->method('getCounts')
             ->with($key)
             ->willReturnOnConsecutiveCalls(
@@ -377,20 +377,20 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
                 [1 => 2, 2 => 3]
             );
 
-        $this->cache->expects($this->never())
+        $this->cache->expects(self::never())
             ->method('setCounts');
 
-        $this->datagridParametersHelper->expects($this->exactly(2))
+        $this->datagridParametersHelper->expects(self::exactly(2))
             ->method('getFromParameters')
             ->willReturn([
                 'filter1' => [],
                 SubcategoryFilter::FILTER_TYPE_NAME => ['value' => [1, 2, 3]],
             ]);
-        $this->datagridParametersHelper->expects($this->exactly(2))
+        $this->datagridParametersHelper->expects(self::exactly(2))
             ->method('getFromMinifiedParameters')
             ->willReturn(null);
 
-        $this->configManager->expects($this->any())
+        $this->configManager->expects(self::any())
             ->method('get')
             ->willReturn(true);
 
@@ -422,7 +422,7 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
             ]
         ];
 
-        $this->assertEquals($metadataArray, $metadata->toArray());
+        self::assertEquals($metadataArray, $metadata->toArray());
     }
 
     /**
@@ -437,22 +437,22 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
             ],
         ]);
 
-        $this->categoryRepository->expects($this->never())
+        $this->categoryRepository->expects(self::never())
             ->method($this->anything());
 
-        $this->datagridManager->expects($this->never())
+        $this->datagridManager->expects(self::never())
             ->method($this->anything());
 
-        $this->productSearchRepository->expects($this->never())
+        $this->productSearchRepository->expects(self::never())
             ->method($this->anything());
 
-        $this->cache->expects($this->never())
+        $this->cache->expects(self::never())
             ->method($this->anything());
 
         $this->extension->setParameters(new ParameterBag($parameters));
         $this->extension->visitMetadata(DatagridConfiguration::createNamed(self::GRID_NAME, []), $metadata);
 
-        $this->assertEquals(
+        self::assertEquals(
             [
                 'filters' => [
                     [
@@ -529,5 +529,10 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
                 ]
             ]
         ];
+    }
+
+    public function testGetPriority(): void
+    {
+        self::assertEquals(-250, $this->extension->getPriority());
     }
 }
