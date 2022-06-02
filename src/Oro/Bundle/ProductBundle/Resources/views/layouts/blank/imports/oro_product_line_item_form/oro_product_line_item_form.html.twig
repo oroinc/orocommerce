@@ -21,7 +21,6 @@
     {% if not is_configurable_product_type(product.type) %}
         {% set attr = layout_attr_defaults(attr, {
             '~class': ' product-item__qty__current-grid' ~ ' product-item__qty__current-grid--' ~ class_prefix,
-            'data-page-component-init-on': 'asap',
             'data-page-component-module': 'oroproduct/js/app/components/product-unit-select-component',
             'data-page-component-options': {
                 'singleUnitMode': singleUnitMode,

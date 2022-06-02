@@ -23,6 +23,10 @@ layout:
                             defaultUnitCode: '=data["oro_product_single_unit_mode"].getDefaultUnitCode()'
                 __line_item_form_end:
                     blockType: form_end
+                    options:
+                        vars:
+                            js_validation_options:
+                                initOn: 'click,focusin'
                 __line_item_form_buttons:
                     blockType: container
                 __line_item_view_details:
