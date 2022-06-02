@@ -228,8 +228,7 @@
 {% block __oro_product_list_item__product_secondary_content_container_widget %}
     {% if matrixFormType != 'inline' %}
         {% set attr = layout_attr_defaults(attr, {
-            '~class': ' product-item__secondary-content product-item__secondary-content--{{ class_prefix }}',
-            'data-page-component-init-on': 'click,focusin'
+            '~class': ' product-item__secondary-content product-item__secondary-content--{{ class_prefix }}'
         }) %}
         <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
     {% endif %}

@@ -29,7 +29,11 @@ const ShoppingListImagePopoverView = BaseView.extend({
      * @inheritdoc
      */
     constructor: function ShoppingListImagePopoverView(options) {
-        ShoppingListImagePopoverView.__super__.constructor.call(this, options);
+        const {_initEvent: initEvent, ...restOptions} = options;
+        ShoppingListImagePopoverView.__super__.constructor.call(this, restOptions);
+        if (initEvent) {
+            this.$el.popover('show');
+        }
     },
 
     /**
