@@ -83,6 +83,14 @@ class CategoryCountsExtension extends AbstractExtension
     /**
      * {@inheritDoc}
      */
+    public function getPriority()
+    {
+        return -250;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function isApplicable(DatagridConfiguration $config)
     {
         return
