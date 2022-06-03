@@ -22,6 +22,15 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class ShippingMethodsConfigsRuleController extends AbstractController
 {
+    private array $addMethodWidgetUpdateFlags = [ShippingMethodsConfigsRuleHandler::UPDATE_FLAG];
+
+    public function addUpdateFlagToAddMethodWidget(string $addMethodWidgetUpdateFlags): void
+    {
+        if (false === \in_array($addMethodWidgetUpdateFlags, $this->addMethodWidgetUpdateFlags, true)) {
+            $this->addMethodWidgetUpdateFlags[] = $addMethodWidgetUpdateFlags;
+        }
+    }
+
     /**
      * @Route("/", name="oro_shipping_methods_configs_rule_index")
      * @Template
@@ -119,7 +128,9 @@ class ShippingMethodsConfigsRuleController extends AbstractController
 
         return [
             'entity' => $entity,
-            'form'   => $form->createView()
+            'form'   => $form->createView(),
+            'addMethodWidgetUpdateFlags' => $this->addMethodWidgetUpdateFlags,
+            'addMethodWidgetInFocus' => $request->get(ShippingMethodsConfigsRuleHandler::UPDATE_FLAG, false)
         ];
     }
 
