@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Command;
 
+use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
 use Doctrine\Persistence\Mapping\ClassMetadata;
 use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
-use Oro\Bundle\CronBundle\Entity\Repository\ScheduleRepository;
 use Oro\Bundle\CronBundle\Entity\Schedule;
 use Oro\Bundle\FrontendTestFrameworkBundle\Entity\TestContentVariant;
 use Oro\Bundle\MessageQueueBundle\Entity\Job;
@@ -54,7 +54,7 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
      */
     public function testCommandWhenWebCatalogIsUsed(bool $isPartialConfig)
     {
-        $configManager = self::getConfigManager('global');
+        $configManager = self::getConfigManager();
         $configManager->set(
             'oro_web_catalog.web_catalog',
             $this->getReference(LoadWebCatalogsData::FIRST_WEB_CATALOG)->getId()
@@ -128,7 +128,7 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
 
     public function testCommandWhenWebCatalogIsUsedPartialOptionPassed()
     {
-        $configManager = self::getConfigManager('global');
+        $configManager = self::getConfigManager();
         $configManager->set(
             'oro_web_catalog.web_catalog',
             $this->getReference(LoadWebCatalogsData::FIRST_WEB_CATALOG)->getId()
@@ -234,14 +234,14 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
 
     public function testGetDefaultDefinitions()
     {
-        /** @var ScheduleRepository $repo */
-        $repo = $this->getContainer()->get('oro_entity.doctrine_helper')->getEntityRepositoryForClass(Schedule::class);
+        /** @var EntityRepository $repo */
+        $repo = $this->getContainer()->get('doctrine')->getRepository(Schedule::class);
         /** @var Schedule $commandSchedule */
         $commandSchedule = $repo->findOneBy(['command' => ProductCollectionsIndexCronCommand::getDefaultName()]);
         $this->assertNotEmpty($commandSchedule);
         $this->assertSame(Configuration::DEFAULT_CRON_SCHEDULE, $commandSchedule->getDefinition());
 
-        $configManager = self::getConfigManager('global');
+        $configManager = self::getConfigManager();
         $configManager->set(ProductCollectionsScheduleConfigurationListener::CONFIG_FIELD, '0 0 0 0 *');
         $configManager->flush();
         self::runCommand('oro:cron:definitions:load', []);
