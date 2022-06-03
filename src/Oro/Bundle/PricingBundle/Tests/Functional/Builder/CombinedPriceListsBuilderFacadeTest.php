@@ -84,7 +84,7 @@ class CombinedPriceListsBuilderFacadeTest extends WebTestCase
 
         $allCpls = $this->cplRepo->findAll();
 
-        $this->assertCount(2, $allCpls); // 1 group + 1 customer with fallback to group
+        $this->assertCount(3, $allCpls); // 1 group + 1 customer with fallback to group + 1GC
     }
 
     public function testRebuildForCustomers()
@@ -134,8 +134,8 @@ class CombinedPriceListsBuilderFacadeTest extends WebTestCase
             'change on config level' => ['default', 5],
             // 1 website, 1 group, 2 customers (1 fb to group + 1 without group and with default fb)
             'change on website level' => ['PL_WS1', 4],
-            'change on customer group level' => ['PL_WS2_CG1', 2], // 1 group, 1 customer (fallback to group)
-            'change on customer level' => ['PL_WS1_C11', 1] // 1 customer
+            'change on customer group level' => ['PL_WS2_CG1', 3], // 1 group, 1 customer (fallback to group) + 1GC
+            'change on customer level' => ['PL_WS1_C11', 2] // 1 customer + 1GC
         ];
     }
 
