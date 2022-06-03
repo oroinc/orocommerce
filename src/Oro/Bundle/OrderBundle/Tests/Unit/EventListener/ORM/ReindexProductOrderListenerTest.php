@@ -236,7 +236,10 @@ class ReindexProductOrderListenerTest extends \PHPUnit\Framework\TestCase
         $this->reindexManager
             ->expects($this->exactly(2))
             ->method('reindexProducts')
-            ->withConsecutive([$expectedProductIds, self::WEBSITE_ID], [$parentProductIds, self::WEBSITE_ID]);
+            ->withConsecutive(
+                [$expectedProductIds, self::WEBSITE_ID, true, ['order']],
+                [$parentProductIds, self::WEBSITE_ID, true, ['order']]
+            );
 
         $this->listener->processOrderRemove($this->order);
     }
@@ -406,7 +409,10 @@ class ReindexProductOrderListenerTest extends \PHPUnit\Framework\TestCase
             $this->reindexManager
                 ->expects($this->exactly(2))
                 ->method('reindexProducts')
-                ->withConsecutive([$productIds, self::WEBSITE_ID], [[], self::WEBSITE_ID]);
+                ->withConsecutive(
+                    [$productIds, self::WEBSITE_ID, true, ['order']],
+                    [[], self::WEBSITE_ID, true, ['order']]
+                );
         } else {
             $this->reindexManager->expects($this->never())->method('reindexProducts');
         }

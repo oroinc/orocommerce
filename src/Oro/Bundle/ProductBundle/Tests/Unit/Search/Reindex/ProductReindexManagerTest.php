@@ -39,50 +39,69 @@ class ProductReindexManagerTest extends \PHPUnit\Framework\TestCase
         unset($this->eventDispatcher);
     }
 
-    public function testReindexProduct()
+    /**
+     * @dataProvider fieldsGroupDataProvider
+     */
+    public function testReindexProduct(array $fieldsGroup = null)
     {
-        $event = $this->getReindexationEvents(self::PRODUCT_ID, self::WEBSITE_ID);
+        $event = $this->getReindexationEvents(self::PRODUCT_ID, self::WEBSITE_ID, $fieldsGroup);
         /** @var Product $product */
-        $product = $this->getEntity(Product::class, [ 'id' => self::PRODUCT_ID ]);
+        $product = $this->getEntity(Product::class, ['id' => self::PRODUCT_ID]);
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
             ->with($event, ReindexationRequestEvent::EVENT_NAME);
-        $this->reindexManager->reindexProduct($product, self::WEBSITE_ID);
+        $this->reindexManager->reindexProduct($product, self::WEBSITE_ID, true, $fieldsGroup);
     }
 
-    public function testReindexProducts()
+    /**
+     * @dataProvider fieldsGroupDataProvider
+     */
+    public function testReindexProducts(array $fieldsGroup = null)
     {
-        $event = $this->getReindexationEvents(self::PRODUCT_ID, self::WEBSITE_ID);
+        $event = $this->getReindexationEvents(self::PRODUCT_ID, self::WEBSITE_ID, $fieldsGroup);
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
             ->with($event, ReindexationRequestEvent::EVENT_NAME);
-        $this->reindexManager->reindexProducts([self::PRODUCT_ID], self::WEBSITE_ID);
+        $this->reindexManager->reindexProducts([self::PRODUCT_ID], self::WEBSITE_ID, true, $fieldsGroup);
     }
 
-    public function testReindexProductsWithNoProducts()
+    /**
+     * @dataProvider fieldsGroupDataProvider
+     */
+    public function testReindexProductsWithNoProducts(array $fieldsGroup = null)
     {
         $this->eventDispatcher->expects($this->never())->method('dispatch');
-        $this->reindexManager->reindexProducts([], self::WEBSITE_ID);
+        $this->reindexManager->reindexProducts([], self::WEBSITE_ID, true, $fieldsGroup);
     }
 
-    public function testReindexAllProducts()
+    /**
+     * @dataProvider fieldsGroupDataProvider
+     */
+    public function testReindexAllProducts(array $fieldsGroup = null)
     {
-        $event = $this->getReindexationEvents([], self::WEBSITE_ID);
+        $event = $this->getReindexationEvents([], self::WEBSITE_ID, $fieldsGroup);
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
             ->with($event, ReindexationRequestEvent::EVENT_NAME);
-        $this->reindexManager->reindexAllProducts(self::WEBSITE_ID);
+        $this->reindexManager->reindexAllProducts(self::WEBSITE_ID, true, $fieldsGroup);
     }
 
     /**
      * @param $productIds
      * @param $websiteId
-     *
+     * @param array|null $fieldsGroup
      * @return ReindexationRequestEvent
      */
-    protected function getReindexationEvents($productIds, $websiteId)
+    protected function getReindexationEvents($productIds, $websiteId, array $fieldsGroup = null)
     {
         $productIds = is_array($productIds) ? $productIds : [$productIds];
-        return new ReindexationRequestEvent([Product::class], [$websiteId], $productIds, true);
+
+        return new ReindexationRequestEvent([Product::class], [$websiteId], $productIds, true, $fieldsGroup);
+    }
+
+    public function fieldsGroupDataProvider(): \Generator
+    {
+        yield [null];
+        yield [['main']];
     }
 }

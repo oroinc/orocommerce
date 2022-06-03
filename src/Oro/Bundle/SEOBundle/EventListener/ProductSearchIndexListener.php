@@ -8,6 +8,7 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider;
+use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
 use Oro\Bundle\WebsiteSearchBundle\Engine\IndexDataProvider;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
@@ -21,6 +22,8 @@ use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
  */
 class ProductSearchIndexListener
 {
+    use ContextTrait;
+
     private DoctrineHelper $doctrineHelper;
     private AbstractWebsiteLocalizationProvider $websiteLocalizationProvider;
     private WebsiteContextManager $websiteContextManager;
@@ -37,6 +40,10 @@ class ProductSearchIndexListener
 
     public function onWebsiteSearchIndex(IndexEntityEvent $event): void
     {
+        if (!$this->hasContextFieldGroup($event->getContext(), 'main')) {
+            return;
+        }
+
         $websiteId = $this->websiteContextManager->getWebsiteId($event->getContext());
         if (!$websiteId) {
             $event->stopPropagation();

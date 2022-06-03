@@ -60,7 +60,7 @@ class PreviouslyPurchasedFeatureToggleListenerTest extends \PHPUnit\Framework\Te
         $this->reindexManager
             ->expects($this->once())
             ->method('reindexAllProducts')
-            ->with(null);
+            ->with(null, true, ['order']);
 
         $this->listener->reindexProducts($event);
     }

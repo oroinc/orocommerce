@@ -90,7 +90,8 @@ HELP
             $this->collectionIndexationHandler->handle(
                 $partialMessageIterator,
                 $rootJobName,
-                true
+                true,
+                ['main']
             );
         } catch (FailedToRunReindexProductCollectionJobException $jobException) {
             $output->writeln(

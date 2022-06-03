@@ -11,6 +11,7 @@ use Oro\Bundle\ProductBundle\EventListener\ManuallyAddedProductCollectionIndexer
 use Oro\Bundle\ProductBundle\Service\ProductCollectionDefinitionConverter;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 use Oro\Component\WebCatalog\ContentVariantProviderInterface;
@@ -63,9 +64,31 @@ class ManuallyAddedProductCollectionIndexerListenerTest extends \PHPUnit\Framewo
         );
     }
 
-    public function testOnWebsiteSearchIndexWhenNoWebsiteId()
+    public function testOnWebsiteSearchIndexWhenNotSupportedFieldsGroup()
     {
-        $context = ['some context value'];
+        $context = [AbstractIndexer::CONTEXT_FIELD_GROUPS => ['image']];
+        $event = new IndexEntityEvent(\stdClass::class, [], $context);
+
+        $this->websiteContextManager->expects($this->never())
+            ->method($this->anything());
+        $this->contentVariantProvider->expects($this->never())
+            ->method($this->anything());
+        $this->registry->expects($this->never())
+            ->method($this->anything());
+        $this->configManager->expects($this->never())
+            ->method($this->anything());
+        $this->productCollectionDefinitionConverter->expects($this->never())
+            ->method($this->anything());
+
+        $this->listener->onWebsiteSearchIndex($event);
+        self::assertFalse($event->isPropagationStopped());
+    }
+
+    /**
+     * @dataProvider validContextDataProvider
+     */
+    public function testOnWebsiteSearchIndexWhenNoWebsiteId(array $context)
+    {
         $event = new IndexEntityEvent(\stdClass::class, [], $context);
 
         $this->websiteContextManager->expects($this->once())
@@ -86,11 +109,14 @@ class ManuallyAddedProductCollectionIndexerListenerTest extends \PHPUnit\Framewo
         self::assertTrue($event->isPropagationStopped());
     }
 
-    public function testOnWebsiteSearchIndexWhenNoSupportedClass()
+    /**
+     * @dataProvider validContextDataProvider
+     */
+    public function testOnWebsiteSearchIndexWhenNoSupportedClass(array $context)
     {
         $websiteId = 42;
         $entityClass = \stdClass::class;
-        $context = ['websiteId' => $websiteId, 'some context value'];
+        $context['websiteId'] = $websiteId;
         $event = new IndexEntityEvent($entityClass, [], $context);
 
         $this->websiteContextManager->expects($this->once())
@@ -113,11 +139,14 @@ class ManuallyAddedProductCollectionIndexerListenerTest extends \PHPUnit\Framewo
         self::assertFalse($event->isPropagationStopped());
     }
 
-    public function testOnWebsiteSearchIndexWhenNoWebCatalogId()
+    /**
+     * @dataProvider validContextDataProvider
+     */
+    public function testOnWebsiteSearchIndexWhenNoWebCatalogId(array $context)
     {
         $websiteId = 42;
         $entityClass = Product::class;
-        $context = ['websiteId' => $websiteId, 'some context value'];
+        $context['websiteId'] = $websiteId;
         $event = new IndexEntityEvent($entityClass, [], $context);
 
         $this->websiteContextManager->expects($this->once())
@@ -155,11 +184,14 @@ class ManuallyAddedProductCollectionIndexerListenerTest extends \PHPUnit\Framewo
         self::assertFalse($event->isPropagationStopped());
     }
 
-    public function testOnWebsiteSearchIndexWhenNoWebCatalog()
+    /**
+     * @dataProvider validContextDataProvider
+     */
+    public function testOnWebsiteSearchIndexWhenNoWebCatalog(array $context)
     {
         $websiteId = 42;
         $entityClass = Product::class;
-        $context = ['websiteId' => $websiteId, 'some context value'];
+        $context['websiteId'] = $websiteId;
         $event = new IndexEntityEvent($entityClass, [], $context);
 
         $this->websiteContextManager->expects($this->once())
@@ -211,11 +243,14 @@ class ManuallyAddedProductCollectionIndexerListenerTest extends \PHPUnit\Framewo
         self::assertFalse($event->isPropagationStopped());
     }
 
-    public function testOnWebsiteSearchIndexWhenEmptyVariantsByRecordId()
+    /**
+     * @dataProvider validContextDataProvider
+     */
+    public function testOnWebsiteSearchIndexWhenEmptyVariantsByRecordId(array $context)
     {
         $websiteId = 42;
         $entityClass = Product::class;
-        $context = ['websiteId' => $websiteId, 'some context value'];
+        $context['websiteId'] = $websiteId;
         $event = new IndexEntityEvent($entityClass, [], $context);
 
         $this->websiteContextManager->expects($this->once())
@@ -266,5 +301,11 @@ class ManuallyAddedProductCollectionIndexerListenerTest extends \PHPUnit\Framewo
 
         $this->listener->onWebsiteSearchIndex($event);
         self::assertFalse($event->isPropagationStopped());
+    }
+
+    public function validContextDataProvider(): \Generator
+    {
+        yield [[]];
+        yield [[AbstractIndexer::CONTEXT_FIELD_GROUPS => ['main']]];
     }
 }

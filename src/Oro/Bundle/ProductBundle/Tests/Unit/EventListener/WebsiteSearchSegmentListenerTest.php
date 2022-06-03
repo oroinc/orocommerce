@@ -71,6 +71,21 @@ class WebsiteSearchSegmentListenerTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
+    public function testProcessUnsupportedFieldsGroup()
+    {
+        $context[AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY] = [];
+        $context[AbstractIndexer::CONTEXT_WEBSITE_IDS] = [1, 2];
+        $context[AbstractIndexer::CONTEXT_FIELD_GROUPS] = ['image'];
+
+        $this->contentVariantSegmentProvider->expects($this->never())
+            ->method('getContentVariantSegments');
+        $this->staticSegmentManager->expects($this->never())
+            ->method('run');
+
+        $event = new BeforeReindexEvent(Product::class, $context);
+        $this->websiteSearchSegmentListener->process($event);
+    }
+
     public function testProcessForWebsite()
     {
         $context[AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY] = [];
@@ -130,6 +145,13 @@ class WebsiteSearchSegmentListenerTest extends \PHPUnit\Framework\TestCase
             'with product class and filled ids' => [
                 Product::class,
                 [AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [333, 777]],
+            ],
+            'with product class and filled ids main fields group' => [
+                Product::class,
+                [
+                    AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [333, 777],
+                    AbstractIndexer::CONTEXT_FIELD_GROUPS => ['main']
+                ],
             ]
         ];
     }

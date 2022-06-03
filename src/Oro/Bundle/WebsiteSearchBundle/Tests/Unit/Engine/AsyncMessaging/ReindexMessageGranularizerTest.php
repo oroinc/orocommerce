@@ -37,6 +37,37 @@ class ReindexMessageGranularizerTest extends \PHPUnit\Framework\TestCase
         $this->testable = new ReindexMessageGranularizer($this->identifierRepository);
     }
 
+    public function testGranulationWithFieldGroup()
+    {
+        $context = [];
+        $context = $this->setContextEntityIds($context, self::IDS_FROM_REPOSITORY);
+        $context = $this->setContextFieldGroups($context, ['main']);
+
+        $this->identifierRepository->expects($this->any())
+            ->method('getIds')
+            ->willReturn(self::IDS_FROM_REPOSITORY);
+
+        $result = $this->testable->process(
+            ['Product'],
+            [1],
+            $context
+        );
+
+        $this->assertEquals(
+            [
+                [
+                    'class'   => ['Product'],
+                    'context' => [
+                        AbstractIndexer::CONTEXT_WEBSITE_IDS => [1],
+                        AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => self::IDS_FROM_REPOSITORY,
+                        AbstractIndexer::CONTEXT_FIELD_GROUPS => ['main']
+                    ]
+                ]
+            ],
+            iterator_to_array($result)
+        );
+    }
+
     /**
      * @dataProvider smallDataProvider
      */

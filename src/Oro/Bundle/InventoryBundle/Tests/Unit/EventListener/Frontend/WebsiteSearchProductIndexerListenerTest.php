@@ -7,6 +7,7 @@ use Oro\Bundle\InventoryBundle\EventListener\Frontend\WebsiteSearchProductIndexe
 use Oro\Bundle\InventoryBundle\Provider\UpcomingProductProvider;
 use Oro\Bundle\InventoryBundle\Tests\Unit\EventListener\Stub\ProductStub;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Component\Testing\ReflectionUtil;
 
@@ -32,7 +33,10 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
         );
     }
 
-    public function testOnWebsiteSearchIndex(): void
+    /**
+     * @dataProvider contextDataProvider
+     */
+    public function testOnWebsiteSearchIndex(array $context): void
     {
         $product1Id = 10;
         $product1 = new ProductStub();
@@ -77,7 +81,7 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
                 [$product3, $product3AvailabilityDate]
             ]);
 
-        $event = new IndexEntityEvent(Product::class, [$product1, $product2, $product3], []);
+        $event = new IndexEntityEvent(Product::class, [$product1, $product2, $product3], $context);
         $this->listener->onWebsiteSearchIndex($event);
 
         self::assertSame(
@@ -94,5 +98,27 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
             ],
             $event->getEntitiesData()
         );
+    }
+
+    public function contextDataProvider(): \Generator
+    {
+        yield [[]];
+        yield [[AbstractIndexer::CONTEXT_FIELD_GROUPS => ['main']]];
+    }
+
+    public function testOnWebsiteSearchIndexUnsupportedFieldGroup(): void
+    {
+        $event = $this->createMock(IndexEntityEvent::class);
+        $event
+            ->method('getContext')
+            ->willReturn([AbstractIndexer::CONTEXT_FIELD_GROUPS => ['image']]);
+
+        $this->entityFallbackResolver->expects(self::never())
+            ->method(self::anything());
+
+        $this->upcomingProductProvider->expects(self::never())
+            ->method(self::anything());
+
+        $this->listener->onWebsiteSearchIndex($event);
     }
 }

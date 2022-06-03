@@ -54,9 +54,9 @@ class ReindexProductLineItemListener
         }
 
         $websiteId = $lineItem->getOrder()->getWebsite()->getId();
-        $this->productReindexManager->reindexProduct($product, $websiteId);
+        $this->productReindexManager->reindexProduct($product, $websiteId, true, ['order']);
         if ($lineItem->getParentProduct()) {
-            $this->productReindexManager->reindexProduct($lineItem->getParentProduct(), $websiteId);
+            $this->productReindexManager->reindexProduct($lineItem->getParentProduct(), $websiteId, true, ['order']);
         }
     }
 
@@ -109,12 +109,12 @@ class ReindexProductLineItemListener
 
         $oldProduct = $event->getOldValue($field);
         if ($oldProduct instanceof Product) {
-            $this->productReindexManager->reindexProduct($oldProduct, $websiteId);
+            $this->productReindexManager->reindexProduct($oldProduct, $websiteId, true, ['order']);
         }
 
         $newProduct = $event->getNewValue($field);
         if ($newProduct instanceof Product) {
-            $this->productReindexManager->reindexProduct($newProduct, $websiteId);
+            $this->productReindexManager->reindexProduct($newProduct, $websiteId, true, ['order']);
         }
     }
 }

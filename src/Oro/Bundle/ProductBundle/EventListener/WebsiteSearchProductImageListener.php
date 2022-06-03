@@ -7,46 +7,44 @@ use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 
 /**
- * Adds webp images urls for products.
+ * Add image data to search index
  */
-class WebpAwareWebsiteSearchProductIndexerListener implements WebsiteSearchProductIndexerListenerInterface
+class WebsiteSearchProductImageListener implements WebsiteSearchProductIndexerListenerInterface
 {
     use ContextTrait;
 
-    private ManagerRegistry $managerRegistry;
+    /** @var WebsiteContextManager */
+    private $websiteContextManager;
 
-    private AttachmentManager $attachmentManager;
+    /** @var ManagerRegistry */
+    private $registry;
 
-    private WebsiteContextManager $websiteContextManager;
+    /** @var AttachmentManager */
+    private $attachmentManager;
 
     public function __construct(
-        ManagerRegistry $managerRegistry,
-        AttachmentManager $attachmentManager,
-        WebsiteContextManager $websiteContextManager
+        WebsiteContextManager $websiteContextManager,
+        ManagerRegistry $registry,
+        AttachmentManager $attachmentManager
     ) {
-        $this->managerRegistry = $managerRegistry;
-        $this->attachmentManager = $attachmentManager;
         $this->websiteContextManager = $websiteContextManager;
+        $this->registry = $registry;
+        $this->attachmentManager = $attachmentManager;
     }
 
-    public function onWebsiteSearchIndex(IndexEntityEvent $event): void
+    public function onWebsiteSearchIndex(IndexEntityEvent $event)
     {
         if (!$this->hasContextFieldGroup($event->getContext(), 'image')) {
             return;
         }
 
-        if (!$this->attachmentManager->isWebpEnabledIfSupported()) {
-            return;
-        }
-
-        $website = $this->getWebsite($event);
-        if (!$website) {
+        $websiteId = $this->websiteContextManager->getWebsiteId($event->getContext());
+        if (!$websiteId) {
             $event->stopPropagation();
 
             return;
@@ -63,19 +61,10 @@ class WebpAwareWebsiteSearchProductIndexerListener implements WebsiteSearchProdu
         );
 
         $productImages = $this->getProductRepository()->getListingImagesFilesByProductIds($productIds);
+
         foreach ($products as $product) {
             $this->processImages($event, $productImages, $product->getId());
         }
-    }
-
-    private function getWebsite(IndexEntityEvent $event): ?Website
-    {
-        $websiteId = $this->websiteContextManager->getWebsiteId($event->getContext());
-        if ($websiteId) {
-            return $this->managerRegistry->getManagerForClass(Website::class)->find(Website::class, $websiteId);
-        }
-
-        return null;
     }
 
     private function processImages(IndexEntityEvent $event, array $productImages, int $productId): void
@@ -86,8 +75,8 @@ class WebpAwareWebsiteSearchProductIndexerListener implements WebsiteSearchProdu
             foreach (['product_large', 'product_medium', 'product_small'] as $filterName) {
                 $event->addField(
                     $productId,
-                    'image_' . $filterName . '_webp',
-                    $this->attachmentManager->getFilteredImageUrl($entity, $filterName, 'webp')
+                    'image_' . $filterName,
+                    $this->attachmentManager->getFilteredImageUrl($entity, $filterName)
                 );
             }
         }
@@ -95,6 +84,6 @@ class WebpAwareWebsiteSearchProductIndexerListener implements WebsiteSearchProdu
 
     private function getProductRepository(): ProductRepository
     {
-        return $this->managerRegistry->getRepository(Product::class);
+        return $this->registry->getRepository(Product::class);
     }
 }

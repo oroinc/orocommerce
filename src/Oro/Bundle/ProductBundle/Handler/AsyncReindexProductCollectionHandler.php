@@ -52,12 +52,14 @@ class AsyncReindexProductCollectionHandler implements AsyncReindexProductCollect
     public function handle(
         iterable $childJobPartialMessages,
         string $uniqueJobName,
-        bool $throwExceptionOnFailToRunJob = false
+        bool $throwExceptionOnFailToRunJob = false,
+        array $indexationFieldGroups = null
     ): bool {
         $runCallback = fn (JobRunner $jobRunner, Job $job) => $this->doJob(
             $jobRunner,
             $job,
-            $childJobPartialMessages
+            $childJobPartialMessages,
+            $indexationFieldGroups
         );
 
         $result = $this->jobRunner->runUnique(UUIDGenerator::v4(), $uniqueJobName, $runCallback);
@@ -66,16 +68,20 @@ class AsyncReindexProductCollectionHandler implements AsyncReindexProductCollect
             throw new FailedToRunReindexProductCollectionJobException($uniqueJobName);
         }
 
-        return (bool) $result;
+        return (bool)$result;
     }
 
-    private function doJob(JobRunner $jobRunner, Job $job, iterable $childJobPartialMessages): bool
-    {
+    private function doJob(
+        JobRunner $jobRunner,
+        Job $job,
+        iterable $childJobPartialMessages,
+        array $indexationFieldGroups = null
+    ): bool {
         $isDependentJobAdded = false;
         $childJobMessageTopic = ReindexProductCollectionBySegmentTopic::NAME;
         foreach ($childJobPartialMessages as $childJobPartialMessage) {
             if (!$isDependentJobAdded) {
-                $this->addDependentJob($job->getRootJob());
+                $this->addDependentJob($job->getRootJob(), $indexationFieldGroups);
                 $isDependentJobAdded = true;
             }
 
@@ -98,12 +104,15 @@ class AsyncReindexProductCollectionHandler implements AsyncReindexProductCollect
         return true;
     }
 
-    private function addDependentJob(Job $rootJob): void
+    private function addDependentJob(Job $rootJob, array $indexationFieldGroups = null): void
     {
         $dependentJobContext = $this->dependentJobService->createDependentJobContext($rootJob);
         $dependentJobContext->addDependentJob(
             ReindexRequestItemProductsByRelatedJobIdTopic::NAME,
-            ['relatedJobId' => $rootJob->getId()]
+            [
+                'relatedJobId' => $rootJob->getId(),
+                'indexationFieldsGroups' => $indexationFieldGroups
+            ]
         );
 
         $this->dependentJobService->saveDependentJob($dependentJobContext);

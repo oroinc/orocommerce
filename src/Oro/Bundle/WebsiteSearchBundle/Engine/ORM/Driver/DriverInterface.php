@@ -3,6 +3,7 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Engine\ORM\Driver;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\EntityBundle\ORM\DatabaseDriverInterface;
 use Oro\Bundle\SearchBundle\Engine\Orm\DBALPersisterInterface;
 use Oro\Bundle\SearchBundle\Entity\AbstractItem;
@@ -14,6 +15,16 @@ use Oro\Bundle\SearchBundle\Query\Query;
  */
 interface DriverInterface extends DatabaseDriverInterface, DBALPersisterInterface
 {
+
+    /**
+     * Create a new QueryBuilder instance that is prepopulated for this entity name
+     *
+     * @param string $alias
+     *
+     * @return QueryBuilder $qb
+     */
+    public function createQueryBuilder($alias);
+
     /**
      * Search query by Query builder object
      *

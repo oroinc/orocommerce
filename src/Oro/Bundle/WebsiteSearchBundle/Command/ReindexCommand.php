@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Oro\Bundle\WebsiteSearchBundle\Command;
 
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\SearchBundle\Provider\SearchMappingProvider;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -21,11 +22,16 @@ class ReindexCommand extends Command
 
     private ManagerRegistry $doctrine;
     private EventDispatcherInterface $eventDispatcher;
+    private SearchMappingProvider $searchMappingProvider;
 
-    public function __construct(ManagerRegistry $doctrine, EventDispatcherInterface $eventDispatcher)
-    {
+    public function __construct(
+        ManagerRegistry $doctrine,
+        EventDispatcherInterface $eventDispatcher,
+        SearchMappingProvider $searchMappingProvider
+    ) {
         $this->doctrine = $doctrine;
         $this->eventDispatcher = $eventDispatcher;
+        $this->searchMappingProvider = $searchMappingProvider;
 
         parent::__construct();
     }
@@ -38,6 +44,17 @@ class ReindexCommand extends Command
             ->addOption('website-id', null, InputOption::VALUE_OPTIONAL, 'ID (integer) of the website to reindex')
             ->addOption('scheduled', null, InputOption::VALUE_NONE, 'Schedule the reindexation in the background')
             ->addOption('ids', null, InputOption::VALUE_OPTIONAL, 'IDs of the entities to reindex', '')
+            ->addOption(
+                'field-group',
+                null,
+                InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
+                sprintf(
+                    'Field groups to reindex. ' .
+                    'If no group is passed then all groups will be reindexed. Supported field groups are: %s',
+                    implode(', ', $this->getSupportedFieldGroups())
+                ),
+                []
+            )
             ->setDescription('Rebuilds the storefront search index.')
             ->setHelp(
             // @codingStandardsIgnoreStart
@@ -48,6 +65,10 @@ The scope of the reindexation can be limited to search indexes of a specific web
 with the <info>--website-id</info> option:
 
   <info>php %command.full_name% --website-id=<ID></info>
+
+You can limit the reindexation to a specific field group with the <info>--field-group</info> option:
+
+  <info>php %command.full_name% --field-group=<fieldGroup></info>
 
 You can limit the reindexation to a specific entity with the <info>--class</info> option.
 Both the FQCN (Oro\Bundle\UserBundle\Entity\User) and short (OroUserBundle:User)
@@ -73,9 +94,10 @@ HELP
             ->addUsage('--website-id=<ID>')
             ->addUsage('--scheduled --website-id=<ID>')
             ->addUsage('--class=<entity>')
+            ->addUsage('--class=<entity> --field-group=<fieldGroup>')
             ->addUsage('--scheduled --class=<entity>')
             ->addUsage('--scheduled --class=<entity> --ids=<expression>')
-        ;
+            ->addUsage('--scheduled --class=<entity> --ids=<expression> --field-group=<fieldGroup>');
     }
 
     /** @noinspection PhpMissingParentCallCommonInspection */
@@ -85,6 +107,22 @@ HELP
         $websiteId = $input->getOption('website-id');
         $isScheduled = $input->getOption('scheduled');
         $entityId = $input->getOption('ids');
+        $fieldGroups = $input->getOption('field-group') ?: null;
+
+        if ($fieldGroups) {
+            $supportedGroups = $this->getSupportedFieldGroups();
+            $notSupportedGroups = array_diff($fieldGroups, $supportedGroups);
+
+            if ($notSupportedGroups) {
+                throw new \InvalidArgumentException(
+                    sprintf(
+                        'Field groups %s are not supported. Supported field groups: %s.',
+                        implode(', ', $notSupportedGroups),
+                        implode(', ', $supportedGroups)
+                    )
+                );
+            }
+        }
 
         $class = $class ? $this->getFQCN($class) : null;
 
@@ -96,9 +134,9 @@ HELP
         $entityIds = $this->parseEntityIdOption($output, $class, $entityId, $isScheduled);
 
         if (!is_array(reset($entityIds))) {
-            $this->fireReindexationEvents($classes, $websiteIds, $entityIds, $isScheduled);
+            $this->fireReindexationEvents($classes, $websiteIds, $entityIds, $isScheduled, $fieldGroups);
         } else {
-            $this->fireReindexationEventsForChunks($classes, $websiteIds, $entityIds, $isScheduled);
+            $this->fireReindexationEventsForChunks($classes, $websiteIds, $entityIds, $isScheduled, $fieldGroups);
         }
 
         $output->writeln('Reindex finished successfully.');
@@ -143,7 +181,7 @@ HELP
             return null;
         }
 
-        return \intval($matches[1]);
+        return (int)$matches[1];
     }
 
     /** @return null|array<int, int> */
@@ -154,7 +192,7 @@ HELP
             return null;
         }
 
-        return [\intval($matches[1]), \intval($matches[2])];
+        return [(int)$matches[1], (int)$matches[2]];
     }
 
     private function createEntityIdMessage(?int $chunkSize, ?array $range): string
@@ -187,7 +225,7 @@ HELP
         }
 
         $chunkSize = $this->getChunkSizeFromEntityIdOption($entityId);
-        $range     = $this->getRangeFromEntityIdOption($entityId);
+        $range = $this->getRangeFromEntityIdOption($entityId);
 
         if (null === $chunkSize && null === $range) {
             throw new \RuntimeException('Cannot understand value: ' . $entityId);
@@ -201,7 +239,7 @@ HELP
         $output->writeln($message);
 
         if (null !== $range) {
-            $result  = range($range[0], $range[1]);
+            $result = range($range[0], $range[1]);
         } else {
             $result = $this->getLastEntityId($className);
             $result = range(1, $result);
@@ -216,9 +254,14 @@ HELP
         return $result;
     }
 
-    private function fireReindexationEvents(array $classes, array $websiteIds, array $entityId, bool $isScheduled): void
-    {
-        $event = new ReindexationRequestEvent($classes, $websiteIds, $entityId, $isScheduled);
+    private function fireReindexationEvents(
+        array $classes,
+        array $websiteIds,
+        array $entityId,
+        bool $isScheduled,
+        array $fieldGroups = null
+    ): void {
+        $event = new ReindexationRequestEvent($classes, $websiteIds, $entityId, $isScheduled, $fieldGroups);
         $this->eventDispatcher->dispatch($event, ReindexationRequestEvent::EVENT_NAME);
     }
 
@@ -226,10 +269,31 @@ HELP
         array $classes,
         array $websiteIds,
         array $chunks,
-        bool $isScheduled
+        bool $isScheduled,
+        array $fieldGroups = null
     ): void {
         foreach ($chunks as $chunk) {
-            $this->fireReindexationEvents($classes, $websiteIds, $chunk, $isScheduled);
+            $this->fireReindexationEvents($classes, $websiteIds, $chunk, $isScheduled, $fieldGroups);
         }
+    }
+
+    private function getSupportedFieldGroups(): array
+    {
+        $groups = [];
+
+        $configs = $this->searchMappingProvider->getMappingConfig();
+
+        foreach ($configs as $config) {
+            foreach ($config['fields'] as $field) {
+                if (empty($field['group'])) {
+                    continue;
+                }
+                if (!in_array($field['group'], $groups, true)) {
+                    $groups[] = $field['group'];
+                }
+            }
+        }
+
+        return $groups;
     }
 }
