@@ -18,7 +18,7 @@ trusted_data:
                 rootAlias: true
                 limitationQb: true
         Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository:
-            getUnusedPriceListsIds:
+            getUnusedCombinedPriceListsQueryBuilder:
                 entityName: true
                 alias: true
             hasOtherRelations:

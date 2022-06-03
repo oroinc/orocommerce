@@ -32,10 +32,8 @@ class CombinedPriceListRepositoryGCTest extends WebTestCase
 
     /**
      * @dataProvider cplRelationsDataProvider
-     * @param string $relationClass
-     * @param bool $hasFullChain
      */
-    public function testGetUnusedPriceListsIdsForRelation($relationClass, $hasFullChain = false)
+    public function testGetUnusedPriceListsIdsForRelation(string $relationClass, bool $hasFullChain = false)
     {
         $this->loadFixtures([
             LoadWebsiteData::class,
@@ -68,7 +66,10 @@ class CombinedPriceListRepositoryGCTest extends WebTestCase
         /** @var CombinedPriceListRepository $combinedPriceListRepository */
         $combinedPriceListRepository = $em->getRepository(CombinedPriceList::class);
 
-        $priceListsForDelete = $combinedPriceListRepository->getUnusedPriceListsIds();
+        $helper = $this->getContainer()->get('oro_entity.orm.native_query_executor_helper');
+        $combinedPriceListRepository->scheduleUnusedPriceListsRemoval($helper);
+        $requestedAt = new \DateTime('now', new \DateTimeZone('UTC'));
+        $priceListsForDelete = $combinedPriceListRepository->getPriceListsScheduledForRemoval($helper, $requestedAt);
         static::assertContainsEquals(
             $notAssignedCPL->getId(),
             $priceListsForDelete,
@@ -88,10 +89,7 @@ class CombinedPriceListRepositoryGCTest extends WebTestCase
         }
     }
 
-    /**
-     * @return \Generator
-     */
-    public function cplRelationsDataProvider()
+    public function cplRelationsDataProvider(): \Generator
     {
         $relations = [
             CombinedPriceListToWebsite::class,
@@ -101,16 +99,15 @@ class CombinedPriceListRepositoryGCTest extends WebTestCase
 
         foreach ($relations as $relation) {
             foreach ($this->trueFalseDataProvider() as $value) {
-                yield [$relation, $value];
+                yield [$relation, $value[0]];
             }
         }
     }
 
     /**
      * @dataProvider trueFalseDataProvider
-     * @param bool $hasFullChain
      */
-    public function testGetUnusedPriceListsIdsForActivationRule($hasFullChain = false)
+    public function testGetUnusedPriceListsIdsForActivationRule(bool $hasFullChain = false)
     {
         $this->loadFixtures([
             LoadWebsiteData::class,
@@ -144,7 +141,10 @@ class CombinedPriceListRepositoryGCTest extends WebTestCase
         /** @var CombinedPriceListRepository $combinedPriceListRepository */
         $combinedPriceListRepository = $em->getRepository(CombinedPriceList::class);
 
-        $priceListsForDelete = $combinedPriceListRepository->getUnusedPriceListsIds();
+        $helper = $this->getContainer()->get('oro_entity.orm.native_query_executor_helper');
+        $combinedPriceListRepository->scheduleUnusedPriceListsRemoval($helper);
+        $requestedAt = new \DateTime('now', new \DateTimeZone('UTC'));
+        $priceListsForDelete = $combinedPriceListRepository->getPriceListsScheduledForRemoval($helper, $requestedAt);
         static::assertContainsEquals(
             $notAssignedCPL->getId(),
             $priceListsForDelete,
@@ -224,11 +224,7 @@ class CombinedPriceListRepositoryGCTest extends WebTestCase
         return $relation;
     }
 
-    /**
-     * @param string $name
-     * @return CombinedPriceList
-     */
-    protected function createCombinedPriceList($name): CombinedPriceList
+    protected function createCombinedPriceList(string $name): CombinedPriceList
     {
         $cpl = new CombinedPriceList();
         $cpl->setEnabled(true);

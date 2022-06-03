@@ -33,7 +33,7 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
      */
     public function getMigrationVersion()
     {
-        return 'v1_18_3';
+        return 'v1_18_4';
     }
 
     /**
@@ -68,6 +68,7 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
         $this->createOroPriceRuleLexemeTable($schema);
         $this->createOroNotificationMessageTable($schema);
         $this->createOroPriceListCombinedBuildActivityTable($schema);
+        $this->createOroPriceListCombinedGCTable($schema);
 
         /** Foreign keys generation **/
         $this->addOroPriceListCurrencyForeignKeys($schema);
@@ -93,6 +94,7 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
         $this->addOroPriceRuleForeignKeys($schema);
         $this->addOroPriceRuleLexemeForeignKeys($schema);
         $this->addOroPriceListCombinedBuildActivityForeignKeys($schema);
+        $this->addOroPriceListCombinedGCForeignKeys($schema);
     }
 
     /**
@@ -511,6 +513,32 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
         $table->addIndex(['channel', 'topic'], 'oro_notif_msg_channel', []);
         $table->addIndex(['receiver_entity_fqcn', 'receiver_entity_id'], 'oro_notif_msg_entity', []);
         $table->setPrimaryKey(['id']);
+    }
+
+    /**
+     * Create `oro_combined_price_gc' table.
+     *
+     * This table stores CPL removal request by GC. Records are removed from this table only when actual CPL removal is
+     * performed. Presence of CPL in the table does not mean that it will be actually removed, the request actuality is
+     * checked and the moment of actual removal.
+     */
+    protected function createOroPriceListCombinedGCTable(Schema $schema)
+    {
+        $table = $schema->createTable('oro_price_list_combined_gc');
+        $table->addColumn('combined_price_list_id', 'integer', ['notnull' => true]);
+        $table->addColumn('requested_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
+        $table->addUniqueIndex(['combined_price_list_id'], 'oro_cpl_gc_unq_idx');
+    }
+
+    protected function addOroPriceListCombinedGCForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('oro_price_list_combined_gc');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_price_list_combined'),
+            ['combined_price_list_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
     }
 
     /**
