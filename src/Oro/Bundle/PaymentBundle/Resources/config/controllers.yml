@@ -1,0 +1,10 @@
+services:
+    _defaults:
+        public: true
+
+    Oro\Bundle\PaymentBundle\Controller\PaymentMethodsConfigsRuleController:
+        calls:
+            - ['setContainer', ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
+            - { name: container.service_subscriber, id: oro_payment.form.handler.payment_methods_configs_rule, key: Oro\Bundle\PaymentBundle\Form\Handler\PaymentMethodsConfigsRuleHandler }
