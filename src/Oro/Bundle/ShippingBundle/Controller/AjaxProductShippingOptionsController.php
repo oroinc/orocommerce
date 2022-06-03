@@ -21,6 +21,16 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class AjaxProductShippingOptionsController extends AbstractController
 {
+    /** Additional options that must be provided to the form that processed within ajax requests */
+    private array $ajaxFormsAdditionalOptions = [];
+
+    public function addAjaxFormsAdditionalOption(
+        string $ajaxFormsAdditionalOption,
+        mixed $ajaxFormsAdditionalOptionValue
+    ): void {
+        $this->ajaxFormsAdditionalOptions[$ajaxFormsAdditionalOption] = $ajaxFormsAdditionalOptionValue;
+    }
+
     /**
      * Get available FreightClasses codes
      *
@@ -66,7 +76,7 @@ class AjaxProductShippingOptionsController extends AbstractController
     private function buildProduct(array $productData)
     {
         $product = new Product();
-        $form = $this->createForm(ProductType::class, $product);
+        $form = $this->createForm(ProductType::class, $product, $this->ajaxFormsAdditionalOptions);
         $form->submit($productData);
 
         return $product;
@@ -88,7 +98,14 @@ class AjaxProductShippingOptionsController extends AbstractController
         $activeShippingOptions = null;
         foreach ($shippingOptionsData as $shippingOptionsRow) {
             $shippingOptions = new ProductShippingOptions();
-            $form = $this->createForm(ProductShippingOptionsType::class, $shippingOptions, ['by_reference' => true]);
+            $form = $this->createForm(
+                ProductShippingOptionsType::class,
+                $shippingOptions,
+                \array_merge(
+                    ['by_reference' => true],
+                    $this->ajaxFormsAdditionalOptions
+                )
+            );
             $form->submit($shippingOptionsRow);
             $productUnit = $shippingOptions->getProductUnit();
             if ($productUnit && $unitCode === $productUnit->getCode()) {
