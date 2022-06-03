@@ -11,9 +11,13 @@ use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Provider\VisibilityScopeProvider;
+use Oro\Bundle\VisibilityBundle\Visibility\Provider\ProductVisibilityProvider;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 use Oro\Component\Website\WebsiteInterface;
 
+/**
+ * Expands the ability to adjust the products visibilities.
+ */
 trait ProductVisibilityTrait
 {
     /**
@@ -134,13 +138,28 @@ TERM;
         );
     }
 
-    /**
-     * @param QueryBuilder $queryBuilder
-     * @param WebsiteInterface $website
-     * @return string
-     */
-    private function getProductVisibilityResolvedTermByWebsite(QueryBuilder $queryBuilder, WebsiteInterface $website)
-    {
+    private function buildProductVisibilityResolvedTermByWebsiteConditions(
+        QueryBuilder $queryBuilder,
+        string $fieldName,
+        int $defaultVisibility
+    ): void {
+        $callback = function ($visibility) use ($defaultVisibility) {
+            $currentVisibility = $this->buildConfigFallback($visibility, $this->getProductConfigValue()) > 0
+                ? BaseVisibilityResolved::VISIBILITY_VISIBLE
+                : BaseVisibilityResolved::VISIBILITY_HIDDEN;
+
+            return $currentVisibility === $defaultVisibility;
+        };
+
+        $visibilities = array_filter(ProductVisibilityProvider::VISIBILITIES, $callback);
+
+        $this->buildVisibilityConditions($queryBuilder, $fieldName, $visibilities);
+    }
+
+    private function buildProductVisibilityResolvedTermByWebsite(
+        QueryBuilder $queryBuilder,
+        WebsiteInterface $website
+    ): string {
         $queryBuilder->leftJoin(
             'OroVisibilityBundle:VisibilityResolved\ProductVisibilityResolved',
             'product_visibility_resolved',
@@ -153,11 +172,40 @@ TERM;
 
         $queryBuilder->setParameter('scope', $this->getVisibilityScopeProvider()->getProductVisibilityScope($website));
 
+        return 'product_visibility_resolved.visibility';
+    }
+
+    /**
+     * @param QueryBuilder $queryBuilder
+     * @param WebsiteInterface $website
+     * @return string
+     */
+    private function getProductVisibilityResolvedTermByWebsite(QueryBuilder $queryBuilder, WebsiteInterface $website)
+    {
+        $fieldName = $this->buildProductVisibilityResolvedTermByWebsite($queryBuilder, $website);
+
         return sprintf(
             'COALESCE(%s, %s)',
-            $this->addCategoryConfigFallback('product_visibility_resolved.visibility'),
+            $this->addCategoryConfigFallback($fieldName),
             $this->getProductConfigValue()
         );
+    }
+
+    private function buildVisibilityConditions(
+        QueryBuilder $queryBuilder,
+        string $fieldName,
+        array $visibilities
+    ): void {
+        $orExpr = [];
+        QueryBuilderUtil::checkField($fieldName);
+        foreach ($visibilities as $visibility) {
+            QueryBuilderUtil::checkParameter($visibility);
+            $orExpr[] = null === $visibility
+                ? $queryBuilder->expr()->isNull($fieldName)
+                : $queryBuilder->expr()->eq($fieldName, $visibility);
+        }
+
+        $queryBuilder->andWhere($queryBuilder->expr()->andX($queryBuilder->expr()->orX(...$orExpr)));
     }
 
     /**
@@ -174,6 +222,17 @@ TERM;
             BaseVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
             $this->getCategoryConfigValue()
         );
+    }
+
+    protected function buildConfigFallback(
+        ?int $visibility,
+        $nullValue = BaseVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG
+    ): int {
+        return match ($visibility) {
+            default => $visibility,
+            null => $nullValue,
+            BaseVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG => $this->getCategoryConfigValue()
+        };
     }
 
     /**
