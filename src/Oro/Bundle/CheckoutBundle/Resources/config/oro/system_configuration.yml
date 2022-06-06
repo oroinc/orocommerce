@@ -78,6 +78,7 @@ system_configuration:
         oro_checkout.checkout_max_line_items_per_page:
             data_type: integer
             type: Symfony\Component\Form\Extension\Core\Type\IntegerType
+            priority: 20
             search_type: text
             options:
                 label: oro.checkout.system_configuration.fields.checkout_max_line_items_per_page.label
@@ -88,6 +89,13 @@ system_configuration:
                     - Range:
                         min: 200
                         max: 1000
+        oro_checkout.new_checkout_shopping_list_item_changed:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            priority: 10
+            options:
+                label: oro.checkout.system_configuration.fields.new_checkout_shopping_list_item_changed.title
+                tooltip: oro.checkout.system_configuration.fields.new_checkout_shopping_list_item_changed.tooltip
 
     tree:
         system_configuration:
@@ -110,6 +118,7 @@ system_configuration:
                                     checkout_options:
                                         children:
                                             - oro_checkout.checkout_max_line_items_per_page
+                                            - oro_checkout.new_checkout_shopping_list_item_changed
                             orders_history:
                                 children:
                                     orders_history_open_orders:

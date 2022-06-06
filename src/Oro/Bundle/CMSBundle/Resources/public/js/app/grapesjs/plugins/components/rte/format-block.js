@@ -3,112 +3,7 @@ import $ from 'jquery';
 import 'jquery.select2';
 import selectTemplate from 'tpl-loader!orocms/templates/grapesjs-select-action.html';
 import select2OptionTemplate from 'tpl-loader!orocms/templates/grapesjs-select2-option.html';
-
-const tags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p'];
-const formatting = ['b', 'i', 'u', 'strike', 'sup', 'sub'];
-const lists = ['ul', 'ol', 'li'];
-
-const isBlockFormatted = node => node.nodeType === 1 && tags.includes(node.tagName.toLowerCase());
-const isFormattedText = node => node.nodeType === 1 && formatting.includes(node.tagName.toLowerCase());
-const isContainLists = node => node.nodeType === 1 && lists.includes(node.tagName.toLowerCase());
-
-const surroundContent = (node, wrapper) => {
-    if (node.nodeType !== 1) {
-        return node;
-    }
-    wrapper.innerHTML = node.innerHTML;
-    node.innerHTML = '';
-    node.appendChild(wrapper);
-};
-
-const unwrap = node => {
-    const parent = node.parentNode;
-    while (node.firstChild) {
-        parent.insertBefore(node.firstChild, node);
-    }
-    parent.removeChild(node);
-};
-
-function makeSurroundNode(context) {
-    return (node, surround) => {
-        const parent = context.createElement(surround);
-        clearTextFormatting(node);
-        surroundContent(node, parent);
-    };
-};
-
-function clearTextFormatting(node) {
-    if (node.childNodes.length) {
-        node.childNodes.forEach(child => {
-            if (isBlockFormatted(child)) {
-                unwrap(child);
-                clearTextFormatting(child);
-            }
-        });
-    }
-};
-
-function findTextFormattingInRange(range, node = null) {
-    return [...(node ? node.childNodes : range.commonAncestorContainer.childNodes)].reduce((tags, child) => {
-        if (!range.intersectsNode(child)) {
-            return tags;
-        }
-
-        if (isBlockFormatted(child)) {
-            tags.push(child.tagName.toLowerCase());
-        }
-
-        return tags.concat(...findTextFormattingInRange(range, child));
-    }, []);
-};
-
-function setCaretPosition(element, caretPos) {
-    if (caretPos === 0) {
-        return;
-    }
-
-    if (element !== null) {
-        if (element.createTextRange) {
-            const range = element.createTextRange();
-            range.move('character', caretPos);
-            range.select();
-        } else {
-            if (element.selectionStart) {
-                element.focus();
-                element.setSelectionRange(caretPos, caretPos);
-            } else {
-                element.focus();
-            }
-        }
-    }
-};
-
-function findClosestFormattingBlock(node) {
-    if (isBlockFormatted(node)) {
-        return node;
-    }
-
-    return findClosestFormattingBlock(node.parentNode);
-};
-
-function getParentsUntil(node, until = document) {
-    const parents = [];
-
-    for (;node && node !== until; node = node.parentNode) {
-        parents.push(node);
-    }
-    return parents;
-};
-
-function findParentSpan(node) {
-    const found = getParentsUntil(node).reverse().find(item => item.nodeType === 1 && item.tagName === 'SPAN');
-
-    if (found) {
-        return found;
-    }
-
-    return node;
-};
+import * as utils from './utils/utils';
 
 export default {
     name: 'formatBlock',
@@ -150,6 +45,7 @@ export default {
     },
 
     result(rte) {
+        const cursor = utils.saveCursor(rte);
         const value = rte.actionbar.querySelector('[name="tag"]').value;
         const selection = rte.selection();
 
@@ -157,16 +53,17 @@ export default {
             return;
         }
 
-        const anchorOffset = selection.anchorOffset;
         const range = selection.getRangeAt(0);
-        const surround = makeSurroundNode(rte.doc);
+        const surround = utils.makeSurroundNode(rte.doc);
         const isTag = range.commonAncestorContainer.nodeType === 1;
         const isTextNode = range.commonAncestorContainer.nodeType === 3;
 
         const removeParent = parentNode => {
-            const text = parentNode.innerHTML;
+            const parent = parentNode.parentNode;
+            [...parentNode.childNodes].forEach(child => {
+                parent.insertBefore(child, parentNode);
+            });
             parentNode.remove();
-            rte.insertHTML(text);
             this.editor.trigger('change:canvasOffset');
         };
 
@@ -174,47 +71,47 @@ export default {
             if (isTag) {
                 range.commonAncestorContainer.childNodes.forEach(node => {
                     if (range.intersectsNode(node)) {
-                        clearTextFormatting(node);
+                        utils.clearTextFormatting(node);
                     }
                 });
 
-                if (isBlockFormatted(range.commonAncestorContainer)) {
+                if (utils.isBlockFormatted(range.commonAncestorContainer)) {
                     removeParent(range.commonAncestorContainer);
                 }
 
                 this.editor.trigger('change:canvasOffset');
-                setCaretPosition(rte.el, anchorOffset);
+                cursor();
                 return;
             }
 
             if (isTextNode) {
-                removeParent(findClosestFormattingBlock(range.commonAncestorContainer));
-                setCaretPosition(rte.el, anchorOffset);
+                removeParent(utils.findClosestFormattingBlock(range.commonAncestorContainer));
+                cursor();
                 return;
             }
         }
 
-        if (!range.collapsed && isTag && isContainLists(range.commonAncestorContainer)) {
+        if (!range.collapsed && isTag && utils.isContainLists(range.commonAncestorContainer)) {
             range.commonAncestorContainer.childNodes.forEach(node => {
                 if (range.intersectsNode(node)) {
                     surround(node, value);
                 }
             });
-            range.setStartAfter(range.endContainer);
+
             selection.removeAllRanges();
             this.editor.trigger('change:canvasOffset');
 
-            setCaretPosition(rte.el, anchorOffset);
+            cursor();
             return;
         }
 
         if (isTextNode &&
-            !isBlockFormatted(range.commonAncestorContainer.parentNode) &&
-            !isFormattedText(range.commonAncestorContainer.parentNode)
+            !utils.isBlockFormatted(range.commonAncestorContainer.parentNode) &&
+            !utils.isFormattedText(range.commonAncestorContainer.parentNode)
         ) {
             const newParent = rte.doc.createElement(value);
             const docFragment = rte.doc.createDocumentFragment();
-            newParent.appendChild(findParentSpan(range.commonAncestorContainer));
+            newParent.appendChild(utils.findParentTag(range.commonAncestorContainer, 'SPAN'));
             docFragment.appendChild(newParent);
             range.deleteContents();
             range.insertNode(docFragment);
@@ -224,12 +121,12 @@ export default {
             selection.addRange(range);
             this.editor.trigger('change:canvasOffset');
 
-            setCaretPosition(rte.el, anchorOffset);
+            cursor();
             return;
         }
 
         this.editor.trigger('change:canvasOffset');
-        setCaretPosition(rte.el, anchorOffset);
+        cursor();
         return rte.exec('formatBlock', value);
     },
 
@@ -240,7 +137,7 @@ export default {
         if (selection.anchorNode) {
             const range = selection.getRangeAt(0);
             if (range.commonAncestorContainer.nodeType === 1) {
-                const formatting = findTextFormattingInRange(range);
+                const formatting = utils.findTextFormattingInRange(range);
                 if (formatting.length) {
                     $(select).select2('val', formatting[0]);
                     return;
@@ -248,13 +145,13 @@ export default {
             }
         }
 
-        if (value === '' && isBlockFormatted(rte.el)) {
+        if (value === '' && utils.isBlockFormatted(rte.el)) {
             $(select).select2('val', rte.el.tagName.toLowerCase());
             return;
         }
 
         if (value !== 'false') {
-            if (tags.includes(value)) {
+            if (utils.tags.includes(value)) {
                 $(select).select2('val', value);
             } else {
                 $(select).select2('val', 'normal');

@@ -42,14 +42,12 @@ class AddValidateUnitPrecisionsDuplicateFormListener implements ProcessorInterfa
         if ($unitPrecisionsFieldName && $formBuilder->has($unitPrecisionsFieldName)) {
             $formBuilder->get($unitPrecisionsFieldName)->addEventListener(
                 FormEvents::PRE_SUBMIT,
-                function (FormEvent $event) use ($includedEntities) {
-                    $this->onPreSubmit($event, $includedEntities);
-                }
+                fn (FormEvent $event) => $this->onPreSubmit($event, $includedEntities, $context->getId())
             );
         }
     }
 
-    private function onPreSubmit(FormEvent $event, IncludedEntityCollection $includedEntities)
+    private function onPreSubmit(FormEvent $event, IncludedEntityCollection $includedEntities, ?string $objectId)
     {
         /** @var array $unitPrecisionsData [['class' => unit precision class name, 'id' => unit precision id], ...] */
         $unitPrecisionsData = $event->getData();
@@ -62,7 +60,7 @@ class AddValidateUnitPrecisionsDuplicateFormListener implements ProcessorInterfa
         $existingUnitCodes = [];
 
         /** @var Product $product */
-        $product = $includedEntities->getPrimaryEntity();
+        $product = $includedEntities->get(Product::class, $objectId) ?? $includedEntities->getPrimaryEntity();
         foreach ($product->getUnitPrecisions() as $unitPrecision) {
             $existingUnitCodes[$unitPrecision->getUnit()->getCode()] = $unitPrecision->getId();
         }

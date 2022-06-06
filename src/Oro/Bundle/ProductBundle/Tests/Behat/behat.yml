@@ -287,9 +287,11 @@ oro_behat_extension:
           Price Value 1: 'oro_product[prices][0][price][value]'
           Price Unit 1: 'oro_product[prices][0][unit]'
           Shipping Option Weight Value 1: 'oro_product[product_shipping_options][0][weight][value]'
+          Shipping Option Weight Unit 1: 'oro_product[product_shipping_options][0][weight][unit]'
           Shipping Option Dimensions Length Value 1: 'oro_product[product_shipping_options][0][dimensions][value][length]'
           Shipping Option Dimensions Width Value 1: 'oro_product[product_shipping_options][0][dimensions][value][width]'
           Shipping Option Dimensions Height Value 1: 'oro_product[product_shipping_options][0][dimensions][value][height]'
+          Shipping Option Dimensions Unit 1: 'oro_product[product_shipping_options][0][dimensions][unit]'
           Shipping Option Freight Class Value 1: 'oro_product[product_shipping_options][0][freightClass]'
           Product WYSIWYG_video Attribute Content:
             type: 'css'
@@ -1475,6 +1477,9 @@ oro_behat_extension:
     MSRP Product Price Attributes Grid:
       selector: '.product-price-attributes-grid'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+    Product Type Microdata Declaration:
+      selector: '[itemtype="http://schema.org/Product"]'
 
   pages:
     Product View:

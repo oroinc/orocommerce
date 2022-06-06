@@ -19,7 +19,8 @@ const cssLines = {
         `#${TEST_ID} [data-attr="test"], #${TEST_ID} [role="button"]{color: red;}`,
     'div + div{color: red;}': `#${TEST_ID} div + div{color: red;}`,
     '.div ~ div{color: red;}': `#${TEST_ID} .div ~ div{color: red;}`,
-    '.div > .div{color: red;}': `#${TEST_ID} .div > .div{color: red;}`,
+    // eslint-disable-next-line
+    '.div > .div{color: red;} .cms-wrapper{color: red;}': `#${TEST_ID} .div > .div{color: red;} #${TEST_ID}.cms-wrapper{color: red;}`,
     'ul, ol{color: red;}': `#${TEST_ID} ul, #${TEST_ID} ol{color: red;}`,
     // eslint-disable-next-line
     '[foo^="bar"], div[foo|="fruit"], div[foo$="fruit"]{color: red;}': `#${TEST_ID} [foo^="bar"], #${TEST_ID} div[foo|="fruit"], #${TEST_ID} div[foo$="fruit"]{color: red;}`,
@@ -39,7 +40,9 @@ const cssLines = {
     // eslint-disable-next-line
     'div:before, span:after, p:after{color: red;}': `#${TEST_ID} div:before, #${TEST_ID} span:after, #${TEST_ID} p:after{color: red;}`,
     // eslint-disable-next-line
-    '::before, ::after, :first-child{color: red;}': `#${TEST_ID}::before, #${TEST_ID}::after, #${TEST_ID}:first-child{color: red;}`
+    '::before, ::after, :first-child{color: red;}': `#${TEST_ID}::before, #${TEST_ID}::after, #${TEST_ID}:first-child{color: red;}`,
+    // eslint-disable-next-line
+    '.cms-wrapper{color: red;}': `#${TEST_ID}.cms-wrapper{color: red;}`
 };
 
 describe('orocms/js/app/grapesjs/plugins/components/content-isolation', () => {

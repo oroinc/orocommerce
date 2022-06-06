@@ -28,6 +28,8 @@ services:
             - '@oro_pricing.model.combined_price_list_trigger_handler'
             - '@oro_pricing.combined_price_list_activation_status_helper'
             - '@event_dispatcher'
+        calls:
+            - [setScheduleResolver, ['@oro_pricing.resolver.combined_product_schedule_resolver']]
         tags:
             - { name: monolog.logger, channel: oro_pricing }
 

@@ -5,9 +5,6 @@
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-OroCheckoutBundle:Checkout.yml
 Feature: Shopping list duplication for non authenticated visitor
-  In order to ...
-  As an ...
-  I should be able to ...
 
   Scenario: Feature Background
     Given sessions active:

@@ -131,10 +131,8 @@ class ProductPriceRepositoryTest extends WebTestCase
                 'price_list_id' => $this->getReference('price_list_2')->getId(),
             ],
         ];
-        usort($expected, [$this, 'sort']);
-        usort($actual, [$this, 'sort']);
 
-        $this->assertEquals($expected, $actual);
+        $this->assertEqualsCanonicalizing($expected, $actual);
     }
 
     public function testGetProductsByPriceListAndVersion()

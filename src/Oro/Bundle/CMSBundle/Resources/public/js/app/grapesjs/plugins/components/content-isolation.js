@@ -13,6 +13,7 @@ const FORBIDDEN_ATTR = ['draggable', 'data-gjs[-\\w]+'];
 
 const ROOT_ATTR_REGEXP = /\[id\*\=\"isolation\"\]/gm;
 const SCOPE_ATTR_REGEXP = /\[id\*\=\"scope\"\]/gm;
+const WRAPPER_REGEXP = /#isolation-scope-[\\w]*\\s?\.cms\-wrapper/gm;
 
 /**
  * Test regexp
@@ -54,6 +55,7 @@ export const escapeCss = css => {
     return css
         .replace(ROOT_ATTR_REGEXP, ':root')
         .replace(SCOPE_ATTR_REGEXP, ':scope')
+        .replace(WRAPPER_REGEXP, '.cms-wrapper')
         .replace(cssChildrenScopeRegexp, '')
         .replace(componentCssIdRegexp, '');
 };
@@ -65,6 +67,9 @@ export const getWrapperAttrs = html => {
         each($wrapper[0].attributes, attr => attrs[attr.name] = $wrapper.attr(attr.name));
     }
     delete attrs.id;
+    if (attrs.class) {
+        attrs.class = attrs.class.split(' ').filter(className => className !== 'wrapper').join(' ');
+    }
     return attrs;
 };
 
@@ -111,6 +116,9 @@ class ContentIsolation {
                 }
                 if (/(\:root)/.test(selector)) {
                     return selector.trim().replace(/(\:root)/g, ` #${this.scopeId}[id*="isolation"]`);
+                }
+                if (/(\.cms\-wrapper)/.test(selector)) {
+                    return selector.trim().replace(/(\.cms\-wrapper)/g, ` #${this.scopeId}.cms-wrapper`);
                 }
                 return ` #${this.scopeId}${(selector.trim().indexOf(':') === 0 ? '' : ' ')}${selector.trim()}`;
             }).join(',');

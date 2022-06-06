@@ -57,8 +57,10 @@ class CombinedPriceListGarbageCollectorTest extends WebTestCase
         $this->prevFullCpl = $cm->get('oro_pricing.full_combined_price_list');
         $cm->set('oro_pricing.combined_price_list', $cpl->getId());
         $cm->set('oro_pricing.full_combined_price_list', $fullCpl->getId());
-
         $cm->flush();
+
+        // Set offset to 0 to apply cleanups immediately
+        $this->gc->setGcOffsetMinutes(0);
     }
 
     protected function tearDown(): void
@@ -68,11 +70,15 @@ class CombinedPriceListGarbageCollectorTest extends WebTestCase
         $cm->set('oro_pricing.full_combined_price_list', $this->prevFullCpl);
         $cm->flush();
 
+        // Revert the default offset
+        $this->gc->setGcOffsetMinutes(60);
+
         parent::tearDown();
     }
 
     public function testCleanCombinedPriceLists()
     {
+        $this->assertFalse($this->gc->hasPriceListsScheduledForRemoval());
         $this->gc->cleanCombinedPriceLists();
 
         $cpls = $this->manager->getRepository(CombinedPriceList::class)->findAll();
@@ -108,6 +114,24 @@ class CombinedPriceListGarbageCollectorTest extends WebTestCase
             'cpl_broken_ar',
             'cpl_unassigned'
         ];
+        foreach ($expectedToBeRemoved as $ref) {
+            $this->assertContains(
+                $this->getReference($ref)->getId(),
+                $cplIds,
+                'CPL ' . $ref . ' was not expected to be removed'
+            );
+        }
+
+        $this->assertTrue($this->gc->hasPriceListsScheduledForRemoval());
+        $this->gc->removeScheduledUnusedPriceLists();
+        $cpls = $this->manager->getRepository(CombinedPriceList::class)->findAll();
+        $cplIds = array_map(
+            static function (CombinedPriceList $combinedPriceList) {
+                return $combinedPriceList->getId();
+            },
+            $cpls
+        );
+
         foreach ($expectedToBeRemoved as $ref) {
             $this->assertNotContains(
                 $this->getReference($ref)->getId(),

@@ -2,9 +2,6 @@
 @fixture-OroProductBundle:featured_products.yml
 @regression
 Feature: Featured product using segment records limit with cache
-  In order to ...
-  As an ...
-  I should be able to ...
 
   Scenario: Feature Background
     Given sessions active:

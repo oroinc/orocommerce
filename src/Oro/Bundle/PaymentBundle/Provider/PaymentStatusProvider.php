@@ -20,6 +20,7 @@ class PaymentStatusProvider implements PaymentStatusProviderInterface
     const DECLINED = 'declined';
     const PENDING = 'pending';
     const CANCELED = 'canceled';
+    const CANCELED_PARTIALLY = 'canceled_partially';
 
     /** @var PaymentTransactionProvider */
     protected $paymentTransactionProvider;
@@ -52,6 +53,10 @@ class PaymentStatusProvider implements PaymentStatusProviderInterface
      */
     private function getStatusByEntityAndTransactions($entity, ArrayCollection $paymentTransactions)
     {
+        if ($this->isCanceledPartially($paymentTransactions)) {
+            return self::CANCELED_PARTIALLY;
+        }
+
         if ($this->hasCanceledTransactions($paymentTransactions)) {
             return self::CANCELED;
         }
@@ -206,17 +211,33 @@ class PaymentStatusProvider implements PaymentStatusProviderInterface
      */
     protected function hasCanceledTransactions(ArrayCollection $paymentTransactions)
     {
-        return false === $paymentTransactions
-                ->filter(
-                    function (PaymentTransaction $paymentTransaction) {
-                        if ($paymentTransaction->isClone()) {
-                            return false;
-                        }
+        $canceledTransactions = $this->getCanceledTransactions($paymentTransactions);
+        return $canceledTransactions->count() > 0;
+    }
 
-                        return $paymentTransaction->isSuccessful()
-                            && $paymentTransaction->getAction() === PaymentMethodInterface::CANCEL;
+    protected function getCanceledTransactions(ArrayCollection $paymentTransactions)
+    {
+        return $paymentTransactions
+            ->filter(
+                function (PaymentTransaction $paymentTransaction) {
+                    if ($paymentTransaction->isClone()) {
+                        return false;
                     }
-                )
-                ->isEmpty();
+
+                    return $paymentTransaction->isSuccessful()
+                        && $paymentTransaction->getAction() === PaymentMethodInterface::CANCEL;
+                }
+            );
+    }
+
+    protected function isCanceledPartially(ArrayCollection $paymentTransactions)
+    {
+        $canceledTransactions = $this->getCanceledTransactions($paymentTransactions);
+        $successfulTransactions = $this->getSuccessfulTransactions($paymentTransactions);
+
+        return $canceledTransactions->count()
+            && $successfulTransactions
+            && $this->getTransactionAmounts($successfulTransactions) >
+            $this->getTransactionAmounts($canceledTransactions);
     }
 }

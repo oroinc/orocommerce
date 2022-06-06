@@ -110,8 +110,10 @@ class WebCatalogCacheProcessor implements MessageProcessorInterface, TopicSubscr
                 continue;
             }
 
+            // CE application has scope resolved website ID equal to 0
+            $website = $websiteId ? $websites[$websiteId] : null;
             $navigationRootValue = $this->configManager
-                ->get('oro_web_catalog.navigation_root', false, false, $websites[$websiteId]);
+                ->get('oro_web_catalog.navigation_root', false, false, $website);
             $contentNode = $this->getContentNode($webCatalog, $navigationRootValue);
             if (!$contentNode) {
                 continue;

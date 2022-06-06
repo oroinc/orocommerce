@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\OrderBundle\Tests\Functional\Api\Frontend\RestJsonApi;
+namespace Oro\Bundle\OrderBundle\Tests\Functional\Api\Frontend\RestJsonApiForVisitor;
 
 use Oro\Bundle\CustomerBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\Api\FrontendRestJsonApiTestCase;
@@ -14,6 +14,8 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class OrderForVisitorTest extends FrontendRestJsonApiTestCase
 {
+    private const COMMON_REQUESTS_PATH = '@OroOrderBundle/Tests/Functional/Api/Frontend/RestJsonApi/requests/';
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -50,7 +52,7 @@ class OrderForVisitorTest extends FrontendRestJsonApiTestCase
     {
         $response = $this->post(
             ['entity' => 'orders'],
-            'create_order.yml',
+            self::COMMON_REQUESTS_PATH . 'create_order.yml',
             [],
             false
         );

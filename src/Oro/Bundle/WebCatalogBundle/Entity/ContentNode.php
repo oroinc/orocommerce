@@ -592,4 +592,11 @@ class ContentNode extends ExtendContentNode implements
     {
         return $this->localizedUrls->contains($url);
     }
+
+    public function __clone()
+    {
+        if ($this->id) {
+            $this->cloneLocalizedFallbackValueAssociations();
+        }
+    }
 }

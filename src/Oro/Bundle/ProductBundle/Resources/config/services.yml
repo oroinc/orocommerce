@@ -1594,6 +1594,8 @@ services:
         arguments:
             - '@.inner'
             - '@oro_config.manager'
+        calls:
+            - [setFeatureChecker, ['@oro_featuretoggle.checker.feature_checker']]
 
     oro_product.event_listener.attribute_changes:
         class: 'Oro\Bundle\ProductBundle\EventListener\AttributeChangesListener'
@@ -2002,3 +2004,10 @@ services:
         tags:
             - { name: oro_featuretogle.voter }
             - { name: oro_featuretogle.feature, feature: attachment_original_filenames }
+
+    oro_checkout.layout.extension.product_seo_context_configurator:
+        class: Oro\Bundle\ProductBundle\Layout\Extension\ProductSEOContextConfigurator
+        arguments:
+            - '@oro_config.manager'
+        tags:
+            - { name: layout.context_configurator }

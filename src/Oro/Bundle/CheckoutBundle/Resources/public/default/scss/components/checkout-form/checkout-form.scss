@@ -67,6 +67,8 @@
     &__payment-methods-list {
         @include list-normalize();
         @include clearfix();
+
+        margin: $checkout-form-payment-methods-list-form-margin;
     }
 
     &__payment-methods-item {
@@ -75,7 +77,9 @@
     }
 
     &__payment-methods-form {
-        margin: $checkout-form-payment-methods-form-margin;
+        .form-row:last-child {
+            margin-bottom: 0;
+        }
     }
 
     &__asterix {

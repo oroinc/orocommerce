@@ -1,0 +1,52 @@
+/* @theme: admin.oro; */
+
+@media only screen and (max-width: $small-landscape-devices-media-breakpoint) {
+    .invalidate-cache {
+        &-form {
+            table {
+                width: 100%;
+            }
+        }
+
+        &-tr {
+            display: grid;
+            grid-template-areas:
+                                'label label'
+                                'field field'
+                                'at date';
+            grid-template-columns: auto 1fr;
+            align-items: center;
+            gap: 8px 0;
+
+            td {
+                height: auto;
+            }
+
+            .invalidate-cache-td-fields {
+                .datepicker-input {
+                    width: 50%;
+                }
+
+                .timepicker-input {
+                    width: calc(50% - 5px);
+                }
+            }
+        }
+
+        &-label {
+            grid-area: label;
+        }
+
+        &-field {
+            grid-area: field;
+        }
+
+        &-at {
+            grid-area: at;
+        }
+
+        &-date {
+            grid-area: date;
+        }
+    }
+}

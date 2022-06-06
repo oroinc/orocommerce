@@ -54,7 +54,7 @@ class OrderRequiredTaxRecalculationSpecification implements SpecificationInterfa
      *
      * @return bool
      */
-    private function isOrderChanged(Order $order)
+    private function isOrderChanged(Order $order): bool
     {
         $originalOrderData = $this->getOriginalEntityData($order);
         /**
@@ -75,16 +75,14 @@ class OrderRequiredTaxRecalculationSpecification implements SpecificationInterfa
             return true;
         }
 
-        if ($this->isOrderAddressChanged($order->getShippingAddress(), $originalOrderData['shippingAddress'])) {
+        if ($this->isOrderAddressChanged($order->getShippingAddress(), $originalOrderData['shippingAddress'])
+            || $this->isOrderAddressChanged($order->getBillingAddress(), $originalOrderData['billingAddress'])
+        ) {
             return true;
         }
 
-        if ($this->isOrderAddressChanged($order->getBillingAddress(), $originalOrderData['billingAddress'])) {
-            return true;
-        }
-
-        // Users can overwrite shipping cost manually and this needs tax recalculation.
-        return ($order->getOverriddenShippingCostAmount() !== $originalOrderData['overriddenShippingCostAmount']);
+        return $order->getOverriddenShippingCostAmount() !== $originalOrderData['overriddenShippingCostAmount']
+            || ($order->getEstimatedShippingCostAmount() !== $originalOrderData['estimatedShippingCostAmount']);
     }
 
     /**

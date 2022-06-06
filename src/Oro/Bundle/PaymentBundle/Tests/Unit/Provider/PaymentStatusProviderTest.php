@@ -58,7 +58,7 @@ class PaymentStatusProviderTest extends \PHPUnit\Framework\TestCase
         $total->setAmount($amount);
 
         $this->totalProcessorProvider
-            ->expects($this->once())
+            ->expects($this->any())
             ->method('getTotal')
             ->with($object)
             ->willReturn($total);
@@ -431,6 +431,43 @@ class PaymentStatusProviderTest extends \PHPUnit\Framework\TestCase
                 100,
                 PaymentStatusProvider::PENDING,
             ],
+            'partially refunded amount' => [
+                [
+                    (new PaymentTransaction())
+                        ->setSuccessful(true)
+                        ->setActive(false)
+                        ->setAction(PaymentMethodInterface::CAPTURE)
+                        ->setAmount(50),
+                    (new PaymentTransaction())
+                        ->setSuccessful(true)
+                        ->setActive(false)
+                        ->setAction(PaymentMethodInterface::CANCEL)
+                        ->setAmount(10),
+                    (new PaymentTransaction())
+                        ->setSuccessful(true)
+                        ->setActive(false)
+                        ->setAction(PaymentMethodInterface::CANCEL)
+                        ->setAmount(30),
+                ],
+                100,
+                PaymentStatusProvider::CANCELED_PARTIALLY
+            ],
+            'partially canceled/refunded amount' => [
+                [
+                    (new PaymentTransaction())
+                        ->setSuccessful(true)
+                        ->setActive(false)
+                        ->setAction(PaymentMethodInterface::AUTHORIZE)
+                        ->setAmount(50),
+                    (new PaymentTransaction())
+                        ->setSuccessful(true)
+                        ->setActive(false)
+                        ->setAction(PaymentMethodInterface::CANCEL)
+                        ->setAmount(50)
+                ],
+                50,
+                PaymentStatusProvider::CANCELED
+            ]
         ];
     }
 }

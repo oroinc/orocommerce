@@ -5,6 +5,9 @@ namespace Oro\Bundle\PaymentBundle\Formatter;
 use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Format labels for payment statuses.
+ */
 class PaymentStatusLabelFormatter
 {
     /**
@@ -37,6 +40,9 @@ class PaymentStatusLabelFormatter
             $this->formatPaymentStatusLabel(PaymentStatusProvider::PENDING) => PaymentStatusProvider::PENDING,
             $this->formatPaymentStatusLabel(PaymentStatusProvider::DECLINED) => PaymentStatusProvider::DECLINED,
             $this->formatPaymentStatusLabel(PaymentStatusProvider::PARTIALLY) => PaymentStatusProvider::PARTIALLY,
+            $this->formatPaymentStatusLabel(PaymentStatusProvider::CANCELED) => PaymentStatusProvider::CANCELED,
+            $this->formatPaymentStatusLabel(PaymentStatusProvider::CANCELED_PARTIALLY) =>
+                PaymentStatusProvider::CANCELED_PARTIALLY
         ];
     }
 }

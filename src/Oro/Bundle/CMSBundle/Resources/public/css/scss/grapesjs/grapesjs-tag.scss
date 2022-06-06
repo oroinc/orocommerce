@@ -5,7 +5,8 @@
         padding: 0 0 10px;
         display: inline;
 
-        ##{$clm-prefix}add-tag {
+        ##{$clm-prefix}add-tag,
+        .#{$clm-prefix}tags-btn__sync {
             display: inline-block;
             width: 24px;
             height: 24px;
@@ -19,6 +20,10 @@
             color: $primary-inverse;
             box-shadow: none;
             border: 0;
+
+            &:not(:last-child) {
+                margin-right: 3px;
+            }
         }
 
         ##{$clm-prefix}tags-field {

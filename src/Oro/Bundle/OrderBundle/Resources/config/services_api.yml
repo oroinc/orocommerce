@@ -6,6 +6,33 @@ services:
         tags:
             - { name: oro.api.query_modifier, requestType: frontend }
 
+    oro_order.api.guest_checkout_association_access_exclusion_provider_for_order:
+        class: Oro\Bundle\CheckoutBundle\Api\GuestCheckoutAssociationAccessExclusionProvider
+        arguments:
+            - '@oro_checkout.api.guest_checkout_checker'
+            - 'Oro\Bundle\OrderBundle\Entity\Order'
+            - ['customer', 'customerUser', 'lineItems', 'billingAddress', 'shippingAddress']
+        tags:
+            - { name: oro_api.association_access_exclusion_provider, requestType: frontend }
+
+    oro_order.api.guest_checkout_association_access_exclusion_provider_for_order_line_item:
+        class: Oro\Bundle\CheckoutBundle\Api\GuestCheckoutAssociationAccessExclusionProvider
+        arguments:
+            - '@oro_checkout.api.guest_checkout_checker'
+            - 'Oro\Bundle\OrderBundle\Entity\OrderLineItem'
+            - ['order']
+        tags:
+            - { name: oro_api.association_access_exclusion_provider, requestType: frontend }
+
+    oro_order.api.guest_checkout_association_access_exclusion_provider_for_order_address:
+        class: Oro\Bundle\CheckoutBundle\Api\GuestCheckoutAssociationAccessExclusionProvider
+        arguments:
+            - '@oro_checkout.api.guest_checkout_checker'
+            - 'Oro\Bundle\OrderBundle\Entity\OrderAddress'
+            - ['customerAddress', 'customerUserAddress']
+        tags:
+            - { name: oro_api.association_access_exclusion_provider, requestType: frontend }
+
     oro_order.api.update_price_by_value_and_currency:
         class: Oro\Bundle\CurrencyBundle\Api\Processor\UpdatePriceByValueAndCurrency
         tags:

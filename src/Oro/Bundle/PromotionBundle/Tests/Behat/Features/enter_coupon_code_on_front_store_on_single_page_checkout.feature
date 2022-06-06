@@ -70,7 +70,8 @@ Feature: Enter coupon code on front store on single page checkout
     And I should not see "The selected payment method is not available. Please return to the payment method selection step and select a different one."
 
   Scenario: Payment card data should be visible when coupon applied after Paypal payment method available again.
-    When I check "PayPalFlow" on the checkout page
+    When I scroll to top
+    And I check "PayPalFlow" on the checkout page
     Then I fill "PayPal Credit Card Form" with:
       | CreditCardNumber | 5424000000000015 |
       | Month            | 11               |

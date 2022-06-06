@@ -691,9 +691,9 @@ class Product extends ExtendProduct implements
         try {
             if ($this->getDefaultName()) {
                 return (string) $this->getDefaultName();
-            } else {
-                return (string) $this->sku;
             }
+
+            return (string) $this->sku;
         } catch (\LogicException $e) {
             return (string) $this->sku;
         }
@@ -968,7 +968,8 @@ class Product extends ExtendProduct implements
     {
         $result = [];
         foreach ($this->unitPrecisions as $unitPrecision) {
-            $result[$unitPrecision->getUnit()->getCode()] = $unitPrecision->getUnit();
+            $unit = $unitPrecision->getUnit();
+            $result[$unit->getCode()] = $unit;
         }
 
         return $result;
@@ -1412,6 +1413,8 @@ class Product extends ExtendProduct implements
             $this->slugs = new ArrayCollection();
             $this->slugPrototypesWithRedirect = new SlugPrototypesWithRedirect($this->slugPrototypes);
             $this->variantFields = [];
+
+            $this->cloneLocalizedFallbackValueAssociations();
         }
     }
 
@@ -1452,7 +1455,7 @@ class Product extends ExtendProduct implements
     {
         $productUnit = $unitPrecision->getUnit();
         $primary = $this->getPrimaryUnitPrecision();
-        $primaryUnit = $primary ? $primary->getUnit() : null;
+        $primaryUnit = $primary?->getUnit();
         if ($productUnit == $primaryUnit) {
             return $this;
         }
@@ -1472,7 +1475,7 @@ class Product extends ExtendProduct implements
     {
         $productUnit = $unitPrecision->getUnit();
         $primary = $this->getPrimaryUnitPrecision();
-        $primaryUnit = $primary ? $primary->getUnit() : null;
+        $primaryUnit = $primary?->getUnit();
         if ($productUnit == $primaryUnit) {
             return $this;
         }
@@ -1494,9 +1497,7 @@ class Product extends ExtendProduct implements
                 return $precision != $primaryPrecision;
             });
 
-        $additionalPrecisionsSorted = new ArrayCollection(array_values($additionalPrecisions->toArray()));
-
-        return $additionalPrecisionsSorted;
+        return new ArrayCollection(array_values($additionalPrecisions->toArray()));
     }
 
     /**

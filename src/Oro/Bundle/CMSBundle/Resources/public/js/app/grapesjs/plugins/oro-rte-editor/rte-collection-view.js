@@ -21,6 +21,10 @@ const RteCollectionView = BaseCollectionView.extend({
 
     observer: null,
 
+    events: {
+        click: 'updateActiveActions'
+    },
+
     constructor: function RteCollectionView(options) {
         this.spansToRemove = [];
         this.spansToSave = [];
@@ -108,7 +112,8 @@ const RteCollectionView = BaseCollectionView.extend({
                 editableEl: this.editableEl,
                 $editableEl: this.$editableEl,
                 editor: this.editor,
-                model
+                model,
+                collection: this
             });
         } else {
             throw new Error(
@@ -172,6 +177,12 @@ const RteCollectionView = BaseCollectionView.extend({
      */
     blur() {
         this.$el.blur();
+    },
+
+    emitEvent(event) {
+        if (event.type === 'keydown') {
+            invoke(this.subviews, 'onKeyDown', event);
+        }
     }
 });
 

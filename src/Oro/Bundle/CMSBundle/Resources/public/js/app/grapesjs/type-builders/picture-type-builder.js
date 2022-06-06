@@ -41,23 +41,11 @@ const PictureTypeBuilder = BaseTypeBuilder.extend({
             type: 'picture',
             sources: [],
             editable: true,
-            droppable: false,
-            resizable: {
-                ratioDefault: true
-            }
+            droppable: false
         },
 
         initialize(...args) {
-            this.defaults.resizable['onUpdateContainer'] = () => {
-                const {width = '', height = ''} = this.getStyle();
-                this.image.setStyle({
-                    width,
-                    height
-                });
-            };
-
             this.constructor.__super__.initialize.apply(this, args);
-            this.updateToolbar();
 
             const components = this.get('components');
             if (!components.length) {
@@ -68,9 +56,10 @@ const PictureTypeBuilder = BaseTypeBuilder.extend({
 
             this.image = this.findType('image')[0];
             this.image.set({
-                selectable: 0,
-                hoverable: 0
+                draggable: 0
             });
+
+            this.updateToolbar();
 
             this.listenTo(this.image, 'change:previewMetadata', this.onImageUpdate);
             this.listenTo(this, 'change:sources', this.updateSources);
@@ -88,23 +77,30 @@ const PictureTypeBuilder = BaseTypeBuilder.extend({
             const setMain = ({attributes}) => this.image.set('src', attributes.src);
 
             if (!this.get('toolbar').find(toolbar => toolbar.id === 'picture-settings')) {
-                this.set('toolbar', [
-                    {
-                        id: 'picture-settings',
-                        attributes: {
-                            'class': 'fa fa-gear',
-                            'label': __('oro.cms.wysiwyg.toolbar.pictureSettings')
-                        },
-                        command(editor) {
-                            editor.Commands.run('open-picture-settings', {
-                                sources: getSources(),
-                                mainImage: getMainImage(),
-                                setSources,
-                                setMain
-                            });
-                        }
+                const toolbarAction = {
+                    id: 'picture-settings',
+                    attributes: {
+                        'class': 'fa fa-gear',
+                        'label': __('oro.cms.wysiwyg.toolbar.pictureSettings')
                     },
+                    command(editor) {
+                        editor.Commands.run('open-picture-settings', {
+                            sources: getSources(),
+                            mainImage: getMainImage(),
+                            setSources,
+                            setMain
+                        });
+                    }
+                };
+
+                this.set('toolbar', [
+                    toolbarAction,
                     ...this.get('toolbar')
+                ]);
+
+                this.image.set('toolbar', [
+                    toolbarAction,
+                    ...this.image.get('toolbar')
                 ]);
             }
         },

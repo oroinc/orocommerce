@@ -3,9 +3,6 @@
 @ticket-BB-16482
 @ticket-BB-20790
 Feature: Visibility of product variants
-  In order to ...
-  As an ...
-  I should be able to ...
 
   Scenario: Create different window session
       Given sessions active:
@@ -146,6 +143,4 @@ Feature: Visibility of product variants
     And I click "Product Configurable"
     Then I should see "Add to Shopping List"
     And I select "Please select option" from "Size"
-    And I should see "Related Products"
-    And I click "Add to Shopping List"
-    Then I should see "Product has been added to \"Shopping list\""
+    And I should see "This value should not be blank."

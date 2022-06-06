@@ -21,20 +21,9 @@ use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
  */
 class ProductSearchIndexListener
 {
-    /**
-     * @var DoctrineHelper
-     */
-    private $doctrineHelper;
-
-    /**
-     * @var AbstractWebsiteLocalizationProvider
-     */
-    private $websiteLocalizationProvider;
-
-    /**
-     * @var WebsiteContextManager
-     */
-    private $websiteContextManager;
+    private DoctrineHelper $doctrineHelper;
+    private AbstractWebsiteLocalizationProvider $websiteLocalizationProvider;
+    private WebsiteContextManager $websiteContextManager;
 
     public function __construct(
         DoctrineHelper $doctrineHelper,
@@ -89,17 +78,19 @@ class ProductSearchIndexListener
 
         /** @var Product[] $products */
         $products = $event->getEntities();
-
         $localizations = $this->websiteLocalizationProvider->getLocalizationsByWebsiteId($websiteId);
         $categoryMap = $this->getRepository()->getCategoryMapByProducts($products);
         foreach ($products as $product) {
-            // Localized fields
-            $category = &$categoryMap[$product->getId()];
+            $category = $categoryMap[$product->getId()] ?? null;
+            if (null === $category) {
+                continue;
+            }
             foreach ($localizations as $localization) {
-                if (!empty($category)) {
-                    foreach ($this->getMetaFieldsForEntity($category, $localization) as $metaField) {
-                        $this->addPlaceholderToEvent($event, $product->getId(), $metaField, $localization->getId());
+                foreach ($this->getMetaFieldsForEntity($category, $localization) as $metaField) {
+                    if (!$metaField) {
+                        continue;
                     }
+                    $this->addPlaceholderToEvent($event, $product->getId(), $metaField, $localization->getId());
                 }
             }
         }

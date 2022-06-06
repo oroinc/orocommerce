@@ -1,9 +1,6 @@
 @fixture-OroProductBundle:product_listing_images.yml
 @regression
 Feature: Display product listing image instead of main image on the home page in blank theme
-  In order to ...
-  As an ...
-  I should be able to ...
 
   Scenario: Switch to blank theme
     Given I login as administrator

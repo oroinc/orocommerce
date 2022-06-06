@@ -15,6 +15,7 @@ use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListBuildActivityRep
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CombinedPriceListsUpdateEvent;
 use Oro\Bundle\PricingBundle\Model\CombinedPriceListActivationStatusHelperInterface;
 use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
+use Oro\Bundle\PricingBundle\Resolver\CombinedPriceListScheduleResolver;
 use Oro\Component\MessageQueue\Job\JobRunner;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
@@ -35,6 +36,7 @@ class SingleCplProcessorTest extends TestCase
     private CombinedPriceListActivationStatusHelperInterface|MockObject $activationStatusHelper;
     private EventDispatcherInterface|MockObject $dispatcher;
     private LoggerInterface|MockObject $logger;
+    private CombinedPriceListScheduleResolver|MockObject $scheduleResolver;
     private SingleCplProcessor $processor;
 
     protected function setUp(): void
@@ -46,6 +48,7 @@ class SingleCplProcessorTest extends TestCase
         $this->activationStatusHelper = $this->createMock(CombinedPriceListActivationStatusHelperInterface::class);
         $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
+        $this->scheduleResolver = $this->createMock(CombinedPriceListScheduleResolver::class);
 
         $this->processor = new SingleCplProcessor(
             $this->jobRunner,
@@ -56,6 +59,7 @@ class SingleCplProcessorTest extends TestCase
             $this->dispatcher
         );
         $this->processor->setLogger($this->logger);
+        $this->processor->setScheduleResolver($this->scheduleResolver);
     }
 
     public function testGetSubscribedTopics()
@@ -66,19 +70,43 @@ class SingleCplProcessorTest extends TestCase
         );
     }
 
-    public function testProcessUnexpectedException()
+    public function testProcessUnresolvedRetryableCplCollection()
     {
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')
             ->willReturn([
-                'cpl' => $this->getEntity(CombinedPriceList::class, ['id' => 1]),
+                'cpl' => false,
                 'jobId' => 100,
                 'products' => [],
                 'assign_to' => []
             ]);
 
-        $e = new \Exception();
+        $this->logger->expects($this->once())
+            ->method('warning')
+            ->with(
+                'Unexpected retryable exception occurred during Combined Price Lists message resolving.',
+                ['topic' => CombineSingleCombinedPriceListPricesTopic::getName()]
+            );
+
+        $this->assertEquals(
+            $this->processor::REQUEUE,
+            $this->processor->process($message, $this->createMock(SessionInterface::class))
+        );
+    }
+
+    public function testProcessNotFoundCpl()
+    {
+        $message = $this->createMock(MessageInterface::class);
+        $message->expects($this->any())
+            ->method('getBody')
+            ->willReturn([
+                'cpl' => null,
+                'jobId' => 100,
+                'products' => [],
+                'assign_to' => []
+            ]);
+
         $rootJob = $this->createMock(Job::class);
         $rootJob->expects($this->any())
             ->method('getId')
@@ -96,19 +124,37 @@ class SingleCplProcessorTest extends TestCase
                 }
             );
 
-        $em = $this->createMock(EntityManagerInterface::class);
-        $this->doctrine->expects($this->once())
-            ->method('getManagerForClass')
-            ->willReturn($em);
+        $this->indexationTriggerHandler->expects($this->never())
+            ->method($this->anything());
+        $this->activationStatusHelper->expects($this->never())
+            ->method($this->anything());
+        $this->combinedPriceListsBuilderFacade->expects($this->never())
+            ->method($this->anything());
+        $this->dispatcher->expects($this->never())
+            ->method($this->anything());
 
-        $em->expects($this->once())
-            ->method('beginTransaction');
-        $em->expects($this->once())
-            ->method('rollback');
-        $this->indexationTriggerHandler->expects($this->once())
-            ->method('startCollectVersioned');
-        $this->indexationTriggerHandler->expects($this->once())
-            ->method('rollback');
+        $this->assertEquals(
+            $this->processor::ACK,
+            $this->processor->process($message, $this->createMock(SessionInterface::class))
+        );
+    }
+
+    public function testProcessUnexpectedException()
+    {
+        $message = $this->createMock(MessageInterface::class);
+        $message->expects($this->any())
+            ->method('getBody')
+            ->willReturn([
+                'cpl' => $this->getEntity(CombinedPriceList::class, ['id' => 1]),
+                'jobId' => 100,
+                'products' => [],
+                'assign_to' => []
+            ]);
+
+        $e = new \Exception();
+        $this->assertJobRunnerCalls();
+        $this->assertTransactionRollback();
+
         $this->activationStatusHelper->expects($this->any())
             ->method('isReadyForBuild')
             ->willReturn(true);
@@ -122,11 +168,41 @@ class SingleCplProcessorTest extends TestCase
             ->method('error')
             ->with(
                 'Unexpected exception occurred during Combined Price Lists build.',
-                ['exception' => $e]
+                [
+                    'topic' => CombineSingleCombinedPriceListPricesTopic::getName(),
+                    'exception' => $e
+                ]
             );
 
         $this->assertEquals(
             $this->processor::REJECT,
+            $this->processor->process($message, $this->createMock(SessionInterface::class))
+        );
+    }
+
+    public function testProcessUnexpectedDatabaseExceptionDuringMessageResolve()
+    {
+        $message = $this->createMock(MessageInterface::class);
+        $message->expects($this->any())
+            ->method('getBody')
+            ->willReturn([
+                'cpl' => false,
+                'jobId' => 100,
+                'products' => [],
+                'assign_to' => []
+            ]);
+
+        $this->logger->expects($this->once())
+            ->method('warning')
+            ->with(
+                'Unexpected retryable exception occurred during Combined Price Lists message resolving.',
+                [
+                    'topic' => CombineSingleCombinedPriceListPricesTopic::getName()
+                ]
+            );
+
+        $this->assertEquals(
+            $this->processor::REQUEUE,
             $this->processor->process($message, $this->createMock(SessionInterface::class))
         );
     }
@@ -144,36 +220,9 @@ class SingleCplProcessorTest extends TestCase
             ]);
 
         $e = $this->createMock(DeadlockException::class);
-        $rootJob = $this->createMock(Job::class);
-        $rootJob->expects($this->any())
-            ->method('getId')
-            ->willReturn(42);
-        $job = $this->createMock(Job::class);
-        $job->expects($this->any())
-            ->method('getRootJob')
-            ->willReturn($rootJob);
+        $this->assertJobRunnerCalls();
+        $this->assertTransactionRollback();
 
-        $this->jobRunner->expects($this->once())
-            ->method('runDelayed')
-            ->willReturnCallback(
-                function ($ownerId, $closure) use ($job) {
-                    return $closure($this->jobRunner, $job);
-                }
-            );
-
-        $em = $this->createMock(EntityManagerInterface::class);
-        $this->doctrine->expects($this->once())
-            ->method('getManagerForClass')
-            ->willReturn($em);
-
-        $em->expects($this->once())
-            ->method('beginTransaction');
-        $em->expects($this->once())
-            ->method('rollback');
-        $this->indexationTriggerHandler->expects($this->once())
-            ->method('startCollectVersioned');
-        $this->indexationTriggerHandler->expects($this->once())
-            ->method('rollback');
         $this->activationStatusHelper->expects($this->any())
             ->method('isReadyForBuild')
             ->willReturn(true);
@@ -183,12 +232,20 @@ class SingleCplProcessorTest extends TestCase
         $this->dispatcher->expects($this->never())
             ->method('dispatch');
 
-        $this->logger->expects($this->never())
-            ->method('error');
+        $this->logger->expects($this->once())
+            ->method('warning')
+            ->with(
+                'Unexpected retryable database exception occurred during Combined Price Lists build.',
+                [
+                    'exception' => $e,
+                    'topic' => CombineSingleCombinedPriceListPricesTopic::getName()
+                ]
+            );
 
-        $this->expectException(DeadlockException::class);
-
-        $this->processor->process($message, $this->createMock(SessionInterface::class));
+        $this->assertEquals(
+            $this->processor::REQUEUE,
+            $this->processor->process($message, $this->createMock(SessionInterface::class))
+        );
     }
 
     /**
@@ -198,67 +255,53 @@ class SingleCplProcessorTest extends TestCase
     {
         $cpl = $this->getEntity(CombinedPriceList::class, ['id' => 1]);
         $assignTo = ['config' => true];
-        $message = $this->createMock(MessageInterface::class);
-        $message->expects($this->any())
-            ->method('getBody')
-            ->willReturn([
-                'cpl' => $cpl,
-                'jobId' => 100,
-                'products' => $products,
-                'assign_to' => $assignTo
-            ]);
+        $message = $this->getMessage($products, $assignTo);
 
-        $rootJob = $this->createMock(Job::class);
-        $rootJob->expects($this->any())
-            ->method('getId')
-            ->willReturn(42);
-        $job = $this->createMock(Job::class);
-        $job->expects($this->any())
-            ->method('getRootJob')
-            ->willReturn($rootJob);
-
-        $this->jobRunner->expects($this->once())
-            ->method('runDelayed')
-            ->willReturnCallback(
-                function ($ownerId, $closure) use ($job) {
-                    return $closure($this->jobRunner, $job);
-                }
-            );
-
-        $em = $this->createMock(EntityManagerInterface::class);
-        $this->doctrine->expects($this->once())
-            ->method('getManagerForClass')
-            ->willReturn($em);
+        $this->assertJobRunnerCalls();
         $this->assertActivityRecordsRemoval($products, $cpl);
+        $this->assertTransactionCommit();
 
-        $em->expects($this->once())
-            ->method('beginTransaction');
-        $em->expects($this->once())
-            ->method('commit');
-        $em->expects($this->never())
-            ->method('rollback');
-        $this->indexationTriggerHandler->expects($this->once())
-            ->method('startCollectVersioned');
-        $this->indexationTriggerHandler->expects($this->once())
-            ->method('commit');
-        $this->indexationTriggerHandler->expects($this->never())
-            ->method('rollback');
         $this->activationStatusHelper->expects($this->once())
             ->method('isReadyForBuild')
             ->with($cpl)
             ->willReturn(true);
+        $this->assertCplBuild($cpl, $products, $assignTo);
+
         $this->combinedPriceListsBuilderFacade->expects($this->once())
-            ->method('rebuildWithoutTriggers')
-            ->with([$cpl], $products);
-        $this->combinedPriceListsBuilderFacade->expects($this->once())
-            ->method('triggerProductIndexation')
-            ->with($cpl, $assignTo, $products);
-        $this->dispatcher->expects($this->once())
-            ->method('dispatch')
-            ->with(
-                new CombinedPriceListsUpdateEvent([$cpl->getId()]),
-                CombinedPriceListsUpdateEvent::NAME
-            );
+            ->method('processAssignments')
+            ->with($cpl, $assignTo);
+
+        $this->logger->expects($this->never())
+            ->method('error');
+
+        $this->assertEquals(
+            $this->processor::ACK,
+            $this->processor->process($message, $this->createMock(SessionInterface::class))
+        );
+    }
+
+    public function testProcessOfNotReadyCpl()
+    {
+        $products = [];
+        $cpl = $this->getEntity(CombinedPriceList::class, ['id' => 1]);
+        $assignTo = ['config' => true];
+        $message = $this->getMessage($products, $assignTo);
+
+        $this->assertJobRunnerCalls();
+        $this->assertActivityRecordsRemoval($products, $cpl);
+        $this->assertTransactionCommit();
+
+        $this->activationStatusHelper->expects($this->once())
+            ->method('isReadyForBuild')
+            ->with($cpl)
+            ->willReturn(false);
+        $activeCpl = $this->getEntity(CombinedPriceList::class, ['id' => 2]);
+        $this->scheduleResolver->expects($this->once())
+            ->method('getActiveCplByFullCPL')
+            ->with($cpl)
+            ->willReturn($activeCpl);
+        $this->assertCplBuild($activeCpl, $products, $assignTo);
+
         $this->combinedPriceListsBuilderFacade->expects($this->once())
             ->method('processAssignments')
             ->with($cpl, $assignTo);
@@ -279,51 +322,12 @@ class SingleCplProcessorTest extends TestCase
     {
         $cpl = $this->getEntity(CombinedPriceList::class, ['id' => 1]);
         $assignTo = ['config' => true];
-        $message = $this->createMock(MessageInterface::class);
-        $message->expects($this->any())
-            ->method('getBody')
-            ->willReturn([
-                'cpl' => $cpl,
-                'jobId' => 100,
-                'products' => $products,
-                'assign_to' => $assignTo
-            ]);
+        $message = $this->getMessage($products, $assignTo);
 
-        $rootJob = $this->createMock(Job::class);
-        $rootJob->expects($this->any())
-            ->method('getId')
-            ->willReturn(42);
-        $job = $this->createMock(Job::class);
-        $job->expects($this->any())
-            ->method('getRootJob')
-            ->willReturn($rootJob);
-
-        $this->jobRunner->expects($this->once())
-            ->method('runDelayed')
-            ->willReturnCallback(
-                function ($ownerId, $closure) use ($job) {
-                    return $closure($this->jobRunner, $job);
-                }
-            );
-
-        $em = $this->createMock(EntityManagerInterface::class);
-        $this->doctrine->expects($this->once())
-            ->method('getManagerForClass')
-            ->willReturn($em);
+        $this->assertJobRunnerCalls();
         $this->assertActivityRecordsRemoval($products, $cpl);
+        $this->assertTransactionCommit();
 
-        $em->expects($this->once())
-            ->method('beginTransaction');
-        $em->expects($this->once())
-            ->method('commit');
-        $em->expects($this->never())
-            ->method('rollback');
-        $this->indexationTriggerHandler->expects($this->once())
-            ->method('startCollectVersioned');
-        $this->indexationTriggerHandler->expects($this->once())
-            ->method('commit');
-        $this->indexationTriggerHandler->expects($this->never())
-            ->method('rollback');
         $this->activationStatusHelper->expects($this->once())
             ->method('isReadyForBuild')
             ->with($cpl)
@@ -359,7 +363,7 @@ class SingleCplProcessorTest extends TestCase
         ];
     }
 
-    protected function assertActivityRecordsRemoval(array $products, CombinedPriceList $cpl): void
+    private function assertActivityRecordsRemoval(array $products, CombinedPriceList $cpl): void
     {
         $repo = $this->createMock(CombinedPriceListBuildActivityRepository::class);
         if ($products) {
@@ -375,5 +379,94 @@ class SingleCplProcessorTest extends TestCase
             ->method('getRepository')
             ->with(CombinedPriceListBuildActivity::class)
             ->willReturn($repo);
+    }
+
+    private function assertCplBuild(CombinedPriceList $cpl, array $products, array $assignTo): void
+    {
+        $this->combinedPriceListsBuilderFacade->expects($this->once())
+            ->method('rebuildWithoutTriggers')
+            ->with([$cpl], $products);
+        $this->combinedPriceListsBuilderFacade->expects($this->once())
+            ->method('triggerProductIndexation')
+            ->with($cpl, $assignTo, $products);
+        $this->dispatcher->expects($this->once())
+            ->method('dispatch')
+            ->with(
+                new CombinedPriceListsUpdateEvent([$cpl->getId()]),
+                CombinedPriceListsUpdateEvent::NAME
+            );
+    }
+
+    private function assertJobRunnerCalls(): void
+    {
+        $rootJob = $this->createMock(Job::class);
+        $rootJob->expects($this->any())
+            ->method('getId')
+            ->willReturn(42);
+        $job = $this->createMock(Job::class);
+        $job->expects($this->any())
+            ->method('getRootJob')
+            ->willReturn($rootJob);
+
+        $this->jobRunner->expects($this->once())
+            ->method('runDelayed')
+            ->willReturnCallback(
+                function ($ownerId, $closure) use ($job) {
+                    return $closure($this->jobRunner, $job);
+                }
+            );
+    }
+
+    private function getMessage(array $products, array $assignTo): MessageInterface
+    {
+        $message = $this->createMock(MessageInterface::class);
+        $message->expects($this->any())
+            ->method('getBody')
+            ->willReturn([
+                'cpl' => $this->getEntity(CombinedPriceList::class, ['id' => 1]),
+                'jobId' => 100,
+                'products' => $products,
+                'assign_to' => $assignTo
+            ]);
+
+        return $message;
+    }
+
+    private function assertTransactionRollback(): void
+    {
+        $em = $this->createMock(EntityManagerInterface::class);
+        $this->doctrine->expects($this->once())
+            ->method('getManagerForClass')
+            ->willReturn($em);
+        $em->expects($this->once())
+            ->method('beginTransaction');
+        $em->expects($this->once())
+            ->method('rollback');
+
+        $this->indexationTriggerHandler->expects($this->once())
+            ->method('startCollectVersioned');
+        $this->indexationTriggerHandler->expects($this->once())
+            ->method('rollback');
+    }
+
+    private function assertTransactionCommit(): void
+    {
+        $em = $this->createMock(EntityManagerInterface::class);
+        $this->doctrine->expects($this->once())
+            ->method('getManagerForClass')
+            ->willReturn($em);
+        $em->expects($this->once())
+            ->method('beginTransaction');
+        $em->expects($this->once())
+            ->method('commit');
+        $em->expects($this->never())
+            ->method('rollback');
+
+        $this->indexationTriggerHandler->expects($this->once())
+            ->method('startCollectVersioned');
+        $this->indexationTriggerHandler->expects($this->once())
+            ->method('commit');
+        $this->indexationTriggerHandler->expects($this->never())
+            ->method('rollback');
     }
 }

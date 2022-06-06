@@ -1,6 +1,7 @@
 import _ from 'underscore';
 import __ from 'orotranslation/js/translator';
 import BaseTypeBuilder from 'orocms/js/app/grapesjs/type-builders/base-type-builder';
+import {foundClosestParentByTagName} from 'orocms/js/app/grapesjs/plugins/components/rte/utils/utils';
 
 const TAGS = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'ul', 'li', 'ol'];
 
@@ -85,6 +86,33 @@ const TextTypeBuilder = BaseTypeBuilder.extend({
             this.view.syncContent({
                 force: true
             });
+        },
+
+        getAttrToHTML() {
+            const attrs = this.getAttributes();
+
+            if (!attrs.style) {
+                delete attrs.style;
+            }
+
+            return attrs;
+        },
+
+        attrUpdated(m, v, opts = {}) {
+            const {shallowDiff} = this.em.get('Utils').helpers;
+            const attrs = this.get('attributes');
+            // Handle classes
+            const classes = attrs.class;
+            classes && this.setClass(classes);
+            delete attrs.class;
+
+            const attrPrev = {
+                ...this.previous('attributes')
+            };
+            const diff = shallowDiff(attrPrev, this.get('attributes'));
+            Object.keys(diff).forEach(pr =>
+                this.trigger(`change:attributes:${pr}`, this, diff[pr], opts)
+            );
         }
     },
 
@@ -95,17 +123,29 @@ const TextTypeBuilder = BaseTypeBuilder.extend({
          * @returns {boolean}
          */
         onPressEnter(event) {
+            const {activeRte} = this;
+            activeRte.emitEvent(event);
+
+            if (event.keyCode === 9) {
+                event.preventDefault();
+            }
+
             if (event.keyCode !== 13) {
                 return true;
             }
 
-            const {activeRte} = this;
             let newEle = activeRte.doc.createTextNode('\n');
             const range = activeRte.doc.getSelection().getRangeAt(0);
+            const container = range.commonAncestorContainer;
+            const list = foundClosestParentByTagName(container, ['ul', 'ol'], true);
+
+            if (list && !event.shiftKey) {
+                return false;
+            }
 
             if (
                 range.startContainer.nodeType === 3 &&
-                range.endOffset <= range.commonAncestorContainer.length &&
+                range.endOffset <= container.length &&
                 TAGS.includes(range.startContainer.parentNode.tagName.toLowerCase())
             ) {
                 activeRte.doc.execCommand('defaultParagraphSeparator', true, 'p');
@@ -114,6 +154,7 @@ const TextTypeBuilder = BaseTypeBuilder.extend({
 
             if (activeRte.doc.queryCommandSupported('insertBrOnReturn')) {
                 activeRte.doc.execCommand('defaultParagraphSeparator', false, 'br');
+                return true;
             }
 
             if (activeRte.doc.queryCommandSupported('insertLineBreak')) {
@@ -164,11 +205,21 @@ const TextTypeBuilder = BaseTypeBuilder.extend({
         wrapComponent(tagName = 'div') {
             const {model} = this;
             const content = model.toHTML();
-            const {margin, padding} = this.editor.Canvas.getWindow().getComputedStyle(this.el);
+            const {
+                marginTop,
+                marginBottom,
+                paddingTop,
+                paddingBottom
+            } = this.editor.Canvas.getWindow().getComputedStyle(this.el);
             const [newModel] = model.replaceWith(`<${tagName}>${content}</${tagName}>`);
 
-            newModel.view.el.style.margin = margin;
-            newModel.view.el.style.padding = padding;
+            newModel.view.el.style = {
+                ...newModel.view.el.style,
+                marginTop,
+                marginBottom,
+                paddingTop,
+                paddingBottom
+            };
 
             this.editor.select(newModel);
             newModel.view.$el.trigger('dblclick');
@@ -220,7 +271,7 @@ const TextTypeBuilder = BaseTypeBuilder.extend({
             const {activeRte, $el, cid} = this;
 
             if (activeRte) {
-                $el.off(`keypress.${cid}`).on(`keypress.${cid}`, this.onPressEnter.bind(this));
+                $el.off(`keydown.${cid}`).on(`keydown.${cid}`, this.onPressEnter.bind(this));
             }
         },
 
@@ -251,6 +302,10 @@ const TextTypeBuilder = BaseTypeBuilder.extend({
 
             this.toggleEvents();
 
+            if (this.willRemoved) {
+                return;
+            }
+
             if (clean && this.isSingleLine()) {
                 this.removeWrapper(typeof clean === 'boolean');
             }
@@ -258,6 +313,11 @@ const TextTypeBuilder = BaseTypeBuilder.extend({
             if (model.get('tagName') && this.getContent() === '') {
                 model.set('content', __('oro.cms.wysiwyg.component.text.content'));
             }
+        },
+
+        remove(...args) {
+            this.willRemoved = true;
+            this.constructor.__super__.remove.apply(this, args);
         },
 
         dispose() {

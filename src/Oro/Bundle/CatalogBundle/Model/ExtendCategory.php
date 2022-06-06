@@ -32,6 +32,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
  * @method removeProduct(Product $value)
  * @method ArrayCollection getProducts()
  * @method addProduct(Product $value)
+ * @method $this cloneLocalizedFallbackValueAssociations()
  */
 class ExtendCategory
 {

@@ -5,30 +5,32 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Provider;
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Provider\FileNamesProviderInterface;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Provider\ProductImageFileNamesProvider;
 use PHPUnit\Framework\MockObject\Stub\ReturnCallback;
 
 class ProductImageFileNamesProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var FileNamesProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $innerProvider;
+    private FileNamesProviderInterface|\PHPUnit\Framework\MockObject\MockObject $innerProvider;
 
-    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $configManager;
+    private ConfigManager|\PHPUnit\Framework\MockObject\MockObject $configManager;
 
-    /** @var ProductImageFileNamesProvider */
-    private $fileNamesProvider;
+    private FeatureChecker|\PHPUnit\Framework\MockObject\MockObject $featureChecker;
+
+    private ProductImageFileNamesProvider $fileNamesProvider;
 
     protected function setUp(): void
     {
         $this->innerProvider = $this->createMock(FileNamesProviderInterface::class);
         $this->configManager = $this->createMock(ConfigManager::class);
+        $this->featureChecker = $this->createMock(FeatureChecker::class);
 
         $this->fileNamesProvider = new ProductImageFileNamesProvider(
             $this->innerProvider,
             $this->configManager
         );
+        $this->fileNamesProvider->setFeatureChecker($this->featureChecker);
     }
 
     public function testGetFileNamesForStandaloneFileEntity(): void
@@ -46,6 +48,9 @@ class ProductImageFileNamesProviderTest extends \PHPUnit\Framework\TestCase
             ->method('set');
         $this->configManager->expects(self::never())
             ->method('flush');
+
+        $this->featureChecker->expects(self::never())
+            ->method('resetCache');
 
         $fileNames = ['attachment/filter/filter1/file.jpg', 'attachment/filter/filter2/file.jpg'];
         $this->innerProvider->expects(self::once())
@@ -72,6 +77,9 @@ class ProductImageFileNamesProviderTest extends \PHPUnit\Framework\TestCase
         $this->configManager->expects(self::never())
             ->method('flush');
 
+        $this->featureChecker->expects(self::never())
+            ->method('resetCache');
+
         $fileNames = ['attachment/filter/filter1/file.jpg', 'attachment/filter/filter2/file.jpg'];
         $this->innerProvider->expects(self::once())
             ->method('getFileNames')
@@ -97,6 +105,9 @@ class ProductImageFileNamesProviderTest extends \PHPUnit\Framework\TestCase
             ->method('set');
         $this->configManager->expects(self::never())
             ->method('flush');
+
+        $this->featureChecker->expects(self::never())
+            ->method('resetCache');
 
         $fileNames = ['attachment/filter/filter1/file.jpg', 'attachment/filter/filter2/file.jpg'];
         $this->innerProvider->expects(self::once())
@@ -127,8 +138,11 @@ class ProductImageFileNamesProviderTest extends \PHPUnit\Framework\TestCase
                 ['oro_product.original_file_names_enabled', false],
                 ['oro_product.original_file_names_enabled', true]
             );
-        $this->configManager->expects(self::exactly(2))
+        $this->configManager->expects(self::never())
             ->method('flush');
+
+        $this->featureChecker->expects(self::exactly(2))
+            ->method('resetCache');
 
         $this->innerProvider->expects(self::exactly(2))
             ->method('getFileNames')
@@ -178,8 +192,11 @@ class ProductImageFileNamesProviderTest extends \PHPUnit\Framework\TestCase
                 ['oro_product.original_file_names_enabled', true],
                 ['oro_product.original_file_names_enabled', false]
             );
-        $this->configManager->expects(self::exactly(2))
+        $this->configManager->expects(self::never())
             ->method('flush');
+
+        $this->featureChecker->expects(self::exactly(2))
+            ->method('resetCache');
 
         $this->innerProvider->expects(self::exactly(2))
             ->method('getFileNames')
@@ -231,8 +248,11 @@ class ProductImageFileNamesProviderTest extends \PHPUnit\Framework\TestCase
                 ['oro_product.original_file_names_enabled', true],
                 ['oro_product.original_file_names_enabled', false]
             );
-        $this->configManager->expects(self::exactly(2))
+        $this->configManager->expects(self::never())
             ->method('flush');
+
+        $this->featureChecker->expects(self::exactly(2))
+            ->method('resetCache');
 
         $this->innerProvider->expects(self::exactly(2))
             ->method('getFileNames')

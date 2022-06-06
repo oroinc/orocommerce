@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\Provider;
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Provider\FileNamesProviderInterface;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 
 /**
@@ -14,11 +15,11 @@ class ProductImageFileNamesProvider implements FileNamesProviderInterface
 {
     private const PRODUCT_ORIGINAL_FILE_NAMES_ENABLED = 'oro_product.original_file_names_enabled';
 
-    /** @var FileNamesProviderInterface */
-    private $innerProvider;
+    private FileNamesProviderInterface $innerProvider;
 
-    /** @var ConfigManager */
-    private $configManager;
+    private ConfigManager $configManager;
+
+    private ?FeatureChecker $featureChecker = null;
 
     public function __construct(
         FileNamesProviderInterface $innerProvider,
@@ -26,6 +27,13 @@ class ProductImageFileNamesProvider implements FileNamesProviderInterface
     ) {
         $this->innerProvider = $innerProvider;
         $this->configManager = $configManager;
+    }
+
+    public function setFeatureChecker(FeatureChecker $featureChecker): self
+    {
+        $this->featureChecker = $featureChecker;
+
+        return $this;
     }
 
     /**
@@ -40,12 +48,12 @@ class ProductImageFileNamesProvider implements FileNamesProviderInterface
         $fileNames = [$this->innerProvider->getFileNames($file)];
         $initialOptionValue = $this->configManager->get(self::PRODUCT_ORIGINAL_FILE_NAMES_ENABLED);
         $this->configManager->set(self::PRODUCT_ORIGINAL_FILE_NAMES_ENABLED, !$initialOptionValue);
-        $this->configManager->flush();
+        $this->clearCacheState();
         try {
             $fileNames[] = $this->innerProvider->getFileNames($file);
         } finally {
             $this->configManager->set(self::PRODUCT_ORIGINAL_FILE_NAMES_ENABLED, $initialOptionValue);
-            $this->configManager->flush();
+            $this->clearCacheState();
         }
 
         return array_values(array_unique(array_merge(...$fileNames)));
@@ -56,5 +64,14 @@ class ProductImageFileNamesProvider implements FileNamesProviderInterface
         return
             $file->getParentEntityClass() === ProductImage::class
             && $file->getOriginalFilename();
+    }
+
+    private function clearCacheState(): void
+    {
+        if ($this->featureChecker instanceof FeatureChecker) {
+            $this->featureChecker->resetCache();
+        } else {
+            $this->configManager->flush();
+        }
     }
 }

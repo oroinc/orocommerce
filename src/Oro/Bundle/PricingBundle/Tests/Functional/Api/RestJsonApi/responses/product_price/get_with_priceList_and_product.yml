@@ -1,0 +1,27 @@
+data:
+    type: 'productprices'
+    attributes:
+        quantity: 250
+        value: '150.0000'
+        currency: 'CAD'
+    relationships:
+        priceList:
+            data:
+                type: 'pricelists'
+        product:
+            data:
+                type: 'products'
+        unit:
+            data:
+                type: 'productunits'
+                id: '<toString(@product_unit.box->code)>'
+included:
+    -
+        type: 'entityfieldfallbackvalues'
+        meta:
+            includeId: '1xyz'
+        attributes:
+            fallback:
+            scalarValue:
+            arrayValue:
+                oro_product_frontend_product_view: 'short'

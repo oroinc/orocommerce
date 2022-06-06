@@ -23,7 +23,6 @@ layout:
                         items_data:
                             categoryProductsCount: '=data["categories_products"].getCountByCategories([2,3,4,6,7,8,9,10,11])'
                         attr:
-                            itemprop: 'hasOfferCatalog'
                             itemscope: ~
                             itemtype: 'http://schema.org/OfferCatalog'
                 featured_category:

@@ -13,7 +13,9 @@ use Oro\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomer;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite;
+use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadDuplicateCombinedProductPrices;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
@@ -26,20 +28,19 @@ class CombinedPriceListRepositoryGCTest extends WebTestCase
     protected function setUp(): void
     {
         $this->initClient();
+    }
+
+    /**
+     * @dataProvider cplRelationsDataProvider
+     */
+    public function testGetUnusedPriceListsIdsForRelation(string $relationClass, bool $hasFullChain = false)
+    {
         $this->loadFixtures([
             LoadWebsiteData::class,
             LoadCustomers::class,
             LoadGroups::class
         ]);
-    }
 
-    /**
-     * @dataProvider cplRelationsDataProvider
-     * @param string $relationClass
-     * @param bool $hasFullChain
-     */
-    public function testGetUnusedPriceListsIdsForRelation($relationClass, $hasFullChain = false)
-    {
         /** @var ObjectManager $em */
         $em = $this->getContainer()->get('doctrine')
             ->getManagerForClass(CombinedPriceList::class);
@@ -65,7 +66,10 @@ class CombinedPriceListRepositoryGCTest extends WebTestCase
         /** @var CombinedPriceListRepository $combinedPriceListRepository */
         $combinedPriceListRepository = $em->getRepository(CombinedPriceList::class);
 
-        $priceListsForDelete = $combinedPriceListRepository->getUnusedPriceListsIds();
+        $helper = $this->getContainer()->get('oro_entity.orm.native_query_executor_helper');
+        $combinedPriceListRepository->scheduleUnusedPriceListsRemoval($helper);
+        $requestedAt = new \DateTime('now', new \DateTimeZone('UTC'));
+        $priceListsForDelete = $combinedPriceListRepository->getPriceListsScheduledForRemoval($helper, $requestedAt);
         static::assertContainsEquals(
             $notAssignedCPL->getId(),
             $priceListsForDelete,
@@ -85,10 +89,7 @@ class CombinedPriceListRepositoryGCTest extends WebTestCase
         }
     }
 
-    /**
-     * @return \Generator
-     */
-    public function cplRelationsDataProvider()
+    public function cplRelationsDataProvider(): \Generator
     {
         $relations = [
             CombinedPriceListToWebsite::class,
@@ -98,17 +99,22 @@ class CombinedPriceListRepositoryGCTest extends WebTestCase
 
         foreach ($relations as $relation) {
             foreach ($this->trueFalseDataProvider() as $value) {
-                yield [$relation, $value];
+                yield [$relation, $value[0]];
             }
         }
     }
 
     /**
      * @dataProvider trueFalseDataProvider
-     * @param bool $hasFullChain
      */
-    public function testGetUnusedPriceListsIdsForActivationRule($hasFullChain = false)
+    public function testGetUnusedPriceListsIdsForActivationRule(bool $hasFullChain = false)
     {
+        $this->loadFixtures([
+            LoadWebsiteData::class,
+            LoadCustomers::class,
+            LoadGroups::class
+        ]);
+
         /** @var ObjectManager $em */
         $em = $this->getContainer()->get('doctrine')
             ->getManagerForClass(CombinedPriceList::class);
@@ -135,7 +141,10 @@ class CombinedPriceListRepositoryGCTest extends WebTestCase
         /** @var CombinedPriceListRepository $combinedPriceListRepository */
         $combinedPriceListRepository = $em->getRepository(CombinedPriceList::class);
 
-        $priceListsForDelete = $combinedPriceListRepository->getUnusedPriceListsIds();
+        $helper = $this->getContainer()->get('oro_entity.orm.native_query_executor_helper');
+        $combinedPriceListRepository->scheduleUnusedPriceListsRemoval($helper);
+        $requestedAt = new \DateTime('now', new \DateTimeZone('UTC'));
+        $priceListsForDelete = $combinedPriceListRepository->getPriceListsScheduledForRemoval($helper, $requestedAt);
         static::assertContainsEquals(
             $notAssignedCPL->getId(),
             $priceListsForDelete,
@@ -163,6 +172,33 @@ class CombinedPriceListRepositoryGCTest extends WebTestCase
         ];
     }
 
+    public function testRemoveDuplicatePrices()
+    {
+        $this->loadFixtures([LoadDuplicateCombinedProductPrices::class]);
+        $doctrine = $this->getContainer()->get('doctrine');
+
+        // Check initial number of prices
+        $priceRepo = $doctrine->getRepository(CombinedProductPrice::class);
+        $this->assertCount(5, $priceRepo->findAll());
+
+        /** @var CombinedPriceListRepository $plRepo */
+        $plRepo = $doctrine->getRepository(CombinedPriceList::class);
+        $plRepo->removeDuplicatePrices();
+
+        // Check that two duplicate records were removed
+        $this->assertCount(3, $priceRepo->findAll());
+
+        // Check that price for second product wasn't removed
+        /** @var CombinedProductPrice $price2 */
+        $price2 = $this->getReference('cpl_price.2');
+        $this->assertNotNull($priceRepo->findOneBy(['id' => $price2->getId()]));
+
+        // Check that price for another CPL wasn't removed
+        /** @var CombinedProductPrice $price3 */
+        $price3 = $this->getReference('cpl_price.3');
+        $this->assertNotNull($priceRepo->findOneBy(['id' => $price3->getId()]));
+    }
+
     /**
      * @param string $relationClass
      * @return BaseCombinedPriceListRelation
@@ -188,11 +224,7 @@ class CombinedPriceListRepositoryGCTest extends WebTestCase
         return $relation;
     }
 
-    /**
-     * @param string $name
-     * @return CombinedPriceList
-     */
-    protected function createCombinedPriceList($name): CombinedPriceList
+    protected function createCombinedPriceList(string $name): CombinedPriceList
     {
         $cpl = new CombinedPriceList();
         $cpl->setEnabled(true);
