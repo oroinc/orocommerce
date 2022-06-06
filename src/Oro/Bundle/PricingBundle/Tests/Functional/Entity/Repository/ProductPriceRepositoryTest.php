@@ -25,6 +25,7 @@ use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class ProductPriceRepositoryTest extends WebTestCase
 {
@@ -704,15 +705,22 @@ class ProductPriceRepositoryTest extends WebTestCase
     }
 
     /**
-     * @param array $a
-     * @param array $b
-     * @return bool
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
-    protected function sort(array $a, array $b)
+    protected function sort(array $a, array $b): int
     {
-        if (!empty($a['unit']) && $a['price_list_id'] === $b['price_list_id'] && $a['currency'] === $b['currency']) {
+        if (!empty($a['unit'])
+            && $a['price_list_id'] === $b['price_list_id']
+            && $a['currency'] === $b['currency']
+        ) {
+            if ($a['unit'] === $b['unit']) {
+                return $a['value'] > $b['value'] ? 1 : 0;
+            }
+
             return $a['unit'] > $b['unit'] ? 1 : 0;
-        } elseif ($a['price_list_id'] === $b['price_list_id']) {
+        }
+
+        if ($a['price_list_id'] === $b['price_list_id']) {
             return $a['currency'] > $b['currency'] ? 1 : 0;
         }
 

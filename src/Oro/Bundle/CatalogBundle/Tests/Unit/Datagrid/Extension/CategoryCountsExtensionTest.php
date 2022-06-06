@@ -45,7 +45,7 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var DatagridInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $datagrid;
 
-    /** @var DatagridInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var DatagridInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $datagridWithoutFilters;
 
     /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject $registry */
@@ -540,5 +540,10 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
                 ]
             ]
         ];
+    }
+
+    public function testGetPriority(): void
+    {
+        $this->assertEquals(-250, $this->extension->getPriority());
     }
 }

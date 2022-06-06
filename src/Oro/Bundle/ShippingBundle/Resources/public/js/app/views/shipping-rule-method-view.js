@@ -24,7 +24,7 @@ define(function(require) {
             enabledFieldSelector: '[data-name="field__enabled"]',
             additionalOptionSelector: '.control-group-oro_shipping_method_type_config',
             focus: false,
-            updateFlag: null
+            updateFlags: []
         },
 
         events: {
@@ -165,9 +165,11 @@ define(function(require) {
             } else {
                 data.push(addMethod(this.$methodSelect.get(0)));
             }
-            data.push({
-                name: this.options.updateFlag,
-                value: true
+            _.each(this.options.updateFlags, function(updateFlag) {
+                data.push({
+                    name: updateFlag,
+                    value: true
+                });
             });
 
             mediator.execute('submitPage', {

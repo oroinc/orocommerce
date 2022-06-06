@@ -58,11 +58,6 @@ class CombinedPriceListActivationStatusHelperTest extends \PHPUnit\Framework\Tes
     {
         $cpl = new CombinedPriceList();
 
-        $this->configManager->expects($this->once())
-            ->method('get')
-            ->with('oro_pricing.offset_of_processing_cpl_prices')
-            ->willReturn(10);
-
         $repo = $this->assertRepositoryCall();
         $repo->expects($this->once())
             ->method('hasActivationRules')
@@ -80,11 +75,6 @@ class CombinedPriceListActivationStatusHelperTest extends \PHPUnit\Framework\Tes
     public function testIsReadyForBuildHasNoActiveScedule()
     {
         $cpl = new CombinedPriceList();
-
-        $this->configManager->expects($this->once())
-            ->method('get')
-            ->with('oro_pricing.offset_of_processing_cpl_prices')
-            ->willReturn(10);
 
         $repo = $this->assertRepositoryCall();
         $repo->expects($this->once())

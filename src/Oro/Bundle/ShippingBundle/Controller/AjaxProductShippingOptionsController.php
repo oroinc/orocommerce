@@ -4,6 +4,7 @@ namespace Oro\Bundle\ShippingBundle\Controller;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductType;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
@@ -21,6 +22,16 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class AjaxProductShippingOptionsController extends AbstractController
 {
+    /** Additional options that must be provided to the form that processed within ajax requests */
+    private array $ajaxFormsAdditionalOptions = [];
+
+    public function addAjaxFormsAdditionalOption(
+        string $ajaxFormsAdditionalOption,
+        $ajaxFormsAdditionalOptionValue
+    ): void {
+        $this->ajaxFormsAdditionalOptions[$ajaxFormsAdditionalOption] = $ajaxFormsAdditionalOptionValue;
+    }
+
     /**
      * Get available FreightClasses codes
      *
@@ -47,10 +58,10 @@ class AjaxProductShippingOptionsController extends AbstractController
         $activeShippingOptions->setProduct($product);
 
         /* @var $provider FreightClassesProvider */
-        $provider = $this->get('oro_shipping.provider.measure_units.freight');
+        $provider = $this->get(FreightClassesProvider::class);
 
         /* @var $formatter UnitLabelFormatterInterface */
-        $formatter = $this->get('oro_shipping.formatter.freight_class_label');
+        $formatter = $this->get(UnitLabelFormatter::class);
 
         $units = $provider->getFreightClasses($activeShippingOptions);
 
@@ -68,7 +79,7 @@ class AjaxProductShippingOptionsController extends AbstractController
     private function buildProduct(array $productData)
     {
         $product = new Product();
-        $form = $this->createForm(ProductType::class, $product);
+        $form = $this->createForm(ProductType::class, $product, $this->ajaxFormsAdditionalOptions);
         $form->submit($productData);
 
         return $product;
@@ -90,7 +101,14 @@ class AjaxProductShippingOptionsController extends AbstractController
         $activeShippingOptions = null;
         foreach ($shippingOptionsData as $shippingOptionsRow) {
             $shippingOptions = new ProductShippingOptions();
-            $form = $this->createForm(ProductShippingOptionsType::class, $shippingOptions, ['by_reference' => true]);
+            $form = $this->createForm(
+                ProductShippingOptionsType::class,
+                $shippingOptions,
+                \array_merge(
+                    ['by_reference' => true],
+                    $this->ajaxFormsAdditionalOptions
+                )
+            );
             $form->submit($shippingOptionsRow);
             $productUnit = $shippingOptions->getProductUnit();
             if ($productUnit && $unitCode === $productUnit->getCode()) {
@@ -100,5 +118,19 @@ class AjaxProductShippingOptionsController extends AbstractController
         }
 
         return $activeShippingOptions;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                FreightClassesProvider::class,
+                UnitLabelFormatter::class,
+            ]
+        );
     }
 }

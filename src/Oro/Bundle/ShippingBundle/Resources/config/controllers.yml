@@ -1,0 +1,18 @@
+services:
+    _defaults:
+        public: true
+
+    Oro\Bundle\ShippingBundle\Controller\ShippingMethodsConfigsRuleController:
+        calls:
+            - ['setContainer', ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
+            - { name: container.service_subscriber, id: oro_shipping.form.handler.shipping_methods_configs_rule, key: Oro\Bundle\ShippingBundle\Form\Handler\ShippingMethodsConfigsRuleHandler }
+
+    Oro\Bundle\ShippingBundle\Controller\AjaxProductShippingOptionsController:
+        calls:
+            - ['setContainer', ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
+            - { name: container.service_subscriber, id: oro_shipping.formatter.freight_class_label, key: Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter }
+            - { name: container.service_subscriber, id: oro_shipping.provider.measure_units.freight, key: Oro\Bundle\ShippingBundle\Provider\FreightClassesProvider }

@@ -11,6 +11,9 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Query\Factory\WebsiteQueryFactory;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * @dbIsolationPerTest
+ */
 class ProductRepositoryTest extends WebTestCase
 {
     protected function setUp(): void

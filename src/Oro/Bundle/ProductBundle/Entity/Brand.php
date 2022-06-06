@@ -547,6 +547,8 @@ class Brand extends ExtendBrand implements
             $this->slugPrototypes = new ArrayCollection();
             $this->slugs = new ArrayCollection();
             $this->slugPrototypesWithRedirect = new SlugPrototypesWithRedirect($this->slugPrototypes);
+
+            $this->cloneLocalizedFallbackValueAssociations();
         }
     }
 

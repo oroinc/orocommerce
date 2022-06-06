@@ -769,10 +769,9 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And click "Search Button"
     And click "View Details" for "CNFC" product
     When I should see an "Configurable Product Shopping List Form" element
-    And I fill "Configurable Product Form" with:
-      | Attributes_1 | Value 12 |
-      | Attributes_2 | Value 23 |
-      | Attributes_3 | Value 31 |
+    And I fill in "Attribute 1" with "Value 12"
+    And I fill in "Attribute 2" with "Value 23"
+    And I fill in "Attribute 3" with "Value 32"
     And I click on "Shopping List Dropdown"
     And I click "Create New Shopping List"
     And I fill in "Shopping List Name" with "Product C Shopping List"

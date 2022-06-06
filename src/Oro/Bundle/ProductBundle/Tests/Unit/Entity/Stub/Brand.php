@@ -77,4 +77,9 @@ class Brand extends BaseBrand
 
         return false;
     }
+
+    public function cloneLocalizedFallbackValueAssociations(): self
+    {
+        return $this;
+    }
 }

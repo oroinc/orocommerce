@@ -36,6 +36,7 @@ class CombinedPriceListActivationStatusHelper implements CombinedPriceListActiva
      */
     public function isReadyForBuild(CombinedPriceList $cpl): bool
     {
+        $activationDate = new \DateTime('now', new \DateTimeZone('UTC'));
         /** @var CombinedPriceListActivationRuleRepository $cplActivationRepo */
         $cplActivationRepo = $this->registry
             ->getManagerForClass(CombinedPriceListActivationRule::class)
@@ -45,7 +46,7 @@ class CombinedPriceListActivationStatusHelper implements CombinedPriceListActiva
             return true;
         }
 
-        $activeRule = $cplActivationRepo->getActiveRuleByScheduledCpl($cpl, $this->getActivateDate());
+        $activeRule = $cplActivationRepo->getActiveRuleByScheduledCpl($cpl, $activationDate);
         if ($activeRule) {
             return true;
         }

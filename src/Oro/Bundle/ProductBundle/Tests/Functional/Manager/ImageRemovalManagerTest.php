@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\Manager;
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Tests\Functional\Manager\ImageRemovalManagerTestingTrait;
 use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
+use Oro\Bundle\MessageQueueBundle\Consumption\CacheState;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
@@ -23,6 +24,8 @@ class ImageRemovalManagerTest extends WebTestCase
     /** @var bool */
     private $attachmentInitialOriginalFileNames;
 
+    private CacheState $cacheState;
+
     protected function setUp(): void
     {
         $this->initClient([], self::generateBasicAuthHeader());
@@ -32,6 +35,7 @@ class ImageRemovalManagerTest extends WebTestCase
             ->get(self::PRODUCT_ORIGINAL_FILE_NAMES_ENABLED);
         $this->attachmentInitialOriginalFileNames = $globalConfigManager
             ->get(self::ATTACHMENT_ORIGINAL_FILE_NAMES_ENABLED);
+        $this->cacheState = self::getContainer()->get('oro_message_queue.consumption.cache_state');
 
         $this->setOriginalFileNames(self::ATTACHMENT_ORIGINAL_FILE_NAMES_ENABLED, false);
     }
@@ -79,8 +83,12 @@ class ImageRemovalManagerTest extends WebTestCase
         $fileNames = $this->getImageFileNames($file);
         self::assertCount(2, $fileNames);
 
+        $cacheChangeDate = $this->cacheState->getChangeDate();
+
         $this->removeFiles($file);
         $this->assertFilesDoNotExist($file, $fileNames);
+
+        self::assertEquals($cacheChangeDate, $this->cacheState->getChangeDate());
     }
 
     public function testRemoveFilesWhenOriginalFileNamesEnabled(): void
@@ -99,8 +107,12 @@ class ImageRemovalManagerTest extends WebTestCase
             }
         }
 
+        $cacheChangeDate = $this->cacheState->getChangeDate();
+
         $this->removeFiles($file);
         $this->assertFilesDoNotExist($file, $fileNames);
+
+        self::assertEquals($cacheChangeDate, $this->cacheState->getChangeDate());
     }
 
     public function testRemoveFilesWhenOriginalFileNamesDisabledButThereAreFilesCreatedWhenItWasEnabled(): void
@@ -119,8 +131,12 @@ class ImageRemovalManagerTest extends WebTestCase
         $fileNames = array_unique(array_merge($fileNames, $this->getImageFileNames($file)));
         self::assertCount(4, $fileNames);
 
+        $cacheChangeDate = $this->cacheState->getChangeDate();
+
         $this->removeFiles($file);
         $this->assertFilesDoNotExist($file, $fileNames);
+
+        self::assertEquals($cacheChangeDate, $this->cacheState->getChangeDate());
     }
 
     public function testRemoveFilesWhenOriginalFileNamesEnabledButThereAreFilesCreatedWhenItWasDisabled(): void
@@ -139,7 +155,11 @@ class ImageRemovalManagerTest extends WebTestCase
         $fileNames = array_unique(array_merge($fileNames, $this->getImageFileNames($file)));
         self::assertCount(4, $fileNames);
 
+        $cacheChangeDate = $this->cacheState->getChangeDate();
+
         $this->removeFiles($file);
         $this->assertFilesDoNotExist($file, $fileNames);
+
+        self::assertEquals($cacheChangeDate, $this->cacheState->getChangeDate());
     }
 }

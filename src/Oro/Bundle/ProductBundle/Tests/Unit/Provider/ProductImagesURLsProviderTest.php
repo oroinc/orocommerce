@@ -9,13 +9,11 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Helper\ProductImageHelper;
 use Oro\Bundle\ProductBundle\Provider\ProductImagesURLsProvider;
+use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product as ProductStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProductImage;
-use Oro\Component\Testing\Unit\EntityTrait;
 
 class ProductImagesURLsProviderTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
-
     /**
      * @internal
      */
@@ -101,9 +99,8 @@ class ProductImagesURLsProviderTest extends \PHPUnit\Framework\TestCase
 
         $productImage2 = (new StubProductImage())
             ->setImage($imageFile2);
-        $productWithImages = $this->getEntity(Product::class, [
-            'id' => self::PRODUCT_ID,
-        ]);
+        $productWithImages = (new ProductStub())
+            ->setId(self::PRODUCT_ID);
         $productWithoutImages = clone $productWithImages;
         $productWithImages->addImage($productImage1)->addImage($productImage2);
 

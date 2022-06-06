@@ -70,6 +70,10 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                         'checkout_max_line_items_per_page' => [
                             'value' => 1000,
                             'scope' => 'app'
+                        ],
+                        'new_checkout_shopping_list_item_changed' => [
+                            'value' => false,
+                            'scope' => 'app'
                         ]
                     ]
                 ]

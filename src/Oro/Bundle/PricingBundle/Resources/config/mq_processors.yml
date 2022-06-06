@@ -32,6 +32,7 @@ services:
             - '@event_dispatcher'
         calls:
             - [setTopic, ['@Oro\Bundle\PricingBundle\Async\Topic\CombineSingleCombinedPriceListPricesTopic']]
+            - [setScheduleResolver, ['@oro_pricing.resolver.combined_product_schedule_resolver']]
         tags:
             - { name: monolog.logger, channel: oro_pricing }
 

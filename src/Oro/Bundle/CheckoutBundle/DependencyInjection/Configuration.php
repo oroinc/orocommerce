@@ -57,6 +57,10 @@ class Configuration implements ConfigurationInterface
                     'type' => 'integer',
                     'value' => 1000,
                 ],
+                'new_checkout_shopping_list_item_changed' => [
+                    'type' => 'boolean',
+                    'value' => false,
+                ],
             ]
         );
 

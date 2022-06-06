@@ -1538,6 +1538,8 @@ services:
         arguments:
             - '@oro_product.provider.product_image_file_names.inner'
             - '@oro_config.manager'
+        calls:
+            - [setFeatureChecker, ['@oro_featuretoggle.checker.feature_checker']]
 
     oro_product.event_listener.attribute_changes:
         class: 'Oro\Bundle\ProductBundle\EventListener\AttributeChangesListener'
