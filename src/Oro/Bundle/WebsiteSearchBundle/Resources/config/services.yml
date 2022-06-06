@@ -25,6 +25,8 @@ services:
             - '@oro_website_search.placeholder_decorator'
             - '@oro_website_search.indexer.input_validator'
             - '@event_dispatcher'
+        calls:
+            - ['setRegexPlaceholder', ['@oro_website_search.regex_placeholder_decorator']]
 
     oro_website_search.placeholder.registry:
         class: 'Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderRegistry'
@@ -157,6 +159,10 @@ services:
         class: 'Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderDecorator'
         arguments:
             - '@oro_website_search.placeholder.registry'
+
+    oro_website_search.regex_placeholder_decorator:
+        class: 'Oro\Bundle\WebsiteSearchBundle\Placeholder\RegexPlaceholderDecorator'
+        parent: oro_website_search.placeholder_decorator
 
     oro_website_search.indexer.input_validator:
         class: 'Oro\Bundle\WebsiteSearchBundle\Engine\IndexerInputValidator'

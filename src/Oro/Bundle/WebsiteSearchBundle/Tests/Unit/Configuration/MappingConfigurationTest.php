@@ -106,6 +106,7 @@ class MappingConfigurationTest extends \PHPUnit\Framework\TestCase
                         'fulltext' => true,
                         'organization_id' => null,
                         'store' => true,
+                        'group' => 'main'
                     ],
                     'pageSecondField' => [
                         'name' => 'pageSecondField',
@@ -113,6 +114,7 @@ class MappingConfigurationTest extends \PHPUnit\Framework\TestCase
                         'fulltext' => false,
                         'organization_id' => null,
                         'store' => true,
+                        'group' => 'main'
                     ]
                 ]
             ],
@@ -125,6 +127,7 @@ class MappingConfigurationTest extends \PHPUnit\Framework\TestCase
                         'fulltext' => true,
                         'organization_id' => 3,
                         'store' => true,
+                        'group' => 'main'
                     ],
                     'productSecondField' => [
                         'name' => 'productSecondField',
@@ -132,6 +135,7 @@ class MappingConfigurationTest extends \PHPUnit\Framework\TestCase
                         'fulltext' => false,
                         'organization_id' => null,
                         'store' => true,
+                        'group' => 'main'
                     ],
                     'productThirdField' => [
                         'name'  => 'productThirdField',
@@ -139,6 +143,7 @@ class MappingConfigurationTest extends \PHPUnit\Framework\TestCase
                         'store' => false,
                         'fulltext' => false,
                         'organization_id' => null,
+                        'group' => 'main'
                     ]
                 ]
             ]

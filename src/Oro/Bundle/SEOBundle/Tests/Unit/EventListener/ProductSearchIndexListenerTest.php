@@ -10,20 +10,50 @@ use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SEOBundle\EventListener\ProductSearchIndexListener;
 use Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider;
+use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class ProductSearchIndexListenerTest extends \PHPUnit\Framework\TestCase
 {
+    use EntityTrait;
+
+    public function testOnWebsiteSearchIndexNotSupportedFieldsGroup()
+    {
+        $context = [AbstractIndexer::CONTEXT_FIELD_GROUPS => ['image']];
+        $event = new IndexEntityEvent(Category::class, [$this->getEntity(Category::class, ['id' => 1])], $context);
+
+        $localizationProvider = $this->createMock(AbstractWebsiteLocalizationProvider::class);
+        $localizationProvider->expects($this->never())
+            ->method($this->anything());
+
+        $websiteContextManager = $this->createMock(WebsiteContextManager::class);
+        $websiteContextManager->expects($this->never())
+            ->method($this->anything());
+
+        $doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $doctrineHelper->expects($this->never())
+            ->method($this->anything());
+
+        $testable = new ProductSearchIndexListener(
+            $doctrineHelper,
+            $localizationProvider,
+            $websiteContextManager
+        );
+        $testable->onWebsiteSearchIndex($event);
+    }
+
     /**
+     * @dataProvider contextDataProvider
      * @SuppressWarnings(ExcessiveMethodLength)
      */
-    public function testOnWebsiteSearchIndex()
+    public function testOnWebsiteSearchIndex(array $context)
     {
-        $entityIds     = [1, 2];
+        $entityIds = [1, 2];
         $localizations = $this->getLocalizations();
-        $entities      = $this->getProductEntities($entityIds, $localizations);
+        $entities = $this->getProductEntities($entityIds, $localizations);
         /** @var IndexEntityEvent|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->getMockBuilder(IndexEntityEvent::class)
             ->disableOriginalConstructor()->getMock();
@@ -32,9 +62,9 @@ class ProductSearchIndexListenerTest extends \PHPUnit\Framework\TestCase
             ->method('getEntities')
             ->willReturn($entities);
 
-        $event->expects($this->once())
+        $event->expects($this->any())
             ->method('getContext')
-            ->willReturn([]);
+            ->willReturn($context);
         /** @var AbstractWebsiteLocalizationProvider|\PHPUnit\Framework\MockObject\MockObject $localizationProvider */
         $localizationProvider = $this->getMockBuilder(AbstractWebsiteLocalizationProvider::class)
             ->disableOriginalConstructor()->getMock();
@@ -108,7 +138,7 @@ class ProductSearchIndexListenerTest extends \PHPUnit\Framework\TestCase
             ->with(BaseCategory::class)
             ->willReturn($repository);
 
-        $websiteContextManager->expects($this->once())->method('getWebsiteId')->with([])->willReturn(1);
+        $websiteContextManager->expects($this->once())->method('getWebsiteId')->with($context)->willReturn(1);
 
         $testable = new ProductSearchIndexListener(
             $doctrineHelper,
@@ -118,8 +148,14 @@ class ProductSearchIndexListenerTest extends \PHPUnit\Framework\TestCase
         $testable->onWebsiteSearchIndex($event);
     }
 
+    public function contextDataProvider(): \Generator
+    {
+        yield [[]];
+        yield [[AbstractIndexer::CONTEXT_FIELD_GROUPS => ['main']]];
+    }
+
     /**
-     * @param array          $entityIds
+     * @param array $entityIds
      * @param Localization[] $localizations
      * @return \Oro\Bundle\ProductBundle\Entity\Product[]|\PHPUnit\Framework\MockObject\MockObject[]
      */
@@ -237,6 +273,7 @@ class ProductSearchIndexListenerTest extends \PHPUnit\Framework\TestCase
                     [$localizations['EN'], 'English Category meta keywords'],
                 ]
             );
+
         return $category;
     }
 }

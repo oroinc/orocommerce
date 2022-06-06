@@ -13,6 +13,7 @@ use Oro\Bundle\PricingBundle\EventListener\WebsiteSearchProductPriceFlatIndexerL
 use Oro\Bundle\PricingBundle\Model\AbstractPriceListTreeHandler;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -77,6 +78,24 @@ class WebsiteSearchProductPriceFlatIndexerListenerTest extends \PHPUnit\Framewor
             ->willReturn(false);
 
         $event = $this->createMock(IndexEntityEvent::class);
+        $event->expects($this->any())
+            ->method('getContext')
+            ->willReturn([]);
+
+        $this->websiteContextManager->expects($this->never())->method($this->anything());
+
+        $this->listener->onWebsiteSearchIndex($event);
+    }
+
+    public function testOnWebsiteSearchIndexUnsupportedFieldGroup()
+    {
+        $this->featureChecker->expects($this->never())
+            ->method('isFeatureEnabled');
+
+        $event = $this->createMock(IndexEntityEvent::class);
+        $event->expects($this->any())
+            ->method('getContext')
+            ->willReturn([AbstractIndexer::CONTEXT_FIELD_GROUPS => ['main']]);
 
         $this->websiteContextManager->expects($this->never())->method($this->anything());
 
@@ -101,14 +120,17 @@ class WebsiteSearchProductPriceFlatIndexerListenerTest extends \PHPUnit\Framewor
         $this->listener->onWebsiteSearchIndex($event);
     }
 
-    public function testOnWebsiteSearchIndex()
+    /**
+     * @dataProvider contextDataProvider
+     */
+    public function testOnWebsiteSearchIndex(array $context)
     {
         $basePriceList = $this->getEntity(PriceList::class, ['id' => 2]);
         $accuracy = 'customer';
         $products = [new Product()];
         $website = $this->getEntity(Website::class, ['id' => 1]);
         $event = $this->createMock(IndexEntityEvent::class);
-        $event->method('getContext')->willReturn([]);
+        $event->method('getContext')->willReturn($context);
         $event->method('getEntities')->willReturn($products);
 
         $this->featureChecker->expects($this->once())
@@ -198,5 +220,11 @@ class WebsiteSearchProductPriceFlatIndexerListenerTest extends \PHPUnit\Framewor
         );
 
         $this->listener->onWebsiteSearchIndex($event);
+    }
+
+    public function contextDataProvider()
+    {
+        yield [[]];
+        yield [[AbstractIndexer::CONTEXT_FIELD_GROUPS => ['pricing']]];
     }
 }

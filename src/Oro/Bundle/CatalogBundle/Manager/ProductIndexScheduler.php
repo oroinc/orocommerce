@@ -32,9 +32,23 @@ class ProductIndexScheduler
      */
     public function scheduleProductsReindex(array $categories, $websiteId = null, $isScheduled = true)
     {
+        $this->scheduleProductsReindexWithFieldGroup($categories, $websiteId, $isScheduled);
+    }
+
+    public function scheduleProductsReindexWithFieldGroup(
+        array $categories,
+        $websiteId = null,
+        $isScheduled = true,
+        array $fieldGroups = null
+    ): void {
         /** @var CategoryRepository $repository */
         $repository = $this->doctrineHelper->getEntityRepository(Category::class);
         $productIds = $repository->getProductIdsByCategories($categories);
-        $this->productReindexManager->reindexProducts($productIds, $websiteId, $isScheduled);
+        $this->productReindexManager->reindexProductsWithFieldGroups(
+            $productIds,
+            $websiteId,
+            $isScheduled,
+            $fieldGroups
+        );
     }
 }

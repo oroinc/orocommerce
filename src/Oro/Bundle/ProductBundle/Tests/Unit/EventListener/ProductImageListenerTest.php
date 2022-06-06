@@ -116,7 +116,7 @@ class ProductImageListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->postPersist($productImage, $this->lifecycleArgs);
     }
 
-    public function testPostPersistForNotMAinAndListingImage()
+    public function testPostPersistForNotMainAndListingImage(): void
     {
         $this->imageTypeProvider->expects($this->any())
             ->method('getMaxNumberByType')
@@ -214,8 +214,7 @@ class ProductImageListenerTest extends \PHPUnit\Framework\TestCase
             ->with(
                 new ProductImageResizeEvent($productImage->getId(), true),
                 ProductImageResizeEvent::NAME
-            )
-            ->willReturn(true);
+            );
 
         $this->listener->postUpdate($productImage, $this->lifecycleArgs);
     }
@@ -237,8 +236,7 @@ class ProductImageListenerTest extends \PHPUnit\Framework\TestCase
             ->with(
                 new ProductImageResizeEvent($productImage->getId(), true),
                 ProductImageResizeEvent::NAME
-            )
-            ->willReturn(true);
+            );
 
         $this->listener->filePostUpdate(new File(), $this->lifecycleArgs);
     }
@@ -261,7 +259,9 @@ class ProductImageListenerTest extends \PHPUnit\Framework\TestCase
                         101 => 101,
                         102 => 102,
                         103 => 103,
-                    ]
+                    ],
+                    true,
+                    ['image']
                 ),
                 ReindexationRequestEvent::EVENT_NAME
             );

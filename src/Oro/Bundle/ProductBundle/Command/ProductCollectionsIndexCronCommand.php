@@ -9,6 +9,8 @@ use Oro\Bundle\ProductBundle\Async\Topics;
 use Oro\Bundle\ProductBundle\EventListener\ProductCollectionsScheduleConfigurationListener;
 use Oro\Bundle\ProductBundle\Exception\FailedToRunReindexProductCollectionJobException;
 use Oro\Bundle\ProductBundle\Handler\AsyncReindexProductCollectionHandlerInterface as ReindexHandler;
+use Oro\Bundle\ProductBundle\Handler\AsyncReindexProductCollectionHandlerWithFieldGroupsInterface
+    as ReindexHandlerWithFieldGroups;
 use Oro\Bundle\ProductBundle\Helper\ProductCollectionSegmentHelper;
 use Oro\Bundle\ProductBundle\Model\AccumulateSegmentMessageFactory as AccumulateMessageFactory;
 use Oro\Bundle\ProductBundle\Model\SegmentMessageFactory;
@@ -100,11 +102,20 @@ HELP
         $partialMessageIterator = $this->getPartialMessageIterator($isFull, $hasSchedules, $output);
 
         try {
-            $this->collectionIndexationHandler->handle(
-                $partialMessageIterator,
-                $rootJobName,
-                true
-            );
+            if ($this->collectionIndexationHandler instanceof ReindexHandlerWithFieldGroups) {
+                $this->collectionIndexationHandler->handleWithFieldGroups(
+                    $partialMessageIterator,
+                    $rootJobName,
+                    true,
+                    ['main']
+                );
+            } else {
+                $this->collectionIndexationHandler->handle(
+                    $partialMessageIterator,
+                    $rootJobName,
+                    true
+                );
+            }
         } catch (FailedToRunReindexProductCollectionJobException $jobException) {
             $output->writeln(
                 sprintf(

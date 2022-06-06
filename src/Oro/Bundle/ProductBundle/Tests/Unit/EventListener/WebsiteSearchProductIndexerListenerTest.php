@@ -4,17 +4,17 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
-use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityConfigBundle\Entity\Repository\AttributeFamilyRepository;
 use Oro\Bundle\EntityConfigBundle\Manager\AttributeManager;
-use Oro\Bundle\InventoryBundle\Tests\Unit\Inventory\Stub\InventoryStatusStub;
+use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Oro\Bundle\ProductBundle\EventListener\WebsiteSearchProductIndexerListener;
@@ -23,11 +23,13 @@ use Oro\Bundle\ProductBundle\Search\ProductIndexDataProviderInterface;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductWithInventoryStatus;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider;
+use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\IndexDataProvider;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderValue;
+use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCase
@@ -51,7 +53,9 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
     /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $registry;
 
-    /** @var AttachmentManager|\PHPUnit\Framework\MockObject\MockObject */
+    /**
+     * @var AttachmentManager|\PHPUnit\Framework\MockObject\MockObject
+     */
     private $attachmentManager;
 
     /** @var AttributeManager|\PHPUnit\Framework\MockObject\MockObject */
@@ -79,6 +83,26 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
         );
     }
 
+    public function testOnWebsiteSearchUnsupportedFieldsGroup()
+    {
+        $attributeFamilyId = 42;
+        $productId = 1;
+        $attributeFamily = $this->getAttributeFamily($attributeFamilyId);
+        $product = $this->getProduct($productId, $attributeFamily);
+
+        $this->websiteLocalizationProvider->expects($this->never())
+            ->method($this->anything());
+        $this->websiteContextManager->expects($this->never())
+            ->method($this->anything());
+        $this->attributeManager->expects($this->never())
+            ->method($this->anything());
+        $this->dataProvider->expects($this->never())
+            ->method($this->anything());
+
+        $event = new IndexEntityEvent(Product::class, [$product], [AbstractIndexer::CONTEXT_FIELD_GROUPS => ['image']]);
+        $this->listener->onWebsiteSearchIndex($event);
+    }
+
     /**
      * @param Localization $localization
      * @param string|null $string
@@ -98,9 +122,10 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
     }
 
     /**
-     * * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     * @dataProvider validContextDataProvider
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function testOnWebsiteSearchIndexProductClass()
+    public function testOnWebsiteSearchIndexProductClass(array $context)
     {
         $organization = new Organization();
         $website = new Website();
@@ -118,50 +143,32 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
             ->willReturn([$firstLocale, $secondLocale]);
 
         $attributeFamilyId = 42;
+        $productId = 1;
         $attributeFamily = $this->getEntity(AttributeFamily::class, ['id' => $attributeFamilyId]);
 
-        $product = $this->getEntity(
-            ProductWithInventoryStatus::class,
-            [
-                'id' => 777,
-                'sku' => 'sku123Абв',
-                'status' => Product::STATUS_ENABLED,
-                'type' => Product::TYPE_CONFIGURABLE,
-                'inventoryStatus' => new InventoryStatusStub('in_stock', 'In Stock'),
-                'newArrival' => true,
-                'createdAt' => new \DateTime('2017-09-09 00:00:00'),
-                'attributeFamily' => $attributeFamily,
-            ]
-        );
+        $product = $this->getProduct($productId, $attributeFamily);
 
-        $event = new IndexEntityEvent(Product::class, [$product], []);
+        $event = new IndexEntityEvent(Product::class, [$product], $context);
 
         $this->websiteContextManager
             ->expects($this->once())
             ->method('getWebsiteId')
-            ->with([])
+            ->with($context)
             ->willReturn(1);
 
         $productRepository = $this->createMock(ProductRepository::class);
         $unitRepository = $this->createMock(ProductUnitRepository::class);
         $attributeFamilyRepository = $this->createMock(AttributeFamilyRepository::class);
 
-        $entity = $this->getImageFileEntities();
-
-        $productRepository->expects($this->once())
-            ->method('getListingImagesFilesByProductIds')
-            ->with([777])
-            ->willReturn([777 => $entity]);
-
         $unitRepository->expects($this->once())
             ->method('getProductsUnits')
-            ->with([777])
-            ->willReturn([777 => ['item', 'set']]);
+            ->with([$productId])
+            ->willReturn([$productId => ['item', 'set']]);
 
         $unitRepository->expects($this->once())
             ->method('getPrimaryProductsUnits')
-            ->with([777])
-            ->willReturn([777 => 'item']);
+            ->with([$productId])
+            ->willReturn([$productId => 'item']);
 
         $attribute1 = $this->getEntity(FieldConfigModel::class, ['id' => 1001, 'fieldName' => 'sku']);
         $attribute2 = $this->getEntity(FieldConfigModel::class, ['id' => 1002, 'fieldName' => 'newArrival']);
@@ -188,35 +195,19 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
             ->method('find')
             ->with(Website::class, 1)
             ->willReturn($website);
-        $em->expects($this->exactly(4))
-            ->method('getRepository')
-            ->withConsecutive(
-                ['OroProductBundle:Product'],
-                ['OroProductBundle:ProductUnit'],
-                ['OroProductBundle:ProductUnit'],
-                [AttributeFamily::class]
-            )
-            ->willReturnOnConsecutiveCalls(
-                $productRepository,
-                $unitRepository,
-                $unitRepository,
-                $attributeFamilyRepository
-            );
         $this->registry->expects($this->any())
             ->method('getManagerForClass')
             ->willReturn($em);
+        $this->registry->expects($this->any())
+            ->method('getRepository')
+            ->withConsecutive()
+            ->willReturnMap([
+                [Product::class, null, $productRepository],
+                [ProductUnit::class, null, $unitRepository],
+                [AttributeFamily::class, null, $attributeFamilyRepository]
+            ]);
 
-        $this->attachmentManager->expects($this->exactly(3))
-            ->method('getFilteredImageUrl')
-            ->withConsecutive([$entity], [$entity])
-            ->willReturnOnConsecutiveCalls(
-                '/large/image',
-                '/medium/image',
-                '/small/image'
-            );
-
-        $this->attributeManager
-            ->expects($this->once())
+        $this->attributeManager->expects($this->once())
             ->method('getActiveAttributesByClassForOrganization')
             ->with(Product::class, $organization)
             ->willReturn([$attribute1, $attribute2, $attribute3, $attribute4, $attribute5, $attribute6]);
@@ -289,24 +280,6 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
                     'all_text' => true,
                 ],
             ],
-            'image_product_small' => [
-                [
-                    'value' => '/small/image',
-                    'all_text' => false
-                ]
-            ],
-            'image_product_medium' => [
-                [
-                    'value' => '/medium/image',
-                    'all_text' => false
-                ]
-            ],
-            'image_product_large' => [
-                [
-                    'value' => '/large/image',
-                    'all_text' => false
-                ]
-            ],
             'product_units' => [
                 [
                     'value' => serialize(['item', 'set']),
@@ -351,6 +324,12 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
         $this->assertEquals($expected, $event->getEntitiesData());
     }
 
+    public function validContextDataProvider(): \Generator
+    {
+        yield [[]];
+        yield [[AbstractIndexer::CONTEXT_FIELD_GROUPS => ['main']]];
+    }
+
     /**
      * Create string with not printable control symbols
      *
@@ -367,19 +346,27 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
         return $multicharText . 'ASDF456' . chr(127) . 'ASDF789';
     }
 
-    /**
-     * @return \PHPUnit\Framework\MockObject\MockObject
-     */
-    private function getImageFileEntities()
+    private function getAttributeFamily(int $id): AttributeFamily
     {
-        $file = $this->createMock(File::class);
+        $attributeFamily = new AttributeFamily();
+        ReflectionUtil::setId($attributeFamily, $id);
 
-        $file->method('getId')
-            ->willReturn(1);
+        return $attributeFamily;
+    }
 
-        $file->method('getFilename')
-            ->willReturn('/image/filename');
+    private function getProduct(int $productId, AttributeFamily $attributeFamily): Product
+    {
+        $product = new ProductWithInventoryStatus();
+        ReflectionUtil::setId($product, $productId);
+        $product->setSku('sku123Абв');
+        $product->setStatus(Product::STATUS_ENABLED);
+        $product->setType(Product::TYPE_CONFIGURABLE);
+        $product->setInventoryStatus(new TestEnumValue('in_stock', 'In Stock'));
+        $product->setNewArrival(true);
+        $product->setCreatedAt(new \DateTime('2017-09-09 00:00:00'));
+        $product->setAttributeFamily($attributeFamily);
+        $product->setVariantFields(['field1', 'field2']);
 
-        return $file;
+        return $product;
     }
 }

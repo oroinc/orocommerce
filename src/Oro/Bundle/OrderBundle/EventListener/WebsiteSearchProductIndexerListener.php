@@ -6,12 +6,17 @@ use Oro\Bundle\CustomerBundle\Placeholder\CustomerUserIdPlaceholder;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\OrderBundle\Provider\LatestOrderedProductsInfoProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 
+/**
+ * Adds information about users who ordered products to website search index for product entity
+ */
 class WebsiteSearchProductIndexerListener
 {
     use FeatureCheckerHolderTrait;
+    use ContextTrait;
 
     /**
      * @var WebsiteContextManager
@@ -33,6 +38,10 @@ class WebsiteSearchProductIndexerListener
 
     public function onWebsiteSearchIndex(IndexEntityEvent $event)
     {
+        if (!$this->hasContextFieldGroup($event->getContext(), 'order')) {
+            return;
+        }
+
         $website = $this->websiteContextManager->getWebsite($event->getContext());
         if (!$website) {
             $event->stopPropagation();
@@ -48,7 +57,7 @@ class WebsiteSearchProductIndexerListener
         $products = $event->getEntities();
 
         $productIds = array_map(
-            function (Product $product) {
+            static function (Product $product) {
                 return $product->getId();
             },
             $products

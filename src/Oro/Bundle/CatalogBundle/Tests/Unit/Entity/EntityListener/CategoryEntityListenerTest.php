@@ -42,8 +42,8 @@ class CategoryEntityListenerTest extends \PHPUnit\Framework\TestCase
         $category = new Category();
 
         $this->productIndexScheduler->expects($this->once())
-            ->method('scheduleProductsReindex')
-            ->with([$category]);
+            ->method('scheduleProductsReindexWithFieldGroup')
+            ->with([$category], null, true, ['main']);
 
         $this->categoryCache->expects($this->once())
             ->method('deleteAll');
@@ -84,7 +84,7 @@ class CategoryEntityListenerTest extends \PHPUnit\Framework\TestCase
 
         $changesSet = [];
         $event = new PreUpdateEventArgs($category, $emMock, $changesSet);
-        $this->productIndexScheduler->expects($this->never())->method('scheduleProductsReindex');
+        $this->productIndexScheduler->expects($this->never())->method('scheduleProductsReindexWithFieldGroup');
         $this->listener->preUpdate($category, $event);
     }
 }

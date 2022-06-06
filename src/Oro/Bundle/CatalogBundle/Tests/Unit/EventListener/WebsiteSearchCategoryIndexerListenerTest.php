@@ -15,15 +15,19 @@ use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider;
+use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderValue;
 use Oro\Component\Testing\Unit\EntityTrait;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class WebsiteSearchCategoryIndexerListenerTest extends \PHPUnit\Framework\TestCase
+class WebsiteSearchCategoryIndexerListenerTest extends TestCase
 {
     use EntityTrait;
+
     const NAME_DEFAULT_LOCALE = 'name default';
     const NAME_CUSTOM_LOCALE = 'name custom';
     const DESCRIPTION_DEFAULT_LOCALE = 'description default';
@@ -37,42 +41,31 @@ class WebsiteSearchCategoryIndexerListenerTest extends \PHPUnit\Framework\TestCa
     private $listener;
 
     /**
-     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
+     * @var DoctrineHelper|MockObject
      */
     private $doctrineHelper;
 
     /**
-     * @var AbstractWebsiteLocalizationProvider|\PHPUnit\Framework\MockObject\MockObject
+     * @var AbstractWebsiteLocalizationProvider|MockObject
      */
     private $websiteLocalizationProvider;
 
     /**
-     * @var WebsiteContextManager|\PHPUnit\Framework\MockObject\MockObject
+     * @var WebsiteContextManager|MockObject
      */
     private $websiteContextManager;
 
     /**
-     * @var CategoryRepository|\PHPUnit\Framework\MockObject\MockObject
+     * @var CategoryRepository|MockObject
      */
     private $repository;
 
     protected function setUp(): void
     {
-        $this->repository = $this->getMockBuilder(CategoryRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->websiteLocalizationProvider = $this->getMockBuilder(AbstractWebsiteLocalizationProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->websiteContextManager = $this->getMockBuilder(WebsiteContextManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->repository = $this->createMock(CategoryRepository::class);
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $this->websiteLocalizationProvider = $this->createMock(AbstractWebsiteLocalizationProvider::class);
+        $this->websiteContextManager = $this->createMock(WebsiteContextManager::class);
 
         $this->listener = new WebsiteSearchCategoryIndexerListener(
             $this->doctrineHelper,
@@ -86,14 +79,14 @@ class WebsiteSearchCategoryIndexerListenerTest extends \PHPUnit\Framework\TestCa
      * @param string|null $string
      * @param string|null $text
      * @param string $className
-     * @return LocalizedFallbackValue
+     * @return LocalizedFallbackValue|CategoryTitle|CategoryLongDescription|CategoryShortDescription
      */
     private function prepareLocalizedValue(
         ?Localization $localization = null,
         ?string $string = null,
         ?string $text = null,
         string $className = LocalizedFallbackValue::class
-    ) {
+    ): object {
         $value = new $className();
         $value->setString($string)
             ->setText($text)
@@ -102,14 +95,11 @@ class WebsiteSearchCategoryIndexerListenerTest extends \PHPUnit\Framework\TestCa
         return $value;
     }
 
-    /**
-     * @param Localization $defaultLocale
-     * @param Localization $customLocale
-     * @param Product $product
-     * @return array
-     */
-    private function prepareCategory($defaultLocale, $customLocale, Product $product)
-    {
+    private function prepareCategory(
+        ?Localization $defaultLocale,
+        ?Localization $customLocale,
+        Product $product
+    ): Category {
         $category = $this->getEntity(
             Category::class,
             [
@@ -162,7 +152,10 @@ class WebsiteSearchCategoryIndexerListenerTest extends \PHPUnit\Framework\TestCa
         return $category;
     }
 
-    public function testOnWebsiteSearchIndexProductClass()
+    /**
+     * @dataProvider fieldsGroupDataProvider
+     */
+    public function testOnWebsiteSearchIndexProductClass(?array $fieldsGroup)
     {
         $defaultValueLocale = null;
 
@@ -187,12 +180,13 @@ class WebsiteSearchCategoryIndexerListenerTest extends \PHPUnit\Framework\TestCa
             ->method('getCategoryMapByProducts')
             ->willReturn([$product->getId() => $category]);
 
-        $event = new IndexEntityEvent(Product::class, [$product], ['some_context']);
+        $context = [AbstractIndexer::CONTEXT_FIELD_GROUPS => $fieldsGroup];
+        $event = new IndexEntityEvent(Product::class, [$product], $context);
 
         $this->websiteContextManager
             ->expects($this->once())
             ->method('getWebsiteId')
-            ->with(['some_context'])
+            ->with($context)
             ->willReturn(1);
 
         $this->listener->onWebsiteSearchIndex($event);
@@ -200,10 +194,10 @@ class WebsiteSearchCategoryIndexerListenerTest extends \PHPUnit\Framework\TestCa
         $expected[$product->getId()] = [
             'category_id' => [
                 ['value' => 555, 'all_text' => false],
-             ],
+            ],
             'category_path' => [
                 ['value' => '1_555', 'all_text' => false],
-             ],
+            ],
             'category_path_' . CategoryPathPlaceholder::NAME => [
                 [
                     'value' => new PlaceholderValue(1, [CategoryPathPlaceholder::NAME => '1']),
@@ -242,5 +236,30 @@ class WebsiteSearchCategoryIndexerListenerTest extends \PHPUnit\Framework\TestCa
         ];
 
         $this->assertEquals($expected, $event->getEntitiesData());
+    }
+
+    public function fieldsGroupDataProvider(): \Generator
+    {
+        yield [null];
+        yield [['main']];
+    }
+
+    public function testOnWebsiteSearchIndexUnsupportedFieldsGroup()
+    {
+        /** @var Product $product */
+        $product = $this->getEntity(Product::class, ['id' => 1]);
+        $context = [AbstractIndexer::CONTEXT_FIELD_GROUPS => ['image']];
+        $event = new IndexEntityEvent(Product::class, [$product], $context);
+
+        $this->websiteLocalizationProvider->expects($this->never())
+            ->method($this->anything());
+
+        $this->doctrineHelper->expects($this->never())
+            ->method($this->anything());
+
+        $this->websiteContextManager->expects($this->never())
+            ->method($this->anything());
+
+        $this->listener->onWebsiteSearchIndex($event);
     }
 }

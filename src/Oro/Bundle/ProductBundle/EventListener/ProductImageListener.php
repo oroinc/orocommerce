@@ -149,7 +149,9 @@ class ProductImageListener
                 new ReindexationRequestEvent(
                     [Product::class],
                     [],
-                    $this->productIdsToReindex
+                    $this->productIdsToReindex,
+                    true,
+                    ['image']
                 ),
                 ReindexationRequestEvent::EVENT_NAME
             );

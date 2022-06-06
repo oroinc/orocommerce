@@ -238,6 +238,7 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
                             'store'           => true,
                             'fulltext'        => true,
                             'organization_id' => null,
+                            'group' => 'main'
                         ],
                         'lasttname' => [
                             'name'            => 'lasttname',
@@ -245,6 +246,7 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
                             'store'           => true,
                             'fulltext'        => true,
                             'organization_id' => null,
+                            'group' => 'main'
                         ],
                         'attribute1' => [
                             'name'            => 'attribute1',
@@ -252,6 +254,7 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
                             'store'           => true,
                             'fulltext'        => false,
                             'organization_id' => null,
+                            'group' => 'main'
                         ],
                         $attribute1->getFieldName().'_'.EnumIdPlaceholder::NAME => [
                             'name'            => $attribute1->getFieldName().'_'.EnumIdPlaceholder::NAME,
@@ -259,6 +262,7 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
                             'store'           => true,
                             'fulltext'        => false,
                             'organization_id' => null,
+                            'group' => 'main'
                         ],
                         $attribute2->getFieldName().'_priority'                 => [
                             'name'            => $attribute2->getFieldName().'_priority',
@@ -266,6 +270,7 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
                             'store'           => true,
                             'fulltext'        => false,
                             'organization_id' => null,
+                            'group' => 'main'
                         ],
                         $attribute3->getFieldName().'_'.EnumIdPlaceholder::NAME => [
                             'name'            => $attribute3->getFieldName().'_'.EnumIdPlaceholder::NAME,
@@ -273,6 +278,7 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
                             'store'           => true,
                             'fulltext'        => false,
                             'organization_id' => null,
+                            'group' => 'main'
                         ],
                         $attribute3->getFieldName().'_priority'                 => [
                             'name'            => $attribute3->getFieldName().'_priority',
@@ -280,6 +286,7 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
                             'store'           => true,
                             'fulltext'        => false,
                             'organization_id' => null,
+                            'group' => 'main'
                         ],
                         $attribute5->getFieldName().'_'.EnumIdPlaceholder::NAME                 => [
                             'name'            => $attribute5->getFieldName().'_'.EnumIdPlaceholder::NAME,
@@ -287,6 +294,7 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
                             'store'           => true,
                             'fulltext'        => false,
                             'organization_id' => null,
+                            'group' => 'main'
                         ],
                         $attribute5->getFieldName().'_priority'                 => [
                             'name'            => $attribute5->getFieldName().'_priority',
@@ -294,6 +302,7 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
                             'store'           => true,
                             'fulltext'        => false,
                             'organization_id' => null,
+                            'group' => 'main'
                         ],
                         $attribute5->getFieldName().'_searchable'                 => [
                             'name'            => $attribute5->getFieldName().'_searchable',
@@ -301,6 +310,7 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
                             'store'           => true,
                             'fulltext'        => true,
                             'organization_id' => null,
+                            'group' => 'main'
                         ]
                     ]
                 ],
@@ -313,6 +323,7 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
                             'store'           => true,
                             'fulltext'        => true,
                             'organization_id' => null,
+                            'group' => 'main'
                         ]
                     ]
                 ]
@@ -434,6 +445,7 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
                             'store'           => true,
                             'fulltext'        => true,
                             'organization_id' => null,
+                            'group' => 'main'
                         ],
                         'lasttname' => [
                             'name'            => 'lasttname',
@@ -441,6 +453,7 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
                             'store'           => true,
                             'fulltext'        => true,
                             'organization_id' => null,
+                            'group' => 'main'
                         ],
                         'attribute1' => [
                             'name'            => 'attribute1',
@@ -448,6 +461,7 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
                             'store'           => true,
                             'fulltext'        => false,
                             'organization_id' => null,
+                            'group' => 'main'
                         ],
                         $attribute1->getFieldName() => [
                             'name'            => $attribute1->getFieldName(),
@@ -455,6 +469,7 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
                             'store'           => true,
                             'fulltext'        => true,
                             'organization_id' => null,
+                            'group' => 'main'
                         ],
                         $attribute2->getFieldName() => [
                             'name'            => $attribute2->getFieldName(),
@@ -462,6 +477,7 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
                             'store'           => true,
                             'fulltext'        => false,
                             'organization_id' => null,
+                            'group' => 'main'
                         ],
                         $attribute3->getFieldName() => [
                             'name'            => $attribute3->getFieldName(),
@@ -469,6 +485,7 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
                             'store'           => true,
                             'fulltext'        => true,
                             'organization_id' => null,
+                            'group' => 'main'
                         ],
                         $attribute5->getFieldName() => [
                             'name'            => $attribute5->getFieldName(),
@@ -476,6 +493,7 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
                             'store'           => true,
                             'fulltext'        => true,
                             'organization_id' => null,
+                            'group' => 'main'
                         ],
                     ]
                 ],
@@ -488,6 +506,7 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
                             'store'           => true,
                             'fulltext'        => true,
                             'organization_id' => null,
+                            'group' => 'main'
                         ]
                     ]
                 ]

@@ -59,6 +59,7 @@ class ReindexRequestItemProductsByRelatedJobProcessor implements
             }
 
             $relatedJobId = (int) $body['relatedJobId'];
+            $fieldGroups = $body['indexationFieldsGroups'];
             $websiteIdsOnReindex = $this->websiteReindexRequestDataStorage->getWebsiteIdsByRelatedJobId(
                 $relatedJobId
             );
@@ -71,8 +72,8 @@ class ReindexRequestItemProductsByRelatedJobProcessor implements
             $result = $this->jobRunner->runUnique(
                 $message->getMessageId(),
                 $jobName,
-                function (JobRunner $jobRunner, Job $job) use ($relatedJobId, $websiteIdsOnReindex) {
-                    $this->doJob($jobRunner, $job, $relatedJobId, $websiteIdsOnReindex);
+                function (JobRunner $jobRunner, Job $job) use ($relatedJobId, $websiteIdsOnReindex, $fieldGroups) {
+                    $this->doJobWithFieldGroups($jobRunner, $job, $relatedJobId, $websiteIdsOnReindex, $fieldGroups);
 
                     return true;
                 }
@@ -98,6 +99,21 @@ class ReindexRequestItemProductsByRelatedJobProcessor implements
         int $relatedJobId,
         array $websiteIds
     ): void {
+        $this->doJobWithFieldGroups(
+            $jobRunner,
+            $job,
+            $relatedJobId,
+            $websiteIds
+        );
+    }
+
+    protected function doJobWithFieldGroups(
+        JobRunner $jobRunner,
+        Job $job,
+        int $relatedJobId,
+        array $websiteIds,
+        array $fieldGroups = null
+    ): void {
         foreach ($websiteIds as $websiteId) {
             $productIdIteratorOnReindex = $this->websiteReindexRequestDataStorage
                 ->getProductIdIteratorByRelatedJobIdAndWebsiteId(
@@ -108,12 +124,13 @@ class ReindexRequestItemProductsByRelatedJobProcessor implements
 
             $batchIndex = 0;
             foreach ($productIdIteratorOnReindex as $productIds) {
-                $this->sendToReindex(
+                $this->sendToReindexWithFieldGroups(
                     $jobRunner,
                     $job,
                     $websiteId,
                     $productIds,
-                    $batchIndex
+                    $batchIndex,
+                    $fieldGroups
                 );
 
                 $this->websiteReindexRequestDataStorage->deleteProcessedRequestItems(
@@ -127,6 +144,22 @@ class ReindexRequestItemProductsByRelatedJobProcessor implements
         }
     }
 
+    protected function sendToReindex(
+        JobRunner $jobRunner,
+        Job $job,
+        int $websiteId,
+        array $productIds,
+        int $batchId
+    ): void {
+        $this->sendToReindexWithFieldGroups(
+            $jobRunner,
+            $job,
+            $websiteId,
+            $productIds,
+            $batchId
+        );
+    }
+
     /**
      * @param JobRunner $jobRunner
      * @param Job $job
@@ -135,16 +168,17 @@ class ReindexRequestItemProductsByRelatedJobProcessor implements
      * @param int $batchId
      * @return void
      */
-    protected function sendToReindex(
+    protected function sendToReindexWithFieldGroups(
         JobRunner $jobRunner,
         Job $job,
         int $websiteId,
         array $productIds,
-        int $batchId
+        int $batchId,
+        array $fieldGroups = null
     ): void {
         $jobRunner->createDelayed(
             sprintf('%s:reindex:%d:%d', $job->getName(), $websiteId, $batchId),
-            function (JobRunner $jobRunner, Job $child) use ($websiteId, $productIds) {
+            function (JobRunner $jobRunner, Job $child) use ($websiteId, $productIds, $fieldGroups) {
                 $message = new Message(
                     [
                         'jobId' => $child->getId(),
@@ -152,6 +186,7 @@ class ReindexRequestItemProductsByRelatedJobProcessor implements
                         'context' => [
                             AbstractIndexer::CONTEXT_WEBSITE_IDS => [$websiteId],
                             AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => $productIds,
+                            AbstractIndexer::CONTEXT_FIELD_GROUPS => $fieldGroups
                         ]
                     ],
                     AsyncIndexer::DEFAULT_PRIORITY_REINDEX

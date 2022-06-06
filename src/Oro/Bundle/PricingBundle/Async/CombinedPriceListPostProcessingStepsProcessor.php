@@ -84,7 +84,10 @@ class CombinedPriceListPostProcessingStepsProcessor implements
     {
         $this->producer->send(
             ProductBundleTopics::REINDEX_REQUEST_ITEM_PRODUCTS_BY_RELATED_JOB_ID,
-            ['relatedJobId' => $jobId]
+            [
+                'relatedJobId' => $jobId,
+                'indexationFieldsGroups' => ['pricing']
+            ]
         );
     }
 }
