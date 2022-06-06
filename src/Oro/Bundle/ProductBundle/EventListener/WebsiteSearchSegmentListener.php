@@ -11,7 +11,8 @@ use Oro\Bundle\WebsiteSearchBundle\Event\BeforeReindexEvent;
 
 /**
  * Website search index event listener that updates snapshot for segments which are used to form product collections and
- * therefore are related to content variants. Needs to be executed before WebsiteSearchProductIndexerListener listener.
+ * therefore are related to content variants.
+ * Needs to be executed before WebCatalogEntityIndexerListener and ManuallyAddedProductCollectionIndexerListener.
  */
 class WebsiteSearchSegmentListener
 {
@@ -37,6 +38,10 @@ class WebsiteSearchSegmentListener
 
     public function process(BeforeReindexEvent $event)
     {
+        if (!$this->hasContextFieldGroup($event->getContext(), 'main')) {
+            return;
+        }
+
         $classes = \is_array($event->getClassOrClasses())
             ? $event->getClassOrClasses()
             : (array) $event->getClassOrClasses();

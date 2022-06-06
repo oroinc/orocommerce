@@ -65,11 +65,13 @@ class IndexerInputValidator
         $optionsResolver->setAllowedTypes('context', 'array');
         $optionsResolver->setDefault('context', function (OptionsResolver $resolver) {
             $resolver->setDefined('skip_pre_processing');
+            $resolver->setDefined('fieldGroups');
             $resolver->setDefined(AbstractIndexer::CONTEXT_WEBSITE_IDS);
             $resolver->setDefined(AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY);
             $resolver->setDefined(AbstractIndexer::CONTEXT_CURRENT_WEBSITE_ID_KEY);
 
             $resolver->setAllowedTypes('skip_pre_processing', ['bool']);
+            $resolver->setAllowedTypes('fieldGroups', ['string[]']);
             $resolver->setAllowedTypes(AbstractIndexer::CONTEXT_WEBSITE_IDS, ['int[]', 'string[]']);
             $resolver->setAllowedTypes(AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY, ['int[]', 'string[]']);
             $resolver->setAllowedTypes(AbstractIndexer::CONTEXT_CURRENT_WEBSITE_ID_KEY, 'int');

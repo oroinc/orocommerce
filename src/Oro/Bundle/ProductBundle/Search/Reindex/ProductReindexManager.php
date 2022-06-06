@@ -22,25 +22,44 @@ class ProductReindexManager
     }
 
     /**
-     * @param Product  $product
+     * @param Product $product
      * @param int|null $websiteId
-     * @param bool     $isScheduled
+     * @param bool $isScheduled
      */
     public function reindexProduct(Product $product, $websiteId = null, $isScheduled = true)
     {
+        $this->reindexProductWithFieldGroups($product, $websiteId, $isScheduled);
+    }
+
+    public function reindexProductWithFieldGroups(
+        Product $product,
+        int $websiteId = null,
+        bool $isScheduled = true,
+        array $fieldGroups = null
+    ): void {
         $productId = $product->getId();
-        $this->reindexProducts([$productId], $websiteId, $isScheduled);
+        $this->reindexProductsWithFieldGroups([$productId], $websiteId, $isScheduled, $fieldGroups);
     }
 
     /**
-     * @param array    $productIds
+     * @param array $productIds
      * @param int|null $websiteId
-     * @param bool     $isScheduled
+     * @param bool $isScheduled
+     * @return void
      */
     public function reindexProducts(array $productIds, $websiteId = null, $isScheduled = true)
     {
+        $this->reindexProductsWithFieldGroups($productIds, $websiteId, $isScheduled);
+    }
+
+    public function reindexProductsWithFieldGroups(
+        array $productIds,
+        int $websiteId = null,
+        bool $isScheduled = true,
+        array $fieldGroups = null
+    ): void {
         if ($productIds) {
-            $this->doReindexProducts($productIds, $websiteId, $isScheduled);
+            $this->doReindexProductsWithFieldGroups($productIds, $websiteId, $isScheduled, $fieldGroups);
         }
     }
 
@@ -50,30 +69,61 @@ class ProductReindexManager
      */
     public function reindexAllProducts($websiteId = null, $isScheduled = true)
     {
-        $this->doReindexProducts([], $websiteId, $isScheduled);
+        $this->reindexAllProductsWithFieldGroups($websiteId, $isScheduled);
+    }
+
+    public function reindexAllProductsWithFieldGroups(
+        int $websiteId = null,
+        bool $isScheduled = true,
+        array $fieldGroups = null
+    ): void {
+        $this->doReindexProductsWithFieldGroups([], $websiteId, $isScheduled, $fieldGroups);
     }
 
     /**
-     * @param array    $productIds
+     * @param array $productIds
      * @param int|null $websiteId
-     * @param bool     $isScheduled
+     * @param bool $isScheduled
      *
      * @return ReindexationRequestEvent
      */
     protected function getReindexationRequestEvent(array $productIds, $websiteId, $isScheduled)
     {
-        $websiteId = is_null($websiteId) ? [] : [$websiteId];
-        return new ReindexationRequestEvent([Product::class], $websiteId, $productIds, $isScheduled);
+        return $this->getReindexationRequestEventWithFieldGroups($productIds, $websiteId, (bool)$isScheduled);
+    }
+
+    protected function getReindexationRequestEventWithFieldGroups(
+        array $productIds,
+        ?int $websiteId,
+        bool $isScheduled,
+        array $fieldGroups = null
+    ): ReindexationRequestEvent {
+        return new ReindexationRequestEvent(
+            [Product::class],
+            null === $websiteId ? [] : [$websiteId],
+            $productIds,
+            $isScheduled,
+            $fieldGroups
+        );
     }
 
     /**
-     * @param array    $productIds
+     * @param array $productIds
      * @param int|null $websiteId
-     * @param bool     $isScheduled
+     * @param bool $isScheduled
      */
     protected function doReindexProducts(array $productIds, $websiteId, $isScheduled)
     {
-        $event = $this->getReindexationRequestEvent($productIds, $websiteId, $isScheduled);
+        $this->doReindexProductsWithFieldGroups($productIds, $websiteId, (bool)$isScheduled);
+    }
+
+    protected function doReindexProductsWithFieldGroups(
+        array $productIds,
+        ?int $websiteId,
+        bool $isScheduled,
+        array $fieldGroups = null
+    ): void {
+        $event = $this->getReindexationRequestEventWithFieldGroups($productIds, $websiteId, $isScheduled, $fieldGroups);
         $this->dispatcher->dispatch($event, ReindexationRequestEvent::EVENT_NAME);
     }
 }

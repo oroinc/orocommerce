@@ -185,7 +185,7 @@ class ProductInventoryFieldsChangedListenerTest extends \PHPUnit\Framework\TestC
     public function testOnConfigUpdateWhenApplicableConfigOptionWasNotChanged(): void
     {
         $this->productReindexManager->expects(self::never())
-            ->method('reindexAllProducts');
+            ->method('reindexAllProductsWithFieldGroups');
 
         $args = new ConfigUpdateEvent(
             new ConfigChangeSet(['option1' => ['new' => true, 'old' => false]]),
@@ -201,8 +201,8 @@ class ProductInventoryFieldsChangedListenerTest extends \PHPUnit\Framework\TestC
     public function testOnConfigUpdateWhenApplicableConfigOptionWasChanged(string $optionName): void
     {
         $this->productReindexManager->expects(self::once())
-            ->method('reindexAllProducts')
-            ->with(self::isNull());
+            ->method('reindexAllProductsWithFieldGroups')
+            ->with(self::isNull(), true, ['main']);
 
         $args = new ConfigUpdateEvent(
             new ConfigChangeSet([$optionName => ['new' => true, 'old' => false]]),
@@ -220,8 +220,8 @@ class ProductInventoryFieldsChangedListenerTest extends \PHPUnit\Framework\TestC
         $websiteId = 1;
 
         $this->productReindexManager->expects(self::once())
-            ->method('reindexAllProducts')
-            ->with(self::identicalTo($websiteId));
+            ->method('reindexAllProductsWithFieldGroups')
+            ->with(self::identicalTo($websiteId), true, ['main']);
 
         $args = new ConfigUpdateEvent(
             new ConfigChangeSet([$optionName => ['new' => true, 'old' => false]]),

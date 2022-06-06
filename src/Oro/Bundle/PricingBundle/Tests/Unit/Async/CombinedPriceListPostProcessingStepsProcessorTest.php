@@ -63,7 +63,10 @@ class CombinedPriceListPostProcessingStepsProcessorTest extends TestCase
             ->method('send')
             ->with(
                 ReindexRequestItemProductsByRelatedJobIdTopic::getName(),
-                ['relatedJobId' => $jobId]
+                [
+                    'relatedJobId' => $jobId,
+                    'indexationFieldsGroups' => ['pricing']
+                ]
             );
 
         $this->assertEquals(
@@ -111,7 +114,10 @@ class CombinedPriceListPostProcessingStepsProcessorTest extends TestCase
             ->method('send')
             ->with(
                 ReindexRequestItemProductsByRelatedJobIdTopic::getName(),
-                ['relatedJobId' => $jobId]
+                [
+                    'relatedJobId' => $jobId,
+                    'indexationFieldsGroups' => ['pricing']
+                ]
             );
 
         $this->assertEquals(

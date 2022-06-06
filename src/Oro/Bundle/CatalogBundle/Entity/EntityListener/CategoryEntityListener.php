@@ -29,21 +29,24 @@ class CategoryEntityListener
 
     public function preRemove(Category $category)
     {
-        $this->productIndexScheduler->scheduleProductsReindex([$category]);
-        $this->categoryCache->deleteAll();
+        $this->scheduleCategoryReindex($category);
     }
 
     public function postPersist(Category $category)
     {
-        $this->productIndexScheduler->scheduleProductsReindex([$category]);
-        $this->categoryCache->deleteAll();
+        $this->scheduleCategoryReindex($category);
     }
 
     public function preUpdate(Category $category, PreUpdateEventArgs $eventArgs)
     {
         if ($eventArgs->getEntityChangeSet()) {
-            $this->productIndexScheduler->scheduleProductsReindex([$category]);
-            $this->categoryCache->deleteAll();
+            $this->scheduleCategoryReindex($category);
         }
+    }
+
+    private function scheduleCategoryReindex(Category $category): void
+    {
+        $this->productIndexScheduler->scheduleProductsReindexWithFieldGroup([$category], null, true, ['main']);
+        $this->categoryCache->deleteAll();
     }
 }

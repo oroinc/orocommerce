@@ -13,6 +13,7 @@ use Oro\Bundle\PricingBundle\Model\AbstractPriceListTreeHandler;
 use Oro\Bundle\PricingBundle\Placeholder\CurrencyPlaceholder;
 use Oro\Bundle\PricingBundle\Placeholder\PriceListIdPlaceholder;
 use Oro\Bundle\PricingBundle\Placeholder\UnitPlaceholder;
+use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 
@@ -22,6 +23,7 @@ use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 class WebsiteSearchProductPriceFlatIndexerListener implements FeatureToggleableInterface
 {
     use FeatureCheckerHolderTrait;
+    use ContextTrait;
 
     public const MP_ALIAS = 'minimal_price_PRICE_LIST_ID_CURRENCY_UNIT';
 
@@ -59,6 +61,10 @@ class WebsiteSearchProductPriceFlatIndexerListener implements FeatureToggleableI
 
     public function onWebsiteSearchIndex(IndexEntityEvent $event)
     {
+        if (!$this->hasContextFieldGroup($event->getContext(), 'pricing')) {
+            return;
+        }
+
         if (!$this->isFeaturesEnabled()) {
             return;
         }

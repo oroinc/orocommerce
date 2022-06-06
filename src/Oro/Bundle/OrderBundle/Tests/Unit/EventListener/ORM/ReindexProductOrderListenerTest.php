@@ -97,7 +97,7 @@ class ReindexProductOrderListenerTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->reindexManager->expects($this->never())
-            ->method('reindexProducts');
+            ->method('reindexProductsWithFieldGroups');
 
         $this->order->setInternalStatus(new TestEnumValue(2, ''));
         $this->listener->processOrderUpdate($this->order, $this->event);
@@ -121,7 +121,7 @@ class ReindexProductOrderListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->reindexManager
             ->expects($expectThatReindexEventWilBeCalled ? $this->exactly(2) : $this->never())
-            ->method('reindexProducts');
+            ->method('reindexProductsWithFieldGroups');
 
         $this->order->setWebsite($this->website);
         $this->listener->processOrderUpdate($this->order, $this->event);
@@ -175,7 +175,7 @@ class ReindexProductOrderListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->reindexManager
             ->expects($this->never())
-            ->method('reindexProducts');
+            ->method('reindexProductsWithFieldGroups');
 
         $this->listener->processOrderUpdate($this->order, $this->event);
     }
@@ -197,7 +197,7 @@ class ReindexProductOrderListenerTest extends \PHPUnit\Framework\TestCase
             OrderStatusesProviderInterface::INTERNAL_STATUS_CLOSED
         );
 
-        $this->reindexManager->expects($this->never())->method('reindexProducts');
+        $this->reindexManager->expects($this->never())->method('reindexProductsWithFieldGroups');
 
         $this->order->setWebsite($this->website);
 
@@ -235,8 +235,11 @@ class ReindexProductOrderListenerTest extends \PHPUnit\Framework\TestCase
         $expectedProductIds = [1,2,3,4,5];
         $this->reindexManager
             ->expects($this->exactly(2))
-            ->method('reindexProducts')
-            ->withConsecutive([$expectedProductIds, self::WEBSITE_ID], [$parentProductIds, self::WEBSITE_ID]);
+            ->method('reindexProductsWithFieldGroups')
+            ->withConsecutive(
+                [$expectedProductIds, self::WEBSITE_ID, true, ['order']],
+                [$parentProductIds, self::WEBSITE_ID, true, ['order']]
+            );
 
         $this->listener->processOrderRemove($this->order);
     }
@@ -254,7 +257,7 @@ class ReindexProductOrderListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->reindexManager
             ->expects($this->never())
-            ->method('reindexProducts');
+            ->method('reindexProductsWithFieldGroups');
 
         $this->listener->processOrderRemove($this->order);
     }
@@ -267,7 +270,7 @@ class ReindexProductOrderListenerTest extends \PHPUnit\Framework\TestCase
             ->willReturn(false);
 
         $this->reindexManager->expects($this->never())
-            ->method('reindexProducts');
+            ->method('reindexProductsWithFieldGroups');
 
         $this->order->setWebsite($this->website);
         $this->listener->processOrderRemove($this->order);
@@ -306,7 +309,7 @@ class ReindexProductOrderListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->reindexManager
             ->expects($this->exactly(4))
-            ->method('reindexProducts');
+            ->method('reindexProductsWithFieldGroups');
 
         $this->listener->processOrderUpdate($this->order, $this->event);
     }
@@ -405,10 +408,13 @@ class ReindexProductOrderListenerTest extends \PHPUnit\Framework\TestCase
 
             $this->reindexManager
                 ->expects($this->exactly(2))
-                ->method('reindexProducts')
-                ->withConsecutive([$productIds, self::WEBSITE_ID], [[], self::WEBSITE_ID]);
+                ->method('reindexProductsWithFieldGroups')
+                ->withConsecutive(
+                    [$productIds, self::WEBSITE_ID, true, ['order']],
+                    [[], self::WEBSITE_ID, true, ['order']]
+                );
         } else {
-            $this->reindexManager->expects($this->never())->method('reindexProducts');
+            $this->reindexManager->expects($this->never())->method('reindexProductsWithFieldGroups');
         }
     }
 

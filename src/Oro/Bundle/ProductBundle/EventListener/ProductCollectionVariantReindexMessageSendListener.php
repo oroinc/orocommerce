@@ -4,6 +4,8 @@ namespace Oro\Bundle\ProductBundle\EventListener;
 
 use Oro\Bundle\ProductBundle\Async\Topic\AccumulateReindexProductCollectionBySegmentTopic;
 use Oro\Bundle\ProductBundle\Handler\AsyncReindexProductCollectionHandlerInterface as ReindexHandler;
+use Oro\Bundle\ProductBundle\Handler\AsyncReindexProductCollectionHandlerWithFieldGroupsInterface
+    as ReindexHandlerWithFieldGroups;
 use Oro\Bundle\ProductBundle\Helper\ProductCollectionSegmentHelper;
 use Oro\Bundle\ProductBundle\Model\AccumulateSegmentMessageFactory as AccumulateMessageFactory;
 use Oro\Bundle\ProductBundle\Model\SegmentMessageFactory;
@@ -82,7 +84,17 @@ class ProductCollectionVariantReindexMessageSendListener
             'listener',
             $this->getMessageKey($scheduledPartialMessages)
         );
-        $this->collectionIndexationHandler->handle($scheduledPartialMessages, $rootJobName);
+
+        if ($this->collectionIndexationHandler instanceof ReindexHandlerWithFieldGroups) {
+            $this->collectionIndexationHandler->handleWithFieldGroups(
+                $scheduledPartialMessages,
+                $rootJobName,
+                false,
+                ['main']
+            );
+        } else {
+            $this->collectionIndexationHandler->handle($scheduledPartialMessages, $rootJobName);
+        }
     }
 
     /**

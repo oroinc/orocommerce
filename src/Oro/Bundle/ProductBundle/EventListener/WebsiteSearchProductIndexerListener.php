@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ProductBundle\EventListener;
 
 use Doctrine\Persistence\ManagerRegistry;
-use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
@@ -11,11 +10,11 @@ use Oro\Bundle\EntityConfigBundle\Entity\Repository\AttributeFamilyRepository;
 use Oro\Bundle\EntityConfigBundle\Manager\AttributeManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Oro\Bundle\ProductBundle\Search\ProductIndexDataProviderInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider;
+use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 
@@ -25,6 +24,8 @@ use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
  */
 class WebsiteSearchProductIndexerListener
 {
+    use ContextTrait;
+
     private WebsiteContextManager $websiteContextManager;
     private AbstractWebsiteLocalizationProvider $websiteLocalizationProvider;
     private ManagerRegistry $doctrine;
@@ -50,9 +51,14 @@ class WebsiteSearchProductIndexerListener
 
     /**
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public function onWebsiteSearchIndex(IndexEntityEvent $event): void
     {
+        if (!$this->hasContextFieldGroup($event->getContext(), 'main')) {
+            return;
+        }
+
         $website = $this->getWebsite($event);
         if (!$website) {
             $event->stopPropagation();
@@ -71,7 +77,6 @@ class WebsiteSearchProductIndexerListener
         );
 
         $localizations = $this->websiteLocalizationProvider->getLocalizationsByWebsiteId($website->getId());
-        $productImages = $this->getProductRepository()->getListingImagesFilesByProductIds($productIds);
         $productUnits = $this->getProductUnitRepository()->getProductsUnits($productIds);
         $primaryUnits = $this->getProductUnitRepository()->getPrimaryProductsUnits($productIds);
         $attributes = $this->attributeManager
@@ -109,8 +114,6 @@ class WebsiteSearchProductIndexerListener
                     $product->getAttributeFamily()->getId()
                 );
             }
-
-            $this->processImages($event, $productImages, $product->getId());
 
             if (isset($primaryUnits[$product->getId()])) {
                 $event->addField(
@@ -190,29 +193,6 @@ class WebsiteSearchProductIndexerListener
             || \in_array($attributeFamily->getId(), $attributeFamilies[$attribute->getId()], true);
     }
 
-    private function processImages(IndexEntityEvent $event, array $productImages, int $productId): void
-    {
-        if (isset($productImages[$productId])) {
-            /** @var File $entity */
-            $entity = $productImages[$productId];
-            $event->addField(
-                $productId,
-                'image_product_large',
-                $this->attachmentManager->getFilteredImageUrl($entity, 'product_large')
-            );
-            $event->addField(
-                $productId,
-                'image_product_medium',
-                $this->attachmentManager->getFilteredImageUrl($entity, 'product_medium')
-            );
-            $event->addField(
-                $productId,
-                'image_product_small',
-                $this->attachmentManager->getFilteredImageUrl($entity, 'product_small')
-            );
-        }
-    }
-
     /**
      * Cleans up a unicode string from control characters
      */
@@ -229,11 +209,6 @@ class WebsiteSearchProductIndexerListener
         return \is_string($data) && $data
             ? preg_replace(['/[[:cntrl:]]/', '/\s+/'], ' ', $data)
             : $data;
-    }
-
-    private function getProductRepository(): ProductRepository
-    {
-        return $this->doctrine->getRepository(Product::class);
     }
 
     private function getProductUnitRepository(): ProductUnitRepository
