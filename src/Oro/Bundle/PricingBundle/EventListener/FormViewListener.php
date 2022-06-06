@@ -129,10 +129,22 @@ class FormViewListener implements FeatureToggleableInterface
         );
 
         $priceLists = $this->getProductAttributesPriceLists();
-
-        foreach ($priceLists as $priceList) {
+        if (empty($priceLists)) {
             $subBlockId = $scrollData->addSubBlock(self::PRICE_ATTRIBUTES_BLOCK_NAME);
+            $template = $event->getEnvironment()
+                ->render('@OroPricing/Product/price_attribute_no_data.html.twig', []);
+            $scrollData->addSubBlockData(
+                self::PRICE_ATTRIBUTES_BLOCK_NAME,
+                $subBlockId,
+                $template,
+                'productPriceAttributesPrices'
+            );
 
+            return;
+        }
+
+        $subBlocksData = ['even' => '', 'odd' => ''];
+        foreach ($priceLists as $key => $priceList) {
             $priceAttributePrices = $this->priceAttributePricesProvider
                 ->getPricesWithUnitAndCurrencies($priceList, $product);
 
@@ -145,22 +157,23 @@ class FormViewListener implements FeatureToggleableInterface
                 ]
             );
 
-            $scrollData->addSubBlockData(
-                self::PRICE_ATTRIBUTES_BLOCK_NAME,
-                $subBlockId,
-                $template,
-                'productPriceAttributesPrices'
-            );
+            $subBlocksData[$key % 2 === 0 ? 'even' : 'odd'] .= $template;
         }
 
-        if (empty($priceLists)) {
-            $subBlockId = $scrollData->addSubBlock(self::PRICE_ATTRIBUTES_BLOCK_NAME);
-            $template = $event->getEnvironment()
-                ->render('@OroPricing/Product/price_attribute_no_data.html.twig', []);
+        $subBlockEvenId = $scrollData->addSubBlock(self::PRICE_ATTRIBUTES_BLOCK_NAME);
+        $scrollData->addSubBlockData(
+            self::PRICE_ATTRIBUTES_BLOCK_NAME,
+            $subBlockEvenId,
+            $subBlocksData['even'],
+            'productPriceAttributesPrices'
+        );
+
+        if (count($priceLists) > 1) {
+            $subBlockOddId = $scrollData->addSubBlock(self::PRICE_ATTRIBUTES_BLOCK_NAME);
             $scrollData->addSubBlockData(
                 self::PRICE_ATTRIBUTES_BLOCK_NAME,
-                $subBlockId,
-                $template,
+                $subBlockOddId,
+                $subBlocksData['odd'],
                 'productPriceAttributesPrices'
             );
         }
