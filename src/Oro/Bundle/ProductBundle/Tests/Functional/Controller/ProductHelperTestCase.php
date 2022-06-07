@@ -2,10 +2,11 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Controller;
 
+use Oro\Bundle\LocaleBundle\Entity\AbstractLocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Model\FallbackType;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Tests\Functional\Helper\ProductTestHelper;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Crawler;
@@ -14,10 +15,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class ProductHelperTestCase extends WebTestCase
 {
-    /**
-     * @return Crawler
-     */
-    protected function createProduct()
+    protected function createProduct(): Crawler
     {
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_create'));
         $this->assertEquals(
@@ -55,7 +53,7 @@ class ProductHelperTestCase extends WebTestCase
             0,
             $crawler->filterXPath("//nav/a[contains(text(),'".ProductTestHelper::CATEGORY_MENU_NAME."')]")->count()
         );
-        static::assertStringContainsString("Category: ".ProductTestHelper::CATEGORY_NAME, $crawler->html());
+        self::assertStringContainsString("Category: ".ProductTestHelper::CATEGORY_NAME, $crawler->html());
 
         $form = $crawler->selectButton('Save and Close')->form();
         $this->assertDefaultProductUnit($form);
@@ -97,22 +95,16 @@ class ProductHelperTestCase extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $html = $crawler->html();
-        static::assertStringContainsString('Product has been saved', $html);
-        static::assertStringContainsString(ProductTestHelper::TEST_SKU, $html);
-        static::assertStringContainsString(ProductTestHelper::INVENTORY_STATUS, $html);
-        static::assertStringContainsString(ProductTestHelper::STATUS, $html);
-        static::assertStringContainsString(ProductTestHelper::FIRST_UNIT_CODE, $html);
+        self::assertStringContainsString('Product has been saved', $html);
+        self::assertStringContainsString(ProductTestHelper::TEST_SKU, $html);
+        self::assertStringContainsString(ProductTestHelper::INVENTORY_STATUS, $html);
+        self::assertStringContainsString(ProductTestHelper::STATUS, $html);
+        self::assertStringContainsString(ProductTestHelper::FIRST_UNIT_CODE, $html);
 
         return $crawler;
     }
 
-    /**
-     * @param array $data
-     * @param Product $product
-     * @param Form $form
-     * @return array
-     */
-    protected function getSubmittedData(array $data, Product $product, Form $form)
+    protected function getSubmittedData(array $data, Product $product, Form $form): array
     {
         $localization = $this->getLocalization();
         $localizedName = $this->getLocalizedName($product, $localization);
@@ -188,19 +180,12 @@ class ProductHelperTestCase extends WebTestCase
         ];
     }
 
-    /**
-     * @return int
-     */
-    protected function getBusinessUnitId()
+    protected function getBusinessUnitId(): int
     {
         return $this->getContainer()->get('oro_security.token_accessor')->getUser()->getOwner()->getId();
     }
 
-    /**
-     * @param array $unitPrecisions
-     * @return array
-     */
-    protected function sortUnitPrecisions(array $unitPrecisions)
+    protected function sortUnitPrecisions(array $unitPrecisions): array
     {
         // prices must be sort by unit and currency
         usort(
@@ -218,56 +203,39 @@ class ProductHelperTestCase extends WebTestCase
         return $unitPrecisions;
     }
 
-    /**
-     * @param string $sku
-     * @return Product
-     */
-    protected function getProductDataBySku($sku)
+    protected function getProductDataBySku(string $sku): Product
     {
         /** @var Product $product */
         $product = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroProductBundle:Product')
-            ->getRepository('OroProductBundle:Product')
+            ->getRepository(Product::class)
             ->findOneBy(['sku' => $sku]);
         $this->assertNotEmpty($product);
 
         return $product;
     }
 
-    /**
-     * @param string $name
-     * @param int $precision
-     * @return string
-     */
-    protected function createPrimaryUnitPrecisionString($name, $precision)
+    protected function createPrimaryUnitPrecisionString(string $name, int $precision): string
     {
-        if ($precision == 0) {
+        if (0 === $precision) {
             return sprintf('%s (whole numbers)', $name);
-        } elseif ($precision == 1) {
-            return sprintf('%s (fractional, %d decimal digit)', $name, $precision);
-        } else {
-            return sprintf('%s (fractional, %d decimal digits)', $name, $precision);
         }
+        if (1 === $precision) {
+            return sprintf('%s (fractional, %d decimal digit)', $name, $precision);
+        }
+
+        return sprintf('%s (fractional, %d decimal digits)', $name, $precision);
     }
 
-    /**
-     * @param string $code
-     * @param int $precision
-     * @param string $html
-     */
-    protected function assertContainsAdditionalUnitPrecision($code, $precision, $html)
+    protected function assertContainsAdditionalUnitPrecision(string $code, int $precision, string $html): void
     {
-        static::assertStringContainsString(sprintf("<td>%s</td>", $code), $html);
-        static::assertStringContainsString(sprintf("<td>%d</td>", $precision), $html);
+        self::assertStringContainsString(sprintf("<td>%s</td>", $code), $html);
+        self::assertStringContainsString(sprintf("<td>%d</td>", $precision), $html);
     }
 
-    /**
-     * @return Localization
-     */
-    protected function getLocalization()
+    protected function getLocalization(): Localization
     {
-        $localization = $this->getContainer()->get('doctrine')->getManagerForClass('OroLocaleBundle:Localization')
-            ->getRepository('OroLocaleBundle:Localization')
+        $localization = $this->getContainer()->get('doctrine')
+            ->getRepository(Localization::class)
             ->findOneBy([]);
 
         if (!$localization) {
@@ -277,12 +245,7 @@ class ProductHelperTestCase extends WebTestCase
         return $localization;
     }
 
-    /**
-     * @param Product $product
-     * @param Localization $localization
-     * @return LocalizedFallbackValue
-     */
-    protected function getLocalizedName(Product $product, Localization $localization)
+    protected function getLocalizedName(Product $product, Localization $localization): AbstractLocalizedFallbackValue
     {
         $localizedName = null;
         foreach ($product->getNames() as $name) {
@@ -300,16 +263,10 @@ class ProductHelperTestCase extends WebTestCase
         return $localizedName;
     }
 
-    /**
-     * @param int $productId
-     * @param string $unit
-     * @param string $expectedPrecision
-     */
-    protected function assertProductPrecision($productId, $unit, $expectedPrecision)
+    protected function assertProductPrecision(int $productId, string $unit, string $expectedPrecision): void
     {
-        $productUnitPrecision = $this->getContainer()
-            ->get('doctrine')
-            ->getRepository('OroProductBundle:ProductUnitPrecision')
+        $productUnitPrecision = $this->getContainer()->get('doctrine')
+            ->getRepository(ProductUnitPrecision::class)
             ->findOneBy(['product' => $productId, 'unit' => $unit]);
 
         $this->assertEquals($expectedPrecision, $productUnitPrecision->getPrecision());
@@ -317,10 +274,8 @@ class ProductHelperTestCase extends WebTestCase
 
     /**
      * checking if default product unit field is added and filled
-     *
-     * @param Form $form
      */
-    protected function assertDefaultProductUnit($form)
+    protected function assertDefaultProductUnit(Form $form): void
     {
         $configManager = $this->client->getContainer()->get('oro_config.manager');
         $expectedDefaultProductUnit = $configManager->get('oro_product.default_unit');
@@ -338,12 +293,7 @@ class ProductHelperTestCase extends WebTestCase
         );
     }
 
-    /**
-     * @param Crawler $crawler
-     * @param int $position
-     * @return array
-     */
-    protected function getActualAdditionalUnitPrecision(Crawler $crawler, $position)
+    protected function getActualAdditionalUnitPrecision(Crawler $crawler, int $position): array
     {
         return [
             'unit' => $crawler
@@ -361,20 +311,12 @@ class ProductHelperTestCase extends WebTestCase
         ];
     }
 
-    /**
-     * @param string $fileName
-     * @return UploadedFile
-     */
-    protected function createUploadedFile($fileName)
+    protected function createUploadedFile(string $fileName): UploadedFile
     {
         return new UploadedFile(__DIR__ . '/../DataFixtures/files/example.gif', $fileName);
     }
 
-    /**
-     * @param Crawler $crawler
-     * @return array
-     */
-    protected function parseProductImages(Crawler $crawler)
+    protected function parseProductImages(Crawler $crawler): array
     {
         $result = [];
 
@@ -395,7 +337,7 @@ class ProductHelperTestCase extends WebTestCase
                     $checked = false;
                     if ($icon) {
                         $iconClass = $icon->attributes->getNamedItem('class')->nodeValue;
-                        $checked = $iconClass == ProductTestHelper::IMAGE_TYPE_CHECKED_CLASS;
+                        $checked = $iconClass === ProductTestHelper::IMAGE_TYPE_CHECKED_CLASS;
                     }
                     $data[] = (int) $checked;
                 }

@@ -6,30 +6,25 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
 use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodes;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Symfony\Component\DomCrawler\Form;
 
 class ProductControllerTest extends WebTestCase
 {
-    const TEST_SKU = 'SKU-001';
-    const STATUS = 'Disabled';
-    const INVENTORY_STATUS = 'In Stock';
-    const DEFAULT_NAME = 'default name';
-    const DEFAULT_DESCRIPTION = 'default description';
-    const FIRST_UNIT_CODE = 'item';
-    const FIRST_UNIT_PRECISION = '0';
+    private const TEST_SKU = 'SKU-001';
+    private const STATUS = 'Disabled';
+    private const INVENTORY_STATUS = 'In Stock';
+    private const DEFAULT_NAME = 'default name';
+    private const DEFAULT_DESCRIPTION = 'default description';
+    private const FIRST_UNIT_CODE = 'item';
+    private const FIRST_UNIT_PRECISION = '0';
 
-    const CATEGORY_ID = 1;
+    private const CATEGORY_ID = 1;
 
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
 
-        $this->loadFixtures(
-            [
-                'Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodes',
-            ]
-        );
+        $this->loadFixtures([LoadProductTaxCodes::class]);
     }
 
     public function testCreate()
@@ -47,7 +42,6 @@ class ProductControllerTest extends WebTestCase
         $this->client->followRedirects(true);
         $crawler = $this->client->request('POST', $this->getUrl('oro_product_create'), $formValues);
 
-        /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
 
         $formValues = $form->getPhpValues();
@@ -70,11 +64,11 @@ class ProductControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $html = $crawler->html();
-        static::assertStringContainsString('Product has been saved', $html);
-        static::assertStringContainsString(self::TEST_SKU, $html);
-        static::assertStringContainsString(self::INVENTORY_STATUS, $html);
-        static::assertStringContainsString(self::STATUS, $html);
-        static::assertStringContainsString($productTaxCode->getCode(), $html);
+        self::assertStringContainsString('Product has been saved', $html);
+        self::assertStringContainsString(self::TEST_SKU, $html);
+        self::assertStringContainsString(self::INVENTORY_STATUS, $html);
+        self::assertStringContainsString(self::STATUS, $html);
+        self::assertStringContainsString($productTaxCode->getCode(), $html);
     }
 
     /**
@@ -93,13 +87,13 @@ class ProductControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $html = $crawler->html();
-        static::assertStringContainsString($productTaxCode->getCode(), $html);
+        self::assertStringContainsString($productTaxCode->getCode(), $html);
 
         $productTaxCodeLink = $this->getContainer()->get('router')->generate('oro_tax_product_tax_code_view', [
             'id' => $productTaxCode->getId(),
         ]);
 
-        static::assertStringContainsString($productTaxCodeLink, $html);
+        self::assertStringContainsString($productTaxCodeLink, $html);
     }
 
     /**
@@ -119,7 +113,7 @@ class ProductControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $grid = $crawler->filter('.inner-grid')->eq(0)->attr('data-page-component-options');
-        static::assertStringContainsString(self::TEST_SKU, $grid);
+        self::assertStringContainsString(self::TEST_SKU, $grid);
     }
 
     /**
@@ -142,24 +136,16 @@ class ProductControllerTest extends WebTestCase
         $this->assertEquals($productTaxCode->getCode(), $result['taxCode']);
     }
 
-    /**
-     * @return int
-     */
-    protected function getBusinessUnitId()
+    private function getBusinessUnitId(): int
     {
         return $this->getContainer()->get('oro_security.token_accessor')->getUser()->getOwner()->getId();
     }
 
-    /**
-     * @param string $sku
-     * @return Product
-     */
-    private function getProductDataBySku($sku)
+    private function getProductDataBySku(string $sku): Product
     {
         /** @var Product $product */
         $product = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroProductBundle:Product')
-            ->getRepository('OroProductBundle:Product')
+            ->getRepository(Product::class)
             ->findOneBy(['sku' => $sku]);
         $this->assertNotEmpty($product);
 

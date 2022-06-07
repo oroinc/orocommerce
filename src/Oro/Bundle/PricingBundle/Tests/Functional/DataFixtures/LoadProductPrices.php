@@ -196,7 +196,7 @@ class LoadProductPrices extends AbstractFixture implements DependentFixtureInter
             /** @var Product $product */
             $product = $this->getReference($data['product']);
             if ($data['priceList'] === 'default_price_list') {
-                $priceList = $manager->getRepository('OroPricingBundle:PriceList')->getDefault();
+                $priceList = $manager->getRepository(PriceList::class)->getDefault();
             } else {
                 /** @var PriceList $priceList */
                 $priceList = $this->getReference($data['priceList']);

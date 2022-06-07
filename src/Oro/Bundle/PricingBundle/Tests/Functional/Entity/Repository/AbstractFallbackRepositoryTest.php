@@ -3,16 +3,13 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
 use Doctrine\Persistence\ManagerRegistry;
-use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListFallbackSettings;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 abstract class AbstractFallbackRepositoryTest extends WebTestCase
 {
-    /**
-     * @var ManagerRegistry
-     */
-    protected $doctrine;
+    protected ManagerRegistry $doctrine;
 
     protected function setUp(): void
     {
@@ -21,21 +18,17 @@ abstract class AbstractFallbackRepositoryTest extends WebTestCase
         $this->doctrine = $this->getContainer()->get('doctrine');
     }
 
-    /**
-     * @param string[] $expectedCustomers
-     * @param BufferedIdentityQueryResultIterator|array $iterator
-     */
-    public function checkExpectedCustomers($expectedCustomers, $iterator)
+    public function checkExpectedCustomers(array $expectedCustomerNames, \Iterator $iterator): void
     {
         $customers = [];
-        $customerRepository = $this->doctrine->getRepository('OroCustomerBundle:Customer');
+        $customerRepository = $this->doctrine->getRepository(Customer::class);
         foreach ($iterator as $item) {
             $customers[] = $customerRepository->find($item['id']);
             $customerRepository->find($item['id'])->getName();
         }
-        $this->assertCount(count($customers), $expectedCustomers);
+        $this->assertCount(count($customers), $expectedCustomerNames);
         foreach ($customers as $customer) {
-            $this->assertContains($customer->getName(), $expectedCustomers);
+            $this->assertContains($customer->getName(), $expectedCustomerNames);
         }
     }
 }

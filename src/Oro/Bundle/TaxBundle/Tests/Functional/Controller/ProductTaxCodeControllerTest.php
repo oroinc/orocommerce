@@ -8,11 +8,11 @@ use Symfony\Component\DomCrawler\Crawler;
 
 class ProductTaxCodeControllerTest extends WebTestCase
 {
-    const PRODUCT_TAX_CODE = 'unique';
-    const PRODUCT_TAX_CODE_UPDATED = 'uniqueUpdated';
-    const PRODUCT_TAX_CODE_DESCRIPTION = 'description';
-    const PRODUCT_TAX_CODE_DESCRIPTION_UPDATED = 'description updated';
-    const PRODUCT_TAX_CODE_SAVE_MESSAGE = 'Product Tax Code has been saved';
+    private const PRODUCT_TAX_CODE = 'unique';
+    private const PRODUCT_TAX_CODE_UPDATED = 'uniqueUpdated';
+    private const PRODUCT_TAX_CODE_DESCRIPTION = 'description';
+    private const PRODUCT_TAX_CODE_DESCRIPTION_UPDATED = 'description updated';
+    private const PRODUCT_TAX_CODE_SAVE_MESSAGE = 'Product Tax Code has been saved';
 
     protected function setUp(): void
     {
@@ -25,10 +25,10 @@ class ProductTaxCodeControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_tax_product_tax_code_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        static::assertStringContainsString('tax-product-tax-codes-grid', $crawler->html());
+        self::assertStringContainsString('tax-product-tax-codes-grid', $crawler->html());
     }
 
-    public function testCreate()
+    public function testCreate(): int
     {
         $crawler = $this->client->request('GET', $this->getUrl('oro_tax_product_tax_code_create'));
         $result = $this->client->getResponse();
@@ -38,8 +38,7 @@ class ProductTaxCodeControllerTest extends WebTestCase
 
         /** @var ProductTaxCode $taxCode */
         $taxCode = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroTaxBundle:ProductTaxCode')
-            ->getRepository('OroTaxBundle:ProductTaxCode')
+            ->getRepository(ProductTaxCode::class)
             ->findOneBy(['code' => self::PRODUCT_TAX_CODE]);
         $this->assertNotEmpty($taxCode);
 
@@ -47,11 +46,9 @@ class ProductTaxCodeControllerTest extends WebTestCase
     }
 
     /**
-     * @param $id int
-     * @return int
      * @depends testCreate
      */
-    public function testUpdate($id)
+    public function testUpdate(int $id): int
     {
         $crawler = $this->client->request(
             'GET',
@@ -71,9 +68,8 @@ class ProductTaxCodeControllerTest extends WebTestCase
 
     /**
      * @depends testUpdate
-     * @param int $id
      */
-    public function testView($id)
+    public function testView(int $id)
     {
         $crawler = $this->client->request(
             'GET',
@@ -84,7 +80,7 @@ class ProductTaxCodeControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
-        static::assertStringContainsString(
+        self::assertStringContainsString(
             self::PRODUCT_TAX_CODE_UPDATED . ' - View - Product Tax Codes - Taxes',
             $html
         );
@@ -96,12 +92,7 @@ class ProductTaxCodeControllerTest extends WebTestCase
         );
     }
 
-    /**
-     * @param Crawler $crawler
-     * @param string  $code
-     * @param string  $description
-     */
-    protected function assertProductTaxCodeSave(Crawler $crawler, $code, $description)
+    private function assertProductTaxCodeSave(Crawler $crawler, string $code, string $description): void
     {
         $form = $crawler->selectButton('Save and Close')->form(
             [
@@ -117,18 +108,13 @@ class ProductTaxCodeControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
-        static::assertStringContainsString(self::PRODUCT_TAX_CODE_SAVE_MESSAGE, $html);
+        self::assertStringContainsString(self::PRODUCT_TAX_CODE_SAVE_MESSAGE, $html);
         $this->assertViewPage($html, $code, $description);
     }
 
-    /**
-     * @param string $html
-     * @param string $code
-     * @param string $description
-     */
-    protected function assertViewPage($html, $code, $description)
+    private function assertViewPage(string $html, string $code, string $description): void
     {
-        static::assertStringContainsString($code, $html);
-        static::assertStringContainsString($description, $html);
+        self::assertStringContainsString($code, $html);
+        self::assertStringContainsString($description, $html);
     }
 }

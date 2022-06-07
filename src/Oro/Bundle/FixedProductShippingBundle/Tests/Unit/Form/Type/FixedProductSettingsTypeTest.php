@@ -20,7 +20,6 @@ use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
-use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -30,17 +29,7 @@ class FixedProductSettingsTypeTest extends FormIntegrationTestCase
 {
     use EntityTrait;
 
-    public const LOCALIZATION_ID = 998;
-
-    /**
-     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected ManagerRegistry $registry;
-
-    /**
-     * @var Translator|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected Translator $translator;
+    private const LOCALIZATION_ID = 998;
 
     /**
      * {@inheritdoc}
@@ -50,54 +39,41 @@ class FixedProductSettingsTypeTest extends FormIntegrationTestCase
         $repositoryLocalization = $this->createMock(ObjectRepository::class);
         $repositoryLocalization->expects($this->any())
             ->method('find')
-            ->willReturnCallback(
-                function ($id) {
-                    return $this->getEntity(Localization::class, ['id' => $id]);
-                }
-            );
+            ->willReturnCallback(function ($id) {
+                return $this->getEntity(Localization::class, ['id' => $id]);
+            });
 
         $repositoryLocalizedFallbackValue = $this->createMock(ObjectRepository::class);
         $repositoryLocalizedFallbackValue->expects($this->any())
             ->method('find')
-            ->willReturnCallback(
-                function ($id) {
-                    return $this->getEntity(LocalizedFallbackValue::class, ['id' => $id]);
-                }
-            );
+            ->willReturnCallback(function ($id) {
+                return $this->getEntity(LocalizedFallbackValue::class, ['id' => $id]);
+            });
 
-        $this->registry = $this->createMock(ManagerRegistry::class);
-        $this->registry->expects($this->any())
+        $doctrine = $this->createMock(ManagerRegistry::class);
+        $doctrine->expects($this->any())
             ->method('getRepository')
-            ->willReturnMap(
-                [
-                    ['OroLocaleBundle:Localization', null, $repositoryLocalization],
-                    ['OroLocaleBundle:LocalizedFallbackValue', null, $repositoryLocalizedFallbackValue],
-                ]
-            );
+            ->willReturnMap([
+                [Localization::class, null, $repositoryLocalization],
+                [LocalizedFallbackValue::class, null, $repositoryLocalizedFallbackValue],
+            ]);
 
-        /** @var ConfigProvider|MockObject $entityConfigProvider */
-        $entityConfigProvider = $this->createMock(ConfigProvider::class);
-
-        $this->translator = $this->createMock(Translator::class);
+        $translator = $this->createMock(Translator::class);
 
         return [
             new PreloadedExtension(
                 [
                     LocalizedPropertyType::class => new LocalizedPropertyType(),
-                    LocalizedFallbackValueCollectionType::class => new LocalizedFallbackValueCollectionType(
-                        $this->registry
-                    ),
-                    LocalizationCollectionType::class => new LocalizationCollectionTypeStub(
-                        [
-                            $this->getEntity(Localization::class, ['id' => self::LOCALIZATION_ID]),
-                        ]
-                    ),
+                    LocalizedFallbackValueCollectionType::class => new LocalizedFallbackValueCollectionType($doctrine),
+                    LocalizationCollectionType::class => new LocalizationCollectionTypeStub([
+                        $this->getEntity(Localization::class, ['id' => self::LOCALIZATION_ID]),
+                    ]),
                     FallbackValueType::class => new FallbackValueType(),
-                    FallbackPropertyType::class => new FallbackPropertyType($this->translator),
+                    FallbackPropertyType::class => new FallbackPropertyType($translator),
                 ],
                 [
                     FormType::class => [
-                        new TooltipFormExtension($entityConfigProvider, $this->translator),
+                        new TooltipFormExtension($this->createMock(ConfigProvider::class), $translator),
                     ],
                 ]
             ),
@@ -135,14 +111,7 @@ class FixedProductSettingsTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expected, $form->getData());
     }
 
-    /**
-     * @param string|null $string
-     * @param string|null $text
-     * @param Localization|null $localization
-     *
-     * @return LocalizedFallbackValue
-     */
-    protected function createLocalizedValue(
+    private function createLocalizedValue(
         ?string $string = null,
         ?string $text = null,
         ?Localization $localization = null
@@ -158,13 +127,12 @@ class FixedProductSettingsTypeTest extends FormIntegrationTestCase
     public function testGetBlockPrefixReturnsString(): void
     {
         $formType = new FixedProductSettingsType();
-        $this->assertTrue(is_string($formType->getBlockPrefix()));
+        $this->assertIsString($formType->getBlockPrefix());
     }
 
     public function testConfigureOptions(): void
     {
-        /** @var OptionsResolver|MockObject $resolver */
-        $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
+        $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with([

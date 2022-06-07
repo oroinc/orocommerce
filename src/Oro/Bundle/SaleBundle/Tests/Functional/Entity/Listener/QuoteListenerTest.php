@@ -2,23 +2,17 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Functional\Entity\Listener;
 
-use Doctrine\ORM\EntityManager;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class QuoteListenerTest extends WebTestCase
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
-        $this->loadFixtures([
-            'Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData',
-        ]);
+        $this->loadFixtures([LoadUserData::class]);
     }
 
     /**
@@ -26,13 +20,10 @@ class QuoteListenerTest extends WebTestCase
      */
     public function testPersistQuote()
     {
-        /* @var EntityManager $em */
-        $em = static::getContainer()->get('doctrine')->getManagerForClass('OroSaleBundle:Quote');
+        $em = self::getContainer()->get('doctrine')->getManagerForClass(Quote::class);
 
         $quote = new Quote();
-        $quote
-            ->setOwner($this->getReference(LoadUserData::USER1))
-        ;
+        $quote->setOwner($this->getReference(LoadUserData::USER1));
 
         $this->assertNull($quote->getQid());
 
@@ -46,7 +37,7 @@ class QuoteListenerTest extends WebTestCase
 
         $em->clear();
 
-        $quote = $em->getRepository('OroSaleBundle:Quote')->find($quote->getId());
+        $quote = $em->getRepository(Quote::class)->find($quote->getId());
 
         $this->assertEquals($quote->getId(), $quote->getQid());
     }

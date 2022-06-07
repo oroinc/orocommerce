@@ -13,8 +13,7 @@ class CategoryListenerTest extends WebTestCase
 {
     use MessageQueueExtension;
 
-    /** @var EntityManagerInterface */
-    private $categoryManager;
+    private EntityManagerInterface $categoryManager;
 
     protected function setUp(): void
     {
@@ -22,16 +21,14 @@ class CategoryListenerTest extends WebTestCase
         self::enableMessageBuffering();
 
         $this->categoryManager = self::getContainer()->get('doctrine')
-            ->getManagerForClass('OroCatalogBundle:Category');
+            ->getManagerForClass(Category::class);
     }
 
-    /**
-     * @return Category
-     */
-    private function getCategory()
+    private function getCategory(): Category
     {
         $category = new Category();
         $category->addTitle((new CategoryTitle())->setString('default title'));
+
         return $category;
     }
 

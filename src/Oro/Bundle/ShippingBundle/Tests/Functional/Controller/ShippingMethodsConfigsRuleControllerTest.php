@@ -355,10 +355,7 @@ class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
         $this->client->request($form->getMethod(), $form->getUri(), $formValues);
 
         self::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $shippingRule = $this->getEntityManager()->find(
-            'OroShippingBundle:ShippingMethodsConfigsRule',
-            $shippingRule->getId()
-        );
+        $shippingRule = $this->getEntityManager()->find(ShippingMethodsConfigsRule::class, $shippingRule->getId());
         self::assertCount(0, $shippingRule->getDestinations());
 
         return $shippingRule;

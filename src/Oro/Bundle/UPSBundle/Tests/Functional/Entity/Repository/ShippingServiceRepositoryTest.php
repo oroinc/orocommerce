@@ -11,31 +11,25 @@ use Oro\Bundle\UPSBundle\Tests\Functional\DataFixtures\LoadShippingServices;
 
 class ShippingServiceRepositoryTest extends WebTestCase
 {
-    /**
-     * @var ShippingServiceRepository
-     */
-    protected $repository;
+    private ShippingServiceRepository $repository;
 
     protected function setUp(): void
     {
-        $this->initClient([], static::generateBasicAuthHeader());
+        $this->initClient([], self::generateBasicAuthHeader());
 
         $this->loadFixtures([
             LoadShippingCountries::class,
             LoadShippingServices::class,
         ]);
 
-        $this->repository = static::getContainer()->get('doctrine')
-            ->getManagerForClass('OroUPSBundle:ShippingService')->getRepository('OroUPSBundle:ShippingService');
+        $this->repository = self::getContainer()->get('doctrine')
+            ->getRepository(ShippingService::class);
     }
 
     /**
      * @dataProvider getShippingServicesByCountryDataProvider
-     *
-     * @param string $country
-     * @param array $expectedServices
      */
-    public function testGetShippingServicesByCountry($country, array $expectedServices)
+    public function testGetShippingServicesByCountry(string $country, array $expectedServices)
     {
         /** @var ShippingService[]|array $expectedShippingServices */
         $expectedShippingServices = $this->getEntitiesByReferences($expectedServices);
@@ -43,13 +37,10 @@ class ShippingServiceRepositoryTest extends WebTestCase
             $this->findCountry($country)
         );
 
-        static::assertEquals($expectedShippingServices, $shippingServices);
+        self::assertEquals($expectedShippingServices, $shippingServices);
     }
 
-    /**
-     * @return array
-     */
-    public function getShippingServicesByCountryDataProvider()
+    public function getShippingServicesByCountryDataProvider(): array
     {
         return [
             [
@@ -76,25 +67,17 @@ class ShippingServiceRepositoryTest extends WebTestCase
         ];
     }
 
-    /**
-     * @param array $rules
-     * @return array
-     */
-    protected function getEntitiesByReferences(array $rules)
+    private function getEntitiesByReferences(array $rules): array
     {
         return array_map(function ($ruleReference) {
             return $this->getReference($ruleReference);
         }, $rules);
     }
 
-    /**
-     * @param string $isoCode
-     * @return Country
-     */
-    protected function findCountry($isoCode)
+    private function findCountry(string $isoCode): Country
     {
-        return static::getContainer()->get('doctrine')
-            ->getManagerForClass('OroAddressBundle:Country')
-            ->find('OroAddressBundle:Country', $isoCode);
+        return self::getContainer()->get('doctrine')
+            ->getManagerForClass(Country::class)
+            ->find(Country::class, $isoCode);
     }
 }

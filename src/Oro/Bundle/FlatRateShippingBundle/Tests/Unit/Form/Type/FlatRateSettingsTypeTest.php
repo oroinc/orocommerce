@@ -54,8 +54,8 @@ class FlatRateSettingsTypeTest extends FormIntegrationTestCase
         $doctrine->expects($this->any())
             ->method('getRepository')
             ->willReturnMap([
-                ['OroLocaleBundle:Localization', null, $repositoryLocalization],
-                ['OroLocaleBundle:LocalizedFallbackValue', null, $repositoryLocalizedFallbackValue],
+                [Localization::class, null, $repositoryLocalization],
+                [LocalizedFallbackValue::class, null, $repositoryLocalizedFallbackValue],
             ]);
 
         return [

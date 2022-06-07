@@ -16,10 +16,10 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class AjaxLineItemControllerTest extends WebTestCase
 {
-    const LINE_ITEM_1 = 'ajax_line_shopping_list_line_item.1';
-    const LINE_ITEM_2 = 'ajax_line_shopping_list_line_item.2';
-    const LINE_ITEM_3 = 'ajax_line_shopping_list_line_item.3';
-    const LINE_ITEM_4 = 'ajax_line_shopping_list_line_item.4';
+    private const LINE_ITEM_1 = 'ajax_line_shopping_list_line_item.1';
+    private const LINE_ITEM_2 = 'ajax_line_shopping_list_line_item.2';
+    private const LINE_ITEM_3 = 'ajax_line_shopping_list_line_item.3';
+    private const LINE_ITEM_4 = 'ajax_line_shopping_list_line_item.4';
 
     protected function setUp(): void
     {
@@ -28,31 +28,19 @@ class AjaxLineItemControllerTest extends WebTestCase
             $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
 
-        $this->loadFixtures(
-            [
-                LoadShoppingLists::class,
-                LoadCombinedProductPrices::class,
-            ]
-        );
+        $this->loadFixtures([LoadShoppingLists::class, LoadCombinedProductPrices::class]);
     }
 
     /**
      * @dataProvider addProductFromViewDataProvider
-     *
-     * @param string $lineItem
-     * @param string $product
-     * @param string $unit
-     * @param int $quantity
-     * @param array $expectedSubtotals
-     * @param string $shoppingListRef
      */
     public function testAddProductFromView(
-        $lineItem,
-        $product,
-        $unit,
-        $quantity,
+        string $lineItem,
+        string $product,
+        string $unit,
+        int $quantity,
         array $expectedSubtotals,
-        $shoppingListRef = LoadShoppingLists::SHOPPING_LIST_2
+        string $shoppingListRef = LoadShoppingLists::SHOPPING_LIST_2
     ) {
         /** @var Product $product */
         $product = $this->getReference($product);
@@ -90,8 +78,8 @@ class AjaxLineItemControllerTest extends WebTestCase
         $this->assertEquals($product->getId(), $result['product']['id']);
 
         $shoppingList = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroShoppingListBundle:ShoppingList')
-            ->find('OroShoppingListBundle:ShoppingList', $result['shoppingList']['id']);
+            ->getManagerForClass(ShoppingList::class)
+            ->find(ShoppingList::class, $result['shoppingList']['id']);
 
         $this->assertSubtotals($expectedSubtotals, $shoppingList);
         $this->assertArrayHasKey('shoppingList', $result);
@@ -111,28 +99,25 @@ class AjaxLineItemControllerTest extends WebTestCase
         $this->storeLineItemId($lineItem, $result);
     }
 
-    /**
-     * @return array
-     */
-    public function addProductFromViewDataProvider()
+    public function addProductFromViewDataProvider(): array
     {
         return [
             [
-                'lineItem' => static::LINE_ITEM_1,
+                'lineItem' => self::LINE_ITEM_1,
                 'product' => LoadProductData::PRODUCT_1,
                 'unit' => 'product_unit.bottle',
                 'quantity' => 110,
                 'expectedSubtotals' => ['EUR' => 1342, 'USD' => 1441],
             ],
             [
-                'lineItem' => static::LINE_ITEM_2,
+                'lineItem' => self::LINE_ITEM_2,
                 'product' => LoadProductData::PRODUCT_2,
                 'unit' => 'product_unit.liter',
                 'quantity' => 15,
                 'expectedSubtotals' => ['EUR' => 1573, 'USD' => 1624.0],
             ],
             [
-                'lineItem' => static::LINE_ITEM_3,
+                'lineItem' => self::LINE_ITEM_3,
                 'product' => LoadProductData::PRODUCT_1,
                 'unit' => 'product_unit.bottle',
                 'quantity' => 10,
@@ -140,7 +125,7 @@ class AjaxLineItemControllerTest extends WebTestCase
                 'shoppingListRef' => LoadShoppingLists::SHOPPING_LIST_1,
             ],
             [
-                'lineItem' => static::LINE_ITEM_4,
+                'lineItem' => self::LINE_ITEM_4,
                 'product' => LoadProductData::PRODUCT_1,
                 'unit' => 'product_unit.liter',
                 'quantity' => 10,
@@ -197,21 +182,14 @@ class AjaxLineItemControllerTest extends WebTestCase
     /**
      * @depends      testAddProductFromView
      * @dataProvider removeProductFromViewProvider
-     *
-     * @param string $productRef
-     * @param bool   $expectedResult
-     * @param string $expectedMessage
-     * @param int    $expectedInitCount
-     * @param bool   $removeCurrent
-     * @param string $shoppingListRef
      */
     public function testRemoveProductFromView(
-        $productRef,
-        $expectedResult,
-        $expectedMessage,
-        $expectedInitCount,
-        $removeCurrent = false,
-        $shoppingListRef = LoadShoppingLists::SHOPPING_LIST_2
+        string $productRef,
+        bool $expectedResult,
+        string $expectedMessage,
+        int $expectedInitCount,
+        bool $removeCurrent = false,
+        string $shoppingListRef = LoadShoppingLists::SHOPPING_LIST_2
     ) {
         /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getReference($shoppingListRef);
@@ -272,20 +250,12 @@ class AjaxLineItemControllerTest extends WebTestCase
         }
     }
 
-    /**
-     * @param $id
-     * @return null|ShoppingList
-     */
-    protected function getShoppingList($id)
+    private function getShoppingList(int $id): ?ShoppingList
     {
         return $this->getShoppingListRepository()->find($id);
     }
 
-    /**
-     * @param ShoppingList $currentShoppingList
-     * @param bool $isCurrent
-     */
-    protected function setShoppingListCurrent(ShoppingList $currentShoppingList, $isCurrent)
+    private function setShoppingListCurrent(ShoppingList $currentShoppingList, bool $isCurrent): void
     {
         $container = $this->getContainer();
         $manager = $container->get('doctrine')->getManagerForClass(ShoppingList::class);
@@ -304,10 +274,7 @@ class AjaxLineItemControllerTest extends WebTestCase
         $manager->flush();
     }
 
-    /**
-     * @return array
-     */
-    public function removeProductFromViewProvider()
+    public function removeProductFromViewProvider(): array
     {
         return [
             [
@@ -444,15 +411,12 @@ class AjaxLineItemControllerTest extends WebTestCase
         $this->assertEquals($product->getId(), $lineItem->getProduct()->getId());
     }
 
-    /**
-     * @return ShoppingListRepository
-     */
-    protected function getShoppingListRepository()
+    private function getShoppingListRepository(): ShoppingListRepository
     {
-        return $this->getContainer()->get('doctrine')->getRepository('OroShoppingListBundle:ShoppingList');
+        return $this->getContainer()->get('doctrine')->getRepository(ShoppingList::class);
     }
 
-    protected function assertSubtotals(array $expectedSubtotals, ShoppingList $shoppingList)
+    private function assertSubtotals(array $expectedSubtotals, ShoppingList $shoppingList)
     {
         foreach ($expectedSubtotals as $currency => $value) {
             foreach ($shoppingList->getTotals() as $total) {
@@ -463,13 +427,10 @@ class AjaxLineItemControllerTest extends WebTestCase
         }
     }
 
-    /**
-     * @param ShoppingList $shoppingList
-     * @param Product $parentProduct
-     * @return LineItem
-     */
-    protected function doTestAddProductFromViewWithParentProduct(ShoppingList $shoppingList, Product $parentProduct)
-    {
+    private function doTestAddProductFromViewWithParentProduct(
+        ShoppingList $shoppingList,
+        Product $parentProduct
+    ): LineItem {
         $product = $this->getReference(LoadProductData::PRODUCT_3);
         $unit = $this->getReference('product_unit.liter');
 
@@ -502,8 +463,8 @@ class AjaxLineItemControllerTest extends WebTestCase
         $this->assertEquals($product->getId(), $result['product']['id']);
 
         $shoppingList = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroShoppingListBundle:ShoppingList')
-            ->find('OroShoppingListBundle:ShoppingList', $result['shoppingList']['id']);
+            ->getManagerForClass(ShoppingList::class)
+            ->find(ShoppingList::class, $result['shoppingList']['id']);
 
         $this->assertArrayHasKey('shoppingList', $result);
         $this->assertArrayHasKey('id', $result['shoppingList']);
@@ -512,11 +473,7 @@ class AjaxLineItemControllerTest extends WebTestCase
         return $shoppingList->getLineItems()->first();
     }
 
-    /**
-     * @param string $referenceName
-     * @param array $result
-     */
-    protected function storeLineItemId($referenceName, array $result)
+    private function storeLineItemId(string $referenceName, array $result): void
     {
         $currentShoppingList = $result['shoppingList'];
 

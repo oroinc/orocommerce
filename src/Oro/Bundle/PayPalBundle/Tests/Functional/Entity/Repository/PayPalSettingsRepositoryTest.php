@@ -2,45 +2,34 @@
 
 namespace Oro\Bundle\PayPalBundle\Tests\Functional\Entity\Repository;
 
+use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
 use Oro\Bundle\PayPalBundle\Entity\Repository\PayPalSettingsRepository;
 use Oro\Bundle\PayPalBundle\Tests\Functional\DataFixtures\LoadPayPalChannelData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class PayPalSettingsRepositoryTest extends WebTestCase
 {
-    /**
-     * @var PayPalSettingsRepository
-     */
-    protected $repository;
+    private PayPalSettingsRepository $repository;
 
     protected function setUp(): void
     {
-        $this->initClient([], static::generateBasicAuthHeader());
+        $this->initClient([], self::generateBasicAuthHeader());
+        $this->loadFixtures([LoadPayPalChannelData::class]);
 
-        $this->loadFixtures([
-            LoadPayPalChannelData::class,
-        ]);
-
-        $this->repository = static::getContainer()->get('doctrine')
-            ->getManagerForClass('OroPayPalBundle:PayPalSettings')->getRepository('OroPayPalBundle:PayPalSettings');
+        $this->repository = self::getContainer()->get('doctrine')
+            ->getRepository(PayPalSettings::class);
     }
 
     /**
      * @dataProvider getEnabledSettingsByTypeDataProvider
-     *
-     * @param string $type
-     * @param integer $expectedCount
      */
-    public function testGetEnabledSettingsByType($type, $expectedCount)
+    public function testGetEnabledSettingsByType(string $type, int $expectedCount)
     {
         $enabledSettings = $this->repository->getEnabledSettingsByType($type);
         $this->assertCount($expectedCount, $enabledSettings);
     }
 
-    /**
-     * @return array
-     */
-    public function getEnabledSettingsByTypeDataProvider()
+    public function getEnabledSettingsByTypeDataProvider(): array
     {
         return [
             [
