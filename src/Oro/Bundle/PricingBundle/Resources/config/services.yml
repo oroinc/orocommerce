@@ -1565,6 +1565,8 @@ services:
         tags:
             - { name: kernel.event_listener, event: Oro\Bundle\ProductBundle\Event\CollectAutocompleteFieldsEvent, method: onCollectAutocompleteFields }
             - { name: kernel.event_listener, event: Oro\Bundle\ProductBundle\Event\ProcessAutocompleteDataEvent, method: onProcessAutocompleteData }
+            - { name: oro_featuretogle.feature, feature: oro_price_lists_flat }
+            - { name: oro_featuretogle.feature, feature: oro_price_lists_combined }
 
     oro_pricing.event_listener.price_list_view:
         class: Oro\Bundle\PricingBundle\EventListener\PriceListViewListener
