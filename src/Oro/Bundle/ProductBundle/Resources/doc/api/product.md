@@ -99,7 +99,7 @@ a Product entity, in the **data** section. Example:
 
 #### 5. Creating configurable products
 
-When creating a product , there are two types available : simple and configurable. Configurable products must
+When creating a product, there are three types available: simple, kit, and configurable. Configurable products must
 have custom product attributes in the product attribute family specified and a result product variants can be added to a
 configurable product. A product variant is a simple product attached to a parent configurable product.
 
@@ -223,7 +223,40 @@ For **parentProduct** id you need to specify any id of an existing product from 
 the link between the configurable product that is added on this request and the variants will be handled internally
 by the API. In **product** tag we specify the ID of the product that will be a variant of the created product.
 
-#### 7. Using product images
+#### 7. Creating product kits
+
+To create a product kit the "type" must be specified in the **attributes** section of the product.
+
+Example:
+
+```JSON
+      "attributes": {
+        "sku": "PKSKU1"
+        ...
+        "productType": "kit",
+        ...
+      }
+```
+
+Also, a product kit must have at least one kit item that must be specified using "kitItems" key in the **relationships** section of the product.
+
+Example:
+
+```JSON
+      "relationships": {
+        ...
+        "kitItems": {
+            "data": [
+                {
+                    "type": "productkititems",
+                    "id": "kit-item-1"
+                }
+            ]
+        }
+      },
+```
+
+#### 8. Using product images
 
 Add images definition in the **data** section. Example:
 
@@ -315,7 +348,7 @@ In the **included** section. Example:
 
 The example above also creates product image mandatory subresources : files and types.
 The type attribute of the product image type model ("productImageTypeType") should be a valid type
- of image defined in themes  and it is not directly handled by the API.
+of image defined in themes and it is not directly handled by the API.
 
 {@request:json_api}
 Example:
@@ -417,6 +450,14 @@ Example:
           {
             "type": "productunitprecisions",
             "id": "product-unit-precision-id-2"
+          }
+        ]
+      },
+      "productShippingOptions":{
+        "data":[
+          {
+            "type":"productshippingoptions",
+            "id":"product-shipping-options-1"
           }
         ]
       },
@@ -744,6 +785,36 @@ Example:
           }
         }
       }
+    },
+    {
+      "type":"productshippingoptions",
+      "id":"product-shipping-options-1",
+      "attributes":{
+        "weightValue":10,
+        "dimensionsLength":0.6,
+        "dimensionsWidth":0.8,
+        "dimensionsHeight":0.1
+      },
+      "relationships":{
+        "productUnit":{
+          "data":{
+            "type":"productunits",
+            "id":"set"
+          }
+        },
+        "weightUnit":{
+          "data":{
+            "type":"weightunits",
+            "id":"kg"
+          }
+        },
+        "dimensionsUnit":{
+          "data":{
+            "type":"lengthunits",
+            "id":"m"
+          }
+        }
+      }
     }
   ]
 }
@@ -819,7 +890,7 @@ of the **included** section (see example below)
 ```
 
 * use the **update** flag to specify it is an update on an existing entity, otherwise it will attempt
-the creation of a new entity of that type
+  the creation of a new entity of that type
 
 ```JSON
           "meta": {
@@ -998,6 +1069,14 @@ Example:
             "id": "455"
           }
         ]
+      },
+      "productShippingOptions":{
+        "data":[
+          {
+            "type":"productshippingoptions",
+            "id":"product-shipping-options-1"
+          }
+        ]
       }
     }
   },
@@ -1039,6 +1118,36 @@ Example:
           "data": {
             "type": "productunits",
             "id": "set"
+          }
+        }
+      }
+    },
+    {
+      "type": "productshippingoptions",
+      "id": "product-shipping-options-1",
+      "attributes": {
+        "weightValue": 10,
+        "dimensionsLength": 0.6,
+        "dimensionsWidth": 0.8,
+        "dimensionsHeight": 0.1
+      },
+      "relationships": {
+        "productUnit": {
+          "data": {
+            "type": "productunits",
+            "id": "set"
+          }
+        },
+        "weightUnit": {
+          "data": {
+            "type": "weightunits",
+            "id": "kg"
+          }
+        },
+        "dimensionsUnit": {
+          "data": {
+            "type": "lengthunits",
+            "id": "m"
           }
         }
       }
@@ -1182,6 +1291,20 @@ The unit code provided for this field will be automatically added to the **unitP
 The unit code provided for this field must exist in the **unitPrecisions** list.
 
 **This field must not be empty, if it is passed.**
+
+### kitItems
+
+#### create
+
+**This field must not be empty, if the product type is "kit".**
+
+{@inheritdoc}
+
+#### update
+
+{@inheritdoc}
+
+**This field must not be empty, if it is passed and the product type is "kit".**
 
 ## SUBRESOURCES
 
@@ -2421,6 +2544,77 @@ Example:
   "data": [
     {
       "type": "productvariantlinks",
+      "id": "1"
+    }
+  ]
+}
+```
+{@/request}
+
+### kitItems
+
+#### get_subresource
+
+Retrieve the product kit items of a specific product record.
+
+#### get_relationship
+
+Retrieve a list of IDs for the product kit items of a specific product record.
+
+#### add_relationship
+
+Set the product kit items of a specific product record.
+
+{@request:json_api}
+Example:
+
+```JSON
+{
+  "data": [
+    {
+      "type": "productkititems",
+      "id": "1"
+    }
+  ]
+}
+```
+{@/request}
+
+#### update_relationship
+
+Replace the product kit items for a specific product. The product kit items collection cannot be empty.
+
+{@request:json_api}
+Example:
+
+```JSON
+{
+  "data": [
+    {
+      "type": "productkititems",
+      "id": "1"
+    },
+    {
+      "type": "productkititems",
+      "id": "2"
+    }
+  ]
+}
+```
+{@/request}
+
+#### delete_relationship
+
+Remove the product kit items of a specific product record. The last product kit item cannot be deleted from the product kit.
+
+{@request:json_api}
+Example:
+
+```JSON
+{
+  "data": [
+    {
+      "type": "productkititems",
       "id": "1"
     }
   ]

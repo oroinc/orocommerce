@@ -4,12 +4,13 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener\Doctrine;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
-use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\EventListener\Doctrine\ProductKitUnitOfQuantityDoctrineListener;
 use Oro\Bundle\ProductBundle\Exception\InvalidProductKitItemEmptyProductsException;
-use Oro\Bundle\ProductBundle\Exception\InvalidProductKitItemUnitOfQuantityException;
+use Oro\Bundle\ProductBundle\Exception\ProductKitItemEmptyProductUnitException;
+use Oro\Bundle\ProductBundle\Exception\ProductKitItemInvalidProductUnitException;
+use Oro\Bundle\ProductBundle\Service\ProductKitItemProductUnitChecker;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\ProductKitItemStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
 use Oro\Bundle\TestFrameworkBundle\Test\Logger\LoggerAwareTraitTestTrait;
@@ -22,7 +23,8 @@ class ProductKitUnitOfQuantityDoctrineListenerTest extends \PHPUnit\Framework\Te
 
     protected function setUp(): void
     {
-        $this->listener = new ProductKitUnitOfQuantityDoctrineListener();
+        $productUnitChecker = new ProductKitItemProductUnitChecker();
+        $this->listener = new ProductKitUnitOfQuantityDoctrineListener($productUnitChecker);
 
         $this->setUpLoggerMock($this->listener);
     }
@@ -31,9 +33,7 @@ class ProductKitUnitOfQuantityDoctrineListenerTest extends \PHPUnit\Framework\Te
     {
         $productKitItem = new ProductKitItemStub(42);
 
-        $this->expectExceptionObject(
-            new \LogicException(sprintf('%s::$productKit was not expected to be empty', ProductKitItem::class))
-        );
+        $this->expectExceptionObject(new \LogicException('ProductKitItem::$productKit was not expected to be empty'));
 
         $this->listener->prePersist($productKitItem, $this->createMock(LifecycleEventArgs::class));
     }
@@ -42,9 +42,7 @@ class ProductKitUnitOfQuantityDoctrineListenerTest extends \PHPUnit\Framework\Te
     {
         $productKitItem = new ProductKitItemStub(42);
 
-        $this->expectExceptionObject(
-            new \LogicException(sprintf('%s::$productKit was not expected to be empty', ProductKitItem::class))
-        );
+        $this->expectExceptionObject(new \LogicException('ProductKitItem::$productKit was not expected to be empty'));
 
         $this->listener->preUpdate($productKitItem, $this->createMock(PreUpdateEventArgs::class));
     }
@@ -61,12 +59,8 @@ class ProductKitUnitOfQuantityDoctrineListenerTest extends \PHPUnit\Framework\Te
             ->expects(self::once())
             ->method('debug')
             ->with(
-                'It is not possible to create a ProductKitItem (id: {product_kit_item_id}) '
-                . 'that has empty "Products" collection',
-                [
-                    'product_kit_item_id' => $productKitItem->getId(),
-                    'product_kit_item' => $productKitItem,
-                ]
+                'It is not possible to create a ProductKitItem that has empty products collection',
+                ['product_kit_item' => $productKitItem]
             );
 
         $this->listener->prePersist($productKitItem, $this->createMock(LifecycleEventArgs::class));
@@ -84,12 +78,50 @@ class ProductKitUnitOfQuantityDoctrineListenerTest extends \PHPUnit\Framework\Te
             ->expects(self::once())
             ->method('debug')
             ->with(
-                'It is not possible to create a ProductKitItem (id: {product_kit_item_id}) '
-                . 'that has empty "Products" collection',
-                [
-                    'product_kit_item_id' => $productKitItem->getId(),
-                    'product_kit_item' => $productKitItem,
-                ]
+                'It is not possible to create a ProductKitItem that has empty products collection',
+                ['product_kit_item' => $productKitItem]
+            );
+
+        $this->listener->preUpdate($productKitItem, $this->createMock(PreUpdateEventArgs::class));
+    }
+
+    public function testPrePersistThrowsExceptionWhenEmptyProductUnit(): void
+    {
+        $productKit = (new ProductStub())->setId(4242);
+        $product1 = (new ProductStub())->setId(424242);
+        $productKitItem = (new ProductKitItemStub(42))
+            ->setProductKit($productKit)
+            ->addProduct($product1);
+
+        $this->expectExceptionObject(new ProductKitItemEmptyProductUnitException($productKitItem));
+
+        $this->loggerMock
+            ->expects(self::once())
+            ->method('debug')
+            ->with(
+                'It is not possible to create a ProductKitItem that has empty productUnit',
+                ['product_kit_item' => $productKitItem]
+            );
+
+        $this->listener->prePersist($productKitItem, $this->createMock(LifecycleEventArgs::class));
+    }
+
+    public function testPreUpdateThrowsExceptionWhenEmptyProductUnit(): void
+    {
+        $productKit = (new ProductStub())->setId(4242);
+        $product1 = (new ProductStub())->setId(424242);
+        $productKitItem = (new ProductKitItemStub(42))
+            ->setProductKit($productKit)
+            ->addProduct($product1);
+
+        $this->expectExceptionObject(new ProductKitItemEmptyProductUnitException($productKitItem));
+
+        $this->loggerMock
+            ->expects(self::once())
+            ->method('debug')
+            ->with(
+                'It is not possible to create a ProductKitItem that has empty productUnit',
+                ['product_kit_item' => $productKitItem]
             );
 
         $this->listener->preUpdate($productKitItem, $this->createMock(PreUpdateEventArgs::class));
@@ -106,20 +138,19 @@ class ProductKitUnitOfQuantityDoctrineListenerTest extends \PHPUnit\Framework\Te
             ->addProduct($product1);
 
         $this->expectExceptionObject(
-            new InvalidProductKitItemUnitOfQuantityException($productKitItem, $productUnit, $product1)
+            new ProductKitItemInvalidProductUnitException($productKitItem, $productUnit, $product1)
         );
 
         $this->loggerMock
             ->expects(self::once())
             ->method('debug')
             ->with(
-                'ProductUnit "{product_unit}" cannot be used in ProductKitItem (id: {product_kit_item_id}) '
-                . 'because it is not present in the unit precisions collection of product (id: {product_id})',
+                'Product unit "{product_unit}" cannot be used in ProductKitItem'
+                . ' because it is not present in each product unit precisions collection of the ProductKitItem'
+                . ' $products collection',
                 [
-                    'product_kit_item_id' => $productKitItem->getId(),
-                    'product_unit' => $productUnit->getCode(),
                     'product_kit_item' => $productKitItem,
-                    'product_id' => $product1->getId(),
+                    'product_unit' => $productUnit->getCode(),
                 ]
             );
 
@@ -137,102 +168,23 @@ class ProductKitUnitOfQuantityDoctrineListenerTest extends \PHPUnit\Framework\Te
             ->addProduct($product1);
 
         $this->expectExceptionObject(
-            new InvalidProductKitItemUnitOfQuantityException($productKitItem, $productUnit, $product1)
+            new ProductKitItemInvalidProductUnitException($productKitItem, $productUnit)
         );
 
         $this->loggerMock
             ->expects(self::once())
             ->method('debug')
             ->with(
-                'ProductUnit "{product_unit}" cannot be used in ProductKitItem (id: {product_kit_item_id}) '
-                . 'because it is not present in the unit precisions collection of product (id: {product_id})',
+                'Product unit "{product_unit}" cannot be used in ProductKitItem'
+                . ' because it is not present in each product unit precisions collection of the ProductKitItem'
+                . ' $products collection',
                 [
-                    'product_kit_item_id' => $productKitItem->getId(),
-                    'product_unit' => $productUnit->getCode(),
                     'product_kit_item' => $productKitItem,
-                    'product_id' => $product1->getId(),
+                    'product_unit' => $productUnit->getCode(),
                 ]
             );
 
         $this->listener->preUpdate($productKitItem, $this->createMock(PreUpdateEventArgs::class));
-    }
-
-    public function testPrePersistWhenProductKitItemWithoutProductUnit(): void
-    {
-        $productUnit = (new ProductUnit())->setCode('item');
-        $productKitUnitPrecision = (new ProductUnitPrecision())->setUnit($productUnit);
-        $productKit = (new ProductStub())
-            ->setId(4242)
-            ->setPrimaryUnitPrecision($productKitUnitPrecision);
-
-        $product1UnitPrecision = (new ProductUnitPrecision())->setUnit($productUnit);
-        $product1 = (new ProductStub())
-            ->setId(424242)
-            ->addUnitPrecision($product1UnitPrecision);
-
-        $productKitItem = (new ProductKitItemStub(42))
-            ->setProductKit($productKit)
-            ->addProduct($product1);
-
-        self::assertNull($productKitItem->getProductUnit());
-        self::assertCount(0, $productKitItem->getReferencedUnitPrecisions());
-
-        $this->loggerMock
-            ->expects(self::once())
-            ->method('debug')
-            ->with(
-                '$productUnit is not specified for ProductKitItem (id: {product_kit_item_id}), '
-                . 'trying to use ProductUnit "{product_unit}" from the product kit primary unit precision',
-                [
-                    'product_kit_item_id' => $productKitItem->getId(),
-                    'product_unit' => $productUnit->getCode(),
-                    'product_kit_item' => $productKitItem,
-                ]
-            );
-
-        $this->listener->prePersist($productKitItem, $this->createMock(LifecycleEventArgs::class));
-
-        self::assertEquals($productUnit, $productKitItem->getProductUnit());
-        self::assertCount(1, $productKitItem->getReferencedUnitPrecisions());
-    }
-
-    public function testPreUpdateWhenProductKitItemWithoutProductUnit(): void
-    {
-        $productUnit = (new ProductUnit())->setCode('item');
-        $productKitUnitPrecision = (new ProductUnitPrecision())->setUnit($productUnit);
-        $productKit = (new ProductStub())
-            ->setId(4242)
-            ->setPrimaryUnitPrecision($productKitUnitPrecision);
-
-        $product1UnitPrecision = (new ProductUnitPrecision())->setUnit($productUnit);
-        $product1 = (new ProductStub())
-            ->setId(424242)
-            ->addUnitPrecision($product1UnitPrecision);
-
-        $productKitItem = (new ProductKitItemStub(42))
-            ->setProductKit($productKit)
-            ->addProduct($product1);
-
-        self::assertNull($productKitItem->getProductUnit());
-        self::assertCount(0, $productKitItem->getReferencedUnitPrecisions());
-
-        $this->loggerMock
-            ->expects(self::once())
-            ->method('debug')
-            ->with(
-                '$productUnit is not specified for ProductKitItem (id: {product_kit_item_id}), '
-                . 'trying to use ProductUnit "{product_unit}" from the product kit primary unit precision',
-                [
-                    'product_kit_item_id' => $productKitItem->getId(),
-                    'product_unit' => $productUnit->getCode(),
-                    'product_kit_item' => $productKitItem,
-                ]
-            );
-
-        $this->listener->preUpdate($productKitItem, $this->createMock(PreUpdateEventArgs::class));
-
-        self::assertSame($productUnit, $productKitItem->getProductUnit());
-        self::assertCount(1, $productKitItem->getReferencedUnitPrecisions());
     }
 
     public function testPrePersistWhenProductKitItemWithProductUnit(): void

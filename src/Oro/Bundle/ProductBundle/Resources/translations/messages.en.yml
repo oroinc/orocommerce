@@ -120,7 +120,9 @@ oro:
             label:              'URL Slug'
             description:        Specifies the url slugs used for product (it is a list of localized entities to hold the localized text for each localization)
             singular_label:     'Slug Prototype'
-        kit_items.label: Kit Items
+        kit_items:
+            label: Kit Items
+            description: Items of the product kit
 
         content_variant:
             product_page.label: Product Page
@@ -335,16 +337,32 @@ oro:
             entity_label: Product Kit Item
             entity_plural_label: Product Kit Items
             entity_grid_all_view_label: 'All %entity_plural_label%'
-            entity_description: 'Stores product kit items.'
+            entity_description: Stores product kit items.
             id.label: ID
-            labels.label: Label
-            minimum_quantity.label: Minimum Quantity
-            maximum_quantity.label: Maximum Quantity
-            product_unit.label: Unit of Quantity
-            optional.label: Optional
-            product_kit.label: Product Kit
-            products.label: Products
-            sort_order.label: Sort Order
+            labels:
+                label: Label
+                description: Label of the kit item of the kit.
+            minimum_quantity:
+                label: Minimum Quantity
+                description: Used to limit the quantity of this kit item that a customer may purchase as part of the kit.
+            maximum_quantity:
+                label: Maximum Quantity
+                description: Used to limit the quantity of this kit item that a customer may purchase as part of the kit.
+            product_unit:
+                label: Unit of Quantity
+                description: Unit of Quantity for Minimum Quantity and Maximum Quantity values.
+            optional:
+                label: Optional
+                description: Indicates whether this kit item is required for purchase, or can be skipped by the customer.
+            product_kit:
+                label: Product Kit
+                description: The product of type "kit" owning the product kit item.
+            products:
+                label: Products
+                description: The collection of one or more products. Customer will be offered a selection and will have to select one of the products from this collection before purchasing the kit (unless a kit item is marked optional).
+            sort_order:
+                label: Sort Order
+                description: Used to sort product kit item when displaying.
             referenced_unit_precisions.label: Referenced Unit Precisions
 
         productkititemlabel:
@@ -355,16 +373,16 @@ oro:
             id.label: 'ID'
             fallback:
                 label: 'Fallback'
-                description: 'The value for the fallback'
+                description: 'The fallback type'
             localization:
                 label: 'Localization'
-                description: 'The value for the localization, selected language'
+                description: 'The value for the localization, selected language.'
             string:
                 label: 'String value'
-                description: 'The string value for the current localization'
+                description: 'The string value for the current localization.'
             product_kit_item:
                 label: 'Product Kit Item'
-                description: 'Related product kit item'
+                description: 'The related product kit item.'
 
         related_products:
             label: Related Products

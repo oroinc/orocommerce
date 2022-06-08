@@ -7,7 +7,9 @@ use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
 use Oro\Bundle\ProductBundle\Exception\InvalidProductKitItemEmptyProductsException;
-use Oro\Bundle\ProductBundle\Exception\InvalidProductKitItemUnitOfQuantityException;
+use Oro\Bundle\ProductBundle\Exception\ProductKitItemEmptyProductUnitException;
+use Oro\Bundle\ProductBundle\Exception\ProductKitItemInvalidProductUnitException;
+use Oro\Bundle\ProductBundle\Service\ProductKitItemProductUnitChecker;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\NullLogger;
@@ -19,8 +21,11 @@ class ProductKitUnitOfQuantityDoctrineListener implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    public function __construct()
+    private ProductKitItemProductUnitChecker $productUnitChecker;
+
+    public function __construct(ProductKitItemProductUnitChecker $productUnitChecker)
     {
+        $this->productUnitChecker = $productUnitChecker;
         $this->logger = new NullLogger();
     }
 
@@ -28,7 +33,7 @@ class ProductKitUnitOfQuantityDoctrineListener implements LoggerAwareInterface
     {
         $productKit = $productKitItem->getProductKit();
         if (!$productKit) {
-            throw new \LogicException(sprintf('%s::$productKit was not expected to be empty', ProductKitItem::class));
+            throw new \LogicException('ProductKitItem::$productKit was not expected to be empty');
         }
 
         $this->setReferencedUnitPrecisions($productKitItem, $productKit);
@@ -44,12 +49,8 @@ class ProductKitUnitOfQuantityDoctrineListener implements LoggerAwareInterface
         $products = $productKitItem->getProducts();
         if (!$products->count()) {
             $this->logger->debug(
-                'It is not possible to create a ProductKitItem (id: {product_kit_item_id}) '
-                . 'that has empty "Products" collection',
-                [
-                    'product_kit_item_id' => $productKitItem->getId(),
-                    'product_kit_item' => $productKitItem,
-                ]
+                'It is not possible to create a ProductKitItem that has empty products collection',
+                ['product_kit_item' => $productKitItem]
             );
 
             throw new InvalidProductKitItemEmptyProductsException($productKitItem);
@@ -57,39 +58,32 @@ class ProductKitUnitOfQuantityDoctrineListener implements LoggerAwareInterface
 
         $productUnit = $productKitItem->getProductUnit();
         if (!$productUnit) {
-            $productUnit = $productKit->getPrimaryUnitPrecision()->getUnit();
-
             $this->logger->debug(
-                '$productUnit is not specified for ProductKitItem (id: {product_kit_item_id}), '
-                . 'trying to use ProductUnit "{product_unit}" from the product kit primary unit precision',
+                'It is not possible to create a ProductKitItem that has empty productUnit',
+                ['product_kit_item' => $productKitItem]
+            );
+
+            throw new ProductKitItemEmptyProductUnitException($productKitItem);
+        }
+
+        $unitCode = $productUnit->getCode();
+        $products = $productKitItem->getProducts();
+        $unitPrecisions = $this->productUnitChecker->getEligibleProductUnitPrecisions($unitCode, $products);
+
+        if (count($unitPrecisions) !== count($products)) {
+            $this->logger->debug(
+                'Product unit "{product_unit}" cannot be used in ProductKitItem'
+                . ' because it is not present in each product unit precisions collection of the ProductKitItem'
+                . ' $products collection',
                 [
-                    'product_kit_item_id' => $productKitItem->getId(),
-                    'product_unit' => $productUnit->getCode(),
                     'product_kit_item' => $productKitItem,
+                    'product_unit' => $unitCode,
                 ]
             );
+
+            throw new ProductKitItemInvalidProductUnitException($productKitItem, $productUnit);
         }
 
-        foreach ($products as $product) {
-            $productUnitPrecision = $product->getUnitPrecision($productUnit->getCode());
-            if (!$productUnitPrecision) {
-                $this->logger->debug(
-                    'ProductUnit "{product_unit}" cannot be used in ProductKitItem (id: {product_kit_item_id}) '
-                    . 'because it is not present in the unit precisions collection of product (id: {product_id})',
-                    [
-                        'product_kit_item_id' => $productKitItem->getId(),
-                        'product_unit' => $productUnit->getCode(),
-                        'product_kit_item' => $productKitItem,
-                        'product_id' => $product->getId(),
-                    ]
-                );
-
-                throw new InvalidProductKitItemUnitOfQuantityException($productKitItem, $productUnit, $product);
-            }
-
-            $productKitItem->addReferencedUnitPrecision($productUnitPrecision);
-        }
-
-        $productKitItem->setProductUnit($productUnit);
+        $productKitItem->setReferencedUnitPrecisions($unitPrecisions);
     }
 }

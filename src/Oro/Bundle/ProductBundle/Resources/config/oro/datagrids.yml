@@ -361,6 +361,14 @@ datagrids:
                     confirm_content_params:
                         entityLabel: '@translator->trans(oro.product.entity_label)'
                     success: oro.product.grid.delete_success
+        mass_actions:
+            delete:
+                type: delete
+                icon: trash
+                label: oro.grid.action.delete
+                entity_name: 'Oro\Bundle\ProductBundle\Entity\Product'
+                data_identifier: product.id
+                handler: oro_product.datagrid.extension.mass_action.handler.product_delete
         inline_editing:
             enable: true
             behaviour: enable_selected

@@ -1,0 +1,31 @@
+data:
+    type: productkititems
+    id: 'productkititems3'
+    attributes:
+        optional: true
+        sortOrder: 3
+    relationships:
+        labels:
+            data:
+                -
+                    type: productkititemlabels
+                    id: 'productkititems3-productkititemlabels-default'
+        productKit:
+            data:
+                type: products
+                id: '<toString(@product_kit2->getId())>'
+        products:
+            data:
+                -
+                    type: products
+                    id: '<toString(@product1->getId())>'
+included:
+    -
+        type: productkititemlabels
+        id: 'productkititems3-productkititemlabels-default'
+        attributes:
+            fallback: null
+            string: 'productkititems3-productkititemlabels-default'
+        relationships:
+            localization:
+                data: null

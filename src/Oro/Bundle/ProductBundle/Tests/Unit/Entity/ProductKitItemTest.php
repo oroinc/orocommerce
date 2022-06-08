@@ -43,4 +43,26 @@ class ProductKitItemTest extends \PHPUnit\Framework\TestCase
 
         self::assertPropertyCollections(new ProductKitItemStub(), $collections);
     }
+
+    public function testSetReferencedUnitPrecisions(): void
+    {
+        $entity = new ProductKitItem();
+        $productUnitPrecision1 = new ProductUnitPrecision();
+        $productUnitPrecision2 = new ProductUnitPrecision();
+        $productUnitPrecision3 = new ProductUnitPrecision();
+
+        $entity->setReferencedUnitPrecisions([$productUnitPrecision1, $productUnitPrecision2]);
+
+        self::assertSame(
+            [$productUnitPrecision1, $productUnitPrecision2],
+            $entity->getReferencedUnitPrecisions()->toArray()
+        );
+
+        $entity->setReferencedUnitPrecisions([$productUnitPrecision2, $productUnitPrecision3]);
+
+        self::assertSame(
+            [$productUnitPrecision2, $productUnitPrecision3],
+            $entity->getReferencedUnitPrecisions()->toArray()
+        );
+    }
 }

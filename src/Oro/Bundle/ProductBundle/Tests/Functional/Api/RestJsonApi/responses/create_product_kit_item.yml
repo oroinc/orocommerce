@@ -1,0 +1,52 @@
+data:
+    type: productkititems
+    id: new
+    attributes:
+        sortOrder: 3
+        optional: true
+        minimumQuantity: null
+        maximumQuantity: null
+    relationships:
+        labels:
+            data:
+                -
+                    type: productkititemlabels
+                    id: new
+                -
+                    type: productkititemlabels
+                    id: new
+                -
+                    type: productkititemlabels
+                    id: new
+                -
+                    type: productkititemlabels
+                    id: new
+        productKit:
+            data:
+                type: products
+                id: '<toString(@product_kit1->id)>'
+        products:
+            data:
+                -
+                    type: products
+                    id: '<toString(@product4->id)>'
+        productUnit:
+            data:
+                type: productunits
+                id: '<toString(@item->code)>'
+included:
+    -
+        type: productkititemlabels
+        id: new
+        meta:
+            includeId: productkititems3-productkititemlabels-default
+        attributes:
+            string: productkititems3-productkititemlabels-default
+            fallback: null
+        relationships:
+            productKitItem:
+                data:
+                    type: productkititems
+                    id: new
+            localization:
+                data: null

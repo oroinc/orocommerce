@@ -38,7 +38,8 @@ class ProductForBuyerTest extends FrontendRestJsonApiTestCase
                     ['type' => 'products', 'id' => '<toString(@configurable_product2_variant1->id)>'],
                     ['type' => 'products', 'id' => '<toString(@configurable_product2_variant2->id)>'],
                     ['type' => 'products', 'id' => '<toString(@configurable_product3_variant1->id)>'],
-                    ['type' => 'products', 'id' => '<toString(@configurable_product3_variant2->id)>']
+                    ['type' => 'products', 'id' => '<toString(@configurable_product3_variant2->id)>'],
+                    ['type' => 'products', 'id' => '<toString(@product_kit1->id)>'],
                 ]
             ],
             $response

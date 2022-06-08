@@ -536,7 +536,11 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
                     [
                         'type' => 'productsearch',
                         'id'   => '<toString(@configurable_product2->id)>'
-                    ]
+                    ],
+                    [
+                        'type' => 'productsearch',
+                        'id'   => '<toString(@product_kit1->id)>'
+                    ],
                 ]
             ],
             $response,
@@ -590,7 +594,11 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
                     [
                         'type' => 'productsearch',
                         'id'   => '<toString(@configurable_product2->id)>'
-                    ]
+                    ],
+                    [
+                        'type' => 'productsearch',
+                        'id'   => '<toString(@product_kit1->id)>'
+                    ],
                 ]
             ],
             $response,
@@ -629,7 +637,8 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
                     ['type' => 'productsearch', 'id' => '<toString(@product3->id)>'],
                     ['type' => 'productsearch', 'id' => '<toString(@configurable_product1->id)>'],
                     ['type' => 'productsearch', 'id' => '<toString(@configurable_product2->id)>'],
-                    ['type' => 'productsearch', 'id' => '<toString(@configurable_product3->id)>']
+                    ['type' => 'productsearch', 'id' => '<toString(@configurable_product3->id)>'],
+                    ['type' => 'productsearch', 'id' => '<toString(@product_kit1->id)>'],
                 ]
             ],
             $response,
@@ -651,7 +660,8 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
                     ['type' => 'productsearch', 'id' => '<toString(@product3->id)>'],
                     ['type' => 'productsearch', 'id' => '<toString(@configurable_product1->id)>'],
                     ['type' => 'productsearch', 'id' => '<toString(@configurable_product2->id)>'],
-                    ['type' => 'productsearch', 'id' => '<toString(@configurable_product3->id)>']
+                    ['type' => 'productsearch', 'id' => '<toString(@configurable_product3->id)>'],
+                    ['type' => 'productsearch', 'id' => '<toString(@product_kit1->id)>'],
                 ]
             ],
             $response,
@@ -682,7 +692,8 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
                     ['type' => 'productsearch', 'id' => '<toString(@product1->id)>'],
                     ['type' => 'productsearch', 'id' => '<toString(@product3->id)>'],
                     ['type' => 'productsearch', 'id' => '<toString(@configurable_product1->id)>'],
-                    ['type' => 'productsearch', 'id' => '<toString(@configurable_product2->id)>']
+                    ['type' => 'productsearch', 'id' => '<toString(@configurable_product2->id)>'],
+                    ['type' => 'productsearch', 'id' => '<toString(@product_kit1->id)>'],
                 ]
             ],
             $response,
@@ -700,7 +711,7 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains(
             [
                 'data' => [
-                    ['type' => 'productsearch', 'id' => '<toString(@configurable_product3->id)>']
+                    ['type' => 'productsearch', 'id' => '<toString(@configurable_product3->id)>'],
                 ]
             ],
             $response,
@@ -739,7 +750,8 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
                     ['type' => 'productsearch', 'id' => '<toString(@product3->id)>'],
                     ['type' => 'productsearch', 'id' => '<toString(@configurable_product1->id)>'],
                     ['type' => 'productsearch', 'id' => '<toString(@configurable_product2->id)>'],
-                    ['type' => 'productsearch', 'id' => '<toString(@configurable_product3->id)>']
+                    ['type' => 'productsearch', 'id' => '<toString(@configurable_product3->id)>'],
+                    ['type' => 'productsearch', 'id' => '<toString(@product_kit1->id)>'],
                 ]
             ],
             $response,
@@ -901,6 +913,13 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
                     ],
                     [
                         'type'       => 'productsearch',
+                        'id'         => '<toString(@product_kit1->id)>',
+                        'attributes' => [
+                            'sku' => 'PKSKU1',
+                        ],
+                    ],
+                    [
+                        'type'       => 'productsearch',
                         'id'         => '<toString(@product1->id)>',
                         'attributes' => [
                             'sku' => 'PSKU1'
@@ -929,6 +948,14 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains(
             [
                 'data' => [
+                    [
+                        'type'       => 'productsearch',
+                        'id'         => '<toString(@product_kit1->id)>',
+                        'attributes' => [
+                            'sku'  => 'PKSKU1',
+                            'name' => 'Product Kit 1'
+                        ]
+                    ],
                     [
                         'type'       => 'productsearch',
                         'id'         => '<toString(@product3->id)>',
@@ -996,8 +1023,12 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
             ],
             [
                 'type' => 'productsearch',
+                'id'   => '<toString(@product_kit1->id)>'
+            ],
+            [
+                'type' => 'productsearch',
                 'id'   => '<toString(@configurable_product3->id)>'
-            ]
+            ],
         ];
 
         if ($this->isMySqlOrmSearchEngine()) {
@@ -1013,6 +1044,9 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains(['data' => $data], $response);
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function testSortByFloatProductAttribute()
     {
         $data = [
@@ -1034,8 +1068,12 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
             ],
             [
                 'type' => 'productsearch',
+                'id'   => '<toString(@product_kit1->id)>'
+            ],
+            [
+                'type' => 'productsearch',
                 'id'   => '<toString(@configurable_product1->id)>'
-            ]
+            ],
         ];
 
         if ($this->isMySqlOrmSearchEngine()) {
@@ -1090,13 +1128,22 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
                     ],
                     [
                         'type'       => 'products',
+                        'id'         => '<toString(@product_kit1->id)>',
+                        'attributes' => [
+                            'productAttributes' => [
+                                'testAttrFloat' => 1.6
+                            ]
+                        ]
+                    ],
+                    [
+                        'type'       => 'products',
                         'id'         => '<toString(@configurable_product3->id)>',
                         'attributes' => [
                             'productAttributes' => [
                                 'testAttrFloat' => 1.5
                             ]
                         ]
-                    ]
+                    ],
                 ]
             ],
             $response
@@ -1132,13 +1179,20 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
                     [
                         'type' => 'productsearch',
                         'id'   => '<toString(@configurable_product3->id)>'
-                    ]
+                    ],
+                    [
+                        'type' => 'productsearch',
+                        'id'   => '<toString(@product_kit1->id)>'
+                    ],
                 ]
             ],
             $response
         );
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function testSortByManyToOneProductAttribute()
     {
         $response = $this->cget(
@@ -1168,7 +1222,11 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
                     [
                         'type' => 'productsearch',
                         'id'   => '<toString(@configurable_product1->id)>'
-                    ]
+                    ],
+                    [
+                        'type' => 'productsearch',
+                        'id'   => '<toString(@product_kit1->id)>'
+                    ],
                 ],
                 'included' => [
                     [
@@ -1230,8 +1288,20 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
                                 ]
                             ]
                         ]
-                    ]
-                ]
+                    ],
+                    [
+                        'type'       => 'products',
+                        'id'         => '<toString(@product_kit1->id)>',
+                        'attributes' => [
+                            'productAttributes' => [
+                                'testAttrManyToOne' => [
+                                    'id' => '<toString(@customer6->id)>',
+                                    'targetValue' => 'Company 6',
+                                ],
+                            ]
+                        ]
+                    ],
+                ],
             ],
             $response
         );

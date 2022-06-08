@@ -1,0 +1,33 @@
+data:
+    type: productkititems
+    id: '<toString(@product_kit1_item2->id)>'
+    attributes:
+        sortOrder: 3
+        optional: true
+        minimumQuantity: 0
+        maximumQuantity: 5
+    relationships:
+        labels:
+            data:
+                -
+                    type: productkititemlabels
+                    id: '<toString(@product_kit1_item2_label->id)>'
+                -
+                    type: productkititemlabels
+                    id: '<toString(@product_kit1_item2_label_es->id)>'
+        productKit:
+            data:
+                type: products
+                id: '<toString(@product_kit1->id)>'
+        products:
+            data:
+                -
+                    type: products
+                    id: '<toString(@product3->id)>'
+                -
+                    type: products
+                    id: '<toString(@product4->id)>'
+        productUnit:
+            data:
+                type: productunits
+                id: '<toString(@item->code)>'

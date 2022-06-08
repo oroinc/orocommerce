@@ -9,8 +9,8 @@ data:
         product:
             data:
                 type: products
-                id: '<toString(@product-1->id)>'
+                id: '<toString(@product1->id)>'
         unit:
             data:
                 type: productunits
-                id: '<toString(@product_unit.box->code)>'
+                id: '<toString(@each->code)>'

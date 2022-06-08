@@ -43,11 +43,11 @@ class ProductTest extends RestJsonApiTestCase
 
     private function assertSlugsPrototype(array $expected, array $slugs): void
     {
-        $actual = array_map(fn (LocalizedFallbackValue $value) => $value->getString(), $slugs);
+        $actual = array_map(static fn (LocalizedFallbackValue $value) => $value->getString(), $slugs);
         $this->assertEmpty(array_diff($actual, $expected));
     }
 
-    public function testCreate()
+    public function testCreate(): void
     {
         $response = $this->post(
             ['entity' => 'products'],
@@ -81,7 +81,7 @@ class ProductTest extends RestJsonApiTestCase
         );
     }
 
-    public function testGetListFilteredByProduct()
+    public function testGetListFilteredByProduct(): void
     {
         $response = $this->cget(
             ['entity' => 'products'],
@@ -91,7 +91,7 @@ class ProductTest extends RestJsonApiTestCase
         $this->assertResponseContains('cget_filter_by_product.yml', $response);
     }
 
-    public function testGetListFilteredBySeveralProductsWithDifferentInventoryStatuses()
+    public function testGetListFilteredBySeveralProductsWithDifferentInventoryStatuses(): void
     {
         $response = $this->cget(
             ['entity' => 'products'],
@@ -101,7 +101,7 @@ class ProductTest extends RestJsonApiTestCase
         $this->assertResponseContains('cget_filter_by_products_by_inventory_status.yml', $response);
     }
 
-    public function testGet()
+    public function testGet(): void
     {
         $product = $this->getReference(LoadProductData::PRODUCT_1);
         $response = $this->get(
@@ -111,7 +111,7 @@ class ProductTest extends RestJsonApiTestCase
         $this->assertResponseContains('get_product_by_id.yml', $response);
     }
 
-    public function testUpdate()
+    public function testUpdate(): void
     {
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_1);
@@ -156,7 +156,7 @@ class ProductTest extends RestJsonApiTestCase
         $this->assertResponseContains('patch_update_entity.yml', $response);
     }
 
-    public function testCreateWithPageTemplateScalarValue()
+    public function testCreateWithPageTemplateScalarValue(): void
     {
         $data = $this->getRequestData('create_product_min.yml');
         $data['data']['attributes']['sku'] = 'test-api-pt-scalar';
@@ -187,7 +187,7 @@ class ProductTest extends RestJsonApiTestCase
         $this->assertNull($pageTemplate->getFallback());
     }
 
-    public function testCreateWithPageTemplateFallbackToSystemConfig()
+    public function testCreateWithPageTemplateFallbackToSystemConfig(): void
     {
         $data = $this->getRequestData('create_product_min.yml');
         $data['data']['attributes']['sku'] = 'test-api-pt-sys-conf';
@@ -216,7 +216,7 @@ class ProductTest extends RestJsonApiTestCase
         $this->assertNull($pageTemplate->getScalarValue());
     }
 
-    public function testCreateWithInvalidPageTemplateBecauseOfInvalidValue()
+    public function testCreateWithInvalidPageTemplateBecauseOfInvalidValue(): void
     {
         $data = $this->getRequestData('create_product_min.yml');
         $data['data']['relationships']['pageTemplate']['data'] = [
@@ -242,7 +242,7 @@ class ProductTest extends RestJsonApiTestCase
         );
     }
 
-    public function testCreateWithInvalidPageTemplateBecauseOfFallbackValueIsEmpty()
+    public function testCreateWithInvalidPageTemplateBecauseOfFallbackValueIsEmpty(): void
     {
         $data = $this->getRequestData('create_product_min.yml');
         $data['data']['relationships']['pageTemplate']['data'] = [
@@ -265,7 +265,7 @@ class ProductTest extends RestJsonApiTestCase
         );
     }
 
-    public function testCreateWithInvalidPageTemplateBecauseOfFallbackValueHasInvalidFallback()
+    public function testCreateWithInvalidPageTemplateBecauseOfFallbackValueHasInvalidFallback(): void
     {
         $data = $this->getRequestData('create_product_min.yml');
         $data['data']['relationships']['pageTemplate']['data'] = [
@@ -291,7 +291,7 @@ class ProductTest extends RestJsonApiTestCase
         );
     }
 
-    public function testCreateWithInvalidIsUpcomingBecauseOfFallbackValueIsEmpty()
+    public function testCreateWithInvalidIsUpcomingBecauseOfFallbackValueIsEmpty(): void
     {
         $data = $this->getRequestData('create_product_min.yml');
         $data['data']['relationships']['isUpcoming']['data'] = [
@@ -314,7 +314,7 @@ class ProductTest extends RestJsonApiTestCase
         );
     }
 
-    public function testCreateWithInvalidIsUpcomingBecauseOfFallbackValueHasMoreThanOneAttribute()
+    public function testCreateWithInvalidIsUpcomingBecauseOfFallbackValueHasMoreThanOneAttribute(): void
     {
         $data = $this->getRequestData('create_product_min.yml');
         $data['data']['relationships']['isUpcoming']['data'] = [
@@ -341,7 +341,7 @@ class ProductTest extends RestJsonApiTestCase
         );
     }
 
-    public function testCreateWithInvalidIsUpcomingBecauseOfFallbackValueHasInvalidFallback()
+    public function testCreateWithInvalidIsUpcomingBecauseOfFallbackValueHasInvalidFallback(): void
     {
         $data = $this->getRequestData('create_product_min.yml');
         $data['data']['relationships']['isUpcoming']['data'] = [
@@ -371,7 +371,7 @@ class ProductTest extends RestJsonApiTestCase
         ], $response);
     }
 
-    public function testCreateWithInvalidIsUpcomingBecauseOfFallbackValueIsArrayValueInsteadOfScalarValue()
+    public function testCreateWithInvalidIsUpcomingBecauseOfFallbackValueIsArrayValueInsteadOfScalarValue(): void
     {
         $data = $this->getRequestData('create_product_min.yml');
         $data['data']['relationships']['isUpcoming']['data'] = [
@@ -397,11 +397,10 @@ class ProductTest extends RestJsonApiTestCase
         );
     }
 
-    public function testCreateWithEmptyNames()
+    public function testCreateWithEmptyNames(): void
     {
         $data = $this->getRequestData('create_product_min.yml');
-        unset($data['data']['relationships']['names']);
-        unset($data['included'][0]);
+        unset($data['data']['relationships']['names'], $data['included'][0]);
         $response = $this->post(['entity' => 'products'], $data, [], false);
 
         $this->assertResponseContainsValidationErrors(
@@ -421,7 +420,7 @@ class ProductTest extends RestJsonApiTestCase
         );
     }
 
-    public function testCreateWithEmptyDefaultName()
+    public function testCreateWithEmptyDefaultName(): void
     {
         $data = $this->getRequestData('create_product_with_empty_default_name.yml');
         $response = $this->post(['entity' => 'products'], $data, [], false);
@@ -438,7 +437,7 @@ class ProductTest extends RestJsonApiTestCase
         );
     }
 
-    public function testCreateWithInvalidProductUnit()
+    public function testCreateWithInvalidProductUnit(): void
     {
         $response = $this->post(
             ['entity' => 'products'],
@@ -464,7 +463,7 @@ class ProductTest extends RestJsonApiTestCase
         );
     }
 
-    public function testCreateWithDuplicateUnitPrecision()
+    public function testCreateWithDuplicateUnitPrecision(): void
     {
         $response = $this->post(
             ['entity' => 'products'],
@@ -483,7 +482,7 @@ class ProductTest extends RestJsonApiTestCase
         );
     }
 
-    public function testUpdateWithInvalidProductUnit()
+    public function testUpdateWithInvalidProductUnit(): void
     {
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_3);
@@ -513,7 +512,7 @@ class ProductTest extends RestJsonApiTestCase
         );
     }
 
-    public function testUpdateWhenUnitForNewUnitPrecisionIsNotProvided()
+    public function testUpdateWhenUnitForNewUnitPrecisionIsNotProvided(): void
     {
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_3);
@@ -543,7 +542,7 @@ class ProductTest extends RestJsonApiTestCase
         );
     }
 
-    public function testUpdateWithDuplicateUnitPrecision()
+    public function testUpdateWithDuplicateUnitPrecision(): void
     {
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_3);
@@ -573,7 +572,7 @@ class ProductTest extends RestJsonApiTestCase
         );
     }
 
-    public function testUpdateWithDuplicateExistingUnitPrecision()
+    public function testUpdateWithDuplicateExistingUnitPrecision(): void
     {
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_3);
@@ -608,7 +607,7 @@ class ProductTest extends RestJsonApiTestCase
         );
     }
 
-    public function testUpdateWithSetUnitForExistingUnitPrecisionThatDuplicatesAnotherUnitPrecision()
+    public function testUpdateWithSetUnitForExistingUnitPrecisionThatDuplicatesAnotherUnitPrecision(): void
     {
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_4);
@@ -637,7 +636,7 @@ class ProductTest extends RestJsonApiTestCase
         );
     }
 
-    public function testUpdateWithSetAttributeForExistingUnitPrecision()
+    public function testUpdateWithSetAttributeForExistingUnitPrecision(): void
     {
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_4);
@@ -666,7 +665,7 @@ class ProductTest extends RestJsonApiTestCase
         );
     }
 
-    public function testDeleteProductUnitPrecisionRelationship()
+    public function testDeleteProductUnitPrecisionRelationship(): void
     {
         $precisionId = $this->getReference('product_unit_precision.product-1.liter')->getId();
 
@@ -685,7 +684,7 @@ class ProductTest extends RestJsonApiTestCase
         $this->assertNull($this->getEntityManager()->find(ProductUnitPrecision::class, $precisionId));
     }
 
-    public function testTryToDeletePrimaryProductUnitPrecisionRelationship()
+    public function testTryToDeletePrimaryProductUnitPrecisionRelationship(): void
     {
         $response = $this->deleteRelationship(
             ['entity' => 'products', 'id' => '<toString(@product-1->id)>', 'association' => 'unitPrecisions'],
@@ -710,9 +709,9 @@ class ProductTest extends RestJsonApiTestCase
         );
     }
 
-    public function testDelete()
+    public function testDelete(): void
     {
-        $product = $this->getReference(LoadProductData::PRODUCT_1);
+        $product = $this->getReference(LoadProductData::PRODUCT_6);
         $id = $product->getId();
         $this->delete(
             [
@@ -726,7 +725,7 @@ class ProductTest extends RestJsonApiTestCase
         );
     }
 
-    public function testCreateForConfigurableProduct()
+    public function testCreateForConfigurableProduct(): void
     {
         $this->post(
             ['entity' => 'products'],
@@ -734,17 +733,17 @@ class ProductTest extends RestJsonApiTestCase
         );
     }
 
-    public function testCreateWithImage()
+    public function testCreateWithImage(): void
     {
         $response = $this->post(['entity' => 'products'], 'create_product_with_image.yml');
         $productId = $this->getResourceId($response);
 
         $product = $this->getEntityManager()->find(Product::class, $productId);
 
-        $this->assertTrue($product !== null);
+        $this->assertNotSame(null, $product);
         $this->assertCount(1, $product->getImages());
 
-        $items = $this->getContainer()
+        $items = self::getContainer()
             ->get('oro_workflow.manager.system')
             ->getWorkflowItemsByEntity($product);
 

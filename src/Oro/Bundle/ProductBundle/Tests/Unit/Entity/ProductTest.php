@@ -493,7 +493,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
 
     public function testGetTypes(): void
     {
-        self::assertEquals([Product::TYPE_SIMPLE, Product::TYPE_CONFIGURABLE], Product::getTypes());
+        self::assertEquals([Product::TYPE_SIMPLE, Product::TYPE_CONFIGURABLE, Product::TYPE_KIT], Product::getTypes());
     }
 
     public function testAddVariantLink(): void

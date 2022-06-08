@@ -61,6 +61,10 @@ Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
     configurable_product3_variant2_precision:
         unit: '@item'
         precision: 0
+    product_kit1_precision1:
+        unit: '@item'
+        precision: 0
+        conversionRate: 1
 
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     product1_meta_title:
@@ -115,6 +119,8 @@ Oro\Bundle\ProductBundle\Entity\ProductName:
         string: 'Variant 1 for Configurable Product 3'
     configurable_product3_variant2_name:
         string: 'Variant 2 for Configurable Product 3'
+    product_kit1_name:
+        string: 'Product Kit 1'
 
 Oro\Bundle\ProductBundle\Entity\ProductShortDescription:
     product1_short_description:
@@ -204,6 +210,8 @@ Extend\Entity\EV_Test_Prod_Attr_Enum:
         __construct: ['option4', 'Option 4', 4, true]
     productAttrEnum_option5:
         __construct: ['option5', 'Option 5', 5, true]
+    productAttrEnum_option6:
+        __construct: ['option6', 'Option 6', 6, true]
 
 Extend\Entity\EV_Test_Prod_Attr_M_Enum:
     productAttrMultiEnum_option1:
@@ -236,6 +244,11 @@ Oro\Bundle\CustomerBundle\Entity\Customer:
         owner: '@user'
     customer5:
         name: 'Company 5'
+        parent: '@customer'
+        organization: '@organization'
+        owner: '@user'
+    customer6:
+        name: 'Company 6'
         parent: '@customer'
         organization: '@organization'
         owner: '@user'
@@ -588,6 +601,25 @@ Oro\Bundle\ProductBundle\Entity\Product:
         testAttrBoolean: true
         testAttrEnum: '@productAttrEnum_option2'
         parentVariantLinks: ['@configurable_product3_variant2_link']
+    product_kit1:
+        sku: 'PKSKU1'
+        type: 'kit'
+        attributeFamily: '@default_product_family'
+        __calls:
+            - addName: ['@product_kit1_name']
+            - addKitItem: ['@product_kit1_item1']
+            - addKitItem: ['@product_kit1_item2']
+        status: 'enabled'
+        organization: '@organization'
+        owner: '@business_unit'
+        inventoryStatus: '@in_stock'
+        primaryUnitPrecision: '@product_kit1_precision1'
+        unitPrecisions: [ '@product_kit1_precision1' ]
+        testAttrBoolean: false
+        testAttrFloat: 1.6
+        testAttrInteger: 141
+        testAttrEnum: '@productAttrEnum_option6'
+        testAttrManyToOne: '@customer6'
 
 Oro\Bundle\ProductBundle\Entity\ProductVariantLink:
     configurable_product1_variant1_link:
@@ -707,3 +739,40 @@ Oro\Bundle\ProductBundle\Entity\ProductImageType:
         __construct: ['additional']
         productImage: '@product3_image2'
 
+Oro\Bundle\ProductBundle\Entity\ProductKitItemLabel:
+    product_kit1_item1_label:
+        string: 'Product Kit 1 Item 1'
+    product_kit1_item1_label_es:
+        string: 'Product Kit 1 Item 1 ES'
+        localization: '@es'
+    product_kit1_item2_label:
+        string: 'Product Kit 1 Item 2'
+    product_kit1_item2_label_es:
+        string: 'Product Kit 1 Item 2 ES'
+        localization: '@es'
+
+Oro\Bundle\ProductBundle\Entity\ProductKitItem:
+    product_kit1_item1:
+        optional: false
+        sortOrder: 1
+        minimumQuantity: ~
+        maximumQuantity: ~
+        productKit: '@product_kit1'
+        productUnit: '@item'
+        __calls:
+            - addLabel: ['@product_kit1_item1_label']
+            - addLabel: ['@product_kit1_item1_label_es']
+            - addProduct: ['@product1']
+            - addProduct: ['@product3']
+
+    product_kit1_item2:
+        optional: true
+        sortOrder: 10
+        minimumQuantity: 0
+        maximumQuantity: 5
+        productKit: '@product_kit1'
+        productUnit: '@item'
+        __calls:
+            - addLabel: ['@product_kit1_item2_label']
+            - addLabel: ['@product_kit1_item2_label_es']
+            - addProduct: ['@product3']

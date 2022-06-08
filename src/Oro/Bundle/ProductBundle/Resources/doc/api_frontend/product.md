@@ -68,6 +68,10 @@ The products that are variants for a configurable product.
 
 The configurable products that use this product as a variant.
 
+### kitItems
+
+Items of the product kit.
+
 ### images
 
 The images of the product.
@@ -145,3 +149,13 @@ Retrieve a record of the inventory status for a specific product.
 #### get_relationship
 
 Retrieve the ID of the inventory status for a specific product.
+
+### kitItems
+
+#### get_subresource
+
+Retrieve the product kit items of a specific product record.
+
+#### get_relationship
+
+Retrieve a list of IDs for the product kit items of a specific product record.

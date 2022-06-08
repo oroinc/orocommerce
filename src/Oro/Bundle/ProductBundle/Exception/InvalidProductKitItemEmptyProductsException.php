@@ -5,7 +5,7 @@ namespace Oro\Bundle\ProductBundle\Exception;
 use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
 
 /**
- * Thrown when {@see ProductKitItem}::$products collection is empty.
+ * Thrown when {@see ProductKitItem::$products} collection is empty.
  */
 class InvalidProductKitItemEmptyProductsException extends \RuntimeException
 {
@@ -13,12 +13,7 @@ class InvalidProductKitItemEmptyProductsException extends \RuntimeException
 
     public function __construct(ProductKitItem $productKitItem)
     {
-        $message = sprintf(
-            'Products collection of ProductKitItem (id: %d) was not expected to be empty.',
-            $productKitItem->getId()
-        );
-
-        parent::__construct($message);
+        parent::__construct('ProductKitItem products collection was not expected to be empty.');
 
         $this->productKitItem = $productKitItem;
     }

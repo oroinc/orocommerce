@@ -24,6 +24,7 @@ services:
             - '@.inner'
         calls:
             - [addSkippedEntity, ['Oro\Bundle\ProductBundle\Entity\Brand', ['create']]]
+            - [addSkippedEntity, ['Oro\Bundle\ProductBundle\Entity\ProductKitItem', ['create']]]
 
     oro_product.tests.skipped_file_systems:
         class: Oro\Bundle\GaufretteBundle\Tests\Functional\Environment\SkippedGaufretteFileSystemProvider
@@ -31,3 +32,8 @@ services:
         arguments:
             - '@.inner'
             - ['import_product_images']
+
+    oro_product.tests.provider.product_kits_by_unit_precision:
+        parent: oro_product.provider.product_kits_by_unit_precision
+        decorates: oro_product.provider.product_kits_by_unit_precision
+        public: true

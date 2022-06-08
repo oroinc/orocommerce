@@ -13,7 +13,7 @@ use Oro\Bundle\ProductBundle\Model\ExtendProductKitItem;
 /**
  * Represents a product kit item.
  *
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass="Oro\Bundle\ProductBundle\Entity\Repository\ProductKitItemRepository")
  * @ORM\Table(name="oro_product_kit_item")
  * @ORM\HasLifecycleCallbacks
  * @Config()
@@ -296,9 +296,9 @@ class ProductKitItem extends ExtendProductKitItem implements DatesAwareInterface
         return $this->sortOrder;
     }
 
-    public function setSortOrder(int $sortOrder): self
+    public function setSortOrder(?int $sortOrder): self
     {
-        $this->sortOrder = $sortOrder;
+        $this->sortOrder = (int) $sortOrder;
 
         return $this;
     }
@@ -318,6 +318,20 @@ class ProductKitItem extends ExtendProductKitItem implements DatesAwareInterface
     public function getReferencedUnitPrecisions(): Collection
     {
         return $this->referencedUnitPrecisions;
+    }
+
+    /**
+     * @param iterable<ProductUnitPrecision> $productUnitPrecisions
+     * @return self
+     */
+    public function setReferencedUnitPrecisions(iterable $productUnitPrecisions): self
+    {
+        $this->referencedUnitPrecisions->clear();
+        foreach ($productUnitPrecisions as $unitPrecision) {
+            $this->referencedUnitPrecisions->add($unitPrecision);
+        }
+
+        return $this;
     }
 
     public function addReferencedUnitPrecision(ProductUnitPrecision $productUnitPrecision): self

@@ -470,3 +470,17 @@ services:
         class: Oro\Bundle\ProductBundle\Api\Processor\SetProductPageTemplate
         tags:
             - { name: oro.api.processor, action: customize_form_data, event: pre_validate, parentAction: create|update, class: Oro\Bundle\ProductBundle\Entity\Product, priority: -10 }
+
+    oro_product.api.set_product_kit_item_product_unit:
+        class: Oro\Bundle\ProductBundle\Api\Processor\SetProductKitItemProductUnit
+        arguments:
+            - '@oro_product.product_kit_item_product_unit_checker'
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: pre_validate, class: Oro\Bundle\ProductBundle\Entity\ProductKitItem }
+
+    oro_product.api.disable_product_kit_item_label_creation:
+        class: Oro\Bundle\ProductBundle\Api\Processor\DisableProductKitItemLabelCreation
+        tags:
+            - { name: oro.api.processor, action: create, group: resource_check, class: Oro\Bundle\ProductBundle\Entity\ProductKitItemLabel, priority: 250 }

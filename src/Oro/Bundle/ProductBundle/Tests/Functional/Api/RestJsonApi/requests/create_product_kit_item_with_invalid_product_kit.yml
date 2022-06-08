@@ -1,0 +1,30 @@
+data:
+    type: productkititems
+    id: 'productkititems1'
+    attributes:
+        optional: true
+    relationships:
+        labels:
+            data:
+                -
+                    type: productkititemlabels
+                    id: 'productkititems1-productkititemlabels-default'
+        productKit:
+            data:
+                type: products
+                id: '<toString(@product1->getId())>'
+        products:
+            data:
+                -
+                    type: products
+                    id: '<toString(@product1->getId())>'
+included:
+    -
+        type: productkititemlabels
+        id: 'productkititems1-productkititemlabels-default'
+        attributes:
+            fallback: null
+            string: 'productkititems1-productkititemlabels-default'
+        relationships:
+            localization:
+                data: null

@@ -11,6 +11,9 @@ Oro\Bundle\ProductBundle\Entity\Product:
         - Oro\Bundle\ProductBundle\Validator\Constraints\NotEmptyConfigurableAttributes:
             groups: [product_create_step_one, Import]
         - Oro\Bundle\ProductBundle\Validator\Constraints\PrimaryProductUnitPrecision: ~
+        - Oro\Bundle\ProductBundle\Validator\Constraints\NotEmptyProductKitItemsCollection: ~
+        - Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitItemsOwnedByProductKit: ~
+        - Oro\Bundle\ProductBundle\Validator\Constraints\ProductUnitPrecisionsCollectionReferencedByProductKitItems: ~
     properties:
         sku:
             - NotBlank:
@@ -122,6 +125,7 @@ Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
             fields: [ product, unit ]
+        - Oro\Bundle\ProductBundle\Validator\Constraints\ProductUnitPrecisionReferencedByProductKitItems: ~
     properties:
         unit:
             - NotBlank:
@@ -233,3 +237,60 @@ Oro\Bundle\ProductBundle\Entity\Brand:
             - Valid: ~
         slugPrototypes:
             - Valid: ~
+
+Oro\Bundle\ProductBundle\Entity\ProductKitItem:
+    constraints:
+        - Oro\Bundle\ProductBundle\Validator\Constraints\OnlySimpleProductsInProductKitItemProductsCollection: ~
+        - Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitItemUnitAvailableForSpecifiedProducts: ~
+        - Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitItemQuantityPrecision: ~
+    properties:
+        labels:
+            - Valid:
+                  traverse: true
+            - Count:
+                  min: 1
+        productKit:
+            - NotNull: ~
+            - Oro\Bundle\FormBundle\Validator\Constraints\UnchangeableField:
+                  groups: [api]
+            - Oro\Bundle\ProductBundle\Validator\Constraints\ProductType:
+                  allowedTypes: [kit]
+        products:
+            - Count:
+                min: 1
+                minMessage: oro.product.productkititem.products.not_empty
+        minimumQuantity:
+            - Type: [float, null]
+            - Range:
+                  min: 0
+        maximumQuantity:
+            - Type: [float, null]
+            - Range:
+                  min: 0
+        productUnit:
+            - NotNull:
+                message: oro.product.productkititem.product_unit.not_empty
+        optional:
+            - Type: bool
+        sortOrder:
+            - Type: integer
+            - Range:
+                  # Maximum of 4-byte integer value.
+                  max: 2147483647
+
+Oro\Bundle\ProductBundle\Entity\ProductKitItemLabel:
+    properties:
+        fallback:
+            - Length:
+                  max: 64
+            - Choice: { callback: getFallbacks }
+        string:
+            - Length:
+                  max: 255
+        productKitItem:
+            - NotNull: ~
+            - Oro\Bundle\FormBundle\Validator\Constraints\UnchangeableField:
+                  groups: [api]
+        localization:
+            - Oro\Bundle\FormBundle\Validator\Constraints\UnchangeableField:
+                  groups: [api]

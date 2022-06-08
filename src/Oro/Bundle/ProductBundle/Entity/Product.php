@@ -705,7 +705,7 @@ class Product extends ExtendProduct implements
      */
     public static function getTypes()
     {
-        return [self::TYPE_SIMPLE, self::TYPE_CONFIGURABLE];
+        return [self::TYPE_SIMPLE, self::TYPE_CONFIGURABLE, self::TYPE_KIT];
     }
 
     /**
@@ -1664,6 +1664,9 @@ class Product extends ExtendProduct implements
         return $this;
     }
 
+    /**
+     * @return Collection<ProductKitItem>
+     */
     public function getKitItems(): Collection
     {
         if ($this->kitItems === null) {
