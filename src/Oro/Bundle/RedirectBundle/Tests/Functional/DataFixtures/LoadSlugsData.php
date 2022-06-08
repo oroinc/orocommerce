@@ -9,6 +9,7 @@ use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\CMSBundle\Tests\Functional\DataFixtures\LoadPageData;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 
 class LoadSlugsData extends AbstractFixture implements DependentFixtureInterface
@@ -24,6 +25,8 @@ class LoadSlugsData extends AbstractFixture implements DependentFixtureInterface
     const SLUG_TEST_ONLY = '__test-only__';
     const PAGE_3_DEFAULT = '/localized-slug/en/page3';
     const PAGE_3_LOCALIZED_EN_CA = '/localized-slug/en_ca/page3';
+
+    protected ?Organization $organization = null;
 
     /**
      * {@inheritdoc}
@@ -119,6 +122,7 @@ class LoadSlugsData extends AbstractFixture implements DependentFixtureInterface
         $slug->setUrl($url);
         $slug->setRouteName($routeName);
         $slug->setRouteParameters($routeParameters);
+        $slug->setOrganization($this->getOrganization($manager));
 
         if (null !== $localization) {
             $slug->setLocalization($localization);
@@ -128,6 +132,19 @@ class LoadSlugsData extends AbstractFixture implements DependentFixtureInterface
         $this->addReference($reference ?: $url, $slug);
 
         return $slug;
+    }
+
+    /**
+     * @param ObjectManager $manager
+     * @return Organization
+     */
+    protected function getOrganization(ObjectManager $manager)
+    {
+        if (null === $this->organization) {
+            $this->organization = $manager->getRepository('OroOrganizationBundle:Organization')->getFirst();
+        }
+
+        return $this->organization;
     }
 
     /**

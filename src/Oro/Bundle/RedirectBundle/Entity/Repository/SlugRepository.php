@@ -12,6 +12,7 @@ use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\RedirectBundle\Entity\Hydrator\MatchingSlugHydrator;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Entity\SlugAwareInterface;
+use Oro\Bundle\RedirectBundle\Helper\SlugQueryRestrictionHelperInterface;
 use Oro\Bundle\RedirectBundle\Helper\UrlParameterHelper;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
@@ -88,6 +89,31 @@ class SlugRepository extends EntityRepository
     }
 
     /**
+     * @deprecated This method will be removed in 5.1
+     */
+    public function findRestrictedAllDirectUrlsByPattern(
+        string $pattern,
+        SlugQueryRestrictionHelperInterface $slugQueryRestrictionHelper,
+        SlugAwareInterface $restrictedEntity = null,
+        ScopeCriteria $scopeCriteria = null
+    ): array {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->from($this->getEntityName(), 'slug')
+            ->select('slug.url')
+            ->where('slug.url LIKE :pattern')
+            ->setParameter('pattern', $pattern)
+            ->orderBy('slug.id');
+
+        $this->applyDirectUrlScopeCriteria($qb, $scopeCriteria);
+        $this->restrictByEntitySlugs($qb, $restrictedEntity);
+        $slugQueryRestrictionHelper->restrictQueryBuilder($qb);
+
+        $rawResult = $qb->getQuery()->getArrayResult();
+
+        return \array_column($rawResult, 'url');
+    }
+
+    /**
      * @param string $url
      * @param ScopeCriteria $scopeCriteria
      * @param AclHelper $aclHelper
@@ -101,6 +127,29 @@ class SlugRepository extends EntityRepository
             ->addSelect('scopes.id as matchedScopeId');
 
         return $this->getMatchingSlugForCriteria($qb, $scopeCriteria, $aclHelper);
+    }
+
+    /**
+     * @deprecated This method will be removed in 5.1
+     *
+     * @param string $url
+     * @param ScopeCriteria $scopeCriteria
+     * @param SlugQueryRestrictionHelperInterface $slugQueryRestrictionHelper
+     * @return Slug|null
+     */
+    public function getRestrictedSlugByUrlAndScopeCriteria(
+        $url,
+        ScopeCriteria $scopeCriteria,
+        SlugQueryRestrictionHelperInterface $slugQueryRestrictionHelper
+    ) {
+        $qb = $this->getSlugByUrlQueryBuilder($url);
+
+        $qb->leftJoin('slug.scopes', 'scopes', Join::WITH)
+            ->addSelect('scopes.id as matchedScopeId');
+
+        $qb = $slugQueryRestrictionHelper->restrictQueryBuilder($qb);
+
+        return $this->getMatchingSlugForCriteria($qb, $scopeCriteria);
     }
 
     /**
@@ -121,6 +170,30 @@ class SlugRepository extends EntityRepository
             ->setParameter('slugPrototype', $slugPrototype);
 
         return $this->getMatchingSlugForCriteria($qb, $scopeCriteria, $aclHelper);
+    }
+
+    /**
+     * @deprecated This method will be removed in 5.1
+     *
+     * @param string $slugPrototype
+     * @param ScopeCriteria $scopeCriteria
+     * @param SlugQueryRestrictionHelperInterface $slugQueryRestrictionHelper
+     * @return Slug|null
+     */
+    public function getRestrictedSlugBySlugPrototypeAndScopeCriteria(
+        $slugPrototype,
+        ScopeCriteria $scopeCriteria,
+        SlugQueryRestrictionHelperInterface $slugQueryRestrictionHelper
+    ) {
+        $qb = $this->createQueryBuilder('slug');
+        $this->applyDirectUrlScopeCriteria($qb);
+        $qb->addSelect('scopes.id as matchedScopeId')
+            ->andWhere($qb->expr()->eq('slug.slugPrototype', ':slugPrototype'))
+            ->setParameter('slugPrototype', $slugPrototype);
+
+        $qb = $slugQueryRestrictionHelper->restrictQueryBuilder($qb);
+
+        return $this->getMatchingSlugForCriteria($qb, $scopeCriteria);
     }
 
     /**

@@ -7,6 +7,7 @@ use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\PlatformBundle\Maintenance\Mode as MaintenanceMode;
 use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
+use Oro\Bundle\RedirectBundle\Helper\SlugQueryRestrictionHelperInterface;
 use Oro\Bundle\RedirectBundle\Routing\MatchedUrlDecisionMaker;
 use Oro\Bundle\RedirectBundle\Routing\SluggableUrlGenerator;
 use Oro\Bundle\RedirectBundle\Routing\SlugUrlMatcher;
@@ -57,6 +58,9 @@ class SlugUrlMatcherTest extends \PHPUnit\Framework\TestCase
      */
     private $maintenanceMode;
 
+    /** @var SlugQueryRestrictionHelperInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $slugQueryRestrictionHelper;
+
     /**
      * @var SlugUrlMatcher
      */
@@ -70,6 +74,7 @@ class SlugUrlMatcherTest extends \PHPUnit\Framework\TestCase
         $this->matchedUrlDecisionMaker = $this->createMock(MatchedUrlDecisionMaker::class);
         $this->aclHelper = $this->createMock(AclHelper::class);
         $this->maintenanceMode = $this->createMock(MaintenanceMode::class);
+        $this->slugQueryRestrictionHelper = $this->createMock(SlugQueryRestrictionHelperInterface::class);
 
         $manager = $this->createMock(ObjectManager::class);
         $manager->expects($this->any())
@@ -91,6 +96,7 @@ class SlugUrlMatcherTest extends \PHPUnit\Framework\TestCase
             $this->aclHelper,
             $this->maintenanceMode
         );
+        $this->matcher->setSlugQueryRestrictionHelper($this->slugQueryRestrictionHelper);
     }
 
     public function testMatchSystem()
@@ -189,7 +195,7 @@ class SlugUrlMatcherTest extends \PHPUnit\Framework\TestCase
         $this->assertScopeCriteriaReceived();
 
         $this->repository->expects($this->once())
-            ->method('getSlugByUrlAndScopeCriteria')
+            ->method('getRestrictedSlugByUrlAndScopeCriteria')
             ->willReturn(null);
 
         $this->expectException(ResourceNotFoundException::class);
@@ -415,7 +421,7 @@ class SlugUrlMatcherTest extends \PHPUnit\Framework\TestCase
         $this->assertScopeCriteriaReceived();
 
         $this->repository->expects($this->once())
-            ->method('getSlugByUrlAndScopeCriteria')
+            ->method('getRestrictedSlugByUrlAndScopeCriteria')
             ->willReturn(null);
 
         $this->expectException(ResourceNotFoundException::class);
@@ -519,10 +525,10 @@ class SlugUrlMatcherTest extends \PHPUnit\Framework\TestCase
         $contextSlug->setUrl($contextUrl);
 
         $this->repository->expects($this->exactly(2))
-            ->method('getSlugByUrlAndScopeCriteria')
+            ->method('getRestrictedSlugByUrlAndScopeCriteria')
             ->withConsecutive(
-                [$contextUrl, $scopeCriteria, $this->aclHelper],
-                [$itemUrl, $scopeCriteria, $this->aclHelper]
+                [$contextUrl, $scopeCriteria, $this->slugQueryRestrictionHelper],
+                [$itemUrl, $scopeCriteria, $this->slugQueryRestrictionHelper]
             )
             ->willReturnOnConsecutiveCalls(
                 $contextSlug,
@@ -595,13 +601,13 @@ class SlugUrlMatcherTest extends \PHPUnit\Framework\TestCase
         $contextSlug->setUrl($contextUrl);
 
         $this->repository->expects($this->once())
-            ->method('getSlugByUrlAndScopeCriteria')
-            ->with($contextUrl, $scopeCriteria, $this->aclHelper)
+            ->method('getRestrictedSlugByUrlAndScopeCriteria')
+            ->with($contextUrl, $scopeCriteria, $this->slugQueryRestrictionHelper)
             ->willReturnOnConsecutiveCalls($contextSlug);
 
         $this->repository->expects($this->once())
-            ->method('getSlugBySlugPrototypeAndScopeCriteria')
-            ->with($itemUrl, $scopeCriteria, $this->aclHelper)
+            ->method('getRestrictedSlugBySlugPrototypeAndScopeCriteria')
+            ->with($itemUrl, $scopeCriteria, $this->slugQueryRestrictionHelper)
             ->willReturnOnConsecutiveCalls($urlSlug);
 
         $this->assertRouterCalls(
@@ -668,8 +674,8 @@ class SlugUrlMatcherTest extends \PHPUnit\Framework\TestCase
         $contextSlug->setUrl($contextUrl);
 
         $this->repository->expects($this->once())
-            ->method('getSlugByUrlAndScopeCriteria')
-            ->with($contextUrl, $scopeCriteria, $this->aclHelper)
+            ->method('getRestrictedSlugByUrlAndScopeCriteria')
+            ->with($contextUrl, $scopeCriteria, $this->slugQueryRestrictionHelper)
             ->willReturn($contextSlug);
         $this->router->expects($this->once())
             ->method('generate')
@@ -775,7 +781,7 @@ class SlugUrlMatcherTest extends \PHPUnit\Framework\TestCase
         $slug->setRouteParameters($routeParameters);
         $slug->setUrl($url);
         $this->repository->expects($this->once())
-            ->method('getSlugByUrlAndScopeCriteria')
+            ->method('getRestrictedSlugByUrlAndScopeCriteria')
             ->willReturn($slug);
         $this->router->expects($this->once())
             ->method('generate')

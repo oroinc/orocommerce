@@ -6,6 +6,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PlatformBundle\Maintenance\Mode as MaintenanceMode;
 use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
+use Oro\Bundle\RedirectBundle\Helper\SlugQueryRestrictionHelperInterface;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
@@ -79,6 +80,8 @@ class SlugUrlMatcher implements RequestMatcherInterface, UrlMatcherInterface
      */
     private $maintenanceMode;
 
+    private SlugQueryRestrictionHelperInterface $slugQueryRestrictionHelper;
+
     public function __construct(
         RouterInterface $router,
         ManagerRegistry $registry,
@@ -106,6 +109,14 @@ class SlugUrlMatcher implements RequestMatcherInterface, UrlMatcherInterface
     public function addUrlToMatchSlugFirst($url)
     {
         $this->matchSlugsFirst[$url] = true;
+    }
+
+    /**
+     * @deprecated This method will be removed in 5.1
+     */
+    public function setSlugQueryRestrictionHelper(SlugQueryRestrictionHelperInterface $slugQueryRestrictionHelper)
+    {
+        $this->slugQueryRestrictionHelper = $slugQueryRestrictionHelper;
     }
 
     /**
@@ -305,7 +316,11 @@ class SlugUrlMatcher implements RequestMatcherInterface, UrlMatcherInterface
         $url = $this->getCleanUrl($url);
 
         return $this->getSlugRepository()
-            ->getSlugByUrlAndScopeCriteria($url, $this->getScopeCriteria(), $this->aclHelper);
+            ->getRestrictedSlugByUrlAndScopeCriteria(
+                $url,
+                $this->getScopeCriteria(),
+                $this->slugQueryRestrictionHelper
+            );
     }
 
     /**
@@ -317,7 +332,11 @@ class SlugUrlMatcher implements RequestMatcherInterface, UrlMatcherInterface
         $url = $this->getCleanUrl($url);
 
         return $this->getSlugRepository()
-            ->getSlugBySlugPrototypeAndScopeCriteria($url, $this->getScopeCriteria(), $this->aclHelper);
+            ->getRestrictedSlugBySlugPrototypeAndScopeCriteria(
+                $url,
+                $this->getScopeCriteria(),
+                $this->slugQueryRestrictionHelper
+            );
     }
 
     private function getSlugRepository(): SlugRepository

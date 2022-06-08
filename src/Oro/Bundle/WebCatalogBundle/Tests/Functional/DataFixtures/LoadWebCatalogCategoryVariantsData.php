@@ -5,6 +5,7 @@ namespace Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
@@ -40,6 +41,7 @@ class LoadWebCatalogCategoryVariantsData extends AbstractFixture implements Depe
                     unset($nodeData);
                     continue;
                 }
+                /** @var Category $category */
                 $category = $this->getReference(self::$data[$nodeReference]);
 
                 $node = $this->getReference($nodeReference);
@@ -50,6 +52,7 @@ class LoadWebCatalogCategoryVariantsData extends AbstractFixture implements Depe
                 $slug->setRouteName($this->getRoute());
                 $slug->setRouteParameters(['categoryId' => $category->getId(), 'includeSubcategories'=>1]);
                 $slug->addScope($scope);
+                $slug->setOrganization($category->getOrganization());
 
                 $manager->persist($slug);
 
