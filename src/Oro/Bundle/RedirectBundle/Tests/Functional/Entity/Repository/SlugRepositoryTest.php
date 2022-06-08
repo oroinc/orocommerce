@@ -30,7 +30,10 @@ class SlugRepositoryTest extends WebTestCase
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
+            $this->generateBasicAuthHeader(
+                LoadCustomerUserData::AUTH_USER,
+                LoadCustomerUserData::AUTH_PW
+            )
         );
         $this->loadFixtures([LoadSlugScopesData::class]);
 
@@ -55,7 +58,10 @@ class SlugRepositoryTest extends WebTestCase
     public function testGetSlugByUrlAndScopeCriteriaAnonymous()
     {
         $criteria = $this->scopeManager->getCriteria(ScopeManager::BASE_SCOPE);
-        $slug = $this->repository->getSlugByUrlAndScopeCriteria(LoadSlugsData::SLUG_URL_ANONYMOUS, $criteria);
+        $slug = $this->repository->getSlugByUrlAndScopeCriteria(
+            LoadSlugsData::SLUG_URL_ANONYMOUS,
+            $criteria
+        );
         $expected = $this->getReference(LoadSlugsData::SLUG_URL_ANONYMOUS);
 
         $this->assertNotEmpty($slug);
