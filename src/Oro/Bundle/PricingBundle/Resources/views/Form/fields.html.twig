@@ -43,7 +43,7 @@
                     </div>
                     <div class="fields-row-error">
                         {{ form_errors(form.price.value) }}
-                    </div>                      
+                    </div>
                     <div class="is-group__col-end">
                         {{ form_widget(form.price.currency, { 'attr': {'class': 'price-currency'} }) }}
                     </div>
@@ -77,7 +77,6 @@
 
 {% block oro_pricing_price_list_collection_widget %}
     {% import '@OroUI/macros.html.twig' as UI %}
-    {% set widgetContainerAttributes = block('widget_container_attributes') %}
     {{ UI.sortable_list_view(form, attr, {
         collection_class: 'pricing-price-list',
         add_btn_label: 'oro.pricing.add_price_list'|trans,
@@ -85,7 +84,7 @@
         column_options_label: 'oro.pricing.pricelist.options.label'|trans,
         show_form_when_empty: show_form_when_empty,
         data_page_component_module: "oropricing/js/app/components/price-lists-errors-handler"
-    }, widgetContainerAttributes) }}
+    }) }}
 {% endblock %}
 
 {% macro oro_pricing_price_list_collection_prototype(widget) %}

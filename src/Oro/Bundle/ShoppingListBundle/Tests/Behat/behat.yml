@@ -196,16 +196,16 @@ oro_behat_extension:
     Shopping List Dropdown:
       selector:
         type: 'xpath'
-        locator: '//a[contains(@class, "add-to-shopping-list-button")]/following-sibling::a[contains(@class, "dropdown-toggle")]'
+        locator: '//button[contains(@class, "add-to-shopping-list-button")]/following-sibling::a[contains(@class, "dropdown-toggle")]'
 
     Create New Shopping List:
-      selector: 'a.add-to-shopping-list-button[title="Create New Shopping List"]'
+      selector: '.add-to-shopping-list-button[title="Create New Shopping List"]'
 
     Update Product B Shopping List:
-      selector: 'a.add-to-shopping-list-button[title="Update Product B Shopping List"]'
+      selector: '.add-to-shopping-list-button[title="Update Product B Shopping List"]'
 
     Remove From Shopping List:
-      selector: 'a.add-to-shopping-list-button[title="Remove From Shopping list"]'
+      selector: '.add-to-shopping-list-button[title="Remove From Shopping list"]'
 
     Shopping List Quick Search:
       selector: '.dropdown-menu [data-role="quick-search"]'
@@ -280,7 +280,7 @@ oro_behat_extension:
       selector: 'button.shopping-lists__area-trigger'
 
     Add to Shopping List:
-      selector: 'a.add-to-shopping-list-button:contains("Add to Shopping List")'
+      selector: '.add-to-shopping-list-button:contains("Add to Shopping List")'
 
     Add a Note to This Shopping List:
       selector: 'input[name=addANote]'

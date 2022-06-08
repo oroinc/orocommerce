@@ -70,6 +70,8 @@ layout:
                         visible: '=false'
                 __product_secondary_content_second_container:
                     blockType: container
+                    options:
+                        visible: '=data["acl"].isGranted("oro_shopping_list_frontend_update") && (context["is_logged_in"] || (!context["is_logged_in"] && data["feature"].isFeatureEnabled("guest_shopping_list")))'
                 __product_more_info:
                     blockType: block
                     options:

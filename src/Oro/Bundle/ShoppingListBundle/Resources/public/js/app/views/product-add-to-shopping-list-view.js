@@ -205,7 +205,7 @@ define(function(require) {
 
             if (hasLineItems) {
                 const $removeButton = $(this.options.removeButtonTemplate(shoppingList));
-                $removeButton.find('a').attr('data-intention', 'remove');
+                $removeButton.find('a, button').attr('data-intention', 'remove');
                 buttons.push($removeButton);
             }
         },
@@ -216,8 +216,14 @@ define(function(require) {
         },
 
         initButtons: function() {
-            this.findAllButtons()
-                .attr('role', 'button')
+            const $buttons = this.findAllButtons();
+
+            $buttons.each((i, btn) => {
+                if (!$(btn).is('button')) {
+                    $(btn).attr('role', 'button');
+                }
+            });
+            $buttons
                 .off('click' + this.eventNamespace())
                 .on('click' + this.eventNamespace(), this.onClick.bind(this));
         },
@@ -302,6 +308,7 @@ define(function(require) {
         },
 
         onClick: function(e) {
+            e.preventDefault();
             const $button = $(e.currentTarget);
             if ($button.data('disabled')) {
                 return false;
@@ -358,15 +365,15 @@ define(function(require) {
                 intention = 'add';
             }
 
-            const $link = $button.find('a');
+            const $els = $button.find('a, button');
             const $icon = $button.find('.fa').clone();
 
-            $link
+            $els
                 .text(label)
                 .attr('data-intention', intention);
 
             if ($icon.length) {
-                $link.prepend($icon);
+                $els.prepend($icon);
             }
 
             return $button;

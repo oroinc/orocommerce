@@ -1,1 +1,1 @@
-<meta itemprop="priceCurrency" content="<%- price.currency %>"/><meta itemprop="price" content="<%- numeral(price.price).format('0.00') %>"/><%- price.formatted_price.trim() %>
+<span class="hidden" itemprop="priceCurrency" aria-hidden="true"><%- price.currency %></span><span itemprop="price" class="hidden" aria-hidden="true"><%- numeral(price.price).format('0.00') %></span><%- price.formatted_price.trim() %>
