@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
+use Oro\Bundle\RedirectBundle\Helper\SlugQueryRestrictionHelperInterface;
 use Oro\Bundle\RedirectBundle\Provider\SlugEntityFinder;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
@@ -25,11 +26,15 @@ class SlugEntityFinderTest extends \PHPUnit\Framework\TestCase
     /** @var SlugEntityFinder */
     private $slugEntityFinder;
 
+    /** @var SlugQueryRestrictionHelperInterface */
+    private $slugQueryRestrictionHelper;
+
     protected function setUp(): void
     {
         $this->repository = $this->createMock(SlugRepository::class);
         $this->scopeManager = $this->createMock(ScopeManager::class);
         $this->aclHelper = $this->createMock(AclHelper::class);
+        $this->slugQueryRestrictionHelper = $this->createMock(SlugQueryRestrictionHelperInterface::class);
 
         $em = $this->createMock(EntityManagerInterface::class);
         $em->expects(self::any())
@@ -44,6 +49,7 @@ class SlugEntityFinderTest extends \PHPUnit\Framework\TestCase
             ->willReturn($em);
 
         $this->slugEntityFinder = new SlugEntityFinder($doctrine, $this->scopeManager, $this->aclHelper);
+        $this->slugEntityFinder->setSlugQueryRestrictionHelper($this->slugQueryRestrictionHelper);
     }
 
     private function expectsGetScopeCriteria(): ScopeCriteria
@@ -73,8 +79,8 @@ class SlugEntityFinderTest extends \PHPUnit\Framework\TestCase
         $url = '/test';
         $scopeCriteria = $this->expectsGetScopeCriteria();
         $this->repository->expects(self::once())
-            ->method('getSlugByUrlAndScopeCriteria')
-            ->with($url, self::identicalTo($scopeCriteria), self::identicalTo($this->aclHelper))
+            ->method('getRestrictedSlugByUrlAndScopeCriteria')
+            ->with($url, self::identicalTo($scopeCriteria), self::identicalTo($this->slugQueryRestrictionHelper))
             ->willReturn($result);
 
         self::assertSame($result, $this->slugEntityFinder->findSlugEntityByUrl($url));
@@ -86,8 +92,8 @@ class SlugEntityFinderTest extends \PHPUnit\Framework\TestCase
         $slug = $this->createMock(Slug::class);
         $scopeCriteria = $this->expectsGetScopeCriteria();
         $this->repository->expects(self::exactly(2))
-            ->method('getSlugByUrlAndScopeCriteria')
-            ->with($url, self::identicalTo($scopeCriteria), self::identicalTo($this->aclHelper))
+            ->method('getRestrictedSlugByUrlAndScopeCriteria')
+            ->with($url, self::identicalTo($scopeCriteria), self::identicalTo($this->slugQueryRestrictionHelper))
             ->willReturn($slug);
 
         self::assertSame($slug, $this->slugEntityFinder->findSlugEntityByUrl($url));
@@ -103,8 +109,12 @@ class SlugEntityFinderTest extends \PHPUnit\Framework\TestCase
         $slugPrototype = '/test';
         $scopeCriteria = $this->expectsGetScopeCriteria();
         $this->repository->expects(self::once())
-            ->method('getSlugBySlugPrototypeAndScopeCriteria')
-            ->with($slugPrototype, self::identicalTo($scopeCriteria), self::identicalTo($this->aclHelper))
+            ->method('getRestrictedSlugBySlugPrototypeAndScopeCriteria')
+            ->with(
+                $slugPrototype,
+                self::identicalTo($scopeCriteria),
+                self::identicalTo($this->slugQueryRestrictionHelper)
+            )
             ->willReturn($result);
 
         self::assertSame($result, $this->slugEntityFinder->findSlugEntityBySlugPrototype($slugPrototype));
@@ -116,8 +126,12 @@ class SlugEntityFinderTest extends \PHPUnit\Framework\TestCase
         $slug = $this->createMock(Slug::class);
         $scopeCriteria = $this->expectsGetScopeCriteria();
         $this->repository->expects(self::exactly(2))
-            ->method('getSlugBySlugPrototypeAndScopeCriteria')
-            ->with($slugPrototype, self::identicalTo($scopeCriteria), self::identicalTo($this->aclHelper))
+            ->method('getRestrictedSlugBySlugPrototypeAndScopeCriteria')
+            ->with(
+                $slugPrototype,
+                self::identicalTo($scopeCriteria),
+                self::identicalTo($this->slugQueryRestrictionHelper)
+            )
             ->willReturn($slug);
 
         self::assertSame($slug, $this->slugEntityFinder->findSlugEntityBySlugPrototype($slugPrototype));

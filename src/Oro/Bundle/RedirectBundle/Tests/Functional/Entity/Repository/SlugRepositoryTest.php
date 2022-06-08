@@ -136,6 +136,111 @@ class SlugRepositoryTest extends WebTestCase
         $this->assertEquals($expected->getId(), $slug->getId());
     }
 
+    public function testRestrictedGetSlugByUrlAndScopeCriteriaAnonymous()
+    {
+        $criteria = $this->scopeManager->getCriteria(ScopeManager::BASE_SCOPE);
+        $slug = $this->repository->getRestrictedSlugByUrlAndScopeCriteria(
+            LoadSlugsData::SLUG_URL_ANONYMOUS,
+            $criteria,
+            self::getContainer()->get('oro_redirect.helper.slug_query_restriction_helper')
+        );
+        $expected = $this->getReference(LoadSlugsData::SLUG_URL_ANONYMOUS);
+
+        $this->assertNotEmpty($slug);
+        $this->assertSame($expected->getId(), $slug->getId());
+    }
+
+    public function testRestrictedGetSlugByUrlAndScopeCriteriaUser()
+    {
+        /** @var CustomerUser $customer */
+        $customer = $this->getReference(LoadCustomers::DEFAULT_ACCOUNT_NAME);
+
+        $criteria = $this->scopeManager->getCriteria(ScopeManager::BASE_SCOPE, ['customer' => $customer]);
+        $slug = $this->repository->getRestrictedSlugByUrlAndScopeCriteria(
+            LoadSlugsData::SLUG_URL_USER,
+            $criteria,
+            self::getContainer()->get('oro_redirect.helper.slug_query_restriction_helper')
+        );
+        $expected = $this->getReference(LoadSlugsData::SLUG_URL_USER);
+
+        $this->assertNotEmpty($slug);
+        $this->assertSame($expected->getId(), $slug->getId());
+    }
+
+    public function testRestrictedGetSlugByUrlAndScopeCriteriaWhenSlugHasScopesThatNotMatches()
+    {
+        $criteria = $this->scopeManager->getCriteria(ScopeManager::BASE_SCOPE);
+        $slug = $this->repository->getRestrictedSlugByUrlAndScopeCriteria(
+            LoadSlugsData::SLUG_URL_PAGE,
+            $criteria,
+            self::getContainer()->get('oro_redirect.helper.slug_query_restriction_helper')
+        );
+
+        $this->assertNull($slug);
+    }
+
+    public function testRestrictedGetSlugByUrlAndScopeCriteriaSlugWithoutScopes()
+    {
+        $criteria = $this->scopeManager->getCriteria(ScopeManager::BASE_SCOPE);
+        $slug = $this->repository->getRestrictedSlugByUrlAndScopeCriteria(
+            LoadSlugsData::SLUG_URL_ANONYMOUS,
+            $criteria,
+            self::getContainer()->get('oro_redirect.helper.slug_query_restriction_helper')
+        );
+        $expected = $this->getReference(LoadSlugsData::SLUG_URL_ANONYMOUS);
+
+        $this->assertNotEmpty($slug);
+        $this->assertSame($expected->getId(), $slug->getId());
+    }
+
+    public function testRestrictedGetSlugByUrlAndScopeCriteriaSlugWithoutScopesNotEmptyCriteria()
+    {
+        /** @var CustomerUser $customer */
+        $customer = $this->getReference(LoadCustomers::DEFAULT_ACCOUNT_NAME);
+
+        $criteria = $this->scopeManager->getCriteria(ScopeManager::BASE_SCOPE, ['customer' => $customer]);
+        $slug = $this->repository->getRestrictedSlugByUrlAndScopeCriteria(
+            LoadSlugsData::SLUG_URL_ANONYMOUS,
+            $criteria,
+            self::getContainer()->get('oro_redirect.helper.slug_query_restriction_helper')
+        );
+        $expected = $this->getReference(LoadSlugsData::SLUG_URL_ANONYMOUS);
+
+        $this->assertNotEmpty($slug);
+        $this->assertSame($expected->getId(), $slug->getId());
+    }
+
+    public function testRestrictedGetSlugByUrlAndScopeCriteriaSlugWithScopesMatched()
+    {
+        /** @var CustomerUser $customer */
+        $customer = $this->getReference(LoadCustomers::DEFAULT_ACCOUNT_NAME);
+
+        $criteria = $this->scopeManager->getCriteria(ScopeManager::BASE_SCOPE, ['customer' => $customer]);
+        $slug = $this->repository->getRestrictedSlugByUrlAndScopeCriteria(
+            LoadSlugsData::SLUG_TEST_DUPLICATE_URL,
+            $criteria,
+            self::getContainer()->get('oro_redirect.helper.slug_query_restriction_helper')
+        );
+        $expected = $this->getReference(LoadSlugsData::SLUG_TEST_DUPLICATE_URL);
+
+        $this->assertNotEmpty($slug);
+        $this->assertSame($expected->getId(), $slug->getId());
+    }
+
+    public function testRestrictedGetSlugByUrlAndScopeCriteriaSlugWithoutScopesMatched()
+    {
+        $criteria = $this->scopeManager->getCriteria(ScopeManager::BASE_SCOPE);
+        $slug = $this->repository->getRestrictedSlugByUrlAndScopeCriteria(
+            LoadSlugsData::SLUG_TEST_DUPLICATE_URL,
+            $criteria,
+            self::getContainer()->get('oro_redirect.helper.slug_query_restriction_helper')
+        );
+        $expected = $this->getReference(LoadSlugsData::SLUG_TEST_DUPLICATE_REFERENCE);
+
+        $this->assertNotEmpty($slug);
+        $this->assertEquals($expected->getId(), $slug->getId());
+    }
+
     public function testFindOneDirectUrlBySlug()
     {
         $qb = $this->repository->getOneDirectUrlBySlugQueryBuilder('/slug/first');
@@ -173,6 +278,20 @@ class SlugRepositoryTest extends WebTestCase
     public function testFindAllDirectUrlsByPattern($pattern, array $expected)
     {
         $actual = $this->repository->findAllDirectUrlsByPattern($pattern);
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @dataProvider findAllByPatternWithoutScopeDataProvider
+     * @param string $pattern
+     * @param array $expected
+     */
+    public function testFindRestrictedAllDirectUrlsByPattern($pattern, array $expected)
+    {
+        $actual = $this->repository->findRestrictedAllDirectUrlsByPattern(
+            $pattern,
+            self::getContainer()->get('oro_redirect.helper.slug_query_restriction_helper')
+        );
         $this->assertEquals($expected, $actual);
     }
 
@@ -219,6 +338,31 @@ class SlugRepositoryTest extends WebTestCase
         $this->assertEmpty($actual);
     }
 
+    public function testFindRestrictedAllDirectUrlsByPatternWithRestriction()
+    {
+        $restrictedEntity = $this->createMock(SluggableInterface::class);
+        $restrictedEntity->expects($this->any())
+            ->method('getSlugs')
+            ->willReturn([$this->getReference('reference:/slug/first')]);
+
+        $actual = $this->repository->findRestrictedAllDirectUrlsByPattern(
+            '/slug/f%',
+            self::getContainer()->get('oro_redirect.helper.slug_query_restriction_helper'),
+            $restrictedEntity
+        );
+        $this->assertEmpty($actual);
+    }
+
+    public function testFindRestrictedAllDirectUrlsByPatternScopedSlug()
+    {
+        $actual = $this->repository->findRestrictedAllDirectUrlsByPattern(
+            '/slug/page',
+            self::getContainer()->get('oro_redirect.helper.slug_query_restriction_helper')
+        );
+
+        $this->assertEmpty($actual);
+    }
+
     public function testGetUsedScopes()
     {
         $this->assertSame(
@@ -244,6 +388,37 @@ class SlugRepositoryTest extends WebTestCase
 
         $criteria = $this->scopeManager->getCriteria(ScopeManager::BASE_SCOPE, ['customer' => $customer]);
         $slug = $this->repository->getSlugBySlugPrototypeAndScopeCriteria('page2', $criteria);
+        $expected = $this->getReference(LoadSlugsData::SLUG_URL_PAGE_2);
+
+        $this->assertNotEmpty($slug);
+        $this->assertSame($expected->getId(), $slug->getId());
+    }
+
+    public function testRestrictedGetSlugBySlugPrototypeAndScopeCriteriaAnonymous()
+    {
+        $criteria = $this->scopeManager->getCriteria(ScopeManager::BASE_SCOPE);
+        $slug = $this->repository->getRestrictedSlugBySlugPrototypeAndScopeCriteria(
+            'anonymous',
+            $criteria,
+            self::getContainer()->get('oro_redirect.helper.slug_query_restriction_helper')
+        );
+        $expected = $this->getReference(LoadSlugsData::SLUG_URL_ANONYMOUS);
+
+        $this->assertNotEmpty($slug);
+        $this->assertSame($expected->getId(), $slug->getId());
+    }
+
+    public function testRestrictedGetSlugBySlugPrototypeAndScopeCriteriaUser()
+    {
+        /** @var CustomerUser $customer */
+        $customer = $this->getReference(LoadCustomers::DEFAULT_ACCOUNT_NAME);
+
+        $criteria = $this->scopeManager->getCriteria(ScopeManager::BASE_SCOPE, ['customer' => $customer]);
+        $slug = $this->repository->getRestrictedSlugBySlugPrototypeAndScopeCriteria(
+            'page2',
+            $criteria,
+            self::getContainer()->get('oro_redirect.helper.slug_query_restriction_helper')
+        );
         $expected = $this->getReference(LoadSlugsData::SLUG_URL_PAGE_2);
 
         $this->assertNotEmpty($slug);
