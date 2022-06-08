@@ -210,7 +210,7 @@
                             }|json_encode }}"
                         >
                             <div class="price_rule__quantity price-rule-item-quantity-type-field" style="display: none;">
-                                {{ form_widget(form.quantity) }}
+                                {{ form_widget(form.quantity, {attr: {'data-floating-error': ''}}) }}
                             </div>
                             <div class="price_rule__quantity price-rule-item-quantity-type-expression visible">
                                 {{ form_widget(form.quantityExpression) }}
