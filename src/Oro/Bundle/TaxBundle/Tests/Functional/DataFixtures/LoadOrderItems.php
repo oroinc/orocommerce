@@ -5,6 +5,8 @@ namespace Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
+use Oro\Bundle\AddressBundle\Entity\Country;
+use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
@@ -53,10 +55,10 @@ class LoadOrderItems extends AbstractFixture implements DependentFixtureInterfac
         $order = $this->getReference(LoadOrders::ORDER_1);
         $address = new OrderAddress();
         $address->setCountry(
-            $manager->getRepository('OroAddressBundle:Country')->find(LoadTaxJurisdictions::COUNTRY_US)
+            $manager->getRepository(Country::class)->find(LoadTaxJurisdictions::COUNTRY_US)
         );
         $address->setRegion(
-            $manager->getRepository('OroAddressBundle:Region')->find(LoadTaxJurisdictions::STATE_US_NY)
+            $manager->getRepository(Region::class)->find(LoadTaxJurisdictions::STATE_US_NY)
         );
         $order
             ->setBillingAddress($address)

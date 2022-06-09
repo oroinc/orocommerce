@@ -90,9 +90,8 @@ class LoadGuestShoppingLists extends AbstractFixture implements DependentFixture
      */
     protected function getCustomerUser(ObjectManager $manager, $email)
     {
-        $customerUser = $manager->getRepository('OroCustomerBundle:CustomerUser')
+        $customerUser = $manager->getRepository(CustomerUser::class)
             ->findOneBy(['email' => $email]);
-
         if (!$customerUser) {
             throw new \LogicException('Test customer user not loaded');
         }

@@ -7,6 +7,8 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\IntegrationBundle\Entity\Transport;
+use Oro\Bundle\MoneyOrderBundle\Entity\MoneyOrderSettings;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadAdminUserData;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -60,15 +62,13 @@ class LoadMoneyOrderChannelData extends AbstractFixture implements DependentFixt
     {
         $userManager = $this->container->get('oro_user.manager');
         $admin = $userManager->findUserByEmail(LoadAdminUserData::DEFAULT_ADMIN_EMAIL);
-        $organization = $manager->getRepository('OroOrganizationBundle:Organization')->getFirst();
+        $organization = $manager->getRepository(Organization::class)->getFirst();
 
         foreach ($this->channelData as $data) {
             $entity = new Channel();
             /** @var Transport $transport */
             $transportId = $this->getReference($data['transport'])->getId();
-            $transport = $manager
-                ->getRepository('OroMoneyOrderBundle:MoneyOrderSettings')
-                ->findOneBy(['id' => $transportId]);
+            $transport = $manager->getRepository(MoneyOrderSettings::class)->findOneBy(['id' => $transportId]);
             $entity->setName($data['name']);
             $entity->setType($data['type']);
             $entity->setEnabled($data['enabled']);

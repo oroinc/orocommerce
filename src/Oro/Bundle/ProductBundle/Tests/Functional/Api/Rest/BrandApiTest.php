@@ -6,27 +6,19 @@ use Oro\Bundle\ProductBundle\Entity\Brand;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadBrandData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-/**
- * @package Oro\Bundle\TaskBundle\Tests\Functional\Api
- */
 class BrandApiTest extends WebTestCase
 {
     protected function setUp(): void
     {
-        $this->initClient([], static::generateWsseAuthHeader());
-
-        $this->loadFixtures([
-            LoadBrandData::class
-        ]);
+        $this->initClient([], self::generateWsseAuthHeader());
+        $this->loadFixtures([LoadBrandData::class]);
     }
 
     public function testGetAction()
     {
         /** @var Brand $brand */
-        $brand = $this
-            ->getContainer()
-            ->get('doctrine')
-            ->getRepository('OroProductBundle:Brand')
+        $brand = self::getContainer()->get('doctrine')
+            ->getRepository(Brand::class)
             ->findOneBy([]);
 
         $id = $brand->getId();
@@ -40,10 +32,8 @@ class BrandApiTest extends WebTestCase
     public function testDeleteAction()
     {
         /** @var Brand $brand */
-        $brand = $this
-            ->getContainer()
-            ->get('doctrine')
-            ->getRepository('OroProductBundle:Brand')
+        $brand = self::getContainer()->get('doctrine')
+            ->getRepository(Brand::class)
             ->findOneBy([]);
 
         $id = $brand->getId();

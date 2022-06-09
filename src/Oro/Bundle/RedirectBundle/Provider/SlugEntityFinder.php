@@ -2,28 +2,24 @@
 
 namespace Oro\Bundle\RedirectBundle\Provider;
 
-use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
-use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
 /**
  * Provides methods to find a slug entity.
  */
 class SlugEntityFinder
 {
-    private ManagerRegistry $doctrine;
+    private SlugRepository $slugRepository;
     private ScopeManager $scopeManager;
-    private AclHelper $aclHelper;
     private ?ScopeCriteria $scopeCriteria = null;
 
-    public function __construct(ManagerRegistry $doctrine, ScopeManager $scopeManager, AclHelper $aclHelper)
+    public function __construct(SlugRepository $slugRepository, ScopeManager $scopeManager)
     {
-        $this->doctrine = $doctrine;
+        $this->slugRepository = $slugRepository;
         $this->scopeManager = $scopeManager;
-        $this->aclHelper = $aclHelper;
     }
 
     /**
@@ -31,11 +27,7 @@ class SlugEntityFinder
      */
     public function findSlugEntityByUrl(string $url): ?Slug
     {
-        return $this->getSlugRepository()->getSlugByUrlAndScopeCriteria(
-            $url,
-            $this->getScopeCriteria(),
-            $this->aclHelper
-        );
+        return $this->slugRepository->getSlugByUrlAndScopeCriteria($url, $this->getScopeCriteria());
     }
 
     /**
@@ -43,17 +35,10 @@ class SlugEntityFinder
      */
     public function findSlugEntityBySlugPrototype(string $slugPrototype): ?Slug
     {
-        return $this->getSlugRepository()->getSlugBySlugPrototypeAndScopeCriteria(
+        return $this->slugRepository->getSlugBySlugPrototypeAndScopeCriteria(
             $slugPrototype,
-            $this->getScopeCriteria(),
-            $this->aclHelper
+            $this->getScopeCriteria()
         );
-    }
-
-    private function getSlugRepository(): SlugRepository
-    {
-        return $this->doctrine->getManagerForClass(Slug::class)
-            ->getRepository(Slug::class);
     }
 
     private function getScopeCriteria(): ScopeCriteria

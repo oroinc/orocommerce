@@ -19,32 +19,19 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
  */
 class PriceListToProductRepositoryTest extends WebTestCase
 {
-    /**
-     * @var ShardManager
-     */
-    protected $shardManager;
+    private ShardManager $shardManager;
+    private PriceListToProductRepository $repository;
 
-    /**
-     * @var PriceListToProductRepository
-     */
-    protected $repository;
-
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->initClient();
-        $this->loadFixtures(
-            [
-                LoadProductPrices::class,
-                LoadPriceListToProductWithoutPrices::class,
-            ]
-        );
+        $this->loadFixtures([
+            LoadProductPrices::class,
+            LoadPriceListToProductWithoutPrices::class,
+        ]);
 
-        $this->repository = $this->getContainer()
-            ->get('doctrine')
-            ->getRepository('OroPricingBundle:PriceListToProduct');
+        $this->repository = $this->getContainer()->get('doctrine')
+            ->getRepository(PriceListToProduct::class);
         $this->shardManager = $this->getContainer()->get('oro_pricing.shard_manager');
     }
 
@@ -72,7 +59,7 @@ class PriceListToProductRepositoryTest extends WebTestCase
 
     public function testDeleteGeneratedRelations()
     {
-        $em = $this->getContainer()->get('doctrine')->getManagerForClass('OroPricingBundle:PriceListToProduct');
+        $em = $this->getContainer()->get('doctrine')->getManagerForClass(PriceListToProduct::class);
         $priceList = new PriceList();
         $priceList->setName('test price list');
         $em->persist($priceList);
@@ -104,7 +91,7 @@ class PriceListToProductRepositoryTest extends WebTestCase
 
     public function testDeleteManualRelations()
     {
-        $em = $this->getContainer()->get('doctrine')->getManagerForClass('OroPricingBundle:PriceListToProduct');
+        $em = $this->getContainer()->get('doctrine')->getManagerForClass(PriceListToProduct::class);
         $priceList = new PriceList();
         $priceList->setName('test price list');
         $em->persist($priceList);
@@ -117,13 +104,13 @@ class PriceListToProductRepositoryTest extends WebTestCase
         //not manual relations
         /** @var Product $product2 */
         $product2 = $this->getReference(LoadProductData::PRODUCT_2);
-        $manualRelatio1 = $this->createRelation($priceList, $product2, true);
-        $em->persist($manualRelatio1);
+        $manualRelation1 = $this->createRelation($priceList, $product2, true);
+        $em->persist($manualRelation1);
 
         /** @var Product $product3 */
         $product3 = $this->getReference(LoadProductData::PRODUCT_3);
-        $manualRelatio2 = $this->createRelation($priceList, $product3, true);
-        $em->persist($manualRelatio2);
+        $manualRelation2 = $this->createRelation($priceList, $product3, true);
+        $em->persist($manualRelation2);
 
         $em->flush();
 
@@ -135,7 +122,7 @@ class PriceListToProductRepositoryTest extends WebTestCase
         $actual = $this->repository->findBy(['priceList' => $priceList], ['manual' => 'ASC']);
         $this->assertCount(2, $actual);
         $this->assertEquals($generatedRelation->getId(), array_shift($actual)->getId());
-        $this->assertEquals($manualRelatio2->getId(), array_shift($actual)->getId());
+        $this->assertEquals($manualRelation2->getId(), array_shift($actual)->getId());
 
         $this->repository->deleteManualRelations($priceList);
         $actual = $this->repository->findBy(['priceList' => $priceList]);
@@ -198,13 +185,7 @@ class PriceListToProductRepositoryTest extends WebTestCase
         $this->assertCount(12, $this->repository->findAll());
     }
 
-    /**
-     * @param PriceList $priceList
-     * @param Product $product
-     * @param bool $isManual
-     * @return PriceListToProduct
-     */
-    protected function createRelation($priceList, $product, $isManual)
+    private function createRelation(PriceList $priceList, Product $product, bool $isManual): PriceListToProduct
     {
         $manualRelation = new PriceListToProduct();
         $manualRelation->setPriceList($priceList)

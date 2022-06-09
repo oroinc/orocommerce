@@ -4,16 +4,14 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerGroupType;
+use Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup;
 
 /**
  * @group CommunityEdition
  */
 class CustomerGroupControllerTest extends AbstractPriceListsByEntityTestCase
 {
-    /**
-     * @var  CustomerGroup
-     */
-    protected $customerGroup;
+    private CustomerGroup $customerGroup;
 
     protected function setUp(): void
     {
@@ -58,11 +56,8 @@ class CustomerGroupControllerTest extends AbstractPriceListsByEntityTestCase
      */
     public function getPriceListsByEntity()
     {
-        return $this->client
-            ->getContainer()
-            ->get('doctrine')
-            ->getManager()
-            ->getRepository('OroPricingBundle:PriceListToCustomerGroup')
+        return self::getContainer()->get('doctrine')
+            ->getRepository(PriceListToCustomerGroup::class)
             ->findBy(['customerGroup' => $this->customerGroup]);
     }
 }

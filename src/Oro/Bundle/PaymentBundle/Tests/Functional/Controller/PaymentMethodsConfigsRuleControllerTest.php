@@ -11,7 +11,6 @@ use Oro\Bundle\PaymentBundle\Tests\Functional\Entity\DataFixtures\LoadPaymentMet
 use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadChannelData;
 use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -23,8 +22,6 @@ class PaymentMethodsConfigsRuleControllerTest extends WebTestCase
 {
     private const PAYMENT_METHOD_TYPE = 'payment_term';
 
-    private TranslatorInterface $translator;
-
     protected function setUp(): void
     {
         $this->initClient();
@@ -35,7 +32,6 @@ class PaymentMethodsConfigsRuleControllerTest extends WebTestCase
             LoadUserData::class,
             LoadChannelData::class
         ]);
-        $this->translator = self::getContainer()->get('translator');
     }
 
     public function testIndex()
@@ -64,7 +60,7 @@ class PaymentMethodsConfigsRuleControllerTest extends WebTestCase
         $payMethods = $paymentRule->getMethodConfigs();
         $payMethodsLabels = [];
         foreach ($payMethods as $method) {
-            $payMethodsLabels[] = $this->translator
+            $payMethodsLabels[] = self::getContainer()->get('translator')
                 ->trans(sprintf('oro.payment.admin.%s.label', $method->getType()));
         }
 
@@ -308,10 +304,7 @@ class PaymentMethodsConfigsRuleControllerTest extends WebTestCase
         $this->client->request($form->getMethod(), $form->getUri(), $formValues);
 
         self::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $paymentRule = $this->getEntityManager()->find(
-            'OroPaymentBundle:PaymentMethodsConfigsRule',
-            $paymentRule->getId()
-        );
+        $paymentRule = $this->getEntityManager()->find(PaymentMethodsConfigsRule::class, $paymentRule->getId());
         self::assertCount(0, $paymentRule->getDestinations());
 
         return $paymentRule;
@@ -434,7 +427,7 @@ class PaymentMethodsConfigsRuleControllerTest extends WebTestCase
     private function getPaymentMethodsConfigsRuleById(int $id): PaymentMethodsConfigsRule
     {
         return $this->getEntityManager()
-            ->getRepository('OroPaymentBundle:PaymentMethodsConfigsRule')
+            ->getRepository(PaymentMethodsConfigsRule::class)
             ->find($id);
     }
 

@@ -263,8 +263,9 @@ class CategoryTreeHandlerTest extends AbstractTreeHandlerTestCase
      */
     protected function getActualNodeHierarchy(int $entityId, int $parentId, int $position): array
     {
-        $entities = $this->getContainer()->get('doctrine')->getManagerForClass('OroCatalogBundle:Category')
-            ->getRepository('OroCatalogBundle:Category')->findBy([], ['level' => 'DESC', 'left' => 'DESC']);
+        $entities = $this->getContainer()->get('doctrine')
+            ->getRepository(Category::class)
+            ->findBy([], ['level' => 'DESC', 'left' => 'DESC']);
         return array_reduce($entities, function ($result, Category $category) {
             $result[$category->getDefaultTitle()->getString()] = [];
             if ($category->getParentCategory()) {
@@ -278,11 +279,10 @@ class CategoryTreeHandlerTest extends AbstractTreeHandlerTestCase
     private function setAdminToken()
     {
         $container = self::getContainer();
-        $organizationRepository = $container->get('doctrine')
-            ->getManagerForClass(Organization::class)
-            ->getRepository(Organization::class);
         /** @var Organization $organization */
-        $organization = $organizationRepository->getFirst();
+        $organization = $container->get('doctrine')
+            ->getRepository(Organization::class)
+            ->getFirst();
 
         $adminToken = new UsernamePasswordOrganizationToken(
             'admin',

@@ -6,11 +6,14 @@ use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryType;
 use Oro\Bundle\CatalogBundle\Model\CategoryUnitPrecision;
+use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
 use Oro\Bundle\InventoryBundle\Inventory\LowInventoryProvider;
+use Oro\Bundle\LocaleBundle\Entity\AbstractLocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Model\FallbackType;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -19,24 +22,17 @@ use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 class CategoryTypeTest extends WebTestCase
 {
-    const LARGE_IMAGE_NAME = 'large_image.png';
-    const SMALL_IMAGE_NAME = 'small_image.png';
+    private const LARGE_IMAGE_NAME = 'large_image.png';
+    private const SMALL_IMAGE_NAME = 'small_image.png';
 
-    /**
-     * @var FormFactoryInterface
-     */
-    protected $formFactory;
-
-    /**
-     * @var CsrfTokenManagerInterface
-     */
-    protected $tokenManager;
+    private FormFactoryInterface $formFactory;
+    private CsrfTokenManagerInterface $tokenManager;
 
     protected function setUp(): void
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
-        $this->loadFixtures(['Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData']);
+        $this->loadFixtures([LoadCategoryProductData::class]);
 
         $this->formFactory = $this->getContainer()->get('form.factory');
         $this->tokenManager = $this->getContainer()->get('security.csrf.token_manager');
@@ -45,9 +41,9 @@ class CategoryTypeTest extends WebTestCase
     public function testSubmit()
     {
         $doctrine = $this->getContainer()->get('doctrine');
-        $localizationRepository = $doctrine->getRepository('OroLocaleBundle:Localization');
-        $productRepository = $doctrine->getRepository('OroProductBundle:Product');
-        $productUnitRepository = $doctrine->getRepository('OroProductBundle:ProductUnit');
+        $localizationRepository = $doctrine->getRepository(Localization::class);
+        $productRepository = $doctrine->getRepository(Product::class);
+        $productUnitRepository = $doctrine->getRepository(ProductUnit::class);
 
         /** @var Localization[] $localizations */
         $localizations = $localizationRepository->findAll();
@@ -118,7 +114,7 @@ class CategoryTypeTest extends WebTestCase
         // assert category entity
         /** @var Category $category */
         $category = $form->getData();
-        $this->assertInstanceOf('Oro\Bundle\CatalogBundle\Entity\Category', $category);
+        $this->assertInstanceOf(Category::class, $category);
         $this->assertEquals($defaultTitle, (string)$category->getDefaultTitle());
         $this->assertEquals($defaultShortDescription, (string)$category->getDefaultShortDescription());
         $this->assertEquals($defaultLongDescription, (string)$category->getDefaultLongDescription());
@@ -145,7 +141,7 @@ class CategoryTypeTest extends WebTestCase
     public function testInventoryThresholdMandatoryField()
     {
         $doctrine = $this->getContainer()->get('doctrine');
-        $localizationRepository = $doctrine->getRepository('OroLocaleBundle:Localization');
+        $localizationRepository = $doctrine->getRepository(Localization::class);
         /** @var Localization[] $localizations */
         $localizations = $localizationRepository->findAll();
 
@@ -195,29 +191,24 @@ class CategoryTypeTest extends WebTestCase
         );
     }
 
-    /**
-     * @param Product[] $products
-     * @return array
-     */
-    protected function getProductIds(array $products)
+    private function getProductIds(array $products): array
     {
         $ids = [];
+        /** @var Product $product */
         foreach ($products as $product) {
             $ids[] = $product->getId();
         }
         return $ids;
     }
 
-    /**
-     * @param Collection|LocalizedFallbackValue[] $values
-     * @param Localization $localization
-     * @return LocalizedFallbackValue|null
-     */
-    protected function getValueByLocalization($values, Localization $localization)
-    {
+    private function getValueByLocalization(
+        Collection $values,
+        Localization $localization
+    ): ?AbstractLocalizedFallbackValue {
         $localizationId = $localization->getId();
+        /** @var LocalizedFallbackValue $value */
         foreach ($values as $value) {
-            if ($value->getLocalization()->getId() == $localizationId) {
+            if ($value->getLocalization()->getId() === $localizationId) {
                 return $value;
             }
         }
@@ -225,11 +216,7 @@ class CategoryTypeTest extends WebTestCase
         return null;
     }
 
-    /**
-     * @param Localization $localization
-     * @param Category $category
-     */
-    protected function assertLocalization($localization, $category)
+    private function assertLocalization(Localization $localization, Category $category): void
     {
         $localizedTitle = $this->getValueByLocalization($category->getTitles(), $localization);
         $this->assertNotEmpty($localizedTitle);

@@ -29,7 +29,7 @@ class InventoryLevelControllerNoProductUnitsTest extends WebTestCase
         foreach ($product->getUnitPrecisions() as $unit) {
             $product->removeUnitPrecision($unit);
         }
-        $this->getContainer()->get('doctrine')->getManagerForClass('OroProductBundle:Product')->flush($product);
+        $this->getContainer()->get('doctrine')->getManagerForClass(Product::class)->flush($product);
 
         // open product view page
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_view', ['id' => $product->getId()]));
@@ -42,7 +42,7 @@ class InventoryLevelControllerNoProductUnitsTest extends WebTestCase
         $this->assertNotEmpty($updateUrl);
 
         // open dialog with levels edit form
-        list($route, $parameters) = $this->parseUrl($updateUrl);
+        [$route, $parameters] = $this->parseUrl($updateUrl);
         $parameters['_widgetContainer'] = 'dialog';
         $parameters['_wid'] = uniqid('abc', true);
 
@@ -50,14 +50,10 @@ class InventoryLevelControllerNoProductUnitsTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
         $msg = 'Please add at least one Unit of Quantity to the current product to enable inventory management.';
-        static::assertStringContainsString($msg, $crawler->html());
+        self::assertStringContainsString($msg, $crawler->html());
     }
 
-    /**
-     * @param string $url
-     * @return array
-     */
-    protected function parseUrl($url)
+    private function parseUrl(string $url): array
     {
         /** @var RouterInterface $router */
         $router = $this->getContainer()->get('router');

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Intl\Currencies;
 
@@ -13,7 +14,7 @@ class AjaxPriceListControllerTest extends WebTestCase
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
 
-        $this->loadFixtures(['Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists']);
+        $this->loadFixtures([LoadPriceLists::class]);
     }
 
     public function testDefaultAction()
@@ -29,14 +30,13 @@ class AjaxPriceListControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertJsonResponseStatusCodeEquals($result, 200);
 
-        $data = json_decode($result->getContent(), true);
+        $data = self::jsonToArray($result->getContent());
 
         $this->assertArrayHasKey('successful', $data);
         $this->assertTrue($data['successful']);
 
-        $defaultPriceLists = $this->getContainer()
-            ->get('doctrine')
-            ->getRepository('OroPricingBundle:PriceList')
+        $defaultPriceLists = $this->getContainer()->get('doctrine')
+            ->getRepository(PriceList::class)
             ->findBy(['default' => true]);
 
         $this->assertEquals([$priceList], $defaultPriceLists);
@@ -55,7 +55,7 @@ class AjaxPriceListControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertJsonResponseStatusCodeEquals($result, 200);
 
-        $data = json_decode($result->getContent(), true);
+        $data = self::jsonToArray($result->getContent());
 
         $this->assertEquals($priceList->getCurrencies(), array_keys($data));
         $this->assertEquals(

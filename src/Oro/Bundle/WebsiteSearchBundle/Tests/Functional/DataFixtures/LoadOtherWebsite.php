@@ -24,8 +24,7 @@ class LoadOtherWebsite extends AbstractFixture implements ContainerAwareInterfac
      */
     public function load(ObjectManager $manager)
     {
-        $mainWebsite = $manager
-            ->getRepository('OroWebsiteBundle:Website')
+        $mainWebsite = $manager->getRepository(Website::class)
             ->findOneBy(['name' => LoadWebsiteData::DEFAULT_WEBSITE_NAME]);
 
         $website = new Website();

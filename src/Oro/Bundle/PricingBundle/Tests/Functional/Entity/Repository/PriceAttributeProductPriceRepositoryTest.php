@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceAttributeProductPriceRepository;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceAttributePriceLists;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceAttributeProductPrices;
@@ -32,9 +33,8 @@ class PriceAttributeProductPriceRepositoryTest extends WebTestCase
         $priceAttributePriceList1 = $this->getReference(LoadPriceAttributePriceLists::PRICE_ATTRIBUTE_PRICE_LIST_1);
         /** @var PriceAttributePriceList $priceAttributePriceList2 */
         $priceAttributePriceList2 = $this->getReference(LoadPriceAttributePriceLists::PRICE_ATTRIBUTE_PRICE_LIST_2);
-        $repo = $this->getContainer()
-            ->get('doctrine')
-            ->getRepository('OroPricingBundle:PriceAttributeProductPrice');
+        $repo = $this->getContainer()->get('doctrine')
+            ->getRepository(PriceAttributeProductPrice::class);
         $result = $repo->findByPriceAttributeProductPriceIdsAndProductIds(
             [$priceAttributePriceList1->getId(), $priceAttributePriceList2->getId()],
             [$product1->getId(), $product2->getId()]
@@ -53,9 +53,8 @@ class PriceAttributeProductPriceRepositoryTest extends WebTestCase
         $product = $this->getReference(LoadProductData::PRODUCT_1);
         $productUnit = $this->getReference(LoadProductUnits::LITER);
 
-        $repo = $this->getContainer()
-            ->get('doctrine')
-            ->getRepository('OroPricingBundle:PriceAttributeProductPrice');
+        $repo = $this->getContainer()->get('doctrine')
+            ->getRepository(PriceAttributeProductPrice::class);
 
         $result = $repo->findBy(['product' => $product, 'unit' => $productUnit]);
         $this->assertCount(3, $result);
@@ -72,10 +71,9 @@ class PriceAttributeProductPriceRepositoryTest extends WebTestCase
         $priceList = $this->getReference(LoadPriceAttributePriceLists::PRICE_ATTRIBUTE_PRICE_LIST_1);
 
         /** @var PriceAttributeProductPriceRepository $repository */
-        $repository = static::getContainer()
-            ->get('doctrine')
-            ->getRepository('OroPricingBundle:PriceAttributeProductPrice');
+        $repository = self::getContainer()->get('doctrine')
+            ->getRepository(PriceAttributeProductPrice::class);
 
-        static::assertSame(8, $repository->deletePricesByPriceList($priceList));
+        self::assertSame(8, $repository->deletePricesByPriceList($priceList));
     }
 }

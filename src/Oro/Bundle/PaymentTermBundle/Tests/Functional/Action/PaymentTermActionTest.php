@@ -15,9 +15,7 @@ class PaymentTermActionTest extends WebTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
-        $this->loadFixtures([
-            LoadPaymentTermData::class,
-        ]);
+        $this->loadFixtures([LoadPaymentTermData::class]);
     }
 
     public function testDelete()
@@ -45,15 +43,14 @@ class PaymentTermActionTest extends WebTestCase
             [],
             ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest']
         );
-        static::assertJsonResponseStatusCodeEquals($this->client->getResponse(), 200);
+        self::assertJsonResponseStatusCodeEquals($this->client->getResponse(), 200);
 
-        static::getContainer()->get('doctrine')->getManagerForClass(PaymentTerm::class)->clear();
+        self::getContainer()->get('doctrine')->getManagerForClass(PaymentTerm::class)->clear();
 
-        $removedTerm = static::getContainer()
-            ->get('doctrine')
-            ->getRepository('OroPaymentTermBundle:PaymentTerm')
+        $removedTerm = self::getContainer()->get('doctrine')
+            ->getRepository(PaymentTerm::class)
             ->find($termId);
 
-        static::assertNull($removedTerm);
+        self::assertNull($removedTerm);
     }
 }
