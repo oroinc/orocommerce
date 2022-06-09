@@ -38,7 +38,7 @@ class ProductSearchIndexListener
         $this->websiteContextManager       = $websiteContextManager;
     }
 
-    public function onWebsiteSearchIndex(IndexEntityEvent $event): void
+    public function onWebsiteSearchIndex(IndexEntityEvent $event)
     {
         if (!$this->hasContextFieldGroup($event->getContext(), 'main')) {
             return;

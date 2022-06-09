@@ -163,6 +163,18 @@ class PriceListToCustomerGroupRepository extends EntityRepository implements Pri
         return new BufferedQueryResultIterator($qb);
     }
 
+    public function hasRelationWithPriceList(PriceList $priceList): bool
+    {
+        $qb = $this->createQueryBuilder('priceListToCustomerGroup');
+        $qb
+            ->select('priceListToCustomerGroup.id')
+            ->where('priceListToCustomerGroup.priceList = :priceList')
+            ->setParameter('priceList', $priceList)
+            ->setMaxResults(1);
+
+        return (bool)$qb->getQuery()->getScalarResult();
+    }
+
     /**
      * @param CustomerGroup $customerGroup
      * @param Website $website
