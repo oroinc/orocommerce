@@ -230,6 +230,18 @@ class PriceListToCustomerRepository extends EntityRepository implements PriceLis
         return new BufferedQueryResultIterator($qb);
     }
 
+    public function hasRelationWithPriceList(PriceList $priceList): bool
+    {
+        $qb = $this->createQueryBuilder('priceListToCustomer');
+        $qb
+            ->select('priceListToCustomer.id')
+            ->where('priceListToCustomer.priceList = :priceList')
+            ->setParameter('priceList', $priceList)
+            ->setMaxResults(1);
+
+        return (bool)$qb->getQuery()->getScalarResult();
+    }
+
     /**
      * @return CustomerWebsiteDTO[]|\Iterator
      */
