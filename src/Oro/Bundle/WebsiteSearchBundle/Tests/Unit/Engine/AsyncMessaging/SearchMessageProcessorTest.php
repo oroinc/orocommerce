@@ -5,6 +5,7 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Engine\AsyncMessaging;
 use Doctrine\DBAL\Exception\DeadlockException;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+use Monolog\Logger;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SearchBundle\Engine\IndexerInterface;
@@ -20,6 +21,7 @@ use Oro\Bundle\WebsiteSearchBundle\Event\SearchProcessingEngineExceptionEvent;
 use Oro\Component\MessageQueue\Client\Config as MessageQueConfig;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
+use Oro\Component\MessageQueue\Exception\JobRuntimeException;
 use Oro\Component\MessageQueue\Test\JobRunner;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
@@ -27,7 +29,11 @@ use Oro\Component\MessageQueue\Util\JSON;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\OptionsResolver\Exception\InvalidArgumentException;
+use Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class SearchMessageProcessorTest extends \PHPUnit\Framework\TestCase
 {
     /**
@@ -154,6 +160,107 @@ class SearchMessageProcessorTest extends \PHPUnit\Framework\TestCase
             ->willReturn(true);
 
         $this->assertEquals(MessageProcessorInterface::ACK, $this->processor->process($message, $this->session));
+    }
+
+    public function testProcessDelayedMessageWhenBodyHasInvalidOption(): void
+    {
+        $messageBody = ['jobId' => 1, 'invalid_key' => 'invalid_value'];
+
+        $message = $this->createMock(MessageInterface::class);
+
+        $message->expects(self::once())
+            ->method('getBody')
+            ->willReturn(json_encode($messageBody));
+
+        $message->expects(self::once())
+            ->method('getProperty')
+            ->with(MessageQueConfig::PARAMETER_TOPIC_NAME)
+            ->willReturn(AsyncIndexer::TOPIC_REINDEX);
+
+        $this->jobRunner->expects(self::once())
+            ->method('runDelayed')
+            ->willReturnCallback(function (int $jobId, callable $callable) use ($messageBody) {
+                self::assertSame($messageBody['jobId'], $jobId);
+
+                return $callable();
+            });
+
+        $exception = new UndefinedOptionsException(
+            'The option "invalid_key" does not exist. Defined options are: "class", "context", "granulize".'
+        );
+        $this->logger
+            ->expects(self::once())
+            ->method('log')
+            ->with(Logger::ERROR, 'An unexpected exception occurred during indexation', ['exception' => $exception]);
+
+        self::assertEquals(MessageProcessorInterface::REJECT, $this->processor->process($message, $this->session));
+    }
+
+    public function testProcessDelayedMessageWhenNullReturned(): void
+    {
+        $messageBody = ['jobId' => 1, 'invalid_key' => 'invalid_value'];
+
+        $message = $this->createMock(MessageInterface::class);
+
+        $message->expects(self::once())
+            ->method('getBody')
+            ->willReturn(json_encode($messageBody));
+
+        $message->expects(self::once())
+            ->method('getProperty')
+            ->with(MessageQueConfig::PARAMETER_TOPIC_NAME)
+            ->willReturn(AsyncIndexer::TOPIC_REINDEX);
+
+        $this->jobRunner->expects(self::once())
+            ->method('runDelayed')
+            ->willReturnCallback(function (int $jobId, callable $callable) use ($messageBody) {
+                self::assertSame($messageBody['jobId'], $jobId);
+
+                return null;
+            });
+
+        self::assertEquals(MessageProcessorInterface::REJECT, $this->processor->process($message, $this->session));
+    }
+
+    public function testProcessDelayedMessageWhenJobRuntimeException(): void
+    {
+        $messageBody = ['jobId' => 1, 'invalid_key' => 'invalid_value'];
+
+        $message = $this->createMock(MessageInterface::class);
+
+        $message->expects(self::once())
+            ->method('getBody')
+            ->willReturn(json_encode($messageBody));
+
+        $message->expects(self::once())
+            ->method('getProperty')
+            ->with(MessageQueConfig::PARAMETER_TOPIC_NAME)
+            ->willReturn(AsyncIndexer::TOPIC_REINDEX);
+
+        $jobRuntimeException = new JobRuntimeException(
+            sprintf('An error occurred while running job, id: %d', $messageBody['jobId']),
+            0,
+            new \Exception()
+        );
+
+        $this->jobRunner->expects(self::once())
+            ->method('runDelayed')
+            ->willReturnCallback(function (int $jobId, callable $callable) use ($messageBody, $jobRuntimeException) {
+                self::assertSame($messageBody['jobId'], $jobId);
+
+                throw $jobRuntimeException;
+            });
+
+        $this->logger
+            ->expects(self::once())
+            ->method('log')
+            ->with(
+                Logger::WARNING,
+                'An unexpected exception occurred during indexation',
+                ['exception' => $jobRuntimeException]
+            );
+
+        self::assertEquals(MessageProcessorInterface::REQUEUE, $this->processor->process($message, $this->session));
     }
 
     /**
@@ -320,29 +427,29 @@ class SearchMessageProcessorTest extends \PHPUnit\Framework\TestCase
                 'message' => [
                     'entity' => [
                         'class' => TestActivity::class,
-                        'id' => 13
+                        'id' => 13,
                     ],
                     'context' => [
                         // Check BC for AbstractIndexer::CONTEXT_WEBSITE_IDS parameter.
-                        AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [1, 2, 3]
-                    ]
+                        AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [1, 2, 3],
+                    ],
                 ],
                 'topic' => AsyncIndexer::TOPIC_SAVE,
-                'expectedMethod' => 'save'
+                'expectedMethod' => 'save',
             ],
             'delete' => [
                 'message' => [
                     'entity' => [
                         'class' => TestActivity::class,
-                        'id' => 13
+                        'id' => 13,
                     ],
                     'context' => [
                         AbstractIndexer::CONTEXT_WEBSITE_IDS => [1, 2],
-                        AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [1, 2, 3]
-                    ]
+                        AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [1, 2, 3],
+                    ],
                 ],
                 'topic' => AsyncIndexer::TOPIC_DELETE,
-                'expectedMethod' => 'delete'
+                'expectedMethod' => 'delete',
             ],
             'reindex' => [
                 'message' => [
@@ -350,11 +457,11 @@ class SearchMessageProcessorTest extends \PHPUnit\Framework\TestCase
                     'class' => TestActivity::class,
                     'context' => [
                         AbstractIndexer::CONTEXT_WEBSITE_IDS => [1, 2],
-                        AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [1, 2, 3]
-                    ]
+                        AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [1, 2, 3],
+                    ],
                 ],
                 'topic' => AsyncIndexer::TOPIC_REINDEX,
-                'expectedMethod' => 'reindex'
+                'expectedMethod' => 'reindex',
             ],
             'reindex_with_given_context' => [
                 'message' => [
@@ -362,11 +469,11 @@ class SearchMessageProcessorTest extends \PHPUnit\Framework\TestCase
                     'class' => TestActivity::class,
                     'context' => [
                         AbstractIndexer::CONTEXT_WEBSITE_IDS => [1, 2],
-                        AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [1, 2, 3]
-                    ]
+                        AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [1, 2, 3],
+                    ],
                 ],
                 'topic' => AsyncIndexer::TOPIC_REINDEX,
-                'expectedMethod' => 'reindex'
+                'expectedMethod' => 'reindex',
             ],
             'resetReindex' => [
                 'message' => [
@@ -374,12 +481,12 @@ class SearchMessageProcessorTest extends \PHPUnit\Framework\TestCase
                     'class' => TestActivity::class,
                     'context' => [
                         AbstractIndexer::CONTEXT_WEBSITE_IDS => [1, 2],
-                        AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [1, 2, 3]
-                    ]
+                        AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [1, 2, 3],
+                    ],
                 ],
                 'topic' => AsyncIndexer::TOPIC_RESET_INDEX,
-                'expectedMethod' => 'resetIndex'
-            ]
+                'expectedMethod' => 'resetIndex',
+            ],
         ];
     }
 
@@ -392,8 +499,8 @@ class SearchMessageProcessorTest extends \PHPUnit\Framework\TestCase
                     'class' => [TestActivity::class],
                     'context' => [
                         AbstractIndexer::CONTEXT_WEBSITE_IDS => [1, 2],
-                        AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [1, 2, 3]
-                    ]
+                        AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [1, 2, 3],
+                    ],
                 ],
                 'classesToIndex' => [TestActivity::class],
                 'websiteIdsToIndex' => [1, 2],
@@ -420,8 +527,8 @@ class SearchMessageProcessorTest extends \PHPUnit\Framework\TestCase
                     'class' => [Product::class, Category::class],
                     'context' => [
                         AbstractIndexer::CONTEXT_WEBSITE_IDS => [1, 2, 3],
-                        AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [1, 2, 3]
-                    ]
+                        AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [1, 2, 3],
+                    ],
                 ],
                 'classesToIndex' => [Product::class, Category::class],
                 'websiteIdsToIndex' => [1, 2, 3],
@@ -624,18 +731,19 @@ class SearchMessageProcessorTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @param \Exception|\PHPUnit\Framework\MockObject\MockObject $exception
+     * @param int $logLevel
      * @param string $result
      *
      * @dataProvider getProcessExceptionsDataProvider
      */
-    public function testProcessExceptions($exception, $result): void
+    public function testProcessExceptions($exception, int $logLevel, string $result): void
     {
         $messageBody = [
             'class' => TestActivity::class,
             'context' => [
                 AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [1, 2],
                 AbstractIndexer::CONTEXT_WEBSITE_IDS => [1],
-            ]
+            ],
         ];
         /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
         $message = $this->createMock(MessageInterface::class);
@@ -654,10 +762,10 @@ class SearchMessageProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('reindex')
             ->willThrowException($exception);
 
-        $levelMethod = $result === MessageProcessorInterface::REQUEUE ? 'warning' : 'error';
         $this->logger
-            ->expects($this->once())
-            ->method($levelMethod);
+            ->expects(self::once())
+            ->method('log')
+            ->with($logLevel, 'An unexpected exception occurred during indexation', ['exception' => $exception]);
 
         $this->assertEquals($result, $this->processor->process($message, $this->session));
     }
@@ -667,24 +775,29 @@ class SearchMessageProcessorTest extends \PHPUnit\Framework\TestCase
         return [
             'process deadlock' => [
                 'exception' => $this->createMock(DeadlockException::class),
-                'result' => MessageProcessorInterface::REQUEUE
+                'logLevel' => Logger::WARNING,
+                'result' => MessageProcessorInterface::REQUEUE,
             ],
             'process exception' => [
                 'exception' => new \Exception(),
-                'result' => MessageProcessorInterface::REQUEUE
+                'logLevel' => Logger::WARNING,
+                'result' => MessageProcessorInterface::REQUEUE,
             ],
             'process unique constraint exception' => [
                 'exception' => $this->createMock(UniqueConstraintViolationException::class),
-                'result' => MessageProcessorInterface::REQUEUE
+                'logLevel' => Logger::WARNING,
+                'result' => MessageProcessorInterface::REQUEUE,
             ],
             'process foreign key constraint exception' => [
                 'exception' => $this->createMock(ForeignKeyConstraintViolationException::class),
-                'result' => MessageProcessorInterface::REQUEUE
+                'logLevel' => Logger::WARNING,
+                'result' => MessageProcessorInterface::REQUEUE,
             ],
             'Invalid body exception' => [
                 'exception' => $this->createMock(InvalidArgumentException::class),
-                'result' => MessageProcessorInterface::REJECT
-            ]
+                'logLevel' => Logger::ERROR,
+                'result' => MessageProcessorInterface::REJECT,
+            ],
         ];
     }
 }
