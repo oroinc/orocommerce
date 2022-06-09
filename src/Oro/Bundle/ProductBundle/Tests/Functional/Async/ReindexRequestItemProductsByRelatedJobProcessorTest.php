@@ -42,7 +42,8 @@ class ReindexRequestItemProductsByRelatedJobProcessorTest extends WebTestCase
         $session = $this->getConnection()->createSession();
         $message = $this->createMessage(
             [
-                'relatedJobId' => 999
+                'relatedJobId' => 999,
+                'indexationFieldsGroups' => null
             ]
         );
 
@@ -68,12 +69,13 @@ class ReindexRequestItemProductsByRelatedJobProcessorTest extends WebTestCase
      *
      * @return void
      */
-    public function testProcess(int $relatedJobId): void
+    public function testProcess(int $relatedJobId, array $fieldGroups = null): void
     {
         $session = $this->getConnection()->createSession();
         $message = $this->createMessage(
             [
-                'relatedJobId' => $relatedJobId
+                'relatedJobId' => $relatedJobId,
+                'indexationFieldsGroups' => $fieldGroups
             ]
         );
 
@@ -98,7 +100,7 @@ class ReindexRequestItemProductsByRelatedJobProcessorTest extends WebTestCase
             $messageBodies
         );
 
-        $expectedData = $this->getExpectedResultsFor($relatedJobId);
+        $expectedData = $this->getExpectedResultsFor($relatedJobId, $fieldGroups);
         self::assertEquals($expectedData, $valuableDataFromMessageBodies);
 
         $this->assertNoRecordsForRelatedJobId($relatedJobId);
@@ -108,15 +110,21 @@ class ReindexRequestItemProductsByRelatedJobProcessorTest extends WebTestCase
     {
         return [
             'Test process products in different websites' => [
-                'relatedJobId' => LoadProductWebsiteReindexRequestItems::JOB_ID_W_PRODUCT_IN_DIFFERENT_WEBSITES
+                'relatedJobId' => LoadProductWebsiteReindexRequestItems::JOB_ID_W_PRODUCT_IN_DIFFERENT_WEBSITES,
+                'indexationFieldsGroups' => null
+            ],
+            'Test process products in different websites group main' => [
+                'relatedJobId' => LoadProductWebsiteReindexRequestItems::JOB_ID_W_PRODUCT_IN_DIFFERENT_WEBSITES,
+                'indexationFieldsGroups' => ['main']
             ],
             'Test process products in same websites' => [
-                'relatedJobId' => LoadProductWebsiteReindexRequestItems::JOB_ID_W_PRODUCT_IN_SAME_WEBSITES
+                'relatedJobId' => LoadProductWebsiteReindexRequestItems::JOB_ID_W_PRODUCT_IN_SAME_WEBSITES,
+                'indexationFieldsGroups' => null
             ],
         ];
     }
 
-    private function getExpectedResultsFor(string $relatedJobId): array
+    private function getExpectedResultsFor(string $relatedJobId, array $fieldsGroups = null): array
     {
         $expectedResults = Yaml::parse(
             file_get_contents(
@@ -125,7 +133,14 @@ class ReindexRequestItemProductsByRelatedJobProcessorTest extends WebTestCase
             )
         );
 
-        return $expectedResults['data'][$relatedJobId];
+        $data = $expectedResults['data'][$relatedJobId];
+        if ($fieldsGroups) {
+            foreach ($data as &$row) {
+                $row['context']['fieldGroups'] = $fieldsGroups;
+            }
+        }
+
+        return $data;
     }
 
     private function assertNoRecordsForRelatedJobId(int $relatedJobId): void

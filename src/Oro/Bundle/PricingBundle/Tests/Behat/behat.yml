@@ -122,6 +122,11 @@ oro_behat_extension:
           Pricing Rounding Type: 'pricing[oro_pricing___rounding_type][value]'
           Allow To Round Displayed Prices And Amounts System: 'pricing[oro_locale___allow_to_round_displayed_prices_and_amounts][use_parent_scope_value]'
           Allow To Round Displayed Prices And Amounts: 'pricing[oro_locale___allow_to_round_displayed_prices_and_amounts][value]'
+          Pricing Default Price List Use Default: 'pricing[oro_pricing___default_price_list][use_parent_scope_value]'
+          Pricing Default Price List:
+            type: 'xpath'
+            locator: '//input[@name="pricing[oro_pricing___default_price_list][value]"]'
+            element: Select2Entity
 
     Add Product Price Form:
       selector: '[id^="oro_action_operation-uid"]'

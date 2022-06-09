@@ -2,9 +2,14 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Engine\ORM\Driver;
 
+use Oro\Bundle\SearchBundle\Engine\Orm\QueryBuilderCreatorInterface;
+
+/**
+ * This trait contains useful methods for ORM search drivers.
+ */
 trait DriverAwareTrait
 {
-    /** @var DriverInterface */
+    /** @var DriverInterface|QueryBuilderCreatorInterface */
     private $driver;
 
     public function setDriver(DriverInterface $driver)
@@ -13,7 +18,7 @@ trait DriverAwareTrait
     }
 
     /**
-     * @return DriverInterface
+     * @return DriverInterface|QueryBuilderCreatorInterface
      * @throws \RuntimeException
      */
     protected function getDriver()

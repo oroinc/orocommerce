@@ -55,9 +55,31 @@ class ProductIndexSchedulerTest extends \PHPUnit\Framework\TestCase
             ->willReturn($productIds);
 
         $this->reindexManager->expects($this->once())
-            ->method('reindexProducts')
+            ->method('reindexProductsWithFieldGroups')
             ->with($productIds, $websiteId, true);
 
         $this->productIndexScheduler->scheduleProductsReindex($categories, $websiteId);
+    }
+
+    public function testScheduleProductsReindexWithFieldGroup()
+    {
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntityRepository')
+            ->with(Category::class)
+            ->willReturn($this->categoryRepository);
+
+        $categories[] = new Category();
+        $productIds = [1, 2, 3];
+        $websiteId = 777;
+        $this->categoryRepository->expects($this->once())
+            ->method('getProductIdsByCategories')
+            ->with($categories)
+            ->willReturn($productIds);
+
+        $this->reindexManager->expects($this->once())
+            ->method('reindexProductsWithFieldGroups')
+            ->with($productIds, $websiteId, true, ['main']);
+
+        $this->productIndexScheduler->scheduleProductsReindexWithFieldGroup($categories, $websiteId, true, ['main']);
     }
 }

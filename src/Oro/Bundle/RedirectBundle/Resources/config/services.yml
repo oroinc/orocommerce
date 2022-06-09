@@ -24,6 +24,7 @@ services:
             - '@oro_platform.maintenance'
         calls:
             - [addUrlToMatchSlugFirst, ['/']]
+            - ['setSlugQueryRestrictionHelper',['@oro_redirect.helper.slug_query_restriction_helper']]
         tags:
             - { name: container.hot_path }
 
@@ -181,6 +182,8 @@ services:
             - "@doctrine"
             - '@oro_security.acl_helper'
             - '@event_dispatcher'
+        calls:
+            - ['setSlugQueryRestrictionHelper', ['@oro_redirect.helper.slug_query_restriction_helper']]
         tags:
             - { name: doctrine.event_listener, event: onFlush }
 
@@ -488,3 +491,6 @@ services:
             - '@oro_entity_config.config_manager'
             - '@doctrine'
         public: false
+
+    oro_redirect.helper.slug_query_restriction_helper:
+        class: Oro\Bundle\RedirectBundle\Helper\DefaultSlugQueryQueryRestrictionHelper

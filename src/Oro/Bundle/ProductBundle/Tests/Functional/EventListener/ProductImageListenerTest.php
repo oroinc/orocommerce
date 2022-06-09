@@ -13,6 +13,7 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\RedirectBundle\Async\Topics as RedirectTopics;
 use Oro\Bundle\SearchBundle\Async\Topics as SearchTopics;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer as WebsiteSearchAsyncIndexerTopics;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Traits\DefaultWebsiteIdTestTrait;
 use Oro\Component\MessageQueue\Client\Message;
@@ -66,21 +67,26 @@ class ProductImageListenerTest extends WebTestCase
      *
      * @return Message
      */
-    private function prepareProductsReindexMessage(array $products)
+    private function prepareProductsReindexMessage(array $products, array $expectedFieldGroups = null)
     {
         $entityIds = [];
         foreach ($products as $product) {
             $entityIds[] = $product->getId();
         }
 
+        $context = [
+            'entityIds' => $entityIds,
+            'websiteIds' => [$this->getDefaultWebsiteId()]
+        ];
+        if ($expectedFieldGroups) {
+            $context[AbstractIndexer::CONTEXT_FIELD_GROUPS] = $expectedFieldGroups;
+        }
+
         return new Message(
             [
                 'class' => [Product::class],
                 'granulize' => true,
-                'context' => [
-                    'entityIds' => $entityIds,
-                    'websiteIds' => [$this->getDefaultWebsiteId()]
-                ],
+                'context' => $context
             ],
             MessagePriority::LOW
         );
@@ -147,7 +153,7 @@ class ProductImageListenerTest extends WebTestCase
 
         $this->assertMessageSent(
             WebsiteSearchAsyncIndexerTopics::TOPIC_REINDEX,
-            $this->prepareProductsReindexMessage([$product1, $product2, $product3])
+            $this->prepareProductsReindexMessage([$product1, $product2, $product3], ['image'])
         );
     }
 
@@ -196,7 +202,7 @@ class ProductImageListenerTest extends WebTestCase
 
         $this->assertMessageSent(
             WebsiteSearchAsyncIndexerTopics::TOPIC_REINDEX,
-            $this->prepareProductsReindexMessage([$product1, $product2])
+            $this->prepareProductsReindexMessage([$product1, $product2], ['image'])
         );
     }
 
@@ -236,7 +242,7 @@ class ProductImageListenerTest extends WebTestCase
 
         $this->assertMessageSent(
             WebsiteSearchAsyncIndexerTopics::TOPIC_REINDEX,
-            $this->prepareProductsReindexMessage([$product1, $product2])
+            $this->prepareProductsReindexMessage([$product1, $product2], ['image'])
         );
     }
 
@@ -280,7 +286,7 @@ class ProductImageListenerTest extends WebTestCase
 
         $this->assertMessageSent(
             WebsiteSearchAsyncIndexerTopics::TOPIC_REINDEX,
-            $this->prepareProductsReindexMessage([$product1, $product2])
+            $this->prepareProductsReindexMessage([$product1, $product2], ['image'])
         );
     }
 

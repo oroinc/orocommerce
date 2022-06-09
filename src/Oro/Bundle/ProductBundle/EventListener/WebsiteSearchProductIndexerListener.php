@@ -3,19 +3,18 @@
 namespace Oro\Bundle\ProductBundle\EventListener;
 
 use Doctrine\Persistence\ManagerRegistry;
-use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityConfigBundle\Entity\Repository\AttributeFamilyRepository;
 use Oro\Bundle\EntityConfigBundle\Manager\AttributeManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
-use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Search\ProductIndexDataProviderInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider;
 use Oro\Bundle\WebsiteBundle\Provider\WebsiteLocalizationProvider;
+use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 
@@ -25,6 +24,8 @@ use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
  */
 class WebsiteSearchProductIndexerListener
 {
+    use ContextTrait;
+
     /** @var WebsiteContextManager */
     private $websiteContextManager;
 
@@ -59,8 +60,16 @@ class WebsiteSearchProductIndexerListener
         $this->dataProvider = $dataProvider;
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     */
     public function onWebsiteSearchIndex(IndexEntityEvent $event)
     {
+        if (!$this->hasContextFieldGroup($event->getContext(), 'main')) {
+            return;
+        }
+
         $website = $this->getWebsite($event);
         if (!$website) {
             $event->stopPropagation();
@@ -79,7 +88,6 @@ class WebsiteSearchProductIndexerListener
         );
 
         $localizations = $this->websiteLocalizationProvider->getLocalizationsByWebsiteId($website->getId());
-        $productImages = $this->getProductRepository()->getListingImagesFilesByProductIds($productIds);
         $productUnits = $this->getProductUnitRepository()->getProductsUnits($productIds);
         $primaryUnits = $this->getProductUnitRepository()->getPrimaryProductsUnits($productIds);
         $attributes = $this->attributeManager
@@ -117,8 +125,6 @@ class WebsiteSearchProductIndexerListener
                     $product->getAttributeFamily()->getId()
                 );
             }
-
-            $this->processImages($event, $productImages, $product->getId());
 
             if (isset($primaryUnits[$product->getId()])) {
                 $event->addField(
@@ -193,46 +199,6 @@ class WebsiteSearchProductIndexerListener
     }
 
     /**
-     * @param IndexEntityEvent $event
-     * @param array $productImages
-     * @param int $productId
-     */
-    private function processImages(IndexEntityEvent $event, array $productImages, $productId)
-    {
-        if (isset($productImages[$productId])) {
-            /** @var File $entity */
-            $entity = $productImages[$productId];
-            $largeImageUrl = $this->attachmentManager->getFilteredImageUrl(
-                $entity,
-                FrontendProductDatagridListener::PRODUCT_IMAGE_FILTER_LARGE
-            );
-            $mediumImageUrl = $this->attachmentManager->getFilteredImageUrl(
-                $entity,
-                FrontendProductDatagridListener::PRODUCT_IMAGE_FILTER_MEDIUM
-            );
-            $smallImageUrl = $this->attachmentManager->getFilteredImageUrl(
-                $entity,
-                FrontendProductDatagridListener::PRODUCT_IMAGE_FILTER_SMALL
-            );
-            $event->addField(
-                $productId,
-                'image_' . FrontendProductDatagridListener::PRODUCT_IMAGE_FILTER_LARGE,
-                $largeImageUrl
-            );
-            $event->addField(
-                $productId,
-                'image_' . FrontendProductDatagridListener::PRODUCT_IMAGE_FILTER_MEDIUM,
-                $mediumImageUrl
-            );
-            $event->addField(
-                $productId,
-                'image_' . FrontendProductDatagridListener::PRODUCT_IMAGE_FILTER_SMALL,
-                $smallImageUrl
-            );
-        }
-    }
-
-    /**
      * Cleans up a unicode string from control characters
      *
      * @param string|array $data
@@ -251,24 +217,9 @@ class WebsiteSearchProductIndexerListener
         return is_string($data) ? preg_replace(['/[[:cntrl:]]/', '/\s+/'], ' ', $data) : $data;
     }
 
-    /**
-     * @return ProductRepository
-     */
-    protected function getProductRepository()
+    private function getProductUnitRepository()
     {
-        return $this->registry
-            ->getManagerForClass('OroProductBundle:Product')
-            ->getRepository('OroProductBundle:Product');
-    }
-
-    /**
-     * @return ProductUnitRepository
-     */
-    protected function getProductUnitRepository()
-    {
-        return $this->registry
-            ->getManagerForClass('OroProductBundle:ProductUnit')
-            ->getRepository('OroProductBundle:ProductUnit');
+        return $this->registry->getRepository(ProductUnit::class);
     }
 
     /**
@@ -276,8 +227,6 @@ class WebsiteSearchProductIndexerListener
      */
     protected function getAttributeFamilyRepository()
     {
-        return $this->registry
-            ->getManagerForClass(AttributeFamily::class)
-            ->getRepository(AttributeFamily::class);
+        return $this->registry->getRepository(AttributeFamily::class);
     }
 }

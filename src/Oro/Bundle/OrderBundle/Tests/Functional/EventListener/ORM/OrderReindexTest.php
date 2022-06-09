@@ -161,7 +161,8 @@ class OrderReindexTest extends FrontendWebTestCase
             'granulize' => true,
             'context' => [
                 'websiteIds' => [$this->getDefaultWebsiteId()],
-                'entityIds' => $productsIds
+                'entityIds' => $productsIds,
+                'fieldGroups' => ['order']
             ],
         ];
     }
@@ -180,6 +181,7 @@ class OrderReindexTest extends FrontendWebTestCase
             'context' => [
                 'websiteIds' => [$this->getDefaultWebsiteId()],
                 'entityIds' => $productIds,
+                'fieldGroups' => ['order']
             ],
         ];
     }

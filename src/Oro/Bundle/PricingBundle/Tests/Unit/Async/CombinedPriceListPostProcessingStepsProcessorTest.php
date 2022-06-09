@@ -80,7 +80,10 @@ class CombinedPriceListPostProcessingStepsProcessorTest extends TestCase
             ->method('send')
             ->with(
                 ProductBundleTopics::REINDEX_REQUEST_ITEM_PRODUCTS_BY_RELATED_JOB_ID,
-                ['relatedJobId' => $jobId]
+                [
+                    'relatedJobId' => $jobId,
+                    'indexationFieldsGroups' => ['pricing']
+                ]
             );
 
         $this->assertEquals(
@@ -128,7 +131,10 @@ class CombinedPriceListPostProcessingStepsProcessorTest extends TestCase
             ->method('send')
             ->with(
                 ProductBundleTopics::REINDEX_REQUEST_ITEM_PRODUCTS_BY_RELATED_JOB_ID,
-                ['relatedJobId' => $jobId]
+                [
+                    'relatedJobId' => $jobId,
+                    'indexationFieldsGroups' => ['pricing']
+                ]
             );
 
         $this->assertEquals(

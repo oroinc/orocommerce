@@ -35,19 +35,32 @@ class ProductReindexManagerTest extends \PHPUnit\Framework\TestCase
      */
     protected function tearDown(): void
     {
-        unset($this->reindexManager);
-        unset($this->eventDispatcher);
+        unset($this->reindexManager, $this->eventDispatcher);
     }
 
     public function testReindexProduct()
     {
         $event = $this->getReindexationEvents(self::PRODUCT_ID, self::WEBSITE_ID);
         /** @var $product Product|\PHPUnit\Framework\MockObject\MockObject */
-        $product = $this->getEntity(Product::class, [ 'id' => self::PRODUCT_ID ]);
+        $product = $this->getEntity(Product::class, ['id' => self::PRODUCT_ID]);
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
             ->with($event, ReindexationRequestEvent::EVENT_NAME);
-        $this->reindexManager->reindexProduct($product, self::WEBSITE_ID);
+        $this->reindexManager->reindexProductWithFieldGroups($product, self::WEBSITE_ID);
+    }
+
+    /**
+     * @dataProvider fieldsGroupDataProvider
+     */
+    public function testReindexProductWithFieldGroups(array $fieldsGroup = null)
+    {
+        $event = $this->getReindexationEvents(self::PRODUCT_ID, self::WEBSITE_ID, $fieldsGroup);
+        /** @var Product $product */
+        $product = $this->getEntity(Product::class, ['id' => self::PRODUCT_ID]);
+        $this->eventDispatcher->expects($this->once())
+            ->method('dispatch')
+            ->with($event, ReindexationRequestEvent::EVENT_NAME);
+        $this->reindexManager->reindexProductWithFieldGroups($product, self::WEBSITE_ID, true, $fieldsGroup);
     }
 
     public function testReindexProducts()
@@ -56,13 +69,34 @@ class ProductReindexManagerTest extends \PHPUnit\Framework\TestCase
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
             ->with($event, ReindexationRequestEvent::EVENT_NAME);
-        $this->reindexManager->reindexProducts([self::PRODUCT_ID], self::WEBSITE_ID);
+        $this->reindexManager->reindexProductsWithFieldGroups([self::PRODUCT_ID], self::WEBSITE_ID);
+    }
+
+    /**
+     * @dataProvider fieldsGroupDataProvider
+     */
+    public function testReindexProductsWithFieldGroups(array $fieldsGroup = null)
+    {
+        $event = $this->getReindexationEvents(self::PRODUCT_ID, self::WEBSITE_ID, $fieldsGroup);
+        $this->eventDispatcher->expects($this->once())
+            ->method('dispatch')
+            ->with($event, ReindexationRequestEvent::EVENT_NAME);
+        $this->reindexManager->reindexProductsWithFieldGroups([self::PRODUCT_ID], self::WEBSITE_ID, true, $fieldsGroup);
     }
 
     public function testReindexProductsWithNoProducts()
     {
         $this->eventDispatcher->expects($this->never())->method('dispatch');
         $this->reindexManager->reindexProducts([], self::WEBSITE_ID);
+    }
+
+    /**
+     * @dataProvider fieldsGroupDataProvider
+     */
+    public function testReindexProductsWithFieldGroupsWithNoProducts(array $fieldsGroup = null)
+    {
+        $this->eventDispatcher->expects($this->never())->method('dispatch');
+        $this->reindexManager->reindexProductsWithFieldGroups([], self::WEBSITE_ID, true, $fieldsGroup);
     }
 
     public function testReindexAllProducts()
@@ -75,14 +109,33 @@ class ProductReindexManagerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @dataProvider fieldsGroupDataProvider
+     */
+    public function testReindexAllProductsWithFieldGroups(array $fieldsGroup = null)
+    {
+        $event = $this->getReindexationEvents([], self::WEBSITE_ID, $fieldsGroup);
+        $this->eventDispatcher->expects($this->once())
+            ->method('dispatch')
+            ->with($event, ReindexationRequestEvent::EVENT_NAME);
+        $this->reindexManager->reindexAllProductsWithFieldGroups(self::WEBSITE_ID, true, $fieldsGroup);
+    }
+
+    /**
      * @param $productIds
      * @param $websiteId
-     *
+     * @param array|null $fieldsGroup
      * @return ReindexationRequestEvent
      */
-    protected function getReindexationEvents($productIds, $websiteId)
+    protected function getReindexationEvents($productIds, $websiteId, array $fieldsGroup = null)
     {
         $productIds = is_array($productIds) ? $productIds : [$productIds];
-        return new ReindexationRequestEvent([Product::class], [$websiteId], $productIds, true);
+
+        return new ReindexationRequestEvent([Product::class], [$websiteId], $productIds, true, $fieldsGroup);
+    }
+
+    public function fieldsGroupDataProvider(): \Generator
+    {
+        yield [null];
+        yield [['main']];
     }
 }

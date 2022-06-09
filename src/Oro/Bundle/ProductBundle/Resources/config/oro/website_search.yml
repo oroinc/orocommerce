@@ -38,14 +38,17 @@ Oro\Bundle\ProductBundle\Entity\Product:
             name: image_product_large
             type: text
             fulltext: false
+            group: image
         -
             name: image_product_medium
             type: text
             fulltext: false
+            group: image
         -
             name: image_product_small
             type: text
             fulltext: false
+            group: image
         -
             name: product_units
             type: text
