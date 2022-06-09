@@ -24,9 +24,20 @@ class ProductSearchIndexListener
 {
     use ContextTrait;
 
-    private DoctrineHelper $doctrineHelper;
-    private AbstractWebsiteLocalizationProvider $websiteLocalizationProvider;
-    private WebsiteContextManager $websiteContextManager;
+    /**
+     * @var DoctrineHelper
+     */
+    private $doctrineHelper;
+
+    /**
+     * @var AbstractWebsiteLocalizationProvider
+     */
+    private $websiteLocalizationProvider;
+
+    /**
+     * @var WebsiteContextManager
+     */
+    private $websiteContextManager;
 
     public function __construct(
         DoctrineHelper $doctrineHelper,

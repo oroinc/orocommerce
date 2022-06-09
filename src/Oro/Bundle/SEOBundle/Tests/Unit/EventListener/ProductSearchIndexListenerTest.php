@@ -122,6 +122,10 @@ class ProductSearchIndexListenerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @param array $entityIds
+<<<<<<< HEAD
+     * @param Localization[] $localizations
+=======
+>>>>>>> maintenance/5.0
      *
      * @return Product[]
      */
