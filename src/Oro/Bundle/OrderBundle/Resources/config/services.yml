@@ -301,15 +301,7 @@ services:
             - '@oro_entity.doctrine_helper'
             - '@oro_payment.formatter.payment_method_label'
         tags:
-            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.orders-grid, method: onResultAfter }
-
-    oro_order.event_listener.frontend_order_datagrid:
-        class: 'Oro\Bundle\OrderBundle\EventListener\OrderDatagridListener'
-        arguments:
-            - '@oro_entity.doctrine_helper'
-            - '@oro_payment.formatter.payment_method_label'
-        tags:
-            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-orders-grid, method: onResultAfter }
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.base-orders-grid, method: onResultAfter }
 
     oro_order.layout.provider.top_selling_items:
         class: 'Oro\Bundle\OrderBundle\Layout\DataProvider\TopSellingItemsProvider'
