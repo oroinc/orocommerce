@@ -827,7 +827,6 @@ services:
             - '@oro_attachment.manager'
             - '@oro_entity_config.manager.attribute_manager'
             - '@oro_product.provider.website_search_index_data'
-            - '@oro_attachment.tools.webp_configuration'
         tags:
             - { name: kernel.event_listener, event: oro_website_search.event.index_entity.product, method: onWebsiteSearchIndex, priority: -255 }
 
@@ -837,6 +836,15 @@ services:
             - '@doctrine'
             - '@oro_attachment.manager'
             - '@oro_website_search.manager.website_context_manager'
+        tags:
+            - { name: kernel.event_listener, event: oro_website_search.event.index_entity.product, method: onWebsiteSearchIndex, priority: -255 }
+
+    oro_product.event_listener.website_search_index_image:
+        class: 'Oro\Bundle\ProductBundle\EventListener\WebsiteSearchProductImageListener'
+        arguments:
+            - '@oro_website_search.manager.website_context_manager'
+            - '@doctrine'
+            - '@oro_attachment.manager'
         tags:
             - { name: kernel.event_listener, event: oro_website_search.event.index_entity.product, method: onWebsiteSearchIndex, priority: -255 }
 

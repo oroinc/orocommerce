@@ -246,7 +246,7 @@ class CategoryContentVariantIndexListener implements ContentNodeFieldsChangesAwa
         }
 
         foreach ($websiteIds as $websiteId) {
-            $this->indexScheduler->scheduleProductsReindex($categories, $websiteId);
+            $this->indexScheduler->scheduleProductsReindexWithFieldGroup($categories, $websiteId, true, ['main']);
         }
     }
 }

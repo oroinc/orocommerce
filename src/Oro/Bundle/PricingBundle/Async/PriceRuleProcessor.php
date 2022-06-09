@@ -5,12 +5,16 @@ namespace Oro\Bundle\PricingBundle\Async;
 use Doctrine\DBAL\Exception\RetryableException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\NotificationBundle\NotificationAlert\NotificationAlertManager;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolveFlatPriceTopic;
 use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceRulesTopic;
 use Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
+use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
@@ -20,13 +24,19 @@ use Psr\Log\LoggerInterface;
 /**
  * Resolves price lists rules and updates actuality of price lists.
  */
-class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberInterface
+class PriceRuleProcessor implements
+    MessageProcessorInterface,
+    TopicSubscriberInterface,
+    FeatureToggleableInterface
 {
+    use FeatureCheckerHolderTrait;
+
     private ManagerRegistry $doctrine;
     private LoggerInterface $logger;
     private ProductPriceBuilder $priceBuilder;
     private NotificationAlertManager $notificationAlertManager;
     private PriceListTriggerHandler $triggerHandler;
+    private MessageProducerInterface $producer;
 
     public function __construct(
         ManagerRegistry $doctrine,
@@ -40,6 +50,11 @@ class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberIn
         $this->priceBuilder = $priceBuilder;
         $this->notificationAlertManager = $notificationAlertManager;
         $this->triggerHandler = $triggerHandler;
+    }
+
+    public function setMessageProducer(MessageProducerInterface $producer): void
+    {
+        $this->producer = $producer;
     }
 
     /**
@@ -81,6 +96,7 @@ class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberIn
                 $this->processPriceList($em, $priceList, $productIds);
 
                 $em->commit();
+                $this->handleProductReindex($priceList, $productIds);
             } catch (\Exception $e) {
                 $em->rollback();
                 $this->logger->error(
@@ -140,6 +156,16 @@ class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberIn
             /** @var PriceListRepository $repo */
             $repo = $em->getRepository(PriceList::class);
             $repo->updatePriceListsActuality([$priceList], true);
+        }
+    }
+
+    private function handleProductReindex(PriceList $priceList, array $productIds): void
+    {
+        if ($this->isFeaturesEnabled()) {
+            $this->producer->send(
+                ResolveFlatPriceTopic::getName(),
+                ['priceList' => $priceList->getId(), 'products' => $productIds]
+            );
         }
     }
 }

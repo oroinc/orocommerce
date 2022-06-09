@@ -7,15 +7,17 @@ use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\ImportExportBundle\Entity\ImportExportResult;
 use Oro\Bundle\PricingBundle\Async\Topic\ResolveCombinedPriceByPriceListTopic;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolveFlatPriceTopic;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\Model\PriceRuleLexemeTriggerHandler;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
+use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
 /**
- * Resolve combined prices on ImportExportResult post persist
+ * Resolve prices on ImportExportResult post persist.
  */
 class ImportExportResultListener implements FeatureToggleableInterface
 {
@@ -33,6 +35,8 @@ class ImportExportResultListener implements FeatureToggleableInterface
     /** @var ShardManager */
     private $shardManager;
 
+    private MessageProducerInterface $producer;
+
     public function __construct(
         ManagerRegistry $doctrine,
         PriceRuleLexemeTriggerHandler $lexemeTriggerHandler,
@@ -43,6 +47,11 @@ class ImportExportResultListener implements FeatureToggleableInterface
         $this->lexemeTriggerHandler = $lexemeTriggerHandler;
         $this->priceListTriggerHandler = $priceListTriggerHandler;
         $this->shardManager = $shardManager;
+    }
+
+    public function setMessageProducer(MessageProducerInterface $producer): void
+    {
+        $this->producer = $producer;
     }
 
     public function postPersist(ImportExportResult $importExportResult)
@@ -69,7 +78,12 @@ class ImportExportResultListener implements FeatureToggleableInterface
 
         foreach ($this->getProductBatches($priceList, $version) as $products) {
             $this->lexemeTriggerHandler->processLexemes($lexemes, $products);
-            $this->emitCplTriggers($priceList, $products);
+
+            if ($this->isFeaturesEnabled()) {
+                $this->emitCplTriggers($priceList, $products);
+            } else {
+                $this->emitFlatTriggers($priceList, $products);
+            }
         }
     }
 
@@ -93,14 +107,18 @@ class ImportExportResultListener implements FeatureToggleableInterface
 
     private function emitCplTriggers(PriceList $priceList, array $products): void
     {
-        if (!$this->isFeaturesEnabled()) {
-            return;
-        }
-
         $this->priceListTriggerHandler->handlePriceListTopic(
             ResolveCombinedPriceByPriceListTopic::getName(),
             $priceList,
             $products
+        );
+    }
+
+    private function emitFlatTriggers(PriceList $priceList, array $products): void
+    {
+        $this->producer->send(
+            ResolveFlatPriceTopic::getName(),
+            ['priceList' => $priceList->getId(), 'products' => $products]
         );
     }
 }

@@ -55,7 +55,7 @@ class CategoryContentVariantIndexListenerTest extends \PHPUnit\Framework\TestCas
         $entityManager = $this->getEntityManager();
 
         $this->indexScheduler->expects($this->never())
-            ->method('scheduleProductsReindex');
+            ->method('scheduleProductsReindexWithFieldGroup');
 
         $this->listener->onFlush(new OnFlushEventArgs($entityManager));
     }
@@ -72,7 +72,7 @@ class CategoryContentVariantIndexListenerTest extends \PHPUnit\Framework\TestCas
             [new \stdClass()]
         );
         $this->indexScheduler->expects($this->never())
-            ->method('scheduleProductsReindex');
+            ->method('scheduleProductsReindexWithFieldGroup');
 
         $this->listener->onFlush(new OnFlushEventArgs($entityManager));
     }
@@ -169,7 +169,7 @@ class CategoryContentVariantIndexListenerTest extends \PHPUnit\Framework\TestCas
         ];
 
         $this->indexScheduler->expects($this->once())
-            ->method('scheduleProductsReindex')
+            ->method('scheduleProductsReindexWithFieldGroup')
             ->with($expectedCategories, null, true);
 
         $this->listener->onFlush(new OnFlushEventArgs($entityManager));
@@ -184,7 +184,7 @@ class CategoryContentVariantIndexListenerTest extends \PHPUnit\Framework\TestCas
             ->willReturn([0 => '1']);
 
         $this->indexScheduler->expects($this->once())
-            ->method('scheduleProductsReindex')
+            ->method('scheduleProductsReindexWithFieldGroup')
             ->with([1 => $contentVariant->getCategoryPageCategory()], null, true);
 
         $this->listener->onFlush(new OnFlushEventArgs($entityManager));
@@ -199,7 +199,7 @@ class CategoryContentVariantIndexListenerTest extends \PHPUnit\Framework\TestCas
             ->willReturn([1 => '1']);
 
         $this->indexScheduler->expects($this->once())
-            ->method('scheduleProductsReindex')
+            ->method('scheduleProductsReindexWithFieldGroup')
             ->with([1 => $contentVariant->getCategoryPageCategory()], 1, true);
 
         $this->listener->onFlush(new OnFlushEventArgs($entityManager));
@@ -212,7 +212,7 @@ class CategoryContentVariantIndexListenerTest extends \PHPUnit\Framework\TestCas
         $this->provider->expects($this->never())
             ->method('getAssignedWebCatalogs');
         $this->indexScheduler->expects($this->never())
-            ->method('scheduleProductsReindex');
+            ->method('scheduleProductsReindexWithFieldGroup');
 
         $this->listener->onFlush(new OnFlushEventArgs($entityManager));
     }
@@ -226,7 +226,7 @@ class CategoryContentVariantIndexListenerTest extends \PHPUnit\Framework\TestCas
             ->method('getAssignedWebCatalogs')
             ->willReturn([]);
         $this->indexScheduler->expects($this->never())
-            ->method('scheduleProductsReindex');
+            ->method('scheduleProductsReindexWithFieldGroup');
 
         $this->listener->onFlush(new OnFlushEventArgs($entityManager));
     }
@@ -268,7 +268,7 @@ class CategoryContentVariantIndexListenerTest extends \PHPUnit\Framework\TestCas
             ->method('getAssignedWebCatalogs')
             ->willReturn([1 => 1]);
         $this->indexScheduler->expects($this->never())
-            ->method('scheduleProductsReindex');
+            ->method('scheduleProductsReindexWithFieldGroup');
 
         $this->listener->onFlush(new OnFlushEventArgs($entityManager));
     }
@@ -351,7 +351,7 @@ class CategoryContentVariantIndexListenerTest extends \PHPUnit\Framework\TestCas
         }
 
         $this->indexScheduler->expects($this->exactly(count($websiteIds)))
-            ->method('scheduleProductsReindex')
+            ->method('scheduleProductsReindexWithFieldGroup')
             ->withConsecutive(...$arguments);
     }
 }

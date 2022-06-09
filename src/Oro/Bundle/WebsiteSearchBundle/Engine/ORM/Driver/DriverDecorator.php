@@ -4,6 +4,7 @@ namespace Oro\Bundle\WebsiteSearchBundle\Engine\ORM\Driver;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\SearchBundle\Engine\Orm\QueryBuilderCreatorInterface;
 use Oro\Bundle\SearchBundle\Entity\AbstractItem;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
@@ -13,7 +14,7 @@ use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
  * the corresponding driver will be used. Each driver should implement DriverInterface interface.
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class DriverDecorator implements DriverInterface
+class DriverDecorator implements DriverInterface, QueryBuilderCreatorInterface
 {
     /** @var DoctrineHelper */
     private $doctrineHelper;
@@ -21,11 +22,8 @@ class DriverDecorator implements DriverInterface
     /** @var DriverInterface[] */
     private $availableDrivers = [];
 
-    /** @var DriverInterface */
+    /** @var DriverInterface|QueryBuilderCreatorInterface */
     private $driver;
-
-    /** @var EntityManagerInterface */
-    private $entityManager;
 
     public function __construct(DoctrineHelper $doctrineHelper)
     {
@@ -39,7 +37,7 @@ class DriverDecorator implements DriverInterface
     }
 
     /**
-     * @return DriverInterface
+     * @return DriverInterface|QueryBuilderCreatorInterface
      */
     protected function getDriver()
     {
@@ -53,11 +51,18 @@ class DriverDecorator implements DriverInterface
 
             $this->driver = $this->availableDrivers[$databasePlatform];
             $this->driver->initialize($em);
-            // entityManager's use preferred over doctrineHelper in drivers
-            $this->entityManager = $this->doctrineHelper->getEntityManager(Item::class);
         }
 
         return $this->driver;
+    }
+
+    public function createQueryBuilder(string $alias)
+    {
+        if (!$this->getDriver() instanceof QueryBuilderCreatorInterface) {
+            throw new \RuntimeException('Decorated driver must implement QueryBuilderCreatorInterface for ORM search');
+        }
+
+        return $this->getDriver()->createQueryBuilder($alias);
     }
 
     /** {@inheritdoc} */

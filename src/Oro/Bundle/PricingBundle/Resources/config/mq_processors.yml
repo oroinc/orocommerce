@@ -19,6 +19,14 @@ services:
         tags:
             - { name: monolog.logger, channel: oro_pricing }
 
+    oro_pricing.async.flat_price_processor:
+        class: 'Oro\Bundle\PricingBundle\Async\FlatPriceProcessor'
+        arguments:
+            - '@oro_message_queue.client.message_producer'
+            - '@oro_message_queue.job.runner'
+        tags:
+            - { name: monolog.logger, channel: oro_pricing }
+
     oro_pricing.async.single_cpl_processor:
         class: 'Oro\Bundle\PricingBundle\Async\SingleCplProcessor'
         arguments:
@@ -69,8 +77,11 @@ services:
             - '@oro_pricing.builder.product_price_builder'
             - '@oro_pricing.notification_alert_manager'
             - '@oro_pricing.price_list_trigger_handler'
+        calls:
+            - [setMessageProducer, ['@oro_message_queue.client.message_producer']]
         tags:
             - { name: monolog.logger, channel: oro_pricing }
+            - { name: oro_featuretogle.feature, feature: oro_price_lists_flat }
 
     oro_pricing.async.price_list_assigned_products_processor:
         class: 'Oro\Bundle\PricingBundle\Async\PriceListAssignedProductsProcessor'

@@ -24,10 +24,12 @@ class ReindexRequestItemProductsByRelatedJobIdTopic extends AbstractTopic
 
     public function configureMessageBody(OptionsResolver $resolver): void
     {
+        $resolver->setDefault('indexationFieldsGroups', null);
         $resolver->setRequired([
             'relatedJobId'
         ]);
 
         $resolver->setAllowedTypes('relatedJobId', ['int']);
+        $resolver->setAllowedTypes('indexationFieldsGroups', ['string[]', 'null']);
     }
 }

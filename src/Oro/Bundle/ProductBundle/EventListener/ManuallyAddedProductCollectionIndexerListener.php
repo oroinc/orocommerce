@@ -9,6 +9,7 @@ use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebCatalogBundle\EventListener\WebCatalogEntityIndexerListener;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\AssignIdPlaceholder;
@@ -22,6 +23,8 @@ use Oro\Component\WebCatalog\ContentVariantProviderInterface;
  */
 class ManuallyAddedProductCollectionIndexerListener
 {
+    use ContextTrait;
+
     /**
      * @var ManagerRegistry
      */
@@ -63,6 +66,10 @@ class ManuallyAddedProductCollectionIndexerListener
 
     public function onWebsiteSearchIndex(IndexEntityEvent $event)
     {
+        if (!$this->hasContextFieldGroup($event->getContext(), 'main')) {
+            return;
+        }
+
         if (!$this->isApplicable($event)) {
             return;
         }

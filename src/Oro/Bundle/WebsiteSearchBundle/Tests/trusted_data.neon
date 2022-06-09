@@ -4,6 +4,8 @@ trusted_data:
         Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderExpressionVisitor:
             dispatch: true
     check_methods:
+        Oro\Bundle\WebsiteSearchBundle\Engine\ORM\Driver:
+            createQueryBuilder: [0]
         Oro\Bundle\WebsiteSearchBundle\Query\WebsiteSearchQuery:
             setCriteria: true
             select: true

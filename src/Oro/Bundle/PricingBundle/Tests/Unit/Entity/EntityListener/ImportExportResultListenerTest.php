@@ -6,6 +6,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\ImportExportBundle\Entity\ImportExportResult;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolveCombinedPriceByPriceListTopic;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolveFlatPriceTopic;
 use Oro\Bundle\PricingBundle\Entity\EntityListener\ImportExportResultListener;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
@@ -14,6 +16,7 @@ use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\Model\PriceRuleLexemeTriggerHandler;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
+use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class ImportExportResultListenerTest extends \PHPUnit\Framework\TestCase
@@ -35,10 +38,11 @@ class ImportExportResultListenerTest extends \PHPUnit\Framework\TestCase
     /** @var ImportExportResultListener */
     private $listener;
 
-    /**
-     * @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
     private $featureChecker;
+
+    /** @var MessageProducerInterface */
+    private $producer;
 
     /**
      * {@inheritdoc}
@@ -49,6 +53,7 @@ class ImportExportResultListenerTest extends \PHPUnit\Framework\TestCase
         $this->lexemeTriggerHandler = $this->createMock(PriceRuleLexemeTriggerHandler::class);
         $this->priceListTriggerHandler = $this->createMock(PriceListTriggerHandler::class);
         $this->shardManager = $this->createMock(ShardManager::class);
+        $this->producer = $this->createMock(MessageProducerInterface::class);
         $this->featureChecker = $this->createMock(FeatureChecker::class);
 
         $this->listener = new ImportExportResultListener(
@@ -58,6 +63,7 @@ class ImportExportResultListenerTest extends \PHPUnit\Framework\TestCase
             $this->shardManager
         );
 
+        $this->listener->setMessageProducer($this->producer);
         $this->listener->setFeatureChecker($this->featureChecker);
         $this->listener->addFeature('oro_price_lists_combined');
     }
@@ -94,6 +100,15 @@ class ImportExportResultListenerTest extends \PHPUnit\Framework\TestCase
             ->method('processLexemes')
             ->with($lexemes);
 
+        $this->priceListTriggerHandler->expects($this->never())
+            ->method('handlePriceListTopic')
+            ->with(ResolveCombinedPriceByPriceListTopic::getName(), $priceList);
+
+        $this->producer
+            ->expects($this->once())
+            ->method('send')
+            ->with(ResolveFlatPriceTopic::getName(), ['priceList' => $priceList->getId(), 'products' => []]);
+
         $this->listener->postPersist($importExportResult);
     }
 
@@ -128,6 +143,10 @@ class ImportExportResultListenerTest extends \PHPUnit\Framework\TestCase
         $this->lexemeTriggerHandler->expects($this->once())
             ->method('processLexemes')
             ->with($lexemes);
+
+        $this->priceListTriggerHandler->expects($this->once())
+            ->method('handlePriceListTopic')
+            ->with(ResolveCombinedPriceByPriceListTopic::getName(), $priceList);
 
         $this->listener->postPersist($importExportResult);
     }
@@ -232,6 +251,13 @@ class ImportExportResultListenerTest extends \PHPUnit\Framework\TestCase
             ->withConsecutive(
                 [$lexemes, $products1],
                 [$lexemes, $products2]
+            );
+
+        $this->priceListTriggerHandler->expects($this->exactly(2))
+            ->method('handlePriceListTopic')
+            ->withConsecutive(
+                [ResolveCombinedPriceByPriceListTopic::getName(), $priceList, $products1],
+                [ResolveCombinedPriceByPriceListTopic::getName(), $priceList, $products2]
             );
 
         $this->listener->postPersist($importExportResult);

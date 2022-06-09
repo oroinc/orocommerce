@@ -5,6 +5,7 @@ namespace Oro\Bundle\RedirectBundle\Provider;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
+use Oro\Bundle\RedirectBundle\Helper\SlugQueryRestrictionHelperInterface;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
@@ -18,6 +19,7 @@ class SlugEntityFinder
     private ScopeManager $scopeManager;
     private AclHelper $aclHelper;
     private ?ScopeCriteria $scopeCriteria = null;
+    private SlugQueryRestrictionHelperInterface $slugQueryRestrictionHelper;
 
     public function __construct(ManagerRegistry $doctrine, ScopeManager $scopeManager, AclHelper $aclHelper)
     {
@@ -27,14 +29,25 @@ class SlugEntityFinder
     }
 
     /**
+     * @deprecated This method will be removed in 5.1
+     *
+     * @param SlugQueryRestrictionHelperInterface $slugQueryRestrictionHelper
+     * @return void
+     */
+    public function setSlugQueryRestrictionHelper(SlugQueryRestrictionHelperInterface $slugQueryRestrictionHelper): void
+    {
+        $this->slugQueryRestrictionHelper = $slugQueryRestrictionHelper;
+    }
+
+    /**
      * Finds a slug entity by the given URL.
      */
     public function findSlugEntityByUrl(string $url): ?Slug
     {
-        return $this->getSlugRepository()->getSlugByUrlAndScopeCriteria(
+        return $this->getSlugRepository()->getRestrictedSlugByUrlAndScopeCriteria(
             $url,
             $this->getScopeCriteria(),
-            $this->aclHelper
+            $this->slugQueryRestrictionHelper
         );
     }
 
@@ -43,10 +56,10 @@ class SlugEntityFinder
      */
     public function findSlugEntityBySlugPrototype(string $slugPrototype): ?Slug
     {
-        return $this->getSlugRepository()->getSlugBySlugPrototypeAndScopeCriteria(
+        return $this->getSlugRepository()->getRestrictedSlugBySlugPrototypeAndScopeCriteria(
             $slugPrototype,
             $this->getScopeCriteria(),
-            $this->aclHelper
+            $this->slugQueryRestrictionHelper
         );
     }
 

@@ -53,7 +53,7 @@ class ReindexProductLineItemListenerTest extends \PHPUnit\Framework\TestCase
         $this->lineItem = $this->createMock(OrderLineItem::class);
         $this->featureChecker = $this->createMock(FeatureChecker::class);
 
-        $this->website = $this->getEntity(Website::class, [ 'id' => self::WEBSITE_ID ]);
+        $this->website = $this->getEntity(Website::class, ['id' => self::WEBSITE_ID]);
 
         $this->order = $this->getEntity(OrderStub::class);
         $this->order->setInternalStatus(new TestEnumValue(
@@ -99,7 +99,7 @@ class ReindexProductLineItemListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->reindexManager
             ->expects($this->never())
-            ->method('reindexProduct');
+            ->method('reindexProductWithFieldGroups');
 
         $this->listener->reindexProductOnLineItemUpdate($this->lineItem, $event);
     }
@@ -111,8 +111,8 @@ class ReindexProductLineItemListenerTest extends \PHPUnit\Framework\TestCase
             ->with('previously_purchased_products', $this->website)
             ->willReturn(true);
 
-        $product1 = $this->getEntity(Product::class, [ 'id' => 1 ]);
-        $product2 = $this->getEntity(Product::class, [ 'id' => 2 ]);
+        $product1 = $this->getEntity(Product::class, ['id' => 1]);
+        $product2 = $this->getEntity(Product::class, ['id' => 2]);
         $event = $this->getPreUpdateEvent(
             [
                 ReindexProductLineItemListener::ORDER_LINE_ITEM_PRODUCT_FIELD => [
@@ -124,10 +124,10 @@ class ReindexProductLineItemListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->reindexManager
             ->expects($this->exactly(2))
-            ->method('reindexProduct')
+            ->method('reindexProductWithFieldGroups')
             ->withConsecutive(
-                [$product1, self::WEBSITE_ID],
-                [$product2, self::WEBSITE_ID]
+                [$product1, self::WEBSITE_ID, true, ['order']],
+                [$product2, self::WEBSITE_ID, true, ['order']]
             );
 
         $this->listener->reindexProductOnLineItemUpdate($this->lineItem, $event);
@@ -140,8 +140,8 @@ class ReindexProductLineItemListenerTest extends \PHPUnit\Framework\TestCase
             ->with('previously_purchased_products', $this->website)
             ->willReturn(true);
 
-        $product1 = $this->getEntity(Product::class, [ 'id' => 1 ]);
-        $product2 = $this->getEntity(Product::class, [ 'id' => 2 ]);
+        $product1 = $this->getEntity(Product::class, ['id' => 1]);
+        $product2 = $this->getEntity(Product::class, ['id' => 2]);
         $event = $this->getPreUpdateEvent(
             [
                 ReindexProductLineItemListener::ORDER_LINE_ITEM_PARENT_PRODUCT_FIELD => [
@@ -153,10 +153,10 @@ class ReindexProductLineItemListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->reindexManager
             ->expects($this->exactly(2))
-            ->method('reindexProduct')
+            ->method('reindexProductWithFieldGroups')
             ->withConsecutive(
-                [$product1, self::WEBSITE_ID],
-                [$product2, self::WEBSITE_ID]
+                [$product1, self::WEBSITE_ID, true, ['order']],
+                [$product2, self::WEBSITE_ID, true, ['order']]
             );
 
         $this->listener->reindexProductOnLineItemUpdate($this->lineItem, $event);
@@ -176,8 +176,8 @@ class ReindexProductLineItemListenerTest extends \PHPUnit\Framework\TestCase
             ->willReturn($product);
 
         $this->reindexManager->expects($this->once())
-            ->method('reindexProduct')
-            ->with($product, self::WEBSITE_ID);
+            ->method('reindexProductWithFieldGroups')
+            ->with($product, self::WEBSITE_ID, true, ['order']);
 
         $this->listener->reindexProductOnLineItemCreateOrDelete($this->lineItem);
     }
@@ -201,8 +201,11 @@ class ReindexProductLineItemListenerTest extends \PHPUnit\Framework\TestCase
             ->willReturn($parentProduct);
 
         $this->reindexManager->expects($this->exactly(2))
-            ->method('reindexProduct')
-            ->withConsecutive([$product, self::WEBSITE_ID], [$parentProduct, self::WEBSITE_ID]);
+            ->method('reindexProductWithFieldGroups')
+            ->withConsecutive(
+                [$product, self::WEBSITE_ID, true, ['order']],
+                [$parentProduct, self::WEBSITE_ID, true, ['order']]
+            );
 
         $this->listener->reindexProductOnLineItemCreateOrDelete($this->lineItem);
     }
@@ -221,8 +224,8 @@ class ReindexProductLineItemListenerTest extends \PHPUnit\Framework\TestCase
             )
         );
 
-        $product1 = $this->getEntity(Product::class, [ 'id' => 1 ]);
-        $product2 = $this->getEntity(Product::class, [ 'id' => 2 ]);
+        $product1 = $this->getEntity(Product::class, ['id' => 1]);
+        $product2 = $this->getEntity(Product::class, ['id' => 2]);
         $event = $this->getPreUpdateEvent(
             [
                 ReindexProductLineItemListener::ORDER_LINE_ITEM_PRODUCT_FIELD => [
@@ -233,15 +236,15 @@ class ReindexProductLineItemListenerTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->reindexManager->expects($this->never())
-            ->method('reindexProduct');
+            ->method('reindexProductWithFieldGroups');
 
         $this->listener->reindexProductOnLineItemUpdate($this->lineItem, $event);
     }
 
     public function testReindexInOrderWithInvalidWebsite()
     {
-        $product1 = $this->getEntity(Product::class, [ 'id' => 1 ]);
-        $product2 = $this->getEntity(Product::class, [ 'id' => 2 ]);
+        $product1 = $this->getEntity(Product::class, ['id' => 1]);
+        $product2 = $this->getEntity(Product::class, ['id' => 2]);
         $event = $this->getPreUpdateEvent(
             [
                 ReindexProductLineItemListener::ORDER_LINE_ITEM_PRODUCT_FIELD => [
@@ -255,15 +258,15 @@ class ReindexProductLineItemListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->reindexManager
             ->expects($this->never())
-            ->method('reindexProduct');
+            ->method('reindexProductWithFieldGroups');
 
         $this->listener->reindexProductOnLineItemUpdate($this->lineItem, $event);
     }
 
     public function testFeatureDisabled()
     {
-        $product1 = $this->getEntity(Product::class, [ 'id' => 1 ]);
-        $product2 = $this->getEntity(Product::class, [ 'id' => 2 ]);
+        $product1 = $this->getEntity(Product::class, ['id' => 1]);
+        $product2 = $this->getEntity(Product::class, ['id' => 2]);
         $event = $this->getPreUpdateEvent(
             [
                 ReindexProductLineItemListener::ORDER_LINE_ITEM_PRODUCT_FIELD => [
@@ -280,20 +283,21 @@ class ReindexProductLineItemListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->reindexManager
             ->expects($this->never())
-            ->method('reindexProduct');
+            ->method('reindexProductWithFieldGroups');
 
         $this->listener->reindexProductOnLineItemUpdate($this->lineItem, $event);
         $this->listener->reindexProductOnLineItemCreateOrDelete($this->lineItem);
     }
 
     /**
-     * @param array       $changeSet
+     * @param array $changeSet
      *
      * @return PreUpdateEventArgs
      */
     protected function getPreUpdateEvent(array $changeSet = [])
     {
         $em = $this->createMock(EntityManagerInterface::class);
+
         return new PreUpdateEventArgs(
             $this->getEntity(OrderLineItem::class),
             $em,

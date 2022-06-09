@@ -12,6 +12,7 @@ use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\EventListener\WebpAwareWebsiteSearchProductIndexerListener;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -42,14 +43,13 @@ class WebpAwareWebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framewor
         );
     }
 
-    public function testOnWebsiteSearchIndexWebpStrategyNotEnabledIfSupported(): void
+    public function testOnWebsiteSearchIndexWebpStrategyNotSupportedFieldsGroup(): void
     {
         $this->attachmentManager
-            ->expects(self::once())
-            ->method('isWebpEnabledIfSupported')
-            ->willReturn(false);
+            ->expects(self::never())
+            ->method('isWebpEnabledIfSupported');
 
-        $event = new IndexEntityEvent(Product::class, [], []);
+        $event = new IndexEntityEvent(Product::class, [], [AbstractIndexer::CONTEXT_FIELD_GROUPS => ['main']]);
 
         $this->listener->onWebsiteSearchIndex($event);
 
@@ -57,14 +57,35 @@ class WebpAwareWebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framewor
         self::assertEquals([], $event->getEntitiesData());
     }
 
-    public function testOnWebsiteSearchIndexNoWebsite(): void
+    /**
+     * @dataProvider validContextDataProvider
+     */
+    public function testOnWebsiteSearchIndexWebpStrategyNotEnabledIfSupported(array $context): void
+    {
+        $this->attachmentManager
+            ->expects(self::once())
+            ->method('isWebpEnabledIfSupported')
+            ->willReturn(false);
+
+        $event = new IndexEntityEvent(Product::class, [], $context);
+
+        $this->listener->onWebsiteSearchIndex($event);
+
+        self::assertFalse($event->isPropagationStopped());
+        self::assertEquals([], $event->getEntitiesData());
+    }
+
+    /**
+     * @dataProvider validContextDataProvider
+     */
+    public function testOnWebsiteSearchIndexNoWebsite(array $context): void
     {
         $this->attachmentManager
             ->expects(self::once())
             ->method('isWebpEnabledIfSupported')
             ->willReturn(true);
 
-        $event = new IndexEntityEvent(Product::class, [], []);
+        $event = new IndexEntityEvent(Product::class, [], $context);
 
         $this->listener->onWebsiteSearchIndex($event);
 
@@ -72,7 +93,10 @@ class WebpAwareWebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framewor
         self::assertEquals([], $event->getEntitiesData());
     }
 
-    public function testOnWebsiteSearchIndexNoProducts(): void
+    /**
+     * @dataProvider validContextDataProvider
+     */
+    public function testOnWebsiteSearchIndexNoProducts(array $context): void
     {
         $this->attachmentManager
             ->expects(self::once())
@@ -106,10 +130,10 @@ class WebpAwareWebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framewor
         $this->websiteContextManager
             ->expects(self::once())
             ->method('getWebsiteId')
-            ->with([])
+            ->with($context)
             ->willReturn(1);
 
-        $event = new IndexEntityEvent(Product::class, [], []);
+        $event = new IndexEntityEvent(Product::class, [], $context);
 
         $this->listener->onWebsiteSearchIndex($event);
 
@@ -117,7 +141,10 @@ class WebpAwareWebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framewor
         self::assertEquals([], $event->getEntitiesData());
     }
 
-    public function testOnWebsiteSearch(): void
+    /**
+     * @dataProvider validContextDataProvider
+     */
+    public function testOnWebsiteSearch(array $context): void
     {
         $this->attachmentManager
             ->expects(self::once())
@@ -169,10 +196,10 @@ class WebpAwareWebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framewor
         $this->websiteContextManager
             ->expects(self::once())
             ->method('getWebsiteId')
-            ->with([])
+            ->with($context)
             ->willReturn(1);
 
-        $event = new IndexEntityEvent(Product::class, [$productFoo, $productBar], []);
+        $event = new IndexEntityEvent(Product::class, [$productFoo, $productBar], $context);
 
         $this->attachmentManager
             ->expects(self::exactly(3))
@@ -211,5 +238,11 @@ class WebpAwareWebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framewor
             ],
             $event->getEntitiesData()
         );
+    }
+
+    public function validContextDataProvider(): \Generator
+    {
+        yield [[]];
+        yield [[AbstractIndexer::CONTEXT_FIELD_GROUPS => ['image']]];
     }
 }

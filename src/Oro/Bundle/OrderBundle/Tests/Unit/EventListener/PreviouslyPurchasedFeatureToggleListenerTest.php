@@ -39,7 +39,7 @@ class PreviouslyPurchasedFeatureToggleListenerTest extends \PHPUnit\Framework\Te
     {
         $this->reindexManager
             ->expects($this->never())
-            ->method('reindexAllProducts');
+            ->method('reindexAllProductsWithFieldGroups');
 
         $event = $this->getConfigUpdateEvent();
         $this->listener->reindexProducts($event);
@@ -59,8 +59,8 @@ class PreviouslyPurchasedFeatureToggleListenerTest extends \PHPUnit\Framework\Te
 
         $this->reindexManager
             ->expects($this->once())
-            ->method('reindexAllProducts')
-            ->with(null);
+            ->method('reindexAllProductsWithFieldGroups')
+            ->with(null, true, ['order']);
 
         $this->listener->reindexProducts($event);
     }

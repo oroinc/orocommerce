@@ -5,14 +5,17 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Async;
 use Doctrine\DBAL\Exception\DeadlockException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\NotificationBundle\NotificationAlert\NotificationAlertManager;
 use Oro\Bundle\PricingBundle\Async\PriceListCalculationNotificationAlert;
 use Oro\Bundle\PricingBundle\Async\PriceRuleProcessor;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolveFlatPriceTopic;
 use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceRulesTopic;
 use Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
+use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
@@ -38,6 +41,12 @@ class PriceRuleProcessorTest extends \PHPUnit\Framework\TestCase
     /** @var PriceListTriggerHandler|\PHPUnit\Framework\MockObject\MockObject */
     private $triggerHandler;
 
+    /** @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $producer;
+
+    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
+    private $featureChecker;
+
     /** @var PriceRuleProcessor */
     private $processor;
 
@@ -48,6 +57,8 @@ class PriceRuleProcessorTest extends \PHPUnit\Framework\TestCase
         $this->priceBuilder = $this->createMock(ProductPriceBuilder::class);
         $this->notificationAlertManager = $this->createMock(NotificationAlertManager::class);
         $this->triggerHandler = $this->createMock(PriceListTriggerHandler::class);
+        $this->producer = $this->createMock(MessageProducerInterface::class);
+        $this->featureChecker = $this->createMock(FeatureChecker::class);
 
         $this->processor = new PriceRuleProcessor(
             $this->doctrine,
@@ -56,6 +67,9 @@ class PriceRuleProcessorTest extends \PHPUnit\Framework\TestCase
             $this->notificationAlertManager,
             $this->triggerHandler
         );
+
+        $this->processor->setFeatureChecker($this->featureChecker);
+        $this->processor->setMessageProducer($this->producer);
     }
 
     /**
@@ -506,6 +520,71 @@ class PriceRuleProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('updatePriceListsActuality')
             ->with([$priceList], true);
 
+        $this->assertEquals(
+            MessageProcessorInterface::ACK,
+            $this->processor->process($this->getMessage($body), $this->getSession())
+        );
+    }
+
+    public function testProcessWithFlatPricingEnabled(): void
+    {
+        $priceListId = 1;
+        $productIds = [2];
+        $body = ['product' => [$priceListId => $productIds]];
+
+        /** @var PriceList $priceList */
+        $priceList = $this->getEntity(PriceList::class, ['id' => $priceListId, 'updatedAt' => new \DateTime()]);
+
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->expects(self::once())
+            ->method('beginTransaction');
+        $em->expects((self::once()))
+            ->method('commit');
+
+        $this->doctrine->expects(self::once())
+            ->method('getManagerForClass')
+            ->with(PriceList::class)
+            ->willReturn($em);
+
+        $em->expects(self::once())
+            ->method('find')
+            ->with(PriceList::class, $priceList->getId())
+            ->willReturn($priceList);
+
+        $this->notificationAlertManager->expects(self::once())
+            ->method('resolveNotificationAlertByOperationAndItemIdForCurrentUser')
+            ->with(
+                PriceListCalculationNotificationAlert::OPERATION_PRICE_RULES_BUILD,
+                $priceListId
+            );
+        $this->priceBuilder->expects(self::once())
+            ->method('buildByPriceList')
+            ->with($priceList, $productIds);
+
+        $em->expects(self::once())
+            ->method('refresh')
+            ->with($priceList);
+
+        $repository = $this->createMock(PriceListRepository::class);
+        $em->expects(self::once())
+            ->method('getRepository')
+            ->willReturn($repository);
+        $repository->expects(self::once())
+            ->method('updatePriceListsActuality')
+            ->with([$priceList], true);
+
+        $this->featureChecker
+            ->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('oro_price_lists_flat')
+            ->willReturn(true);
+
+        $this->producer
+            ->expects($this->once())
+            ->method('send')
+            ->with(ResolveFlatPriceTopic::getName(), ['priceList' => $priceList->getId(), 'products' => $productIds]);
+
+        $this->processor->addFeature('oro_price_lists_flat');
         $this->assertEquals(
             MessageProcessorInterface::ACK,
             $this->processor->process($this->getMessage($body), $this->getSession())

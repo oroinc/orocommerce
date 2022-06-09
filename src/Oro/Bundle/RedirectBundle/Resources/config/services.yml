@@ -171,6 +171,8 @@ services:
             - "@doctrine"
             - '@oro_security.acl_helper'
             - '@event_dispatcher'
+        calls:
+            - ['setSlugQueryRestrictionHelper', ['@oro_redirect.helper.slug_query_restriction_helper']]
         tags:
             - { name: doctrine.event_listener, event: onFlush }
 
@@ -337,6 +339,8 @@ services:
             - '@doctrine'
             - '@oro_scope.scope_manager'
             - '@oro_security.acl_helper'
+        calls:
+            - ['setSlugQueryRestrictionHelper', ['@oro_redirect.helper.slug_query_restriction_helper']]
 
     oro_redirect.sluggable_entity_finder:
         class: Oro\Bundle\RedirectBundle\Provider\SluggableEntityFinder
@@ -486,6 +490,9 @@ services:
             - '@oro_entity_config.config_manager'
             - '@doctrine'
         public: false
+
+    oro_redirect.helper.slug_query_restriction_helper:
+        class: Oro\Bundle\RedirectBundle\Helper\DefaultSlugQueryQueryRestrictionHelper
 
     Oro\Bundle\RedirectBundle\EntityConfig\SlugEntityConfiguration:
         tags:

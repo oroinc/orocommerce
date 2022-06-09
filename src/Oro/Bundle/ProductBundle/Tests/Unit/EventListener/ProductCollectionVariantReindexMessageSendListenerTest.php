@@ -92,10 +92,13 @@ class ProductCollectionVariantReindexMessageSendListenerTest extends \PHPUnit\Fr
         ];
         $this->collectionIndexationHandler
             ->expects($this->once())
-            ->method('handle')
+            ->method('handleWithFieldGroups')
             ->with(
                 $scheduledPartialMessages,
-                'oro_product.accumulate_reindex_product_collection_by_segment:listener:433143095836f9cab5eb7d9c9374cab5'
+                'oro_product.accumulate_reindex_product_collection_by_segment'
+                . ':listener:433143095836f9cab5eb7d9c9374cab5',
+                false,
+                ['main']
             );
 
         $this->listener->postFlush();
@@ -145,10 +148,13 @@ class ProductCollectionVariantReindexMessageSendListenerTest extends \PHPUnit\Fr
         ];
         $this->collectionIndexationHandler
             ->expects($this->once())
-            ->method('handle')
+            ->method('handleWithFieldGroups')
             ->with(
                 $scheduledPartialMessages,
-                'oro_product.accumulate_reindex_product_collection_by_segment:listener:823a241bbe36fd0f41c4b4dd1f838185'
+                'oro_product.accumulate_reindex_product_collection_by_segment'
+                . ':listener:823a241bbe36fd0f41c4b4dd1f838185',
+                false,
+                ['main']
             );
 
         $this->listener->postFlush();

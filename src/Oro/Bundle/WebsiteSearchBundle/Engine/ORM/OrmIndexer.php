@@ -2,13 +2,20 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Engine\ORM;
 
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\QueryBuilder;
+use Oro\Bundle\SearchBundle\Entity\AbstractItem;
+use Oro\Bundle\SearchBundle\Entity\ItemFieldInterface;
 use Oro\Bundle\SearchBundle\Query\Query as SearchQuery;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
 use Oro\Bundle\WebsiteSearchBundle\Engine\ORM\Driver\DriverAwareTrait;
+use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
 
 /**
  * Performs search indexation (save and delete) for ORM engine at website search index
+ *
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class OrmIndexer extends AbstractIndexer
 {
@@ -37,7 +44,7 @@ class OrmIndexer extends AbstractIndexer
 
         foreach ($sortedEntitiesData as $entityClass => $entityIds) {
             // $classes can be skipped, because current class was already validated at filterEntityData
-            list($classes, $websiteIds) = $this->inputValidator->validateRequestParameters($entityClass, $context);
+            [$classes, $websiteIds] = $this->inputValidator->validateRequestParameters($entityClass, $context);
             foreach ($websiteIds as $websiteId) {
                 $websiteContext = $this->setContextCurrentWebsite([], $websiteId);
                 $entityAlias = $this->getEntityAlias($entityClass, $websiteContext);
@@ -144,5 +151,170 @@ class OrmIndexer extends AbstractIndexer
         } else { //Resets whole index
             $this->getDriver()->removeIndexByClass();
         }
+    }
+
+    protected function savePartialIndexData($entityClass, array $entitiesData, $entityAliasTemp, array $context)
+    {
+        $realAlias = $this->getEntityAlias($entityClass, $context);
+
+        if (null === $realAlias) {
+            return [];
+        }
+
+        [$newFields, $newRegexps, $fieldTypes] = $this->collectFieldNamesAndRegexps($context, $entityClass);
+
+        // need to get data from index to index full document later
+        $items = $this->loadItems($entityClass, array_keys($entitiesData), $context);
+
+        $existingDocuments = [];
+        foreach ($items as $item) {
+            $existingDocuments[$item->getRecordId()] = $item;
+        }
+
+        $entityIds = array_keys($entitiesData);
+        foreach ($entitiesData as $entityId => $entityData) {
+            // if entity was removed there is no need to do anything
+            if (!array_key_exists($entityId, $existingDocuments)) {
+                unset($entitiesData[$entityId]);
+                continue;
+            }
+
+            $item = $existingDocuments[$entityId];
+            foreach ($fieldTypes as $fieldType) {
+                $this->processFieldsCollection($item, $newFields, $newRegexps, $entityData, $fieldType);
+            }
+            $item->saveItemData($entityData);
+            $this->getDriver()->writeItem($item);
+        }
+        $this->getDriver()->flushWrites();
+
+        return $entityIds;
+    }
+
+    private function processFieldsCollection(
+        Item $item,
+        array $newFields,
+        array $newRegexps,
+        array &$entityData,
+        string $fieldType
+    ): void {
+        $method = 'get' . ucfirst($fieldType) . 'Fields';
+        /** @var Collection|ItemFieldInterface[] $collection */
+        $collection = $item->{$method}();
+        $removedItems = [];
+        foreach ($collection as $fieldItem) {
+            $name = $fieldItem->getField();
+
+            // Skip update of fields if data is already in the index
+            if (isset($entityData[$fieldType][$name]) && $entityData[$fieldType][$name] === $fieldItem->getValue()) {
+                continue;
+            }
+            if ($this->shouldBeRemoved($name, $newRegexps, $newRegexps)) {
+                $removedItems[] = $fieldItem;
+                continue;
+            }
+
+            // Add fields from other groups back to $entityData to prevent their removal
+            if (isset($entityData[$fieldType]) && !array_key_exists($name, $entityData[$fieldType])) {
+                $entityData[$fieldType][$name] = $fieldItem->getValue();
+            }
+        }
+
+        foreach ($removedItems as $removedItem) {
+            $collection->removeElement($removedItem);
+        }
+    }
+
+    private function shouldBeRemoved(string $fieldName, array $newFields, array $newRegexps): bool
+    {
+        if (in_array($fieldName, $newFields, true)) {
+            return true;
+        }
+
+        foreach ($newRegexps as $regexp) {
+            if (preg_match("~^$regexp$~", $fieldName)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    protected function getIndexedEntities($entityClass, array $entities, array $context)
+    {
+        $recordIds = $this->getIndexedRecordIds($entityClass, array_keys($entities), $context);
+
+        $indexedEntities = [];
+        foreach ($recordIds as $entityId) {
+            if (array_key_exists($entityId, $entities)) {
+                $indexedEntities[$entityId] = $entities[$entityId];
+            }
+        }
+
+        return $indexedEntities;
+    }
+
+    private function getIndexedRecordIds(string $entityClass, array $entityIds, array $context): array
+    {
+        $qb = $this->getItemsQueryBuilder($entityClass, $entityIds, $context);
+        $qb->select('i.recordId');
+
+        return $qb->getQuery()->getSingleColumnResult();
+    }
+
+    /**
+     * @return AbstractItem[]
+     */
+    private function loadItems(string $entityClass, array $entityIds, array $context): array
+    {
+        $qb = $this->getItemsQueryBuilder($entityClass, $entityIds, $context);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    private function getItemsQueryBuilder(
+        string $entityClass,
+        array $entityIds,
+        array $context
+    ): QueryBuilder {
+        $entityAlias = $this->getEntityAlias($entityClass, $context);
+        $qb = $this->getDriver()->createQueryBuilder('i');
+        $qb
+            ->where($qb->expr()->eq('i.alias', ':alias'))
+            ->andWhere($qb->expr()->in('i.recordId', ':ids'))
+            ->setParameter('alias', $entityAlias)
+            ->setParameter('ids', $entityIds);
+
+        return $qb;
+    }
+
+    private function collectFieldNamesAndRegexps(array $context, string $entityClass): array
+    {
+        $fields = $this->getFieldsForGroup($entityClass, $context);
+
+        $newFields = [];
+        $newRegexps = [];
+        $fieldTypes = [];
+
+        foreach ($fields as $field) {
+            $fieldTypes[$field['type']] = $field['type'];
+            $fieldName = $field['name'];
+            // Flattened fields contain dot and should be all replaced (visible_for_customer.CUSTOMER_ID)
+            if (str_contains($fieldName, '.')) {
+                $newRegexps[] = explode('.', $fieldName)[0] . '\.\w+';
+                continue;
+            }
+
+            $replacedField = $this->regexPlaceholder->replaceDefault($fieldName);
+            if ($replacedField === $fieldName) {
+                // Replace field if it is present in returned data (is_visible)
+                $newFields[] = $replacedField;
+            } else {
+                // Replace all fields containing placeholders by regexp (minimal_price_PRICE_LIST_ID)
+                $newRegexps[] = $replacedField;
+            }
+        }
+
+        return [array_unique($newFields), array_unique($newRegexps), $fieldTypes];
     }
 }

@@ -9,17 +9,47 @@ use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SEOBundle\EventListener\ProductSearchIndexListener;
 use Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider;
+use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder as Placeholder;
 use Oro\Component\Testing\ReflectionUtil;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class ProductSearchIndexListenerTest extends \PHPUnit\Framework\TestCase
 {
+    use EntityTrait;
+
+    public function testOnWebsiteSearchIndexNotSupportedFieldsGroup()
+    {
+        $context = [AbstractIndexer::CONTEXT_FIELD_GROUPS => ['image']];
+        $event = new IndexEntityEvent(Category::class, [$this->getEntity(Category::class, ['id' => 1])], $context);
+
+        $localizationProvider = $this->createMock(AbstractWebsiteLocalizationProvider::class);
+        $localizationProvider->expects($this->never())
+            ->method($this->anything());
+
+        $websiteContextManager = $this->createMock(WebsiteContextManager::class);
+        $websiteContextManager->expects($this->never())
+            ->method($this->anything());
+
+        $doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $doctrineHelper->expects($this->never())
+            ->method($this->anything());
+
+        $testable = new ProductSearchIndexListener(
+            $doctrineHelper,
+            $localizationProvider,
+            $websiteContextManager
+        );
+        $testable->onWebsiteSearchIndex($event);
+    }
+
     /**
+     * @dataProvider contextDataProvider
      * @SuppressWarnings(ExcessiveMethodLength)
      */
-    public function testOnWebsiteSearchIndex()
+    public function testOnWebsiteSearchIndex(array $context)
     {
         $localizations = [
             'PL' => $this->getLocalization(10),
@@ -36,9 +66,9 @@ class ProductSearchIndexListenerTest extends \PHPUnit\Framework\TestCase
         $event->expects($this->once())
             ->method('getEntities')
             ->willReturn($products);
-        $event->expects($this->once())
+        $event->expects($this->any())
             ->method('getContext')
-            ->willReturn([]);
+            ->willReturn($context);
         $event->expects($this->exactly(10))
             ->method('addPlaceholderField')
             ->withConsecutive(
@@ -73,7 +103,7 @@ class ProductSearchIndexListenerTest extends \PHPUnit\Framework\TestCase
         $websiteContextManager = $this->createMock(WebsiteContextManager::class);
         $websiteContextManager->expects($this->once())
             ->method('getWebsiteId')
-            ->with([])
+            ->with($context)
             ->willReturn(1);
 
         $testable = new ProductSearchIndexListener(
@@ -84,8 +114,18 @@ class ProductSearchIndexListenerTest extends \PHPUnit\Framework\TestCase
         $testable->onWebsiteSearchIndex($event);
     }
 
+    public function contextDataProvider(): \Generator
+    {
+        yield [[]];
+        yield [[AbstractIndexer::CONTEXT_FIELD_GROUPS => ['main']]];
+    }
+
     /**
      * @param array $entityIds
+<<<<<<< HEAD
+     * @param Localization[] $localizations
+=======
+>>>>>>> maintenance/5.0
      *
      * @return Product[]
      */

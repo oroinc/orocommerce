@@ -127,8 +127,13 @@ class ReindexProductOrderListener
             $productIds[] = $product->getId();
         }
 
-        $this->productReindexManager->reindexProducts($productIds, $websiteId);
-        $this->productReindexManager->reindexProducts($this->getParentProductIds($order), $websiteId);
+        $this->productReindexManager->reindexProductsWithFieldGroups($productIds, $websiteId, true, ['order']);
+        $this->productReindexManager->reindexProductsWithFieldGroups(
+            $this->getParentProductIds($order),
+            $websiteId,
+            true,
+            ['order']
+        );
     }
 
     /**

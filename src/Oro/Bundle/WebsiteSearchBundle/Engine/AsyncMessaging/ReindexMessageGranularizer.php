@@ -5,6 +5,9 @@ namespace Oro\Bundle\WebsiteSearchBundle\Engine\AsyncMessaging;
 use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Repository\EntityIdentifierRepository;
 
+/**
+ * Splats given list of entities on chunks applicable and optimized for indexation process.
+ */
 class ReindexMessageGranularizer
 {
     use ContextTrait;
@@ -56,6 +59,7 @@ class ReindexMessageGranularizer
                 foreach ($chunks as $chunk) {
                     $itemContext = [];
                     $itemContext = $this->setContextEntityIds($itemContext, $chunk);
+                    $itemContext = $this->setContextFieldGroups($itemContext, $this->getContextFieldGroups($context));
                     yield [
                         'class'   => [$entity],
                         'context' => $itemContext,
@@ -71,6 +75,7 @@ class ReindexMessageGranularizer
                     $itemContext = [];
                     $itemContext = $this->setContextEntityIds($itemContext, $chunk);
                     $itemContext = $this->setContextWebsiteIds($itemContext, [$website]);
+                    $itemContext = $this->setContextFieldGroups($itemContext, $this->getContextFieldGroups($context));
                     yield [
                         'class'   => [$entity],
                         'context' => $itemContext,
