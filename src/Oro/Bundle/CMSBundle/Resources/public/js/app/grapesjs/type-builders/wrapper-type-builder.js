@@ -37,7 +37,7 @@ const WrapperTypeBuilder = BaseTypeBuilder.extend({
     onStyleUpdate() {
         const {SelectorManager} = this.editor;
         const target = SelectorManager.selectorTags.getTarget();
-        if (target.is(this.componentType)) {
+        if (target && target.is(this.componentType)) {
             setTimeout(() => SelectorManager.selectorTags.syncStyle(), 0);
         }
     },

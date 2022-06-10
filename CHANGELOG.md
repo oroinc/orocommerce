@@ -6,6 +6,9 @@ The current file describes significant changes in the code that may affect the u
 
 ### Added
 
+#### CMSBundle
+* WYSIWYG editor. Added a new control option to add/remove cells and rows in the table.
+
 #### ProductBundle
 * Added `product_original_filenames` feature. This feature is enabled when `oro_attachment.original_file_names_enabled`
   is disabled and `oro_product.original_file_names_enabled` is enabled.

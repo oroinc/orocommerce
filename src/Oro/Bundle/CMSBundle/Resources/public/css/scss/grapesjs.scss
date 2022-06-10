@@ -284,14 +284,23 @@
             margin-right: 8px;
             min-width: 25px;
             width: auto;
+            height: 32px;
 
             &:last-child {
                 margin-right: 0;
             }
 
+            svg {
+                fill: $primary-100;
+            }
+
             &:hover,
             &.#{$rte-prefix}active {
                 color: $primary-inverse;
+
+                svg {
+                    fill: $primary-inverse;
+                }
             }
 
             select {
@@ -331,6 +340,15 @@
             top: -10px;
         }
     }
+}
+
+.table-edition-toolbar {
+    /* rtl:begin:ignore */
+    left: 50%;
+    transform: translate(-50%, 0);
+
+    /* rtl:end:ignore */
+    margin-bottom: 5px;
 }
 
 .sp-container {
