@@ -1,27 +1,27 @@
 import BaseTypeBuilder from 'orocms/js/app/grapesjs/type-builders/base-type-builder';
 import TableTypeDecorator from '../controls/table-edit/table-type-decorator';
 
-const TableRowTypeBuilder = BaseTypeBuilder.extend({
-    parentType: 'row',
+const TableTheadTypeBuilder = BaseTypeBuilder.extend({
+    parentType: 'thead',
 
     modelMixin: {
         defaults: {
             removable: false,
             copyable: false,
-            draggable: ['tbody', 'thead', 'tfoot']
+            draggable: false
         },
 
         ...TableTypeDecorator
     },
 
-    constructor: function TableRowTypeBuilder(...args) {
-        TableRowTypeBuilder.__super__.constructor.apply(this, args);
+    constructor: function TableTheadTypeBuilder(...args) {
+        TableTheadTypeBuilder.__super__.constructor.apply(this, args);
     },
 
     isComponent(el) {
         let result = null;
 
-        if (el.tagName === 'TR') {
+        if (el.tagName === 'THEAD') {
             result = {
                 type: this.componentType
             };
@@ -31,4 +31,4 @@ const TableRowTypeBuilder = BaseTypeBuilder.extend({
     }
 });
 
-export default TableRowTypeBuilder;
+export default TableTheadTypeBuilder;

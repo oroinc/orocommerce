@@ -28,7 +28,7 @@ const GridColumnTypeBuilder = BaseTypeBuilder.extend({
                 updateTarget(target, {w, h}, {config, resizer}) {
                     const model = target.__cashData.model;
                     const siblingMethod = resizer.handlerAttr === 'cr' ? 'nextSibling' : 'previousSibling';
-                    const sibling = target[siblingMethod].__cashData.model;
+                    const sibling = target[siblingMethod] ? target[siblingMethod].__cashData.model : false;
 
                     const getWidth = m => parseFloat(m.getStyle()[config.keyWidth].replace(config.unitWidth, ''));
 

@@ -185,6 +185,9 @@ const BaseTypeBuilder = BaseClass.extend({
      */
     registerEditorCommands() {
         for (const [command, callback] of Object.entries(this.commands)) {
+            if (this.editor.Commands.has(command)) {
+                throw new Error(`Command "${command}" is already registered`);
+            }
             this.editor.Commands.add(command, callback);
         }
     }

@@ -15,8 +15,11 @@ The current file describes significant changes in the code that may affect the u
 
 ### Added
 
+#### CMSBundle
+* WYSIWYG editor. Added a new control option to add/remove cells and rows in the table.
+
 #### SEOBundle
-* Enabled `orphanRemoval` option for SEO fields: metaDescriptions, metaKeywords, metaTitles.
+* Enabled the `orphanRemoval` option for SEO fields: metaDescriptions, metaKeywords, metaTitles.
 
 #### CMSBundle
 * Added entity name provider for `Page` entity
