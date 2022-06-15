@@ -77,12 +77,14 @@
 
 {% block _product_datagrid_toolbar_display_options_widget %}
     {% set gridName = block.vars['datagrid'].name %}
+    {% set catalogSwitcherId = 'catalog-switcher-'|uniqid %}
     {% set attr = layout_attr_defaults(attr, {
         'data-page-component-module': 'oroproduct/js/app/components/catalog-switch-component',
         'data-page-component-options': {
             'parameterName': gridName
         },
         'data-server-render': '',
+        'id': catalogSwitcherId,
         class: attr.class|default('') ~ " datagrid-tool display-options"
     }) %}
     {% set toolbarPosition = attr['data-grid-toolbar']|default('') %}
@@ -101,7 +103,11 @@
                 } %}
                 <a href="{{ url_prefix ~ '?' ~ query_parameters|merge({(gridName): {(row_view_key): row_view}})|url_encode }}"
                    class="btn btn--default btn--size-s {% if current_row_view == row_view %}active{% endif %}"
+                   data-toggle="tooltip"
+                   data-trigger="hover"
+                   data-container="#{{ catalogSwitcherId }}"
                    data-catalog-view-trigger="{{ view_trigger|json_encode }}"
+                   title="{{ 'oro.product.grid.action.catalog_switcher.gallery_view.aria_label'|trans }}"
                    aria-pressed="{{ (current_row_view == row_view) ? 'true' : 'false' }}"
                    aria-label="{{ 'oro.product.grid.action.catalog_switcher.gallery_view.aria_label'|trans }}"
                >
@@ -113,7 +119,11 @@
                 } %}
                 <a href="{{ url_prefix ~ '?' ~ query_parameters|merge({(gridName): {(row_view_key): row_view}})|url_encode }}"
                    class="btn btn--default btn--size-s {% if current_row_view == row_view %}active{% endif %}"
+                   data-toggle="tooltip"
+                   data-trigger="hover"
+                   data-container="#{{ catalogSwitcherId }}"
                    data-catalog-view-trigger="{{ view_trigger|json_encode }}"
+                   title="{{ 'oro.product.grid.action.catalog_switcher.list_view.aria_label'|trans }}"
                    aria-pressed="{{ (current_row_view == row_view) ? 'true' : 'false' }}"
                    aria-label="{{ 'oro.product.grid.action.catalog_switcher.list_view.aria_label'|trans }}"
                >
@@ -125,7 +135,11 @@
                 } %}
                 <a href="{{ url_prefix ~ '?' ~ query_parameters|merge({(gridName): {(row_view_key): row_view}})|url_encode }}"
                    class="btn btn--default btn--size-s {% if current_row_view == row_view %}active{% endif %}"
+                   data-toggle="tooltip"
+                   data-trigger="hover"
+                   data-container="#{{ catalogSwitcherId }}"
                    data-catalog-view-trigger="{{ view_trigger|json_encode }}"
+                   title="{{ 'oro.product.grid.action.catalog_switcher.compact_view.aria_label'|trans }}"
                    aria-pressed="{{ (current_row_view == row_view) ? 'true' : 'false' }}"
                    aria-label="{{ 'oro.product.grid.action.catalog_switcher.compact_view.aria_label'|trans }}"
                >
