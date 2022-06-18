@@ -7,6 +7,9 @@ import ImageTypeBuilder from 'orocms/js/app/grapesjs/type-builders/image-type-bu
 import QuoteTypeBuilder from 'orocms/js/app/grapesjs/type-builders/quote-type-builder';
 import TableTypeBuilder from 'orocms/js/app/grapesjs/type-builders/table-type-builder';
 import TableRowTypeBuilder from 'orocms/js/app/grapesjs/type-builders/table-row-type-builder';
+import TableTbodyTypeBuilder from 'orocms/js/app/grapesjs/type-builders/table-tbody-type-builder';
+import TableTheadTypeBuilder from 'orocms/js/app/grapesjs/type-builders/table-thead-type-builder';
+import TableCellTypeBuilder from 'orocms/js/app/grapesjs/type-builders/table-cell-type-builder';
 import TableResponsiveTypeBuilder from 'orocms/js/app/grapesjs/type-builders/table-responsive-type-builder';
 import LinkBLockTypeBuilder from 'orocms/js/app/grapesjs/type-builders/link-block-builder';
 import LinkButtonTypeBuilder from 'orocms/js/app/grapesjs/type-builders/link-button-type-builder';
@@ -29,11 +32,20 @@ ComponentManager.registerComponentTypes({
     'quote': {
         Constructor: QuoteTypeBuilder
     },
+    'cell': {
+        Constructor: TableCellTypeBuilder
+    },
     'row': {
         Constructor: TableRowTypeBuilder
     },
     'table': {
         Constructor: TableTypeBuilder
+    },
+    'tbody': {
+        Constructor: TableTbodyTypeBuilder
+    },
+    'thead': {
+        Constructor: TableTheadTypeBuilder
     },
     'table-responsive': {
         Constructor: TableResponsiveTypeBuilder

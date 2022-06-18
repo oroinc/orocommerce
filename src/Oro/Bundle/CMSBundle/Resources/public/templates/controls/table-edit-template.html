@@ -1,0 +1,13 @@
+<div class="gjs-rte-actionbar" data-layout="separate">
+    <% _.each(actionGroups, function(actions) { %>
+    <div class="actionbar-group">
+        <% _.each(actions, function(action) { %>
+        <div class="gjs-rte-action" data-toggle="tooltip" title="<%- action.label %>" data-command="<%- action.command %>">
+            <span aria-hidden="true">
+                <%= action.icon %>
+            </span>
+        </div>
+        <% }); %>
+    </div>
+    <% }); %>
+</div>

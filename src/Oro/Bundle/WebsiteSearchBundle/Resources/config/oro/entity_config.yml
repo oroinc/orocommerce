@@ -17,3 +17,7 @@ entity_config:
                             required: false
                             label: 'oro.website_search.entity_config.search_boost.label'
                             tooltip: 'oro.website_search.entity_config.search_boost.tooltip'
+                    import_export:
+                        import_template:
+                            use_in_template: true
+                            value: 0

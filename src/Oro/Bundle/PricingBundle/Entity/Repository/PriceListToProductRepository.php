@@ -67,6 +67,22 @@ class PriceListToProductRepository extends EntityRepository
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getProductIdsByPriceList(int|PriceList $priceList): array
+    {
+        $this->_em->createQueryBuilder();
+        $qb = $this->_em->createQueryBuilder();
+
+        return $qb->select('IDENTITY(productToPriceList.product) as productId')
+            ->from(PriceListToProduct::class, 'productToPriceList')
+            ->where($qb->expr()->eq('productToPriceList.priceList', ':priceList'))
+            ->setParameter('priceList', $priceList)
+            ->getQuery()
+            ->getSingleColumnResult();
+    }
+
+    /**
      * @param PriceList $priceList
      * @param array|Product[] $products
      * @return QueryBuilder

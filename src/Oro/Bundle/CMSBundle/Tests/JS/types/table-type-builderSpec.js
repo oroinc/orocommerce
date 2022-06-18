@@ -57,8 +57,8 @@ describe('orocms/js/app/grapesjs/type-builders/table-type-builder', () => {
             expect(tableTypeBuilder.Model.componentType).toEqual(tableTypeBuilder.componentType);
             expect(tableTypeBuilder.Model.prototype.defaults.tagName).toEqual('table');
             expect(tableTypeBuilder.Model.prototype.defaults.classes).toEqual(['table']);
-            expect(tableTypeBuilder.Model.prototype.defaults.draggable).toEqual(['div']);
-            expect(tableTypeBuilder.Model.prototype.defaults.droppable).toEqual(['tbody', 'thead', 'tfoot']);
+            expect(tableTypeBuilder.Model.prototype.defaults.draggable).toBeFalsy();
+            expect(tableTypeBuilder.Model.prototype.defaults.droppable).toBeTruthy();
 
             expect(tableTypeBuilder.Model.prototype.editor).toEqual(editor);
         });
@@ -83,7 +83,7 @@ describe('orocms/js/app/grapesjs/type-builders/table-type-builder', () => {
             it('check "toHTML"', () => {
                 expect(tableComponent.toHTML()).toEqual(
                     // eslint-disable-next-line
-                    '<table class="table"><thead><tr class="row"><td class="cell"></td></tr></thead><tbody><tr class="row"><td class="cell"></td></tr></tbody><tfoot><tr class="row"><td class="cell"></td></tr></tfoot></table>'
+                    '<table class="table"><thead><tr class="row"><td class="cell"></td></tr></thead><tbody><tr class="row"><td class="cell"></td></tr></tbody></table>'
                 );
             });
         });
