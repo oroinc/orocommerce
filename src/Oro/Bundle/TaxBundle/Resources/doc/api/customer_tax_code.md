@@ -1,22 +1,22 @@
-# Oro\Bundle\TaxBundle\Entity\ProductTaxCode
+# Oro\Bundle\TaxBundle\Entity\CustomerTaxCode
 
 ## ACTIONS
 
 ### get
 
-Retrieve a specific product tax code record.
+Retrieve a specific customer tax code record.
 
 {@inheritdoc}
 
 ### get_list
 
-Retrieve a collection of product tax code records.
+Retrieve a collection of customer tax code records.
 
 {@inheritdoc}
 
 ### create
 
-Create a new product tax code record.
+Create a new customer tax code record.
 
 The created record is returned in the response.
 
@@ -28,7 +28,7 @@ Example:
 ```JSON
 {
   "data": {
-    "type": "producttaxcodes",
+    "type": "customertaxcodes",
     "attributes": {
       "code": "SOME_TAX_CODE",
       "description": "Some tax code description"
@@ -40,7 +40,7 @@ Example:
 
 ### update
 
-Edit a specific product tax code record.
+Edit a specific customer tax code record.
 
 The updated record is returned in the response.
 
@@ -52,7 +52,7 @@ Example:
 ```JSON
 {
   "data": {
-    "type": "producttaxcodes",
+    "type": "customertaxcodes",
     "id": "1",
     "attributes": {
       "name": "SOME_TAX_CODE",
@@ -65,13 +65,13 @@ Example:
 
 ### delete
 
-Delete a specific product tax code record.
+Delete a specific customer tax code record.
 
 {@inheritdoc}
 
 ### delete_list
 
-Delete a collection of product tax code records.
+Delete a collection of customer tax code records.
 
 {@inheritdoc}
 
@@ -91,6 +91,14 @@ Delete a collection of product tax code records.
 
 **This field must not be empty, if it is passed.**
 
+### owner
+
+#### create, update
+
+{@inheritdoc}
+
+**The read-only field. A passed value will be ignored.**
+
 ### organization
 
 #### create, update
@@ -101,12 +109,22 @@ Delete a collection of product tax code records.
 
 ## SUBRESOURCES
 
+### owner
+
+#### get_subresource
+
+Retrieve the record of the user a specific customer tax code record belongs to.
+
+#### get_relationship
+
+Retrieve the ID of the user record which a specific customer tax code record belongs to.
+
 ### organization
 
 #### get_subresource
 
-Retrieve the record of the organization a specific product tax code record belongs to.
+Retrieve the record of the organization a specific customer tax code record belongs to.
 
 #### get_relationship
 
-Retrieve the ID of the organization record which a specific product tax code record belongs to.
+Retrieve the ID of the organization record which a specific customer tax code record belongs to.

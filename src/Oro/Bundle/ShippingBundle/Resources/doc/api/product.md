@@ -171,12 +171,6 @@ Example:
           }
         ]
       },
-      "taxCode": {
-        "data": {
-          "type": "producttaxcodes",
-          "id": "2"
-        }
-      },
       "attributeFamily": {
         "data": {
           "type": "attributefamilies",
@@ -715,12 +709,6 @@ Example:
         "data": {
           "type": "organizations",
           "id": "1"
-        }
-      },
-      "taxCode": {
-        "data": {
-          "type": "producttaxcodes",
-          "id": "2"
         }
       },
       "attributeFamily": {

@@ -1,0 +1,14 @@
+dependencies:
+    - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization
+    - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser
+
+Oro\Bundle\TaxBundle\Entity\CustomerTaxCode:
+    tax_code1:
+        code: 'TAX_CODE_1'
+        description: 'tax code 1'
+        owner: '@user'
+        organization: '@organization'
+    tax_code2:
+        code: 'TAX_CODE_2'
+        owner: '@user'
+        organization: '@organization'

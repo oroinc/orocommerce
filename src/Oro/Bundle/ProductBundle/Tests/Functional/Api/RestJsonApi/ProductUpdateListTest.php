@@ -13,7 +13,6 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadVariantFields;
-use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodes;
 
 /**
  * @dbIsolationPerTest
@@ -31,7 +30,6 @@ class ProductUpdateListTest extends RestJsonApiUpdateListTestCase
             LoadProductUnitPrecisions::class,
             LoadBusinessUnitData::class,
             LoadOrganizations::class,
-            LoadProductTaxCodes::class,
             LoadCategoryData::class,
             LoadVariantFields::class,
             LoadLocalizationData::class,
