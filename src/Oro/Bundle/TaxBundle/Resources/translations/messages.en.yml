@@ -32,21 +32,31 @@ oro.tax:
             description:      The description of the tax
         organization:
             label: Organization
-            description: The relationship on organization.
+            description: An organization that the product tax code belongs to.
 
     customertaxcode:
         entity_label: 'Customer Tax Code'
         entity_plural_label: 'Customer Tax Codes'
+        entity_description: Customer Tax Code is a label that is assigned to a customer and indicates the tax obligations and exemptions a customer has. The customer tax obligations are taken into account when a customer (user) submits an order.
         entity_grid_all_view_label: 'All %entity_plural_label%'
-        description: 'List of Customer Tax Codes'
+        list:
+            description: List of Customer Tax Codes
         customers.label: 'Customers'
         customer_groups.label: 'Customer Groups'
         id.label: 'ID'
-        code.label: 'Code'
-        description.label: 'Description'
+        code:
+            label: Code
+            description: The code of the tax
+        description:
+            label: Description
+            description: The description of the tax
         customer_group.view.label: 'Defined for Customer Group'
-        organization.label: 'Organization'
-        owner.label: 'Owner'
+        organization:
+            label: Organization
+            description: An organization that the customer tax code belongs to.
+        owner:
+            label: Owner
+            description: A user who owns the customer tax code.
 
     taxrule:
         entity_label: 'Tax Rule'
@@ -197,3 +207,13 @@ oro.product:
     tax_code:
         label: Tax Code
         description: The tax code for the product.
+
+oro.customer:
+    tax_code:
+        label: Tax Code
+        description: The tax code for the customer.
+
+oro.customer.customergroup:
+    tax_code:
+        label: Tax Code
+        description: The tax code for the customer group.
