@@ -48,6 +48,15 @@ const ImageTypeBuilder = BaseTypeBuilder.extend({
                     }
                 }
             );
+        },
+
+        onError(...args) {
+            this.constructor.__super__.onError.apply(this, args);
+
+            const parent = this.el.parentNode;
+            if (parent.tagName === 'PICTURE') {
+                parent.querySelectorAll('source').forEach(child => child.srcset = '');
+            }
         }
     },
 
