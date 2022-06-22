@@ -29,6 +29,7 @@
         {%- set options = oro_action_frontend_options(button) -%}
         {%- set buttonOptions = options.options -%}
         <button
+            type="button"
             class="action mode-icon-text dropdown-item"
             title="{{ button.label|trans }}"
             aria-label="{{ button.ariaLabel|trans({'%name%': shoppingList.label}) }}"
@@ -43,6 +44,7 @@
 
 {% block __customer_user_shopping_list_actions__shopping_list_action_assign_widget %}
     <button
+        type="button"
         class="action mode-icon-text dropdown-item"
         title="{{ 'oro.frontend.shoppinglist.btn.assign.label'|trans }}"
         aria-label="{{ 'oro.frontend.shoppinglist.btn.assign.aria_label'|trans({'%name%': shoppingList.label}) }}"
