@@ -493,6 +493,7 @@ oro.cms:
                     remove: 'Remove source'
                 main_image: 'Main image'
                 select_breakpoints: 'Click to select breakpoint'
+                unknown_type: 'unknown'
     change_type:
         confirmation:
             title: 'Change Type'

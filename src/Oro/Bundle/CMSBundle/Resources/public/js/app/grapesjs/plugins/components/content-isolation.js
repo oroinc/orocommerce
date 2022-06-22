@@ -1,5 +1,4 @@
-import $ from 'jquery';
-import {uniqueId, each} from 'underscore';
+import {uniqueId, each, unescape} from 'underscore';
 import CONSTANTS from 'orocms/js/app/grapesjs/constants';
 
 const ISOLATION_SCOPE = `${CONSTANTS.ISOLATION_PREFIX}-`;
@@ -14,6 +13,7 @@ const FORBIDDEN_ATTR = ['draggable', 'data-gjs[-\\w]+'];
 const ROOT_ATTR_REGEXP = /\[id\*\=\"isolation\"\]/gm;
 const SCOPE_ATTR_REGEXP = /\[id\*\=\"scope\"\]/gm;
 const WRAPPER_REGEXP = /#isolation-scope-[\\w]*\\s?\.cms\-wrapper/gm;
+const REGEXP_TWIG_TAGS_ESC = /([\{|\%|\#]{2})([\w\W]+)([\%|\}|\#]{2})/gi;
 
 /**
  * Test regexp
@@ -26,9 +26,13 @@ const hasIsolation = html => {
     return componentHtmlIdRegexp.test(html);
 };
 
-export const separateContent = html => {
+const convertHtmlStringToNodes = html => {
     const domParser = new DOMParser();
-    const body = domParser.parseFromString(html, 'text/html').body;
+    return domParser.parseFromString(html, 'text/html').body;
+};
+
+export const separateContent = html => {
+    const body = convertHtmlStringToNodes(html);
 
     const css = [...body.querySelectorAll('style')].reduce((acc, style) => {
         acc += style.innerHTML;
@@ -44,7 +48,8 @@ export const separateContent = html => {
 
 export const escapeWrapper = html => {
     if (hasIsolation(html)) {
-        html = $(html).html();
+        const body = convertHtmlStringToNodes(html);
+        html = body.firstChild.innerHTML;
         html = escapeWrapper(html);
     }
 
@@ -63,8 +68,8 @@ export const escapeCss = css => {
 export const getWrapperAttrs = html => {
     const attrs = {};
     if (hasIsolation(html)) {
-        const $wrapper = $(stripRestrictedAttrs(html));
-        each($wrapper[0].attributes, attr => attrs[attr.name] = $wrapper.attr(attr.name));
+        const body = convertHtmlStringToNodes(stripRestrictedAttrs(html));
+        each(body.firstChild.attributes, attr => attrs[attr.name] = body.firstChild.getAttribute(attr.name));
     }
     delete attrs.id;
     if (attrs.class) {
@@ -79,6 +84,10 @@ export const stripRestrictedAttrs = html => {
     });
 
     return html;
+};
+
+export const unescapeTwigExpression = html => {
+    return html.replace(REGEXP_TWIG_TAGS_ESC, match => unescape(match).replace(/&#039;/gi, `'`));
 };
 
 function randomId(length = 20) {
@@ -132,16 +141,8 @@ class ContentIsolation {
     }
 
     isolateHtml(html, wrapperClasses = '') {
-        const root = document.createElement('div');
-
-        root.id = this.scopeId;
-        root.innerHTML = html;
-
-        if (wrapperClasses) {
-            root.className = wrapperClasses;
-        }
-
-        return root.outerHTML;
+        const classes = wrapperClasses ? ` class="${wrapperClasses}"` : '';
+        return `<div id="${this.scopeId}"${classes}>${unescapeTwigExpression(html)}</div>`;
     }
 }
 
