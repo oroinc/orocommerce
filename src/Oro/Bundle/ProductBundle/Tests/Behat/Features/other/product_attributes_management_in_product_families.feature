@@ -1,3 +1,4 @@
+@container-incompatible
 @ticket-BB-15287
 @automatically-ticket-tagged
 Feature: Product Attributes Management in Product Families

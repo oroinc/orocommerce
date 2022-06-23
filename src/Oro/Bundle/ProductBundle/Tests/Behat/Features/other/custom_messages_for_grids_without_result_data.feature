@@ -1,3 +1,4 @@
+@container-incompatible
 @ticket-BAP-17428
 @fixture-OroProductBundle:CustomEmptyGridTranslation.yml
 

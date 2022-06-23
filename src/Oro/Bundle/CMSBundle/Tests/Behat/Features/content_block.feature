@@ -1,3 +1,4 @@
+@container-incompatible
 @ticket-BB-19056
 @feature-BAP-19790
 @fixture-OroCMSBundle:CustomerUserFixture.yml
