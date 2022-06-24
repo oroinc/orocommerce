@@ -9,6 +9,7 @@ define(function(require) {
     const mediator = require('oroui/js/mediator');
     const $ = require('jquery');
     const _ = require('underscore');
+    const __ = require('orotranslation/js/translator');
     /** @var QuantityHelper QuantityHelper **/
     const QuantityHelper = require('oroproduct/js/app/quantity-helper');
     const ShoppingListCollectionService = require('oroshoppinglist/js/shoppinglist-collection-service');
@@ -501,7 +502,8 @@ define(function(require) {
                     this.shoppingListCollection.trigger('change', {
                         refresh: true
                     });
-                    mediator.execute('showFlashMessage', 'success', _.__(this.options.messages.success));
+                    const messageOptions = {namespace: 'shopping_list'};
+                    mediator.execute('showFlashMessage', 'success', __(this.options.messages.success), messageOptions);
                 })
                 .always(() => {
                     mediator.execute('hideLoading');
