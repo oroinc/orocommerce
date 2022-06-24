@@ -117,7 +117,7 @@ define(function(require) {
                         shoppingList: shoppingListLabel
                     });
 
-                    mediator.execute('showFlashMessage', 'success', message);
+                    mediator.execute('showFlashMessage', 'success', message, {namespace: 'shopping_list'});
                     mediator.trigger('layout-subtree:update:shopping_list_set_default');
                     mediator.trigger('layout-subtree:update:shopping_list_owner');
                 }

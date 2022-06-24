@@ -52,7 +52,8 @@ Feature: Mass Product Actions processing
     Then should see an "Create New Shopping List popup" element
     And type "Shopping List of Amanda" in "Shopping List Name"
     And click "Create and Add"
-    Then should see 'Shopping list "Shopping List of Amanda" was created successfully' flash message
+    Then should see '2 products were added' flash message
+    And click on "Flash Message Close Button"
     When I hover on "Shopping Cart"
     And I click "Shopping List of Amanda" on shopping list widget
     Then I should see following grid:

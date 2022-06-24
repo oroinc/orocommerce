@@ -88,6 +88,8 @@ define(function(require) {
             });
             this.datagrid.resetSelectionState();
 
+            data.successMessageOptions = {namespace: 'shopping_list'};
+
             this._showAjaxSuccessMessage(data);
             mediator.trigger('shopping-list:refresh');
         },
