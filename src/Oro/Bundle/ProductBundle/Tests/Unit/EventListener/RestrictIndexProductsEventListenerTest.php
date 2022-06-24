@@ -8,6 +8,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\EventListener\RestrictIndexProductsEventListener;
 use Oro\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier;
 use Oro\Bundle\WebsiteSearchBundle\Event\RestrictIndexEntityEvent;
+use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 
 class RestrictIndexProductsEventListenerTest extends \PHPUnit\Framework\TestCase
 {
@@ -25,6 +26,9 @@ class RestrictIndexProductsEventListenerTest extends \PHPUnit\Framework\TestCase
     /** @var \PHPUnit\Framework\MockObject\MockObject|QueryBuilder */
     protected $queryBuilder;
 
+    /** @var \PHPUnit\Framework\MockObject\MockObject|WebsiteContextManager */
+    protected $websiteContext;
+
     protected function setUp(): void
     {
         $this->modifier = $this->getMockBuilder(ProductVisibilityQueryBuilderModifier::class)
@@ -33,16 +37,23 @@ class RestrictIndexProductsEventListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->configManager = $this->getMockBuilder(ConfigManager::class)->disableOriginalConstructor()->getMock();
         $this->queryBuilder = $this->getMockBuilder(QueryBuilder::class)->disableOriginalConstructor()->getMock();
+        $this->websiteContext = $this->getMockBuilder(WebsiteContextManager::class)
+            ->disableOriginalConstructor()->getMock();
 
         $this->listener = new RestrictIndexProductsEventListener(
             $this->configManager,
             $this->modifier,
             self::CONFIG_PATH
         );
+        $this->listener->setWebsiteContextManager($this->websiteContext);
     }
 
     public function testOnRestrictIndexEntitiesEvent()
     {
+        $context = [
+            'currentWebsiteId' => 1,
+        ];
+
         $this->modifier->expects($this->once())
             ->method('modifyByStatus')
             ->with($this->queryBuilder, [Product::STATUS_ENABLED]);
@@ -53,11 +64,15 @@ class RestrictIndexProductsEventListenerTest extends \PHPUnit\Framework\TestCase
             ->with(self::CONFIG_PATH)
             ->willReturn($inventoryStatuses);
 
+        $this->websiteContext->expects($this->once())
+            ->method('getWebsite')
+            ->with($context);
+
         $this->modifier->expects($this->once())
             ->method('modifyByInventoryStatus')
             ->with($this->queryBuilder, $inventoryStatuses);
 
-        $event = new RestrictIndexEntityEvent($this->queryBuilder, []);
+        $event = new RestrictIndexEntityEvent($this->queryBuilder, $context);
         $this->listener->onRestrictIndexEntityEvent($event);
     }
 }
