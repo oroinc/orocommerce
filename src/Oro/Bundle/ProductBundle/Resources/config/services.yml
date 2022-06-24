@@ -845,6 +845,7 @@ services:
         arguments:
             - '@oro_config.manager'
             - '@oro_product.model.product_visibility_query_builder_modifier'
+            - '@oro_website_search.manager.website_context_manager'
             - 'oro_product.general_frontend_product_visibility'
         tags:
             - { name: kernel.event_listener, event: oro_website_search.event.restrict_index_entity.product, method: onRestrictIndexEntityEvent }
