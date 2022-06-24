@@ -711,7 +711,7 @@ const GrapesjsEditorView = BaseView.extend({
             toolbar = toolbar.map(tool => {
                 const attributes = tool.attributes || {};
                 tool.label = '';
-                if (_.isFunction(tool.command) && !attributes.label) {
+                if (_.isFunction(tool.command) && !attributes.label && !tool.id) {
                     attributes.label = __('oro.cms.wysiwyg.toolbar.selectParent');
                     attributes.class = 'fa fa-arrow-up';
 
@@ -719,7 +719,8 @@ const GrapesjsEditorView = BaseView.extend({
                     return tool;
                 }
 
-                switch (tool.command) {
+                const name = tool.id || tool.command;
+                switch (name) {
                     case 'tlb-move':
                         attributes.label = __('oro.cms.wysiwyg.toolbar.move');
                         attributes.class = 'fa fa-arrows';
