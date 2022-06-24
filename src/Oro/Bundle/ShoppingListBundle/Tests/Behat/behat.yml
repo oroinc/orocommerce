@@ -426,7 +426,7 @@ oro_behat_extension:
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilters
 
     First Line Item Row Checkbox:
-      selector: '.grid-body .grid-row:first-child .custom-checkbox__input'
+      selector: '.grid-body .grid-row:first-child input[type=checkbox]'
 
     Shopping Lists Navigation Link:
       selector:

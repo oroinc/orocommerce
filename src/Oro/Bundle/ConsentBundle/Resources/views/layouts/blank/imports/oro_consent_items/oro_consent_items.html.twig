@@ -44,7 +44,7 @@
 
 {% block __oro_consent_items__consent_item_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        'class': 'custom-checkbox input-widget' ~ requiredClass,
+        'class': 'checkbox-label' ~ requiredClass,
         'for': 'consent-' ~ index
     }) %}
 
@@ -72,7 +72,6 @@
 
 {% block __oro_consent_items__checkbox_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        'class': 'custom-checkbox__input',
         'type': 'checkbox',
         'id': 'consent-' ~ index,
         'name': 'consent-' ~ index,
@@ -91,14 +90,9 @@
         }) %}
     {% endif %}
     <input {{ block('block_attributes') }} {% if consent.accepted %} checked {% endif %}>
-    <span class="custom-checkbox__icon"></span>
 {% endblock %}
 
 {% block __oro_consent_items__text_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        'class': ' custom-checkbox__text',
-    }) %}
-
     <span {{ block('block_attributes') }}>
         {{ 'oro.consent.frontend.form.agree.label'|trans }}
         {{ parent_block_widget(block) }}

@@ -42,7 +42,7 @@
 .oro-item-collection {
     td {
         .sell {
-            margin-top: $content-padding-small;
+            margin-top: -2px;
         }
 
         table {
@@ -160,7 +160,8 @@
             text-align: center;
         }
 
-        .checkbox-view {
+        [type='checkbox'],
+        [type='radio'] {
             margin-top: $content-padding-small;
         }
 

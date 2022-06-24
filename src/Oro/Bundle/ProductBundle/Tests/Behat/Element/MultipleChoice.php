@@ -48,7 +48,7 @@ class MultipleChoice extends BaseMultipleChoice
         $this->getDriver()->waitForAjax();
 
         $widget = $this->getWidget();
-        $inputs = $widget->findAll('css', 'li span.custom-checkbox__text');
+        $inputs = $widget->findAll('css', 'li span');
 
         $choices = [];
         /** @var Element $input */

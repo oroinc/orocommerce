@@ -2,17 +2,29 @@
 
 .request-form-editnote {
     padding: 7px 10px;
-
     border-radius: 4px;
     background: $request-form-editnote-background;
+    display: grid;
+    grid-template-areas:
+        'toggle label'
+        'body body';
+    grid-template-columns: auto 1fr;
+    gap: 0 $offset-x-m;
 
     &__body {
+        grid-area: body;
         display: none;
-
-        margin-top: $offset-y-m;
+        padding-top: $offset-y-m;
     }
 
-    .checked ~ &__body,
+    &__label {
+        grid-area: label;
+    }
+
+    &__toggle {
+        grid-area: toggle;
+    }
+
     &__toggle:checked ~ &__body {
         display: block;
     }

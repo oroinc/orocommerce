@@ -36,6 +36,7 @@
             position: absolute;
             top: $responsive-shopping-list-edit-action-in-desktop-height - 1px;
             left: $datagrid-body-select-row-cell-offset-start + $checkbox-icon-size * .5;
+            left: $datagrid-body-select-row-cell-offset-start;
             transform: translateX(-50%);
             bottom: -1px;
 
@@ -51,6 +52,7 @@
     .sub-row {
         .cell-checkbox {
             padding-left: $responsive-shopping-list-edit-checkbox-offset + $checkbox-icon-size * .5;
+            padding-left: $responsive-shopping-list-edit-checkbox-offset;
         }
 
         .select-row-cell {
@@ -58,6 +60,7 @@
                 position: absolute;
                 top: -($responsive-shopping-sub-row-border-width + 1px);
                 left: $datagrid-body-select-row-cell-offset-start + $checkbox-icon-size * .5;
+                left: $datagrid-body-select-row-cell-offset-start;
                 bottom: -1px;
                 transform: translateX(-50%);
 
