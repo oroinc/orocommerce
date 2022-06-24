@@ -23,7 +23,12 @@ function openDigitalAssetsManager(model) {
                     href: url,
                     title: title,
                     target: target
-                }).set('content', filename);
+                });
+
+                model.components([{
+                    type: 'textnode',
+                    content: filename
+                }]);
 
                 if (traitText) {
                     traitText.set('value', filename);
@@ -63,16 +68,24 @@ const FileTypeBuilder = BaseTypeBuilder.extend({
             this.constructor.__super__.initialize.apply(this, args);
 
             const toolbar = this.get('toolbar');
-
-            toolbar.unshift({
-                attributes: {
-                    'class': 'fa fa-gear',
-                    'label': __('oro.cms.wysiwyg.toolbar.fileSetting')
-                },
-                command: openDigitalAssetsManager.bind(null, this)
-            });
-
-            this.set('toolbar', toolbar);
+            if (!toolbar.find(toolbar => toolbar.id === 'file-settings')) {
+                this.set('toolbar', [
+                    {
+                        attributes: {
+                            'class': 'fa fa-gear',
+                            'label': __('oro.cms.wysiwyg.toolbar.fileSetting')
+                        },
+                        id: 'file-settings',
+                        command(editor) {
+                            const selected = editor.getSelected();
+                            if (selected) {
+                                openDigitalAssetsManager(selected);
+                            }
+                        }
+                    },
+                    ...toolbar
+                ]);
+            }
         },
 
         /**
