@@ -113,9 +113,8 @@
                         <div class="shopping-lists-units"
                              data-role="line-item"
                             {{ utils.underscoreRaw(UI.renderPageComponentAttributes({
-                                module: 'oroui/js/app/components/view-component',
+                                view: 'oroproduct/js/app/views/product-quantity-editable-view',
                                 options: {
-                                    view: 'oroproduct/js/app/views/product-quantity-editable-view',
                                     dataKey: constant('Oro\\Bundle\\ProductBundle\\Form\\Type\\FrontendLineItemType::NAME'),
                                     enable: is_granted('oro_shopping_list_frontend_update'),
                                     elements: {
@@ -135,7 +134,8 @@
                                     triggerData: {
                                         lineItemId: '<%- _.escapeForJSON(lineItem.id) %>',
                                         shoppingListId: '<%- _.escapeForJSON(list.id) %>'
-                                    }
+                                    },
+                                    successMessageOptions: {namespace: 'shopping_list'}
                                 }
                             })) }}>
                             <form action="#">
@@ -167,7 +167,8 @@
                                                             lineItemId: '<%- _.escapeForJSON(lineItem.id) %>'
                                                         },
                                                         confirmMessage: 'oro.frontend.shoppinglist.messages.line_item_delete_confirm'|trans,
-                                                        successMessage: 'oro.frontend.shoppinglist.messages.line_item_deleted'|trans
+                                                        successMessage: 'oro.frontend.shoppinglist.messages.line_item_deleted'|trans,
+                                                        successMessageOptions: {namespace: 'shopping_list'}
                                                     }
                                                 })) }}>
                                                 <span class="fa-trash-o" aria-hidden="true"></span>

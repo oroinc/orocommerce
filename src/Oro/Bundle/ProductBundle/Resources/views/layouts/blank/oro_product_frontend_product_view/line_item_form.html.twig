@@ -56,6 +56,13 @@
     {% endif %}
 {% endblock %}
 
+{% block _line_item_form_start_widget %}
+    {% set attr = attr|merge({
+        'data-prevent-submit': ''
+    }) %}
+    {{ parent_block_widget(block, {attr: attr}) }}
+{% endblock %}
+
 {% block _line_item_form_end_widget %}
     {{ form_widget(form._token) }}
     {{ block_widget(block) }}
