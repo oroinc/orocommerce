@@ -351,7 +351,7 @@ datagrids:
                 acl_resource: oro_product_update
             delete:
                 type: delete
-                acl_resource: oro_product_delete
+                acl_resource: 'DELETE;entity:Oro\Bundle\ProductBundle\Entity\Product'
                 label: oro.grid.action.delete
                 icon: trash-o
                 link: delete_link

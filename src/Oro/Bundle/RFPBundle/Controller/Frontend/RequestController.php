@@ -57,20 +57,12 @@ class RequestController extends AbstractController
      * @AclAncestor("oro_rfp_frontend_request_view")
      * @Route("/", name="oro_rfp_frontend_request_index")
      * @Layout(vars={"entity_class"})
-     * @return array|RedirectResponse
+     * @return array
      */
     public function indexAction()
     {
-        $entityClass = RFPRequest::class;
-        $viewPermission = 'VIEW;entity:' . $entityClass;
-        if (!$this->isGranted($viewPermission)) {
-            return $this->redirect(
-                $this->generateUrl('oro_rfp_frontend_request_create')
-            );
-        }
-
         return [
-            'entity_class' => $entityClass,
+            'entity_class' => RFPRequest::class
         ];
     }
 
