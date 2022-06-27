@@ -5,7 +5,6 @@ namespace Oro\Bundle\VisibilityBundle\Visibility\Provider;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
-use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\BatchBundle\ORM\Query\ResultIterator\IdentifierHydrator;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
@@ -138,7 +137,7 @@ class ProductVisibilityProvider
     }
 
     /**
-     * @return BufferedQueryResultIterator
+     * @return BufferedIdentityQueryResultIterator
      */
     private function getCustomerIds()
     {
@@ -157,7 +156,10 @@ class ProductVisibilityProvider
 
         $query->setHydrationMode($identifierHydrationMode);
 
-        return new BufferedQueryResultIterator($query);
+        $buffer = new BufferedIdentityQueryResultIterator($query);
+        $buffer->setBufferSize($this->queryBufferSize);
+
+        return $buffer;
     }
 
     /**
@@ -166,8 +168,8 @@ class ProductVisibilityProvider
      */
     private function getAllCustomersData(array $productIds)
     {
-        foreach ($productIds as $productId) {
-            foreach ($this->getCustomerIds() as $customerId) {
+        foreach ($this->getCustomerIds() as $customerId) {
+            foreach ($productIds as $productId) {
                 yield ['productId' => $productId, 'customerId' => $customerId];
             }
         }
