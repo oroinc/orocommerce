@@ -54,6 +54,11 @@
         },
         'data-layout': 'separate'
     }) %}
+    {% if is_configurable_product_type(product.type) %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': ' is-configurable',
+        }) %}
+    {% endif %}
 
     {% do block|merge_context({
         '__productUniqId': 'product-'|uniqid,
