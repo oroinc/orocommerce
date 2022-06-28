@@ -617,6 +617,7 @@ services:
         arguments:
             - '@translator'
             - '@oro_tax.manager.oro.customer_tax_code_manager'
+            - '@oro_entity.helper.field_helper'
             - 'Oro\Bundle\CustomerBundle\Entity\Customer'
         tags:
             - { name: kernel.event_subscriber }

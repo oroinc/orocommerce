@@ -30,7 +30,7 @@ class CustomerTaxCodeImportExportHelper
     public function loadCustomerTaxCode(array $customers)
     {
         $customerTaxCodes = [];
-
+        // @TODO stevensonkuo need to wake up customer tax code.
         foreach ($customers as $customer) {
             $customerTaxCodes[$customer->getId()] = $customer->getTaxCode();
         }

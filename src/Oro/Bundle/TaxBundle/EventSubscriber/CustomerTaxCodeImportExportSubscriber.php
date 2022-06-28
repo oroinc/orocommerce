@@ -4,6 +4,7 @@ namespace Oro\Bundle\TaxBundle\EventSubscriber;
 
 use Doctrine\ORM\EntityNotFoundException;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\EntityBundle\Helper\FieldHelper;
 use Oro\Bundle\ImportExportBundle\Event\AfterEntityPageLoadedEvent;
 use Oro\Bundle\ImportExportBundle\Event\Events;
 use Oro\Bundle\ImportExportBundle\Event\LoadEntityRulesAndBackendHeadersEvent;
@@ -17,25 +18,18 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class CustomerTaxCodeImportExportSubscriber implements EventSubscriberInterface
 {
-    /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
+    protected TranslatorInterface $translator;
 
-    /**
-     * @var CustomerTaxCodeImportExportHelper
-     */
-    private $customerTaxCodeImportExportHelper;
+    private CustomerTaxCodeImportExportHelper $customerTaxCodeImportExportHelper;
 
-    /**
-     * @var string
-     */
-    private $customerClassName;
+    private string $customerClassName;
+
+    protected FieldHelper $fieldHelper;
 
     /**
      * @var CustomerTaxCode[]
      */
-    private $customerTaxCodes = [];
+    private array $customerTaxCodes = [];
 
     /**
      * @param CustomerTaxCodeImportExportHelper $customerTaxManager
@@ -44,10 +38,12 @@ class CustomerTaxCodeImportExportSubscriber implements EventSubscriberInterface
     public function __construct(
         TranslatorInterface $translator,
         CustomerTaxCodeImportExportHelper $customerTaxManager,
+        FieldHelper $fieldHelper,
         $customerClassName
     ) {
         $this->translator = $translator;
         $this->customerTaxCodeImportExportHelper = $customerTaxManager;
+        $this->fieldHelper = $fieldHelper;
         $this->customerClassName = $customerClassName;
     }
 
@@ -72,12 +68,20 @@ class CustomerTaxCodeImportExportSubscriber implements EventSubscriberInterface
             return;
         }
 
+        if ($this->isTaxCodeSkippedForNormalization()) {
+            return;
+        }
+        // @TODO stevensonkuo and the id for first record is not matching record in rows?!
         $this->customerTaxCodes = $this->customerTaxCodeImportExportHelper->loadCustomerTaxCode($event->getRows());
     }
 
     public function normalizeEntity(NormalizeEntityEvent $event)
     {
         if (!$event->isFullData() || !is_a($event->getObject(), $this->customerClassName)) {
+            return;
+        }
+
+        if ($this->isTaxCodeSkippedForNormalization()) {
             return;
         }
 
@@ -94,6 +98,10 @@ class CustomerTaxCodeImportExportSubscriber implements EventSubscriberInterface
     public function loadEntityRulesAndBackendHeaders(LoadEntityRulesAndBackendHeadersEvent $event)
     {
         if (!$event->isFullData() || $event->getEntityName() !== $this->customerClassName) {
+            return;
+        }
+
+        if ($this->isTaxCodeSkippedForNormalization()) {
             return;
         }
 
@@ -163,5 +171,14 @@ class CustomerTaxCodeImportExportSubscriber implements EventSubscriberInterface
         }
 
         return $this->customerTaxCodes[$customer->getId()];
+    }
+
+    /**
+     * Do not act when customer class has entity config about this field.
+     */
+    protected function isTaxCodeSkippedForNormalization(): bool
+    {
+        return false;
+//        return (bool)$this->fieldHelper->getConfigValue($this->customerClassName, 'taxCode', 'excluded');
     }
 }
