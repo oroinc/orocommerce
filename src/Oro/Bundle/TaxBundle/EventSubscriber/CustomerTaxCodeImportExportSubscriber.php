@@ -3,8 +3,6 @@
 namespace Oro\Bundle\TaxBundle\EventSubscriber;
 
 use Doctrine\ORM\EntityNotFoundException;
-use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\NoResultException;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\EntityBundle\Helper\FieldHelper;
 use Oro\Bundle\ImportExportBundle\Event\AfterEntityPageLoadedEvent;
