@@ -93,9 +93,24 @@
             font-size: $base-font-size--s;
         }
 
+        ##{$clm-prefix}checkbox {
+            min-width: 12px;
+        }
+
         ##{$clm-prefix}close {
             font-size: $base-font-size--xl;
             font-weight: font-weight('bold');
+            min-width: 12px;
+        }
+    }
+
+    &clm-header {
+        &-status {
+            min-width: 90px;
+        }
+
+        [data-states] {
+            padding-right: 15px;
         }
     }
 }
