@@ -518,6 +518,7 @@ const GrapesjsEditorView = BaseView.extend({
         this.listenTo(this.builder, 'component:remove:before', this.componentBeforeRemove.bind(this));
         this.listenTo(this.builder, 'component:remove', this.componentRemove.bind(this));
         this.listenTo(this.builder, 'rteToolbarPosUpdate', this.updateRtePosition.bind(this));
+        this.listenTo(this.builder, 'selector', this.onSelector.bind(this));
         this.listenTo(this.state, 'change', this.updatePropertyField.bind(this));
 
         // Fix reload form when click export to zip dialog
@@ -913,6 +914,18 @@ const GrapesjsEditorView = BaseView.extend({
 
     updatePropertyField() {
         this.$propertiesInputElement.val(JSON.stringify(this.state.toJSON()));
+    },
+
+    /**
+     * Handle change selector to Selector Manager and escaping label
+     * @param {Object} selector
+     */
+    onSelector({event, model}) {
+        if (event === 'change:label' || event === 'add') {
+            model.set('label', _.escape(model.get('label')), {
+                silent: true
+            });
+        }
     },
 
     /**
