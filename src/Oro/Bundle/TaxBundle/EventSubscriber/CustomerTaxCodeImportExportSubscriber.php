@@ -3,6 +3,8 @@
 namespace Oro\Bundle\TaxBundle\EventSubscriber;
 
 use Doctrine\ORM\EntityNotFoundException;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\EntityBundle\Helper\FieldHelper;
 use Oro\Bundle\ImportExportBundle\Event\AfterEntityPageLoadedEvent;
@@ -31,15 +33,11 @@ class CustomerTaxCodeImportExportSubscriber implements EventSubscriberInterface
      */
     private array $customerTaxCodes = [];
 
-    /**
-     * @param CustomerTaxCodeImportExportHelper $customerTaxManager
-     * @param string $customerClassName
-     */
     public function __construct(
         TranslatorInterface $translator,
         CustomerTaxCodeImportExportHelper $customerTaxManager,
         FieldHelper $fieldHelper,
-        $customerClassName
+        string $customerClassName
     ) {
         $this->translator = $translator;
         $this->customerTaxCodeImportExportHelper = $customerTaxManager;
@@ -68,11 +66,11 @@ class CustomerTaxCodeImportExportSubscriber implements EventSubscriberInterface
             return;
         }
 
-        if ($this->isTaxCodeSkippedForNormalization()) {
+        if (!$this->isEnable()) {
             return;
         }
-        // @TODO stevensonkuo and the id for first record is not matching record in rows?!
-        $this->customerTaxCodes = $this->customerTaxCodeImportExportHelper->loadCustomerTaxCode($event->getRows());
+
+        $this->customerTaxCodes = $this->customerTaxCodeImportExportHelper->loadCustomerTaxCode($rows);
     }
 
     public function normalizeEntity(NormalizeEntityEvent $event)
@@ -81,7 +79,7 @@ class CustomerTaxCodeImportExportSubscriber implements EventSubscriberInterface
             return;
         }
 
-        if ($this->isTaxCodeSkippedForNormalization()) {
+        if (!$this->isEnable()) {
             return;
         }
 
@@ -101,7 +99,7 @@ class CustomerTaxCodeImportExportSubscriber implements EventSubscriberInterface
             return;
         }
 
-        if ($this->isTaxCodeSkippedForNormalization()) {
+        if (!$this->isEnable()) {
             return;
         }
 
@@ -174,11 +172,10 @@ class CustomerTaxCodeImportExportSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * Do not act when customer class has entity config about this field.
+     * Do not act when customer class has entity config about this field to prevent duplicates
      */
-    protected function isTaxCodeSkippedForNormalization(): bool
+    protected function isEnable(): bool
     {
-        return false;
-//        return (bool)$this->fieldHelper->getConfigValue($this->customerClassName, 'taxCode', 'excluded');
+        return $this->fieldHelper->getConfigValue($this->customerClassName, 'taxCode', 'excluded') !== false;
     }
 }

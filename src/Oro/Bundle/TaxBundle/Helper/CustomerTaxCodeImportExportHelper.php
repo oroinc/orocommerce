@@ -4,6 +4,9 @@ namespace Oro\Bundle\TaxBundle\Helper;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityNotFoundException;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\Proxy\Proxy;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\TaxBundle\Entity\CustomerTaxCode;
@@ -16,6 +19,11 @@ class CustomerTaxCodeImportExportHelper
      */
     private $doctrineHelper;
 
+    /**
+     * @var CustomerTaxCode[]
+     */
+    private array $customerTaxCodes = [];
+
     public function __construct(DoctrineHelper $doctrineHelper)
     {
         $this->doctrineHelper = $doctrineHelper;
@@ -23,16 +31,17 @@ class CustomerTaxCodeImportExportHelper
 
     /**
      * Returns array [Customer::class => [CustomerTaxCode $object, CustomerTaxCode $object,...]]
-     *
-     * @param Customer[] $customers
-     * @return CustomerTaxCode[]
      */
-    public function loadCustomerTaxCode(array $customers)
+    public function loadCustomerTaxCode(array $customers): array
     {
         $customerTaxCodes = [];
-        // @TODO stevensonkuo need to wake up customer tax code.
         foreach ($customers as $customer) {
-            $customerTaxCodes[$customer->getId()] = $customer->getTaxCode();
+            $taxCode = $customer->getTaxCode();
+            if (!isset($this->customerTaxCodes[$taxCode->getId()])) {
+                $this->customerTaxCodes[$taxCode->getId()] = $taxCode;
+            }
+
+            $customerTaxCodes[$customer->getId()] = $this->customerTaxCodes[$taxCode->getId()];
         }
 
         return $customerTaxCodes;
