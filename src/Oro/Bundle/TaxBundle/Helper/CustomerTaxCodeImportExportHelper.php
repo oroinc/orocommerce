@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\TaxBundle\Helper;
 
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
