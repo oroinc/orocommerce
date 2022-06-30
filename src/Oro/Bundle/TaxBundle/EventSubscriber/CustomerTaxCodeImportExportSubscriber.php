@@ -16,6 +16,9 @@ use Oro\Bundle\TaxBundle\Helper\CustomerTaxCodeImportExportHelper;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * This subscriber could help decoupled customer entity to append tax code in export file quickly and easily.
+ */
 class CustomerTaxCodeImportExportSubscriber implements EventSubscriberInterface
 {
     protected TranslatorInterface $translator;
