@@ -164,7 +164,7 @@ class CustomerTaxCodeImportExportSubscriber implements EventSubscriberInterface
 
 
     /**
-     * There is one issue that read of EntityReader will trigger pagination before item be read and processed.
+     * There is one issue that read of EntityReader will trigger pagination before the last item be processed.
      * So we need to keep all customer tax codes info in local cache and only reset after fetched.
      */
     private function getCustomerTaxCode(Customer $customer): ?CustomerTaxCode
