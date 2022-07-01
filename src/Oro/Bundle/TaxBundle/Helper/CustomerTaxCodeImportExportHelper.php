@@ -3,18 +3,24 @@
 namespace Oro\Bundle\TaxBundle\Helper;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\EntityNotFoundException;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\TaxBundle\Entity\CustomerTaxCode;
 use Oro\Bundle\TaxBundle\Entity\Repository\CustomerTaxCodeRepository;
 
+/**
+ * Help to collect tax code field of customer entity and return.
+ */
 class CustomerTaxCodeImportExportHelper
 {
+    private DoctrineHelper $doctrineHelper;
+
     /**
-     * @var DoctrineHelper
+     * @var CustomerTaxCode[]
      */
-    private $doctrineHelper;
+    private array $customerTaxCodes = [];
 
     public function __construct(DoctrineHelper $doctrineHelper)
     {
@@ -32,17 +38,18 @@ class CustomerTaxCodeImportExportHelper
         $customerTaxCodes = [];
 
         foreach ($customers as $customer) {
-            $customerTaxCodes[$customer->getId()] = $customer->getTaxCode();
+            $taxCode = $customer->getTaxCode();
+            if (!isset($this->customerTaxCodes[$taxCode->getId()])) {
+                $this->customerTaxCodes[$taxCode->getId()] = $taxCode;
+            }
+
+            $customerTaxCodes[$customer->getId()] = $this->customerTaxCodes[$taxCode->getId()];
         }
 
         return $customerTaxCodes;
     }
 
-    /**
-     * @param CustomerTaxCode $customerTaxCode
-     * @return array
-     */
-    public function normalizeCustomerTaxCode(CustomerTaxCode $customerTaxCode = null)
+    public function normalizeCustomerTaxCode(CustomerTaxCode $customerTaxCode = null): array
     {
         if (!$customerTaxCode) {
             return ['code' => ''];
@@ -52,11 +59,9 @@ class CustomerTaxCodeImportExportHelper
     }
 
     /**
-     * @param array $data
-     * @return null|CustomerTaxCode
      * @throws EntityNotFoundException
      */
-    public function denormalizeCustomerTaxCode(array $data)
+    public function denormalizeCustomerTaxCode(array $data): ?CustomerTaxCode
     {
         if (!isset($data['tax_code'], $data['tax_code']['code'])) {
             return null;
@@ -76,18 +81,10 @@ class CustomerTaxCodeImportExportHelper
     }
 
     /**
-     * @return \Doctrine\ORM\EntityRepository|CustomerTaxCodeRepository
+     * @return EntityRepository|CustomerTaxCodeRepository
      */
     private function getCustomerTaxCodeRepository()
     {
         return $this->doctrineHelper->getEntityRepository(CustomerTaxCode::class);
-    }
-
-    /**
-     * @return EntityManager
-     */
-    private function getEntityManager()
-    {
-        return $this->doctrineHelper->getEntityManager(CustomerTaxCode::class);
     }
 }
