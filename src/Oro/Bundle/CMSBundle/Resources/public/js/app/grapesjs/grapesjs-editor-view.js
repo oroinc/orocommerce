@@ -505,7 +505,7 @@ const GrapesjsEditorView = BaseView.extend({
         this.listenTo(this.builder, 'component:update', this._onComponentUpdatedBuilder.bind(this));
         this.listenTo(this.builder, 'changeTheme', this._updateTheme.bind(this));
         this.listenTo(this.builder, 'component:selected', this.componentSelected.bind(this));
-        this.listenTo(this.builder, 'component:deselected}', this.componentDeselected.bind(this));
+        this.listenTo(this.builder, 'component:deselected', this.componentDeselected.bind(this));
         this.listenTo(this.builder, 'rteToolbarPosUpdate', this.updateRtePosition.bind(this));
         this.listenTo(this.state, 'change', this.updatePropertyField.bind(this));
 
