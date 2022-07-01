@@ -53,13 +53,44 @@ class FrontendShoppingListsViewsList extends AbstractViewsList
                 'oro_shopping_list.my_shopping_lists',
                 [
                     'owner' => [
-                        'type' => TextFilterType::TYPE_EQUAL,
+                        'type' => (string)TextFilterType::TYPE_EQUAL,
                         'value' => $this->getFullName(),
                     ],
                 ],
-                ['createdAt' => AbstractSorterExtension::DIRECTION_DESC],
+                [
+                    'createdAt' => AbstractSorterExtension::DIRECTION_DESC,
+                ],
                 'system',
-                ['owner' => [ColumnsStateProvider::RENDER_FIELD_NAME => false]]
+                [
+                    'label' => [
+                        ColumnsStateProvider::RENDER_FIELD_NAME => true,
+                        ColumnsStateProvider::ORDER_FIELD_NAME => 0,
+                    ],
+                    'subtotal' => [
+                        ColumnsStateProvider::RENDER_FIELD_NAME => true,
+                        ColumnsStateProvider::ORDER_FIELD_NAME => 1,
+                    ],
+                    'lineItemsCount' => [
+                        ColumnsStateProvider::RENDER_FIELD_NAME => true,
+                        ColumnsStateProvider::ORDER_FIELD_NAME => 2,
+                    ],
+                    'isDefault' => [
+                        ColumnsStateProvider::RENDER_FIELD_NAME => true,
+                        ColumnsStateProvider::ORDER_FIELD_NAME => 3,
+                    ],
+                    'owner' => [
+                        ColumnsStateProvider::RENDER_FIELD_NAME => false,
+                        ColumnsStateProvider::ORDER_FIELD_NAME => 4,
+                    ],
+                    'createdAt' => [
+                        ColumnsStateProvider::RENDER_FIELD_NAME => true,
+                        ColumnsStateProvider::ORDER_FIELD_NAME => 5,
+                    ],
+                    'updatedAt' => [
+                        ColumnsStateProvider::RENDER_FIELD_NAME => true,
+                        ColumnsStateProvider::ORDER_FIELD_NAME => 6,
+                    ],
+                ]
             );
 
             $view
