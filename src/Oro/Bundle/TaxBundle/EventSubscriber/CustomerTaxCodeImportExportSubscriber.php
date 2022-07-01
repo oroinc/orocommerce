@@ -71,10 +71,7 @@ class CustomerTaxCodeImportExportSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $this->customerTaxCodes = array_merge(
-            $this->customerTaxCodes,
-            $this->customerTaxCodeImportExportHelper->loadCustomerTaxCode($rows)
-        );
+        $this->customerTaxCodes += $this->customerTaxCodeImportExportHelper->loadCustomerTaxCode($rows);
     }
 
     public function normalizeEntity(NormalizeEntityEvent $event)
