@@ -320,11 +320,6 @@ services:
             - '@oro_pricing.user_currency_manager'
             - '@oro_config.global'
 
-    oro_shopping_list.provider.shopping_list_entity_name:
-        class: Oro\Bundle\ShoppingListBundle\Provider\ShoppingListEntityNameProvider
-        tags:
-            - { name: oro_entity.name_provider, priority: 100 }
-
     oro_shopping_list.provider.shopping_list_url:
         class: Oro\Bundle\ShoppingListBundle\Provider\ShoppingListUrlProvider
         public: true

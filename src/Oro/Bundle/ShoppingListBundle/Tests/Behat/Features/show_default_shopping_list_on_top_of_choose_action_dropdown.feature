@@ -17,11 +17,12 @@ Feature: Show default Shopping List on top of Choose Action drop-down
     And I click "ProductFrontendMassActionButton"
     And I click "Create New Shopping List" link from mass action dropdown in "Product Frontend Grid"
     Then should see an "Create New Shopping List popup" element
-    And type "Shopping List" in "Shopping List Name"
+    And type "Shopping List 1" in "Shopping List Name"
     And click "Create and Add"
-    Then should see 'Shopping list "Shopping List" was created successfully' flash message
+    Then should see '1 product was added' flash message
     And click on "Flash Message Close Button"
-    And click on "Flash Message Close Button"
+    When I hover on "Shopping Cart"
+    Then I should see "Shopping List 1" on shopping list widget
     When I check PSKU1 record in "Product Frontend Grid" grid
     And I click "ProductFrontendMassActionButton"
     Then I should not see "ProductFrontendGridMassActionDefaultItem" element with text "Add to Shopping List" inside "ProductFrontendGridMassActionMenu" element
@@ -64,9 +65,10 @@ Feature: Show default Shopping List on top of Choose Action drop-down
     Then should see an "Create New Shopping List popup" element
     When type "Shopping List 2" in "Shopping List Name"
     And click "Create and Add"
-    Then should see 'Shopping list "Shopping List 2" was created successfully' flash message
+    Then should see '1 product was added' flash message
     And click on "Flash Message Close Button"
-    And click on "Flash Message Close Button"
+    When I hover on "Shopping Cart"
+    Then I should see "Shopping List 2" on shopping list widget
 
   Scenario: Verify that a "Default Shopping List" action is always on the top of the actions list
     Given I scroll to top
@@ -80,9 +82,10 @@ Feature: Show default Shopping List on top of Choose Action drop-down
     Then should see an "Create New Shopping List popup" element
     And type "Shopping List 3" in "Shopping List Name"
     And click "Create and Add"
-    Then should see 'Shopping list "Shopping List 3" was created successfully' flash message
+    Then should see '1 product was added' flash message
     And click on "Flash Message Close Button"
-    And click on "Flash Message Close Button"
+    When I hover on "Shopping Cart"
+    Then I should see "Shopping List 3" on shopping list widget
     When I check PSKU1 record in "Product Frontend Grid" grid
     And I click "ProductFrontendMassActionButton"
     Then I should see "ProductFrontendGridMassActionDefaultItem" element with text "Add to Shopping List 3" inside "ProductFrontendGridMassActionMenu" element
@@ -93,18 +96,20 @@ Feature: Show default Shopping List on top of Choose Action drop-down
     Then should see an "Create New Shopping List popup" element
     And type "Shopping List 4" in "Shopping List Name"
     And click "Create and Add"
-    Then should see 'Shopping list "Shopping List 4" was created successfully' flash message
+    Then should see '1 product was added' flash message
     And click on "Flash Message Close Button"
-    And click on "Flash Message Close Button"
+    When I hover on "Shopping Cart"
+    Then I should see "Shopping List 4" on shopping list widget
 
     When I check PSKU1 record in "Product Frontend Grid" grid
     And I click "Create New Shopping List" link from mass action dropdown in "Product Frontend Grid"
     Then should see an "Create New Shopping List popup" element
     And type "Shopping List 5" in "Shopping List Name"
     And click "Create and Add"
-    Then should see 'Shopping list "Shopping List 5" was created successfully' flash message
+    Then should see '1 product was added' flash message
     And click on "Flash Message Close Button"
-    And click on "Flash Message Close Button"
+    When I hover on "Shopping Cart"
+    Then I should see "Shopping List 5" on shopping list widget
 
   Scenario: Product mass actions search is visible if number of actions more then 5
     Given I check PSKU1 record in "Product Frontend Grid" grid

@@ -37,6 +37,7 @@ Oro\Bundle\TaxBundle\Entity\TaxRule:
             - NotBlank: ~
         taxJurisdiction:
             - NotBlank: ~
+
 Oro\Bundle\TaxBundle\Entity\TaxJurisdiction:
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: code

@@ -12,7 +12,7 @@ define(function(require) {
         _.extend(componentContainerMixin, {
             options: {
                 includeButtons: '.btn, .dropdown-menu li > a, .dropdown-search',
-                excludeButtons: '.dropdown-toggle, button',
+                excludeButtons: '.dropdown-toggle, [data-btn-processor="exclude"]',
                 groupList: true,
                 sortedList: true,
                 moreButtonAttrs: {

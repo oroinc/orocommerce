@@ -138,15 +138,14 @@
         <div class="request-form-editline__footer">
             <div class="request-form-editline__note">
                 <div class="request-form-editnote">
-                    <label for="{{ 'lineItem-'~prototype_name }}" class="custom-checkbox{% if hasNotes %} checked{% endif %}">
-                        <input type="checkbox"
-                               name="{{ 'lineItem'~id }}"
-                               data-role="field__comment-checkbox"
-                               id="{{ 'lineItem-'~prototype_name }}"{% if hasNotes %} checked="checked"{% endif %}
-                               class="custom-checkbox__input"
-                        >
-                        <span class="custom-checkbox__icon"></span>
-                        <span class="custom-checkbox__text">{{ 'oro.frontend.shoppinglist.view.add_item_note.label'|trans }}</span>
+                    <input type="checkbox"
+                        name="{{ 'lineItem'~id }}"
+                        data-role="field__comment-checkbox"
+                        id="{{ 'lineItem-'~prototype_name }}"{% if hasNotes %} checked="checked"{% endif %}
+                        class="request-form-editnote__toggle"
+                    >
+                    <label for="{{ 'lineItem-'~prototype_name }}" class="request-form-editnote__label">
+                        {{- 'oro.frontend.shoppinglist.view.add_item_note.label'|trans -}}
                     </label>
                     <div class="request-form-editnote__body">
                         {{ form_widget(form.comment) }}

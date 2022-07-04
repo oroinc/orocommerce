@@ -61,7 +61,7 @@ define(function(require) {
                 uniqueOnly: true,
                 toggleLoading: false,
                 success() {
-                    messenger.notificationFlashMessage('success', success);
+                    messenger.notificationFlashMessage('success', success, {namespace: 'shopping_list'});
                     mediator.trigger('shopping-list:refresh');
                 }
             });

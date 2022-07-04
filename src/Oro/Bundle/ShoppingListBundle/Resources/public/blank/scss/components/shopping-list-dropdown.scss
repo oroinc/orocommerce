@@ -213,16 +213,3 @@
         }
     }
 }
-
-@include breakpoint('tablet-small') {
-    .shopping-list-dropdown__item {
-        .custom-radio {
-            &__text {
-                &::before {
-                    width: 16px;
-                    height: 16px;
-                }
-            }
-        }
-    }
-}

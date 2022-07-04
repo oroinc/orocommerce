@@ -401,12 +401,6 @@ services:
         class: Oro\Bundle\PromotionBundle\Provider\AppliedDiscountsProvider
         public: false
 
-    oro_promotion.coupon_entity_name_provider:
-        class: Oro\Bundle\PromotionBundle\Provider\CouponEntityNameProvider
-        public: false
-        tags:
-            - { name: oro_entity.name_provider, priority: 100 }
-
     oro_promotion.promotion_entity_name_provider:
         class: Oro\Bundle\PromotionBundle\Provider\PromotionEntityNameProvider
         tags:

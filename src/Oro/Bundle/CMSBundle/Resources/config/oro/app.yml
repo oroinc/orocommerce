@@ -124,3 +124,9 @@ oro_form:
                 blockquote:
                     attributes:
                         - cite
+
+oro_entity:
+    entity_name_representation:
+        Oro\Bundle\CMSBundle\Entity\ContentWidget:
+            full: [ name ]
+            short: [ name ]

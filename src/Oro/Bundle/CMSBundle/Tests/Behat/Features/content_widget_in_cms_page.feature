@@ -1,3 +1,4 @@
+@container-incompatible
 @ticket-BB-17552
 @fixture-OroCMSBundle:content_widget_in_cms_page.yml
 

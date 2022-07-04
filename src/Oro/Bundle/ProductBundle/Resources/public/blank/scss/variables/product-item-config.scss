@@ -25,6 +25,11 @@ $product-item-sku-value-word-break: break-all !default;
 
 $product-item-view-product-color: null !default;
 
+$product-item-select-row-gallery-view-height: var(--product-item-select-row-gallery-view-height, 26px) !default;
+
+// tablet
+$product-item-select-row-gallery-view-height-tablet: auto !default;
+
 // tablet-small
 $product-item-gallery-view-offset-x-tablet-small: 12px !default;
 

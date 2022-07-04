@@ -196,16 +196,16 @@ oro_behat_extension:
     Shopping List Dropdown:
       selector:
         type: 'xpath'
-        locator: '//a[contains(@class, "add-to-shopping-list-button")]/following-sibling::a[contains(@class, "dropdown-toggle")]'
+        locator: '//button[contains(@class, "add-to-shopping-list-button")]/following-sibling::a[contains(@class, "dropdown-toggle")]'
 
     Create New Shopping List:
-      selector: 'a.add-to-shopping-list-button[title="Create New Shopping List"]'
+      selector: '.add-to-shopping-list-button[title="Create New Shopping List"]'
 
     Update Product B Shopping List:
-      selector: 'a.add-to-shopping-list-button[title="Update Product B Shopping List"]'
+      selector: '.add-to-shopping-list-button[title="Update Product B Shopping List"]'
 
     Remove From Shopping List:
-      selector: 'a.add-to-shopping-list-button[title="Remove From Shopping list"]'
+      selector: '.add-to-shopping-list-button[title="Remove From Shopping list"]'
 
     Shopping List Quick Search:
       selector: '.dropdown-menu [data-role="quick-search"]'
@@ -280,7 +280,7 @@ oro_behat_extension:
       selector: 'button.shopping-lists__area-trigger'
 
     Add to Shopping List:
-      selector: 'a.add-to-shopping-list-button:contains("Add to Shopping List")'
+      selector: '.add-to-shopping-list-button:contains("Add to Shopping List")'
 
     Add a Note to This Shopping List:
       selector: 'input[name=addANote]'
@@ -426,7 +426,7 @@ oro_behat_extension:
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilters
 
     First Line Item Row Checkbox:
-      selector: '.grid-body .grid-row:first-child .custom-checkbox__input'
+      selector: '.grid-body .grid-row:first-child input[type=checkbox]'
 
     Shopping Lists Navigation Link:
       selector:
@@ -436,6 +436,11 @@ oro_behat_extension:
     Frontend Customer User Shopping Lists Grid:
       selector: 'div[data-page-component-name="frontend-customer-user-shopping-lists-grid"]'
       class: Oro\Bundle\FrontendBundle\Tests\Behat\Element\Grid
+
+    Frontend Customer User Shopping Lists Grid Edited Label:
+      selector:
+        type: xpath
+        locator: '//div[@data-page-component-name="frontend-customer-user-shopping-lists-grid"]//span[contains(text(),"Edited") and contains(@class, "grid-views__edit-label")]'
 
     Frontend Customer User Shopping List Edit Grid:
       selector: 'div[data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]'

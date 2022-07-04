@@ -1,3 +1,4 @@
+import __ from 'orotranslation/js/translator';
 import BaseModel from 'oroui/js/app/models/base/model';
 
 const MIME_TYPES = {
@@ -11,6 +12,9 @@ const MIME_TYPES = {
 
 const getMimeType = url => {
     const ext = url.match(/\.\w{3,4}($|\?)/g);
+    if (!ext) {
+        return __('oro.cms.wysiwyg.dialog.picture_settings.unknown_type');
+    }
     return MIME_TYPES[ext[0]] || '';
 };
 

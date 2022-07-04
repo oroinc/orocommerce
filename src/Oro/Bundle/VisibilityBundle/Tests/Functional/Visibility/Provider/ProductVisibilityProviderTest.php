@@ -20,6 +20,7 @@ class ProductVisibilityProviderTest extends WebTestCase
 {
     private const PRODUCT_VISIBILITY_CONFIGURATION_PATH = 'oro_visibility.product_visibility';
     private const CATEGORY_VISIBILITY_CONFIGURATION_PATH = 'oro_visibility.category_visibility';
+    private const QUERY_BUFFER_SIZE = 10000;
 
     /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     private $configManager;
@@ -47,6 +48,7 @@ class ProductVisibilityProviderTest extends WebTestCase
         $this->provider->setVisibilityScopeProvider(
             $this->getContainer()->get('oro_visibility.provider.visibility_scope_provider')
         );
+        $this->provider->setQueryBufferSize(self::QUERY_BUFFER_SIZE);
 
         $this->getContainer()->get('oro_visibility.visibility.cache.product.cache_builder')->buildCache();
     }

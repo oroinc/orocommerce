@@ -32,7 +32,7 @@ oro_behat_extension:
       selector: 'td.order-checkout-widget__total span.order-checkout-widget__total-price'
 
     CheckoutFormRow:
-      selector: '.checkout-form span.custom-radio__text'
+      selector: '.checkout-form label.checkbox-label'
 
     Flat Rate Shipping Method Icon:
       selector: '.shipping-method-config .fa-plus-square-o'

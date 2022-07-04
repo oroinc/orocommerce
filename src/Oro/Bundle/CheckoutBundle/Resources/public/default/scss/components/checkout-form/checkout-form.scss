@@ -110,16 +110,6 @@
                 margin-bottom: 0;
             }
         }
-
-        .custom-radio {
-            &.checked {
-                + .checkout-form__payment-container {
-                    .checkout-form__payment-methods-form {
-                        display: block;
-                    }
-                }
-            }
-        }
     }
 
     .form-field-cvv,

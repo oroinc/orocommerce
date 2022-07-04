@@ -280,11 +280,6 @@ services:
             - '@oro_cms.content_widget.type_registry'
             - '@translator'
 
-    oro_cms.provider.content_widget_entity_name:
-        class: Oro\Bundle\CMSBundle\Provider\ContentWidgetEntityNameProvider
-        tags:
-            - { name: oro_entity.name_provider, priority: 100 }
-
     oro_cms.provider.page_entity_name:
         class: Oro\Bundle\CMSBundle\Provider\PageEntityNameProvider
         tags:

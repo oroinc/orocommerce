@@ -46,7 +46,7 @@
         shoppingList: null,
         defaultLabel: '',
         ariaLabel: null,
-        aCss: 'btn--info'
+        btnCss: 'btn--info'
     }|merge(options) %}
 
     {% set shoppingListId = options.shoppingList ? options.shoppingList.id : null %}
@@ -59,9 +59,9 @@
     }) %}
 
     {% set buttonOptions = {
-        'role': 'button',
+        'type': 'submit',
         'dataAttributes': dataAttributes,
-        'aCss': 'btn btn--block btn-main add-to-shopping-list-button ' ~ options.aCss,
+        'btnCss': 'btn btn--block btn-main add-to-shopping-list-button ' ~ options.btnCss,
         'moreButtonExtraClass': 'btn--action',
         'dataId': shoppingListId,
         'label' : options.actionLabel|replace({
@@ -96,7 +96,7 @@
     {% endif %}
 
     <div class="btn-group--flex btn-group--full icons-holder btn-group--loading">
-        {{ UI.clientLink(buttonOptions) }}
+        {{ UI.clientBtn(buttonOptions) }}
     </div>
 {% endmacro %}
 

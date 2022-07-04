@@ -271,12 +271,6 @@ td.order-discount-item-remove {
         label {
             margin-bottom: 0;
         }
-
-        input[type='radio'] {
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-        }
     }
 
     .possible_shipping_methods_form {
@@ -289,7 +283,7 @@ td.order-discount-item-remove {
         }
 
         input[type='radio'] {
-            margin-top: 3px;
+            margin-top: -1px;
         }
     }
 

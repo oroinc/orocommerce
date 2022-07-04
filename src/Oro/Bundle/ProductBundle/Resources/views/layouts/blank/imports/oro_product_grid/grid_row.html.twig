@@ -54,6 +54,11 @@
         },
         'data-layout': 'separate'
     }) %}
+    {% if is_configurable_product_type(product.type) %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': ' is-configurable',
+        }) %}
+    {% endif %}
 
     {% do block|merge_context({
         '__productUniqId': 'product-'|uniqid,
@@ -66,6 +71,7 @@
 
 {% block __oro_product_grid__product_image_holder_widget %}
     {% set attr = layout_attr_defaults(attr, {
+        'id': __productUniqId ~ 'image-holder',
         '~class': " product-item__image-holder product-item__image-holder--{{ class_prefix }}",
         'data-page-component-init-on': 'click,focusin'
     }) %}

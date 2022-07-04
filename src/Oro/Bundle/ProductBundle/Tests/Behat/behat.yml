@@ -221,7 +221,7 @@ oro_behat_extension:
             locator: '//div[contains(@class, "control-group-oro_redirect_localized_slug_with_redirect")]//div[contains(text(), "German_Loc")]/following-sibling::div//input[@class="fallback-item-value-input"]'
           Name German Use Default:
             type: 'xpath'
-            locator: '//div[contains(@class, "control-group-oro_redirect_localized_slug_with_redirect")]//div[contains(text(), "German_Loc")]/following-sibling::div//input[contains(@class, "checkbox-view__input")]'
+            locator: '//div[contains(@class, "control-group-oro_redirect_localized_slug_with_redirect")]//div[contains(text(), "German_Loc")]/following-sibling::div//input[@type="checkbox"]'
           URL Slug: 'oro_product[slugPrototypesWithRedirect][slugPrototypes][values][default]'
           Description:
             type: 'css'
@@ -233,7 +233,7 @@ oro_behat_extension:
             locator: '//label[text() = "Name"]/ancestor::div[contains(@class, "control-group")]//div[text() = "English (United States)"]/following-sibling::div//input[contains(@class, "fallback-item-value-input")]'
           Name English (United States) use fallback:
             type: 'xpath'
-            locator: '//label[text() = "Name"]/ancestor::div[contains(@class, "control-group")]//div[text() = "English (United States)"]/following-sibling::div//input[contains(@class, "checkbox-view__input")]'
+            locator: '//label[text() = "Name"]/ancestor::div[contains(@class, "control-group")]//div[text() = "English (United States)"]/following-sibling::div//input[@type="checkbox"]'
           Name English (United States) fallback:
             type: 'xpath'
             locator: '//label[text() = "Name"]/ancestor::div[contains(@class, "control-group")]//div[text() = "English (United States)"]/following-sibling::div//select]'
@@ -242,7 +242,7 @@ oro_behat_extension:
             locator: '//label[text() = "Name"]/ancestor::div[contains(@class, "control-group")]//div[text() = "Dutch"]/following-sibling::div//input[contains(@class, "fallback-item-value-input")]'
           Name Dutch use fallback:
             type: 'xpath'
-            locator: '//label[text() = "Name"]/ancestor::div[contains(@class, "control-group")]//div[text() = "Dutch"]/following-sibling::div//input[contains(@class, "checkbox-view__input")]'
+            locator: '//label[text() = "Name"]/ancestor::div[contains(@class, "control-group")]//div[text() = "Dutch"]/following-sibling::div//input[@type="checkbox"]'
           Name Dutch fallback:
             type: 'xpath'
             locator: '//label[text() = "Name"]/ancestor::div[contains(@class, "control-group")]//div[text() = "Dutch"]/following-sibling::div//select]'
@@ -251,7 +251,7 @@ oro_behat_extension:
             locator: '//label[text() = "Name"]/ancestor::div[contains(@class, "control-group")]//div[text() = "French"]/following-sibling::div//input[contains(@class, "fallback-item-value-input")]'
           Name French use fallback:
             type: 'xpath'
-            locator: '//label[text() = "Name"]/ancestor::div[contains(@class, "control-group")]//div[text() = "French"]/following-sibling::div//input[contains(@class, "checkbox-view__input")]'
+            locator: '//label[text() = "Name"]/ancestor::div[contains(@class, "control-group")]//div[text() = "French"]/following-sibling::div//input[@type="checkbox"]'
           Name French fallback:
             type: 'xpath'
             locator: '//label[text() = "Name"]/ancestor::div[contains(@class, "control-group")]//div[text() = "French"]/following-sibling::div//select]'
@@ -431,7 +431,7 @@ oro_behat_extension:
     URLSlugEnglishUnitedStatesFallback:
       selector:
         type: 'xpath'
-        locator: '//label[contains(text(), "URL Slug")]/ancestor::div[contains(@class, "control-group")]//div[text() = "English (United States)"]/following-sibling::div//input[contains(@class, "checkbox-view__input")]'
+        locator: '//label[contains(text(), "URL Slug")]/ancestor::div[contains(@class, "control-group")]//div[text() = "English (United States)"]/following-sibling::div//input[@type="checkbox"]'
 
     RelatedProductsConfig:
       selector: 'form[name="related_items"]'

@@ -4,7 +4,8 @@ import DialogWidget from 'oro/dialog-widget';
 import {
     stripRestrictedAttrs,
     escapeWrapper,
-    separateContent
+    separateContent,
+    unescapeTwigExpression
 } from 'orocms/js/app/grapesjs/plugins/components/content-isolation';
 import _ from 'underscore';
 import __ from 'orotranslation/js/translator';
@@ -13,7 +14,6 @@ import ApiAccessor from 'oroui/js/tools/api-accessor';
 import LoadingMaskView from 'oroui/js/app/views/loading-mask-view';
 
 const REGEXP_TWIG_TAGS = /\{\{([\w\s\"\'\_\-\,\&\#\;\(\)]+)\}\}/gi;
-const REGEXP_TWIG_TAGS_ESC = /([\{|\%|\#]{2})([\w\W]+)([\%|\}|\#]{2})/gi;
 
 function messageCheck(str) {
     const REGEXP_LINK_DOC = /<a\b[^>]* href=\"[\w\d\/\:\#\.]+\" target=\"_blank+\">(.*?)<\/a>/gi;
@@ -187,10 +187,7 @@ const ImportDialogView = BaseView.extend({
     render({content} = {}) {
         ImportDialogView.__super__.render.call(this);
 
-        this.content = (content ? content : this.getImportContent())
-            .replace(REGEXP_TWIG_TAGS_ESC, match => {
-                return _.unescape(match).replace(/&#039;/gi, `'`);
-            });
+        this.content = unescapeTwigExpression(content ? content : this.getImportContent());
 
         this.codeViewer.init(this.$el.find('[data-role="code"]')[0]);
         this.viewerEditor = this.codeViewer.editor;

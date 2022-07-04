@@ -105,7 +105,7 @@
             {% set can_set_as_default = is_granted('oro_shopping_list_frontend_set_as_default', shoppingList) %}
             {% if can_set_as_default %}
                 <div class="shopping-list-dropdown__radio">
-                    <label class="custom-radio {{ shoppingList.isCurrent ? currentClass }}"
+                    <label class="checkbox-label"
                         data-toggle="tooltip"
                         data-trigger="hover"
                         data-container="[data-role='tooltip-container']"
@@ -116,9 +116,7 @@
                         data-role="shopping-list-current-label">
                         <span class="sr-only">{{ 'oro.frontend.shoppinglist.radio.label'|trans({'%shoppinglist%': shoppingList.label}) }}</span>
                         <input type="radio" name="{{ id }}-radio" data-role="set-default" {{ shoppingList.isCurrent ? 'checked' }}
-                            value="{{ shoppingList.id }}" data-label="{{ shoppingList.label|oro_html_escape|escape('html_attr') }}"
-                            class="custom-radio__control">
-                        <span class="custom-radio__text" aria-hidden="true"></span>
+                            value="{{ shoppingList.id }}" data-label="{{ shoppingList.label|oro_html_escape|escape('html_attr') }}">
                     </label>
                 </div>
             {% endif %}

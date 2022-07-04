@@ -1,3 +1,4 @@
+@container-incompatible
 @waf-skip
 @fixture-OroCMSBundle:CustomerUserFixture.yml
 @fixture-OroCMSBundle:WysiwygRoleFixture.yml

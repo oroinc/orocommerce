@@ -69,22 +69,6 @@ oro_product_frontend_export:
 
 
 #
-# DEPRECATED OLD REST API ROUTES
-#
-
-oro_api_options_brands:
-    path: '/api/rest/{version}/brands.{_format}'
-    methods: [OPTIONS]
-    defaults:
-        _controller: 'Oro\Bundle\ProductBundle\Controller\Api\Rest\BrandController::optionsAction'
-        _format: json
-        version: latest
-    requirements:
-        _format: json
-        version: latest|v1
-
-
-#
 # OLD REST API ROUTES
 #
 

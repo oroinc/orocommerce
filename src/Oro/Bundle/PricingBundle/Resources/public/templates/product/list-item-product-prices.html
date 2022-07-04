@@ -7,7 +7,7 @@
     <span class="product-price__label"><%- _.__('oro.pricing.product_prices.your_price') %></span>
     <span class="product-price__main-box">
         <span class="product-price__value" data-name="price-value" itemscope="itemscope" itemtype="http://schema.org/Offer" itemprop="offers">
-            <meta itemprop="priceCurrency" content="<%- price.currency %>"/><meta itemprop="price" content="<%- numeral(price.price).format('0.00') %>"/><%- price.formatted_price.trim() %>
+            <span itemprop="priceCurrency" class="hidden" aria-hidden="true"><%- price.currency %></span><span itemprop="price" class="hidden" aria-hidden="true"><%- numeral(price.price).format('0.00') %></span><%- price.formatted_price.trim() %>
         </span>
         <span> / </span>
         <span class="product-price__unit" data-name="unit">
