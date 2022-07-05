@@ -154,9 +154,9 @@ class AttributeValueUsageInVariantValidator extends ConstraintValidator
             $existingIds[] = $persistedOption->getId();
         }
 
-        $passedIds = array_filter(array_map(static function ($option) {
-            return $option['id'];
-        }, $value));
+        $passedIds = array_filter(array_column($value, 'id'), static function ($value) {
+            return null !== $value && '' !== $value;
+        });
 
         return array_diff($existingIds, $passedIds);
     }
