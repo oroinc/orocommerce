@@ -364,6 +364,7 @@ services:
 
     oro_checkout.action.default_shipping_method_setter:
         class: 'Oro\Bundle\CheckoutBundle\Action\DefaultShippingMethodSetter'
+        # Public because used in checkout workflows.
         public: true
         arguments:
             - '@oro_checkout.shipping_method.provider_main'
@@ -373,6 +374,16 @@ services:
         decorates: oro_checkout.action.default_shipping_method_setter
         arguments:
             - '@oro_checkout.action.default_shipping_method_setter_decorator.inner'
+
+    oro_checkout.action.default_payment_method_setter:
+        class: 'Oro\Bundle\CheckoutBundle\Action\DefaultPaymentMethodSetter'
+        # Public because used in checkout workflows.
+        public: true
+        arguments:
+            - '@oro_payment.method.provider.applicable_methods_provider'
+            - '@oro_checkout.provider.payment_context'
+        calls:
+            - [setLogger, ['@logger']]
 
     oro_checkout.factory.shipping_context_factory:
         class: 'Oro\Bundle\CheckoutBundle\Factory\CheckoutShippingContextFactory'

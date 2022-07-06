@@ -24,11 +24,12 @@ class CompositePaymentMethodViewProvider implements PaymentMethodViewProviderInt
     public function getPaymentMethodViews(array $identifiers)
     {
         $items = [];
-        foreach ($this->providers as $provider) {
-            $items[] = $provider->getPaymentMethodViews($identifiers);
-        }
-        if ($items) {
-            $items = array_merge(...$items);
+        foreach ($identifiers as $identifier) {
+            foreach ($this->providers as $provider) {
+                if ($provider->hasPaymentMethodView($identifier)) {
+                    $items[] = $provider->getPaymentMethodView($identifier);
+                }
+            }
         }
 
         return $items;
