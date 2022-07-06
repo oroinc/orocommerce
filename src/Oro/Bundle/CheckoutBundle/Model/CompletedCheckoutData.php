@@ -83,7 +83,7 @@ final class CompletedCheckoutData extends \ArrayObject implements \JsonSerializa
     }
 
     /**
-     * @return int
+     * @return array
      */
     public function getOrderData()
     {
