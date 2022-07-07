@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Helper;
 
+use Oro\Bundle\ActionBundle\Model\ActionGroup;
 use Oro\Bundle\ActionBundle\Model\ActionGroupRegistry;
 use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
@@ -15,6 +16,7 @@ use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -28,13 +30,16 @@ class CheckoutWorkflowHelperTest extends \PHPUnit\Framework\TestCase
     /** @var WorkflowManager|\PHPUnit\Framework\MockObject\MockObject */
     private $workflowManager;
 
+    /** @var ActionGroupRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $actionGroupRegistry;
+
     /**
      * {@inheritdoc}
      */
     protected function setUp(): void
     {
         $this->workflowManager = $this->createMock(WorkflowManager::class);
-        $actionGroupRegistry = $this->createMock(ActionGroupRegistry::class);
+        $this->actionGroupRegistry = $this->createMock(ActionGroupRegistry::class);
         $transitionProvider = $this->createMock(TransitionProvider::class);
         $transitionFormProvider = $this->createMock(TransitionFormProvider::class);
         $errorHandler = $this->createMock(CheckoutErrorHandler::class);
@@ -46,7 +51,7 @@ class CheckoutWorkflowHelperTest extends \PHPUnit\Framework\TestCase
 
         $this->helper = new CheckoutWorkflowHelper(
             $this->workflowManager,
-            $actionGroupRegistry,
+            $this->actionGroupRegistry,
             $transitionProvider,
             $transitionFormProvider,
             $errorHandler,
@@ -75,6 +80,64 @@ class CheckoutWorkflowHelperTest extends \PHPUnit\Framework\TestCase
         }
         $result = $this->helper->getWorkflowItem($checkout);
         $this->assertEquals($expected, $result);
+    }
+
+    public function testProcessWorkflowAndGetCurrentStepWhenRequestedLayoutUpdates()
+    {
+        $checkout = $this->createMock(Checkout::class);
+        $request = Request::create(
+            'checkout/1',
+            Request::METHOD_GET,
+            [
+                'transition' => 'payment_error',
+                'layout_block_ids' => ['some_block']
+            ],
+        );
+        $actionGroup = $this->createMock(ActionGroup::class);
+        $this->actionGroupRegistry->expects(self::once())->method('findByName')->willReturn($actionGroup);
+        $actionGroup->expects(self::once())->method('execute');
+
+        $items = [
+            $this->getEntity(WorkflowItem::class, ['id' => 1]),
+        ];
+        $this->workflowManager->expects($this->once())
+            ->method('getWorkflowItemsByEntity')
+            ->with($checkout)
+            ->willReturn($items);
+
+        $this->workflowManager->expects(self::never())->method('transitIfAllowed');
+        $this->workflowManager->expects(self::any())->method('getTransitionsByWorkflowItem')->willReturn([]);
+
+        $this->helper->processWorkflowAndGetCurrentStep($request, $checkout);
+    }
+
+    public function testProcessWorkflowAndGetCurrentStep()
+    {
+        $checkout = $this->createMock(Checkout::class);
+        $request = Request::create(
+            'checkout/1',
+            Request::METHOD_GET,
+            [
+                'transition' => 'payment_error',
+            ],
+        );
+        $actionGroup = $this->createMock(ActionGroup::class);
+        $this->actionGroupRegistry->expects(self::once())->method('findByName')->willReturn($actionGroup);
+        $actionGroup->expects(self::once())->method('execute');
+
+        $items = [
+            $this->getEntity(WorkflowItem::class, ['id' => 1]),
+        ];
+        $this->workflowManager->expects($this->once())
+            ->method('getWorkflowItemsByEntity')
+            ->with($checkout)
+            ->willReturn($items);
+
+        $this->workflowManager->expects(self::any())->method('getTransitionsByWorkflowItem')->willReturn([]);
+
+        $this->workflowManager->expects(self::once())->method('transitIfAllowed');
+
+        $this->helper->processWorkflowAndGetCurrentStep($request, $checkout);
     }
 
     /**

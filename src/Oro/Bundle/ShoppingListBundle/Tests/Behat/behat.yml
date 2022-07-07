@@ -434,6 +434,11 @@ oro_behat_extension:
       selector: 'div[data-page-component-name="frontend-customer-user-shopping-lists-grid"]'
       class: Oro\Bundle\FrontendBundle\Tests\Behat\Element\Grid
 
+    Frontend Customer User Shopping Lists Grid Edited Label:
+      selector:
+        type: xpath
+        locator: '//div[@data-page-component-name="frontend-customer-user-shopping-lists-grid"]//span[contains(text(),"Edited") and contains(@class, "grid-views__edit-label")]'
+
     Frontend Customer User Shopping List Edit Grid:
       selector: 'div[data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]'
       class: Oro\Bundle\FrontendBundle\Tests\Behat\Element\Grid

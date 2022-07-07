@@ -1,5 +1,11 @@
 /* @theme: blank; */
 
+:root {
+    @include only-mobile() {
+        --product-item-select-row-gallery-view-height: #{$product-item-select-row-gallery-view-height-mobile};
+    }
+}
+
 .product-item {
     @include clearfix();
 
@@ -67,6 +73,10 @@
             display: flex;
             flex-direction: column;
             min-height: 100%;
+
+            &.is-configurable {
+                padding-bottom: $product-item-select-row-gallery-view-height;
+            }
         }
     }
 
@@ -317,6 +327,7 @@
         padding-right: $offset-x-s;
 
         &--gallery-view {
+            min-height: $product-item-select-row-gallery-view-height;
             padding-top: $offset-x-s;
         }
 

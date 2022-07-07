@@ -4,4 +4,4 @@
 
 ### fallback
 
-The value of the fallback. Possible values: `systemConfig`, `category`, `parentCategory`.
+The value of the fallback. Possible values: `systemConfig`, `category`, `parentCategory` or `null`.

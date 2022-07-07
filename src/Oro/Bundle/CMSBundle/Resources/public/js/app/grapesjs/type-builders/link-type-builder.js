@@ -122,7 +122,7 @@ const LinkTypeBuilder = BaseTypeBuilder.extend({
                     delete attrs[this.tempAttr];
                     delete attrs['text'];
 
-                    return attrs;
+                    return _.mapObject(attrs, value => _.escape(value));
                 }
             },
             extendView: this.componentType,
@@ -136,7 +136,9 @@ const LinkTypeBuilder = BaseTypeBuilder.extend({
                 },
                 editor: this.editor,
                 initialize() {
-                    this.listenTo(this.model, 'change:attributes:text', (model, value) => model.components(value));
+                    this.listenTo(this.model, 'change:attributes:text',
+                        (model, value) => model.components(_.escape(value))
+                    );
                 },
                 onRender() {
                     const traitText = this.model.getTrait('text');

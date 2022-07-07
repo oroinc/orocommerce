@@ -1,4 +1,5 @@
 @ticket-BB-18916
+@ticket-BB-20327
 @fixture-OroShoppingListBundle:MyShoppingListsFixture.yml
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroCheckoutBundle:Shipping.yml

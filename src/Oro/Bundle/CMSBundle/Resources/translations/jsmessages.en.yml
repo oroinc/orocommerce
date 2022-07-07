@@ -123,6 +123,14 @@ oro.cms:
             blockSetting: 'Block Settings'
             fileSetting: 'File Settings'
             pictureSettings: 'Picture sources manager'
+            table:
+                row.before: 'Insert row before'
+                row.after: 'Insert row after'
+                row.delete: 'Delete row'
+                column.before: 'Insert column before'
+                column.after: 'Insert column after'
+                column.delete: 'Delete column'
+                delete: 'Delete table'
         asset_manager:
             add_button: 'Add image'
             input_plh: 'http://path/to/the/image.jpg'
@@ -485,6 +493,7 @@ oro.cms:
                     remove: 'Remove source'
                 main_image: 'Main image'
                 select_breakpoints: 'Click to select breakpoint'
+                unknown_type: 'unknown'
     change_type:
         confirmation:
             title: 'Change Type'
