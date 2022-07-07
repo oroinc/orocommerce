@@ -17,8 +17,9 @@ use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 class ProductVisibilityProviderTest extends WebTestCase
 {
-    const PRODUCT_VISIBILITY_CONFIGURATION_PATH = 'oro_visibility.product_visibility';
-    const CATEGORY_VISIBILITY_CONFIGURATION_PATH = 'oro_visibility.category_visibility';
+    private const PRODUCT_VISIBILITY_CONFIGURATION_PATH = 'oro_visibility.product_visibility';
+    private const CATEGORY_VISIBILITY_CONFIGURATION_PATH = 'oro_visibility.category_visibility';
+    private const QUERY_BUFFER_SIZE = 10000;
 
     /**
      * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
@@ -50,13 +51,14 @@ class ProductVisibilityProviderTest extends WebTestCase
 
         $this->provider = new ProductVisibilityProvider(
             $this->getContainer()->get('oro_entity.doctrine_helper'),
-            $this->configManager,
-            $this->getContainer()->get('oro_scope.scope_manager')
+            $this->configManager
         );
 
         $this->provider->setVisibilityScopeProvider(
             $this->getContainer()->get('oro_visibility.provider.visibility_scope_provider')
         );
+
+        $this->provider->setQueryBufferSize(self::QUERY_BUFFER_SIZE);
 
         $this->getContainer()->get('oro_visibility.visibility.cache.product.cache_builder')->buildCache();
     }

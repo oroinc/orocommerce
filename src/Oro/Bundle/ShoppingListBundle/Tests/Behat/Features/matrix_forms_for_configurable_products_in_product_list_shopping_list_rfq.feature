@@ -737,7 +737,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I click "Create New Shopping List" in "ShoppingListButtonGroupMenu" element
     And I fill in "Shopping List Name" with "Product B Shopping List"
     And I click "Create and Add"
-    Then I should see "Shopping list \"Product B Shopping List\" was created successfully"
+    Then I should see "Shopping list \"Product B Shopping List\" was updated successfully"
 
   Scenario: Update ConfigurableProductB variants
     Given I click "Clear All Product Variants"
@@ -776,7 +776,6 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I click "Create New Shopping List"
     And I fill in "Shopping List Name" with "Product C Shopping List"
     And I click "Create and Add"
-    Then I should see "Shopping list \"Product C Shopping List\" was created successfully"
     And I should see "Product has been added to \"Product C Shopping List\""
     When I click "Account"
     And I click on "Shopping Lists Navigation Link"

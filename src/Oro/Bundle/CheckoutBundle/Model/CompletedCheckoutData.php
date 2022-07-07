@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\CheckoutBundle\Model;
 
+/**
+ * DTO for completed checkout.
+ */
 final class CompletedCheckoutData extends \ArrayObject implements \JsonSerializable
 {
     const CURRENCY = 'currency';
@@ -80,7 +83,7 @@ final class CompletedCheckoutData extends \ArrayObject implements \JsonSerializa
     }
 
     /**
-     * @return int
+     * @return array
      */
     public function getOrderData()
     {

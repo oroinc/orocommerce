@@ -259,6 +259,10 @@ workflows:
                         parameters_mapping:
                             checkout: $checkout
                     - '@assign_value': [$.result.shippingPriceUpdated, true]
+                    - '@call_service_method':
+                          service: oro_checkout.action.default_payment_method_setter
+                          method: setDefaultPaymentMethod
+                          method_parameters: [$checkout]
                     - '@generate_uuid': $state_token
 
             continue_to_order_review_definition:

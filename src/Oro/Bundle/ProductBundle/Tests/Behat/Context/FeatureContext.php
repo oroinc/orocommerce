@@ -1149,9 +1149,9 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     /**
      * Assert that embedded block contains specified products.
      * Example: Then should see the following products in the "New Arrivals Block":
-     *            | SKU  |
-     *            | SKU1 |
-     *            | SKU2 |
+     *            | SKU  | Product Price Your | Product Price Listed |
+     *            | SKU1 | $1 / each          | $2 / each            |
+     *            | SKU2 | $2 / each          | $3 / each            |
      *
      * @Then /^(?:|I )should see the following products in the "(?P<blockName>[^"]+)":$/
      */
@@ -1161,9 +1161,29 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         self::assertTrue($block->isValid(), sprintf('Embedded block "%s" was not found', $blockName));
 
         foreach ($table as $row) {
-            foreach ($row as $rowName => $rowValue) {
-                $productItem = $this->findElementContains('EmbeddedProduct', $rowValue, $block);
-                self::assertTrue($productItem->isIsset(), sprintf('Product "%s" was not found', $rowValue));
+            $skuOrTitleKey = key($row);
+            $skuOrTitle = $row[$skuOrTitleKey];
+            $productItem = $this->findElementContains('EmbeddedProduct', $skuOrTitle, $block);
+            self::assertTrue($productItem->isIsset(), sprintf('Product "%s" was not found', $skuOrTitle));
+
+            unset($row[$skuOrTitleKey]);
+            foreach ($row as $elementName => $expectedValue) {
+                $element = $this->createElement($elementName, $productItem);
+                self::assertTrue(
+                    $element->isIsset(),
+                    sprintf('Element "%s" in product "%s" was not found', $elementName, $skuOrTitle)
+                );
+
+                static::assertStringContainsString(
+                    $expectedValue,
+                    $element->getText(),
+                    \sprintf(
+                        'Element "%s" in product "%s" does not contains text: %s',
+                        $elementName,
+                        $skuOrTitle,
+                        $expectedValue
+                    )
+                );
             }
         }
     }

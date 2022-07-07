@@ -26,6 +26,7 @@ define(function(require) {
                 processingMessage: __('oro.form.inlineEditing.saving_progress'),
                 preventWindowUnload: __('oro.form.inlineEditing.inline_edits')
             },
+            successMessageOptions: {},
             elements: {
                 saveButton: '',
                 quantity: '[name$="[quantity]"]',
@@ -71,6 +72,7 @@ define(function(require) {
             this._isSaving = false;
 
             this.messages = options.messages;
+            this.successMessageOptions = options.successMessageOptions;
             this.dataKey = options.dataKey;
             this.quantityFieldName = options.quantityFieldName;
             this.unitFieldName = options.unitFieldName;
@@ -294,7 +296,7 @@ define(function(require) {
             this.trigger('product:quantity-unit:update', value);
             mediator.trigger('product:quantity-unit:update', value);
 
-            mediator.execute('showFlashMessage', 'success', this.messages.success);
+            mediator.execute('showFlashMessage', 'success', this.messages.success, this.successMessageOptions);
         },
 
         onSaveError: function(jqXHR) {

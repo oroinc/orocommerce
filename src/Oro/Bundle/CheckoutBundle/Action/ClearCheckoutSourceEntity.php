@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CheckoutBundle\Action;
 
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
+use Oro\Bundle\CheckoutBundle\Event\CheckoutSourceEntityClearEvent;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderInterface;
 use Oro\Component\Action\Action\AbstractAction;
 use Oro\Component\Action\Exception\InvalidParameterException;
@@ -62,6 +63,11 @@ class ClearCheckoutSourceEntity extends AbstractAction
                 )
             );
         }
+
+        $this->eventDispatcher->dispatch(
+            new CheckoutSourceEntityClearEvent($checkoutSourceEntity),
+            CheckoutSourceEntityClearEvent::NAME
+        );
 
         $checkoutSourceEntity->getLineItems()->clear();
     }

@@ -285,6 +285,11 @@ class CheckoutWorkflowHelper
     {
         if ($request->query->has('transition')) {
             $transition = $request->get('transition');
+            if ($transition === 'payment_error' && $request->query->has('layout_block_ids')) {
+                // Do not transit workflow if requested only layout updates
+                return;
+            }
+
             $this->workflowManager->transitIfAllowed($workflowItem, $transition);
         }
     }

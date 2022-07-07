@@ -55,8 +55,10 @@ define(function(require) {
             if (response.message) {
                 const isSuccessful = response.hasOwnProperty('successful') && response.successful;
                 mediator.execute(
-                    'showFlashMessage', (isSuccessful ? 'success' : 'error'),
-                    response.message
+                    'showFlashMessage',
+                    isSuccessful ? 'success' : 'error',
+                    response.message,
+                    isSuccessful ? {namespace: 'shopping_list'} : {}
                 );
             }
 

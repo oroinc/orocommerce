@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Engine\AsyncMessaging;
 
+use Monolog\Logger;
 use Oro\Bundle\SearchBundle\Engine\IndexerInterface;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer;
@@ -11,6 +12,7 @@ use Oro\Bundle\WebsiteSearchBundle\Event\SearchProcessingEngineExceptionEvent;
 use Oro\Component\MessageQueue\Client\Config as MessageQueueConfig;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
+use Oro\Component\MessageQueue\Exception\JobRuntimeException;
 use Oro\Component\MessageQueue\Job\JobRunner;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
@@ -85,13 +87,44 @@ class SearchMessageProcessor implements MessageProcessorInterface
     public function process(MessageInterface $message, SessionInterface $session)
     {
         try {
-            $result = $this->doProcess($message, $session);
-        } catch (InvalidArgumentException | \UnexpectedValueException $exception) {
-            $this->logger->error($exception->getMessage(), ['exception' => $exception]);
-            $result = self::REJECT;
-        } catch (\Exception $exception) {
+            $result = $this->doProcess($message);
+        } catch (JobRuntimeException $exception) {
+            // Child job that is interrupted by an exception is always marked for redelivery, so the message should
+            // also be requeued.
+            $result = self::REQUEUE;
+            $this->logException(Logger::WARNING, $exception);
+        } catch (\Throwable $exception) {
             $result = $this->dispatchExceptionEvent($exception) ?? self::REJECT;
-            $this->logException($result, $exception);
+            $this->logException($result === self::REQUEUE ? Logger::WARNING : Logger::ERROR, $exception);
+        }
+
+        return $result;
+    }
+
+    private function doProcess(MessageInterface $message): string
+    {
+        $data = JSON::decode($message->getBody());
+        $topicName = $message->getProperty(MessageQueueConfig::PARAMETER_TOPIC_NAME);
+        if (!empty($data['jobId'])) {
+            $processResult = $this->jobRunner->runDelayed($data['jobId'], function () use ($topicName, $data) {
+                unset($data['jobId']);
+                return $this->tryProcessMessage($topicName, $data);
+            });
+        } else {
+            $processResult = $this->tryProcessMessage($topicName, $data);
+        }
+
+        return $processResult === true ? self::ACK : self::REJECT;
+    }
+
+    private function tryProcessMessage(string $topicName, array $data): bool
+    {
+        try {
+            $this->processMessage($topicName, $data);
+            $result = true;
+        } catch (InvalidArgumentException | \UnexpectedValueException $exception) {
+            $result = false;
+            $this->logException(Logger::ERROR, $exception);
         }
 
         return $result;
@@ -101,27 +134,7 @@ class SearchMessageProcessor implements MessageProcessorInterface
      * @throws \UnexpectedValueException
      * @throws InvalidArgumentException
      */
-    private function doProcess(MessageInterface $message, SessionInterface $session): string
-    {
-        $data = JSON::decode($message->getBody());
-        $topicName = $message->getProperty(MessageQueueConfig::PARAMETER_TOPIC_NAME);
-        if (!empty($data['jobId'])) {
-            $processResult = $this->jobRunner->runDelayed($data['jobId'], function () use ($topicName, $data) {
-                unset($data['jobId']);
-                return $this->processMessage($topicName, $data);
-            });
-        } else {
-            $processResult = $this->processMessage($topicName, $data);
-        }
-
-        return $processResult ? self::ACK : self::REQUEUE;
-    }
-
-    /**
-     * @throws \UnexpectedValueException
-     * @throws InvalidArgumentException
-     */
-    private function processMessage(string $topicName, array $data): bool
+    private function processMessage(string $topicName, array $data): void
     {
         switch ($topicName) {
             case AsyncIndexer::TOPIC_SAVE:
@@ -153,8 +166,6 @@ class SearchMessageProcessor implements MessageProcessorInterface
             default:
                 throw new \UnexpectedValueException(sprintf('Topic name "%s" not supported!', $topicName));
         }
-
-        return true;
     }
 
     private function processReindex(array $parameters): void
@@ -212,14 +223,14 @@ class SearchMessageProcessor implements MessageProcessorInterface
         }
     }
 
-    private function logException(string $result, \Exception $exception): void
+    /**
+     * @param string|int $level
+     * @param \Exception $exception
+     */
+    private function logException($level, \Exception $exception): void
     {
         $message = 'An unexpected exception occurred during indexation';
-        if (self::REQUEUE === $result) {
-            $this->logger->warning($message, ['exception' => $exception]);
-        } else {
-            $this->logger->error($message, ['exception' => $exception]);
-        }
+        $this->logger->log($level, $message, ['exception' => $exception]);
     }
 
     private function dispatchReindexEvent(array $parameters): void

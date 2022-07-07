@@ -49,6 +49,8 @@ oro_behat_extension:
       selector: '.product-price__container'
     Product Price Main:
       selector: '.product-price__main'
+    Product Price Your:
+      selector: '.product-price__your'
     Product Price Listed:
       selector: '.product-price__listed'
     Product Price Hint:
