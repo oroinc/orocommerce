@@ -21,14 +21,15 @@ Feature: System respects product attributes precision and scale
       | Label            | <Label>            |
       | Filterable       | <Filterable>       |
       | Show Grid Filter | <Show Grid Filter> |
+      | Auditable        | <Auditable>        |
     And I save and close form
     Then I should see "Attribute was successfully saved" flash message
     Examples:
-      | Field Name                   | Type     | Label                        | Filterable | Show Grid Filter |
-      | percent_serialized_attribute | Percent  | Percent Serialized Attribute | No         | No               |
-      | percent_column_attribute     | Percent  | Percent Column Attribute     | Yes        | Yes              |
-      | float_serialized_attribute   | Float    | Float Serialized Attribute   | No         | No               |
-      | float_column_attribute       | Float    | Float Column Attribute       | Yes        | Yes              |
+      | Field Name                   | Type     | Label                        | Filterable | Show Grid Filter | Auditable |
+      | percent_serialized_attribute | Percent  | Percent Serialized Attribute | Yes        | No               | No        |
+      | percent_column_attribute     | Percent  | Percent Column Attribute     | Yes        | Yes              | Yes       |
+      | float_serialized_attribute   | Float    | Float Serialized Attribute   | Yes        | No               | No        |
+      | float_column_attribute       | Float    | Float Column Attribute       | Yes        | Yes              | Yes       |
 
   Scenario Outline: Create Decimal Product Attributes
     When I click "Create Attribute"
@@ -40,15 +41,16 @@ Feature: System respects product attributes precision and scale
       | Label            | <Label>            |
       | Filterable       | <Filterable>       |
       | Show Grid Filter | <Show Grid Filter> |
+      | Auditable        | <Auditable>        |
       | Precision        | <Precision>        |
       | Scale            | <Scale>            |
     And I save and close form
     Then I should see "Attribute was successfully saved" flash message
     Examples:
-      | Field Name                            | Type     | Label                                 | Filterable | Show Grid Filter | Precision | Scale |
-      | decimal_column_attribute              | Decimal  | Decimal Column Attribute              | Yes        | Yes              | 10        | 7     |
-      | decimal_specific_serialized_attribute | Decimal  | Decimal Specific Serialized Attribute | No         | No               | 29        | 20    |
-      | decimal_specific_column_attribute     | Decimal  | Decimal Specific Column Attribute     | Yes        | Yes              | 29        | 20    |
+      | Field Name                            | Type     | Label                                 | Filterable | Show Grid Filter | Auditable | Precision | Scale |
+      | decimal_column_attribute              | Decimal  | Decimal Column Attribute              | Yes        | Yes              | Yes       | 10        | 7     |
+      | decimal_specific_serialized_attribute | Decimal  | Decimal Specific Serialized Attribute | Yes        | No               | No        | 29        | 20    |
+      | decimal_specific_column_attribute     | Decimal  | Decimal Specific Column Attribute     | Yes        | Yes              | Yes       | 29        | 20    |
 
   Scenario: Update schema
     When I click update schema

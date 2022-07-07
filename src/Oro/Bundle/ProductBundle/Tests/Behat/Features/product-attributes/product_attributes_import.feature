@@ -53,7 +53,7 @@ Feature: Product attributes import
   Scenario: Import BigInt Product Attribute as "Serialized field"
     Given I fill template with data:
       | fieldName        | type   | entity.label    | datagrid.show_filter | datagrid.is_visible |
-      | bigIntSerialized | bigint | FieldText Label | no                   | 0                   |
+      | bigIntSerialized | bigint | FieldText Label | yes                  | 0                   |
     When I import file
     And Email should contains the following "Errors: 0 processed: 1, read: 1, added: 1, updated: 0, replaced: 0" text
     When I reload the page
@@ -72,8 +72,8 @@ Feature: Product attributes import
 
   Scenario: Import BigInt Product Attribute as "Table column"
     Given I fill template with data:
-      | fieldName   | type   | entity.label    | datagrid.show_filter | datagrid.is_visible |
-      | bigIntTable | bigint | FieldText Label | yes                  | 0                   |
+      | fieldName   | type   | entity.label    | datagrid.show_filter | datagrid.is_visible | dataaudit.auditable |
+      | bigIntTable | bigint | FieldText Label | yes                  | 0                   | 1                   |
     When I import file
     And Email should contains the following "Errors: 0 processed: 1, read: 1, added: 1, updated: 0, replaced: 0" text
     And I reload the page
@@ -89,8 +89,8 @@ Feature: Product attributes import
 
   Scenario: Import BigInt Product Attribute as "Table column" when field which requires schema update is changed
     Given I fill template with data:
-      | fieldName   | type   | entity.label | datagrid.show_filter | datagrid.is_visible |
-      | bigIntTable | bigint | new Label    | yes                  | 1                   |
+      | fieldName   | type   | entity.label | datagrid.show_filter | datagrid.is_visible | dataaudit.auditable |
+      | bigIntTable | bigint | new Label    | yes                  | 1                   | 1                   |
     When I import file
     And Email should contains the following "Errors: 0 processed: 1, read: 1, added: 0, updated: 1, replaced: 0" text
     And I reload the page
@@ -169,7 +169,7 @@ Feature: Product attributes import
     And I should see following grid:
       | NAME                         | DATA TYPE       | LABEL             | TYPE   | SCHEMA STATUS | STORAGE TYPE     | AUDITABLE | PRODUCT FAMILIES |
       | bigIntSerialized             | BigInt          | FieldText Label   | Custom | Active        | Serialized field | No        |                  |
-      | bigIntTable                  | BigInt          | new Label         | Custom | Active        | Table column     | No        |                  |
+      | bigIntTable                  | BigInt          | new Label         | Custom | Active        | Table column     | Yes       |                  |
       | brand                        | System relation | Brand             | System | Active        | Table column     | Yes       | Default          |
       | correct_field_name           | BigInt          | label value 1     | Custom | Active        | Serialized field | No        |                  |
       | descriptions                 | System relation | Description       | System | Active        | Table column     | No        | Default          |
