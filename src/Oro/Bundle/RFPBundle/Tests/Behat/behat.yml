@@ -86,6 +86,10 @@ oro_behat_extension:
                     Do Not Ship Later Than:
                         type: 'css'
                         locator: 'input[name^="oro_rfp_frontend_request_shipUntil"]'
+                    Line Item First Unit:
+                        type: 'css'
+                        locator: 'select[name="oro_rfp_frontend_request[requestProducts][0][requestProductItems][0][productUnit]"]'
+                        element: Select2Entity
 
         RFQ Products List:
             selector: '.request-form__content'
