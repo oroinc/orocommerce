@@ -1,5 +1,5 @@
 app-modules:
-    - orovalidation/blank/js/app/modules/validator-constraints-module
+    - orovalidation/default/js/app/modules/validator-constraints-module
 configs:
     orovalidation/js/validator/greater-than-zero: {}
 dynamic-imports:

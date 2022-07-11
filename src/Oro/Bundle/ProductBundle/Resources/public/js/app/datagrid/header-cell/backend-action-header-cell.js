@@ -11,7 +11,7 @@ define(function(require, exports, module) {
     const ActionHeaderCell = require('orodatagrid/js/datagrid/header-cell/action-header-cell');
     const ShoppingListCollectionService = require('oroshoppinglist/js/shoppinglist-collection-service');
     const ActionsPanel = require('oroproduct/js/app/datagrid/backend-actions-panel');
-    const FullscreenPopupView = require('orofrontend/blank/js/app/views/fullscreen-popup-view');
+    const FullscreenPopupView = require('orofrontend/default/js/app/views/fullscreen-popup-view');
     const config = require('module-config').default(module.id);
 
     const shoppingListAddAction = config.shoppingListAddAction || {

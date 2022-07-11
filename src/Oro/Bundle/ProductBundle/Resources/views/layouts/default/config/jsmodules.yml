@@ -1,14 +1,14 @@
 aliases:
-    jquery-elevatezoom$: "@oroinc/elevatezoom/jquery.elevatezoom"
+    jquery-elevatezoom$: '@oroinc/elevatezoom/jquery.elevatezoom'
     oro/quick-add-import-widget$: oroproduct/js/app/widget/quick-add-import-widget
 app-modules:
     - oroproduct/js/app/modules/frontend-validator-constraints-module
 configs:
     oroproduct/js/app/datagrid/backend-grid: {}
+    oroproduct/js/app/datagrid/frontend-product-process-options-builder: {}
     oroproduct/js/app/datagrid/header-cell/backend-action-header-cell: {}
     oroproduct/js/app/views/sidebar-filters/filter-items-hint-view: {}
     oroproduct/js/app/views/sidebar-filters/sidebar-toggle-filters-view: {}
-    oroproduct/js/app/datagrid/frontend-product-process-options-builder: {}
 dynamic-imports:
     commons:
         - oro/quick-add-import-widget
@@ -24,9 +24,9 @@ dynamic-imports:
         - oroproduct/js/app/datagrid/backend-pageable-collection
         - oroproduct/js/app/datagrid/cell/backend-select-row-cell
         - oroproduct/js/app/datagrid/datagrid-product-lazy-init-view
-        - oroproduct/js/app/datagrid/frontend-product-process-options-builder
         - oroproduct/js/app/datagrid/frontend-product-display-options-builder
         - oroproduct/js/app/datagrid/frontend-product-filters-events-dispatcher-builder
+        - oroproduct/js/app/datagrid/frontend-product-process-options-builder
         - oroproduct/js/app/datagrid/grid-sidebar-filters-builder
     oroproduct:
         - jquery-elevatezoom
