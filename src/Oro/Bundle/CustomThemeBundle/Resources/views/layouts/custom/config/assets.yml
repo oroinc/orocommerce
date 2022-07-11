@@ -6,8 +6,6 @@ styles:
 
         - 'bundles/orocatalog/default/scss/styles.scss'
 
-        - 'bundles/orocommercemenu/blank/scss/styles.scss': 'bundles/orocommercemenu/blank/scss/styles_custom.scss'
-
         - 'bundles/orocustomtheme/CheckoutBundle/scss/styles.scss'
 
         - 'bundles/orocustomtheme/ShoppingListBundle/scss/styles.scss'
