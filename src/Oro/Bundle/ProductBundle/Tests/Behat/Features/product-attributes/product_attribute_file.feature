@@ -33,6 +33,8 @@ Feature: Product attribute file
       | image/gif                                                                 |
       | image/jpeg                                                                |
       | image/png                                                                 |
+      | image/svg                                                                 |
+      | image/svg+xml                                                             |
     When I fill form with:
       | File Size (MB)     | 10                                       |
       | Allowed MIME types | [application/pdf, image/png, image/jpeg] |
