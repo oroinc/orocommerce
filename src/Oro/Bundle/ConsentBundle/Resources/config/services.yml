@@ -112,7 +112,6 @@ services:
         arguments:
             - '@doctrine'
             - '@oro_locale.helper.localization'
-            - '@translator'
 
     oro_consent.config.consent_config_manager:
         class: 'Oro\Bundle\ConsentBundle\SystemConfig\ConsentConfigManager'

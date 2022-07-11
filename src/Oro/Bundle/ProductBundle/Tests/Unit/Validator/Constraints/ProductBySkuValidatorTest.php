@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Validator\Constraints;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -17,27 +16,27 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class ProductBySkuValidatorTest extends ConstraintValidatorTestCase
 {
-    /** @var \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry */
-    private $registry;
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrine;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|AclHelper */
+    /** @var AclHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $aclHelper;
 
     protected function setUp(): void
     {
-        $this->registry = $this->createMock(Registry::class);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->aclHelper = $this->createMock(AclHelper::class);
         parent::setUp();
     }
 
     protected function createValidator(): ProductBySkuValidator
     {
-        return new ProductBySkuValidator($this->registry, $this->aclHelper);
+        return new ProductBySkuValidator($this->doctrine, $this->aclHelper);
     }
 
     public function testValidateNoValue()
     {
-        $this->registry->expects($this->never())
+        $this->doctrine->expects($this->never())
             ->method('getRepository');
 
         $constraint = new ProductBySku();
@@ -111,7 +110,7 @@ class ProductBySkuValidatorTest extends ConstraintValidatorTestCase
                 ->with($queryBuilder)
                 ->willReturn($query);
 
-            $this->registry->expects($this->once())
+            $this->doctrine->expects($this->once())
                 ->method('getRepository')
                 ->with(Product::class)
                 ->willReturn($repository);

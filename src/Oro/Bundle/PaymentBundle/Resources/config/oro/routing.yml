@@ -12,33 +12,6 @@ oro_payment_methods_configs_rule:
 
 
 #
-# DEPRECATED OLD REST API ROUTES
-#
-
-oro_api_coptions_paymentmethodsconfigsrules:
-    path: '/api/rest/{version}/paymentmethodsconfigsrules.{_format}'
-    methods: [OPTIONS]
-    defaults:
-        _controller: 'Oro\Bundle\PaymentBundle\Controller\Api\Rest\PaymentMethodsConfigsRuleController::optionsAction'
-        _format: json
-        version: latest
-    requirements:
-        _format: json
-        version: latest|v1
-
-oro_api_options_paymentmethodsconfigsrules:
-    path: '/api/rest/{version}/paymentmethodsconfigsrules.{_format}'
-    methods: [OPTIONS]
-    defaults:
-        _controller: 'Oro\Bundle\PaymentBundle\Controller\Api\Rest\PaymentMethodsConfigsRuleController::optionsAction'
-        _format: json
-        version: latest
-    requirements:
-        _format: json
-        version: latest|v1
-
-
-#
 # OLD REST API ROUTES
 #
 

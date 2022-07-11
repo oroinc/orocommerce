@@ -10,10 +10,10 @@ use Symfony\Component\Intl\Currencies;
 
 class PriceAttributePriceListControllerTest extends WebTestCase
 {
-    const PRICE_ATTRIBUTE_PRICE_LIST_NAME = 'MSRP';
-    const PRICE_ATTRIBUTE_PRICE_LIST_FIELD_NAME = 'msrp';
-    const PRICE_ATTRIBUTE_PRICE_LIST_NAME_EDIT = 'MAP';
-    const PRICE_ATTRIBUTE_PRICE_LIST_FIELD_NAME_EDIT = 'map';
+    private const PRICE_ATTRIBUTE_PRICE_LIST_NAME = 'MSRP';
+    private const PRICE_ATTRIBUTE_PRICE_LIST_FIELD_NAME = 'msrp';
+    private const PRICE_ATTRIBUTE_PRICE_LIST_NAME_EDIT = 'MAP';
+    private const PRICE_ATTRIBUTE_PRICE_LIST_FIELD_NAME_EDIT = 'map';
 
     protected function setUp(): void
     {
@@ -27,7 +27,7 @@ class PriceAttributePriceListControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_pricing_price_attribute_price_list_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        static::assertStringContainsString('pricing-price-attribute-price-list-grid', $crawler->html());
+        self::assertStringContainsString('pricing-price-attribute-price-list-grid', $crawler->html());
 
         $this->checkContainsPriceAttributePriceList($crawler, 'price_attribute_price_list_1');
         $this->checkContainsPriceAttributePriceList($crawler, 'price_attribute_price_list_2');
@@ -36,15 +36,13 @@ class PriceAttributePriceListControllerTest extends WebTestCase
         $this->checkContainsPriceAttributePriceList($crawler, 'price_attribute_price_list_5');
     }
 
-    /**
-     * @param Crawler $crawler
-     * @param string $priceAttributePriceListReference
-     */
-    protected function checkContainsPriceAttributePriceList(Crawler $crawler, $priceAttributePriceListReference)
-    {
+    private function checkContainsPriceAttributePriceList(
+        Crawler $crawler,
+        string $priceAttributePriceListReference
+    ): void {
         /** @var PriceAttributePriceList $priceAttributePriceList */
         $priceAttributePriceList = $this->getReference($priceAttributePriceListReference);
-        static::assertStringContainsString($priceAttributePriceList->getName(), $crawler->html());
+        self::assertStringContainsString($priceAttributePriceList->getName(), $crawler->html());
     }
 
     public function testCreate()
@@ -65,12 +63,11 @@ class PriceAttributePriceListControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
-        static::assertStringContainsString('Price Attribute has been saved', $html);
+        self::assertStringContainsString('Price Attribute has been saved', $html);
 
         /** @var PriceAttributePriceList $priceAttributePriceList */
         $priceAttributePriceList = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroPricingBundle:PriceAttributePriceList')
-            ->getRepository('OroPricingBundle:PriceAttributePriceList')
+            ->getRepository(PriceAttributePriceList::class)
             ->findOneBy(['name' => self::PRICE_ATTRIBUTE_PRICE_LIST_NAME]);
         $this->assertNotEmpty($priceAttributePriceList);
     }
@@ -87,7 +84,7 @@ class PriceAttributePriceListControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        static::assertStringContainsString($priceAttributePriceList->getName(), $crawler->html());
+        self::assertStringContainsString($priceAttributePriceList->getName(), $crawler->html());
     }
 
     public function testUpdate()
@@ -117,8 +114,8 @@ class PriceAttributePriceListControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        static::assertStringContainsString(self::PRICE_ATTRIBUTE_PRICE_LIST_NAME_EDIT, $crawler->html());
-        static::assertStringContainsString(Currencies::getName('CAD'), $crawler->html());
+        self::assertStringContainsString(self::PRICE_ATTRIBUTE_PRICE_LIST_NAME_EDIT, $crawler->html());
+        self::assertStringContainsString(Currencies::getName('CAD'), $crawler->html());
     }
 
     public function testFieldNameValidator()
@@ -147,7 +144,7 @@ class PriceAttributePriceListControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        static::assertStringContainsString(
+        self::assertStringContainsString(
             'Field Name cannot contain special chars or spaces, and must contain at least one letter',
             $crawler->html()
         );
@@ -168,7 +165,7 @@ class PriceAttributePriceListControllerTest extends WebTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        static::assertStringContainsString(self::PRICE_ATTRIBUTE_PRICE_LIST_NAME_EDIT, $crawler->html());
-        static::assertStringContainsString(Currencies::getName('CAD'), $crawler->html());
+        self::assertStringContainsString(self::PRICE_ATTRIBUTE_PRICE_LIST_NAME_EDIT, $crawler->html());
+        self::assertStringContainsString(Currencies::getName('CAD'), $crawler->html());
     }
 }

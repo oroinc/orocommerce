@@ -9,6 +9,7 @@ define(function(require) {
     const mediator = require('oroui/js/mediator');
     const $ = require('jquery');
     const _ = require('underscore');
+    const __ = require('orotranslation/js/translator');
     /** @var QuantityHelper QuantityHelper **/
     const QuantityHelper = require('oroproduct/js/app/quantity-helper');
     const ShoppingListCollectionService = require('oroshoppinglist/js/shoppinglist-collection-service');
@@ -205,7 +206,7 @@ define(function(require) {
 
             if (hasLineItems) {
                 const $removeButton = $(this.options.removeButtonTemplate(shoppingList));
-                $removeButton.find('a').attr('data-intention', 'remove');
+                $removeButton.find('a, button').attr('data-intention', 'remove');
                 buttons.push($removeButton);
             }
         },
@@ -216,8 +217,14 @@ define(function(require) {
         },
 
         initButtons: function() {
-            this.findAllButtons()
-                .attr('role', 'button')
+            const $buttons = this.findAllButtons();
+
+            $buttons.each((i, btn) => {
+                if (!$(btn).is('button')) {
+                    $(btn).attr('role', 'button');
+                }
+            });
+            $buttons
                 .off('click' + this.eventNamespace())
                 .on('click' + this.eventNamespace(), this.onClick.bind(this));
         },
@@ -297,11 +304,12 @@ define(function(require) {
             return this.shoppingListCollection.find({id: id}).toJSON() || null;
         },
 
-        validate: function(intention, url, urlOptions, formData) {
+        validate: function() {
             return this.dropdownWidget.validateForm();
         },
 
         onClick: function(e) {
+            e.preventDefault();
             const $button = $(e.currentTarget);
             if ($button.data('disabled')) {
                 return false;
@@ -313,14 +321,18 @@ define(function(require) {
             const urlOptions = {
                 shoppingListId: $button.data('shoppinglist').id
             };
+
+            let isValidProduct = true;
+
             if (this.model) {
                 urlOptions.productId = this.model.get('id');
+                isValidProduct = urlOptions.productId !== 0;
                 if (this.model.has('parentProduct')) {
                     urlOptions.parentProductId = this.model.get('parentProduct');
                 }
             }
 
-            if (!this.validate(intention, url, urlOptions, formData)) {
+            if (!this.validate() || !isValidProduct) {
                 return;
             }
 
@@ -354,15 +366,15 @@ define(function(require) {
                 intention = 'add';
             }
 
-            const $link = $button.find('a');
+            const $els = $button.find('a, button');
             const $icon = $button.find('.fa').clone();
 
-            $link
+            $els
                 .text(label)
                 .attr('data-intention', intention);
 
             if ($icon.length) {
-                $link.prepend($icon);
+                $els.prepend($icon);
             }
 
             return $button;
@@ -497,7 +509,8 @@ define(function(require) {
                     this.shoppingListCollection.trigger('change', {
                         refresh: true
                     });
-                    mediator.execute('showFlashMessage', 'success', _.__(this.options.messages.success));
+                    const messageOptions = {namespace: 'shopping_list'};
+                    mediator.execute('showFlashMessage', 'success', __(this.options.messages.success), messageOptions);
                 })
                 .always(() => {
                     mediator.execute('hideLoading');

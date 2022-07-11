@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Provider;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
@@ -23,28 +24,29 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Oro\Component\Testing\Unit\EntityTrait;
-use PHPUnit\Framework\TestCase;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
 
-class FrontendProductPricesExportProviderTest extends TestCase
+class FrontendProductPricesExportProviderTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $configManager;
 
-    private ConfigManager|\PHPUnit\Framework\MockObject\MockObject $configManager;
+    /** @var ProductPriceProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $priceProvider;
 
-    private ProductPriceProviderInterface|\PHPUnit\Framework\MockObject\MockObject $priceProvider;
+    /** @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $tokenAccessor;
 
-    private TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject $tokenAccessor;
+    /** @var ProductPriceScopeCriteriaFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $priceScopeCriteriaFactory;
 
-    private ProductPriceScopeCriteriaFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
-        $priceScopeCriteriaFactory;
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrine;
 
-    private ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject $managerRegistry;
+    /** @var UserCurrencyManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $currencyManager;
 
-    private UserCurrencyManager|\PHPUnit\Framework\MockObject\MockObject $currencyManager;
-
-    private FrontendProductPricesExportProvider $provider;
+    /** @var FrontendProductPricesExportProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $provider;
 
     protected function setUp(): void
     {
@@ -52,11 +54,11 @@ class FrontendProductPricesExportProviderTest extends TestCase
         $this->priceProvider = $this->createMock(ProductPriceProviderInterface::class);
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
         $this->priceScopeCriteriaFactory = $this->createMock(ProductPriceScopeCriteriaFactoryInterface::class);
-        $this->managerRegistry = $this->createMock(ManagerRegistry::class);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->currencyManager = $this->createMock(UserCurrencyManager::class);
 
         $this->provider = new FrontendProductPricesExportProvider(
-            $this->managerRegistry,
+            $this->doctrine,
             $this->configManager,
             $this->priceProvider,
             $this->tokenAccessor,
@@ -71,20 +73,20 @@ class FrontendProductPricesExportProviderTest extends TestCase
             ->method('getOrganization')
             ->willReturn(new Organization());
 
-        $repositoryMock = $this->createMock(PriceAttributePriceListRepository::class);
+        $repository = $this->createMock(PriceAttributePriceListRepository::class);
 
         $priceAttributes = [
             $this->createPriceAttributePriceList('test_price'),
             $this->createPriceAttributePriceList('custom_price'),
         ];
 
-        $repositoryMock->expects(self::once())
+        $repository->expects(self::once())
             ->method('findBy')
             ->willReturn($priceAttributes);
 
-        $this->managerRegistry->expects(self::once())
+        $this->doctrine->expects(self::once())
             ->method('getRepository')
-            ->willReturn($repositoryMock);
+            ->willReturn($repository);
 
         $result = $this->provider->getAvailableExportPriceAttributes();
 
@@ -102,7 +104,7 @@ class FrontendProductPricesExportProviderTest extends TestCase
             ->method('getOrganization')
             ->willReturn(new Organization());
 
-        $priceAttributeRepositoryMock = $this->createMock(PriceAttributePriceListRepository::class);
+        $priceAttributeRepository = $this->createMock(PriceAttributePriceListRepository::class);
 
         $testPriceAttribute = $this->createPriceAttributePriceList('test_price');
         $customPriceAttribute = $this->createPriceAttributePriceList('custom_price');
@@ -112,7 +114,7 @@ class FrontendProductPricesExportProviderTest extends TestCase
             $customPriceAttribute,
         ];
 
-        $priceAttributeRepositoryMock->expects(self::once())
+        $priceAttributeRepository->expects(self::once())
             ->method('findBy')
             ->willReturn($priceAttributes);
 
@@ -160,9 +162,9 @@ class FrontendProductPricesExportProviderTest extends TestCase
             ->method('findByPriceAttributeProductPriceIdsAndProductIds')
             ->willReturn($priceAttributePrices);
 
-        $this->managerRegistry->expects(self::exactly(2))
+        $this->doctrine->expects(self::exactly(2))
             ->method('getRepository')
-            ->willReturnOnConsecutiveCalls($priceAttributeRepositoryMock, $pricesRepository);
+            ->willReturnOnConsecutiveCalls($priceAttributeRepository, $pricesRepository);
 
         $result = $this->provider->getProductPriceAttributesPrices(
             $product,
@@ -194,16 +196,11 @@ class FrontendProductPricesExportProviderTest extends TestCase
         $testPriceAttribute = $this->createPriceAttributePriceList('test_price');
         $customPriceAttribute = $this->createPriceAttributePriceList('custom_price');
 
-        $priceAttributeRepositoryMock = $this->createMock(PriceAttributePriceListRepository::class);
+        $priceAttributeRepository = $this->createMock(PriceAttributePriceListRepository::class);
 
-        $priceAttributeRepositoryMock->expects(self::once())
+        $priceAttributeRepository->expects(self::once())
             ->method('findBy')
-            ->willReturn(
-                [
-                    $testPriceAttribute,
-                    $customPriceAttribute,
-                ]
-            );
+            ->willReturn([$testPriceAttribute, $customPriceAttribute]);
 
         $pricesRepository = $this->createMock(PriceAttributeProductPriceRepository::class);
 
@@ -226,9 +223,9 @@ class FrontendProductPricesExportProviderTest extends TestCase
             ->method('findByPriceAttributeProductPriceIdsAndProductIds')
             ->willReturn($priceAttributePrices);
 
-        $this->managerRegistry->expects(self::exactly(2))
+        $this->doctrine->expects(self::exactly(2))
             ->method('getRepository')
-            ->willReturnOnConsecutiveCalls($priceAttributeRepositoryMock, $pricesRepository);
+            ->willReturnOnConsecutiveCalls($priceAttributeRepository, $pricesRepository);
 
         $this->currencyManager->expects(self::once())
             ->method('getUserCurrency')

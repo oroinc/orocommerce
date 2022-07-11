@@ -92,6 +92,8 @@ const LinkTypeBuilder = BaseTypeBuilder.extend({
         }
     },
 
+    parentType: 'link',
+
     modelMixin: {
         defaults: {
             tagName: 'a',
@@ -100,13 +102,14 @@ const LinkTypeBuilder = BaseTypeBuilder.extend({
             components: [{
                 type: 'textnode',
                 content: __('oro.cms.wysiwyg.component.link.content')
-            }]
+            }],
+            editable: false
         },
 
         tempAttr: TEMP_ATTR,
 
         init() {
-            this.listenTo(this, 'change:attributes:text', (model, value) => model.components(value));
+            this.listenTo(this, 'change:attributes:text', (model, value) => model.components(_.escape(value)));
         },
 
         getAttrToHTML() {
@@ -117,7 +120,7 @@ const LinkTypeBuilder = BaseTypeBuilder.extend({
             delete attrs[this.tempAttr];
             delete attrs['text'];
 
-            return attrs;
+            return _.mapObject(attrs, value => _.escape(value));
         }
     },
 

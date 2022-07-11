@@ -6,64 +6,53 @@ use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Model\FallbackType;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadProductDefaultAttributeFamilyData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Symfony\Component\DomCrawler\Form;
 
 class ProductWithPricesTest extends WebTestCase
 {
-    const TEST_SKU = 'SKU-001';
+    private const TEST_SKU = 'SKU-001';
 
-    const PRICE_LIST_NAME = 'price_list_1';
+    private const PRICE_LIST_NAME = 'price_list_1';
 
-    const FIRST_UNIT_CODE = 'item';
-    const FIRST_UNIT_FULL_NAME = 'item';
-    const FIRST_UNIT_PRECISION = 0;
-    const SECOND_UNIT_CODE = 'kg';
-    const SECOND_UNIT_FULL_NAME = 'kilogram';
-    const SECOND_UNIT_PRECISION = 3;
+    private const FIRST_UNIT_CODE = 'item';
+    private const FIRST_UNIT_FULL_NAME = 'item';
+    private const FIRST_UNIT_PRECISION = 0;
+    private const SECOND_UNIT_CODE = 'kg';
+    private const SECOND_UNIT_FULL_NAME = 'kilogram';
+    private const SECOND_UNIT_PRECISION = 3;
 
-    const FIRST_QUANTITY = 10;
-    const SECOND_QUANTITY = 5.556;
-    const EXPECTED_SECOND_QUANTITY = 5.556;
+    private const FIRST_QUANTITY = 10;
+    private const SECOND_QUANTITY = 5.556;
+    private const EXPECTED_SECOND_QUANTITY = 5.556;
 
-    const FIRST_PRICE_VALUE = 10;
-    const FIRST_PRICE_CURRENCY = 'USD';
-    const SECOND_PRICE_VALUE = 0.5;
-    const SECOND_PRICE_CURRENCY = 'USD';
+    private const FIRST_PRICE_VALUE = 10;
+    private const FIRST_PRICE_CURRENCY = 'USD';
+    private const SECOND_PRICE_VALUE = 0.5;
+    private const SECOND_PRICE_CURRENCY = 'USD';
 
-    const DEFAULT_NAME = 'default name';
+    private const DEFAULT_NAME = 'default name';
 
-    const CATEGORY_ID = 1;
+    private const CATEGORY_ID = 1;
 
-    /**
-     * {@inheritDoc}
-     */
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
-        $this->loadFixtures(['Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists']);
+        $this->loadFixtures([LoadPriceLists::class]);
     }
 
-    /**
-     * @return AttributeFamily
-     */
-    private function getDefaultFamily()
+    private function getDefaultFamily(): AttributeFamily
     {
-        $defaultFamily = $this->getContainer()
+        return $this->getContainer()
             ->get('oro_entity.doctrine_helper')
             ->getEntityRepositoryForClass(AttributeFamily::class)
             ->findOneBy(['code' => LoadProductDefaultAttributeFamilyData::DEFAULT_FAMILY_CODE]);
-
-        return $defaultFamily;
     }
 
-    /**
-     * @return string
-     */
-    public function testCreate()
+    public function testCreate(): int
     {
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_create'));
         $form = $crawler->selectButton('Continue')->form();
@@ -76,7 +65,6 @@ class ProductWithPricesTest extends WebTestCase
         $this->client->followRedirects(true);
         $crawler = $this->client->request('POST', $this->getUrl('oro_product_create'), $formValues);
 
-        /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
 
         /** @var PriceList $priceList */
@@ -129,7 +117,7 @@ class ProductWithPricesTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        static::assertStringContainsString('Product has been saved', $crawler->html());
+        self::assertStringContainsString('Product has been saved', $crawler->html());
 
         $this->assertEquals(
             $priceList->getId(),
@@ -155,8 +143,7 @@ class ProductWithPricesTest extends WebTestCase
 
         /** @var Product $product */
         $product = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroProductBundle:Product')
-            ->getRepository('OroProductBundle:Product')
+            ->getRepository(Product::class)
             ->findOneBy(['sku' => self::TEST_SKU]);
         $this->assertNotEmpty($product);
 
@@ -165,17 +152,14 @@ class ProductWithPricesTest extends WebTestCase
 
     /**
      * @depends testCreate
-     * @param $id int
-     * @return integer
      */
-    public function testUpdate($id)
+    public function testUpdate(int $id): int
     {
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_update', ['id' => $id]));
 
         /** @var PriceList $priceList */
         $priceList = $this->getReference(self::PRICE_LIST_NAME);
 
-        /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
         $form['oro_product[sku]'] = self::TEST_SKU;
         $form['oro_product[prices][0][priceList]'] = $priceList->getId();
@@ -190,7 +174,7 @@ class ProductWithPricesTest extends WebTestCase
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        static::assertStringContainsString('Product has been saved', $crawler->html());
+        self::assertStringContainsString('Product has been saved', $crawler->html());
 
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_update', ['id' => $id]));
 
@@ -221,13 +205,11 @@ class ProductWithPricesTest extends WebTestCase
 
     /**
      * @depends testUpdate
-     * @param integer $id
      */
-    public function testDelete($id)
+    public function testDelete(int $id)
     {
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_update', ['id' => $id]));
 
-        /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
 
         unset($form['oro_product[prices]']);
@@ -238,28 +220,25 @@ class ProductWithPricesTest extends WebTestCase
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        static::assertStringContainsString('Product has been saved', $crawler->html());
+        self::assertStringContainsString('Product has been saved', $crawler->html());
 
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_update', ['id' => $id]));
 
-        static::assertStringContainsString('oro_product[additionalUnitPrecisions][0]', $crawler->html());
-        static::assertStringNotContainsString('oro_product[prices][0]', $crawler->html());
+        self::assertStringContainsString('oro_product[additionalUnitPrecisions][0]', $crawler->html());
+        self::assertStringNotContainsString('oro_product[prices][0]', $crawler->html());
     }
 
     /**
      * @return Localization[]
      */
-    protected function getLocalizations()
+    private function getLocalizations(): array
     {
-        return $this->getContainer()->get('doctrine')->getManagerForClass('OroLocaleBundle:Localization')
-            ->getRepository('OroLocaleBundle:Localization')
+        return $this->getContainer()->get('doctrine')
+            ->getRepository(Localization::class)
             ->findAll();
     }
 
-    /**
-     * @return integer
-     */
-    protected function getBusinessUnitId()
+    private function getBusinessUnitId(): int
     {
         return $this->getContainer()->get('security.token_storage')->getToken()->getUser()->getOwner()->getId();
     }

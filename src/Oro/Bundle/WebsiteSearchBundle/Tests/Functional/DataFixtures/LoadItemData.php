@@ -10,6 +10,7 @@ use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\SearchBundle\Entity\ItemFieldInterface;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestEmployee;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestProduct;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexDatetime;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexDecimal;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexInteger;
@@ -136,7 +137,7 @@ class LoadItemData extends AbstractFixture implements ContainerAwareInterface, D
      */
     public function load(ObjectManager $manager)
     {
-        $websiteIds = $manager->getRepository('OroWebsiteBundle:Website')->getWebsiteIdentifiers();
+        $websiteIds = $manager->getRepository(Website::class)->getWebsiteIdentifiers();
 
         $manager = $this->container->get('oro_entity.doctrine_helper')->getEntityManager(Item::class);
         self::$searchReferenceRepository = new ReferenceRepository($manager);

@@ -40,14 +40,10 @@ class RFPListenerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider persistNotSetDefaultOwnerDataProvider
-     *
-     * @param string $token
-     * @param Request $request
      */
-    public function testPrePersistNotSetDefaultOwner($token, Request $request)
+    public function testPrePersistNotSetDefaultOwner(?object $token, Request $request)
     {
-        $this->tokenAccessor
-            ->expects($this->once())
+        $this->tokenAccessor->expects($this->once())
             ->method('getToken')
             ->willReturn($token);
 
@@ -57,10 +53,7 @@ class RFPListenerTest extends \PHPUnit\Framework\TestCase
         $this->assertNotSame($newUser, $request->getOwner());
     }
 
-    /**
-     * @return array
-     */
-    public function persistNotSetDefaultOwnerDataProvider()
+    public function persistNotSetDefaultOwnerDataProvider(): array
     {
         return [
             'without token and without owner' => [
@@ -83,17 +76,15 @@ class RFPListenerTest extends \PHPUnit\Framework\TestCase
         $token = $this->createAnonymousToken();
         $request = new Request();
 
-        $this->tokenAccessor
-            ->expects($this->once())
+        $this->tokenAccessor->expects($this->once())
             ->method('getToken')
             ->willReturn($token);
 
         $newUser = new User();
         $newUser->setFirstName('first_name');
-        $this->defaultUserProvider
-            ->expects($this->once())
+        $this->defaultUserProvider->expects($this->once())
             ->method('getDefaultUser')
-            ->with('oro_rfp', 'default_guest_rfp_owner')
+            ->with('oro_rfp.default_guest_rfp_owner')
             ->willReturn($newUser);
 
         $this->listener->prePersist($request);
@@ -108,17 +99,15 @@ class RFPListenerTest extends \PHPUnit\Framework\TestCase
             ->setFirstName('Firstname')
             ->setLastName('Lastname');
 
-        $this->tokenAccessor
-            ->expects($this->once())
+        $this->tokenAccessor->expects($this->once())
             ->method('getToken')
             ->willReturn($token);
 
         $newUser = new User();
         $newUser->setFirstName('first_name');
-        $this->defaultUserProvider
-            ->expects($this->once())
+        $this->defaultUserProvider->expects($this->once())
             ->method('getDefaultUser')
-            ->with('oro_rfp', 'default_guest_rfp_owner')
+            ->with('oro_rfp.default_guest_rfp_owner')
             ->willReturn($newUser);
 
         $customerUser = new CustomerUser();
@@ -137,10 +126,7 @@ class RFPListenerTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($customerUser, $request->getCustomerUser());
     }
 
-    /**
-     * @return AnonymousCustomerUserToken
-     */
-    protected function createAnonymousToken()
+    private function createAnonymousToken(): AnonymousCustomerUserToken
     {
         $visitor = new CustomerVisitor();
         $visitor->setCustomerUser(new CustomerUser);

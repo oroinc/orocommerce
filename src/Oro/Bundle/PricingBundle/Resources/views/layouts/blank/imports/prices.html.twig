@@ -20,7 +20,6 @@
 {% block product_price_component %}
     {% if not is_configurable_product_type(product.type) or matrixFormType == 'none' %}
         {% set attr = layout_attr_defaults(attr, {
-            'data-page-component-init-on': 'asap',
             'data-page-component-module': 'oroui/js/app/components/view-component',
             '~data-page-component-options': {
                 view: 'oropricing/js/app/views/list-item-product-prices-view',
@@ -106,8 +105,8 @@
                             fraction_digits: oro_locale_number_attribute('max_fraction_digits', 'currency')
                         }
                     } %}
-                    <meta itemprop="priceCurrency" content="{{ firstPrice.currency }}"/>
-                    <meta itemprop="price" content="{{ firstPrice.price|number_format(priceFormatOptions.attributes.fraction_digits, '.', '') }}"/>
+                    <span itemprop="priceCurrency" class="hidden" aria-hidden="true">{{ firstPrice.currency }}</span>
+                    <span itemprop="price" class="hidden" aria-hidden="true">{{ firstPrice.price|number_format(priceFormatOptions.attributes.fraction_digits, '.', '') }}</span>
                     {{- firstPrice.formatted_price -}}
                     {% endif %}
                 {% endapply %}
@@ -186,10 +185,8 @@
             <table class="product-prices__table">
                 <thead class="product-prices__thead">
                 <tr class="product-prices__tr">
-                    <th style="width: 40%"
-                        class="product-prices__th text-uppercase">{{ 'oro.pricing.frontend.product.quantity.short_label'|trans }}</th>{# qty #}
-                    <th style="width: 60%"
-                        class="product-prices__th">{{ 'oro.pricing.frontend.product.unit_price.long_label'|trans }}</th>{# Unit Price #}
+                    <th class="product-prices__th text-uppercase" scope="col">{{ 'oro.pricing.frontend.product.quantity.short_label'|trans }}</th>{# qty #}
+                    <th class="product-prices__th" scope="col">{{ 'oro.pricing.frontend.product.unit_price.long_label'|trans }}</th>{# Unit Price #}
                 </tr>
                 </thead>
                 {{ block_widget(block) }}
@@ -234,11 +231,11 @@
                 <td class="product-prices__td" itemprop="referenceQuantity" itemscope
                     itemtype="http://schema.org/QuantitativeValue">
                     <span itemprop="value" content="{{ price.quantity }}">{{ price.quantity }}</span>
-                    <meta itemprop="unitCode" content="{{ currentUnit }}"/>
+                    <span class="hidden" aria-hidden="true" itemprop="unitCode">{{ currentUnit }}</span>
                 </td>
                 <td class="product-prices__td">
-                    <meta itemprop="priceCurrency" content="{{ price.currency }}"/>
-                    <meta itemprop="price" content="{{ price.price|number_format(priceFormatOptions.attributes.fraction_digits, '.', '') }}"/>
+                    <span class="hidden" aria-hidden="true" itemprop="priceCurrency">{{ price.currency }}</span>
+                    <span class="hidden" aria-hidden="true" itemprop="price">{{ price.price|number_format(priceFormatOptions.attributes.fraction_digits, '.', '') }}</span>
                     {{- price.formatted_price -}}
                 </td>
             </tr>

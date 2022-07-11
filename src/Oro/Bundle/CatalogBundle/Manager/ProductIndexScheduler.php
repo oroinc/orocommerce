@@ -13,11 +13,8 @@ use Oro\Bundle\ProductBundle\Search\Reindex\ProductReindexManager;
  */
 class ProductIndexScheduler
 {
-    /** @var DoctrineHelper */
-    private $doctrineHelper;
-
-    /** @var ProductReindexManager */
-    private $productReindexManager;
+    private DoctrineHelper $doctrineHelper;
+    private ProductReindexManager $productReindexManager;
 
     public function __construct(DoctrineHelper $doctrineHelper, ProductReindexManager $productReindexManager)
     {
@@ -25,16 +22,15 @@ class ProductIndexScheduler
         $this->productReindexManager = $productReindexManager;
     }
 
-    /**
-     * @param Category[] $categories
-     * @param int|null $websiteId
-     * @param bool $isScheduled
-     */
-    public function scheduleProductsReindex(array $categories, $websiteId = null, $isScheduled = true)
-    {
+    public function scheduleProductsReindex(
+        array $categories,
+        $websiteId = null,
+        $isScheduled = true,
+        array $fieldGroups = null
+    ): void {
         /** @var CategoryRepository $repository */
         $repository = $this->doctrineHelper->getEntityRepository(Category::class);
         $productIds = $repository->getProductIdsByCategories($categories);
-        $this->productReindexManager->reindexProducts($productIds, $websiteId, $isScheduled);
+        $this->productReindexManager->reindexProducts($productIds, $websiteId, $isScheduled, $fieldGroups);
     }
 }

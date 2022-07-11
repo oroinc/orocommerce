@@ -21,8 +21,6 @@ Feature: My Shopping List
     And I go to System / Localization / Translations
     And I filter Key as equal to "oro.frontend.shoppinglist.lineitem.unit.label"
     And I edit "oro.frontend.shoppinglist.lineitem.unit.label" Translated Value as "Unit"
-    And I click "Update Cache"
-    And I should see "Translation Cache has been updated" flash message
 
   Scenario: Create Color product attribute
     When I go to Products/Product Attributes
@@ -136,12 +134,18 @@ Feature: My Shopping List
       | Shopping List 3 | $8,818.00 | 32    |
       | Shopping List 1 | $1,581.00 | 3     |
     And records in grid should be 2
+    And I should see "My Shopping Lists"
+    And I should not see an "Frontend Customer User Shopping Lists Grid Edited Label" element
+    When I filter Name as contains "List 3"
+    Then I should see an "Frontend Customer User Shopping Lists Grid Edited Label" element
     When I switch to "All Shopping Lists" grid view in "Frontend Customer User Shopping Lists Grid" frontend grid
     Then should see following grid:
       | Name            | Subtotal  | Items |
       | Shopping List 3 | $8,818.00 | 32    |
       | Shopping List 2 | $1,178.00 | 2     |
       | Shopping List 1 | $1,581.00 | 3     |
+    And I should see "All Shopping Lists"
+    And I should not see an "Frontend Customer User Shopping Lists Grid Edited Label" element
     And I open shopping list widget
     And I should see "Shopping List 1" in the "Shopping List Widget" element
     And I should not see "Shopping List 2" in the "Shopping List Widget" element
@@ -171,13 +175,16 @@ Feature: My Shopping List
 
   Scenario: Check Name filter
     Given I operate as the Buyer
-    And I reset grid
-    And records in grid should be 3
+    When I reset grid
+    Then records in grid should be 3
+    And I should see "All Shopping Lists"
+    And I should not see an "Frontend Customer User Shopping Lists Grid Edited Label" element
     When I filter Name as contains "List 3"
     Then I should see following grid:
       | Name            | Subtotal  | Items |
       | Shopping List 3 | $8,012.00 | 30    |
     And records in grid should be 1
+    And I should see an "Frontend Customer User Shopping Lists Grid Edited Label" element
 
   Scenario: Sort by Name
     Given I reset grid

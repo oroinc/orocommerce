@@ -22,6 +22,15 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class PaymentMethodsConfigsRuleController extends AbstractController
 {
+    private array $addMethodWidgetUpdateFlags = [PaymentMethodsConfigsRuleHandler::UPDATE_FLAG];
+
+    public function addUpdateFlagToAddMethodWidget(string $addMethodWidgetUpdateFlags): void
+    {
+        if (false === \in_array($addMethodWidgetUpdateFlags, $this->addMethodWidgetUpdateFlags, true)) {
+            $this->addMethodWidgetUpdateFlags[] = $addMethodWidgetUpdateFlags;
+        }
+    }
+
     /**
      * @Route("/", name="oro_payment_methods_configs_rule_index")
      * @Template
@@ -119,7 +128,8 @@ class PaymentMethodsConfigsRuleController extends AbstractController
 
         return [
             'entity' => $entity,
-            'form'   => $form->createView()
+            'form'   => $form->createView(),
+            'addMethodWidgetUpdateFlags' => $this->addMethodWidgetUpdateFlags
         ];
     }
 

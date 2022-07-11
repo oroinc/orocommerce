@@ -20,8 +20,6 @@ Feature: Default Checkout With Line Items Grid From Shopping List
     And I go to System / Localization / Translations
     And I filter Key as equal to "oro.checkout.order_summary.unit"
     And I edit "oro.checkout.order_summary.unit" Translated Value as "Unit"
-    And I click "Update Cache"
-    And I should see "Translation Cache has been updated" flash message
     And I set configuration property "oro_checkout.use_new_layout_for_checkout_page" to "1"
 
   Scenario: Create Color product attribute
@@ -598,8 +596,10 @@ Feature: Default Checkout With Line Items Grid From Shopping List
     Then I should not see an "Popover Image" element
 
   Scenario: Process checkout
-    When I select "ORO, Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
-    And I select "ORO, Fifth avenue, 10115 Berlin, Germany" on the "Shipping Information" checkout step and press Continue
+    When I open page with shopping list Shopping List 3
+    And I click "Create Order"
+    And on the "Billing Information" checkout step I press Continue
+    And on the "Shipping Information" checkout step I press Continue
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     And I check "Payment Terms" on the "Payment" checkout step and press Continue
     And I check "Delete this shopping list after submitting order" on the "Order Review" checkout step and press Submit Order

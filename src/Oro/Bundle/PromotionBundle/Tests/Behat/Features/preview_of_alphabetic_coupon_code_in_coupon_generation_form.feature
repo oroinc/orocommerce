@@ -55,8 +55,6 @@ Feature: Preview of alphabetic coupon code in coupon generation form
     And I edit "oro.promotion.coupon.generation.codePreview.label" Translated Value as "Code Preview - Zulu"
     Then I should see following records in grid:
       | Code Preview - Zulu |
-    When I click "Update Cache"
-    Then I should see "Translation Cache has been updated" flash message
 
   Scenario: Check translations for Generate Multiple Coupons dialog
     When I go to Marketing / Promotions / Coupons

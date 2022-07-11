@@ -2,8 +2,7 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Functional\WYSIWYG;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Entity\Repository\FileRepository;
 use Oro\Bundle\CMSBundle\Entity\Page;
@@ -14,9 +13,11 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class DigitalAssetTwigFunctionProcessorTest extends WebTestCase
 {
-    private EntityManager $entityManager;
+    /** @var EntityManagerInterface */
+    private $entityManager;
 
-    private FileRepository $fileRepository;
+    /** @var FileRepository */
+    private $fileRepository;
 
     protected function setUp(): void
     {
@@ -25,10 +26,7 @@ class DigitalAssetTwigFunctionProcessorTest extends WebTestCase
 
         $this->getOptionalListenerManager()->enableListener('oro_cms.event_listener.wysiwyg_field_twig_listener');
 
-        /** @var Registry */
-        $doctrine = self::getContainer()->get('doctrine');
-
-        $this->entityManager = $doctrine->getManager();
+        $this->entityManager = self::getContainer()->get('doctrine')->getManager();
         $this->fileRepository = $this->entityManager->getRepository(File::class);
     }
 

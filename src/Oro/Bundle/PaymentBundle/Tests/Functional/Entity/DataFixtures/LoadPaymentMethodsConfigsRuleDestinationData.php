@@ -33,13 +33,11 @@ class LoadPaymentMethodsConfigsRuleDestinationData extends AbstractFixture imple
             $entity = new PaymentMethodsConfigsRuleDestination();
 
             /** @var Country $country */
-            $country = $manager
-                ->getRepository('OroAddressBundle:Country')
+            $country = $manager->getRepository(Country::class)
                 ->findOneBy(['iso2Code' => $data['iso2_country_code']]);
 
             /** @var Region $region */
-            $region = $manager
-                ->getRepository('OroAddressBundle:Region')
+            $region = $manager->getRepository(Region::class)
                 ->findOneBy(['combinedCode' => $data['iso2_country_code'].'-'.$data['region_code']]);
 
             /** @var PaymentMethodsConfigsRule $configsRule */

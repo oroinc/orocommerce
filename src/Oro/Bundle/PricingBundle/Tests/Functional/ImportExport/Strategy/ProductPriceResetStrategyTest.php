@@ -4,7 +4,6 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\ImportExport\Strategy;
 
 use Oro\Bundle\BatchBundle\Entity\JobExecution;
 use Oro\Bundle\BatchBundle\Entity\StepExecution;
-use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ImportExportBundle\Context\StepExecutionProxyContext;
 use Oro\Bundle\ImportExportBundle\Event\BeforeImportChunksEvent;
 use Oro\Bundle\ImportExportBundle\Event\Events;
@@ -14,44 +13,22 @@ use Oro\Bundle\PricingBundle\ImportExport\Strategy\ProductPriceResetStrategy;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
 use Oro\Bundle\PricingBundle\Tests\Functional\ProductPriceReference;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class ProductPriceResetStrategyTest extends WebTestCase
 {
     use ProductPriceReference;
 
-    /**
-     * @var ShardManager
-     */
-    protected $shardManager;
-
-    /**
-     * @var ProductPriceResetStrategy
-     */
-    protected $strategy;
-
-    /**
-     * @var StepExecutionProxyContext
-     */
-    protected $context;
-
-    /**
-     * @var StepExecution
-     */
-    protected $stepExecution;
+    private ShardManager $shardManager;
+    private ProductPriceResetStrategy $strategy;
+    private StepExecutionProxyContext $context;
 
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
 
-        $this->loadFixtures(
-            [
-                LoadProductPrices::class
-            ]
-        );
+        $this->loadFixtures([LoadProductPrices::class]);
 
         $container = $this->getContainer();
 
@@ -67,8 +44,7 @@ class ProductPriceResetStrategyTest extends WebTestCase
             $container->get('oro_importexport.field.related_entity_state_helper')
         );
 
-        $this->stepExecution = new StepExecution('step', new JobExecution());
-        $this->context = new StepExecutionProxyContext($this->stepExecution);
+        $this->context = new StepExecutionProxyContext(new StepExecution('step', new JobExecution()));
         $this->strategy->setImportExportContext($this->context);
         $this->strategy->setEntityName(ProductPrice::class);
         $this->strategy->setOwnershipSetter($container->get('oro_organization.entity_ownership_associations_setter'));
@@ -82,9 +58,8 @@ class ProductPriceResetStrategyTest extends WebTestCase
 
         $productPrice = $this->getPriceByReference('product_price.1');
 
-        $actualPrices = $this->getContainer()
-            ->get('doctrine')
-            ->getRepository('OroPricingBundle:ProductPrice')
+        $actualPrices = $this->getContainer()->get('doctrine')
+            ->getRepository(ProductPrice::class)
             ->findByPriceList($this->shardManager, $priceList, ['priceList' => $priceList->getId()]);
         $this->assertCount(8, $actualPrices);
 
@@ -118,9 +93,8 @@ class ProductPriceResetStrategyTest extends WebTestCase
         // ProductPriceResetStrategy works in conjunction with PreChunksMessageProcessor
         // which clears the price list before importing prices in chunks
         $this->assertEmpty(
-            $this->getContainer()
-                ->get('doctrine')
-                ->getRepository('OroPricingBundle:ProductPrice')
+            $this->getContainer()->get('doctrine')
+                ->getRepository(ProductPrice::class)
                 ->findByPriceList($this->shardManager, $priceList, ['priceList' => $priceList->getId()])
         );
 
@@ -130,31 +104,5 @@ class ProductPriceResetStrategyTest extends WebTestCase
         $this->assertEquals('USD', $productPrice->getPrice()->getCurrency());
         $this->assertEquals(12.2, $productPrice->getPrice()->getValue());
         $this->assertNotEmpty($productPrice->getProduct());
-    }
-
-    /**
-     * @return ProductPrice
-     */
-    protected function createProductPrice()
-    {
-        /** @var Product $product */
-        $product = $this->getReference('product-1');
-
-        /** @var PriceList $priceList */
-        $priceList = $this->getReference('price_list_1');
-
-        /** @var ProductUnit $unit */
-        $unit = $this->getReference('product_unit.liter');
-
-        $price = Price::create(1.2, 'USD');
-        $newProductPrice = new ProductPrice();
-        $newProductPrice
-            ->setPriceList($priceList)
-            ->setProduct($product)
-            ->setQuantity(1)
-            ->setPrice($price)
-            ->setUnit($unit);
-
-        return $newProductPrice;
     }
 }

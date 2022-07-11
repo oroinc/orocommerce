@@ -112,6 +112,11 @@ define(function(require) {
             this.collection.trigger('backgrid:setVisibleState', state);
 
             this.canSelect(state);
+
+            this.$('[data-checkbox-change-visible]')
+                .prop('checked', state)
+                .parent()
+                .toggleClass('checked', state);
         },
 
         onSelectUnbind: function() {

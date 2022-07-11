@@ -259,4 +259,9 @@ class Product extends BaseProduct
     {
         $this->variantLinks = $collection;
     }
+
+    public function cloneLocalizedFallbackValueAssociations(): self
+    {
+        return $this;
+    }
 }

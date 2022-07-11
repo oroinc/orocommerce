@@ -160,7 +160,7 @@ abstract class AbstractCategoryFixture extends AbstractFixture implements Contai
         $locator = $this->container->get('file_locator');
 
         try {
-            $imagePath = $locator->locate(sprintf('@OroCatalogBundle/Migrations/Data/Demo/ORM/images/%s.jpg', $sku));
+            $imagePath = $locator->locate($this->getImageName($sku));
 
             if (is_array($imagePath)) {
                 $imagePath = current($imagePath);
@@ -190,5 +190,16 @@ abstract class AbstractCategoryFixture extends AbstractFixture implements Contai
             ->setParameter('organization', $organization);
 
         return $queryBuilder->getQuery()->getSingleResult();
+    }
+
+    /**
+     * Gets the file name to locate
+     *
+     * @param string $sku
+     * @return string
+     */
+    protected function getImageName(string $sku): string
+    {
+        return sprintf('@OroCatalogBundle/Migrations/Data/Demo/ORM/images/%s.jpg', $sku);
     }
 }

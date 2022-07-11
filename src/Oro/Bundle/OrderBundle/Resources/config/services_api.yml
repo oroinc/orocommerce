@@ -6,6 +6,33 @@ services:
         tags:
             - { name: oro.api.query_modifier, requestType: frontend }
 
+    oro_order.api.guest_checkout_association_access_exclusion_provider_for_order:
+        class: Oro\Bundle\CheckoutBundle\Api\GuestCheckoutAssociationAccessExclusionProvider
+        arguments:
+            - '@oro_checkout.api.guest_checkout_checker'
+            - 'Oro\Bundle\OrderBundle\Entity\Order'
+            - ['customer', 'customerUser', 'lineItems', 'billingAddress', 'shippingAddress']
+        tags:
+            - { name: oro_api.association_access_exclusion_provider, requestType: frontend }
+
+    oro_order.api.guest_checkout_association_access_exclusion_provider_for_order_line_item:
+        class: Oro\Bundle\CheckoutBundle\Api\GuestCheckoutAssociationAccessExclusionProvider
+        arguments:
+            - '@oro_checkout.api.guest_checkout_checker'
+            - 'Oro\Bundle\OrderBundle\Entity\OrderLineItem'
+            - ['order']
+        tags:
+            - { name: oro_api.association_access_exclusion_provider, requestType: frontend }
+
+    oro_order.api.guest_checkout_association_access_exclusion_provider_for_order_address:
+        class: Oro\Bundle\CheckoutBundle\Api\GuestCheckoutAssociationAccessExclusionProvider
+        arguments:
+            - '@oro_checkout.api.guest_checkout_checker'
+            - 'Oro\Bundle\OrderBundle\Entity\OrderAddress'
+            - ['customerAddress', 'customerUserAddress']
+        tags:
+            - { name: oro_api.association_access_exclusion_provider, requestType: frontend }
+
     oro_order.api.update_price_by_value_and_currency:
         class: Oro\Bundle\CurrencyBundle\Api\Processor\UpdatePriceByValueAndCurrency
         tags:
@@ -212,33 +239,6 @@ services:
             - { name: oro.api.processor, action: create, group: security_check, requestType: frontend, class: Oro\Bundle\OrderBundle\Entity\Order, priority: 150 }
             - { name: oro.api.processor, action: create, group: security_check, requestType: frontend, class: Oro\Bundle\OrderBundle\Entity\OrderLineItem, priority: 150 }
             - { name: oro.api.processor, action: create, group: security_check, requestType: frontend, class: Oro\Bundle\OrderBundle\Entity\OrderAddress, priority: 150 }
-
-    oro_order.api.configure_guest_checkout_access_for_order:
-        class: Oro\Bundle\CheckoutBundle\Api\Processor\ConfigureGuestCheckoutAccess
-        arguments:
-            - '@oro_checkout.api.guest_checkout_checker'
-            - '@oro_api.doctrine_helper'
-            - ['customer', 'customerUser', 'lineItems', 'billingAddress', 'shippingAddress']
-        tags:
-            - { name: oro.api.processor, action: get_config, extra: '!identifier_fields_only&!descriptions', requestType: frontend, class: Oro\Bundle\OrderBundle\Entity\Order, targetAction: create, priority: -250 }
-
-    oro_order.api.configure_guest_checkout_access_for_order_line_item:
-        class: Oro\Bundle\CheckoutBundle\Api\Processor\ConfigureGuestCheckoutAccess
-        arguments:
-            - '@oro_checkout.api.guest_checkout_checker'
-            - '@oro_api.doctrine_helper'
-            - ['order']
-        tags:
-            - { name: oro.api.processor, action: get_config, extra: '!identifier_fields_only&!descriptions', requestType: frontend, class: Oro\Bundle\OrderBundle\Entity\OrderLineItem, targetAction: create, priority: -250 }
-
-    oro_order.api.configure_guest_checkout_access_for_order_address:
-        class: Oro\Bundle\CheckoutBundle\Api\Processor\ConfigureGuestCheckoutAccess
-        arguments:
-            - '@oro_checkout.api.guest_checkout_checker'
-            - '@oro_api.doctrine_helper'
-            - ['customerAddress', 'customerUserAddress']
-        tags:
-            - { name: oro.api.processor, action: get_config, extra: '!identifier_fields_only&!descriptions', requestType: frontend, class: Oro\Bundle\OrderBundle\Entity\OrderAddress, targetAction: create, priority: -250 }
 
     oro_order.api.configure_guest_checkout_owner_access:
         class: Oro\Bundle\CheckoutBundle\Api\Processor\ConfigureGuestCheckoutOwnerAccess

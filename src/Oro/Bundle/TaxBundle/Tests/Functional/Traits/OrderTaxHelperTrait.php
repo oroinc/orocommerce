@@ -2,31 +2,28 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Functional\Traits;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
-use Doctrine\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\TaxBundle\Entity\TaxValue;
 use Oro\Bundle\UserBundle\Entity\User;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 trait OrderTaxHelperTrait
 {
-    /**
-     * @param bool $flush
-     * @return Order
-     */
-    protected function createOrder($flush = true)
+    protected function createOrder(bool $flush = true): Order
     {
+        $doctrine = $this->getDoctrine();
         /** @var User $orderUser */
-        $orderUser = $this->getDoctrine()->getRepository('OroUserBundle:User')->findOneBy([]);
+        $orderUser = $doctrine->getRepository(User::class)->findOneBy([]);
         if (!$orderUser->getOrganization()) {
             $orderUser->setOrganization(
-                $this->getDoctrine()->getRepository('OroOrganizationBundle:Organization')->findOneBy([])
+                $doctrine->getRepository(Organization::class)->findOneBy([])
             );
         }
         /** @var CustomerUser $customerUser */
-        $customerUser = $this->getDoctrine()->getRepository('OroCustomerBundle:CustomerUser')->findOneBy([]);
+        $customerUser = $doctrine->getRepository(CustomerUser::class)->findOneBy([]);
 
         $order = new Order();
         $order
@@ -50,7 +47,7 @@ trait OrderTaxHelperTrait
         return $order;
     }
 
-    protected function updateOrder(Order $order)
+    protected function updateOrder(Order $order): void
     {
         $order
             ->setIdentifier(uniqid('identifier_', true))
@@ -61,28 +58,13 @@ trait OrderTaxHelperTrait
         $em->flush();
     }
 
-    /**
-     * @param Order $order
-     * @return TaxValue $taxValue
-     */
-    protected function getTaxValue(Order $order)
+    protected function getTaxValue(Order $order): ?TaxValue
     {
-        /** @var TaxValue $taxValue */
-        $taxValue = $this->getDoctrine()->getRepository(TaxValue::class)->findOneBy(
-            [
-                'entityClass' => Order::class,
-                'entityId' => $order->getId(),
-            ]
-        );
-
-        return $taxValue;
+        return $this->getDoctrine()->getRepository(TaxValue::class)
+            ->findOneBy(['entityClass' => Order::class, 'entityId' => $order->getId()]);
     }
 
-    /**
-     * @param TaxValue $taxValue
-     * @param bool $flush
-     */
-    protected function removeTaxValue(TaxValue $taxValue, $flush = true)
+    protected function removeTaxValue(TaxValue $taxValue, bool $flush = true): void
     {
         $em = $this->getTaxValueEntityManager();
         $em->remove($taxValue);
@@ -91,11 +73,7 @@ trait OrderTaxHelperTrait
         }
     }
 
-    /**
-     * @param $entity
-     * @param bool $flush
-     */
-    protected function removeOrder($entity, $flush = true)
+    protected function removeOrder(object $entity, bool $flush = true): void
     {
         $em = $this->getOrderEntityManager();
         $em->remove($entity);
@@ -104,32 +82,18 @@ trait OrderTaxHelperTrait
         }
     }
 
-    /**
-     * @return ObjectManager
-     */
-    protected function getTaxValueEntityManager()
+    protected function getTaxValueEntityManager(): EntityManagerInterface
     {
         return $this->getDoctrine()->getManagerForClass(TaxValue::class);
     }
 
-    /**
-     * @return ObjectManager
-     */
-    protected function getOrderEntityManager()
+    protected function getOrderEntityManager(): EntityManagerInterface
     {
         return $this->getDoctrine()->getManagerForClass(Order::class);
     }
 
-    /**
-     * @return Registry
-     */
-    protected function getDoctrine()
+    protected function getDoctrine(): ManagerRegistry
     {
-        return $this->getContainer()->get('doctrine');
+        return self::getContainer()->get('doctrine');
     }
-
-    /**
-     * @return ContainerInterface
-     */
-    abstract protected static function getContainer();
 }

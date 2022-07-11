@@ -8,7 +8,9 @@ use Oro\Bundle\CurrencyBundle\DependencyInjection\Configuration as CurrencyConfi
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -27,12 +29,10 @@ class AjaxEntityTotalsControllerTest extends WebTestCase
             $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
 
-        $this->loadFixtures(
-            [
-                'Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems',
-                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices',
-            ]
-        );
+        $this->loadFixtures([
+            LoadShoppingListLineItems::class,
+            LoadCombinedProductPrices::class,
+        ]);
     }
 
     public function testEntityTotalsActionForShoppingList()
@@ -66,11 +66,11 @@ class AjaxEntityTotalsControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertJsonResponseStatusCodeEquals($result, 200);
 
-        $data = json_decode($result->getContent(), true);
+        $data = self::jsonToArray($result->getContent());
 
         $this->assertArrayHasKey('total', $data);
-        $this->assertEquals($data['total']['amount'], 282.43);
-        $this->assertEquals($data['total']['currency'], 'EUR');
+        $this->assertEquals(282.43, $data['total']['amount']);
+        $this->assertEquals('EUR', $data['total']['currency']);
 
         $this->assertArrayHasKey('subtotals', $data);
         $this->assertEquals(282.43, $data['subtotals'][0]['amount']);
@@ -91,23 +91,17 @@ class AjaxEntityTotalsControllerTest extends WebTestCase
         $this->assertJsonResponseStatusCodeEquals($result, 404);
     }
 
-    /**
-     * @return CustomerUser
-     */
-    protected function getCurrentUser()
+    private function getCurrentUser(): CustomerUser
     {
         return $this->getContainer()->get('doctrine')
-            ->getRepository('OroCustomerBundle:CustomerUser')
+            ->getRepository(CustomerUser::class)
             ->findOneBy(['username' => LoadCustomerUserData::AUTH_USER]);
     }
 
-    /**
-     * @return Website
-     */
-    protected function getCurrentWebsite()
+    private function getCurrentWebsite(): Website
     {
         return $this->getContainer()->get('doctrine')
-            ->getRepository('OroWebsiteBundle:Website')
+            ->getRepository(Website::class)
             ->find(1);
     }
 }

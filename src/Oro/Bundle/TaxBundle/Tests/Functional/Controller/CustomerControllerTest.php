@@ -4,6 +4,8 @@ namespace Oro\Bundle\TaxBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadInternalRating;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\TaxBundle\Entity\CustomerTaxCode;
 use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadCustomerTaxCodes;
@@ -12,22 +14,16 @@ use Symfony\Component\DomCrawler\Crawler;
 
 class CustomerControllerTest extends WebTestCase
 {
-    const CUSTOMER_NAME = 'Customer_name';
-    const UPDATED_NAME = 'Customer_name_UP';
+    private const CUSTOMER_NAME = 'Customer_name';
 
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
-        $this->loadFixtures(
-            $this->getFixtureList()
-        );
+        $this->loadFixtures($this->getFixtureList());
     }
 
-    /**
-     * @return int
-     */
-    public function testCreate()
+    public function testCreate(): int
     {
         $crawler = $this->client->request('GET', $this->getUrl('oro_customer_customer_create'));
         $result = $this->client->getResponse();
@@ -46,8 +42,7 @@ class CustomerControllerTest extends WebTestCase
 
         /** @var Customer $taxCustomer */
         $taxCustomer = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroCustomerBundle:Customer')
-            ->getRepository('OroCustomerBundle:Customer')
+            ->getRepository(Customer::class)
             ->findOneBy(['name' => self::CUSTOMER_NAME]);
         $this->assertNotEmpty($taxCustomer);
 
@@ -57,7 +52,7 @@ class CustomerControllerTest extends WebTestCase
     /**
      * @depends testCreate
      */
-    public function testView($id)
+    public function testView(int $id)
     {
         $crawler = $this->client->request(
             'GET',
@@ -72,13 +67,13 @@ class CustomerControllerTest extends WebTestCase
         /** @var CustomerTaxCode $customerTaxCode */
         $customerTaxCode = $this->getReference(LoadCustomerTaxCodes::REFERENCE_PREFIX.'.'.LoadCustomerTaxCodes::TAX_1);
 
-        static::assertStringContainsString($customerTaxCode->getCode(), $html);
+        self::assertStringContainsString($customerTaxCode->getCode(), $html);
 
         $customerTaxCodeLink = $this->getContainer()->get('router')->generate('oro_tax_customer_tax_code_view', [
             'id' => $customerTaxCode->getId(),
         ]);
 
-        static::assertStringContainsString($customerTaxCodeLink, $html);
+        self::assertStringContainsString($customerTaxCodeLink, $html);
     }
 
     /**
@@ -98,7 +93,7 @@ class CustomerControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $grid = $crawler->filter('.inner-grid')->eq(0)->attr('data-page-component-options');
-        static::assertStringContainsString(self::CUSTOMER_NAME, $grid);
+        self::assertStringContainsString(self::CUSTOMER_NAME, $grid);
     }
 
     /**
@@ -180,26 +175,18 @@ class CustomerControllerTest extends WebTestCase
         /** @var CustomerTaxCode $customerTaxCode */
         $customerTaxCode = $this->getReference(LoadCustomerTaxCodes::REFERENCE_PREFIX.'.'.LoadCustomerTaxCodes::TAX_2);
 
-        static::assertStringContainsString($customerTaxCode->getCode(), $html);
-        static::assertStringContainsString('(Defined for Customer Group)', $html);
+        self::assertStringContainsString($customerTaxCode->getCode(), $html);
+        self::assertStringContainsString('(Defined for Customer Group)', $html);
     }
 
-    /**
-     * @param Crawler $crawler
-     * @param string $name
-     * @param Customer $parent
-     * @param CustomerGroup $group
-     * @param AbstractEnumValue $internalRating
-     * @param CustomerTaxCode $customerTaxCode
-     */
-    protected function assertCustomerSave(
+    private function assertCustomerSave(
         Crawler $crawler,
-        $name,
+        string $name,
         Customer $parent,
         CustomerGroup $group,
         AbstractEnumValue $internalRating,
         CustomerTaxCode $customerTaxCode
-    ) {
+    ): void {
         $form = $crawler->selectButton('Save and Close')->form(
             $this->getFormValues($name, $parent, $group, $internalRating, $customerTaxCode)
         );
@@ -211,42 +198,28 @@ class CustomerControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
-        static::assertStringContainsString('Customer has been saved', $html);
+        self::assertStringContainsString('Customer has been saved', $html);
         $this->assertViewPage($html, $name, $parent, $group, $internalRating, $customerTaxCode);
     }
 
-    /**
-     * @param string $html
-     * @param string $name
-     * @param Customer $parent
-     * @param CustomerGroup $group
-     * @param AbstractEnumValue $internalRating
-     * @param CustomerTaxCode $customerTaxCode
-     */
-    protected function assertViewPage(
-        $html,
-        $name,
+    private function assertViewPage(
+        string $html,
+        string $name,
         Customer $parent,
         CustomerGroup $group,
         AbstractEnumValue $internalRating,
         CustomerTaxCode $customerTaxCode
-    ) {
+    ): void {
         $groupName = $group->getName();
-        static::assertStringContainsString($name, $html);
-        static::assertStringContainsString($parent->getName(), $html);
-        static::assertStringContainsString($groupName, $html);
-        static::assertStringContainsString($internalRating->getName(), $html);
-        static::assertStringContainsString($customerTaxCode->getCode(), $html);
+        self::assertStringContainsString($name, $html);
+        self::assertStringContainsString($parent->getName(), $html);
+        self::assertStringContainsString($groupName, $html);
+        self::assertStringContainsString($internalRating->getName(), $html);
+        self::assertStringContainsString($customerTaxCode->getCode(), $html);
     }
 
     /**
-     * @param string $name
-     * @param Customer $parent
-     * @param CustomerGroup $group
-     * @param AbstractEnumValue $internalRating
-     * @param CustomerTaxCode $customerTaxCode
-     *
-     * @return array
+     * {@inheritDoc}
      */
     protected function getFormValues(
         $name,
@@ -265,14 +238,14 @@ class CustomerControllerTest extends WebTestCase
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
     protected function getFixtureList()
     {
         return [
-            'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers',
-            'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadInternalRating',
-            'Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadCustomerTaxCodes',
+            LoadCustomers::class,
+            LoadInternalRating::class,
+            LoadCustomerTaxCodes::class,
         ];
     }
 }

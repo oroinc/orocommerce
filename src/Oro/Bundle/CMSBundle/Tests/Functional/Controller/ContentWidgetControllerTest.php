@@ -4,19 +4,17 @@ namespace Oro\Bundle\CMSBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\CMSBundle\Entity\ContentWidget;
 use Oro\Bundle\CMSBundle\Tests\Functional\ContentWidget\Stub\StubContentWidgetType;
-use Oro\Bundle\OrganizationBundle\Tests\Functional\OrganizationTrait;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
 
 class ContentWidgetControllerTest extends WebTestCase
 {
-    use OrganizationTrait;
-
-    /** @var string */
     private const WIDGET_NAME = 'test-widget';
 
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->loadFixtures([LoadOrganization::class]);
     }
 
     public function testCreate(): ContentWidget
@@ -132,14 +130,13 @@ class ContentWidgetControllerTest extends WebTestCase
     private function getContentWidgetCount(): int
     {
         $qb = $this->getContainer()->get('doctrine')
-            ->getManagerForClass(ContentWidget::class)
             ->getRepository(ContentWidget::class)
             ->createQueryBuilder('cw');
 
         $qb
             ->select($qb->expr()->count('cw'))
             ->where($qb->expr()->eq('cw.organization', ':organization'))
-            ->setParameter('organization', $this->getOrganization());
+            ->setParameter('organization', $this->getReference(LoadOrganization::ORGANIZATION));
 
         return $qb->getQuery()->getSingleScalarResult();
     }

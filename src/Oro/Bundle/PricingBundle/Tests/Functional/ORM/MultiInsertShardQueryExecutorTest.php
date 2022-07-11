@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\ORM;
 
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityBundle\ORM\NativeQueryExecutorHelper;
@@ -25,30 +24,13 @@ class MultiInsertShardQueryExecutorTest extends WebTestCase
 {
     private const BATCH_SIZE = 1;
 
-    /**
-     * @var MultiInsertShardQueryExecutor
-     */
-    protected $insertSelectExecutor;
-
-    /**
-     * @var ShardManager
-     */
-    protected $shardManager;
-
-    /**
-     * @var EntityManager
-     */
-    protected $em;
-
-    /**
-     * @var NativeQueryExecutorHelper
-     */
-    protected $helper;
+    private MultiInsertShardQueryExecutor $insertSelectExecutor;
+    private ShardManager $shardManager;
+    private NativeQueryExecutorHelper $helper;
 
     protected function setUp(): void
     {
         $this->initClient();
-        $this->em = $this->getContainer()->get('doctrine')->getManagerForClass(ProductPrice::class);
         $this->insertSelectExecutor = $this->getContainer()->get('oro_pricing.orm.multi_insert_shard_query_executor');
         $this->insertSelectExecutor->setBatchSize(self::BATCH_SIZE);
         $this->shardManager = $this->getContainer()->get('oro_pricing.shard_manager');
@@ -62,10 +44,10 @@ class MultiInsertShardQueryExecutorTest extends WebTestCase
         $priceListInto = $this->getReference(LoadPriceLists::PRICE_LIST_6);
 
         /** @var ProductPriceRepository $repository */
-        $repository = $this->em->getRepository(ProductPrice::class);
+        $repository = self::getContainer()->get('doctrine')->getRepository(ProductPrice::class);
         $repository->deleteByPriceList($this->shardManager, $priceListInto);
 
-        $qb = $this->em->createQueryBuilder();
+        $qb = $repository->createQueryBuilder('prices');
         $qb->select([
             'UUID()',
             'IDENTITY(prices.product)',
@@ -76,9 +58,8 @@ class MultiInsertShardQueryExecutorTest extends WebTestCase
             (string)$priceListInto->getId(),
             'prices.currency',
         ])
-            ->from(ProductPrice::class, 'prices')
             ->leftJoin(
-                'OroPricingBundle:ProductPrice',
+                ProductPrice::class,
                 'p_check',
                 'WITH',
                 $qb->expr()->andX(
@@ -114,7 +95,7 @@ class MultiInsertShardQueryExecutorTest extends WebTestCase
         $priceListInto = $this->getReference(LoadPriceLists::PRICE_LIST_6);
 
         /** @var ProductPriceRepository $repository */
-        $repository = $this->em->getRepository(ProductPrice::class);
+        $repository = self::getContainer()->get('doctrine')->getRepository(ProductPrice::class);
         $repository->deleteByPriceList($this->shardManager, $priceListInto);
 
         $qb = $this->getInsertQueryBuilder($priceListInto, $priceListFrom, $product);
@@ -139,7 +120,7 @@ class MultiInsertShardQueryExecutorTest extends WebTestCase
         $priceListInto = $this->getReference(LoadPriceLists::PRICE_LIST_6);
 
         /** @var ProductPriceRepository $repository */
-        $repository = $this->em->getRepository(ProductPrice::class);
+        $repository = self::getContainer()->get('doctrine')->getRepository(ProductPrice::class);
         $repository->deleteByPriceList($this->shardManager, $priceListInto);
 
         $qb = $this->getInsertQueryBuilder($priceListInto, $priceListFrom, $product);
@@ -179,16 +160,17 @@ class MultiInsertShardQueryExecutorTest extends WebTestCase
         $priceManager->flush();
     }
 
-    protected function getInsertQueryBuilder(
+    private function getInsertQueryBuilder(
         PriceList $priceListInto,
         PriceList $priceListFrom,
         Product $product
     ): QueryBuilder {
-        $existSubQb = $this->em->createQueryBuilder();
-        $existSubQb->from(ProductPrice::class, 'targetPrices')
+        $repository = self::getContainer()->get('doctrine')->getRepository(ProductPrice::class);
+        $existSubQb = $repository->createQueryBuilder('targetPrices');
+        $existSubQb
             ->select('targetPrices.id')
             ->where($existSubQb->expr()->eq('targetPrices.priceList', ':targetPriceList'));
-        $qb = $this->em->createQueryBuilder();
+        $qb = $repository->createQueryBuilder('prices');
         $qb->select([
             'UUID()',
             'IDENTITY(prices.product)',
@@ -199,16 +181,9 @@ class MultiInsertShardQueryExecutorTest extends WebTestCase
             (string)$priceListInto->getId(),
             'prices.currency',
         ])
-            ->from(ProductPrice::class, 'prices')
             ->where('prices.priceList = :priceList')
             ->andWhere('prices.product = :product')
-            ->andWhere(
-                $qb->expr()->not(
-                    $qb->expr()->exists(
-                        $existSubQb->getDQL()
-                    )
-                )
-            )
+            ->andWhere($qb->expr()->not($qb->expr()->exists($existSubQb->getDQL())))
             ->setParameter('priceList', $priceListFrom)
             ->setParameter('targetPriceList', $priceListInto)
             ->setParameter('product', $product);

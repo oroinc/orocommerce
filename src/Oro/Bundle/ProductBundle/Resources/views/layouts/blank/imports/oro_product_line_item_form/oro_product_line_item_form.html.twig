@@ -21,7 +21,6 @@
     {% if not is_configurable_product_type(product.type) %}
         {% set attr = layout_attr_defaults(attr, {
             '~class': ' product-item__qty__current-grid' ~ ' product-item__qty__current-grid--' ~ class_prefix,
-            'data-page-component-init-on': 'asap',
             'data-page-component-module': 'oroproduct/js/app/components/product-unit-select-component',
             'data-page-component-options': {
                 'singleUnitMode': singleUnitMode,
@@ -120,6 +119,13 @@
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
+{% endblock %}
+
+{% block __oro_product_line_item_form__line_item_form_start_widget %}
+    {% set attr = attr|merge({
+        'data-prevent-submit': ''
+    }) %}
+    {{ parent_block_widget(block, {attr: attr}) }}
 {% endblock %}
 
 {% block __oro_product_line_item_form__line_item_form_buttons_widget %}

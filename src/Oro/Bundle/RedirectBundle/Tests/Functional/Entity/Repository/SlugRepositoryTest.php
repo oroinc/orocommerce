@@ -7,6 +7,7 @@ use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
@@ -22,22 +23,19 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
  */
 class SlugRepositoryTest extends WebTestCase
 {
-    /**
-     * @var SlugRepository
-     */
-    protected $repository;
-
-    /**
-     * @var ScopeManager
-     */
-    protected $scopeManager;
+    private SlugRepository $repository;
+    private ScopeManager $scopeManager;
 
     protected function setUp(): void
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
+            $this->generateBasicAuthHeader(
+                LoadCustomerUserData::AUTH_USER,
+                LoadCustomerUserData::AUTH_PW
+            )
         );
+        $this->loadFixtures([LoadSlugScopesData::class]);
 
         $this->client->useHashNavigation(true);
         $this->repository = $this->getContainer()
@@ -46,7 +44,7 @@ class SlugRepositoryTest extends WebTestCase
         $this->scopeManager = $this->getContainer()->get('oro_scope.scope_manager');
 
         $organization = $this->getContainer()->get('doctrine')
-            ->getRepository('OroOrganizationBundle:Organization')
+            ->getRepository(Organization::class)
             ->getFirst();
         $token = new UsernamePasswordOrganizationToken(
             LoadCustomerUserData::AUTH_USER,
@@ -55,14 +53,15 @@ class SlugRepositoryTest extends WebTestCase
             $organization
         );
         $this->client->getContainer()->get('security.token_storage')->setToken($token);
-
-        $this->loadFixtures([LoadSlugScopesData::class]);
     }
 
     public function testGetSlugByUrlAndScopeCriteriaAnonymous()
     {
         $criteria = $this->scopeManager->getCriteria(ScopeManager::BASE_SCOPE);
-        $slug = $this->repository->getSlugByUrlAndScopeCriteria(LoadSlugsData::SLUG_URL_ANONYMOUS, $criteria);
+        $slug = $this->repository->getSlugByUrlAndScopeCriteria(
+            LoadSlugsData::SLUG_URL_ANONYMOUS,
+            $criteria
+        );
         $expected = $this->getReference(LoadSlugsData::SLUG_URL_ANONYMOUS);
 
         $this->assertNotEmpty($slug);
@@ -167,19 +166,14 @@ class SlugRepositoryTest extends WebTestCase
 
     /**
      * @dataProvider findAllByPatternWithoutScopeDataProvider
-     * @param string $pattern
-     * @param array $expected
      */
-    public function testFindAllDirectUrlsByPattern($pattern, array $expected)
+    public function testFindAllDirectUrlsByPattern(string $pattern, array $expected)
     {
         $actual = $this->repository->findAllDirectUrlsByPattern($pattern);
         $this->assertEquals($expected, $actual);
     }
 
-    /**
-     * @return array
-     */
-    public function findAllByPatternWithoutScopeDataProvider()
+    public function findAllByPatternWithoutScopeDataProvider(): array
     {
         return [
             [
@@ -267,7 +261,7 @@ class SlugRepositoryTest extends WebTestCase
                 'routeParameters' => $slug1->getRouteParameters(),
                 'url' => $slug1->getUrl(),
                 'slugPrototype' => $slug1->getSlugPrototype(),
-                'localization_id' => $slug1->getLocalization() ? $slug1->getLocalization()->getId() : null
+                'localization_id' => $slug1->getLocalization()?->getId()
             ]
         ];
         $this->assertEquals($expected, $actual);
@@ -429,7 +423,7 @@ class SlugRepositoryTest extends WebTestCase
     {
         $actualResult = $this->repository->isSlugForRouteExists($routeName);
 
-        static::assertEquals($expectedResult, $actualResult);
+        self::assertEquals($expectedResult, $actualResult);
     }
 
     public function isSlugForRouteExistsDataProvider(): array

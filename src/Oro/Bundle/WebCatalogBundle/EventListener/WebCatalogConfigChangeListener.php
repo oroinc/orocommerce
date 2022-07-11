@@ -6,6 +6,9 @@ use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * Dispatches oro_website_search.reindexation_request event on oro_web_catalog.web_catalog setting change.
+ */
 class WebCatalogConfigChangeListener
 {
     const WEB_CATALOG_CONFIGURATION_NAME = 'oro_web_catalog.web_catalog';
@@ -37,6 +40,6 @@ class WebCatalogConfigChangeListener
      */
     protected function getReindexationRequestEvent(ConfigUpdateEvent $event)
     {
-        return new ReindexationRequestEvent();
+        return new ReindexationRequestEvent([], [], [], true, ['main']);
     }
 }

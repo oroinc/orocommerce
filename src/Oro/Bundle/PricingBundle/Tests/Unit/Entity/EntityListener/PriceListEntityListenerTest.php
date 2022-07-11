@@ -2,13 +2,17 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Entity\EntityListener;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceListAssignedProductsTopic;
 use Oro\Bundle\PricingBundle\Cache\RuleCache;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\EntityListener\PriceListEntityListener;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
+use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
 use Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerHandler;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\Model\PriceRuleLexemeTriggerHandler;
@@ -241,6 +245,31 @@ class PriceListEntityListenerTest extends \PHPUnit\Framework\TestCase
         $priceList = $this->getEntity(PriceList::class, ['id' => 2]);
         $priceList->addPriceRule($priceRule);
 
+        $cpl1 = $this->getEntity(CombinedPriceList::class, ['id' => 1]);
+        $cpl2 = $this->getEntity(CombinedPriceList::class, ['id' => 2]);
+        $cpls = new \ArrayIterator([$cpl1, $cpl2]);
+        $repo = $this->createMock(CombinedPriceListRepository::class);
+        $repo->expects($this->once())
+            ->method('getCombinedPriceListsByPriceList')
+            ->with($priceList)
+            ->willReturn($cpls);
+
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->expects($this->any())
+            ->method('getRepository')
+            ->with(CombinedPriceList::class)
+            ->willReturn($repo);
+        $em->expects($this->exactly(2))
+            ->method('remove')
+            ->withConsecutive(
+                [$cpl1],
+                [$cpl2]
+            );
+        $args = $this->createMock(LifecycleEventArgs::class);
+        $args->expects($this->any())
+            ->method('getEntityManager')
+            ->willReturn($em);
+
         $this->priceRuleLexemeTriggerHandler->expects($this->once())
             ->method('findEntityLexemes')
             ->willReturn([]);
@@ -253,6 +282,6 @@ class PriceListEntityListenerTest extends \PHPUnit\Framework\TestCase
             );
         $this->triggerHandler->expects($this->once())
             ->method('handlePriceListStatusChange');
-        $this->listener->preRemove($priceList);
+        $this->listener->preRemove($priceList, $args);
     }
 }

@@ -13,9 +13,6 @@ Feature: Country and region translations front-store
   Scenario: Feature Background
     Given I enable the existing localizations
     And I login as administrator
-    When I go to System / Localization / Translations
-    And I click "Update Cache"
-    Then I should see "Translation Cache has been updated" flash message
 
   Scenario: frontend-customer-customer-address-grid
     Given I signed in as AmandaRCole@example.org on the store frontend

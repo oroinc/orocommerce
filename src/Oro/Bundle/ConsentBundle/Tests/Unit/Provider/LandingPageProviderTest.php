@@ -3,15 +3,13 @@
 namespace Oro\Bundle\ConsentBundle\Tests\Unit\Provider;
 
 use Doctrine\Common\Collections\Collection;
-use Doctrine\Persistence\ObjectManager;
-use Doctrine\Persistence\ObjectRepository;
+use Doctrine\ORM\EntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\ConsentBundle\Provider\LandingPageProvider;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class LandingPageProviderTest extends \PHPUnit\Framework\TestCase
 {
@@ -20,7 +18,7 @@ class LandingPageProviderTest extends \PHPUnit\Framework\TestCase
     /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrine;
 
-    /** @var ObjectRepository|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var EntityRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $repository;
 
     /** @var LandingPageProvider */
@@ -29,16 +27,13 @@ class LandingPageProviderTest extends \PHPUnit\Framework\TestCase
     /** @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $localizationHelper;
 
-    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $translator;
-
     protected function setUp(): void
     {
-        $this->repository = $this->createMock(ObjectRepository::class);
+        $this->repository = $this->createMock(EntityRepository::class);
         $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->localizationHelper = $this->createMock(LocalizationHelper::class);
-        $this->translator = $this->createMock(TranslatorInterface::class);
-        $this->provider = new LandingPageProvider($this->doctrine, $this->localizationHelper, $this->translator);
+
+        $this->provider = new LandingPageProvider($this->doctrine, $this->localizationHelper);
     }
 
     /**
@@ -51,13 +46,9 @@ class LandingPageProviderTest extends \PHPUnit\Framework\TestCase
                 ->method('findBy')
                 ->willReturn($variants);
 
-            $objectManager = $this->createMock(ObjectManager::class);
-            $objectManager->expects($this->once())
+            $this->doctrine->expects($this->once())
                 ->method('getRepository')
                 ->willReturn($this->repository);
-            $this->doctrine->expects($this->once())
-                ->method('getManagerForClass')
-                ->willReturn($objectManager);
             $this->localizationHelper->expects($this->any())
                 ->method('getLocalizedValue')
                 ->willReturnCallback(function (Collection $collection) {

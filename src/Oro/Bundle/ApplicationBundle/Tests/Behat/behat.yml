@@ -228,6 +228,11 @@ oro_behat_extension:
         locator: '//h2[contains(@class,"product-item__title product-item__title")]'
         type: xpath
 
+    Product Name in Embedded Block:
+      selector:
+        locator: '//h3[contains(@class,"product-item__title product-item__title")]'
+        type: xpath
+
     Green Box:
       selector:
         locator: '//div[@class="shopping-lists"]'
@@ -235,12 +240,12 @@ oro_behat_extension:
 
     Update Shopping List button:
       selector:
-        locator: '//div/a[contains(text(),"Update Shopping List")]'
+        locator: '//div/button[contains(text(),"Update Shopping List")]'
         type: xpath
 
     Add to Shopping List button:
       selector:
-        locator: '//div/a[contains(text(),"Add to Shopping List")]'
+        locator: '//div/button[contains(text(),"Add to Shopping List")]'
         type: xpath
 
     Gallery View:
@@ -369,7 +374,7 @@ oro_behat_extension:
 
     Ship to this address:
       selector:
-        locator: '//span[text()="Ship to this address"]'
+        locator: '//label[text()="Ship to this address"]'
         type: xpath
 
     Use billing address:
@@ -383,7 +388,7 @@ oro_behat_extension:
         type: xpath
 
     Add a Note to This Item:
-      selector: 'label.custom-checkbox:contains("Add a Note to This Item")'
+      selector: 'label.request-form-editnote__label:contains("Add a Note to This Item")'
 
     Frontstore RFQ Line Item Form1:
       selector: 'form[name="oro_rfp_frontend_request"]'
@@ -511,5 +516,5 @@ oro_behat_extension:
 
     Add to New Front Shopping List:
       selector:
-        locator: '//div/a[@title="Add to New Front Shopping List"]'
+        locator: '//div/button[@title="Add to New Front Shopping List"]'
         type: xpath

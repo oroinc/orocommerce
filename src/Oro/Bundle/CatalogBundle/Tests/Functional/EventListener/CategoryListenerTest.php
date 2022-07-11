@@ -2,40 +2,25 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Functional\EventListener;
 
-use Doctrine\ORM\EntityManager;
-use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\CategoryTitle;
-use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Tests\Functional\CatalogTrait;
-use Oro\Bundle\OrganizationBundle\Tests\Functional\OrganizationTrait;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class CategoryListenerTest extends WebTestCase
 {
-    use OrganizationTrait, CatalogTrait;
+    use CatalogTrait;
 
-    /** @var ManagerRegistry */
-    private $doctrine;
-
-    /** @var EntityManager */
-    private $entityManager;
-
-    /** @var CategoryRepository */
-    private $categoryRepo;
-
-    /** @var Category */
-    private $rootCategory;
+    private EntityManagerInterface $entityManager;
+    private Category $rootCategory;
 
     protected function setUp(): void
     {
         $this->initClient();
 
-        /** @var CategoryRepository $categoryRepo */
-        $this->doctrine = $this->getContainer()->get('doctrine');
-        $this->categoryRepo = $this->doctrine->getRepository(Category::class);
         $this->rootCategory = $this->getRootCategory();
-        $this->entityManager = $this->doctrine->getManagerForClass(Category::class);
+        $this->entityManager = self::getContainer()->get('doctrine')->getManagerForClass(Category::class);
     }
 
     public function testPostPersist(): Category

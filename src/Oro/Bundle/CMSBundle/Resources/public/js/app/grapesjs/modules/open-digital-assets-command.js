@@ -9,7 +9,8 @@ const openDigitalAssetsCommand = {
         routeParams: null,
         loadingElement: null,
         target: null,
-        onSelect: function() {}
+        onSelect: function() {},
+        onClose: function() {}
     },
 
     dialog: null,
@@ -25,7 +26,10 @@ const openDigitalAssetsCommand = {
      * @returns {openDigitalAssetsCommand}
      */
     run: function(editor, sender, options) {
-        this.options = options;
+        this.options = {
+            ...this.options,
+            ...options
+        };
 
         if (!options.routeName) {
             throw new TypeError('Missing required option: routeName');
@@ -33,7 +37,7 @@ const openDigitalAssetsCommand = {
 
         this.dialog = this._openChooseDialog(editor);
         this.dialog.on('grid-row-select', this._onGridRowSelect.bind(this, editor));
-        this.dialog.on('close', () => editor.stopCommand(this.id));
+        this.dialog.on('close', this._onCloseDialog.bind(this, editor));
         this.dialog.render();
 
         return this;
@@ -43,6 +47,11 @@ const openDigitalAssetsCommand = {
         this.dialog.dispose();
 
         return this;
+    },
+
+    _onCloseDialog(editor) {
+        this.options.onClose(this);
+        editor.stopCommand(this.id);
     },
 
     /**
@@ -65,7 +74,8 @@ const openDigitalAssetsCommand = {
             ),
             loadingElement: this.options.loadingElement || container,
             dialogOptions: {
-                appendTo: container
+                appendTo: container,
+                modal: true
             }
         });
     }

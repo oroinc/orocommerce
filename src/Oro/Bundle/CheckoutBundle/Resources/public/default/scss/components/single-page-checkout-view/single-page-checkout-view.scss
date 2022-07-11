@@ -158,6 +158,10 @@
         }
     }
 
+    .checkout {
+        padding: $checkout-padding-narrow;
+    }
+
     .checkout-form__payment-methods {
         max-width: 300px;
         padding: 0 0 0 ($offset-x-m + 2);
@@ -184,7 +188,7 @@
     }
 }
 
-@include breakpoint('tablet') {
+@include breakpoint('single-page-checkout-overflow') {
     .single-page-checkout-view {
         &__column {
             position: relative;

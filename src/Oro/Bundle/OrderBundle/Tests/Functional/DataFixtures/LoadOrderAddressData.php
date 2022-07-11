@@ -106,13 +106,13 @@ class LoadOrderAddressData extends AbstractFixture implements DependentFixtureIn
     protected function createOrderAddress(ObjectManager $manager, $name, array $address)
     {
         /** @var Country $country */
-        $country = $manager->getReference('OroAddressBundle:Country', $address['country']);
+        $country = $manager->getReference(Country::class, $address['country']);
         if (!$country) {
             throw new \RuntimeException('Can\'t find country with ISO ' . $address['country']);
         }
 
         /** @var Region $region */
-        $region = $manager->getReference('OroAddressBundle:Region', $address['region']);
+        $region = $manager->getReference(Region::class, $address['region']);
         if (!$region) {
             throw new \RuntimeException(
                 sprintf('Can\'t find region with code %s', $address['region'])

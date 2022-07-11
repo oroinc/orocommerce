@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\EventListener;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
@@ -10,6 +10,7 @@ use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Filter\PriceListsFilter;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
@@ -23,12 +24,9 @@ abstract class AbstractPriceListRelationDataGridListener implements FeatureToggl
 
     const PRICE_LIST_KEY = 'price_list';
 
-    /**
-     * @var Registry
-     */
-    protected $registry;
+    protected ManagerRegistry $registry;
 
-    public function __construct(Registry $registry)
+    public function __construct(ManagerRegistry $registry)
     {
         $this->registry = $registry;
     }
@@ -94,7 +92,7 @@ abstract class AbstractPriceListRelationDataGridListener implements FeatureToggl
                     'field_type' => EntityType::class,
                     'field_options' => [
                         'multiple' => false,
-                        'class' => 'Oro\Bundle\PricingBundle\Entity\PriceList',
+                        'class' => PriceList::class,
                         'choice_label' => 'name'
                     ]
                 ]

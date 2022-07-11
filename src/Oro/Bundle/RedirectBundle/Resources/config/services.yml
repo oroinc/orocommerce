@@ -126,7 +126,6 @@ services:
         class: Oro\Bundle\RedirectBundle\EventListener\SlugListener
         public: false
         arguments:
-            - '@doctrine'
             - '@oro_message_queue.client.message_producer'
         tags:
             - { name: doctrine.event_listener, event: onFlush }
@@ -168,8 +167,8 @@ services:
         class: Oro\Bundle\RedirectBundle\Generator\UniqueSlugResolver
         public: false
         arguments:
-            - "@doctrine"
-            - '@oro_security.acl_helper'
+            - '@doctrine'
+            - '@oro_redirect.helper.slug_query_restriction_helper'
             - '@event_dispatcher'
         tags:
             - { name: doctrine.event_listener, event: onFlush }
@@ -334,9 +333,8 @@ services:
     oro_redirect.slug_entity_finder:
         class: Oro\Bundle\RedirectBundle\Provider\SlugEntityFinder
         arguments:
-            - '@doctrine'
+            - '@oro_redirect.repository.slug'
             - '@oro_scope.scope_manager'
-            - '@oro_security.acl_helper'
 
     oro_redirect.sluggable_entity_finder:
         class: Oro\Bundle\RedirectBundle\Provider\SluggableEntityFinder
@@ -487,6 +485,21 @@ services:
             - '@doctrine'
         public: false
 
+    oro_redirect.helper.slug_query_restriction_helper:
+        class: Oro\Bundle\RedirectBundle\Helper\DefaultSlugQueryQueryRestrictionHelper
+
     Oro\Bundle\RedirectBundle\EntityConfig\SlugEntityConfiguration:
         tags:
             - oro_entity_config.validation.entity_config
+
+    oro_redirect.repository.slug:
+        alias: Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository
+
+    Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository:
+        parent: oro_entity.abstract_repository
+        arguments:
+            - 'Oro\Bundle\RedirectBundle\Entity\Slug'
+        calls:
+            - ['setSlugQueryRestrictionHelper', ['@oro_redirect.helper.slug_query_restriction_helper']]
+        tags:
+            - { name: doctrine.repository_service }

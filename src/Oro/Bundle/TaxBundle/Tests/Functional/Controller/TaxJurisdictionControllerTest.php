@@ -10,35 +10,29 @@ use Symfony\Component\DomCrawler\Form;
 
 class TaxJurisdictionControllerTest extends WebTestCase
 {
-    const CODE = 'code';
-    const DESCRIPTION = 'description';
-    const COUNTRY = 'ZW';
-    const COUNTRY_FULL = 'Zimbabwe';
-    const STATE = 'ZW-MA';
-    const STATE_FULL = 'Manicaland';
-
-    /** @var array */
-    protected static $zipCodes = [
+    private const CODE = 'code';
+    private const DESCRIPTION = 'description';
+    private const COUNTRY = 'ZW';
+    private const COUNTRY_FULL = 'Zimbabwe';
+    private const STATE = 'ZW-MA';
+    private const STATE_FULL = 'Manicaland';
+    private const ZIP_CODES = [
         ['zipRangeStart' => '11111', 'zipRangeEnd' => null],
         ['zipRangeStart' => '00001', 'zipRangeEnd' => '000003'],
         ['zipRangeStart' => null, 'zipRangeEnd' => '22222'],
     ];
-
-    const CODE_UPDATED = 'codeUpdated';
-    const DESCRIPTION_UPDATED = 'description updated';
-    const COUNTRY_UPDATED = 'HN';
-    const COUNTRY_FULL_UPDATED = 'Honduras';
-    const STATE_UPDATED = 'HN-CH';
-    const STATE_FULL_UPDATED = 'Choluteca';
-
-    /** @var array */
-    protected static $zipCodesUpdated = [
+    private const CODE_UPDATED = 'codeUpdated';
+    private const DESCRIPTION_UPDATED = 'description updated';
+    private const COUNTRY_UPDATED = 'HN';
+    private const COUNTRY_FULL_UPDATED = 'Honduras';
+    private const STATE_UPDATED = 'HN-CH';
+    private const STATE_FULL_UPDATED = 'Choluteca';
+    private const ZIP_CODES_UPDATED = [
         ['zipRangeStart' => '11111', 'zipRangeEnd' => null],
         ['zipRangeStart' => '00001', 'zipRangeEnd' => '000005'],
         ['zipRangeStart' => null, 'zipRangeEnd' => '22222'],
     ];
-
-    const SAVE_MESSAGE = 'Tax Jurisdiction has been saved';
+    private const SAVE_MESSAGE = 'Tax Jurisdiction has been saved';
 
     protected function setUp(): void
     {
@@ -51,10 +45,10 @@ class TaxJurisdictionControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_tax_jurisdiction_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        static::assertStringContainsString('tax-jurisdiction-grid', $crawler->html());
+        self::assertStringContainsString('tax-jurisdiction-grid', $crawler->html());
     }
 
-    public function testCreate()
+    public function testCreate(): int
     {
         $crawler = $this->client->request('GET', $this->getUrl('oro_tax_jurisdiction_create'));
         $result = $this->client->getResponse();
@@ -68,13 +62,12 @@ class TaxJurisdictionControllerTest extends WebTestCase
             self::COUNTRY_FULL,
             self::STATE,
             self::STATE_FULL,
-            self::$zipCodes
+            self::ZIP_CODES
         );
 
         /** @var TaxJurisdiction $taxJurisdiction */
         $taxJurisdiction = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroTaxBundle:TaxJurisdiction')
-            ->getRepository('OroTaxBundle:TaxJurisdiction')
+            ->getRepository(TaxJurisdiction::class)
             ->findOneBy(['code' => self::CODE]);
         $this->assertNotEmpty($taxJurisdiction);
 
@@ -82,11 +75,9 @@ class TaxJurisdictionControllerTest extends WebTestCase
     }
 
     /**
-     * @paran $id int
-     * @return int
      * @depends testCreate
      */
-    public function testUpdate($id)
+    public function testUpdate(int $id): int
     {
         $crawler = $this->client->request(
             'GET',
@@ -103,7 +94,7 @@ class TaxJurisdictionControllerTest extends WebTestCase
             self::COUNTRY_FULL_UPDATED,
             self::STATE_UPDATED,
             self::STATE_FULL_UPDATED,
-            self::$zipCodesUpdated
+            self::ZIP_CODES_UPDATED
         );
 
         return $id;
@@ -111,9 +102,8 @@ class TaxJurisdictionControllerTest extends WebTestCase
 
     /**
      * @depends testUpdate
-     * @param int $id
      */
-    public function testView($id)
+    public function testView(int $id)
     {
         $crawler = $this->client->request(
             'GET',
@@ -124,7 +114,7 @@ class TaxJurisdictionControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
-        static::assertStringContainsString(self::CODE_UPDATED . ' - View - Tax Jurisdictions - Taxes', $html);
+        self::assertStringContainsString(self::CODE_UPDATED . ' - View - Tax Jurisdictions - Taxes', $html);
 
         $this->assertViewPage(
             $html,
@@ -135,26 +125,16 @@ class TaxJurisdictionControllerTest extends WebTestCase
         );
     }
 
-    /**
-     * @param Crawler $crawler
-     * @param string  $code
-     * @param string  $description
-     * @param string  $country
-     * @param string  $countryFull
-     * @param string  $state
-     * @param string  $stateFull
-     * @param array   $zipCodes
-     */
-    protected function assertTaxJurisdictionSave(
+    private function assertTaxJurisdictionSave(
         Crawler $crawler,
-        $code,
-        $description,
-        $country,
-        $countryFull,
-        $state,
-        $stateFull,
+        string $code,
+        string $description,
+        string $country,
+        string $countryFull,
+        string $state,
+        string $stateFull,
         array $zipCodes
-    ) {
+    ): void {
         $token = $this->getCsrfToken('oro_tax_jurisdiction_type')->getValue();
 
         $formData = [
@@ -177,22 +157,19 @@ class TaxJurisdictionControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
-        static::assertStringContainsString(self::SAVE_MESSAGE, $html);
+        self::assertStringContainsString(self::SAVE_MESSAGE, $html);
         $this->assertViewPage($html, $code, $description, $countryFull, $stateFull);
     }
 
-    /**
-     * @param Form $form
-     * @param array $formData
-     * @param string $country
-     * @param string $countryFull
-     * @param string $state
-     * @param string $stateFull
-     * @return array
-     */
-    protected function setCountryAndState(Form $form, array $formData, $country, $countryFull, $state, $stateFull)
-    {
-        $doc = new \DOMDocument("1.0");
+    private function setCountryAndState(
+        Form $form,
+        array $formData,
+        string $country,
+        string $countryFull,
+        string $state,
+        string $stateFull
+    ): array {
+        $doc = new \DOMDocument('1.0');
         $doc->loadHTML(
             '<select name="oro_tax_jurisdiction_type[country]" ' .
             'id="oro_tax_jurisdiction_type_country" ' .
@@ -218,18 +195,16 @@ class TaxJurisdictionControllerTest extends WebTestCase
         return $formData;
     }
 
-    /**
-     * @param string $html
-     * @param string $code
-     * @param string $description
-     * @param string $country
-     * @param string $state
-     */
-    protected function assertViewPage($html, $code, $description, $country, $state)
-    {
-        static::assertStringContainsString($code, $html);
-        static::assertStringContainsString($description, $html);
-        static::assertStringContainsString($country, $html);
-        static::assertStringContainsString($state, $html);
+    private function assertViewPage(
+        string $html,
+        string $code,
+        string $description,
+        string $country,
+        string $state
+    ): void {
+        self::assertStringContainsString($code, $html);
+        self::assertStringContainsString($description, $html);
+        self::assertStringContainsString($country, $html);
+        self::assertStringContainsString($state, $html);
     }
 }

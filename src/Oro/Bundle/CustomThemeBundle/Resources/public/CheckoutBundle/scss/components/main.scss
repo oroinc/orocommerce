@@ -19,6 +19,10 @@
     margin: 0;
 }
 
+.checkout-form__payment-container {
+    max-width: 400px;
+}
+
 @include breakpoint('tablet') {
     .checkout-container {
         padding-left: 0;

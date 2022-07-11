@@ -101,7 +101,7 @@ class ReindexProductsByAttributesProcessor implements MessageProcessorInterface,
             $productIds = $repository->getProductIdsByAttributesId($attributeIds);
             if ($productIds) {
                 $this->dispatcher->dispatch(
-                    new ReindexationRequestEvent([Product::class], [], $productIds),
+                    new ReindexationRequestEvent([Product::class], [], $productIds, true, ['main']),
                     ReindexationRequestEvent::EVENT_NAME
                 );
             }

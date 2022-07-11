@@ -20,8 +20,6 @@ Feature: Single Page Checkout With Line Items Grid From Shopping List
     And I go to System / Localization / Translations
     And I filter Key as equal to "oro.checkout.order_summary.unit"
     And I edit "oro.checkout.order_summary.unit" Translated Value as "Unit"
-    And I click "Update Cache"
-    And I should see "Translation Cache has been updated" flash message
     And I set configuration property "oro_checkout.use_new_layout_for_checkout_page" to "1"
     And I go to System/Workflows
     And I click "Activate" on row "Single Page Checkout" in grid

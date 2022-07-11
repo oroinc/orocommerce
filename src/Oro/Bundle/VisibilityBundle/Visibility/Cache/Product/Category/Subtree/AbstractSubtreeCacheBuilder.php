@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\Subtree;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
@@ -21,7 +21,7 @@ abstract class AbstractSubtreeCacheBuilder
     protected $excludedCategories = [];
 
     /**
-     * @var Registry
+     * @var ManagerRegistry
      */
     protected $registry;
 
@@ -41,7 +41,7 @@ abstract class AbstractSubtreeCacheBuilder
     protected $scopeManager;
 
     public function __construct(
-        Registry $registry,
+        ManagerRegistry $registry,
         CategoryVisibilityResolverInterface $categoryVisibilityResolver,
         ConfigManager $configManager,
         ScopeManager $scopeManager

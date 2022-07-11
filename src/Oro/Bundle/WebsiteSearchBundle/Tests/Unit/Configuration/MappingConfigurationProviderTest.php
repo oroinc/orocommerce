@@ -70,6 +70,7 @@ class MappingConfigurationProviderTest extends \PHPUnit\Framework\TestCase
                         'fulltext' => true,
                         'organization_id' => null,
                         'store' => true,
+                        'group' => 'main'
                     ],
                     'test_first_repeating_field' => [
                         'name' => 'test_first_repeating_field',
@@ -77,6 +78,7 @@ class MappingConfigurationProviderTest extends \PHPUnit\Framework\TestCase
                         'fulltext' => false,
                         'organization_id' => null,
                         'store' => true,
+                        'group' => 'main'
                     ],
                     'test_second_repeating_field' => [
                         'name' => 'test_second_repeating_field',
@@ -84,6 +86,7 @@ class MappingConfigurationProviderTest extends \PHPUnit\Framework\TestCase
                         'fulltext' => false,
                         'organization_id' => null,
                         'store' => true,
+                        'group' => 'main'
                     ],
                     'custom_field' => [
                         'name' => 'custom_field',
@@ -91,6 +94,7 @@ class MappingConfigurationProviderTest extends \PHPUnit\Framework\TestCase
                         'fulltext' => true,
                         'organization_id' => null,
                         'store' => true,
+                        'group' => 'main'
                     ]
                 ]
             ],
@@ -103,6 +107,7 @@ class MappingConfigurationProviderTest extends \PHPUnit\Framework\TestCase
                         'fulltext' => true,
                         'organization_id' => null,
                         'store' => true,
+                        'group' => 'main'
                     ],
                     'price' => [
                         'name' => 'price',
@@ -110,6 +115,7 @@ class MappingConfigurationProviderTest extends \PHPUnit\Framework\TestCase
                         'fulltext' => false,
                         'organization_id' => null,
                         'store' => true,
+                        'group' => 'main'
                     ],
                 ]
             ]

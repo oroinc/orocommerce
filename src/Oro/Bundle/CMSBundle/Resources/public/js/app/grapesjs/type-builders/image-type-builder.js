@@ -9,6 +9,11 @@ const ImageTypeBuilder = BaseTypeBuilder.extend({
         defaults: {
             tagName: 'img',
             previewMetadata: {}
+        },
+
+        removed() {
+            const picture = this.closestType('picture');
+            picture && picture.remove();
         }
     },
 
@@ -17,6 +22,8 @@ const ImageTypeBuilder = BaseTypeBuilder.extend({
             if (e) {
                 e.stopPropagation();
             }
+
+            this.model.set('isNew', !e);
 
             if (this.model.get('editable')) {
                 this._openDigitalAssetManager(this.model);
@@ -40,9 +47,25 @@ const ImageTypeBuilder = BaseTypeBuilder.extend({
                         digitalAssetImageComponentModel.set('src', url).addAttributes({
                             alt: title || ''
                         });
+
+                        digitalAssetImageComponentModel.set('isNew', false);
+                    },
+                    onClose() {
+                        if (digitalAssetImageComponentModel.get('isNew')) {
+                            digitalAssetImageComponentModel.em.get('Editor').runCommand('tlb-delete');
+                        }
                     }
                 }
             );
+        },
+
+        onError(...args) {
+            this.constructor.__super__.onError.apply(this, args);
+
+            const parent = this.el.parentNode;
+            if (parent.tagName === 'PICTURE') {
+                parent.querySelectorAll('source').forEach(child => child.srcset = '');
+            }
         }
     },
 

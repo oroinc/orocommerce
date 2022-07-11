@@ -14,6 +14,11 @@ define(function(require) {
      */
     function getTags(element, mirror = false) {
         let _res = [];
+
+        if (element.nodeType === 3) {
+            return _res;
+        }
+
         _res.push(computedTagData(element, mirror));
 
         for (let i = 0; i < element.childNodes.length; i++) {
@@ -109,15 +114,21 @@ define(function(require) {
                 }
             }, this);
 
-            _.each(_res, BlockManager.remove);
+            _.each(_res, id => BlockManager.remove(id));
         },
 
         /**
          * Get element tags
-         * @param element
+         * @param {Node|Node[]} element
          * @returns {Array}
          */
         getTags: function(element, mirror = false) {
+            if (Array.isArray(element)) {
+                return element.reduce((res, child) => _.uniq([
+                    ...res,
+                    ...getTags(child, mirror)
+                ]), []);
+            }
             return _.uniq(getTags(element, mirror));
         },
 
@@ -193,7 +204,7 @@ define(function(require) {
          * @param template
          */
         checkTemplate: function(template) {
-            return _.every(this.getTags($('<div />').html(stripRestrictedAttrs(template)).get(0)), function(tag) {
+            return _.every(this.getTags(this.stringToNodes(stripRestrictedAttrs(template))), function(tag) {
                 const isAllowed = this.isAllowedTag(tag);
                 if (!isAllowed) {
                     error.showErrorInConsole('Tag "' + tag + '" is not allowed');
@@ -212,9 +223,7 @@ define(function(require) {
             const restricted = [];
 
             try {
-                _.each(this.getTags(
-                    $('<div />').html(stripRestrictedAttrs(template)).get(0), nativeOut
-                ), function(tag) {
+                _.each(this.getTags(this.stringToNodes(stripRestrictedAttrs(template)), nativeOut), function(tag) {
                     if (!this.isAllowedTag(tag)) {
                         restricted.push(_.isArray(tag)
                             ? this.normalize(!nativeOut ? tag : tag[2])
@@ -272,6 +281,17 @@ define(function(require) {
                 attrs = attrs.map(attr => attr[0] === '!' ? attr.substr(1) : attr);
                 return [tagName, attrs.concat(globalAttr)];
             });
+        },
+
+        /**
+         * Convert html string to nodes tree
+         * @param {string} html
+         * @returns {Node[]}
+         */
+        stringToNodes(html) {
+            const domParser = new DOMParser();
+            const document = domParser.parseFromString(html, 'text/html');
+            return document.body.childNodes.length > 1 ? [...document.body.childNodes] : document.body.firstChild;
         }
     };
 

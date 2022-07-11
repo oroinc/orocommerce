@@ -56,8 +56,8 @@ class ProductIndexSchedulerTest extends \PHPUnit\Framework\TestCase
 
         $this->reindexManager->expects($this->once())
             ->method('reindexProducts')
-            ->with($productIds, $websiteId, true);
+            ->with($productIds, $websiteId, true, ['main']);
 
-        $this->productIndexScheduler->scheduleProductsReindex($categories, $websiteId);
+        $this->productIndexScheduler->scheduleProductsReindex($categories, $websiteId, true, ['main']);
     }
 }

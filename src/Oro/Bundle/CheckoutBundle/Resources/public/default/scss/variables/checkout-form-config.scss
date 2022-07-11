@@ -25,6 +25,7 @@ $checkout-form-payment-methods-item-float: left !default;
 $checkout-form-payment-methods-item-margin: 0 $offset-x-m 0 0 !default;
 
 $checkout-form-payment-methods-form-margin: $offset-y 0 0 !default;
+$checkout-form-payment-methods-list-form-margin: 0 0 $offset-y !default;
 
 $checkout-form-asterix-offset: 0 $offset-x-s !default;
 $checkout-form-asterix-color: get-color('ui', 'error-dark') !default;

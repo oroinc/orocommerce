@@ -67,6 +67,10 @@
             display: flex;
             flex-direction: column;
             min-height: 100%;
+
+            &.is-configurable {
+                padding-bottom: $product-item-select-row-gallery-view-height;
+            }
         }
     }
 
@@ -317,6 +321,7 @@
         padding-right: $offset-x-s;
 
         &--gallery-view {
+            min-height: $product-item-select-row-gallery-view-height;
             padding-top: $offset-x-s;
         }
 
@@ -325,6 +330,16 @@
             top: 100%;
             padding-top: $offset-x-s;
         }
+    }
+}
+
+@include breakpoint('tablet') {
+    :root {
+        --product-item-select-row-gallery-view-height: #{$product-item-select-row-gallery-view-height-tablet};
+    }
+
+    .product-item__select-row--gallery-view {
+        padding-top: initial;
     }
 }
 

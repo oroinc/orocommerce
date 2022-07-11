@@ -24,23 +24,26 @@ class CategoryEntityListener
         $this->categoryCache = $categoryCache;
     }
 
-    public function preRemove(Category $category) : void
+    public function preRemove(Category $category): void
     {
-        $this->productIndexScheduler->scheduleProductsReindex([$category]);
-        $this->categoryCache->clear();
+        $this->scheduleCategoryReindex($category);
     }
 
-    public function postPersist(Category $category) : void
+    public function postPersist(Category $category): void
     {
-        $this->productIndexScheduler->scheduleProductsReindex([$category]);
-        $this->categoryCache->clear();
+        $this->scheduleCategoryReindex($category);
     }
 
-    public function preUpdate(Category $category, PreUpdateEventArgs $eventArgs) : void
+    public function preUpdate(Category $category, PreUpdateEventArgs $eventArgs): void
     {
         if ($eventArgs->getEntityChangeSet()) {
-            $this->productIndexScheduler->scheduleProductsReindex([$category]);
-            $this->categoryCache->clear();
+            $this->scheduleCategoryReindex($category);
         }
+    }
+
+    private function scheduleCategoryReindex(Category $category): void
+    {
+        $this->productIndexScheduler->scheduleProductsReindex([$category], null, true, ['main']);
+        $this->categoryCache->clear();
     }
 }

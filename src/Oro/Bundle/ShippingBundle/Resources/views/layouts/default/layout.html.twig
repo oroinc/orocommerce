@@ -49,21 +49,17 @@
                 <% if (type.price) { %>
                     <% var selected = currentShippingMethodType === type.identifier && currentShippingMethod === method.identifier %>
                     <div class="{{ class_prefix }}-form__radio" data-item-container>
-                        <label class="custom-radio <%- selected ? 'checked' : '' %>" data-radio>
-                            <input class="custom-radio__control"
-                                   type="radio" name="shippingMethodType" value="<%- type.identifier %>-<%- method.identifier %>"
+                        <label class="checkbox-label" data-radio>
+                            <input type="radio" name="shippingMethodType" value="<%- type.identifier %>-<%- method.identifier %>"
                                    data-shipping-type="<%- type.identifier %>"
                                    data-shipping-method="<%- method.identifier %>"
                                    data-shipping-price="<%- type.price.value %>"
                                    data-choice="<%- type.identifier %>"
-                                   <% if (selected) { %>checked="checked"<% } %>
-                            />
-                            <span class="custom-radio__text">
-                                <%- _.__('oro.shipping.method_type.backend.method_type_and_price.label', {
-                                    'translatedMethodType': _.escape(type.label),
-                                    'price': formatter.formatCurrency(type.price.value, type.price.currency)
-                                }) %>
-                            </span>
+                                   <% if (selected) { %>checked="checked"<% } %>>
+                            <%- _.__('oro.shipping.method_type.backend.method_type_and_price.label', {
+                                'translatedMethodType': _.escape(type.label),
+                                'price': formatter.formatCurrency(type.price.value, type.price.currency)
+                            }) %>
                         </label>
                     </div>
                 <% } %>

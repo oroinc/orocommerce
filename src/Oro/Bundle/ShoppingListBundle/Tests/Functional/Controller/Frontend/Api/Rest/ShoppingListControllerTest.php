@@ -20,20 +20,13 @@ class ShoppingListControllerTest extends WebTestCase
             $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
 
-        $this->loadFixtures(
-            [
-                LoadShoppingListACLData::class,
-            ]
-        );
+        $this->loadFixtures([LoadShoppingListACLData::class]);
     }
 
     /**
      * @dataProvider ACLProvider
-     * @param string $resource
-     * @param string $user
-     * @param int $status
      */
-    public function testSetCurrent($resource, $user, $status)
+    public function testSetCurrent(string $resource, string $user, int $status)
     {
         $this->loginUser($user);
         $shoppingList = $this->getReference($resource);
@@ -44,7 +37,7 @@ class ShoppingListControllerTest extends WebTestCase
         );
         $result = $this->client->getResponse();
         $this->assertResponseStatusCodeEquals($result, $status);
-        if ($user && $status == 204) {
+        if ($user && $status === 204) {
             $currentShoppingList = $this->getContainer()->get('oro_shopping_list.manager.current_shopping_list')
                 ->getCurrent();
 
@@ -62,11 +55,8 @@ class ShoppingListControllerTest extends WebTestCase
 
     /**
      * @dataProvider actionACLProvider
-     * @param string $resource
-     * @param string $user
-     * @param int $status
      */
-    public function testDelete($resource, $user, $status)
+    public function testDelete(string $resource, string $user, int $status)
     {
         $this->loginUser($user);
         $shoppingList = $this->getReference($resource);
@@ -87,24 +77,20 @@ class ShoppingListControllerTest extends WebTestCase
             $this->getOperationExecuteParams($operationName, $entityId, $entityClass),
             ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest']
         );
-        static::assertJsonResponseStatusCodeEquals($this->client->getResponse(), $status);
+        self::assertJsonResponseStatusCodeEquals($this->client->getResponse(), $status);
 
         if ($status === 200) {
-            static::getContainer()->get('doctrine')->getManagerForClass(ShoppingList::class)->clear();
+            self::getContainer()->get('doctrine')->getManagerForClass(ShoppingList::class)->clear();
 
-            $removedShoppingList = static::getContainer()
-                ->get('doctrine')
-                ->getRepository('OroShoppingListBundle:ShoppingList')
+            $removedShoppingList = self::getContainer()->get('doctrine')
+                ->getRepository(ShoppingList::class)
                 ->find($entityId);
 
-            static::assertNull($removedShoppingList);
+            self::assertNull($removedShoppingList);
         }
     }
 
-    /**
-     * @return array
-     */
-    public function ACLProvider()
+    public function ACLProvider(): array
     {
         return [
             'anonymous user' => [
@@ -140,10 +126,7 @@ class ShoppingListControllerTest extends WebTestCase
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function actionACLProvider()
+    public function actionACLProvider(): array
     {
         $acls = $this->ACLProvider();
         $acls['anonymous user']['status'] = 403;
@@ -156,12 +139,8 @@ class ShoppingListControllerTest extends WebTestCase
 
     /**
      * @dataProvider ownerProvider
-     * @param string $resource
-     * @param string $user
-     * @param int $status
-     * @param string $assignedUserEmail
      */
-    public function testSetOwner($resource, $user, $assignedUserEmail, $status)
+    public function testSetOwner(string $resource, string $user, string $assignedUserEmail, int $status)
     {
         $this->loginUser($user);
         $shoppingList = $this->getReference($resource);
@@ -170,16 +149,13 @@ class ShoppingListControllerTest extends WebTestCase
         $this->client->jsonRequest(
             'PUT',
             $this->getUrl('oro_api_set_shopping_list_owner', ['id' => $shoppingList->getId()]),
-            ["ownerId" => $assignedUser->getId()]
+            ['ownerId' => $assignedUser->getId()]
         );
         $result = $this->client->getResponse();
         $this->assertResponseStatusCodeEquals($result, $status);
     }
 
-    /**
-     * @return array
-     */
-    public function ownerProvider()
+    public function ownerProvider(): array
     {
         return [
             'anonymous user' => [

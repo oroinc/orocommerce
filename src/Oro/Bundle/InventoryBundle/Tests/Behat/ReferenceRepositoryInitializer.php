@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Behat;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -14,7 +14,7 @@ class ReferenceRepositoryInitializer implements ReferenceRepositoryInitializerIn
     /**
      * {@inheritdoc}
      */
-    public function init(Registry $doctrine, Collection $referenceRepository)
+    public function init(ManagerRegistry $doctrine, Collection $referenceRepository): void
     {
         $inventoryStatusClassName = ExtendHelper::buildEnumValueClassName('prod_inventory_status');
         /** @var AbstractEnumValue[] $enumInventoryStatuses */

@@ -2,12 +2,13 @@ import __ from 'orotranslation/js/translator';
 import TextTypeBuilder from 'orocms/js/app/grapesjs/type-builders/text-type-builder';
 
 const QuiteBasicTypeBuilder = TextTypeBuilder.extend({
+    parentType: 'text',
+
     button: {
         label: __('oro.cms.wysiwyg.component.quote.label')
     },
 
     modelMixin: {
-        ...TextTypeBuilder.prototype.modelMixin,
         defaults: {
             tagName: 'blockquote',
             classes: ['quote'],
@@ -22,7 +23,8 @@ const QuiteBasicTypeBuilder = TextTypeBuilder.extend({
     isComponent(el) {
         if (el.nodeType === 1 && el.tagName.toLowerCase() === 'blockquote') {
             return {
-                type: this.componentType
+                type: this.componentType,
+                textComponent: true
             };
         }
     }

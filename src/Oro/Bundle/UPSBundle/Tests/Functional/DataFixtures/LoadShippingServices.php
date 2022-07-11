@@ -5,6 +5,7 @@ namespace Oro\Bundle\UPSBundle\Tests\Functional\DataFixtures;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
+use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Symfony\Component\Yaml\Yaml;
 
@@ -31,8 +32,7 @@ class LoadShippingServices extends AbstractFixture implements DependentFixtureIn
                 ->setCode($data['code'])
                 ->setDescription($data['description']);
 
-            $country = $manager
-                ->getRepository('OroAddressBundle:Country')
+            $country = $manager->getRepository(Country::class)
                 ->findOneBy(['iso2Code' => $data['country']]);
 
             $entity->setCountry($country);

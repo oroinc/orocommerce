@@ -23,26 +23,22 @@ use Twig\Environment;
 
 class FormViewListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
-    private $doctrineHelper;
+    private const TEMPLATE_HTML_PRODUCT_PRICE = 'template_html_product_price';
+    private const TEMPLATE_HTML_PRODUCT_ATTRIBUTE_PRICE = 'template_html_product_attribute_price';
 
-    /** @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $authorizationChecker;
+    private DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject $doctrineHelper;
 
-    /** @var PriceAttributePricesProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $priceAttributePricesProvider;
+    private AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject $authorizationChecker;
 
-    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
-    private $featureChecker;
+    private PriceAttributePricesProvider|\PHPUnit\Framework\MockObject\MockObject $priceAttributePricesProvider;
 
-    /** @var AclHelper|\PHPUnit\Framework\MockObject\MockObject */
-    private $aclHelper;
+    private FeatureChecker|\PHPUnit\Framework\MockObject\MockObject $featureChecker;
 
-    /** @var Environment|\PHPUnit\Framework\MockObject\MockObject */
-    private $env;
+    private AclHelper|\PHPUnit\Framework\MockObject\MockObject $aclHelper;
 
-    /** @var FormViewListener */
-    private $listener;
+    private Environment|\PHPUnit\Framework\MockObject\MockObject $env;
+
+    private FormViewListener $listener;
 
     protected function setUp(): void
     {
@@ -54,7 +50,7 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
         $this->env = $this->createMock(Environment::class);
 
         $translator = $this->createMock(TranslatorInterface::class);
-        $translator->expects($this->any())
+        $translator->expects(self::any())
             ->method('trans')
             ->willReturnCallback(function ($id) {
                 return $id . '.trans';
@@ -69,9 +65,9 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testOnProductEditFeatureDisabled()
+    public function testOnProductEditFeatureDisabled(): void
     {
-        $this->featureChecker->expects($this->once())
+        $this->featureChecker->expects(self::once())
             ->method('isFeatureEnabled')
             ->with('feature1', null)
             ->willReturn(false);
@@ -79,37 +75,37 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->setFeatureChecker($this->featureChecker);
         $this->listener->addFeature('feature1');
 
-        $this->env->expects($this->never())
+        $this->env->expects(self::never())
             ->method('render');
 
         $event = $this->createEvent(new Product());
         $this->listener->onProductEdit($event);
     }
 
-    public function testOnProductViewFeatureDisabled()
+    public function testOnProductViewFeatureDisabled(): void
     {
         $priceAttributePriceListRepository = $this->createMock(PriceAttributePriceListRepository::class);
 
         $query = $this->createMock(AbstractQuery::class);
-        $query->expects($this->once())
+        $query->expects(self::once())
             ->method('getResult')
             ->willReturn([]);
         $queryBuilder = $this->createMock(QueryBuilder::class);
 
-        $priceAttributePriceListRepository->expects($this->once())
+        $priceAttributePriceListRepository->expects(self::once())
             ->method('getPriceAttributesQueryBuilder')
             ->willReturn($queryBuilder);
 
-        $this->aclHelper->expects($this->once())
+        $this->aclHelper->expects(self::once())
             ->method('apply')
             ->with($queryBuilder)
             ->willReturn($query);
 
-        $this->doctrineHelper->expects($this->any())
+        $this->doctrineHelper->expects(self::any())
             ->method('getEntityRepository')
             ->willReturn($priceAttributePriceListRepository);
 
-        $this->featureChecker->expects($this->once())
+        $this->featureChecker->expects(self::once())
             ->method('isFeatureEnabled')
             ->with('feature1', null)
             ->willReturn(false);
@@ -117,48 +113,47 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->setFeatureChecker($this->featureChecker);
         $this->listener->addFeature('feature1');
 
-        $this->authorizationChecker->expects($this->never())
+        $this->authorizationChecker->expects(self::never())
             ->method('isGranted');
 
         $event = $this->createEvent(new Product());
         $this->listener->onProductView($event);
     }
 
-    public function testOnProductViewException()
+    public function testOnProductViewException(): void
     {
         $this->expectException(UnexpectedTypeException::class);
 
         $event = $this->createMock(BeforeListRenderEvent::class);
-        $event->expects($this->once())
+        $event->expects(self::once())
             ->method('getEntity')
             ->willReturn(new ProductPrice());
 
         $this->listener->onProductView($event);
     }
 
-    public function testOnProductView()
+    /**
+     * @dataProvider getTestOnProductViewDataProvider
+     */
+    public function testOnProductView(array $priceLists, array $expectedScrollData): void
     {
         $product = new Product();
-        $templateHtmlProductAttributePrice = 'template_html_product_attribute_price';
-        $templateHtmlProductPrice = 'template_html_product_price';
 
-        $priceAttributeViewRenderExpectation = $this->expectsPriceAttributeViewRender($product);
-        $this->env->expects($this->exactly(2))
-            ->method('render')
-            ->withConsecutive(
-                $priceAttributeViewRenderExpectation,
-                ['@OroPricing/Product/prices_view.html.twig', ['entity' => $product]]
-            )
-            ->willReturnOnConsecutiveCalls(
-                $templateHtmlProductAttributePrice,
-                $templateHtmlProductPrice
-            );
+        $expectedPricesViewRenderCalls = [
+            [
+                '@OroPricing/Product/prices_view.html.twig',
+                ['entity' => $product],
+                self::TEMPLATE_HTML_PRODUCT_PRICE
+            ]
+        ];
+        $this->expectsProductAttributesPriceLists($priceLists);
+        $this->expectsPriceAttributeViewRender($product, $priceLists, $expectedPricesViewRenderCalls);
 
-        $this->authorizationChecker->expects($this->once())
+        $this->authorizationChecker->expects(self::once())
             ->method('isGranted')
             ->willReturn(true);
 
-        $this->featureChecker->expects($this->once())
+        $this->featureChecker->expects(self::once())
             ->method('isFeatureEnabled')
             ->with('feature1', null)
             ->willReturn(true);
@@ -169,39 +164,108 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->onProductView($event);
         $scrollData = $event->getScrollData()->getData();
 
-        $this->assertEquals(
-            'oro.pricing.pricelist.entity_plural_label.trans',
-            $scrollData[ScrollData::DATA_BLOCKS]['prices'][ScrollData::TITLE]
-        );
-
-        $this->assertEquals(
-            ['prices' => $templateHtmlProductPrice],
-            $scrollData[ScrollData::DATA_BLOCKS]['prices'][ScrollData::SUB_BLOCKS][0][ScrollData::DATA]
-        );
-
-        $this->assertEquals(
-            'oro.pricing.priceattributepricelist.entity_plural_label.trans',
-            $scrollData[ScrollData::DATA_BLOCKS]['price_attributes'][ScrollData::TITLE]
-        );
-
-        $this->assertEquals(
-            ['productPriceAttributesPrices' => $templateHtmlProductAttributePrice],
-            $scrollData[ScrollData::DATA_BLOCKS]['price_attributes'][ScrollData::SUB_BLOCKS][0][ScrollData::DATA]
-        );
+        self::assertEquals($expectedScrollData, $scrollData);
     }
 
-    public function testOnProductViewForbiddenToViewPrice()
+    public function getTestOnProductViewDataProvider(): array
+    {
+        return [
+            'one block for one attribute' => [
+                'priceLists' => [
+                    new PriceAttributePriceList(),
+                ],
+                'expectedScrollData' => [
+                    ScrollData::DATA_BLOCKS => [
+                        'prices' => [
+                            ScrollData::TITLE => 'oro.pricing.pricelist.entity_plural_label.trans',
+                            ScrollData::SUB_BLOCKS => [
+                                [
+                                    ScrollData::DATA => ['prices' => self::TEMPLATE_HTML_PRODUCT_PRICE],
+                                ],
+                            ],
+                            ScrollData::USE_SUB_BLOCK_DIVIDER => true,
+                            ScrollData::PRIORITY => FormViewListener::PRICING_BLOCK_PRIORITY,
+                        ],
+                        'price_attributes' => [
+                            ScrollData::TITLE => 'oro.pricing.priceattributepricelist.entity_plural_label.trans',
+                            ScrollData::SUB_BLOCKS => [
+                                [
+                                    ScrollData::DATA => [
+                                        'productPriceAttributesPrices' => self::TEMPLATE_HTML_PRODUCT_ATTRIBUTE_PRICE
+                                    ],
+                                ],
+                            ],
+                            ScrollData::USE_SUB_BLOCK_DIVIDER => true,
+                            ScrollData::PRIORITY => FormViewListener::PRICE_ATTRIBUTES_BLOCK_PRIORITY,
+                        ],
+                        [
+                            ScrollData::SUB_BLOCKS => [
+                                [
+                                    ScrollData::DATA => [],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            'two blocks for more than one attribute' => [
+                'priceLists' => [
+                    new PriceAttributePriceList(),
+                    new PriceAttributePriceList(),
+                    new PriceAttributePriceList(),
+                ],
+                'expectedScrollData' => [
+                    ScrollData::DATA_BLOCKS => [
+                        'prices' => [
+                            ScrollData::TITLE => 'oro.pricing.pricelist.entity_plural_label.trans',
+                            ScrollData::SUB_BLOCKS => [
+                                [
+                                    ScrollData::DATA => ['prices' => self::TEMPLATE_HTML_PRODUCT_PRICE],
+                                ],
+                            ],
+                            ScrollData::USE_SUB_BLOCK_DIVIDER => true,
+                            ScrollData::PRIORITY => FormViewListener::PRICING_BLOCK_PRIORITY,
+                        ],
+                        'price_attributes' => [
+                            ScrollData::TITLE => 'oro.pricing.priceattributepricelist.entity_plural_label.trans',
+                            ScrollData::SUB_BLOCKS => [
+                                [
+                                    ScrollData::DATA => [
+                                        'productPriceAttributesPrices' => self::TEMPLATE_HTML_PRODUCT_ATTRIBUTE_PRICE .
+                                            self::TEMPLATE_HTML_PRODUCT_ATTRIBUTE_PRICE
+                                    ],
+                                ],
+                                [
+                                    ScrollData::DATA => [
+                                        'productPriceAttributesPrices' => self::TEMPLATE_HTML_PRODUCT_ATTRIBUTE_PRICE
+                                    ],
+                                ],
+                            ],
+                            ScrollData::USE_SUB_BLOCK_DIVIDER => true,
+                            ScrollData::PRIORITY => FormViewListener::PRICE_ATTRIBUTES_BLOCK_PRIORITY,
+                        ],
+                        [
+                            ScrollData::SUB_BLOCKS => [
+                                [
+                                    ScrollData::DATA => [],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    public function testOnProductViewForbiddenToViewPrice(): void
     {
         $product = new Product();
-        $templateHtmlProductAttributePrice = 'template_html_product_attribute_price';
 
-        $priceAttributeViewRenderExpectation = $this->expectsPriceAttributeViewRender($product);
-        $this->env->expects($this->once())
-            ->method('render')
-            ->with(...$priceAttributeViewRenderExpectation)
-            ->willReturn($templateHtmlProductAttributePrice);
+        $priceLists = [new PriceAttributePriceList()];
+        $this->expectsProductAttributesPriceLists($priceLists);
+        $this->expectsPriceAttributeViewRender($product, $priceLists);
 
-        $this->authorizationChecker->expects($this->once())
+        $this->authorizationChecker->expects(self::once())
             ->method('isGranted')
             ->willReturn(false);
 
@@ -209,25 +273,25 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->onProductView($event);
         $scrollData = $event->getScrollData()->getData();
 
-        $this->assertTrue(empty($scrollData[ScrollData::DATA_BLOCKS]['prices']));
+        self::assertTrue(empty($scrollData[ScrollData::DATA_BLOCKS]['prices']));
 
-        $this->assertEquals(
+        self::assertEquals(
             'oro.pricing.priceattributepricelist.entity_plural_label.trans',
             $scrollData[ScrollData::DATA_BLOCKS]['price_attributes'][ScrollData::TITLE]
         );
 
-        $this->assertEquals(
-            ['productPriceAttributesPrices' => $templateHtmlProductAttributePrice],
+        self::assertEquals(
+            ['productPriceAttributesPrices' => self::TEMPLATE_HTML_PRODUCT_ATTRIBUTE_PRICE],
             $scrollData[ScrollData::DATA_BLOCKS]['price_attributes'][ScrollData::SUB_BLOCKS][0][ScrollData::DATA]
         );
     }
 
-    public function testOnProductEdit()
+    public function testOnProductEdit(): void
     {
         $formView = new FormView();
         $templateHtml = 'template_html';
 
-        $this->env->expects($this->once())
+        $this->env->expects(self::once())
             ->method('render')
             ->with('@OroPricing/Product/prices_update.html.twig', ['form' => $formView])
             ->willReturn($templateHtml);
@@ -239,12 +303,12 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
 
         $expectedTitle = 'oro.pricing.productprice.entity_plural_label.trans';
 
-        $this->assertEquals(
+        self::assertEquals(
             $expectedTitle,
             $scrollData[ScrollData::DATA_BLOCKS]['prices'][ScrollData::TITLE]
         );
 
-        $this->assertEquals(
+        self::assertEquals(
             ['productPriceAttributesPrices' => $templateHtml],
             $scrollData[ScrollData::DATA_BLOCKS]['prices'][ScrollData::SUB_BLOCKS][0][ScrollData::DATA]
         );
@@ -267,45 +331,63 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
         return new BeforeListRenderEvent($this->env, new ScrollData($defaultData), $entity, $formView);
     }
 
-    private function expectsPriceAttributeViewRender(Product $product): array
+    private function expectsProductAttributesPriceLists(array $priceLists): void
     {
-        $priceList = new PriceAttributePriceList();
-
         $priceAttributePriceListRepository = $this->createMock(PriceAttributePriceListRepository::class);
 
         $query = $this->createMock(AbstractQuery::class);
-        $query->expects($this->once())
+        $query->expects(self::once())
             ->method('getResult')
-            ->willReturn([$priceList]);
+            ->willReturn($priceLists);
         $queryBuilder = $this->createMock(QueryBuilder::class);
 
-        $priceAttributePriceListRepository->expects($this->once())
+        $priceAttributePriceListRepository->expects(self::once())
             ->method('getPriceAttributesQueryBuilder')
             ->willReturn($queryBuilder);
 
-        $this->aclHelper->expects($this->once())
+        $this->aclHelper->expects(self::once())
             ->method('apply')
             ->with($queryBuilder)
             ->willReturn($query);
 
-        $this->doctrineHelper->expects($this->any())
+        $this->doctrineHelper->expects(self::any())
             ->method('getEntityRepository')
             ->willReturnMap([
                 [PriceAttributePriceList::class, $priceAttributePriceListRepository],
             ]);
+    }
 
-        $this->priceAttributePricesProvider->expects($this->once())
+    private function expectsPriceAttributeViewRender(
+        Product $product,
+        array $priceLists,
+        array $additionalRenderCalls = []
+    ): void {
+        $expectedGetPricesWithUnitAndCurrenciesCalls = $expectedViewRenderCalls = [];
+        foreach ($priceLists as $priceList) {
+            $expectedGetPricesWithUnitAndCurrenciesCalls[] = [
+                $priceList,
+                $product,
+                ['Test' => ['item' => ['USD' => 100]]]
+            ];
+            $expectedViewRenderCalls[] = [
+                '@OroPricing/Product/price_attribute_prices_view.html.twig',
+                [
+                    'product' => $product,
+                    'priceList' => $priceList,
+                    'priceAttributePrices' => ['Test' => ['item' => ['USD' => 100]]]
+                ],
+                self::TEMPLATE_HTML_PRODUCT_ATTRIBUTE_PRICE
+            ];
+        }
+
+        $this->priceAttributePricesProvider->expects(self::exactly(count($expectedGetPricesWithUnitAndCurrenciesCalls)))
             ->method('getPricesWithUnitAndCurrencies')
-            ->with($priceList, $product)
-            ->willReturn(['Test' => ['item' => ['USD' => 100]]]);
+            ->willReturnMap($expectedGetPricesWithUnitAndCurrenciesCalls);
 
-        return [
-            '@OroPricing/Product/price_attribute_prices_view.html.twig',
-            [
-                'product' => $product,
-                'priceList' => $priceList,
-                'priceAttributePrices' => ['Test' => ['item' => ['USD' => 100]]]
-            ]
-        ];
+        $expectedViewRenderCalls = array_merge($expectedViewRenderCalls, $additionalRenderCalls);
+
+        $this->env->expects(self::exactly(count($expectedViewRenderCalls)))
+            ->method('render')
+            ->willReturnMap($expectedViewRenderCalls);
     }
 }

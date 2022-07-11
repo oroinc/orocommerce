@@ -2,7 +2,7 @@ import grapesJS from 'grapesjs';
 import 'jasmine-jquery';
 import ComponentManager from 'orocms/js/app/grapesjs/plugins/components/component-manager';
 import ComponentRestriction from 'orocms/js/app/grapesjs/plugins/components/component-restriction';
-import DefaultTypeBuilder from 'orocms/js/app/grapesjs/type-builders/default-type-builder';
+import QuoteTypeBuilder from 'orocms/js/app/grapesjs/type-builders/quote-type-builder';
 import TextTypeBuilder from 'orocms/js/app/grapesjs/type-builders/text-type-builder';
 import html from 'text-loader!../fixtures/grapesjs-editor-view-fixture.html';
 
@@ -49,32 +49,32 @@ describe('orocms/js/app/grapesjs/plugins/components/component-manager', () => {
         });
 
         it('register single component type', () => {
-            ComponentManager.registerComponentType('default', DefaultTypeBuilder);
+            ComponentManager.registerComponentType('quote', QuoteTypeBuilder);
 
             expect(Object.values(ComponentManager.componentTypes).length).toEqual(1);
-            expect(ComponentManager.componentTypes.default).toBeDefined();
-            expect(ComponentManager.componentTypes.default).toEqual(jasmine.any(Function));
+            expect(ComponentManager.componentTypes.quote).toBeDefined();
+            expect(ComponentManager.componentTypes.quote).toEqual(jasmine.any(Function));
         });
 
         it('register multiple component types', () => {
             ComponentManager.registerComponentTypes({
-                'default': DefaultTypeBuilder,
-                'text': TextTypeBuilder
+                quote: QuoteTypeBuilder,
+                text: TextTypeBuilder
             });
 
             expect(Object.values(ComponentManager.componentTypes).length).toEqual(2);
-            expect(ComponentManager.componentTypes.default).toBe(DefaultTypeBuilder);
-            expect(ComponentManager.componentTypes.default).toEqual(jasmine.any(Function));
+            expect(ComponentManager.componentTypes.quote).toBe(QuoteTypeBuilder);
+            expect(ComponentManager.componentTypes.quote).toEqual(jasmine.any(Function));
             expect(ComponentManager.componentTypes.text).toBe(TextTypeBuilder);
             expect(ComponentManager.componentTypes.text).toEqual(jasmine.any(Function));
         });
 
         it('apply component types', () => {
             ComponentManager.registerComponentTypes({
-                'default': {
-                    Constructor: DefaultTypeBuilder
+                quote: {
+                    Constructor: QuoteTypeBuilder
                 },
-                'text': {
+                text: {
                     Constructor: TextTypeBuilder
                 }
             });
@@ -82,16 +82,16 @@ describe('orocms/js/app/grapesjs/plugins/components/component-manager', () => {
             componentManager.applyTypeBuilders();
 
             expect(componentManager.typeBuilders.length).toEqual(2);
-            expect(componentManager.typeBuilders[0].componentType).toEqual('default');
+            expect(componentManager.typeBuilders[0].componentType).toEqual('quote');
             expect(componentManager.typeBuilders[1].componentType).toEqual('text');
         });
 
         it('dispose component manager', () => {
             ComponentManager.registerComponentTypes({
-                'default': {
-                    Constructor: DefaultTypeBuilder
+                quote: {
+                    Constructor: QuoteTypeBuilder
                 },
-                'text': {
+                text: {
                     Constructor: TextTypeBuilder
                 }
             });

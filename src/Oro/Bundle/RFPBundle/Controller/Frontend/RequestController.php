@@ -10,6 +10,7 @@ use Oro\Bundle\RFPBundle\Layout\DataProvider\RFPFormProvider;
 use Oro\Bundle\RFPBundle\Model\RequestManager;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Util\SameSiteUrlHelper;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
@@ -56,20 +57,12 @@ class RequestController extends AbstractController
      * @AclAncestor("oro_rfp_frontend_request_view")
      * @Route("/", name="oro_rfp_frontend_request_index")
      * @Layout(vars={"entity_class"})
-     * @return array|RedirectResponse
+     * @return array
      */
     public function indexAction()
     {
-        $entityClass = RFPRequest::class;
-        $viewPermission = 'VIEW;entity:' . $entityClass;
-        if (!$this->isGranted($viewPermission)) {
-            return $this->redirect(
-                $this->generateUrl('oro_rfp_frontend_request_create')
-            );
-        }
-
         return [
-            'entity_class' => $entityClass,
+            'entity_class' => RFPRequest::class
         ];
     }
 
@@ -211,11 +204,10 @@ class RequestController extends AbstractController
             $this->get(TranslatorInterface::class)->trans('oro.rfp.controller.request.saved.message'),
             null,
             function (RFPRequest $rfpRequest, FormInterface $form, Request $request) {
-                $url = $request->headers->get('referer', $request->getUri());
-
                 return [
-                    'backToUrl' => $url,
-                    'form' => $form->createView()
+                    'backToUrl' => $this->get(SameSiteUrlHelper::class)
+                        ->getSameSiteReferer($request, $request->getUri()),
+                    'form' => $form->createView(),
                 ];
             }
         );
@@ -277,7 +269,8 @@ class RequestController extends AbstractController
                 RequestUpdateHandler::class,
                 RFPFormProvider::class,
                 WebsiteManager::class,
-                RequestManager::class
+                RequestManager::class,
+                SameSiteUrlHelper::class,
             ]
         );
     }

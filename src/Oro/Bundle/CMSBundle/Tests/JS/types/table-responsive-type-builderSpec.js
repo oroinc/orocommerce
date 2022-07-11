@@ -67,7 +67,7 @@ describe('orocms/js/app/grapesjs/type-builders/table-responsive-type-builder', (
             expect(tableResponsiveTypeBuilder.Model.prototype.defaults.draggable).toEqual(['div']);
             expect(
                 tableResponsiveTypeBuilder.Model.prototype.defaults.droppable
-            ).toEqual(['table', 'tbody', 'thead', 'tfoot']);
+            ).toEqual(['table']);
 
             expect(tableResponsiveTypeBuilder.Model.prototype.editor).toEqual(editor);
         });

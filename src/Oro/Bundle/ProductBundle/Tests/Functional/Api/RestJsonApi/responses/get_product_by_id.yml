@@ -63,10 +63,6 @@ data:
                 -
                     type: localizedfallbackvalues
                     id: '<toString(@product-1.slugPrototypes.en_CA->id)>'
-        taxCode:
-            data:
-                type: producttaxcodes
-                id: '<toString(@product_tax_code.TAX1->id)>'
         manageInventory:
             data:
                 type: entityfieldfallbackvalues

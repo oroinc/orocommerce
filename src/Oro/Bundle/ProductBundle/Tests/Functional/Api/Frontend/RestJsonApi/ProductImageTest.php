@@ -303,14 +303,9 @@ class ProductImageTest extends FrontendRestJsonApiTestCase
         );
 
         $expectedData = self::updateExpectedData(
-            $this->getResponseData('get_product_image.yml'),
+            $this->getResponseData('get_product_image_webp_enabled_for_all.yml'),
             ['{fileId}' => (string)$fileId]
         );
-        foreach ($expectedData['data']['attributes']['files'] as &$file) {
-            $file['url'] .= '.webp';
-            unset($file['url_webp']);
-        }
-        unset($file);
         $this->assertResponseContains($expectedData, $response);
     }
 

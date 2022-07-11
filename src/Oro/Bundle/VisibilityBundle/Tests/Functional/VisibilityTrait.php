@@ -14,12 +14,7 @@ use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 
 trait VisibilityTrait
 {
-    /**
-     * @param ManagerRegistry $registry
-     * @param VisibilityInterface $visibility
-     * @return VisibilityInterface
-     */
-    public function updateVisibility(ManagerRegistry $registry, VisibilityInterface $visibility)
+    private function updateVisibility(ManagerRegistry $registry, VisibilityInterface $visibility): VisibilityInterface
     {
         $em = $registry->getManagerForClass(ClassUtils::getClass($visibility));
         $em->persist($visibility);
@@ -28,15 +23,9 @@ trait VisibilityTrait
         return $visibility;
     }
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param Category $category
-     * @return VisibilityInterface
-     */
-    public function getCategoryVisibility(ManagerRegistry $registry, Category $category)
+    private function getCategoryVisibility(ManagerRegistry $registry, Category $category): VisibilityInterface
     {
-        $entity = $registry->getManagerForClass('OroVisibilityBundle:Visibility\CategoryVisibility')
-            ->getRepository('OroVisibilityBundle:Visibility\CategoryVisibility')
+        $entity = $registry->getRepository(CategoryVisibility::class)
             ->findOneBy(['category' => $category]);
 
         if (!$entity) {
@@ -47,27 +36,17 @@ trait VisibilityTrait
         return $entity;
     }
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param Category $category
-     * @param CustomerGroup $customerGroup
-     * @return VisibilityInterface
-     */
-    public function getCategoryVisibilityForCustomerGroup(
+    private function getCategoryVisibilityForCustomerGroup(
         ManagerRegistry $registry,
         Category $category,
         CustomerGroup $customerGroup
-    ) {
-        $scope = $this->scopeManager->findOrCreate(
+    ): VisibilityInterface {
+        $scope = self::getContainer()->get('oro_scope.scope_manager')->findOrCreate(
             CustomerGroupCategoryVisibility::VISIBILITY_TYPE,
             ['customerGroup' => $customerGroup]
         );
-        $entity = $registry->getManagerForClass('OroVisibilityBundle:Visibility\CustomerGroupCategoryVisibility')
-            ->getRepository('OroVisibilityBundle:Visibility\CustomerGroupCategoryVisibility')
-            ->findOneBy([
-                'category' => $category,
-                'scope' => $scope,
-            ]);
+        $entity = $registry->getRepository(CustomerGroupCategoryVisibility::class)
+            ->findOneBy(['category' => $category, 'scope' => $scope]);
         if (!$entity) {
             $entity = (new CustomerGroupCategoryVisibility());
             $entity->setTargetEntity($category)
@@ -77,24 +56,17 @@ trait VisibilityTrait
         return $entity;
     }
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param Category $category
-     * @param Customer $customer
-     * @return VisibilityInterface
-     */
-    public function getCategoryVisibilityForCustomer(ManagerRegistry $registry, Category $category, Customer $customer)
-    {
-        $scope = $this->scopeManager->findOrCreate(
+    private function getCategoryVisibilityForCustomer(
+        ManagerRegistry $registry,
+        Category $category,
+        Customer $customer
+    ): VisibilityInterface {
+        $scope = self::getContainer()->get('oro_scope.scope_manager')->findOrCreate(
             CustomerCategoryVisibility::VISIBILITY_TYPE,
             ['customer' => $customer]
         );
-        $entity = $registry->getManagerForClass('OroVisibilityBundle:Visibility\CustomerCategoryVisibility')
-            ->getRepository('OroVisibilityBundle:Visibility\CustomerCategoryVisibility')
-            ->findOneBy([
-                'category' => $category,
-                'scope' => $scope,
-            ]);
+        $entity = $registry->getRepository(CustomerCategoryVisibility::class)
+            ->findOneBy(['category' => $category, 'scope' => $scope]);
 
         if (!$entity) {
             $entity = (new CustomerCategoryVisibility());

@@ -20,18 +20,10 @@ use Symfony\Component\Form\FormView;
  */
 class EnumValueCollectionExtension extends AbstractTypeExtension
 {
-    const PRODUCT_SKU_IN_TOOLTIP = 10;
+    private const PRODUCT_SKU_IN_TOOLTIP = 10;
 
-    /** @var DoctrineHelper */
-    private $doctrineHelper;
-
-    /** @var ConfigManager */
-    private $configManager;
-
-    public function __construct(DoctrineHelper $doctrineHelper, ConfigManager $configManager)
+    public function __construct(private DoctrineHelper $doctrineHelper, private ConfigManager $configManager)
     {
-        $this->doctrineHelper = $doctrineHelper;
-        $this->configManager = $configManager;
     }
 
     /**
@@ -63,7 +55,7 @@ class EnumValueCollectionExtension extends AbstractTypeExtension
 
         foreach ($data as $option) {
             //Empty option id means option is not saved so no need further logic
-            if (!$option['id']) {
+            if (null === $option['id'] || '' === $option['id']) {
                 continue;
             }
             $attributeOptionIds[] = $option['id'];

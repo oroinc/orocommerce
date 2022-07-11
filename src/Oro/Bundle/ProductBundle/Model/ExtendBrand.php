@@ -6,6 +6,8 @@ use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 
 /**
+ * Model class which allows to extend the Brand entity.
+ *
  * @method LocalizedFallbackValue getName(Localization $localization = null)
  * @method LocalizedFallbackValue getDefaultName()
  * @method setDefaultName(string $value)
@@ -18,6 +20,7 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
  * @method LocalizedFallbackValue getMetaTitle(Localization $localization = null)
  * @method LocalizedFallbackValue getMetaDescription(Localization $localization = null)
  * @method LocalizedFallbackValue getMetaKeyword(Localization $localization = null)
+ * @method $this cloneLocalizedFallbackValueAssociations()
  */
 class ExtendBrand
 {

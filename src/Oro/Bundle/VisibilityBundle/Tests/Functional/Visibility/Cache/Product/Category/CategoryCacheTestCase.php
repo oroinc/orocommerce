@@ -7,6 +7,12 @@ use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationQueryTrait;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CategoryVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerCategoryVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerGroupCategoryVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerGroupProductVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerProductVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityFallbackCategoryData;
 
 abstract class CategoryCacheTestCase extends WebTestCase
@@ -17,9 +23,7 @@ abstract class CategoryCacheTestCase extends WebTestCase
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
-        $this->loadFixtures([
-            LoadProductVisibilityFallbackCategoryData::class
-        ]);
+        $this->loadFixtures([LoadProductVisibilityFallbackCategoryData::class]);
         $this->getContainer()->get('oro_visibility.visibility.cache.cache_builder')->buildCache();
     }
 
@@ -28,15 +32,11 @@ abstract class CategoryCacheTestCase extends WebTestCase
         $this->assertEquals($expectedData, $this->fetchVisibility());
     }
 
-    /**
-     * @return array
-     */
-    protected function getHiddenProducts()
+    protected function getHiddenProducts(): array
     {
         /** @var EntityRepository $repository */
         $repository = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\ProductVisibilityResolved')
-            ->getRepository('OroVisibilityBundle:VisibilityResolved\ProductVisibilityResolved');
+            ->getRepository(ProductVisibilityResolved::class);
         $queryBuilder = $repository->createQueryBuilder('pvr');
         $this->selectHiddenProductSku($queryBuilder, 'pvr');
         $results = $queryBuilder->getQuery()
@@ -47,15 +47,11 @@ abstract class CategoryCacheTestCase extends WebTestCase
         }, $results);
     }
 
-    /**
-     * @return array
-     */
-    protected function getHiddenCategories()
+    protected function getHiddenCategories(): array
     {
         /** @var EntityRepository $repository */
         $repository = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved')
-            ->getRepository('OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved');
+            ->getRepository(CategoryVisibilityResolved::class);
         $queryBuilder = $repository->createQueryBuilder('cvr');
         $this->selectHiddenCategoryTitles($queryBuilder, 'cvr');
         $results = $queryBuilder->getQuery()
@@ -66,15 +62,11 @@ abstract class CategoryCacheTestCase extends WebTestCase
         }, $results);
     }
 
-    /**
-     * @return array
-     */
-    protected function getHiddenProductsByCustomerGroups()
+    protected function getHiddenProductsByCustomerGroups(): array
     {
         /** @var EntityRepository $repository */
         $repository = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\CustomerGroupProductVisibilityResolved')
-            ->getRepository('OroVisibilityBundle:VisibilityResolved\CustomerGroupProductVisibilityResolved');
+            ->getRepository(CustomerGroupProductVisibilityResolved::class);
         $queryBuilder = $repository->createQueryBuilder('agpvr')
             ->select('customerGroup.name as customer_group_name')
             ->join('agpvr.scope', 'scope')
@@ -93,15 +85,11 @@ abstract class CategoryCacheTestCase extends WebTestCase
         }, []);
     }
 
-    /**
-     * @return array
-     */
-    protected function getHiddenCategoriesByCustomerGroups()
+    protected function getHiddenCategoriesByCustomerGroups(): array
     {
         /** @var EntityRepository $repository */
         $repository = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\CustomerGroupCategoryVisibilityResolved')
-            ->getRepository('OroVisibilityBundle:VisibilityResolved\CustomerGroupCategoryVisibilityResolved');
+            ->getRepository(CustomerGroupCategoryVisibilityResolved::class);
         $queryBuilder = $repository->createQueryBuilder('agcvr')
             ->select('customerGroup.name as customer_group_name')
             ->addSelect('customerGroup.id')
@@ -122,15 +110,11 @@ abstract class CategoryCacheTestCase extends WebTestCase
         }, []);
     }
 
-    /**
-     * @return array
-     */
-    protected function getHiddenProductsByCustomers()
+    protected function getHiddenProductsByCustomers(): array
     {
         /** @var EntityRepository $repository */
         $repository = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\CustomerProductVisibilityResolved')
-            ->getRepository('OroVisibilityBundle:VisibilityResolved\CustomerProductVisibilityResolved');
+            ->getRepository(CustomerProductVisibilityResolved::class);
         $queryBuilder = $repository->createQueryBuilder('apvr')
             ->select('customer.name as customer_name')
             ->join('apvr.scope', 'scope')
@@ -149,15 +133,11 @@ abstract class CategoryCacheTestCase extends WebTestCase
         }, []);
     }
 
-    /**
-     * @return array
-     */
-    protected function getHiddenCategoriesByCustomers()
+    protected function getHiddenCategoriesByCustomers(): array
     {
         /** @var EntityRepository $repository */
         $repository = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\CustomerCategoryVisibilityResolved')
-            ->getRepository('OroVisibilityBundle:VisibilityResolved\CustomerCategoryVisibilityResolved');
+            ->getRepository(CustomerCategoryVisibilityResolved::class);
         $queryBuilder = $repository->createQueryBuilder('acvr')
             ->select('customer.name as customer_name')
             ->join('acvr.scope', 'scope')
@@ -176,11 +156,7 @@ abstract class CategoryCacheTestCase extends WebTestCase
         }, []);
     }
 
-    /**
-     * @param QueryBuilder $queryBuilder
-     * @param string $alias
-     */
-    protected function selectHiddenProductSku(QueryBuilder $queryBuilder, $alias)
+    protected function selectHiddenProductSku(QueryBuilder $queryBuilder, string $alias): void
     {
         $queryBuilder->addSelect('product.sku')
             ->join($alias . '.product', 'product')
@@ -192,11 +168,7 @@ abstract class CategoryCacheTestCase extends WebTestCase
             ->addOrderBy('product.sku');
     }
 
-    /**
-     * @param QueryBuilder $queryBuilder
-     * @param string $alias
-     */
-    protected function selectHiddenCategoryTitles(QueryBuilder $queryBuilder, $alias)
+    protected function selectHiddenCategoryTitles(QueryBuilder $queryBuilder, string $alias): void
     {
         $queryBuilder
             ->join($alias . '.category', 'category')
@@ -210,10 +182,7 @@ abstract class CategoryCacheTestCase extends WebTestCase
         $this->joinDefaultLocalizedValue($queryBuilder, 'category.titles', 'categoryTitles', 'title');
     }
 
-    /**
-     * @return array
-     */
-    protected function fetchVisibility()
+    protected function fetchVisibility(): array
     {
         return [
             'hiddenCategories' => $this->getHiddenCategories(),

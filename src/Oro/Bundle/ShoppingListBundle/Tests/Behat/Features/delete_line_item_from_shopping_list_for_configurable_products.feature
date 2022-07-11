@@ -16,8 +16,6 @@ Feature: Delete line item from shopping list for configurable products
     And I go to System / Localization / Translations
     And I filter Key as equal to "oro.frontend.shoppinglist.lineitem.unit.label"
     And I edit "oro.frontend.shoppinglist.lineitem.unit.label" Translated Value as "Unit"
-    And I click "Update Cache"
-    And I should see "Translation Cache has been updated" flash message
 
   Scenario: Prepare product attribute
     Given I go to Products / Product Attributes

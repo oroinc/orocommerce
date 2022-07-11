@@ -50,7 +50,7 @@ class ProductCollectionVariantReindexMessageSendListener
             'listener',
             $this->getMessageKey($scheduledPartialMessages)
         );
-        $this->collectionIndexationHandler->handle($scheduledPartialMessages, $rootJobName);
+        $this->collectionIndexationHandler->handle($scheduledPartialMessages, $rootJobName, false, ['main']);
     }
 
     /**

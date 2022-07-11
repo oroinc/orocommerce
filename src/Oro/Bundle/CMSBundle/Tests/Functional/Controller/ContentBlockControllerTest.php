@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Functional\Controller;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CMSBundle\Entity\ContentBlock;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
@@ -11,21 +11,17 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
  */
 class ContentBlockControllerTest extends WebTestCase
 {
-    const CONTENT_BLOCK_ALIAS = 'content-block-alias';
+    private const CONTENT_BLOCK_ALIAS = 'content-block-alias';
 
-    /**
-     * @var Registry
-     */
-    private $registry;
-
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
-        $this->registry = $this->getContainer()->get('doctrine');
+    }
+
+    private function getDoctrine(): ManagerRegistry
+    {
+        return self::getContainer()->get('doctrine');
     }
 
     public function testIndex()
@@ -60,7 +56,7 @@ class ContentBlockControllerTest extends WebTestCase
     public function testView()
     {
         /** @var ContentBlock $contentBlock */
-        $contentBlock = $this->registry->getRepository(ContentBlock::class)->findOneBy(
+        $contentBlock = $this->getDoctrine()->getRepository(ContentBlock::class)->findOneBy(
             ['alias' => self::CONTENT_BLOCK_ALIAS]
         );
         $crawler      = $this->client->request(
@@ -78,7 +74,7 @@ class ContentBlockControllerTest extends WebTestCase
     public function testUpdate()
     {
         /** @var ContentBlock $contentBlock */
-        $contentBlock = $this->registry->getRepository(ContentBlock::class)->findOneBy(
+        $contentBlock = $this->getDoctrine()->getRepository(ContentBlock::class)->findOneBy(
             ['alias' => self::CONTENT_BLOCK_ALIAS]
         );
         $crawler      = $this->client->request(

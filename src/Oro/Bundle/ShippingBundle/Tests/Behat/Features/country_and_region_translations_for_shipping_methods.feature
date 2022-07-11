@@ -16,9 +16,6 @@ Feature: Country and region translations for Shipping methods
       | Enabled Localizations | [English, Zulu_Loc] |
       | Default Localization  | Zulu_Loc            |
     And I submit form
-    When I go to System / Localization / Translations
-    And I click "Update Cache"
-    Then I should see "Translation Cache has been updated" flash message
 
   Scenario: Check Shipping methods UI
     Given go to System/ Shipping Rules

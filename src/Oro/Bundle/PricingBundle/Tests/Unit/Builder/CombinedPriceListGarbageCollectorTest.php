@@ -2,8 +2,9 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Builder;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\EntityBundle\ORM\NativeQueryExecutorHelper;
 use Oro\Bundle\PricingBundle\Builder\CombinedPriceListGarbageCollector;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule;
@@ -16,62 +17,48 @@ use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToCustomerGroupR
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToCustomerRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToWebsiteRepository;
 use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class CombinedPriceListGarbageCollectorTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|ConfigManager
-     */
-    protected $configManager;
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $registry;
 
-    /**
-     * @var CombinedPriceListGarbageCollector
-     */
-    protected $garbageCollector;
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $configManager;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|Registry
-     */
-    protected $registry;
+    /** @var CombinedPriceListTriggerHandler|\PHPUnit\Framework\MockObject\MockObject */
+    private $triggerHandler;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|CombinedPriceListTriggerHandler
-     */
-    protected $triggerHandler;
+    /** @var CombinedPriceListGarbageCollector */
+    private $garbageCollector;
+
+    /** @var NativeQueryExecutorHelper|MockObject */
+    private $nativeQueryExecutorHelper;
 
     protected function setUp(): void
     {
+        $this->registry = $this->createMock(ManagerRegistry::class);
         $this->configManager = $this->createMock(ConfigManager::class);
-        $this->registry = $this->createMock(Registry::class);
         $this->triggerHandler = $this->createMock(CombinedPriceListTriggerHandler::class);
+        $this->nativeQueryExecutorHelper = $this->createMock(NativeQueryExecutorHelper::class);
 
         $this->garbageCollector = new CombinedPriceListGarbageCollector(
             $this->registry,
             $this->configManager,
-            $this->triggerHandler
+            $this->triggerHandler,
+            $this->nativeQueryExecutorHelper
         );
     }
 
     public function testCleanCombinedPriceLists()
     {
-        $this->configManager->expects($this->atLeastOnce())
-            ->method('get')
-            ->willReturnMap([
-                ['oro_pricing.combined_price_list', false, false, null, 1],
-                ['oro_pricing.full_combined_price_list', false, false, null, 2]
-            ]);
+        $this->assertConfigManagerCalls();
 
-        $invalidCPLs = [42, 45];
         $cplRepository = $this->createMock(CombinedPriceListRepository::class);
         $cplRepository->expects($this->once())
-            ->method('getUnusedPriceListsIds')
-            ->with([1, 2])
-            ->willReturn($invalidCPLs);
-        $cplRepository->expects($this->once())
-            ->method('deletePriceLists')
-            ->with($invalidCPLs);
-        $cplRepository->expects($this->once())
-            ->method('removeDuplicatePrices');
+            ->method('scheduleUnusedPriceListsRemoval')
+            ->with($this->nativeQueryExecutorHelper, [1, 2]);
 
         $customerRelationRepository = $this->createMock(CombinedPriceListToCustomerRepository::class);
         $customerRelationRepository->expects($this->once())
@@ -101,6 +88,42 @@ class CombinedPriceListGarbageCollectorTest extends \PHPUnit\Framework\TestCase
                 [CombinedPriceListActivationRule::class, null, $cplActivationRuleRepository],
             ]);
 
+        $this->garbageCollector->cleanCombinedPriceLists();
+    }
+
+    public function testHasPriceListsScheduledForRemoval()
+    {
+        $cplRepository = $this->createMock(CombinedPriceListRepository::class);
+        $this->registry->expects($this->any())
+            ->method('getRepository')
+            ->with(CombinedPriceList::class)
+            ->willReturn($cplRepository);
+        $cplRepository->expects($this->once())
+            ->method('hasPriceListsScheduledForRemoval')
+            ->willReturn(true);
+
+        $this->assertTrue($this->garbageCollector->hasPriceListsScheduledForRemoval());
+    }
+
+    public function testRemoveScheduledUnusedPriceLists()
+    {
+        $cplRepository = $this->createMock(CombinedPriceListRepository::class);
+        $this->registry->expects($this->any())
+            ->method('getRepository')
+            ->with(CombinedPriceList::class)
+            ->willReturn($cplRepository);
+
+        $this->assertConfigManagerCalls();
+        $invalidCPLs = [42, 45];
+
+        $cplRepository->expects($this->once())
+            ->method('getPriceListsScheduledForRemoval')
+            ->with($this->nativeQueryExecutorHelper, $this->isInstanceOf(\DateTimeInterface::class), [1, 2])
+            ->willReturn($invalidCPLs);
+        $cplRepository->expects($this->once())
+            ->method('deletePriceLists')
+            ->with($invalidCPLs);
+
         $this->triggerHandler->expects($this->once())
             ->method('startCollect');
         $this->triggerHandler->expects($this->once())
@@ -109,6 +132,16 @@ class CombinedPriceListGarbageCollectorTest extends \PHPUnit\Framework\TestCase
         $this->triggerHandler->expects($this->once())
             ->method('commit');
 
-        $this->garbageCollector->cleanCombinedPriceLists();
+        $this->garbageCollector->removeScheduledUnusedPriceLists();
+    }
+
+    private function assertConfigManagerCalls(): void
+    {
+        $this->configManager->expects($this->atLeastOnce())
+            ->method('get')
+            ->willReturnMap([
+                ['oro_pricing.combined_price_list', false, false, null, 1],
+                ['oro_pricing.full_combined_price_list', false, false, null, 2]
+            ]);
     }
 }

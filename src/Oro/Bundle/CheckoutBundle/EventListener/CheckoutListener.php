@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\CheckoutBundle\EventListener;
 
-use Oro\Bundle\CheckoutBundle\DependencyInjection\Configuration;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
@@ -14,11 +13,8 @@ use Oro\Bundle\UserBundle\Provider\DefaultUserProvider;
  */
 class CheckoutListener
 {
-    /** @var DefaultUserProvider */
-    private $defaultUserProvider;
-
-    /** @var TokenAccessorInterface */
-    private $tokenAccessor;
+    private DefaultUserProvider $defaultUserProvider;
+    private TokenAccessorInterface $tokenAccessor;
 
     public function __construct(
         DefaultUserProvider $defaultUserProvider,
@@ -28,15 +24,14 @@ class CheckoutListener
         $this->tokenAccessor = $tokenAccessor;
     }
 
-    public function prePersist(Checkout $checkout)
+    public function prePersist(Checkout $checkout): void
     {
         if ($this->tokenAccessor->getToken() instanceof AnonymousCustomerUserToken
             && null === $checkout->getOwner()
         ) {
-            $checkout->setOwner($this->defaultUserProvider->getDefaultUser(
-                Configuration::ROOT_NODE,
-                Configuration::DEFAULT_GUEST_CHECKOUT_OWNER
-            ));
+            $checkout->setOwner(
+                $this->defaultUserProvider->getDefaultUser('oro_checkout.default_guest_checkout_owner')
+            );
 
             $organization = $this->tokenAccessor->getOrganization();
             if (null !== $organization) {

@@ -13,6 +13,7 @@ use Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
 use Oro\Bundle\PricingBundle\Placeholder\CPLIdPlaceholder;
 use Oro\Bundle\PricingBundle\Placeholder\CurrencyPlaceholder;
 use Oro\Bundle\PricingBundle\Placeholder\UnitPlaceholder;
+use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 
@@ -22,6 +23,7 @@ use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 class WebsiteSearchProductPriceIndexerListener implements FeatureToggleableInterface
 {
     use FeatureCheckerHolderTrait;
+    use ContextTrait;
 
     const MP_ALIAS = 'minimal_price_CPL_ID_CURRENCY_UNIT';
 
@@ -41,6 +43,10 @@ class WebsiteSearchProductPriceIndexerListener implements FeatureToggleableInter
 
     public function onWebsiteSearchIndex(IndexEntityEvent $event)
     {
+        if (!$this->hasContextFieldGroup($event->getContext(), 'pricing')) {
+            return;
+        }
+
         if (!$this->isFeaturesEnabled()) {
             return;
         }

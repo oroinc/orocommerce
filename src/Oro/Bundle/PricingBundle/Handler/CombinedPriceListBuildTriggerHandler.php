@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Handler;
 
-use Doctrine\Persistence\ObjectRepository;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
@@ -10,23 +10,22 @@ use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToPriceListRepos
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerHandler;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 /**
  * Checks whether the rebuilding of the combined price list is required.
  */
 class CombinedPriceListBuildTriggerHandler
 {
-    private ManagerRegistry $managerRegistry;
+    private ManagerRegistry $doctrine;
     private PriceListRelationTriggerHandler $priceListRelationTriggerHandler;
     private ShardManager $shardManager;
 
     public function __construct(
-        ManagerRegistry $managerRegistry,
+        ManagerRegistry $doctrine,
         PriceListRelationTriggerHandler $priceListRelationTriggerHandler,
         ShardManager $shardManager
     ) {
-        $this->managerRegistry = $managerRegistry;
+        $this->doctrine = $doctrine;
         $this->priceListRelationTriggerHandler = $priceListRelationTriggerHandler;
         $this->shardManager = $shardManager;
     }
@@ -51,17 +50,12 @@ class CombinedPriceListBuildTriggerHandler
         $this->priceListRelationTriggerHandler->handlePriceListStatusChange($priceList);
     }
 
-    private function getRepository(string $className): ObjectRepository
-    {
-        return $this->managerRegistry->getRepository($className);
-    }
-
     public function isSupported(PriceList $priceList): bool
     {
         /** @var CombinedPriceListToPriceListRepository $combinedPriceToPriceListRepository */
-        $combinedPriceToPriceListRepository = $this->getRepository(CombinedPriceListToPriceList::class);
+        $combinedPriceToPriceListRepository = $this->doctrine->getRepository(CombinedPriceListToPriceList::class);
         /** @var ProductPriceRepository $productPriceRepository */
-        $productPriceRepository = $this->getRepository(ProductPrice::class);
+        $productPriceRepository = $this->doctrine->getRepository(ProductPrice::class);
 
         return
             $combinedPriceToPriceListRepository->hasCombinedPriceListWithPriceList($priceList)

@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\ProductBundle\VirtualFields;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\EntityBundle\Helper\FieldHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\VirtualFields\QueryDesigner\VirtualFieldsSelectQueryConverter;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Contracts\Cache\CacheInterface;
 
 /**
@@ -32,11 +32,11 @@ class VirtualFieldsProductDecoratorFactory
 
     /**
      * @param Product[] $products
-     * @param Product $product
+     * @param Product   $product
      *
      * @return VirtualFieldsProductDecorator
      */
-    public function createDecoratedProduct(array $products, Product $product)
+    public function createDecoratedProduct(array $products, Product $product): VirtualFieldsProductDecorator
     {
         return new VirtualFieldsProductDecorator(
             $this->converter,

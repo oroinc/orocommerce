@@ -14,7 +14,6 @@ define(function(require, exports, module) {
 
     let config = require('module-config').default(module.id);
     config = _.extend({
-        asapInitComponentsList: '[data-popup-gallery]',
         massActionsContainer: '[data-mass-actions-container]',
         massActionsStickyContainer: '[data-mass-actions-sticky-container]'
     }, config);
@@ -33,9 +32,6 @@ define(function(require, exports, module) {
 
         /** @property */
         massActionsStickyContainer: config.massActionsStickyContainer,
-
-        /** @property */
-        asapInitComponentsList: config.asapInitComponentsList,
 
         /** @property */
         visibleState: {
@@ -174,7 +170,6 @@ define(function(require, exports, module) {
                 this.initLayout({collection: this.collection});
             }
             BackendGrid.__super__._afterRequest.call(this, jqXHR);
-            this.asapInitComponentsForVisibleState();
         },
 
         /**
@@ -221,18 +216,9 @@ define(function(require, exports, module) {
             $(this.massActionsContainer).append(this.selectHeaderActionCell.$el);
         },
 
-        asapInitComponentsForVisibleState: function() {
-            if (!this.visibleState.visible) {
-                return;
-            }
-            for (const el of this.$el.find(this.asapInitComponentsList)) {
-                $(el).attr('data-page-component-init-on', 'asap').trigger('content:changed');
-            }
-        },
-
         setVisibleState: function(state) {
             this.visibleState.visible = state;
-            this.asapInitComponentsForVisibleState();
+            this.$el.toggleClass('row-selection-enabled', state);
         },
 
         /**

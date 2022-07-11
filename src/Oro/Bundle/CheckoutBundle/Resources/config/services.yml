@@ -372,6 +372,7 @@ services:
 
     oro_checkout.action.default_shipping_method_setter:
         class: 'Oro\Bundle\CheckoutBundle\Action\DefaultShippingMethodSetter'
+        # Public because used in checkout workflows.
         public: true
         arguments:
             - '@oro_checkout.shipping_method.provider_main'
@@ -381,6 +382,16 @@ services:
         decorates: oro_checkout.action.default_shipping_method_setter
         arguments:
             - '@.inner'
+
+    oro_checkout.action.default_payment_method_setter:
+        class: 'Oro\Bundle\CheckoutBundle\Action\DefaultPaymentMethodSetter'
+        # Public because used in checkout workflows.
+        public: true
+        arguments:
+            - '@oro_payment.method.provider.applicable_methods_provider'
+            - '@oro_checkout.provider.payment_context'
+        calls:
+            - [setLogger, ['@logger']]
 
     oro_checkout.factory.shipping_context_factory:
         class: 'Oro\Bundle\CheckoutBundle\Factory\CheckoutShippingContextFactory'
@@ -536,14 +547,15 @@ services:
         decorates: oro_payment.provider.result_messages
         arguments: ['@oro_checkout.provider.payment_method_provider']
 
-    oro_checkout.event_listener.system_config:
-        parent: oro_user.event_listener.default_user_system_config
-        calls:
-            - [setAlias, ['oro_checkout']]
-            - [setConfigKey, ['default_guest_checkout_owner']]
+    oro_checkout.event_listener.system_config.default_guest_checkout_owner:
+        class: Oro\Bundle\UserBundle\EventListener\DefaultUserSystemConfigListener
+        arguments:
+            - '@oro_user.provider.default_user'
+            - '@doctrine'
+            - 'oro_checkout.default_guest_checkout_owner'
         tags:
             - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: onFormPreSetData }
-            - { name: kernel.event_listener, event: oro_config.settings_before_save.oro_checkout.default_guest_checkout_owner, method: onSettingsSaveBefore }
+            - { name: kernel.event_listener, event: oro_config.settings_before_save, method: onSettingsSaveBefore }
 
     oro_checkout.voter.guest_checkout:
         parent: oro_customer.voter.anonymous_customer_user
@@ -820,3 +832,22 @@ services:
             - '@oro_order.manager.order_address'
             - '@property_accessor'
             - ['street', 'city', 'country', 'region', 'postalCode']
+
+    oro_checkout.helper.check_compare:
+        class: Oro\Bundle\CheckoutBundle\Helper\CheckoutCompareHelper
+        public: true
+        arguments:
+            - '@oro_checkout.workflow_state.storage.checkout_state_diff_storage'
+            - '@oro_checkout.workflow_state.mapper.shopping_list_line_item'
+            - '@oro_workflow.manager'
+            - '@oro_action.action_group_registry'
+
+    Oro\Bundle\CheckoutBundle\Helper\CheckoutCompareHelper:
+        alias: oro_checkout.helper.check_compare
+
+    oro_checkout.workflow_state.mapper.shopping_list_line_item:
+        class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\ShoppingListLineItemDiffMapper'
+        arguments:
+            - '@oro_checkout.provider.shipping_context'
+        tags:
+            - { name: checkout.workflow_state.mapper }

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\RedirectBundle\Tests\Unit\Provider;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\RedirectBundle\Cache\FlushableCacheInterface;
 use Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface;
 use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
@@ -10,23 +11,22 @@ use Oro\Bundle\RedirectBundle\Provider\SluggableUrlCacheAwareProvider;
 use Oro\Bundle\RedirectBundle\Provider\SluggableUrlDatabaseAwareProvider;
 use Oro\Bundle\RedirectBundle\Routing\SluggableUrlGenerator;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Stub\UrlCacheAllCapabilities;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 class SluggableUrlDatabaseAwareProviderTest extends \PHPUnit\Framework\TestCase
 {
     /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    protected $registry;
+    private $doctrine;
 
     /** @var SluggableUrlCacheAwareProvider|\PHPUnit\Framework\MockObject\MockObject */
-    protected $cacheProvider;
+    private $cacheProvider;
 
     /** @var UrlCacheInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $cache;
+    private $cache;
 
     protected function setUp(): void
     {
         $this->cacheProvider = $this->createMock(SluggableUrlCacheAwareProvider::class);
-        $this->registry = $this->createMock(ManagerRegistry::class);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->cache = $this->createMock(UrlCacheInterface::class);
     }
 
@@ -35,7 +35,7 @@ class SluggableUrlDatabaseAwareProviderTest extends \PHPUnit\Framework\TestCase
         $provider = new SluggableUrlDatabaseAwareProvider(
             $this->cacheProvider,
             $this->cache,
-            $this->registry
+            $this->doctrine
         );
         $provider->setContextUrl('');
 
@@ -46,7 +46,7 @@ class SluggableUrlDatabaseAwareProviderTest extends \PHPUnit\Framework\TestCase
         $this->cache->expects($this->once())
             ->method('getUrl')
             ->with(SluggableUrlDatabaseAwareProvider::SLUG_ROUTES_KEY, [])
-            ->willReturn(json_encode([$name => true]));
+            ->willReturn(json_encode([$name => true], JSON_THROW_ON_ERROR));
         $this->cacheProvider->expects($this->once())
             ->method('getUrl')
             ->with($name, $params, $localizationId)
@@ -57,9 +57,8 @@ class SluggableUrlDatabaseAwareProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider cacheDataProvider
-     * @param UrlCacheInterface|\PHPUnit\Framework\MockObject\MockObject $cache
      */
-    public function testGetUrlWithoutCacheUrl(UrlCacheInterface $cache)
+    public function testGetUrlWithoutCacheUrl(UrlCacheInterface|\PHPUnit\Framework\MockObject\MockObject $cache)
     {
         if ($cache instanceof FlushableCacheInterface) {
             $cache->expects($this->once())
@@ -69,7 +68,7 @@ class SluggableUrlDatabaseAwareProviderTest extends \PHPUnit\Framework\TestCase
         $provider = new SluggableUrlDatabaseAwareProvider(
             $this->cacheProvider,
             $cache,
-            $this->registry
+            $this->doctrine
         );
         $provider->setContextUrl('');
 
@@ -81,7 +80,7 @@ class SluggableUrlDatabaseAwareProviderTest extends \PHPUnit\Framework\TestCase
         $cache->expects($this->once())
             ->method('getUrl')
             ->with(SluggableUrlDatabaseAwareProvider::SLUG_ROUTES_KEY, [])
-            ->willReturn(json_encode([$name => true]));
+            ->willReturn(json_encode([$name => true], JSON_THROW_ON_ERROR));
 
         $this->cacheProvider->expects($this->exactly(2))
             ->method('getUrl')
@@ -105,11 +104,11 @@ class SluggableUrlDatabaseAwareProviderTest extends \PHPUnit\Framework\TestCase
             ->method('getUsedRoutes')
             ->willReturn([$name]);
 
-        $this->registry->expects($this->once())
+        $this->doctrine->expects($this->once())
             ->method('getManagerForClass')
             ->with(Slug::class)
             ->willReturnSelf();
-        $this->registry->expects($this->once())
+        $this->doctrine->expects($this->once())
             ->method('getRepository')
             ->with(Slug::class)
             ->willReturn($slugRepository);
@@ -127,7 +126,7 @@ class SluggableUrlDatabaseAwareProviderTest extends \PHPUnit\Framework\TestCase
                 [
                     SluggableUrlDatabaseAwareProvider::SLUG_ROUTES_KEY,
                     [],
-                    json_encode([$name => true]),
+                    json_encode([$name => true], JSON_THROW_ON_ERROR),
                     null
                 ]
             );
@@ -135,10 +134,7 @@ class SluggableUrlDatabaseAwareProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('/slug-url', $provider->getUrl($name, $routeParameters, $localizationId));
     }
 
-    /**
-     * @return array
-     */
-    public function cacheDataProvider()
+    public function cacheDataProvider(): array
     {
         return [
             'simple cache' => [$this->createMock(UrlCacheInterface::class)],
@@ -148,16 +144,13 @@ class SluggableUrlDatabaseAwareProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getDefaultCacheValues
-     *
-     * @param int $localizationId
-     * @param array $expected
      */
-    public function testGetUrlWithCacheUrl($localizationId, $expected)
+    public function testGetUrlWithCacheUrl(int $localizationId, array $expected)
     {
         $provider = new SluggableUrlDatabaseAwareProvider(
             $this->cacheProvider,
             $this->cache,
-            $this->registry
+            $this->doctrine
         );
         $provider->setContextUrl('');
 
@@ -167,7 +160,7 @@ class SluggableUrlDatabaseAwareProviderTest extends \PHPUnit\Framework\TestCase
         $this->cache->expects($this->once())
             ->method('getUrl')
             ->with(SluggableUrlDatabaseAwareProvider::SLUG_ROUTES_KEY, [])
-            ->willReturn(json_encode([$name => true]));
+            ->willReturn(json_encode([$name => true], JSON_THROW_ON_ERROR));
         $this->cacheProvider->expects($this->exactly($expected['calls']))
             ->method('getUrl')
             ->withConsecutive(
@@ -184,10 +177,7 @@ class SluggableUrlDatabaseAwareProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('/slug-url', $provider->getUrl($name, $params, $localizationId));
     }
 
-    /**
-     * @return array
-     */
-    public function getDefaultCacheValues()
+    public function getDefaultCacheValues(): array
     {
         return [
             'default locale' => [
@@ -225,7 +215,7 @@ class SluggableUrlDatabaseAwareProviderTest extends \PHPUnit\Framework\TestCase
         $provider = new SluggableUrlDatabaseAwareProvider(
             $this->cacheProvider,
             $this->cache,
-            $this->registry
+            $this->doctrine
         );
         $routeParameters = [
             'id' => 10
@@ -253,11 +243,11 @@ class SluggableUrlDatabaseAwareProviderTest extends \PHPUnit\Framework\TestCase
             ->method('getUsedRoutes')
             ->willReturn([$name]);
 
-        $this->registry->expects($this->once())
+        $this->doctrine->expects($this->once())
             ->method('getManagerForClass')
             ->with(Slug::class)
             ->willReturnSelf();
-        $this->registry->expects($this->once())
+        $this->doctrine->expects($this->once())
             ->method('getRepository')
             ->with(Slug::class)
             ->willReturn($slugRepository);
@@ -275,7 +265,7 @@ class SluggableUrlDatabaseAwareProviderTest extends \PHPUnit\Framework\TestCase
                 [
                     SluggableUrlDatabaseAwareProvider::SLUG_ROUTES_KEY,
                     [],
-                    json_encode([$name => false]),
+                    json_encode([$name => false], JSON_THROW_ON_ERROR),
                     null
                 ]
             );
@@ -288,7 +278,7 @@ class SluggableUrlDatabaseAwareProviderTest extends \PHPUnit\Framework\TestCase
         $provider = new SluggableUrlDatabaseAwareProvider(
             $this->cacheProvider,
             $this->cache,
-            $this->registry
+            $this->doctrine
         );
         $routeParameters = [
             'id' => 10
@@ -300,7 +290,7 @@ class SluggableUrlDatabaseAwareProviderTest extends \PHPUnit\Framework\TestCase
         $this->cache->expects($this->once())
             ->method('getUrl')
             ->with(SluggableUrlDatabaseAwareProvider::SLUG_ROUTES_KEY, [])
-            ->willReturn(json_encode([$name => false]));
+            ->willReturn(json_encode([$name => false], JSON_THROW_ON_ERROR));
 
         $this->cacheProvider->expects($this->never())
             ->method($this->anything());

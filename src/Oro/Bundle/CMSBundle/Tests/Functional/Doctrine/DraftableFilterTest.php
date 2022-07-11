@@ -2,29 +2,20 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Functional\Doctrine;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\CMSBundle\Tests\Functional\DataFixtures\LoadDraftPageData;
 use Oro\Bundle\DraftBundle\Doctrine\DraftableFilter;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\Testing\QueryTracker;
 
 class DraftableFilterTest extends WebTestCase
 {
-    /**
-     * @var QueryTracker
-     */
-    private $queryTracker;
+    private QueryTracker $queryTracker;
+    private EntityManagerInterface $em;
 
-    /**
-     * @var EntityManager
-     */
-    private $em;
-
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         parent::setUp();
@@ -141,13 +132,13 @@ class DraftableFilterTest extends WebTestCase
     private function assertQueryModified(string $query): void
     {
         $needle = $this->getQueryNeedleString();
-        static::assertStringContainsString($needle, $query);
+        self::assertStringContainsString($needle, $query);
     }
 
     private function assertQueryNotModified(string $query): void
     {
         $needle = $this->getQueryNeedleString();
-        static::assertStringNotContainsString($needle, $query);
+        self::assertStringNotContainsString($needle, $query);
     }
 
     private function getQueryNeedleString(): string
@@ -174,8 +165,8 @@ class DraftableFilterTest extends WebTestCase
     {
         return $this->em->createQueryBuilder()
             ->select('o')
-            ->from('OroOrganizationBundle:Organization', 'o')
-            ->join('OroCMSBundle:Page', 'p', 'WITH', 'o = p.organization')
+            ->from(Organization::class, 'o')
+            ->join(Page::class, 'p', 'WITH', 'o = p.organization')
             ->where('p.content = :content')
             ->setParameter('content', LoadDraftPageData::BASIC_PAGE_1_DRAFT_1)
             ->getQuery()

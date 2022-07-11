@@ -3,11 +3,9 @@
 namespace Oro\Bundle\SEOBundle\Tests\Functional\Form\Type;
 
 use Doctrine\Common\Collections\Collection;
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Model\FallbackType;
-use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\ProductBundle\Entity\Brand;
 use Oro\Bundle\ProductBundle\Form\Type\BrandType;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -20,31 +18,15 @@ class BrandTypeTest extends WebTestCase
 {
     use EntityTrait;
 
-    const DATA_CLASS = Brand::class;
+    private const DATA_CLASS = Brand::class;
 
-    /**
-     * @var BrandType
-     */
-    protected $type;
-
-    /**
-     * @var FormFactoryInterface
-     */
-    protected $formFactory;
-
-    /**
-     * @var CsrfTokenManagerInterface
-     */
-    protected $tokenManager;
+    private BrandType $type;
+    private FormFactoryInterface $formFactory;
+    private CsrfTokenManagerInterface $tokenManager;
 
     protected function setUp(): void
     {
-        /** @var LocaleSettings|\PHPUnit\Framework\MockObject\MockObject */
-        $localeSettings = $this->createMock(LocaleSettings::class);
-        /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
-        $configManager = $this->createMock(ConfigManager::class);
-
-        $this->type = new BrandType($configManager, $localeSettings);
+        $this->type = new BrandType();
         $this->type->setDataClass(self::DATA_CLASS);
 
         $this->initClient();
@@ -55,14 +37,8 @@ class BrandTypeTest extends WebTestCase
         parent::setUp();
     }
 
-    protected function tearDown(): void
-    {
-        unset($this->type);
-    }
-
     public function testBuildForm()
     {
-        /** @var FormBuilder|\PHPUnit\Framework\MockObject\MockObject $builder */
         $builder = $this->createMock(FormBuilder::class);
 
         $builder->expects($this->exactly(5))
@@ -74,8 +50,8 @@ class BrandTypeTest extends WebTestCase
 
     public function testSubmit()
     {
-        $doctrine = $this->getContainer()->get('doctrine');
-        $localizationRepository = $doctrine->getRepository('OroLocaleBundle:Localization');
+        $localizationRepository = $this->getContainer()->get('doctrine')
+            ->getRepository(Localization::class);
 
         /** @var Localization[] $localizations */
         $localizations = $localizationRepository->findAll();
@@ -133,11 +109,7 @@ class BrandTypeTest extends WebTestCase
         }
     }
 
-    /**
-     * @param Localization $localization
-     * @param Brand $brand
-     */
-    protected function assertLocalization($localization, $brand)
+    private function assertLocalization(Localization $localization, Brand $brand): void
     {
         $localizedName = $this->getValueByLocalization($brand->getNames(), $localization);
         $this->assertNotEmpty($localizedName);
@@ -155,16 +127,12 @@ class BrandTypeTest extends WebTestCase
         $this->assertEquals(FallbackType::SYSTEM, $localizedLongDescription->getFallback());
     }
 
-    /**
-     * @param Collection|LocalizedFallbackValue[] $values
-     * @param Localization $localization
-     * @return LocalizedFallbackValue|null
-     */
-    protected function getValueByLocalization($values, Localization $localization)
+    private function getValueByLocalization(Collection $values, Localization $localization): ?LocalizedFallbackValue
     {
         $localizationId = $localization->getId();
+        /** @var LocalizedFallbackValue $value */
         foreach ($values as $value) {
-            if ($value->getLocalization()->getId() == $localizationId) {
+            if ($value->getLocalization()->getId() === $localizationId) {
                 return $value;
             }
         }

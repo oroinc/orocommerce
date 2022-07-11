@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Behat;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -19,7 +19,7 @@ class ReferenceRepositoryInitializer implements ReferenceRepositoryInitializerIn
     /**
      * {@inheritdoc}
      */
-    public function init(Registry $doctrine, Collection $referenceRepository)
+    public function init(ManagerRegistry $doctrine, Collection $referenceRepository): void
     {
         $this->setDefaultProductFamilyReference($doctrine, $referenceRepository);
         $this->setProductUnitReferences($doctrine, $referenceRepository);
@@ -34,7 +34,7 @@ class ReferenceRepositoryInitializer implements ReferenceRepositoryInitializerIn
         }
     }
 
-    private function setDefaultProductFamilyReference(Registry $doctrine, Collection $referenceRepository): void
+    private function setDefaultProductFamilyReference(ManagerRegistry $doctrine, Collection $referenceRepository): void
     {
         $repository = $doctrine->getManager()->getRepository(AttributeFamily::class);
         $attributeFamily = $repository->findOneBy([
@@ -48,7 +48,7 @@ class ReferenceRepositoryInitializer implements ReferenceRepositoryInitializerIn
         $referenceRepository->set('defaultProductFamily', $attributeFamily);
     }
 
-    private function setProductUnitReferences(Registry $doctrine, Collection $referenceRepository): void
+    private function setProductUnitReferences(ManagerRegistry $doctrine, Collection $referenceRepository): void
     {
         /** @var ProductUnitRepository $repository */
         $repository = $doctrine->getManager()->getRepository(ProductUnit::class);
@@ -76,7 +76,7 @@ class ReferenceRepositoryInitializer implements ReferenceRepositoryInitializerIn
      * Example: translation_key_jsmessages_oro_product_product_unit_bottle_value_label
      */
     private function setProductUnitTranslationKeysReferences(
-        Registry $doctrine,
+        ManagerRegistry $doctrine,
         Collection $referenceRepository
     ): void {
         /** @var TranslationKeyRepository $repository */
@@ -97,7 +97,7 @@ class ReferenceRepositoryInitializer implements ReferenceRepositoryInitializerIn
         }
     }
 
-    private function setProductAttributesReferences(Registry $doctrine, Collection $referenceRepository): void
+    private function setProductAttributesReferences(ManagerRegistry $doctrine, Collection $referenceRepository): void
     {
         $repository = $doctrine->getManagerForClass(FieldConfigModel::class)->getRepository(FieldConfigModel::class);
 

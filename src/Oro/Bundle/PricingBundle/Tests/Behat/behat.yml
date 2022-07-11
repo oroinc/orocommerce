@@ -48,6 +48,8 @@ oro_behat_extension:
       selector: '.product-price__container'
     Product Price Main:
       selector: '.product-price__main'
+    Product Price Your:
+      selector: '.product-price__your'
     Product Price Listed:
       selector: '.product-price__listed'
     Product Price Hint:
@@ -119,6 +121,11 @@ oro_behat_extension:
           Subtotals Calculation Precision in Sales Documents: 'pricing[oro_pricing___precision][value]'
           Pricing Rounding Type System: 'pricing[oro_pricing___rounding_type][use_parent_scope_value]'
           Pricing Rounding Type: 'pricing[oro_pricing___rounding_type][value]'
+          Pricing Default Price List Use Default: 'pricing[oro_pricing___default_price_list][use_parent_scope_value]'
+          Pricing Default Price List:
+            type: 'xpath'
+            locator: '//input[@name="pricing[oro_pricing___default_price_list][value]"]'
+            element: Select2Entity
 
     Add Product Price Form:
       selector: '[id^="oro_action_operation-uid"]'

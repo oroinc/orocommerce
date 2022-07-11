@@ -21,9 +21,6 @@ class CheckoutListenerTest extends \PHPUnit\Framework\TestCase
     /** @var CheckoutListener */
     private $listener;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->defaultUserProvider = $this->createMock(DefaultUserProvider::class);
@@ -34,14 +31,10 @@ class CheckoutListenerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider persistNotSetDefaultOwnerDataProvider
-     *
-     * @param string $token
-     * @param Checkout $checkout
      */
-    public function testPrePersistNotSetDefaultOwner($token, Checkout $checkout)
+    public function testPrePersistNotSetDefaultOwner(?object $token, Checkout $checkout)
     {
-        $this->tokenAccessor
-            ->expects($this->once())
+        $this->tokenAccessor->expects($this->once())
             ->method('getToken')
             ->willReturn($token);
 
@@ -51,10 +44,7 @@ class CheckoutListenerTest extends \PHPUnit\Framework\TestCase
         $this->assertNotSame($newUser, $checkout->getOwner());
     }
 
-    /**
-     * @return array
-     */
-    public function persistNotSetDefaultOwnerDataProvider()
+    public function persistNotSetDefaultOwnerDataProvider(): array
     {
         return [
             'without token and without owner' => [
@@ -74,28 +64,24 @@ class CheckoutListenerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider persistSetDefaultOwnerDataProvider
-     *
-     * @param string $token
-     * @param Checkout $checkout
-     * @param Organization|null $organization
      */
-    public function testPrePersistSetDefaultOwner($token, Checkout $checkout, $organization)
-    {
-        $this->tokenAccessor
-            ->expects($this->once())
+    public function testPrePersistSetDefaultOwner(
+        AnonymousCustomerUserToken $token,
+        Checkout $checkout,
+        ?Organization $organization
+    ) {
+        $this->tokenAccessor->expects($this->once())
             ->method('getToken')
             ->willReturn($token);
 
         $newUser = new User();
         $newUser->setFirstName('first_name');
-        $this->defaultUserProvider
-            ->expects($this->once())
+        $this->defaultUserProvider->expects($this->once())
             ->method('getDefaultUser')
-            ->with('oro_checkout', 'default_guest_checkout_owner')
+            ->with('oro_checkout.default_guest_checkout_owner')
             ->willReturn($newUser);
 
-        $this->tokenAccessor
-            ->expects($this->once())
+        $this->tokenAccessor->expects($this->once())
             ->method('getOrganization')
             ->willReturn($organization);
 
@@ -104,10 +90,7 @@ class CheckoutListenerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($organization, $checkout->getOrganization());
     }
 
-    /**
-     * @return array
-     */
-    public function persistSetDefaultOwnerDataProvider()
+    public function persistSetDefaultOwnerDataProvider(): array
     {
         return [
             'with token, without owner, without current organization' => [

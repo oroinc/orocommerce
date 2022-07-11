@@ -18,12 +18,14 @@ interface AsyncReindexProductCollectionHandlerInterface
      * @param iterable $childJobPartialMessages
      * @param string $uniqueJobName
      * @param bool $throwExceptionOnFailToRunJob - throws exception when failed to run job
+     * @param array|null $indexationFieldGroups - optional list of field groups for indexation
      * @return bool
      * @throws FailedToRunReindexProductCollectionJobException
      */
     public function handle(
         iterable $childJobPartialMessages,
         string $uniqueJobName,
-        bool $throwExceptionOnFailToRunJob = false
+        bool $throwExceptionOnFailToRunJob = false,
+        array $indexationFieldGroups = null
     ): bool;
 }

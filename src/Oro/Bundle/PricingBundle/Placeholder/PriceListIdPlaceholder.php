@@ -5,6 +5,8 @@ namespace Oro\Bundle\PricingBundle\Placeholder;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Provider\CustomerUserRelationsProvider;
+use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\PricingBundle\Model\AbstractPriceListTreeHandler;
@@ -20,20 +22,10 @@ class PriceListIdPlaceholder extends AbstractPlaceholder implements FeatureToggl
 
     public const NAME = 'PRICE_LIST_ID';
 
-    /**
-     * @var AbstractPriceListTreeHandler
-     */
-    private $priceListTreeHandler;
-
-    /**
-     * @var TokenStorageInterface
-     */
-    private $tokenStorage;
-
-    /**
-     * @var ConfigManager
-     */
-    private $configManager;
+    private AbstractPriceListTreeHandler $priceListTreeHandler;
+    private TokenStorageInterface $tokenStorage;
+    private ConfigManager $configManager;
+    private CustomerUserRelationsProvider $customerUserRelationsProvider;
 
     /**
      * @var null|string
@@ -43,11 +35,13 @@ class PriceListIdPlaceholder extends AbstractPlaceholder implements FeatureToggl
     public function __construct(
         AbstractPriceListTreeHandler $priceListTreeHandler,
         TokenStorageInterface $tokenStorage,
-        ConfigManager $configManager
+        ConfigManager $configManager,
+        CustomerUserRelationsProvider $customerUserRelationsProvider
     ) {
         $this->priceListTreeHandler = $priceListTreeHandler;
         $this->tokenStorage = $tokenStorage;
         $this->configManager = $configManager;
+        $this->customerUserRelationsProvider = $customerUserRelationsProvider;
     }
 
     /**
@@ -71,26 +65,38 @@ class PriceListIdPlaceholder extends AbstractPlaceholder implements FeatureToggl
             return $this->value;
         }
 
-        $accuracy = $this->configManager->get('oro_pricing.price_indexation_accuracy');
-        $customer = null;
-        if ($accuracy !== 'website') {
-            $token = $this->tokenStorage->getToken();
-            if ($token && $token->getUser() instanceof CustomerUser) {
-                /** @var Customer $baseCustomer */
-                $baseCustomer = $token->getUser()->getCustomer();
-                if ($baseCustomer && $accuracy === 'customer_group') {
-                    $customer = new Customer();
-                    $customer->setGroup($baseCustomer->getGroup());
-                } else {
-                    $customer = $baseCustomer;
-                }
-            }
-        }
-
+        $customer = $this->getCustomer();
         $priceList = $this->priceListTreeHandler->getPriceList($customer);
 
         $this->value = $priceList ? (string)$priceList->getId() : '';
 
         return $this->value;
+    }
+
+    private function getCustomer(): ?Customer
+    {
+        $accuracy = $this->configManager->get('oro_pricing.price_indexation_accuracy');
+        if ($accuracy === 'website') {
+            return null;
+        }
+
+        $token = $this->tokenStorage->getToken();
+        if (null === $token) {
+            return null;
+        }
+
+        $customer = null;
+        if ($token->getUser() instanceof CustomerUser) {
+            $baseCustomer = $token->getUser()->getCustomer();
+            $customer = $baseCustomer && $accuracy === 'customer_group'
+                ? (new Customer())->setGroup($baseCustomer->getGroup())
+                : $baseCustomer;
+        }
+
+        if ($token instanceof AnonymousCustomerUserToken) {
+            $customer = $this->customerUserRelationsProvider->getCustomerIncludingEmpty();
+        }
+
+        return $customer;
     }
 }

@@ -1,4 +1,6 @@
 import BaseTypeBuilder from 'orocms/js/app/grapesjs/type-builders/base-type-builder';
+import TableEditView from '../controls/table-edit';
+import TableTypeDecorator from '../controls/table-edit/table-type-decorator';
 
 /**
  * Create table component type builder
@@ -11,30 +13,45 @@ const TableTypeBuilder = BaseTypeBuilder.extend({
         TableTypeBuilder.__super__.constructor.call(this, options);
     },
 
+    commands: {
+        'table-edit': {
+            run(editor, sender, table) {
+                this.tableEdit = new TableEditView({
+                    container: this.editorModel.view.$el.find('#gjs-tools'),
+                    table,
+                    selected: editor.getSelected()
+                });
+            },
+
+            stop() {
+                this.tableEdit.dispose();
+            }
+        }
+    },
+
     modelMixin: {
         defaults: {
             tagName: 'table',
-            draggable: ['div'],
-            droppable: ['tbody', 'thead', 'tfoot'],
+            draggable: false,
+            removable: false,
+            copyable: false,
             classes: ['table']
         },
 
-        initialize(...args) {
-            this.constructor.__super__.initialize.apply(this, args);
+        ...TableTypeDecorator,
 
+        init() {
             const components = this.get('components');
 
             if (!components.length) {
-                components.add({
+                components.add([{
                     type: 'thead'
-                });
-                components.add({
+                }, {
                     type: 'tbody'
-                });
-                components.add({
-                    type: 'tfoot'
-                });
+                }]);
             }
+
+            this.bindModelEvents();
         }
     },
 

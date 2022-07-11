@@ -109,13 +109,15 @@ services:
         arguments:
             - '@doctrine'
 
-    oro_web_catalog.event_listener.system_config:
-        class: Oro\Bundle\WebCatalogBundle\EventListener\SystemConfigListener
+    oro_web_catalog.event_listener.system_config.web_catalog:
+        class: Oro\Bundle\ConfigBundle\EventListener\EntitySystemConfigListener
         arguments:
             - '@doctrine'
+            - 'Oro\Bundle\WebCatalogBundle\Entity\WebCatalog'
+            - 'oro_web_catalog.web_catalog'
         tags:
             - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: onFormPreSetData }
-            - { name: kernel.event_listener, event: oro_config.settings_before_save.oro_web_catalog.web_catalog, method: onSettingsSaveBefore }
+            - { name: kernel.event_listener, event: oro_config.settings_before_save, method: onSettingsSaveBefore }
 
     oro_web_catalog.event_listener.webcatalog_config:
         class: Oro\Bundle\WebCatalogBundle\EventListener\WebCatalogConfigChangeListener

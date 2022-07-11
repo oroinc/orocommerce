@@ -33,10 +33,6 @@ data:
                 -
                     type: localizedfallbackvalues
                     id: 'slug-id-2'
-        taxCode:
-            data:
-                type: producttaxcodes
-                id: '<toString(@product_tax_code.TAX3->getId())>'
         attributeFamily:
             data:
                 type: attributefamilies

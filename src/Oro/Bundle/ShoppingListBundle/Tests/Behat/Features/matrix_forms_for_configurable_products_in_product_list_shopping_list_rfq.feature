@@ -58,8 +58,6 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     When I go to System / Localization / Translations
     And I filter Key as equal to "oro.frontend.shoppinglist.lineitem.unit.label"
     And I edit "oro.frontend.shoppinglist.lineitem.unit.label" Translated Value as "Unit"
-    And I click "Update Cache"
-    Then I should see "Translation Cache has been updated" flash message
 
   Scenario: Check prices container on configurable product view is visible only when there are prices
     Given I proceed as the User
@@ -737,7 +735,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I click "Create New Shopping List" in "ShoppingListButtonGroupMenu" element
     And I fill in "Shopping List Name" with "Product B Shopping List"
     And I click "Create and Add"
-    Then I should see "Shopping list \"Product B Shopping List\" was created successfully"
+    Then I should see "Shopping list \"Product B Shopping List\" was updated successfully"
 
   Scenario: Update ConfigurableProductB variants
     Given I click "Clear All Product Variants"
@@ -769,15 +767,13 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And click "Search Button"
     And click "View Details" for "CNFC" product
     When I should see an "Configurable Product Shopping List Form" element
-    And I fill "Configurable Product Form" with:
-      | Attributes_1 | Value 12 |
-      | Attributes_2 | Value 23 |
-      | Attributes_3 | Value 31 |
+    And I fill in "Attribute 1" with "Value 12"
+    And I fill in "Attribute 2" with "Value 23"
+    And I fill in "Attribute 3" with "Value 32"
     And I click on "Shopping List Dropdown"
     And I click "Create New Shopping List"
     And I fill in "Shopping List Name" with "Product C Shopping List"
     And I click "Create and Add"
-    Then I should see "Shopping list \"Product C Shopping List\" was created successfully"
     And I should see "Product has been added to \"Product C Shopping List\""
     When I click "Account"
     And I click on "Shopping Lists Navigation Link"

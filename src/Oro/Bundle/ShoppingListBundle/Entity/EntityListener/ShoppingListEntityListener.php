@@ -4,7 +4,6 @@ namespace Oro\Bundle\ShoppingListBundle\Entity\EntityListener;
 
 use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
-use Oro\Bundle\ShoppingListBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListLimitManager;
 use Oro\Bundle\UserBundle\Provider\DefaultUserProvider;
@@ -15,14 +14,9 @@ use Oro\Bundle\UserBundle\Provider\DefaultUserProvider;
  */
 class ShoppingListEntityListener
 {
-    /** @var DefaultUserProvider */
-    private $defaultUserProvider;
-
-    /** @var TokenAccessorInterface */
-    private $tokenAccessor;
-
-    /** @var ShoppingListLimitManager */
-    private $shoppingListLimitManager;
+    private DefaultUserProvider $defaultUserProvider;
+    private TokenAccessorInterface $tokenAccessor;
+    private ShoppingListLimitManager $shoppingListLimitManager;
 
     public function __construct(
         DefaultUserProvider $defaultUserProvider,
@@ -34,24 +28,23 @@ class ShoppingListEntityListener
         $this->shoppingListLimitManager = $shoppingListLimitManager;
     }
 
-    public function prePersist(ShoppingList $shoppingList)
+    public function prePersist(ShoppingList $shoppingList): void
     {
         if ($this->tokenAccessor->getToken() instanceof AnonymousCustomerUserToken
             && null === $shoppingList->getOwner()
         ) {
-            $shoppingList->setOwner($this->defaultUserProvider->getDefaultUser(
-                Configuration::ROOT_NODE,
-                Configuration::DEFAULT_GUEST_SHOPPING_LIST_OWNER
-            ));
+            $shoppingList->setOwner(
+                $this->defaultUserProvider->getDefaultUser('oro_shopping_list.default_guest_shopping_list_owner')
+            );
         }
     }
 
-    public function postPersist()
+    public function postPersist(): void
     {
         $this->shoppingListLimitManager->resetState();
     }
 
-    public function postRemove()
+    public function postRemove(): void
     {
         $this->shoppingListLimitManager->resetState();
     }

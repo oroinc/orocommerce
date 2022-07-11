@@ -6,6 +6,7 @@ use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;
 use Oro\Bundle\ProductBundle\Search\Reindex\ProductReindexManager;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\ProductRepository;
+use Oro\Bundle\VisibilityBundle\Visibility\Cache\CacheBuilderInterface;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\ProductResolvedCacheBuilder;
 
 /**
@@ -16,7 +17,7 @@ class ProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
     /**
      * {@inheritdoc}
      */
-    public function buildCacheDataProvider()
+    public function buildCacheDataProvider(): array
     {
         return [
             [
@@ -27,9 +28,9 @@ class ProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
     }
 
     /**
-     * @return ProductRepository
+     * {@inheritdoc}
      */
-    protected function getRepository()
+    protected function getRepository(): ProductRepository
     {
         return $this->getContainer()->get('doctrine')->getRepository(
             'OroVisibilityBundle:VisibilityResolved\ProductVisibilityResolved'
@@ -39,7 +40,7 @@ class ProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
     /**
      * {@inheritdoc}
      */
-    protected function getCacheBuilder()
+    protected function getCacheBuilder(): CacheBuilderInterface
     {
         $container = $this->client->getContainer();
 

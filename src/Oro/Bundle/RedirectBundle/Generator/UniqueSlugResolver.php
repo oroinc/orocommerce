@@ -10,7 +10,7 @@ use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\Event\RestrictSlugIncrementEvent;
 use Oro\Bundle\RedirectBundle\Generator\DTO\SlugUrl;
-use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
+use Oro\Bundle\RedirectBundle\Helper\SlugQueryRestrictionHelperInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -22,35 +22,22 @@ class UniqueSlugResolver
     const SLUG_INCREMENT_PATTERN = '/^%s-(\d+)$/';
     const SLUG_INCREMENT_DATABASE_PATTERN = '%s-%%';
 
-    /**
-     * @var ManagerRegistry
-     */
-    protected $registry;
-
-    /**
-     * @var AclHelper
-     */
-    private $aclHelper;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
+    protected ManagerRegistry $registry;
+    private SlugQueryRestrictionHelperInterface $slugQueryRestrictionHelper;
+    private EventDispatcherInterface $eventDispatcher;
 
     /**
      * Store URLs processed in the current batch to increment suffixes for entities withing same transaction.
-     *
-     * @var array
      */
-    private $processedUrls = [];
+    private array $processedUrls = [];
 
     public function __construct(
         ManagerRegistry $registry,
-        AclHelper $aclHelper,
+        SlugQueryRestrictionHelperInterface $slugQueryRestrictionHelper,
         EventDispatcherInterface $eventDispatcher
     ) {
         $this->registry = $registry;
-        $this->aclHelper = $aclHelper;
+        $this->slugQueryRestrictionHelper = $slugQueryRestrictionHelper;
         $this->eventDispatcher = $eventDispatcher;
     }
 
@@ -106,13 +93,14 @@ class UniqueSlugResolver
      * @param SluggableInterface $entity
      * @return string
      */
-    protected function getBaseSlug($slug, SluggableInterface $entity)
+    protected function getBaseSlug(string $slug, SluggableInterface $entity)
     {
         if (preg_match(self::INCREMENTED_SLUG_PATTERN, $slug, $matches)) {
             $baseSlug = $matches[1];
 
             $qb = $this->getSlugRepository()->getOneDirectUrlBySlugQueryBuilder($baseSlug, $entity);
-            if ($this->aclHelper->apply($qb)->getOneOrNullResult()) {
+            $qb = $this->slugQueryRestrictionHelper->restrictQueryBuilder($qb);
+            if ($qb->getQuery()->getOneOrNullResult()) {
                 return $baseSlug;
             }
         }
@@ -150,16 +138,17 @@ class UniqueSlugResolver
 
         $qb = $this->getSlugRepository()->getOneDirectUrlBySlugQueryBuilder($slug, $entity);
         $qb = $this->getRestrictedOneDirectUrlBySlugQueryBuilder($qb, $entity);
+        $qb = $this->slugQueryRestrictionHelper->restrictQueryBuilder($qb);
 
-        return (bool) $this->aclHelper->apply($qb)->getOneOrNullResult();
+        return (bool) $qb->getQuery()->getOneOrNullResult();
     }
 
     /**
-     * @param $slug
+     * @param string $slug
      * @param SluggableInterface $entity
      * @return array|string[]
      */
-    private function findStoredUrls(string $slug, SluggableInterface $entity)
+    private function findStoredUrls(string $slug, SluggableInterface $entity): array
     {
         return $this->getSlugRepository()->findAllDirectUrlsByPattern(
             sprintf(self::SLUG_INCREMENT_DATABASE_PATTERN, $slug),
@@ -203,7 +192,6 @@ class UniqueSlugResolver
 
     private function getSlugRepository(): SlugRepository
     {
-        return $this->registry->getManagerForClass(Slug::class)
-            ->getRepository(Slug::class);
+        return $this->registry->getRepository(Slug::class);
     }
 }

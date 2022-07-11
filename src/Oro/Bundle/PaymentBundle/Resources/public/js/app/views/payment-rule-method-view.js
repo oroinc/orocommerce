@@ -13,7 +13,7 @@ define([
      */
     const PaymentRuleMethodView = Backbone.View.extend({
 
-        requiredOptions: ['methodSelectSelector', 'buttonSelector', 'updateFlag', 'methods'],
+        requiredOptions: ['methodSelectSelector', 'buttonSelector', 'updateFlags', 'methods'],
 
         /**
          * @inheritdoc
@@ -73,9 +73,11 @@ define([
                 value: value
             });
             this.methodCount++;
-            data.push({
-                name: this.options.updateFlag,
-                value: true
+            _.each(this.options.updateFlags, function(updateFlag) {
+                data.push({
+                    name: updateFlag,
+                    value: true
+                });
             });
             mediator.execute('submitPage', {
                 url: url,

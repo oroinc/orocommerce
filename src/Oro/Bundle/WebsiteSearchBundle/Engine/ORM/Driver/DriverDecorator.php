@@ -24,9 +24,6 @@ class DriverDecorator implements DriverInterface
     /** @var DriverInterface */
     private $driver;
 
-    /** @var EntityManagerInterface */
-    private $entityManager;
-
     public function __construct(DoctrineHelper $doctrineHelper)
     {
         $this->doctrineHelper = $doctrineHelper;
@@ -53,11 +50,14 @@ class DriverDecorator implements DriverInterface
 
             $this->driver = $this->availableDrivers[$databasePlatform];
             $this->driver->initialize($em);
-            // entityManager's use preferred over doctrineHelper in drivers
-            $this->entityManager = $this->doctrineHelper->getEntityManager(Item::class);
         }
 
         return $this->driver;
+    }
+
+    public function createQueryBuilder($alias)
+    {
+        return $this->getDriver()->createQueryBuilder($alias);
     }
 
     /** {@inheritdoc} */

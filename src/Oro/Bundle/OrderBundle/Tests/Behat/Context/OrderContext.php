@@ -3,6 +3,7 @@
 namespace Oro\Bundle\OrderBundle\Tests\Behat\Context;
 
 use Behat\Gherkin\Node\TableNode;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
@@ -10,7 +11,6 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 class OrderContext extends OroFeatureContext implements OroPageObjectAware
 {

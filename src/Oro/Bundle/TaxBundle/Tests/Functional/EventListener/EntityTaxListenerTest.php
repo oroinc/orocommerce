@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Functional\EventListener;
 
-use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\TaxBundle\Tests\Functional\Traits\OrderTaxHelperTrait;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
@@ -14,14 +13,10 @@ class EntityTaxListenerTest extends WebTestCase
 {
     use OrderTaxHelperTrait;
 
-    /** @var ManagerRegistry */
-    protected $doctrine;
-
     protected function setUp(): void
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
-        $this->doctrine = $this->getContainer()->get('doctrine');
     }
 
     public function testSaveOrderTaxValue()

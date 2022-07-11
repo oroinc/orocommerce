@@ -13,6 +13,7 @@ use Oro\Bundle\PricingBundle\Entity\CombinedPriceListBuildActivity;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CombinedPriceListsUpdateEvent;
 use Oro\Bundle\PricingBundle\Model\CombinedPriceListStatusHandlerInterface;
 use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
+use Oro\Bundle\PricingBundle\Resolver\CombinedPriceListScheduleResolver;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Exception\JobRedeliveryException;
@@ -38,6 +39,7 @@ class SingleCplProcessor implements MessageProcessorInterface, TopicSubscriberIn
     private CombinedPriceListTriggerHandler $indexationTriggerHandler;
     private CombinedPriceListStatusHandlerInterface $statusHandler;
     private EventDispatcherInterface $dispatcher;
+    private CombinedPriceListScheduleResolver $scheduleResolver;
 
     public function __construct(
         JobRunner $jobRunner,
@@ -45,7 +47,8 @@ class SingleCplProcessor implements MessageProcessorInterface, TopicSubscriberIn
         CombinedPriceListsBuilderFacade $combinedPriceListsBuilderFacade,
         CombinedPriceListTriggerHandler $indexationTriggerHandler,
         CombinedPriceListStatusHandlerInterface $statusHandler,
-        EventDispatcherInterface $dispatcher
+        EventDispatcherInterface $dispatcher,
+        CombinedPriceListScheduleResolver $scheduleResolver
     ) {
         $this->jobRunner = $jobRunner;
         $this->doctrine = $doctrine;
@@ -53,6 +56,7 @@ class SingleCplProcessor implements MessageProcessorInterface, TopicSubscriberIn
         $this->indexationTriggerHandler = $indexationTriggerHandler;
         $this->statusHandler = $statusHandler;
         $this->dispatcher = $dispatcher;
+        $this->scheduleResolver = $scheduleResolver;
     }
 
     /**
@@ -165,15 +169,26 @@ class SingleCplProcessor implements MessageProcessorInterface, TopicSubscriberIn
     }
 
     /**
-     * Run prices combination, add product indexation requests, and trigger CombinedPriceListsUpdateEvent
-     * when CPL is ready for build.
+     * If CPL is ready for build - perform build tasks. Otherwise, when CPL full rebuild requested (no products passed)
+     * try to find current active CPL for a given CPL and build it instead to prevent switching to not built CPL.
      */
     private function buildCombinedPriceList(CombinedPriceList $cpl, array $products, array $assignTo): void
     {
-        if (!$this->statusHandler->isReadyForBuild($cpl)) {
-            return;
+        if ($this->statusHandler->isReadyForBuild($cpl)) {
+            $this->performCombinedPriceListBuild($cpl, $products, $assignTo);
+        } elseif (!$products) {
+            $activeCpl = $this->scheduleResolver->getActiveCplByFullCPL($cpl);
+            if ($activeCpl && !$activeCpl->isPricesCalculated() && $activeCpl->getId() !== $cpl->getId()) {
+                $this->performCombinedPriceListBuild($activeCpl, [], $assignTo);
+            }
         }
+    }
 
+    /**
+     * Run prices combination, add product indexation requests, and trigger CombinedPriceListsUpdateEvent.
+     */
+    private function performCombinedPriceListBuild(CombinedPriceList $cpl, array $products, array $assignTo): void
+    {
         $this->combinedPriceListsBuilderFacade->rebuild([$cpl], $products);
         $this->combinedPriceListsBuilderFacade->triggerProductIndexation($cpl, $assignTo, $products);
         $this->dispatcher->dispatch(

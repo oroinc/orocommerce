@@ -16,6 +16,10 @@ const PictureTypeBuilder = BaseTypeBuilder.extend({
         }
     },
 
+    editorEvents: {
+        'component:drag:end': 'onDragEnd'
+    },
+
     commands: {
         'open-picture-settings': (editor, sender, {setSources, setMain, ...props}) => {
             const dialog = new PictureSettingsDialog({
@@ -41,23 +45,11 @@ const PictureTypeBuilder = BaseTypeBuilder.extend({
             type: 'picture',
             sources: [],
             editable: true,
-            droppable: false,
-            resizable: {
-                ratioDefault: true
-            }
+            droppable: false
         },
 
         initialize(...args) {
-            this.defaults.resizable['onUpdateContainer'] = () => {
-                const {width = '', height = ''} = this.getStyle();
-                this.image.setStyle({
-                    width,
-                    height
-                });
-            };
-
             this.constructor.__super__.initialize.apply(this, args);
-            this.updateToolbar();
 
             const components = this.get('components');
             if (!components.length) {
@@ -67,44 +59,78 @@ const PictureTypeBuilder = BaseTypeBuilder.extend({
             }
 
             this.image = this.findType('image')[0];
-            this.image.set({
-                selectable: 0,
-                hoverable: 0
-            });
+            this.image.wrapper = this;
+
+            this.updateToolbar();
 
             this.listenTo(this.image, 'change:previewMetadata', this.onImageUpdate);
             this.listenTo(this, 'change:sources', this.updateSources);
         },
 
-        updateToolbar() {
-            const getSources = () => this.get('sources');
-            const getMainImage = () => {
-                return this.image.toJSON();
+        getCommandProps() {
+            return {
+                sources: this.get('sources'),
+                mainImage: this.image.toJSON(),
+                setSources(sources) {
+                    this.set('sources', sources);
+                    this.updateSources();
+                },
+                setMain({attributes}) {
+                    this.image.set('src', attributes.src);
+                }
             };
-            const setSources = sources => {
-                this.set('sources', sources);
-                this.updateSources();
-            };
-            const setMain = ({attributes}) => this.image.set('src', attributes.src);
+        },
 
+        updateToolbar() {
             if (!this.get('toolbar').find(toolbar => toolbar.id === 'picture-settings')) {
-                this.set('toolbar', [
-                    {
-                        id: 'picture-settings',
-                        attributes: {
-                            'class': 'fa fa-gear',
-                            'label': __('oro.cms.wysiwyg.toolbar.pictureSettings')
-                        },
-                        command(editor) {
-                            editor.Commands.run('open-picture-settings', {
-                                sources: getSources(),
-                                mainImage: getMainImage(),
-                                setSources,
-                                setMain
-                            });
-                        }
+                const toolbarAction = {
+                    id: 'picture-settings',
+                    attributes: {
+                        'class': 'fa fa-gear',
+                        'label': __('oro.cms.wysiwyg.toolbar.pictureSettings')
                     },
+                    command(editor) {
+                        let selected = editor.getSelected();
+                        if (selected.is('image')) {
+                            selected = selected.wrapper;
+                        }
+
+                        const {sources, mainImage, setSources, setMain} = selected.getCommandProps();
+
+                        if (mainImage.isNew) {
+                            return;
+                        }
+
+                        editor.Commands.run('open-picture-settings', {
+                            sources,
+                            mainImage,
+                            setSources: setSources.bind(selected),
+                            setMain: setMain.bind(selected)
+                        });
+                    }
+                };
+
+                this.set('toolbar', [
+                    toolbarAction,
                     ...this.get('toolbar')
+                ]);
+
+                const imageActions = this.image.get('toolbar').map(action => {
+                    if (action.command === 'tlb-clone') {
+                        action.command = editor => {
+                            const selected = editor.getSelected();
+                            editor.select(selected.wrapper);
+                            editor.runCommand('tlb-clone');
+                        };
+                        action.id = 'tlb-clone';
+                    }
+
+                    return action;
+                });
+
+                this.image.set('toolbar', [
+                    toolbarAction,
+                    ...imageActions
                 ]);
             }
         },
@@ -166,6 +192,15 @@ const PictureTypeBuilder = BaseTypeBuilder.extend({
 
     constructor: function PictureTypeBuilder(options) {
         PictureTypeBuilder.__super__.constructor.call(this, options);
+    },
+
+    onDragEnd({target, parent, index}) {
+        if (target.is('image') && target.wrapper && parent !== target.wrapper) {
+            parent.append(target.wrapper, {
+                at: index
+            });
+            target.move(target.wrapper);
+        }
     },
 
     isComponent(el) {

@@ -56,6 +56,10 @@ workflows:
                         action_group: oro_update_shipping_price
                         parameters_mapping:
                             checkout: $checkout
+                    - '@call_service_method':
+                          service: oro_checkout.action.default_payment_method_setter
+                          method: setDefaultPaymentMethod
+                          method_parameters: [$checkout]
 
             save_state_definition:
                 actions:

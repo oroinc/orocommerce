@@ -32,6 +32,12 @@ liip_imagine:
             filters:
                 strip:        ~
 
+oro_entity_serialized_fields:
+    dbal_types:
+        wysiwyg: string
+        wysiwyg_style: string
+        wysiwyg_properties: json
+
 oro_form:
     html_purifier_modes:
         lax:
@@ -124,3 +130,9 @@ oro_form:
                 blockquote:
                     attributes:
                         - cite
+
+oro_entity:
+    entity_name_representation:
+        Oro\Bundle\CMSBundle\Entity\ContentWidget:
+            full: [ name ]
+            short: [ name ]

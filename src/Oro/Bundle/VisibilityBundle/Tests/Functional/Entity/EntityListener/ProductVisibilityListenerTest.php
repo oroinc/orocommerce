@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Entity\EntityListener;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
@@ -28,18 +28,12 @@ class ProductVisibilityListenerTest extends WebTestCase
     /** @var Product */
     private $product;
 
-    /** @var Registry */
-    private $registry;
-
     /** @var CustomerGroup */
     private $customerGroup;
 
     /** @var Customer */
     private $customer;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->initClient();
@@ -48,7 +42,6 @@ class ProductVisibilityListenerTest extends WebTestCase
 
         $this->getOptionalListenerManager()->enableListener('oro_visibility.entity_listener.product_visibility_change');
 
-        $this->registry = $this->client->getContainer()->get('doctrine');
         $this->product = $this->getReference(LoadProductData::PRODUCT_1);
         $this->customerGroup = $this->getReference(LoadGroups::GROUP1);
         $this->customer = $this->getReference('customer.level_1');
@@ -61,17 +54,22 @@ class ProductVisibilityListenerTest extends WebTestCase
 
     private function getManagerForProductVisibility(): EntityManagerInterface
     {
-        return $this->registry->getManagerForClass(ProductVisibility::class);
+        return $this->getDoctrine()->getManagerForClass(ProductVisibility::class);
     }
 
     private function getManagerForCustomerGroupProductVisibility(): EntityManagerInterface
     {
-        return $this->registry->getManagerForClass(CustomerGroupProductVisibility::class);
+        return $this->getDoctrine()->getManagerForClass(CustomerGroupProductVisibility::class);
     }
 
     private function getManagerForCustomerProductVisibility(): EntityManagerInterface
     {
-        return $this->registry->getManagerForClass(CustomerProductVisibility::class);
+        return $this->getDoctrine()->getManagerForClass(CustomerProductVisibility::class);
+    }
+
+    private function getDoctrine(): ManagerRegistry
+    {
+        return self::getContainer()->get('doctrine');
     }
 
     public function testChangeProductVisibilityToHidden()

@@ -16,7 +16,7 @@ define(function(require) {
                 <div><%= changedSlugs %></div>
                 <div>
                     <br/>
-                    <label class="checkbox" for="confirm-create-redirect">
+                    <label class="checkbox-label" for="confirm-create-redirect">
                         <input type="checkbox" id="confirm-create-redirect" name="confirm-create-redirect">
                     <%- checkboxLabel %></label>
                 </div>

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Handler;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
@@ -10,15 +11,11 @@ use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Handler\CombinedPriceListBuildTriggerHandler;
 use Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerHandler;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 class CombinedPriceListBuildTriggerHandlerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var CombinedPriceListBuildTriggerHandler */
-    private $combinedPriceListBuildTriggerHandler;
-
     /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    private $managerRegistry;
+    private $doctrine;
 
     /** @var PriceListRelationTriggerHandler|\PHPUnit\Framework\MockObject\MockObject */
     private $priceListRelationTriggerHandler;
@@ -26,14 +23,17 @@ class CombinedPriceListBuildTriggerHandlerTest extends \PHPUnit\Framework\TestCa
     /** @var ShardManager|\PHPUnit\Framework\MockObject\MockObject */
     private $shardManager;
 
+    /** @var CombinedPriceListBuildTriggerHandler */
+    private $combinedPriceListBuildTriggerHandler;
+
     protected function setUp(): void
     {
-        $this->managerRegistry = $this->createMock(ManagerRegistry::class);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->priceListRelationTriggerHandler = $this->createMock(PriceListRelationTriggerHandler::class);
         $this->shardManager = $this->createMock(ShardManager::class);
 
         $this->combinedPriceListBuildTriggerHandler = new CombinedPriceListBuildTriggerHandler(
-            $this->managerRegistry,
+            $this->doctrine,
             $this->priceListRelationTriggerHandler,
             $this->shardManager
         );
@@ -45,10 +45,9 @@ class CombinedPriceListBuildTriggerHandlerTest extends \PHPUnit\Framework\TestCa
     public function testHandleIsSupported(bool $hasCombinedPriceListWithPriceList, bool $hasPrices): void
     {
         $priceList = new PriceList();
-        $this->assertManagerRegistry($priceList, $hasCombinedPriceListWithPriceList, $hasPrices);
+        $this->setDoctrineExpectations($priceList, $hasCombinedPriceListWithPriceList, $hasPrices);
 
-        $this->priceListRelationTriggerHandler
-            ->expects($this->once())
+        $this->priceListRelationTriggerHandler->expects($this->once())
             ->method('handlePriceListStatusChange')
             ->with($priceList);
 
@@ -75,10 +74,9 @@ class CombinedPriceListBuildTriggerHandlerTest extends \PHPUnit\Framework\TestCa
     public function testHandleIsNotSupported(bool $hasCombinedPriceListWithPriceList, bool $hasPrices): void
     {
         $priceList = new PriceList();
-        $this->assertManagerRegistry($priceList, $hasCombinedPriceListWithPriceList, $hasPrices);
+        $this->setDoctrineExpectations($priceList, $hasCombinedPriceListWithPriceList, $hasPrices);
 
-        $this->priceListRelationTriggerHandler
-            ->expects($this->never())
+        $this->priceListRelationTriggerHandler->expects($this->never())
             ->method('handlePriceListStatusChange')
             ->with($priceList);
 
@@ -99,27 +97,24 @@ class CombinedPriceListBuildTriggerHandlerTest extends \PHPUnit\Framework\TestCa
         ];
     }
 
-    private function assertManagerRegistry(
+    private function setDoctrineExpectations(
         PriceList $priceList,
         bool $hasCombinedPriceListWithPriceList,
         bool $hasPrices
     ): void {
         $combinedPriceListToPriceListRepository = $this->createMock(CombinedPriceListToPriceListRepository::class);
-        $combinedPriceListToPriceListRepository
-            ->expects($this->once())
+        $combinedPriceListToPriceListRepository->expects($this->once())
             ->method('hasCombinedPriceListWithPriceList')
             ->with($priceList)
             ->willReturn($hasCombinedPriceListWithPriceList);
 
         $productPriceRepository = $this->createMock(ProductPriceRepository::class);
-        $productPriceRepository
-            ->expects($this->once())
+        $productPriceRepository->expects($this->once())
             ->method('hasPrices')
             ->with($this->shardManager, $priceList)
             ->willReturn($hasPrices);
 
-        $this->managerRegistry
-            ->expects($this->any())
+        $this->doctrine->expects($this->any())
             ->method('getRepository')
             ->willReturnMap([
                 [CombinedPriceListToPriceList::class, null, $combinedPriceListToPriceListRepository],

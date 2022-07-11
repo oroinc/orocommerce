@@ -2,8 +2,7 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Behat;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\OrderBundle\Entity\Order;
@@ -15,13 +14,10 @@ class ReferenceRepositoryInitializer implements ReferenceRepositoryInitializerIn
     /**
      * {@inheritdoc}
      */
-    public function init(Registry $doctrine, Collection $referenceRepository)
+    public function init(ManagerRegistry $doctrine, Collection $referenceRepository): void
     {
         $className = ExtendHelper::buildEnumValueClassName(Order::INTERNAL_STATUS_CODE);
-
-        /** @var EntityRepository $repository */
         $repository = $doctrine->getManager()->getRepository($className);
-
         /** @var AbstractEnumValue $status */
         foreach ($repository->findAll() as $status) {
             $referenceRepository->set('order_internal_status_' . $status->getId(), $status);

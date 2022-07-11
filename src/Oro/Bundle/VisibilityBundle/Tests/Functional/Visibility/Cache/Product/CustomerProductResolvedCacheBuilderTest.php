@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Visibility\Cache\Product;
 
-use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;
 use Oro\Bundle\ProductBundle\Search\Reindex\ProductReindexManager;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CustomerProductRepository;
+use Oro\Bundle\VisibilityBundle\Visibility\Cache\CacheBuilderInterface;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\CustomerProductResolvedCacheBuilder;
 
 class CustomerProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
@@ -14,7 +14,7 @@ class CustomerProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
     /**
      * {@inheritdoc}
      */
-    public function buildCacheDataProvider()
+    public function buildCacheDataProvider(): array
     {
         return [
             [
@@ -25,9 +25,9 @@ class CustomerProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
     }
 
     /**
-     * @return CustomerProductRepository|EntityRepository
+     * {@inheritdoc}
      */
-    protected function getRepository()
+    protected function getRepository(): CustomerProductRepository
     {
         return $this->getContainer()->get('oro_visibility.customer_product_repository');
     }
@@ -35,7 +35,7 @@ class CustomerProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
     /**
      * {@inheritdoc}
      */
-    protected function getCacheBuilder()
+    protected function getCacheBuilder(): CacheBuilderInterface
     {
         $container = $this->getContainer();
 

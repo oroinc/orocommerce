@@ -5,6 +5,7 @@ namespace Oro\Bundle\InventoryBundle\EventListener\Frontend;
 use Oro\Bundle\EntityBundle\Fallback\EntityFallbackResolver;
 use Oro\Bundle\InventoryBundle\Provider\UpcomingProductProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 
 /**
@@ -15,6 +16,8 @@ use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
  */
 class WebsiteSearchProductIndexerListener
 {
+    use ContextTrait;
+
     private EntityFallbackResolver $entityFallbackResolver;
     private UpcomingProductProvider $upcomingProductProvider;
 
@@ -28,6 +31,10 @@ class WebsiteSearchProductIndexerListener
 
     public function onWebsiteSearchIndex(IndexEntityEvent $event): void
     {
+        if (!$this->hasContextFieldGroup($event->getContext(), 'main')) {
+            return;
+        }
+
         /** @var Product[] $products */
         $products = $event->getEntities();
         foreach ($products as $product) {

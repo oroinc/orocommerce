@@ -8,14 +8,13 @@ use Symfony\Component\DomCrawler\Crawler;
 
 class TaxControllerTest extends WebTestCase
 {
-    const TAX_CODE = 'unique';
-    const TAX_CODE_UPDATED = 'uniqueUpdated';
-    const TAX_DESCRIPTION = 'description';
-    const TAX_DESCRIPTION_UPDATED = 'description updated';
-    const TAX_RATE = 1;
-    const TAX_RATE_UPDATED = 2;
-
-    const TAX_SAVE_MESSAGE = 'Tax has been saved';
+    private const TAX_CODE = 'unique';
+    private const TAX_CODE_UPDATED = 'uniqueUpdated';
+    private const TAX_DESCRIPTION = 'description';
+    private const TAX_DESCRIPTION_UPDATED = 'description updated';
+    private const TAX_RATE = 1;
+    private const TAX_RATE_UPDATED = 2;
+    private const TAX_SAVE_MESSAGE = 'Tax has been saved';
 
     protected function setUp(): void
     {
@@ -28,10 +27,10 @@ class TaxControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_tax_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        static::assertStringContainsString('tax-taxes-grid', $crawler->html());
+        self::assertStringContainsString('tax-taxes-grid', $crawler->html());
     }
 
-    public function testCreate()
+    public function testCreate(): int
     {
         $crawler = $this->client->request('GET', $this->getUrl('oro_tax_create'));
         $result = $this->client->getResponse();
@@ -41,8 +40,7 @@ class TaxControllerTest extends WebTestCase
 
         /** @var Tax $tax */
         $tax = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroTaxBundle:Tax')
-            ->getRepository('OroTaxBundle:Tax')
+            ->getRepository(Tax::class)
             ->findOneBy(['code' => self::TAX_CODE]);
         $this->assertNotEmpty($tax);
 
@@ -50,11 +48,9 @@ class TaxControllerTest extends WebTestCase
     }
 
     /**
-     * @param $id int
-     * @return int
      * @depends testCreate
      */
-    public function testUpdate($id)
+    public function testUpdate(int $id): int
     {
         $crawler = $this->client->request(
             'GET',
@@ -70,9 +66,8 @@ class TaxControllerTest extends WebTestCase
 
     /**
      * @depends testUpdate
-     * @param int $id
      */
-    public function testView($id)
+    public function testView(int $id)
     {
         $crawler = $this->client->request(
             'GET',
@@ -83,18 +78,12 @@ class TaxControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
-        static::assertStringContainsString(self::TAX_CODE_UPDATED . ' - View - Taxes - Taxes', $html);
+        self::assertStringContainsString(self::TAX_CODE_UPDATED . ' - View - Taxes - Taxes', $html);
 
         $this->assertViewPage($html, self::TAX_CODE_UPDATED, self::TAX_DESCRIPTION_UPDATED, self::TAX_RATE_UPDATED);
     }
 
-    /**
-     * @param Crawler $crawler
-     * @param string  $code
-     * @param string  $description
-     * @param string  $rate
-     */
-    protected function assertTaxSave(Crawler $crawler, $code, $description, $rate)
+    private function assertTaxSave(Crawler $crawler, string $code, string $description, string $rate): void
     {
         $form = $crawler->selectButton('Save and Close')->form(
             [
@@ -111,20 +100,14 @@ class TaxControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
-        static::assertStringContainsString(self::TAX_SAVE_MESSAGE, $html);
+        self::assertStringContainsString(self::TAX_SAVE_MESSAGE, $html);
         $this->assertViewPage($html, $code, $description, $rate);
     }
 
-    /**
-     * @param string $html
-     * @param string $code
-     * @param string $description
-     * @param string $rate
-     */
-    protected function assertViewPage($html, $code, $description, $rate)
+    private function assertViewPage(string $html, string $code, string $description, string $rate): void
     {
-        static::assertStringContainsString($code, $html);
-        static::assertStringContainsString($description, $html);
-        static::assertStringContainsString($rate . '%', $html);
+        self::assertStringContainsString($code, $html);
+        self::assertStringContainsString($description, $html);
+        self::assertStringContainsString($rate . '%', $html);
     }
 }

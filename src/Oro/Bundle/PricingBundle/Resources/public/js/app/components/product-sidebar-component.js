@@ -20,8 +20,9 @@ define(function(require) {
             sidebarAlias: 'products-sidebar',
             routeName: 'oro_pricing_price_list_currency_list',
             routingParams: {},
-            currencyTemplate: '<input type="checkbox" id="<%- id %>" value="<%- value %>">' +
-            '<label for="<%- id %>"><%- text %></label>'
+            currencyTemplate: `<label for="<%- id %>" class="checkbox-label">
+                <input type="checkbox" id="<%- id %>" value="<%- value %>"><%- text %>
+            </label>`
         },
 
         /**

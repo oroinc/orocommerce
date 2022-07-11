@@ -2,37 +2,29 @@
 
 namespace Oro\Bundle\PricingBundle\Provider;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 
+/**
+ * Provides a default price list entity.
+ */
 class PriceListProvider
 {
-    /**
-     * @var Registry
-     */
-    protected $registry;
+    private ManagerRegistry $doctrine;
 
-    public function __construct(Registry $registry)
+    public function __construct(ManagerRegistry $doctrine)
     {
-        $this->registry = $registry;
+        $this->doctrine = $doctrine;
     }
 
-    /**
-     * @return PriceList
-     */
-    public function getDefaultPriceList()
+    public function getDefaultPriceList(): ?PriceList
     {
-        return $this->registry
-            ->getManagerForClass(PriceList::class)
-            ->getRepository(PriceList::class)
+        return $this->doctrine->getRepository(PriceList::class)
             ->findOneBy(['default' => true]);
     }
 
-    /**
-     * @return int
-     */
-    public function getDefaultPriceListId()
+    public function getDefaultPriceListId(): ?int
     {
-        return $this->getDefaultPriceList()->getId();
+        return $this->getDefaultPriceList()?->getId();
     }
 }

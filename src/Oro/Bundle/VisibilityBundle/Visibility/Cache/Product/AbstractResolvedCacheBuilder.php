@@ -198,7 +198,8 @@ abstract class AbstractResolvedCacheBuilder implements CacheBuilderInterface
         $this->productReindexManager->reindexProduct(
             $product,
             $website ? $website->getId() : null,
-            $schedule
+            $schedule,
+            ['visibility']
         );
     }
 
@@ -207,7 +208,7 @@ abstract class AbstractResolvedCacheBuilder implements CacheBuilderInterface
      */
     protected function triggerCategoriesReindexation(array $categories)
     {
-        $this->indexScheduler->scheduleProductsReindex($categories, null);
+        $this->indexScheduler->scheduleProductsReindex($categories, null, true, ['visibility']);
     }
 
     /**

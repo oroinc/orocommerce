@@ -33,30 +33,30 @@ const GridTypeBuilder = BaseTypeBuilder.extend({
         const {BlockManager} = this.editor;
 
         BlockManager.get('column1').set({
-            content: `<div data-gjs-type="row">
-                            <div data-gjs-type="column"></div>
+            content: `<div data-gjs-type="grid-row">
+                            <div data-gjs-type="grid-column" style="width: 100%;"></div>
                         </div>${GRID_STYLES}`
         });
 
         BlockManager.get('column2').set({
-            content: `<div data-gjs-type="row">
-                            <div data-gjs-type="column"></div>
-                            <div data-gjs-type="column"></div>
+            content: `<div data-gjs-type="grid-row">
+                            <div data-gjs-type="grid-column" style="width: 50%;"></div>
+                            <div data-gjs-type="grid-column" style="width: 50%;"></div>
                         </div>${GRID_STYLES}`
         });
 
         BlockManager.get('column3').set({
-            content: `<div data-gjs-type="row">
-                            <div data-gjs-type="column"></div>
-                            <div data-gjs-type="column"></div>
-                            <div data-gjs-type="column"></div>
+            content: `<div data-gjs-type="grid-row">
+                            <div data-gjs-type="grid-column" style="width: 33.33%;"></div>
+                            <div data-gjs-type="grid-column" style="width: 33.33%;"></div>
+                            <div data-gjs-type="grid-column" style="width: 33.33%;"></div>
                         </div>${GRID_STYLES}`
         });
 
         BlockManager.get('column3-7').set({
-            content: `<div data-gjs-type="row">
-                            <div data-gjs-type="column" style="width: 30%;"></div>
-                            <div data-gjs-type="column" style="width: 70%;"></div>
+            content: `<div data-gjs-type="grid-row">
+                            <div data-gjs-type="grid-column" style="width: 30%;"></div>
+                            <div data-gjs-type="grid-column" style="width: 70%;"></div>
                         </div>${GRID_STYLES}`
         });
     }
