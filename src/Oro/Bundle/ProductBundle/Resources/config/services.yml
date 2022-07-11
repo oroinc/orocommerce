@@ -1595,6 +1595,8 @@ services:
         arguments:
             - '@.inner'
             - '@oro_config.manager'
+        calls:
+            - [setFilenameExtensionHelper, ['@oro_attachment.tools.file_name_extension_helper']]
         tags:
             - { name: oro_featuretogle.feature, feature: product_original_filenames }
 
