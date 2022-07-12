@@ -1,3 +1,4 @@
+@container-incompatible
 @ticket-BB-21219
 Feature: Image with svg mime type on Landing page
   In order to see landing page info
