@@ -1,0 +1,19 @@
+{% import '@OroUI/macros.html.twig' as UI %}
+
+<div class="widget-content">
+    <div class="row-fluid form-horizontal">
+        <div class="responsive-block">
+            <div>
+                {{ UI.renderProperty('oro.cms.contenttemplate.name.label'|trans, entity.name) }}
+            </div>
+            <div>
+                {{ UI.renderProperty(
+                    'oro.cms.contenttemplate.enabled.label'|trans,
+                    entity.enabled ?
+                        'oro.cms.contenttemplate.enabled.yes.label'|trans :
+                        'oro.cms.contenttemplate.enabled.no.label'|trans
+                ) }}
+            </div>
+        </div>
+    </div>
+</div>
