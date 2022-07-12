@@ -4,6 +4,7 @@ namespace Oro\Bundle\WebsiteSearchBundle\Engine;
 
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\EntityBundle\ORM\EntityAliasResolver;
+use Oro\Bundle\SearchBundle\Engine\Indexer;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
@@ -162,6 +163,8 @@ class IndexDataProvider
 
             unset($preparedIndexData[$entityId][Query::TYPE_TEXT][$allTextL10N]);
             $preparedIndexData[$entityId] = $this->squashAllTextFields($preparedIndexData[$entityId]);
+
+            $preparedIndexData[$entityId][Query::TYPE_INTEGER][Indexer::ID_FIELD] = $entityId;
         }
 
         return $preparedIndexData;
