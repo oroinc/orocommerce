@@ -111,3 +111,15 @@ Oro\Bundle\CMSBundle\Entity\TextContentVariant:
 Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel:
     constraints:
         - Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYGFieldsName: ~
+
+Oro\Bundle\CMSBundle\Entity\ContentTemplate:
+    properties:
+        name:
+            - NotBlank: ~
+            - Length:
+                min: 1
+                max: 255
+                allowEmptyString: false
+        content:
+            - Oro\Bundle\CMSBundle\Validator\Constraints\TwigContent: ~
+            - Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYG: ~

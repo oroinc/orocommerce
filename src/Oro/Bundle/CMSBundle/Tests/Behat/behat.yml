@@ -17,6 +17,18 @@ oro_behat_extension:
             route: 'oro_cms_page_index'
 
     elements:
+
+        Content Template Form:
+            selector: 'form[name="oro_cms_content_template"]'
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+
+        Content Template Form Content:
+            selector: "textarea[name='oro_cms_content_template[content]']"
+
+        Content Template Grid:
+            selector: 'div[data-page-component-name="content-template-grid"]'
+            class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
         WysiwygCodeTypeBlockEditor:
             selector: '.ui-dialog'
             class: Oro\Bundle\CMSBundle\Tests\Behat\Element\WysiwygCodeTypeBlockEditor
