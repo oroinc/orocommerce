@@ -347,6 +347,7 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
                 [$product1],
                 $this->getReference('1f')
             );
+        $actual = iterator_to_array($actual);
         $expected = [
             [
                 'product' => (string)$product1->getId(),
