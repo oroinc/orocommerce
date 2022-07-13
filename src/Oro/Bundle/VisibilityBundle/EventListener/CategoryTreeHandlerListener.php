@@ -12,8 +12,7 @@ use Oro\Bundle\VisibilityBundle\Visibility\Provider\CategoryVisibilityProvider;
  */
 class CategoryTreeHandlerListener
 {
-    /** @var CategoryVisibilityProvider */
-    private $categoryVisibilityProvider;
+    private CategoryVisibilityProvider $categoryVisibilityProvider;
 
     public function __construct(CategoryVisibilityProvider $categoryVisibilityProvider)
     {
@@ -45,33 +44,12 @@ class CategoryTreeHandlerListener
     {
         // copy categories array to another variable to prevent loop break on removed elements
         $filteredCategories = $categories;
-        foreach ($categories as $category) {
+        foreach ($categories as $key => $category) {
             if (in_array($category->getId(), $hiddenCategoryIds, true)) {
-                $this->removeTreeNode($filteredCategories, $category);
+                unset($filteredCategories[$key]);
             }
         }
 
         return $filteredCategories;
-    }
-
-    /**
-     * @param Category[] $filteredCategories
-     * @param Category   $category
-     */
-    private function removeTreeNode(array &$filteredCategories, Category $category)
-    {
-        foreach ($filteredCategories as $id => $item) {
-            if ($item->getId() === $category->getId()) {
-                unset($filteredCategories[$id]);
-                break;
-            }
-        }
-
-        $children = $category->getChildCategories();
-        if (!$children->isEmpty()) {
-            foreach ($children as $child) {
-                $this->removeTreeNode($filteredCategories, $child);
-            }
-        }
     }
 }
