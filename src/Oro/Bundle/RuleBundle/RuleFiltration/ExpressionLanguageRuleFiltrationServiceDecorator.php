@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\RuleBundle\RuleFiltration;
 
+use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
 use Oro\Component\ExpressionLanguage\ExpressionLanguage;
 use Psr\Log\LoggerInterface;
@@ -38,9 +39,10 @@ class ExpressionLanguageRuleFiltrationServiceDecorator implements RuleFiltration
     {
         $filteredOwners = [];
         foreach ($ruleOwners as $ruleOwner) {
+            /** @var Rule $rule */
             $rule = $ruleOwner->getRule();
 
-            if (!$rule->getExpression() || $this->expressionApplicable($rule->getExpression(), $context)) {
+            if (!$rule->getExpression() || $this->expressionApplicable($rule->getExpression(), $context, $ruleOwner)) {
                 $filteredOwners[] = $ruleOwner;
             }
         }
@@ -50,24 +52,33 @@ class ExpressionLanguageRuleFiltrationServiceDecorator implements RuleFiltration
 
     /**
      * @param string $expression
-     * @param array  $values
-     *
+     * @param array $values
+     * @param RuleOwnerInterface $ruleOwner
      * @return bool
+     * @throws \ErrorException
      */
-    private function expressionApplicable($expression, $values): bool
+    private function expressionApplicable($expression, $values, RuleOwnerInterface $ruleOwner): bool
     {
         $result = false;
 
-        set_error_handler(function ($severity, $message, $file, $line) {
+        set_error_handler(static function ($severity, $message, $file, $line) {
             throw new \ErrorException($message, $severity, $severity, $file, $line);
         }, E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
 
         try {
             $result = (bool) $this->expressionLanguage->evaluate($expression, $values);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error(
-                'Rule condition evaluation error: ' . $e->getMessage(),
-                ['expression' => $expression, 'values' => $values]
+                'Rule condition evaluation error: {error}. ' .
+                '{rule_owner_class_name} with name "{rule_name}" was skipped.',
+                [
+                    'expression' => $expression,
+                    'values' => $values,
+                    'rule_owner' => $ruleOwner,
+                    'error' => $e->getMessage(),
+                    'rule_owner_class_name' => get_class($ruleOwner),
+                    'rule_name' => $ruleOwner->getRule()->getName()
+                ]
             );
         }
 
