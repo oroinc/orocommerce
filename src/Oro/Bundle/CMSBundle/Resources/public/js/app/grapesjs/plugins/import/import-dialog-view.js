@@ -44,7 +44,8 @@ const ImportDialogView = BaseView.extend({
     optionNames: BaseView.prototype.optionNames.concat([
         'editor', 'importViewerOptions',
         'modalImportLabel', 'modalImportTitle', 'modalImportButton',
-        'validateApiProps', 'entityClass', 'fieldName', 'commandId'
+        'validateApiProps', 'entityClass', 'fieldName', 'commandId',
+        'importCallback'
     ]),
 
     /**
@@ -147,6 +148,8 @@ const ImportDialogView = BaseView.extend({
 
     VALIDATE_TIMEOUT: 1000,
 
+    renderProps: {},
+
     /**
      * @constructor
      * @param options
@@ -184,10 +187,11 @@ const ImportDialogView = BaseView.extend({
     /**
      * @inheritdoc
      */
-    render({content} = {}) {
+    render({content, dialogOptions = {}, renderProps = {}} = {}) {
+        this.renderProps = renderProps;
         ImportDialogView.__super__.render.call(this);
 
-        this.content = unescapeTwigExpression(content ? content : this.getImportContent());
+        this.content = unescapeTwigExpression(content ?? this.getImportContent());
 
         this.codeViewer.init(this.$el.find('[data-role="code"]')[0]);
         this.viewerEditor = this.codeViewer.editor;
@@ -214,7 +218,8 @@ const ImportDialogView = BaseView.extend({
                 close: () => {
                     this.editor.Commands.stop(this.commandId);
                 }
-            }
+            },
+            ...dialogOptions
         });
 
         this.viewerEditor.refresh();
@@ -372,9 +377,12 @@ const ImportDialogView = BaseView.extend({
         this.disabled = true;
         this.prevContent = content;
         this.importButton.attr('disabled', this.disabled);
-        const errors = this.editor.CodeValidator.validate(content, {
-            allowLock: false
-        });
+        const errors = this.editor.CodeValidator.validate(
+            content,
+            this.renderProps.codeValidationOptions ?? {
+                allowLock: false
+            }
+        );
 
         if (errors.length) {
             return {
@@ -391,7 +399,7 @@ const ImportDialogView = BaseView.extend({
         }
 
         return this.validateApiAccessor.send({}, {
-            content: content.replace(/<style>(.|\n)*?<\/style>/g, ''),
+            content: this.renderProps.noEscapeStyleTag ? content : content.replace(/<style>(.|\n)*?<\/style>/g, ''),
             className: this.entityClass,
             fieldName: this.fieldName
         }).then(({success, errors}) => {
@@ -450,17 +458,26 @@ const ImportDialogView = BaseView.extend({
 
         if (!this.disabled) {
             const {html, css} = separateContent(content);
-
-            editor.CssComposer.clear();
-            editor.selectRemove(editor.getSelectedAll());
-            editor.setComponents(escapeWrapper(html), {
-                fromImport: true
+            const callback = this.renderProps.importCallback ?? this.importCallback;
+            callback.call(this, {
+                editor,
+                html,
+                css,
+                content
             });
-            editor.setStyle(editor.getPureStyle(css));
-
-            this.closeDialog();
-            this.trigger('import:after', escapeWrapper(content));
         }
+    },
+
+    importCallback({editor, html, css, content}) {
+        editor.CssComposer.clear();
+        editor.selectRemove(editor.getSelectedAll());
+        editor.setComponents(escapeWrapper(html), {
+            fromImport: true
+        });
+        editor.setStyle(editor.getPureStyle(css));
+
+        this.closeDialog();
+        this.trigger('import:after', escapeWrapper(content));
     },
 
     /**

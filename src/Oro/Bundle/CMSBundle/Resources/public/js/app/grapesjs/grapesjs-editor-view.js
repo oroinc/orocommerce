@@ -756,6 +756,33 @@ const GrapesjsEditorView = BaseView.extend({
 
                 $(e.target).tooltip('show');
             });
+
+        this.toggleSelectorManager(model);
+    },
+
+    /**
+     * Toggle Selector Manager in current model doesn't support selector manager
+     * @param {Backbone.Model} model
+     */
+    toggleSelectorManager(model) {
+        const {SelectorManager} = this.builder;
+        const styleManagerEl = SelectorManager.selectorTags.el;
+        const messageContainer = document.createElement('div');
+        messageContainer.classList.add('gjs-sm-header');
+        messageContainer.innerText = __('oro.cms.wysiwyg.style_manager.unsupport');
+        if (model.get('disableSelectorManager')) {
+            styleManagerEl.style.display = 'none';
+            if (!SelectorManager.selectorTags.messageContainer) {
+                styleManagerEl.after(messageContainer);
+                SelectorManager.selectorTags.messageContainer = messageContainer;
+            }
+        } else {
+            styleManagerEl.style.display = '';
+            if (SelectorManager.selectorTags.messageContainer) {
+                SelectorManager.selectorTags.messageContainer.remove();
+                delete SelectorManager.selectorTags.messageContainer;
+            }
+        }
     },
 
     /**
