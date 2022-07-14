@@ -70,6 +70,10 @@ const ComponentManager = BaseClass.extend({
             instance.execute();
             this.typeBuilders.push(instance);
         }
+    },
+
+    getTypeBuilder(type) {
+        return this.typeBuilders.find(({componentType}) => componentType === type);
     }
 }, {
     componentTypes: {},
