@@ -9,6 +9,7 @@ use Oro\Bundle\ProductBundle\Model\ProductView;
 use Oro\Bundle\ProductBundle\Provider\ProductListBuilder;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Factory\QueryFactoryInterface;
+use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Query\Result\Item as SearchResultItem;
 use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
 
@@ -65,7 +66,7 @@ class ProductListBuilderTest extends \PHPUnit\Framework\TestCase
             ->willReturnSelf();
         $query->expects(self::once())
             ->method('setMaxResults')
-            ->with(-1)
+            ->with(Query::INFINITY)
             ->willReturnSelf();
         $query->expects(self::once())
             ->method('execute')
