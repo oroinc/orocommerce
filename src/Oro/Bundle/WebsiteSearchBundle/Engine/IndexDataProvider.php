@@ -103,16 +103,17 @@ class IndexDataProvider
             sprintf('%s.%s', Event\IndexEntityEvent::NAME, $entityAlias)
         );
 
-        return $this->prepareIndexData($indexEntityEvent->getEntitiesData(), $entityConfig);
+        return $this->prepareIndexData($indexEntityEvent->getEntitiesData(), $entityConfig, $context);
     }
 
     /**
      * Adds field types according to entity config, applies placeholders
      * @param array $indexData
      * @param array $entityConfig
+     * @param array $context
      * @return array Structured and cleared data ready to be saved
      */
-    private function prepareIndexData(array $indexData, array $entityConfig): array
+    private function prepareIndexData(array $indexData, array $entityConfig, array $context): array
     {
         $preparedIndexData = [];
 
@@ -164,7 +165,10 @@ class IndexDataProvider
             unset($preparedIndexData[$entityId][Query::TYPE_TEXT][$allTextL10N]);
             $preparedIndexData[$entityId] = $this->squashAllTextFields($preparedIndexData[$entityId]);
 
-            $preparedIndexData[$entityId][Query::TYPE_INTEGER][Indexer::ID_FIELD] = $entityId;
+            // add ID field for full indexation
+            if (empty($context[AbstractIndexer::CONTEXT_FIELD_GROUPS])) {
+                $preparedIndexData[$entityId][Query::TYPE_INTEGER][Indexer::ID_FIELD] = $entityId;
+            }
         }
 
         return $preparedIndexData;
