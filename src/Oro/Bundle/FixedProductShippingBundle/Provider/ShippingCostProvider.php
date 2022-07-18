@@ -41,17 +41,14 @@ class ShippingCostProvider
 
         foreach ($lineItems as $lineItem) {
             $attribute = $this->pricesProvider->getPricesWithUnitAndCurrencies($priceList, $lineItem->getProduct());
-            if (!$attribute[$lineItem->getProductUnitCode()]) {
-                continue;
-            }
+            $unitCode = $lineItem->getProductUnitCode();
 
-            $attribute = $attribute[$lineItem->getProductUnitCode()];
-            if (!$attribute[$currency]) {
+            if (!isset($attribute[$unitCode][$currency])) {
                 continue;
             }
 
             /** @var PriceAttributeProductPrice $productPrice */
-            $productPrice = $attribute[$currency];
+            $productPrice = $attribute[$unitCode][$currency];
             $price = $productPrice->getPrice()->getValue();
 
             $shippingCost += (float)$price * $lineItem->getQuantity();
