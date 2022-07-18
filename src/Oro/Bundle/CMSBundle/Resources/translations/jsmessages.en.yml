@@ -56,8 +56,8 @@ oro.cms:
             content_block: 'Content Block'
             content_widget: 'Content Widget'
             code:
-                label: 'Code'
-                placeholder: 'Type code here'
+                label: 'Code Example'
+                placeholder: 'Type code example here'
             table:
                 label: 'Table'
                 header_cell_label: 'Header Cell'
@@ -99,6 +99,11 @@ oro.cms:
             quote:
                 label: 'Quote'
                 content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore ipsum dolor sit'
+            customCode:
+                label: 'Custom Code'
+                confirmation:
+                    title: 'Merge custom code into content'
+                    desc: 'Custom code will be parsed and merged with the rest of the content'
         validation:
             import: 'Please remove not permitted HTML-tags in the content field: {{ tags }}'
         import:
@@ -131,6 +136,8 @@ oro.cms:
                 column.after: 'Insert column after'
                 column.delete: 'Delete column'
                 delete: 'Delete table'
+            exposeCode: 'Merge custom code into content'
+            editCode: 'Edit custom code'
         asset_manager:
             add_button: 'Add image'
             input_plh: 'http://path/to/the/image.jpg'
@@ -151,6 +158,7 @@ oro.cms:
         style_manager:
             settings: 'Settings'
             empty: 'Select an element before using Style Manager'
+            unsupport: 'The selected component does not support Selector Manager'
             layer: 'Layer'
             enable: 'Enable'
             disable: 'Disable'

@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\RedirectBundle\Async\DirectUrlProcessor;
 use Oro\Bundle\RedirectBundle\Async\Topics;
+use Oro\Bundle\RedirectBundle\Cache\Dumper\SluggableUrlDumper;
 use Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\Generator\SlugEntityGenerator;
@@ -56,6 +57,11 @@ class DirectUrlProcessorTest extends \PHPUnit\Framework\TestCase
      */
     private $urlCache;
 
+    /**
+     * @var SluggableUrlDumper|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $urlCacheDumper;
+
     protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
@@ -63,13 +69,15 @@ class DirectUrlProcessorTest extends \PHPUnit\Framework\TestCase
         $this->messageFactory = $this->createMock(MessageFactoryInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->urlCache = $this->createMock(UrlCacheInterface::class);
+        $this->urlCacheDumper = $this->createMock(SluggableUrlDumper::class);
 
         $this->processor = new DirectUrlProcessor(
             $this->registry,
             $this->generator,
             $this->messageFactory,
             $this->logger,
-            $this->urlCache
+            $this->urlCache,
+            $this->urlCacheDumper
         );
     }
 
@@ -143,7 +151,7 @@ class DirectUrlProcessorTest extends \PHPUnit\Framework\TestCase
         $exception = new \Exception('Test');
         $message = $this->prepareMessage();
         $this->generator->expects($this->once())
-            ->method('generate')
+            ->method('generateWithoutCacheDump')
             ->willThrowException($exception);
 
         $this->assertTransactionRollback();
@@ -166,7 +174,7 @@ class DirectUrlProcessorTest extends \PHPUnit\Framework\TestCase
         $exception = $this->createMock(UniqueConstraintViolationException::class);
         $message = $this->prepareMessage();
         $this->generator->expects($this->once())
-            ->method('generate')
+            ->method('generateWithoutCacheDump')
             ->willThrowException($exception);
 
         $this->assertTransactionRollback();
@@ -182,7 +190,7 @@ class DirectUrlProcessorTest extends \PHPUnit\Framework\TestCase
         $exception = new \Exception('Test');
         $message = $this->prepareMessage();
         $this->generator->expects($this->once())
-            ->method('generate')
+            ->method('generateWithoutCacheDump')
             ->willThrowException($exception);
 
         $em = $this->assertTransactionStarted();
@@ -218,7 +226,7 @@ class DirectUrlProcessorTest extends \PHPUnit\Framework\TestCase
 
         $message = $this->prepareMessage();
         $this->generator->expects($this->once())
-            ->method('generate')
+            ->method('generateWithoutCacheDump')
             ->willThrowException($exception);
         $this->assertTransactionRollback();
 
@@ -272,8 +280,13 @@ class DirectUrlProcessorTest extends \PHPUnit\Framework\TestCase
             $this->generator,
             $this->messageFactory,
             $this->logger,
-            $urlCache
+            $urlCache,
+            $this->urlCacheDumper
         );
+
+        $this->urlCacheDumper
+            ->expects($this->once())
+            ->method('dump');
 
         $this->assertEquals(DirectUrlProcessor::ACK, $processor->process($message, $session));
     }
@@ -416,8 +429,12 @@ class DirectUrlProcessorTest extends \PHPUnit\Framework\TestCase
         $this->assertTransactionCommitted();
         $this->assertMessageFactoryCallsDuringProcess($createRedirect, $messageData, $class, $entity);
 
-        $this->generator->expects($this->once())
+        $this->generator->expects($this->any())
             ->method('generate')
+            ->with($entity, $createRedirect);
+
+        $this->generator->expects($this->any())
+            ->method('generateWithoutCacheDump')
             ->with($entity, $createRedirect);
     }
 
