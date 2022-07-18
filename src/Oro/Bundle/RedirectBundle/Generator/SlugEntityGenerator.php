@@ -43,6 +43,17 @@ class SlugEntityGenerator
      */
     public function generate(SluggableInterface $entity, $generateRedirects = false)
     {
+        $this->generateWithoutCacheDump($entity, $generateRedirects);
+
+        $this->urlCacheDumper->dump($entity);
+    }
+
+    /**
+     * @param SluggableInterface $entity
+     * @param bool $generateRedirects
+     */
+    public function generateWithoutCacheDump(SluggableInterface $entity, $generateRedirects = false)
+    {
         $slugUrls = $this->getResolvedSlugUrls($entity);
 
         /** @var Slug[] $toRemove */
@@ -66,8 +77,6 @@ class SlugEntityGenerator
         // Add new
         $this->addNewSlugs($entity, $slugUrls);
         $this->updateSlugPrototypes($entity, $slugUrls);
-
-        $this->urlCacheDumper->dump($entity);
     }
 
     /**

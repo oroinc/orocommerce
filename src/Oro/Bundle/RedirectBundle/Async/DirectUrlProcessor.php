@@ -6,6 +6,7 @@ use Doctrine\DBAL\Exception\RetryableException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\RedirectBundle\Cache\Dumper\SluggableUrlDumper;
 use Oro\Bundle\RedirectBundle\Cache\FlushableCacheInterface;
 use Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface;
 use Oro\Bundle\RedirectBundle\Generator\SlugEntityGenerator;
@@ -23,43 +24,27 @@ use Psr\Log\LoggerInterface;
  */
 class DirectUrlProcessor implements MessageProcessorInterface, TopicSubscriberInterface
 {
-    /**
-     * @var ManagerRegistry
-     */
-    private $registry;
-
-    /**
-     * @var SlugEntityGenerator
-     */
-    private $generator;
-
-    /**
-     * @var MessageFactoryInterface
-     */
-    private $messageFactory;
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
-     * @var UrlCacheInterface
-     */
-    private $urlCache;
+    private ManagerRegistry $registry;
+    private SlugEntityGenerator $generator;
+    private MessageFactoryInterface $messageFactory;
+    private LoggerInterface $logger;
+    private UrlCacheInterface $urlCache;
+    private SluggableUrlDumper $urlCacheDumper;
 
     public function __construct(
         ManagerRegistry $registry,
         SlugEntityGenerator $generator,
         MessageFactoryInterface $messageFactory,
         LoggerInterface $logger,
-        UrlCacheInterface $urlCache
+        UrlCacheInterface $urlCache,
+        SluggableUrlDumper $urlCacheDumper
     ) {
         $this->registry = $registry;
         $this->generator = $generator;
         $this->messageFactory = $messageFactory;
         $this->logger = $logger;
         $this->urlCache = $urlCache;
+        $this->urlCacheDumper = $urlCacheDumper;
     }
 
     /**
@@ -79,12 +64,12 @@ class DirectUrlProcessor implements MessageProcessorInterface, TopicSubscriberIn
             $em = $this->registry->getManagerForClass($className);
             $em->beginTransaction();
             foreach ($entities as $entity) {
-                $this->generator->generate($entity, $createRedirect);
+                $this->generator->generateWithoutCacheDump($entity, $createRedirect);
             }
 
             $em->flush();
             $em->commit();
-            $this->actualizeUrlCache();
+            $this->actualizeUrlCache($entities);
         } catch (InvalidArgumentException $e) {
             $this->logger->error(
                 'Queue Message is invalid',
@@ -128,8 +113,12 @@ class DirectUrlProcessor implements MessageProcessorInterface, TopicSubscriberIn
         ];
     }
 
-    private function actualizeUrlCache()
+    private function actualizeUrlCache(array $entities)
     {
+        foreach ($entities as $entity) {
+            $this->urlCacheDumper->dump($entity);
+        }
+
         // Remove slug routes cache on Slug changes to refill it with actual data
         $this->urlCache->removeUrl(UrlCacheInterface::SLUG_ROUTES_KEY, []);
 
