@@ -39,7 +39,7 @@ class ProductListBuilder
             $productListType,
             static function (SearchQueryInterface $query) use ($productIds) {
                 $query
-                    ->addWhere(Criteria::expr()->in('integer.product_id', $productIds))
+                    ->addWhere(Criteria::expr()->in('integer.system_entity_id', $productIds))
                     ->setMaxResults(Query::INFINITY);
             }
         );
@@ -76,7 +76,7 @@ class ProductListBuilder
     {
         $query = $this->queryFactory->create(['search_index' => 'website'])
             ->setFrom('oro_product_WEBSITE_ID')
-            ->addSelect('integer.product_id as id');
+            ->addSelect('integer.system_entity_id as id');
         if (null !== $initializeQueryCallback) {
             $initializeQueryCallback($query);
         }

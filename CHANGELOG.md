@@ -4,6 +4,11 @@ The current file describes significant changes in the code that may affect the u
 
 ## UNRELEASED
 
+### Changed
+
+#### ProductBundle
+* Product search index field `product_id` has been replaced with `system_entity_id`
+
 ### Removed
 
 #### OrderBundle

@@ -74,7 +74,7 @@ class ProductRepository extends WebsiteSearchRepository
     public function findOne($id): ?Item
     {
         $searchQuery = $this->createQuery()->addWhere(
-            Criteria::expr()->eq('integer.product_id', $id)
+            Criteria::expr()->eq('integer.system_entity_id', $id)
         );
 
         $items = $searchQuery->getResult();
@@ -100,7 +100,7 @@ class ProductRepository extends WebsiteSearchRepository
         $searchQuery
             ->addSelect('sku')
             ->addSelect('names_LOCALIZATION_ID as name')
-            ->addSelect('integer.product_id')
+            ->addSelect('integer.system_entity_id as product_id')
             ->addWhere(Criteria::expr()->in('sku_uppercase', $upperCaseSkus));
 
         return $searchQuery;
@@ -131,7 +131,7 @@ class ProductRepository extends WebsiteSearchRepository
             ->addSelect('sku')
             ->addSelect('names_LOCALIZATION_ID as name')
             ->addWhere(Criteria::expr()->contains('all_text_LOCALIZATION_ID', $search))
-            ->setOrderBy('integer.product_id', Criteria::ASC)
+            ->setOrderBy('integer.system_entity_id', Criteria::ASC)
             ->setFirstResult($firstResult)
             ->setMaxResults($maxResults);
 
@@ -165,7 +165,7 @@ class ProductRepository extends WebsiteSearchRepository
         $query
             ->setFrom('oro_product_WEBSITE_ID')
             ->addSelect('sku')
-            ->addSelect('integer.product_id')
+            ->addSelect('integer.system_entity_id as product_id')
             ->addSelect('names_LOCALIZATION_ID as name')
             ->getCriteria()
             ->andWhere(
