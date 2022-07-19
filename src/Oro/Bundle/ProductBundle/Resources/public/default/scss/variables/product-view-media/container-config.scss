@@ -1,0 +1,12 @@
+/* @theme: default; */
+
+$product-view-media-container-position: relative !default;
+$product-view-media-container-float: left !default;
+$product-view-media-container-width: $product-view-aside-width - $product-view-aside-offset-y !default;
+$product-view-media-container-margin-bottom: 20px !default;
+
+// Tablet
+$product-view-media-container-tablet-float: none !default;
+$product-view-media-container-tablet-offset: auto !default;
+$product-view-media-container-tablet-width: 100% !default;
+$product-view-media-container-tablet-max-width: 380px !default;

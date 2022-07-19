@@ -1,0 +1,7 @@
+styles:
+    inputs:
+        - 'bundles/orocms/default/scss/variables/cms-typography-config.scss'
+        - 'bundles/orocms/default/scss/variables/promo-slider-config.scss'
+
+        - 'bundles/orocms/default/scss/styles.scss'
+        - 'bundles/orocms/default/scss/components/promo-slider.scss'

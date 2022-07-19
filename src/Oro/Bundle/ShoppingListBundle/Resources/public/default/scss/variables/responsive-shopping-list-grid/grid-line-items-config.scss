@@ -1,0 +1,26 @@
+/* @theme: default; */
+
+$grid-line-items-row-offset-x: $offset-x !default;
+$grid-line-items-line-height: 1.15 !default;
+$grid-line-items-title-font-size: $base-font-size !default;
+$grid-line-items-title-font-w: normal !default;
+$grid-line-items-field-val-offset: 2px !default;
+
+$grid-line-line-height: 1.45 !default;
+
+$grid-line-clip-none-offset: $offset-x-m !default;
+
+$grid-line-separator-height: 16px !default;
+$grid-line-separator-offset: 0 8px !default;
+$grid-line-separator-background: get-color('additional', 'light') !default;
+
+// Tablet
+
+$grid-line-row-entry-offset-y-tablet: 2px !default;
+
+// Mobile
+
+$grid-line-items-container-offset-x-mobile: 10px !default;
+$grid-line-items-row-offset-x-mobile: 10px !default;
+$grid-line-items-field-val-offset-mobile: 4px !default;
+$grid-line-row-entry-offset-y-mobile: 0 !default;

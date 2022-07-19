@@ -1,0 +1,13 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: '@OroInventory/layouts/default/oro_product_frontend_product_view/low_inventory.html.twig'
+        - '@add':
+            id: low_inventory_label
+            parentId: product_view_specification_container
+            siblingId: product_price_subtree_update
+            blockType: block
+            options:
+                vars:
+                    product: '=data["product"]'
+                    visible: '=data["low_inventory"].isLowInventoryProduct(data["product"])'

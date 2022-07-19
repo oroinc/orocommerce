@@ -1,0 +1,15 @@
+/* @theme: default; */
+
+.category-title {
+    font-size: $category-title-font-size;
+    line-height: $category-title-line-height;
+    text-align: $category-title-text-align;
+    margin-top: $category-title-offset-top;
+
+    &--divide-content {
+        width: $category-title-divide-content-width;
+        margin: $category-title-divide-content-offset;
+        padding: $category-title-divide-content-inner-offset;
+        border-bottom: $category-title-divide-content-border-bottom;
+    }
+}

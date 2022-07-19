@@ -1,0 +1,11 @@
+/* @theme: default; */
+
+.sku {
+    margin: $sku-offset;
+
+    font-size: $sku-font-size;
+
+    &__code {
+        color: $sku-offset-color;
+    }
+}

@@ -1,5 +1,0 @@
-layout:
-    imports:
-        -
-            id: oro_customer_page
-    actions: []

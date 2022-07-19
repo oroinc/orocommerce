@@ -1,6 +1,6 @@
 {% extends '@OroAction/Operation/form.html.twig' %}
 
-{% form_theme form with ['@OroFrontend/layouts/blank/form_theme.html.twig', '@OroCheckout/Action/fields.html.twig'] %}
+{% form_theme form with ['@OroFrontend/layouts/default/form_theme.html.twig', '@OroCheckout/Action/fields.html.twig'] %}
 
 {% block form_inner %}
     {{ block('form_widget') }}

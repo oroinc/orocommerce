@@ -1,0 +1,9 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+           themes: '@OroProduct/layouts/default/imports/line_item_buttons/line_item_buttons.html.twig'
+        - '@add':
+           id: __line_item_buttons
+           blockType: container
+           parentId: __root
+           siblingId: ~

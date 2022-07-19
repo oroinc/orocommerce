@@ -1,10 +1,21 @@
 /* @theme: default; */
 
 .product-price {
+    display: $product-price-display;
     width: $product-price-width;
+    overflow: $product-price-overflow;
+
+    &__main {
+        padding-top: $product-price-main-offset-top;
+        padding-bottom: $product-price-main-offset-bottom;
+    }
 
     &__main-box {
         font-size: $product-price-main-box-font-size;
+    }
+
+    &__unit-short {
+        display: $product-price-unit-short-display;
     }
 
     &__value {
@@ -34,6 +45,10 @@
 
     // Modifier for simple view(only main price)
     &--simple & {
+        &__label {
+            display: $product-price-simple-label-display;
+        }
+
         &__value {
             font-size: $product-price-simple-value-font-size;
         }
@@ -54,7 +69,17 @@
 @include breakpoint('tablet') {
     .product-price {
         &--simple {
+            display: $product-price-simple-display-tablet;
+
             text-align: $product-price-simple-text-align-tablet;
+        }
+
+        &__unit-full {
+            display: $product-price-unit-full-display-tablet;
+        }
+
+        &__unit-short {
+            display: $product-price-unit-short-display-tablet;
         }
     }
 }
