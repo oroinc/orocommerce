@@ -1,6 +1,7 @@
 @fixture-OroRFPBundle:RFQ_with_removed_unit.yml
 @ticket-BB-16463
 @ticket-BB-21064
+@ticket-BB-21454
 Feature: Create RFQ on storefront
   In order to control RFQ content
   As an Administrator
@@ -48,5 +49,11 @@ Feature: Create RFQ on storefront
       | SKU123 | product1 | In Stock         |
     And click on SKU123 in grid
     Then I should see "SKU123 product1" in the "RFQ Products List" element
+    When I fill "Frontend Request Form" with:
+      | Line Item First Unit | set |
+    And I click "Add Another Line"
+    Then "Frontend Request Form" must contains values:
+      | Line Item First Unit | set |
+    When I click "Remove Request Product Edit Line Item"
     When I click "Remove Request Product Edit Line Item"
     Then I should not see "SKU123 product1" in the "RFQ Products List" element

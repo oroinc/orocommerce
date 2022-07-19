@@ -1,0 +1,41 @@
+include:
+    - '@OroCatalogBundle:category_tree_with_products.yml'
+    - '@OroCustomerBundle:BuyerCustomerFixture.yml'
+
+Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility:
+    product3Visibility:
+        visibility: 'visible'
+        product: '@product3'
+        scope: '@first_website_scope'
+
+Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\ProductVisibilityResolved:
+    product3VisibilityResolved:
+        __construct: ['@first_website_scope', '@product3']
+        visibility: 1
+        category: '@categoryPrinters'
+
+Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility:
+    categoryPrintersVisibility:
+        visibility: 'visible'
+        category: '@categoryPrinters'
+        scope: '@first_website_scope'
+    categoryRetailSuppliesVisibility:
+        visibility: 'hidden'
+        category: '@categoryRetailSupplies'
+        scope: '@first_website_scope'
+
+Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CategoryVisibilityResolved:
+    categoryPrintersVisibilityResolved:
+        __construct: ['@categoryPrinters']
+        visibility: 1
+        category: '@categoryPrinters'
+        scope: '@first_website_scope'
+        sourceCategoryVisibility: '@categoryPrintersVisibility'
+        source: 1
+    categoryRetailSuppliesVisibilityResolved:
+        __construct: ['@categoryRetailSupplies']
+        visibility: -1
+        category: '@categoryRetailSupplies'
+        scope: '@first_website_scope'
+        sourceCategoryVisibility: '@categoryRetailSuppliesVisibility'
+        source: 1

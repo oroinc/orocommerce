@@ -6,15 +6,19 @@ Oro\Bundle\ProductBundle\Entity\ProductName:
         string: 'product1'
 
 Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
-    precision:
+    itemPrecision:
         unit: '@item'
+        precision: '1'
+    setPrecision:
+        unit: '@set'
         precision: '1'
 
 Oro\Bundle\ProductBundle\Entity\Product:
     product:
         sku: 'SKU123'
         attributeFamily: '@defaultProductFamily'
-        primaryUnitPrecision: '@precision'
+        primaryUnitPrecision: '@itemPrecision'
+        unitPrecisions: ['@setPrecision']
         __calls:
             - addName: ['@locValue']
         inventoryStatus: '@enumInventoryStatuses'

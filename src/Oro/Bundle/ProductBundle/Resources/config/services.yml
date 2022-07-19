@@ -1566,6 +1566,7 @@ services:
         decorates: oro_attachment.provider.file_name
         arguments:
             - '@.inner'
+            - '@oro_attachment.tools.file_name_extension_helper'
         tags:
             - { name: oro_featuretogle.feature, feature: product_original_filenames }
 

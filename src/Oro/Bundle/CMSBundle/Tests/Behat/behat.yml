@@ -229,6 +229,17 @@ oro_behat_extension:
             
         Import Button:
             selector: 'span[data-original-title="Import"]'
+
+        Example1 svg wysiwyg image:
+            selector:
+                type: 'xpath'
+                locator: '//img[contains(@alt,"example1_svg_wysiwyg_image")]'
+
+        Example1 svg wysiwyg picture source:
+            selector:
+                type: 'xpath'
+                locator: '//img[contains(@alt,"example1_svg_wysiwyg_image")]//preceding-sibling::source[@type="image/webp"][last()]'
+
     suites:
         OroCMSBundle:
             contexts:
