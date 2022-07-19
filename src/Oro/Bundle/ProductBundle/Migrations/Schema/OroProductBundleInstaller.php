@@ -91,7 +91,7 @@ class OroProductBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_25_2';
+        return 'v1_25_3';
     }
 
     /**
@@ -748,10 +748,7 @@ class OroProductBundleInstaller implements
         $table->addColumn('related_job_id', 'integer', ['notnull' => true]);
         $table->addColumn('website_id', 'integer', ['notnull' => true]);
         $table->addColumn('product_id', 'integer', ['notnull' => true]);
-        $table->addIndex(
-            ['related_job_id', 'website_id'],
-            'idx_oro_prod_webs_reindex_req_item_main_ids'
-        );
+        $table->addUniqueIndex(['product_id', 'related_job_id', 'website_id'], 'prod_webs_reindex_req_uniq_idx');
     }
 
     /**
