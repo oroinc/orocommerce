@@ -80,6 +80,7 @@ Feature: Product collection tab counters
       | PSKU10 | Product 10 |
       | PSKU7  | Product 7  |
       | PSKU1  | Product 1  |
+    And I scroll to "ActiveGrid"
     When I filter SKU as contains "1" in "ActiveGrid" grid
     Then I should see following "Active Grid" grid:
       | SKU    | NAME       |
