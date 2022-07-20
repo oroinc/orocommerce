@@ -97,7 +97,7 @@ class QuickAddCollectionPriceProviderTest extends WebTestCase
             QuickAddRowsCollectionReadyEvent::NAME
         );
 
-        self::assertEquals('184.7', $collection->getAdditionalField('price')->getValue()['value']);
+        self::assertEquals('185.6', $collection->getAdditionalField('price')->getValue()['value']);
         self::assertEquals('USD', $collection->getAdditionalField('price')->getValue()['currency']);
     }
 
