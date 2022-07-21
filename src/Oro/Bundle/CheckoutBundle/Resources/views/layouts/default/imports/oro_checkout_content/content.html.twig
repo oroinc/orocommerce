@@ -238,12 +238,12 @@
 
 {% block __oro_checkout_content__checkout_button_continue_widget -%}
     {% if transitionData is defined and transitionData %}
-        <div class="grid__row grid__row--offset-none">
-            <div class="grid__column grid__column--gutter-l-none">
+        <div class="checkout__botton-container">
+            <div class="checkout__botton-action">
                 {{ block_widget(block) }}
             </div>
             {% if showRequiredLabel %}
-            <div class="grid__column">
+            <div class="checkout__require-label">
                 <div data-role="checkout-require"
                      class="required-label {% if transitionData.isAllowed == false %}hidden{% endif %}"
                      aria-hidden="true"

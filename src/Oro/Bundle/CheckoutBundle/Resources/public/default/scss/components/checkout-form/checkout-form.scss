@@ -77,8 +77,8 @@
     }
 
     &__payment-methods-form {
-        .form-row:last-child {
-            margin-bottom: 0;
+        .form-row:not(:last-child) {
+            margin-bottom: $offset-y;
         }
     }
 

@@ -68,8 +68,8 @@
         <h2 class="customer-info-grid__title">
             {{- 'oro.frontend.sale.quote.sections.general'|trans -}}
         </h2>
-        <div class="grid__row">
-            <div class="grid__column grid__column--6 grid__column--no-gutters-l">
+        <div class="grid">
+            <div class="grid-col-6 grid-col-mobile-landscape-12">
                 <table class="customer-info-grid__table">
                     <tbody>
                         {% if quote.assignedUsers | length %}
@@ -95,7 +95,7 @@
                     </tbody>
                 </table>
             </div>
-            <div class="grid__column grid__column--6 grid__column--no-gutters-r">
+            <div class="grid-col-6 grid-col-mobile-landscape-12">
                 <table class="customer-info-grid__table">
                     <tbody>
                         <tr class="customer-info-grid__row">

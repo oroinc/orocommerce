@@ -68,6 +68,14 @@
             }
         }
     }
+
+    &__botton-container {
+        margin-top: $offset-y;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0 16px;
+    }
 }
 
 @include breakpoint('tablet') {

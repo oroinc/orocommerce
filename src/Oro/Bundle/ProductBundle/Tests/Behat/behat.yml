@@ -817,7 +817,7 @@ oro_behat_extension:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\FrontendProductGrid
 
     ProductFrontendGridTable:
-      selector: 'div.grid.table'
+      selector: 'div.grid-main-container.table'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
 
     ProductFrontendMassActionHeadCheckbox:

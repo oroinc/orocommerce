@@ -9,6 +9,8 @@
     }
 
     .add-product-from-view-component {
+        margin-top: $offset-y;
+
         @include clearfix();
     }
 

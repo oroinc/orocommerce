@@ -134,7 +134,7 @@
             }|json_encode }}" {{ block('widget_container_attributes') }}
             data-layout="separate"
         >
-            <table class="grid table table-bordered list-items"{% if not form.children|length %} style="display: none;"{% endif %}>
+            <table class="grid grid-main-container table table-bordered list-items"{% if not form.children|length %} style="display: none;"{% endif %}>
                 <thead>
                 <tr>
                     <th><span class="text-center">{{ 'oro.shipping.product_shipping_options.product_unit.label'|trans }}</span></th>

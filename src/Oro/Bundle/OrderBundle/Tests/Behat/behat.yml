@@ -76,7 +76,7 @@ oro_behat_extension:
 
     Order Line Items Table:
       class: Oro\Bundle\OrderBundle\Tests\Behat\Element\ProductTable
-      selector: 'table.grid'
+      selector: 'table.grid-main-container'
 
     OrderLineItemProductSku:
       selector: 'div:contains("Item #:") > span'
