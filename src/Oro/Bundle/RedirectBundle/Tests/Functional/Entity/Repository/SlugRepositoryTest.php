@@ -119,8 +119,8 @@ class SlugRepositoryTest extends WebTestCase
         $customer = $this->getReference(LoadCustomers::DEFAULT_ACCOUNT_NAME);
 
         $criteria = $this->scopeManager->getCriteria(ScopeManager::BASE_SCOPE, ['customer' => $customer]);
-        $slug = $this->repository->getSlugByUrlAndScopeCriteria(LoadSlugsData::SLUG_TEST_DUPLICATE_URL, $criteria);
-        $expected = $this->getReference(LoadSlugsData::SLUG_TEST_DUPLICATE_URL);
+        $slug = $this->repository->getSlugByUrlAndScopeCriteria(LoadSlugsData::SLUG_TEST_URL, $criteria);
+        $expected = $this->getReference(LoadSlugsData::SLUG_TEST_URL);
 
         $this->assertNotEmpty($slug);
         $this->assertSame($expected->getId(), $slug->getId());
@@ -129,11 +129,8 @@ class SlugRepositoryTest extends WebTestCase
     public function testGetSlugByUrlAndScopeCriteriaSlugWithoutScopesMatched()
     {
         $criteria = $this->scopeManager->getCriteria(ScopeManager::BASE_SCOPE);
-        $slug = $this->repository->getSlugByUrlAndScopeCriteria(LoadSlugsData::SLUG_TEST_DUPLICATE_URL, $criteria);
-        $expected = $this->getReference(LoadSlugsData::SLUG_TEST_DUPLICATE_REFERENCE);
-
-        $this->assertNotEmpty($slug);
-        $this->assertEquals($expected->getId(), $slug->getId());
+        $slug = $this->repository->getSlugByUrlAndScopeCriteria(LoadSlugsData::SLUG_TEST_URL, $criteria);
+        $this->assertEmpty($slug);
     }
 
     public function testRestrictedGetSlugByUrlAndScopeCriteriaAnonymous()
@@ -217,11 +214,11 @@ class SlugRepositoryTest extends WebTestCase
 
         $criteria = $this->scopeManager->getCriteria(ScopeManager::BASE_SCOPE, ['customer' => $customer]);
         $slug = $this->repository->getRestrictedSlugByUrlAndScopeCriteria(
-            LoadSlugsData::SLUG_TEST_DUPLICATE_URL,
+            LoadSlugsData::SLUG_TEST_URL,
             $criteria,
             self::getContainer()->get('oro_redirect.helper.slug_query_restriction_helper')
         );
-        $expected = $this->getReference(LoadSlugsData::SLUG_TEST_DUPLICATE_URL);
+        $expected = $this->getReference(LoadSlugsData::SLUG_TEST_URL);
 
         $this->assertNotEmpty($slug);
         $this->assertSame($expected->getId(), $slug->getId());
@@ -231,23 +228,29 @@ class SlugRepositoryTest extends WebTestCase
     {
         $criteria = $this->scopeManager->getCriteria(ScopeManager::BASE_SCOPE);
         $slug = $this->repository->getRestrictedSlugByUrlAndScopeCriteria(
-            LoadSlugsData::SLUG_TEST_DUPLICATE_URL,
+            LoadSlugsData::SLUG_TEST_URL,
             $criteria,
             self::getContainer()->get('oro_redirect.helper.slug_query_restriction_helper')
         );
-        $expected = $this->getReference(LoadSlugsData::SLUG_TEST_DUPLICATE_REFERENCE);
 
-        $this->assertNotEmpty($slug);
-        $this->assertEquals($expected->getId(), $slug->getId());
+        $this->assertEmpty($slug);
     }
 
     public function testFindOneDirectUrlBySlug()
     {
-        $qb = $this->repository->getOneDirectUrlBySlugQueryBuilder('/slug/first');
+        /** @var CustomerUser $customer */
+        $customer = $this->getReference(LoadCustomers::DEFAULT_ACCOUNT_NAME);
+        $criteria = $this->scopeManager->getCriteria(ScopeManager::BASE_SCOPE, ['customer' => $customer]);
+
+        $qb = $this->repository->getOneDirectUrlBySlugQueryBuilder(
+            LoadSlugsData::SLUG_TEST_URL,
+            null,
+            $criteria
+        );
         $actual = $qb->getQuery()->getOneOrNullResult();
 
         $this->assertNotEmpty($actual);
-        $this->assertEquals($this->getReference('reference:/slug/first')->getId(), $actual->getId());
+        $this->assertEquals($this->getReference(LoadSlugsData::SLUG_TEST_URL)->getId(), $actual->getId());
     }
 
     public function testFindOneDirectUrlBySlugScopedSlug()
@@ -272,25 +275,33 @@ class SlugRepositoryTest extends WebTestCase
 
     /**
      * @dataProvider findAllByPatternWithoutScopeDataProvider
-     * @param string $pattern
-     * @param array $expected
      */
-    public function testFindAllDirectUrlsByPattern($pattern, array $expected)
+    public function testFindAllDirectUrlsByPattern($pattern, ?array $criteria, array $expected)
     {
-        $actual = $this->repository->findAllDirectUrlsByPattern($pattern);
+        if ($criteria) {
+            array_walk($criteria, fn (&$item) => $item = $this->getReference($item));
+            $criteria = $this->scopeManager->getCriteria(ScopeManager::BASE_SCOPE, $criteria);
+        }
+
+        $actual = $this->repository->findAllDirectUrlsByPattern($pattern, null, $criteria);
         $this->assertEquals($expected, $actual);
     }
 
     /**
      * @dataProvider findAllByPatternWithoutScopeDataProvider
-     * @param string $pattern
-     * @param array $expected
      */
-    public function testFindRestrictedAllDirectUrlsByPattern($pattern, array $expected)
+    public function testFindRestrictedAllDirectUrlsByPattern(string $pattern, ?array $criteria, array $expected)
     {
+        if ($criteria) {
+            array_walk($criteria, fn (&$item) => $item = $this->getReference($item));
+            $criteria = $this->scopeManager->getCriteria(ScopeManager::BASE_SCOPE, $criteria);
+        }
+
         $actual = $this->repository->findRestrictedAllDirectUrlsByPattern(
             $pattern,
-            self::getContainer()->get('oro_redirect.helper.slug_query_restriction_helper')
+            self::getContainer()->get('oro_redirect.helper.slug_query_restriction_helper'),
+            null,
+            $criteria
         );
         $this->assertEquals($expected, $actual);
     }
@@ -303,15 +314,16 @@ class SlugRepositoryTest extends WebTestCase
         return [
             [
                 'pattern' => '/slug/f%',
+                'criteriaContext' => ['customer' => LoadCustomers::DEFAULT_ACCOUNT_NAME],
                 'expected' => [
                     '/slug/first'
                 ]
             ],
             [
                 'pattern' => '/slug%',
+                'criteriaContext' => null,
                 'expected' => [
                     '/slug/anonymous',
-                    '/slug/first',
                     '/slug/page2',
                     '/slug/en/page',
                     '/slug/es/page'

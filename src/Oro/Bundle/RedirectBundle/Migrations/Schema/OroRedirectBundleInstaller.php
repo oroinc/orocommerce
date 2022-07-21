@@ -16,7 +16,7 @@ class OroRedirectBundleInstaller implements Installation
      */
     public function getMigrationVersion()
     {
-        return 'v1_6_1';
+        return 'v1_7';
     }
 
     /**
@@ -65,8 +65,8 @@ class OroRedirectBundleInstaller implements Installation
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
         $table->addUniqueIndex(
-            ['url_hash', 'scopes_hash', 'route_name', 'parameters_hash'],
-            'oro_redirect_slug_scopes_idx'
+            ['organization_id', 'url_hash', 'scopes_hash'],
+            'oro_redirect_slug_uidx'
         );
     }
 

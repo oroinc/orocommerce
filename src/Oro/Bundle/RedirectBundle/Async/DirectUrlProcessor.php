@@ -7,6 +7,7 @@ use Doctrine\DBAL\Exception\RetryableException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\RedirectBundle\Cache\Dumper\SluggableUrlDumper;
 use Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface;
 use Oro\Bundle\RedirectBundle\Generator\SlugEntityGenerator;
 use Oro\Bundle\RedirectBundle\Model\Exception\InvalidArgumentException;
@@ -48,6 +49,8 @@ class DirectUrlProcessor implements MessageProcessorInterface, TopicSubscriberIn
      */
     private $urlCache;
 
+    private ?SluggableUrlDumper $urlCacheDumper = null;
+
     public function __construct(
         ManagerRegistry $registry,
         SlugEntityGenerator $generator,
@@ -60,6 +63,11 @@ class DirectUrlProcessor implements MessageProcessorInterface, TopicSubscriberIn
         $this->messageFactory = $messageFactory;
         $this->logger = $logger;
         $this->urlCache = $urlCache;
+    }
+
+    public function setUrlCacheDumper(SluggableUrlDumper $urlCacheDumper): void
+    {
+        $this->urlCacheDumper = $urlCacheDumper;
     }
 
     /**
@@ -79,12 +87,12 @@ class DirectUrlProcessor implements MessageProcessorInterface, TopicSubscriberIn
             $em = $this->registry->getManagerForClass($className);
             $em->beginTransaction();
             foreach ($entities as $entity) {
-                $this->generator->generate($entity, $createRedirect);
+                $this->generator->generateWithoutCacheDump($entity, $createRedirect);
             }
 
             $em->flush();
             $em->commit();
-            $this->actualizeUrlCache();
+            $this->actualizeUrlCache($entities);
         } catch (InvalidArgumentException $e) {
             $this->logger->error(
                 'Queue Message is invalid',
@@ -128,8 +136,12 @@ class DirectUrlProcessor implements MessageProcessorInterface, TopicSubscriberIn
         ];
     }
 
-    private function actualizeUrlCache()
+    private function actualizeUrlCache(array $entities)
     {
+        foreach ($entities as $entity) {
+            $this->urlCacheDumper->dump($entity);
+        }
+
         // Remove slug routes cache on Slug changes to refill it with actual data
         $this->urlCache->removeUrl(UrlCacheInterface::SLUG_ROUTES_KEY, []);
 
