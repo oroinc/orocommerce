@@ -93,7 +93,8 @@
     }
 
     &__shipping-methods,
-    &__payment-methods {
+    &__payment-methods,
+    &__shipping_date {
         margin: $checkout-view-shipping-methods-margin;
     }
 

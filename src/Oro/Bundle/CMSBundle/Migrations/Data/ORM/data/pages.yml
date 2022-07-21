@@ -33,45 +33,43 @@ about:
         <p> There are different types of RVs for weekends, travelling, and living. We can <a href="#">help you</a> find your dream RV in minutes. You could also read some of our articles to educate yourself on different aspects of RV as well as email us call our office to ask all the questions you may have.</p>
 
         <div class="grid">
-            <div class="grid__row">
-                <div class="grid__column grid__column--4 grid__column--no-gutters-l">
-                    <p>
-                        <strong>Popular RV types</strong>
-                    </p>
+            <div class="grid-col-4 grid-col-mobile-landscape-12">
+                <p>
+                    <strong>Popular RV types</strong>
+                </p>
 
-                    <ul>
-                        <li>Pop up</li>
-                        <li>Small camper</li>
-                        <li>Fifth wheel</li>
-                        <li>Class C</li>
-                    </ul>
-                </div>
+                <ul>
+                    <li>Pop up</li>
+                    <li>Small camper</li>
+                    <li>Fifth wheel</li>
+                    <li>Class C</li>
+                </ul>
+            </div>
 
-                <div class="grid__column grid__column--4">
-                    <p>
-                        <strong>Our recommended top gear</strong>
-                    </p>
+            <div class="grid-col-4 grid-col-mobile-landscape-12">
+                <p>
+                    <strong>Our recommended top gear</strong>
+                </p>
 
-                    <ol>
-                        <li>Camp kitchen</li>
-                        <li>RV cover</li>
-                        <li>GPS accessories</li>
-                        <li>Power generator</li>
-                    </ol>
-                </div>
+                <ol>
+                    <li>Camp kitchen</li>
+                    <li>RV cover</li>
+                    <li>GPS accessories</li>
+                    <li>Power generator</li>
+                </ol>
+            </div>
 
-                <div class="grid__column grid__column--4 grid__column--no-gutters-r">
-                    <p>
-                        <strong>Our popular membership programs</strong>
-                    </p>
+            <div class="grid-col-4 grid-col-mobile-landscape-12">
+                <p>
+                    <strong>Our popular membership programs</strong>
+                </p>
 
-                    <dl>
-                        <dt>Travel assistance</dt>
-                        <dd>Emergency medical evacuation and home transportation</dd>
-                        <dt>Roadside assistance</dt>
-                        <dd>Emergency fuel delivery, towing, flat tyre and low battery service</dd>
-                    </dl>
-                </div>
+                <dl>
+                    <dt>Travel assistance</dt>
+                    <dd>Emergency medical evacuation and home transportation</dd>
+                    <dt>Roadside assistance</dt>
+                    <dd>Emergency fuel delivery, towing, flat tyre and low battery service</dd>
+                </dl>
             </div>
         </div>
         

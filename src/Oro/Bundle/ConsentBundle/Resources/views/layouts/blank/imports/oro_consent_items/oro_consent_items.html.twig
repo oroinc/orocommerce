@@ -1,6 +1,6 @@
 {% block __oro_consent_items__consent_wrapper_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        'class': 'consent-items form-row'
+        '~class': ' consent-items'
     }) %}
 
     {% if consents is defined and consents|length > 0  %}
@@ -16,8 +16,8 @@
 {% endblock %}
 
 {% block __oro_consent_items__consent_items_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        'class': 'consent-item'
+    {% set base_attr = layout_attr_defaults(attr, {
+        '~class': ' consent-item'
     }) %}
 
     {% for consent in consents %}
@@ -30,8 +30,8 @@
             requiredClass: requiredClass
         }) %}
 
-        {% set attr = attr|merge({
-            'class': 'consent-item' ~ requiredClass,
+        {% set attr = layout_attr_defaults(base_attr, {
+            '~class': ' ' ~ requiredClass,
             'data-page-component-view': 'oroconsent/js/app/views/base-consent-item-view',
             'data-page-component-options': consent|json_encode
         }) %}
@@ -44,7 +44,7 @@
 
 {% block __oro_consent_items__consent_item_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        'class': 'checkbox-label' ~ requiredClass,
+        '~class': ' checkbox-label' ~ requiredClass,
         'for': 'consent-' ~ index
     }) %}
 
