@@ -9,7 +9,10 @@ use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Event\CategoryTreeCreateAfterEvent;
 use Oro\Bundle\CatalogBundle\Provider\CategoryTreeProvider;
 use Oro\Bundle\CatalogBundle\Provider\MasterCatalogRootProvider;
+use Oro\Bundle\CatalogBundle\Tests\Unit\Stub\CategoryStub;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Tests\Unit\Stub\CustomerUserStub;
+use Oro\Bundle\UserBundle\Entity\UserInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class CategoryTreeProviderTest extends \PHPUnit\Framework\TestCase
@@ -18,26 +21,24 @@ class CategoryTreeProviderTest extends \PHPUnit\Framework\TestCase
 
     private EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject $eventDispatcher;
 
-    private CategoryTreeProvider $provider;
-
     private MasterCatalogRootProvider|\PHPUnit\Framework\MockObject\MockObject $masterCatalogRootProvider;
+
+    private CategoryTreeProvider $provider;
 
     protected function setUp(): void
     {
         $this->categoryRepository = $this->createMock(CategoryRepository::class);
-
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
-
         $this->masterCatalogRootProvider = $this->createMock(MasterCatalogRootProvider::class);
 
         $manager = $this->createMock(ObjectManager::class);
-        $manager->expects($this->any())
+        $manager->expects(self::any())
             ->method('getRepository')
             ->with(Category::class)
             ->willReturn($this->categoryRepository);
 
         $registry = $this->createMock(ManagerRegistry::class);
-        $registry->expects($this->any())
+        $registry->expects(self::any())
             ->method('getManagerForClass')
             ->with(Category::class)
             ->willReturn($manager);
@@ -67,24 +68,24 @@ class CategoryTreeProviderTest extends \PHPUnit\Framework\TestCase
         $categories = [$rootCategory, $mainCategory, $childCategory];
         $visibleCategories = [$rootCategory, $mainCategory, $childCategory];
 
-        $this->categoryRepository->expects($this->once())
+        $this->categoryRepository->expects(self::once())
             ->method('getChildren')
             ->willReturn($categories);
 
         $event = new CategoryTreeCreateAfterEvent($categories);
         $event->setUser($user);
-        $this->eventDispatcher->expects($this->once())
+        $this->eventDispatcher->expects(self::once())
             ->method('dispatch')
             ->with($event, CategoryTreeCreateAfterEvent::NAME)
             ->willReturn($event);
 
         $this->masterCatalogRootProvider
-            ->expects($this->never())
+            ->expects(self::never())
             ->method('getMasterCatalogRoot');
 
         $actual = $this->provider->getCategories($user, $rootCategory, false);
 
-        $this->assertEquals($visibleCategories, $actual);
+        self::assertEquals($visibleCategories, $actual);
     }
 
     public function testGetCategoriesWithNoRootPassed(): void
@@ -105,24 +106,84 @@ class CategoryTreeProviderTest extends \PHPUnit\Framework\TestCase
         $categories = [$rootCategory, $mainCategory, $childCategory];
         $visibleCategories = [$rootCategory, $mainCategory, $childCategory];
 
-        $this->categoryRepository->expects($this->once())
+        $this->categoryRepository->expects(self::once())
             ->method('getChildren')
             ->willReturn($categories);
 
         $event = new CategoryTreeCreateAfterEvent($categories);
         $event->setUser($user);
-        $this->eventDispatcher->expects($this->once())
+        $this->eventDispatcher->expects(self::once())
             ->method('dispatch')
             ->with($event, CategoryTreeCreateAfterEvent::NAME)
             ->willReturn($event);
 
         $this->masterCatalogRootProvider
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('getMasterCatalogRoot')
             ->willReturn($rootCategory);
 
         $actual = $this->provider->getCategories($user, null, false);
 
-        $this->assertEquals($visibleCategories, $actual);
+        self::assertEquals($visibleCategories, $actual);
+    }
+
+    /**
+     * @dataProvider getUserDataProvider
+     */
+    public function testGetParentCategories(?UserInterface $user): void
+    {
+        $categoryA = new CategoryStub();
+        $categoryA->setId(1);
+
+        $categoryB = new CategoryStub();
+        $categoryB->setId(2);
+
+        $originalCategories = [$categoryA, $categoryB];
+        $this->categoryRepository->expects(self::once())
+            ->method('getPath')
+            ->with($categoryA)
+            ->willReturn($originalCategories);
+
+        $this->mockEventDispatcher($user, $originalCategories);
+
+        self::assertSame(
+            [$categoryB],
+            $this->provider->getParentCategories($user, $categoryA)
+        );
+    }
+
+
+    public function getUserDataProvider(): array
+    {
+        return [
+            'null' => [
+                'user' => null,
+            ],
+            'not customer user' => [
+                'user' => $this->createMock(UserInterface::class),
+            ],
+            'customer user' => [
+                'user' => new CustomerUserStub(1),
+            ],
+        ];
+    }
+
+    private function mockEventDispatcher(?UserInterface $expectedUser, array $originalCategories): void
+    {
+        $expectedEvent = new CategoryTreeCreateAfterEvent($originalCategories);
+        $expectedEvent->setUser($expectedUser);
+
+        $this->eventDispatcher->expects(self::once())
+            ->method('dispatch')
+            ->with($expectedEvent, CategoryTreeCreateAfterEvent::NAME)
+            ->willReturnCallback(
+                function (CategoryTreeCreateAfterEvent $event) {
+                    $categories = $event->getCategories();
+                    array_shift($categories);
+                    $event->setCategories($categories);
+
+                    return $event;
+                }
+            );
     }
 }

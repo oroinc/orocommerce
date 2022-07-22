@@ -61,6 +61,7 @@ class ExpressionLanguageRuleFiltrationServiceTest extends \PHPUnit\Framework\Tes
         $applicable = $this->createApplicableOwner('1');
         $notApplicable = $this->createNotApplicableOwner('2');
         $exceptionOwner = $this->createExceptionOwner();
+        $typeErrorOwner = $this->createTypeErrorOwner();
         $nullExpressionOwner = $this->createNullExpressionOwner('3');
 
         return [
@@ -70,6 +71,10 @@ class ExpressionLanguageRuleFiltrationServiceTest extends \PHPUnit\Framework\Tes
             ],
             'testWithWrongLanguageExpression' => [
                 [$applicable, $exceptionOwner, $applicable],
+                [$applicable, $applicable]
+            ],
+            'testWithTypeErrorLanguageExpression' => [
+                [$applicable, $typeErrorOwner, $applicable],
                 [$applicable, $applicable]
             ],
             'testWithNullLanguageExpression' => [
@@ -91,11 +96,15 @@ class ExpressionLanguageRuleFiltrationServiceTest extends \PHPUnit\Framework\Tes
         $this->logger->expects(self::once())
             ->method('error')
             ->with(
-                'Rule condition evaluation error: Unexpected token "operator" of value "%" around position 5 '
-                . 'for expression `t = %`.',
+                'Rule condition evaluation error: {error}. ' .
+                '{rule_owner_class_name} with name "{rule_name}" was skipped.',
                 [
                     'expression' => $exceptionOwner->getRule()->getExpression(),
                     'values' => $context,
+                    'rule_owner' => $exceptionOwner,
+                    'error' => 'Unexpected token "operator" of value "%" around position 5 for expression `t = %`.',
+                    'rule_owner_class_name' => get_class($exceptionOwner),
+                    'rule_name' => $exceptionOwner->getRule()->getName()
                 ]
             );
 
@@ -104,7 +113,7 @@ class ExpressionLanguageRuleFiltrationServiceTest extends \PHPUnit\Framework\Tes
             ->with([], $context)
             ->willReturn([]);
 
-        $this->assertEmpty($this->serviceDecorator->getFilteredRuleOwners([$exceptionOwner], $context));
+        self::assertEmpty($this->serviceDecorator->getFilteredRuleOwners([$exceptionOwner], $context));
     }
 
     private function createNotApplicableOwner(string $name): RuleOwnerInterface
@@ -139,6 +148,14 @@ class ExpressionLanguageRuleFiltrationServiceTest extends \PHPUnit\Framework\Tes
     {
         $rule = new Rule();
         $rule->setExpression('t = %');
+
+        return $this->createRuleOwner($rule);
+    }
+
+    private function createTypeErrorOwner(): RuleOwnerInterface
+    {
+        $rule = new Rule();
+        $rule->setExpression('t in (%)');
 
         return $this->createRuleOwner($rule);
     }

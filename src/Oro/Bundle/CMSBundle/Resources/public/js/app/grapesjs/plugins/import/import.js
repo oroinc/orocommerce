@@ -15,6 +15,8 @@ export default GrapesJS.plugins.add('grapesjs-import', function(editor, options 
     Commands.add(commandId, {
         run(editor, sender, props = {}) {
             sender.importDialogView.render(props);
+
+            return sender.importDialogView;
         },
         stop(editor, sender) {
             sender.importDialogView.closeDialog();

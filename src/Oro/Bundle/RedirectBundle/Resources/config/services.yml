@@ -178,6 +178,7 @@ services:
 
     oro_redirect.direct_url_message_factory:
         class: Oro\Bundle\RedirectBundle\Model\DirectUrlMessageFactory
+        public: true
         arguments:
             - '@doctrine'
             - '@oro_config.manager'
@@ -190,6 +191,8 @@ services:
             - '@oro_redirect.direct_url_message_factory'
             - '@logger'
             - '@oro_redirect.url_cache'
+        calls:
+            - ['setUrlCacheDumper', ['@oro_redirect.cache.dumper.sluggable_url_dumper']]
         tags:
             - { name: 'oro_message_queue.client.message_processor' }
 

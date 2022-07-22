@@ -9,8 +9,8 @@ Feature: Upload product watermark image
     And I go to System / Configuration
     And I follow "Commerce/Product/Product Images" on configuration sidebar
     And I fill "Product Image Watermark Config" with:
-      | Use Default | false     |
-      | File        | tiger.svg |
+      | Use Default | false        |
+      | File        | example1.xcf |
     And I save setting
     Then I should see "Product Image Watermark Config" validation errors:
       | File | This file is not a valid image. |

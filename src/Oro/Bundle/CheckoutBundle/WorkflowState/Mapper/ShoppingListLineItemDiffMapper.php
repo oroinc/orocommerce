@@ -75,18 +75,18 @@ class ShoppingListLineItemDiffMapper implements CheckoutStateDiffMapperInterface
     {
         return sprintf(
             "s%s-u%s-q%d-p%s%d-w%d%s-d%dx%dx%d%s-i%s",
-            $item->getProduct()->getSkuUppercase(),
+            $item->getProduct()?->getSkuUppercase(),
             $item->getProductUnitCode(),
             $item->getQuantity(),
             $item->getPrice()?->getCurrency(),
             $item->getPrice()?->getValue(),
             $item->getWeight()?->getValue(),
             $item->getWeight()?->getUnit()?->getCode(),
+            $item->getDimensions()?->getValue()?->getHeight(),
             $item->getDimensions()?->getValue()?->getLength(),
-            $item->getDimensions()?->getValue()?->getLength(),
-            $item->getDimensions()?->getValue()?->getLength(),
+            $item->getDimensions()?->getValue()?->getWidth(),
             $item->getDimensions()?->getUnit()?->getCode(),
-            $item->getProduct()->getInventoryStatus()->getId()
+            $item->getProduct()?->getInventoryStatus()->getId()
         );
     }
 

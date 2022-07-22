@@ -48,7 +48,7 @@ class LoadSlugScopesData extends AbstractFixture implements DependentFixtureInte
         $slug->addScope($scope);
 
         /** @var Slug $slug */
-        $slug = $this->getReference(LoadSlugsData::SLUG_TEST_DUPLICATE_URL);
+        $slug = $this->getReference(LoadSlugsData::SLUG_TEST_URL);
         $slug->addScope($scope);
 
         /** @var Slug $slug */
