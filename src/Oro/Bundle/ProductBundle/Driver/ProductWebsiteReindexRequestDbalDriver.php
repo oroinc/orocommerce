@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\Driver;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
+use Doctrine\DBAL\Platforms\PostgreSQL94Platform;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\Persistence\ManagerRegistry;
@@ -86,7 +87,7 @@ class ProductWebsiteReindexRequestDbalDriver implements ProductWebsiteReindexReq
         $qb->setParameter('websiteId', $websiteId, Types::INTEGER);
         $this->applyOptimizeInByProductIds($qb, $productIds);
 
-        return (int) $qb->execute();
+        return (int)$qb->execute();
     }
 
     /**
@@ -137,7 +138,6 @@ class ProductWebsiteReindexRequestDbalDriver implements ProductWebsiteReindexReq
                 $qb->expr()->eq('req_item.website_id', ':websiteId'),
                 $qb->expr()->gt('req_item.product_id', ':lastProductId')
             )
-            ->groupBy('req_item.product_id')
             ->orderBy('req_item.product_id')
             ->setMaxResults($batchSize)
             ->setParameter('relatedJobId', $relatedJobId, Types::INTEGER)
@@ -173,13 +173,16 @@ class ProductWebsiteReindexRequestDbalDriver implements ProductWebsiteReindexReq
 
         $rowTemplate = '(?,?,?)'; // related_job_id, website_id, product_id
         $rows = array_fill(0, count($params) / 3, $rowTemplate);
-        $sqlStatement = sprintf(
-            'INSERT INTO %s (related_job_id, website_id, product_id) VALUES %s',
-            self::TABLE_NAME,
-            implode(',', $rows)
-        );
 
-        return (int) $connection->executeStatement($sqlStatement, $params);
+        if ($connection->getDatabasePlatform() instanceof PostgreSQL94Platform) {
+            $sql = 'INSERT INTO %s (related_job_id, website_id, product_id) VALUES %s
+                ON CONFLICT (product_id, related_job_id, website_id) DO NOTHING';
+        } else {
+            $sql = 'INSERT IGNORE INTO %s (related_job_id, website_id, product_id) VALUES %s';
+        }
+        $sqlStatement = sprintf($sql, self::TABLE_NAME, implode(',', $rows));
+
+        return (int)$connection->executeStatement($sqlStatement, $params);
     }
 
     protected function applyOptimizeInByProductIds(QueryBuilder $qb, array $productIds): void
