@@ -17,7 +17,7 @@
 
 {% block __oro_consent_items__consent_items_widget %}
     {% set base_attr = layout_attr_defaults(attr, {
-        '~class': ' consent-item'
+        '~class': ' consent-item fields-row'
     }) %}
 
     {% for consent in consents %}
@@ -56,6 +56,7 @@
             {% endif %}
         {% endapply %}
     </label>
+    <div class="fields-row-error"></div>
 {% endblock %}
 
 {% block __oro_consent_items__link_widget %}
