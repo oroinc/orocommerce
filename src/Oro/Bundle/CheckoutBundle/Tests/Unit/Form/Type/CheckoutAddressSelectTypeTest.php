@@ -87,10 +87,13 @@ class CheckoutAddressSelectTypeTest extends FormIntegrationTestCase
 
         $form = $this->factory->create(CheckoutAddressSelectType::class, null, [
             'object' => new Checkout(),
-            'address_type' => 'billing'
+            'address_type' => 'billing',
+            'disabled' => null,
         ]);
 
         $this->assertTrue($form->getConfig()->hasAttribute('choice_list'));
+        $this->assertTrue($form->getConfig()->hasOption('disabled'));
+        $this->assertFalse($form->getConfig()->getOption('disabled'));
     }
 
     public function testGetParent(): void
