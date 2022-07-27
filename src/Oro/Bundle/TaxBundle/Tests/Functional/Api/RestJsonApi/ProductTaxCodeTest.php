@@ -153,7 +153,7 @@ class ProductTaxCodeTest extends RestJsonApiTestCase
                 'type'       => 'producttaxcodes',
                 'id'         => (string)$taxCodeId,
                 'attributes' => [
-                    'description' => 'updates tax code'
+                    'description' => 'updated tax code'
                 ]
             ]
         ];
@@ -164,7 +164,7 @@ class ProductTaxCodeTest extends RestJsonApiTestCase
 
         $taxCode = $this->getEntityManager()->find(ProductTaxCode::class, $this->getResourceId($response));
         self::assertNotNull($taxCode);
-        self::assertEquals('updates tax code', $taxCode->getDescription());
+        self::assertEquals('updated tax code', $taxCode->getDescription());
     }
 
     public function testTryToCreateTaxCodeWithoutCode(): void
