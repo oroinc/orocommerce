@@ -4,13 +4,11 @@
             {{ 'oro.consent.frontend.profile.form.sections.data_protection.label'|trans }}
         </legend>
         <div class="grid">
-            <div class="grid__row grid__row--offset-none">
-                <div class="grid__column grid__column--12">
-                    {{ block_widget(block) }}
-                    {% if form.customerConsents is defined %}
-                        {{ form_widget(form.customerConsents) }}
-                    {% endif %}
-                </div>
+            <div class="grid-col-12">
+                {{ block_widget(block) }}
+                {% if form.customerConsents is defined %}
+                    {{ form_widget(form.customerConsents) }}
+                {% endif %}
             </div>
         </div>
     </fieldset>

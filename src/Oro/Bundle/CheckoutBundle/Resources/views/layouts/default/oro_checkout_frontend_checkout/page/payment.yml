@@ -13,7 +13,7 @@ layout:
             prepend: true
             options:
                 attr:
-                    class: 'grid__column grid__column--offset-y grid__column--6 grid__column--gutter-l-none'
+                    class: 'grid-col-6 grid-col-mobile-landscape-12'
                 class_prefix: 'checkout'
                 views: '=data["oro_payment_method_views_provider"].getViews(data["checkout_payment_context"].getContext(data["checkout"]))'
                 currentPaymentMethod: '=data["checkout"].getPaymentMethod()'

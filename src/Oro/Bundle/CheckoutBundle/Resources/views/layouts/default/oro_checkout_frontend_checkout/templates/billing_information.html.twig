@@ -2,8 +2,8 @@
     {% from '@OroAddress/macros.html.twig' import renderAddress %}
     {% if workflowItem.data.get('disallow_billing_address_edit') %}
         {% set billingAddress = checkout.billingAddress %}
-        <div class="grid__row grid__row--offset-none">
-            <div class="grid__column grid__column--offset-y grid__column--6">
+        <div class="grid">
+            <div class="grid-col-6 grid-col-mobile-landscape-12">
                 {{ renderAddress(checkout.billingAddress, true) }}
             </div>
         </div>
@@ -14,7 +14,7 @@
             {% set hasCustomAddress = not form.billing_address.vars.value.customerUserAddress and not form.billing_address.vars.value.customerAddress %}
         {% endif %}
         {% set billingAddress = form.billing_address.vars.value %}
-        <div data-page-component-module="oroui/js/app/components/view-component"
+        <div class="grid" data-page-component-module="oroui/js/app/components/view-component"
              data-page-component-options="{{ {
                  view: 'orocheckout/js/app/views/address-view',
                  selectors: {
@@ -25,33 +25,29 @@
                  }
              }|json_encode }}">
 
-            <div class="grid">
-                <div class="grid__row grid__row--offset-none">
-                    <div class="grid__column grid__column--6 grid__column--gutter-l-none">
-                        {{ form_row(form.billing_address.customerAddress) }}
-                    </div>
-                </div>
+            <div class="grid-col-6 grid-col-mobile-landscape-12">
+                {{ form_row(form.billing_address.customerAddress) }}
             </div>
 
-            {{ address.address_form(form.billing_address, form.save_billing_address, hasCustomAddress, form.email) }}
+            <div class="grid-col-12">
+                {{ address.address_form(form.billing_address, form.save_billing_address, hasCustomAddress, form.email) }}
 
-            {% set hideShipping = true %}
-            {% if billingAddress %}
-                {% set typedAddress = billingAddress.customerAddress %}
-                {% if typedAddress is empty %}
-                    {% set typedAddress  = billingAddress.customerUserAddress %}
+                {% set hideShipping = true %}
+                {% if billingAddress %}
+                    {% set typedAddress = billingAddress.customerAddress %}
+                    {% if typedAddress is empty %}
+                        {% set typedAddress  = billingAddress.customerUserAddress %}
+                    {% endif %}
+
+                    {% set hideShipping = typedAddress is not empty and not typedAddress.hasTypeWithName('shipping')  %}
                 {% endif %}
 
-                {% set hideShipping = typedAddress is not empty and not typedAddress.hasTypeWithName('shipping')  %}
-            {% endif %}
-
-            {% if not workflowItem.data.get('disallow_shipping_address_edit') %}
-                <div class="grid__row grid__row--offset-none {% if hideShipping %}hidden{% endif %}" data-ship-to-billing-container>
-                    <div class="grid__column grid__column--offset-y grid__column--gutter-l-none">
+                {% if not workflowItem.data.get('disallow_shipping_address_edit') %}
+                    <div data-ship-to-billing-container>
                         {{ form_row(form.ship_to_billing_address) }}
                     </div>
-                </div>
-            {% endif %}
+                {% endif %}
+            </div>
         </div>
     {% endif %}
 

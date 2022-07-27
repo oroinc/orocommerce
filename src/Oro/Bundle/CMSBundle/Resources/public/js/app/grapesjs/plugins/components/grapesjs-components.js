@@ -34,7 +34,7 @@ export default GrapesJS.plugins.add('grapesjs-components', function(editor, opti
 
     editor.ComponentRestriction = new ComponentRestriction(editor, options);
 
-    const componentManager = new ComponentManager({
+    editor.componentManager = new ComponentManager({
         editor,
         typeBuildersOptions: _.pick(options, 'excludeContentBlockAlias', 'excludeContentWidgetAlias')
     });
@@ -42,7 +42,7 @@ export default GrapesJS.plugins.add('grapesjs-components', function(editor, opti
     editor.Panels.removeButton('options', 'preview');
 
     editor.once('destroy', function() {
-        componentManager.dispose();
+        editor.componentManager.dispose();
         delete editor.ComponentRestriction;
     });
 });

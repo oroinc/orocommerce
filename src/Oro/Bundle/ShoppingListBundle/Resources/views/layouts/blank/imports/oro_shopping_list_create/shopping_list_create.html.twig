@@ -19,11 +19,31 @@
     {{ parent() }}
 {% endblock %}
 
+{% block _form_start_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " grid"
+    }) %}
+
+    {{ parent_block_widget(block) }}
+{% endblock %}
+
+{% block _form_fields_widget %}
+    {{ form_widget(form, {
+        'attr': {
+            'class': 'grid-col-12'
+        }
+    }) }}
+{% endblock %}
+
 {% block _form_comment_widget %}
-    <i>
-        {{ 'oro.shoppinglist.create_new_form.comment'|trans }}<br/>
-        {{ 'oro.shoppinglist.create_new_form.comment_cancel'|trans }}
-    </i>
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " grid-col-12"
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{- 'oro.shoppinglist.create_new_form.comment'|trans -}}<br>
+        {{- 'oro.shoppinglist.create_new_form.comment_cancel'|trans -}}
+    </div>
 {% endblock %}
 
 {% block _form_actions_widget %}

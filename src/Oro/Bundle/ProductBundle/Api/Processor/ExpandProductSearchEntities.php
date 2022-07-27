@@ -10,15 +10,12 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
 use Oro\Component\EntitySerializer\EntitySerializer;
 
 /**
- * Expands data for entities requested to be expanded (by the "include" filter) for ProductSearch entity.
+ * Expands data for entities requested to be expanded for ProductSearch entity.
  */
 class ExpandProductSearchEntities implements ProcessorInterface
 {
-    /** @var EntitySerializer */
-    private $entitySerializer;
-
-    /** @var DoctrineHelper */
-    private $doctrineHelper;
+    private EntitySerializer $entitySerializer;
+    private DoctrineHelper $doctrineHelper;
 
     public function __construct(EntitySerializer $entitySerializer, DoctrineHelper $doctrineHelper)
     {
@@ -27,9 +24,9 @@ class ExpandProductSearchEntities implements ProcessorInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var CustomizeLoadedDataContext $context */
 
@@ -58,8 +55,6 @@ class ExpandProductSearchEntities implements ProcessorInterface
     }
 
     /**
-     * @param EntityDefinitionConfig $config
-     *
      * @return string[]
      */
     private function getExpandedAssociationNames(EntityDefinitionConfig $config): array
@@ -125,11 +120,6 @@ class ExpandProductSearchEntities implements ProcessorInterface
     }
 
     /**
-     * @param string                 $entityClass
-     * @param array                  $ids
-     * @param EntityDefinitionConfig $config
-     * @param array                  $normalizationContext
-     *
      * @return array [id => entity data, ...]
      */
     private function loadAssociationData(

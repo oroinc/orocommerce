@@ -122,6 +122,13 @@
     </fieldset>
 {% endblock %}
 
+{% block _shipping_address_wrapper_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " grid"
+    }) %}
+    {{ parent_block_widget(block) }}
+{% endblock %}
+
 {% block _shipping_methods_wrapper_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': " single-page-checkout-view__shipping-methods"
@@ -131,7 +138,7 @@
 
 {% block _payment_methods_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " single-page-checkout-view__payment-methods"
+        '~class': " single-page-checkout-view__payment-methods grid-col-12"
     }) %}
     {{ parent_block_widget(block) }}
 {% endblock %}
@@ -221,14 +228,18 @@
             {{ renderAddress(checkout.shippingAddress, true) }}
         </div>
     {% else %}
-        {% set renderedAddress = checkout.shippingAddress ? checkout.shippingAddress|oro_format_address(null, ', ') : 'N/A'|trans %}
-        {{ form_row(form.shipping_address, {'attr': {
-            'data-role': 'checkout-shipping-address',
-            'data-address-type': 'shipping',
-            'data-new-address-label': renderedAddress,
-            'placeholder': 'oro.checkout.form.address.enter.new_address.placeholder.label'|trans
-        }, 'placeholder': 'oro.checkout.form.address.enter.new_address.placeholder.label'|trans}) }}
-        {{ form_row(form.ship_to_billing_address, {'attr': {'data-role': 'checkout-ship-to'}}) }}
+        <div class="grid-col-12">
+            {% set renderedAddress = checkout.shippingAddress ? checkout.shippingAddress|oro_format_address(null, ', ') : 'N/A'|trans %}
+            {{ form_row(form.shipping_address, {'attr': {
+                'data-role': 'checkout-shipping-address',
+                'data-address-type': 'shipping',
+                'data-new-address-label': renderedAddress,
+                'placeholder': 'oro.checkout.form.address.enter.new_address.placeholder.label'|trans
+            }, 'placeholder': 'oro.checkout.form.address.enter.new_address.placeholder.label'|trans}) }}
+        </div>
+        <div class="grid-col-12">
+            {{ form_row(form.ship_to_billing_address, {'attr': {'data-role': 'checkout-ship-to'}}) }}
+        </div>
     {% endif %}
 {%- endblock %}
 
@@ -288,7 +299,7 @@
 
 {% block _shipping_date_widget %}
     {% set shippingDate= 'shipping-date-uid-'|uniqid %}
-    <div class="grid__row grid__row--offset-none grid__row--offset-top" role="group">
+    <div class="single-page-checkout-view__shipping_date" role="group">
         <label class="label label--full" for="{{ shippingDate }}">{{ "oro.checkout.order_review.shipping_date"|trans }}</label>
         <div class="datepicker-box">
             <span class="datepicker-box__icon" aria-hidden="true"><span class="fa-calendar"></span></span>
@@ -300,29 +311,23 @@
 {% block _checkout_summary_additional_options_widget -%}
     <div class="order-review-options__wrapper">
         <h4 class="heading-bottom-offset">{{ "oro.checkout.workflow.order_options.label"|trans }}</h4>
-        <div class="order-review-options">
-            <div class="grid__row">
-                <div class="grid__column grid__column--6">
-                    {% set poNumberId = 'oro_workflow_transition_po_number-uid-'|uniqid %}
-                    <label class=" label label--full" for="{{ poNumberId }}">{{ "oro.checkout.order_review.po_number"|trans }}</label>
-                    {{ form_widget(form.po_number, { 'id': poNumberId, 'attr': {
-                        'placeholder': 'oro.checkout.order_review.po_number_placeholder'|trans,
-                        'data-validation': { Length: {max: 255} }|json_encode
-                    }}) }}
-                </div>
+        <div class="order-review-options grid">
+            <div class="grid-col-6 grid-col-mobile-landscape-12">
+                {% set poNumberId = 'oro_workflow_transition_po_number-uid-'|uniqid %}
+                <label class=" label label--full" for="{{ poNumberId }}">{{ "oro.checkout.order_review.po_number"|trans }}</label>
+                {{ form_widget(form.po_number, { 'id': poNumberId, 'attr': {
+                    'placeholder': 'oro.checkout.order_review.po_number_placeholder'|trans,
+                    'data-validation': { Length: {max: 255} }|json_encode
+                }}) }}
             </div>
-            <div class="grid__row grid__row--offset-none">
-                <div class="grid__column grid__column--12">
-                    {% set noteId = 'oro_workflow_transition_customer_notes-uid-'|uniqid %}
-                    <label class=" label label--full" for="{{ noteId }}">{{ "oro.checkout.order_review.note"|trans }}</label>
-                    <div class="checkout-form__order-notes">
-                        {{ form_widget(form.customer_notes, { 'id': noteId, 'attr': {
-                                'placeholder': 'oro.checkout.order_review.note_placeholder'|trans,
-                                'data-page-component-elastic-area': ''
-                            }
-                        }) }}
-                    </div>
-                </div>
+            <div class="grid-col-12">
+                {% set noteId = 'oro_workflow_transition_customer_notes-uid-'|uniqid %}
+                <label class=" label label--full" for="{{ noteId }}">{{ "oro.checkout.order_review.note"|trans }}</label>
+                {{ form_widget(form.customer_notes, { 'id': noteId, 'attr': {
+                        'placeholder': 'oro.checkout.order_review.note_placeholder'|trans,
+                        'data-page-component-elastic-area': ''
+                    }
+                }) }}
             </div>
 
             {% if workflowItem.data.get('allow_manual_source_remove') %}
@@ -331,10 +336,8 @@
                 {% if removeLabel %}
                     {% set removeElementOptions = removeElementOptions|merge({label: removeLabel}) %}
                 {% endif %}
-                <div class="grid__row grid__row--offset-none">
-                    <div class="grid__column grid__column--12">
-                        {{ form_row(form.remove_source, removeElementOptions) }}
-                    </div>
+                <div class="grid-col-12">
+                    {{ form_row(form.remove_source, removeElementOptions) }}
                 </div>
             {% endif %}
 
@@ -342,7 +345,7 @@
             checkout.registeredCustomerUser == null and
             checkout.customerUser.isGuest
             %}
-                <div class="grid__row grid__row--offset-none"
+                <div class="grid-col-6 grid-col-mobile-landscape-12 grid"
                           data-page-component-module="oroui/js/app/components/view-component"
                           data-page-component-options="{{ {
                               view: 'orocheckout/js/app/views/late-checkout-registration-view',
@@ -351,15 +354,11 @@
                                   fieldsContainer: '#checkout-late-registration-fields'
                               }
                           }|json_encode }}">
-                    <div class="grid__column grid__column--6">
-                        <div id="checkout-late-registration-toggler">
-                            <div class="form-row">
-                                {{ form_row(form.late_registration.offsetGet('is_late_registration_enabled')) }}
-                            </div>
-                        </div>
-                        <div id="checkout-late-registration-fields">
-                            {{ form_widget(form.late_registration) }}
-                        </div>
+                    <div id="checkout-late-registration-toggler" class="grid-col-12">
+                        {{ form_row(form.late_registration.offsetGet('is_late_registration_enabled')) }}
+                    </div>
+                    <div id="checkout-late-registration-fields" class="grid-col-12">
+                        {{ form_widget(form.late_registration, {'attr': {'class': 'grid'}}) }}
                     </div>
                 </div>
 
@@ -418,7 +417,7 @@
 
 {% block _checkout_consent_message_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        'class': 'notification notification--success form-row',
+        'class': 'consent-notification notification notification--success',
         'role': 'alert'
     }) %}
 

@@ -5,6 +5,8 @@ layout:
             namespace: registration
             root: registration_form
     actions:
+        - '@setBlockTheme':
+            themes: 'customer_user_register_form.html.twig'
         - '@setOption':
             id: registration_consent_wrapper
             optionName: consents
@@ -12,5 +14,5 @@ layout:
         - '@move':
             id: registration_consent_wrapper
             parentId: registration_form
-            siblingId: registration_form_submit_wrapper
+            siblingId: registration_footer
             prepend: true

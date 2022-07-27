@@ -17,13 +17,13 @@ class ComputeCategoryNodeParentAndPath extends ComputeTreeNodePathField
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var CustomizeLoadedDataContext $context */
 
         $data = $context->getData();
 
-        list($isParentFieldRequested, $isPathFieldRequested) = $this->checkRequestedFields($data, $context);
+        [$isParentFieldRequested, $isPathFieldRequested] = $this->checkRequestedFields($data, $context);
         if (!$isParentFieldRequested && !$isPathFieldRequested) {
             return;
         }
@@ -56,9 +56,6 @@ class ComputeCategoryNodeParentAndPath extends ComputeTreeNodePathField
     }
 
     /**
-     * @param array                      $data
-     * @param CustomizeLoadedDataContext $context
-     *
      * @return array [isParentFieldRequested, isPathFieldRequested]
      */
     private function checkRequestedFields(array $data, CustomizeLoadedDataContext $context): array
