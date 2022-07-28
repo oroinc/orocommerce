@@ -3,6 +3,7 @@
 @ticket-BB-13978
 @ticket-BB-14758
 @ticket-BB-16275
+@ticket-BAP-21444
 @fixture-OroCheckoutBundle:Products_quick_order_form_ce.yml
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
@@ -324,12 +325,15 @@ Feature: Quick order form
       | PSKU1       | 1        | item         |
       | PSKU1       | 1        | item (lang1) |
       | PSKU2       | 3        | item         |
-      | PSKU2       | 3        | item (lang1) |
+      | PSKU2       | 4        | item (lang1) |
+      | PSKU2       | 5        | set          |
     When I import file for quick order
     Then I should see next rows in "Quick Order Import Validation" table
-      | Item #                           | Qty | Unit         | Price    |
-      | PSKU1 - Product1 (Localization1) | 1   | item (lang1) | US$45.00 |
-      | PSKU2 - Product2                 | 3   | item (lang1) | N/A      |
+      | Item #                           | Qty | Unit         | Price     |
+      | PSKU1 - Product1 (Localization1) | 1   | item (lang1) | US$45.00  |
+      | PSKU2 - Product2                 | 3   | item (lang1) | N/A       |
+      | PSKU2 - Product2                 | 3   | item         | US$60.00  |
+      | PSKU2 - Product2                 | 5   | set          | US$175.00 |
     And I click "Add to Form"
     And "QuickAddForm" must contains values:
       | SKU1  | psku1 - Product1 (Localization1) |

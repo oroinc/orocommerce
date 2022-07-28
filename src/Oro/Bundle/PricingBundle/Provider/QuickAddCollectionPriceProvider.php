@@ -67,11 +67,13 @@ class QuickAddCollectionPriceProvider
 
         /** @var QuickAddRow $quickAddRow */
         foreach ($quickAddRowCollection->getValidRows() as $quickAddRow) {
-            if (!isset($productPrices[$quickAddRow->getProduct()->getId()])) {
+            $priceIndex = $quickAddRow->getProduct()->getId().'-'.$quickAddRow->getUnit();
+
+            if (!isset($productPrices[$priceIndex])) {
                 continue;
             }
 
-            $productPrice = $productPrices[$quickAddRow->getProduct()->getId()];
+            $productPrice = $productPrices[$priceIndex];
             $rowUnitPrice = [
                 'value' => $productPrice->getValue(),
                 'currency' => $productPrice->getCurrency()
@@ -101,8 +103,8 @@ class QuickAddCollectionPriceProvider
         $prices = $this->productPriceProvider->getMatchedPrices($productPriceCriteria, $scopeCriteria);
         $result = [];
         foreach ($prices as $key => $price) {
-            $identifier = explode('-', $key);
-            $result[$identifier[0]] = $price;
+            [$productId, $unitName] = explode('-', $key);
+            $result[$productId.'-'.$unitName] = $price;
         }
 
         return $result;

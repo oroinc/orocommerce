@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\CatalogBundle\Layout\DataProvider;
 
-use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -32,11 +31,8 @@ class CategoryBreadcrumbProvider
     public function getItems(): array
     {
         $breadcrumbs = [];
-        /* @var Category[] $categories */
-        $categories = array_merge(
-            $this->categoryProvider->getParentCategories(),
-            [$this->categoryProvider->getCurrentCategory()]
-        );
+        $categories = $this->categoryProvider->getCategoryPath();
+
         foreach ($categories as $index => $category) {
             if (0 === $index) {
                 $url = $this->urlGenerator->generate('oro_product_frontend_product_index');

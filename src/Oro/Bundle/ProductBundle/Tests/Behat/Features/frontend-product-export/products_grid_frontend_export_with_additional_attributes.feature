@@ -1,3 +1,4 @@
+@skip
 @regression
 @feature-BB-19874
 @fixture-OroProductBundle:products_grid_frontend.yml

@@ -16,6 +16,8 @@ oro_behat_extension:
         - Oro\Bundle\WebsiteSearchBundle\Tests\Behat\Context\SearchIndexContext
         - Oro\Bundle\EmailBundle\Tests\Behat\Context\EmailContext
         - Oro\Bundle\ImportExportBundle\Tests\Behat\Context\ImportExportContext
+        - Oro\Bundle\ProductBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\AttachmentBundle\Tests\Behat\Context\AttachmentImageContext
       paths:
         - '@OroVisibilityBundle/Tests/Behat/Features'
   elements:

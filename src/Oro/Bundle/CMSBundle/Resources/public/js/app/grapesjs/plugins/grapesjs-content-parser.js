@@ -185,7 +185,9 @@ function parseNodes(el, config, ct = '', parent = {}) {
                 !model.type && (model.type = 'text');
             }
 
-            model.components = parseNodes(node, config, ct, model);
+            if (!model.content) {
+                model.components = parseNodes(node, config, ct, model);
+            }
         }
 
         if (!model.type && _.some(model.components, ({type}) => type === 'text')) {
