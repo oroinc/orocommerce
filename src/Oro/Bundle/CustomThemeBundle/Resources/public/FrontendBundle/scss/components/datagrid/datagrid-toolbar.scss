@@ -1,11 +1,11 @@
 /* @theme: custom; */
 
-.actions-panel-container {
+.catalog-actions-panel-container {
     display: none;
 }
 
 @include breakpoint('mobile-landscape') {
-    .actions-panel-container {
+    .catalog-actions-panel-container {
         display: block;
     }
 }
