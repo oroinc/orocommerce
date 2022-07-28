@@ -21,7 +21,7 @@ layout:
                             singleUnitMode: '=data["oro_product_single_unit_mode"].isSingleUnitMode()'
                             singleUnitModeCodeVisible: '=data["oro_product_single_unit_mode"].isSingleUnitModeCodeVisible()'
                             defaultUnitCode: '=data["oro_product_single_unit_mode"].getDefaultUnitCode()'
-                            skipInputWidgets: 'false'
+                            skipInputWidgets: '=false'
                 __line_item_form_end:
                     blockType: form_end
                     options:
