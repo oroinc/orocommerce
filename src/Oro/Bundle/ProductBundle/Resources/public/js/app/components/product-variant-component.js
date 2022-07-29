@@ -49,10 +49,9 @@ define(function(require) {
 
         onVariantFieldChange: function() {
             let variantFields = [];
-            const self = this;
-            this.variantFieldCheckboxes.each(function(idx, el) {
+            this.variantFieldCheckboxes.each((idx, el) => {
                 if (el.checked) {
-                    variantFields.push(self.getFieldName(el));
+                    variantFields.push(this.getFieldName(el));
                 }
             });
 
@@ -70,18 +69,33 @@ define(function(require) {
          * @private
          */
         _updateProductVariantsGrid: function(selectedFields) {
-            mediator.trigger('datagrid:setParam:' + this.options.datagridName, 'selectedVariantFields', selectedFields);
-            mediator.trigger('datagrid:setParam:' + this.options.datagridName, 'gridDynamicLoad', 1);
-            mediator.trigger('datagrid:doReset:' + this.options.datagridName);
+            this.updateVisibilityChange();
+            const gridName = this.options.datagridName;
+            mediator.trigger(`datagrid:setParam:${gridName}`, 'selectedVariantFields', selectedFields);
+            mediator.trigger(`datagrid:setParam:${gridName}`, 'gridDynamicLoad', 1);
+            mediator.trigger(`datagrid:doReset:${gridName}`);
         },
 
         updateVisibilityChange: function() {
             if (this.variantFieldCheckboxes.length > 0) {
-                const self = this;
                 const gridName = this.options.datagridName;
-                this.variantFieldCheckboxes.each(function(idx, el) {
-                    const columnName = self.getFieldName(el);
-                    mediator.trigger('datagrid:changeColumnParam:' + gridName, columnName, 'renderable', el.checked);
+                this.variantFieldCheckboxes.each((idx, el) => {
+                    const columnName = this.getFieldName(el);
+                    mediator.trigger(`datagrid:changeColumnParam:${gridName}`, columnName, 'renderable', el.checked);
+
+                    const {grid} = this.productVariantsGridComponent;
+                    if (grid) {
+                        const {[columnName]: column} = grid.collection.initialState.columns;
+                        if (column) {
+                            // patch initial state to make variant column renderable even after grid reset
+                            grid.collection.patchInitialState({
+                                columns: {
+                                    ...grid.collection.initialState.columns,
+                                    [columnName]: {...column, renderable: el.checked}
+                                }
+                            });
+                        }
+                    }
                 });
             }
         },
