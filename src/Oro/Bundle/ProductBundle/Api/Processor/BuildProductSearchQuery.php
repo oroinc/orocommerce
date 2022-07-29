@@ -28,17 +28,10 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
  */
 class BuildProductSearchQuery implements ProcessorInterface
 {
-    /** @var SearchEngine */
-    private $searchEngine;
-
-    /** @var AbstractSearchMappingProvider */
-    private $searchMappingProvider;
-
-    /** @var ProductManager */
-    private $productManager;
-
-    /** @var FilterNamesRegistry */
-    private $filterNamesRegistry;
+    private SearchEngine $searchEngine;
+    private AbstractSearchMappingProvider $searchMappingProvider;
+    private ProductManager $productManager;
+    private FilterNamesRegistry $filterNamesRegistry;
 
     public function __construct(
         SearchEngine $searchEngine,
@@ -53,9 +46,9 @@ class BuildProductSearchQuery implements ProcessorInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var ListContext $context */
 
@@ -77,11 +70,9 @@ class BuildProductSearchQuery implements ProcessorInterface
         } catch (InvalidSorterException $e) {
             $context->addError(
                 Error::createValidationError(Constraint::SORT, $e->getMessage())
-                    ->setSource(
-                        ErrorSource::createByParameter(
-                            $this->getSortFilterName($context->getRequestType(), $context->getFilterValues())
-                        )
-                    )
+                    ->setSource(ErrorSource::createByParameter(
+                        $this->getSortFilterName($context->getRequestType(), $context->getFilterValues())
+                    ))
             );
         }
     }

@@ -45,6 +45,14 @@
 {% endblock %}
 
 {% block __oro_product_grid__datagrid_toolbar_actions_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' catalog-actions-panel-container'
+    }) %}
+
+    {{ parent_block_widget(block) }}
+{% endblock %}
+
+{% block __oro_product_grid__datagrid_toolbar_actions_panel_widget %}
     {% set attr = attr|merge({
         class: attr.class|default('') ~ " catalog__filter-controls__item actions-panel form-horizontal",
         'data-grid-actions-panel': ''

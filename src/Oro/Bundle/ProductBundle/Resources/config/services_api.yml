@@ -336,7 +336,6 @@ services:
             - '@oro_website_search.provider.search_mapping'
             - '@oro_product.product.manager'
             - '@oro_api.filter_names_registry'
-            - '@oro_api.doctrine_helper'
         tags:
             - { name: oro.api.processor, action: get_list, group: build_query, requestType: frontend, class: Oro\Bundle\ProductBundle\Api\Model\ProductSearch, priority: -90 }
 

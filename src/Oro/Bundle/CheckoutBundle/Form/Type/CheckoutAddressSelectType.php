@@ -112,7 +112,14 @@ class CheckoutAddressSelectType extends AbstractType
                 'data_class' => null,
                 'group_label_prefix' => 'oro.checkout.',
             ])
-            ->setAllowedTypes('object', Checkout::class);
+            ->setAllowedTypes('object', Checkout::class)
+            ->addNormalizer('disabled', function ($options, $value) {
+                if (null === $value) {
+                    return false;
+                }
+
+                return $value;
+            });
     }
 
     /**
