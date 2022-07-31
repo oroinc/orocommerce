@@ -20,7 +20,7 @@ use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Loads demo order line item data
+ * Loads demo data for order line items.
  */
 class LoadOrderLineItemDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
@@ -132,10 +132,9 @@ class LoadOrderLineItemDemoData extends AbstractFixture implements ContainerAwar
 
         fclose($handler);
 
-        $totalHandler = $this->container->get('oro_order.handler.order_totals_handler');
-
+        $totalHandler = $this->container->get('oro_order.order.total.total_helper');
         foreach ($this->orders as $order) {
-            $totalHandler->fillSubtotals($order);
+            $totalHandler->fill($order);
         }
 
         $manager->flush();

@@ -190,8 +190,8 @@ action_groups:
                     paymentTerm: $.paymentTerm
                     lineItems: $.lineItems
             - '@call_service_method':
-                service: oro_order.handler.order_totals_handler
-                method: fillSubtotals
+                service: oro_order.order.total.total_helper
+                method: fill
                 method_parameters:
                     - $.order
             - '@tree':
