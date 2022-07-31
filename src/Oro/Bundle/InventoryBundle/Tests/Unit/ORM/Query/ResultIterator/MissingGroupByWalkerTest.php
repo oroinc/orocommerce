@@ -2,54 +2,68 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\ORM\Query\ResultIterator;
 
+use Doctrine\ORM\AbstractQuery;
+use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\ORM\Query\AST\FromClause;
 use Doctrine\ORM\Query\AST\GroupByClause;
+use Doctrine\ORM\Query\AST\IdentificationVariableDeclaration;
 use Doctrine\ORM\Query\AST\PathExpression;
+use Doctrine\ORM\Query\AST\RangeVariableDeclaration;
+use Doctrine\ORM\Query\AST\SelectClause;
+use Doctrine\ORM\Query\AST\SelectExpression;
+use Doctrine\ORM\Query\AST\SelectStatement;
+use Doctrine\ORM\Query\ParserResult;
 use Oro\Bundle\InventoryBundle\ORM\Query\ResultIterator\MissingGroupByWalker;
 
 class MissingGroupByWalkerTest extends \PHPUnit\Framework\TestCase
 {
-    use SqlWalkerHelperTrait;
-
-    /**
-     * @var |\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $query;
-
-    /**
-     * @var |\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $parserResult;
-
-    /**
-     * @var |\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $queryComponents;
-
-    /**
-     * @var MissingGroupByWalker
-     */
-    protected $missingGroupByWalker;
+    /** @var MissingGroupByWalker */
+    private $missingGroupByWalker;
 
     protected function setUp(): void
     {
         $this->missingGroupByWalker = new MissingGroupByWalker(
-            $this->query,
-            $this->parserResult,
+            $this->createMock(AbstractQuery::class),
+            $this->createMock(ParserResult::class),
             $this->getQueryComponents()
         );
     }
 
-    public function testWalkSelectStatementAddsGroupBysIfNull()
+    private function getAst(): SelectStatement
     {
-        $AST = $this->getDefaultAST();
-
-        $this->missingGroupByWalker->walkSelectStatement($AST);
-        $this->assertCount(count($this->getQueryComponents()), $AST->groupByClause->groupByItems);
+        return new SelectStatement(
+            new SelectClause([new SelectExpression('e', 'id', null)], false),
+            new FromClause([
+                new IdentificationVariableDeclaration(new RangeVariableDeclaration('Test', 'e'), null, [])
+            ])
+        );
     }
 
-    public function testWalkStatementCompletesExistingGroupBy()
+    private function getQueryComponents(): array
     {
-        $AST = $this->getDefaultAST();
+        $rootMetadata = new ClassMetadata('Entity\Root');
+        $rootMetadata->setIdentifier(['e']);
+        $productMetadata = new ClassMetadata('Entity\Product');
+        $productMetadata->setIdentifier(['p']);
+
+        return [
+            '_product' => ['metadata' => $productMetadata],
+            'e'        => ['map' => null, 'metadata' => $rootMetadata],
+        ];
+    }
+
+    public function testWalkSelectStatementAddsGroupBysIfNull(): void
+    {
+        $ast = $this->getAst();
+
+        $this->missingGroupByWalker->walkSelectStatement($ast);
+
+        $this->assertCount(count($this->getQueryComponents()), $ast->groupByClause->groupByItems);
+    }
+
+    public function testWalkStatementCompletesExistingGroupBy(): void
+    {
+        $ast = $this->getAst();
         $pathExpression1 = new PathExpression(
             PathExpression::TYPE_STATE_FIELD | PathExpression::TYPE_SINGLE_VALUED_ASSOCIATION,
             '_product',
@@ -60,9 +74,10 @@ class MissingGroupByWalkerTest extends \PHPUnit\Framework\TestCase
             'test',
             'test'
         );
-        $AST->groupByClause = new GroupByClause([$pathExpression1, $pathExpression2]);
+        $ast->groupByClause = new GroupByClause([$pathExpression1, $pathExpression2]);
 
-        $this->missingGroupByWalker->walkSelectStatement($AST);
-        $this->assertCount(count($this->getQueryComponents()) + 1, $AST->groupByClause->groupByItems);
+        $this->missingGroupByWalker->walkSelectStatement($ast);
+
+        $this->assertCount(count($this->getQueryComponents()) + 1, $ast->groupByClause->groupByItems);
     }
 }
