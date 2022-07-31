@@ -245,7 +245,7 @@ system_configuration:
             priority: 10
             options:
                 label: oro.product.system_configuration.fields.unit_rounding_type.label
-                tooltip: oro.product.form.tooltip.unit_rounding_type
+                tooltip: oro.product.system_configuration.fields.unit_rounding_type.tooltip
                 required: true
                 constraints:
                     - NotBlank: ~

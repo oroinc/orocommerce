@@ -34,13 +34,16 @@ oro:
         variant_fields:
             label: Configurable Attributes
             description: The names of attributes that are used to choose variants of a configurable product.
+            tooltip: Fields with type "select" and "boolean" are available
             yes.label: Yes
             no.label: No
         unit:
             label: Unit
             aria_label: Product Unit
         price.label: Price
-        has_variants.label: Has Variants
+        has_variants:
+            label: Has Variants
+            tooltip: Please save the product to add variants
         inventory_status:
             label: Inventory Status
             description: The status of the inventory of this product, in stock if there is a minimum quantity that can be ordered.
@@ -55,8 +58,11 @@ oro:
         primary_unit_precision:
             label: Unit of Quantity
             description: The primary unit of quantity for the product
+            tooltip: To allow fractional quantities set the precision to a positive value. Zero value disables fractional quantities, only whole quantities will be allowed.
         primary_unit_precision_id.label: Primary Unit Precision Id
-        additional_unit_precisions.label: Additional Units
+        additional_unit_precisions:
+            label: Additional Units
+            tooltip: To allow fractional quantities set the precision to a positive value. Zero value disables fractional quantities, only whole quantities will be allowed.
         unit_precisions:
             label: Unit Precisions
             description: Collection of configured product unit precisions for this product
@@ -96,6 +102,7 @@ oro:
         new_arrival:
             label: New Arrival
             description: Specifies if the product is a new arrival.
+            tooltip: When set to "Yes" the product will be highlighted on the store frontend.
             yes: Yes
             no: No
         time_period.label: Time Period
@@ -517,7 +524,9 @@ oro:
                   Allows guests to use the quick order form. By default, this option is disabled.
                   For the quick order form to be displayed, at least one of the following options should be enabled:
                   guest RFQ, guest shopping list or guest checkout.
-                unit_rounding_type.label: 'Unit Rounding Type'
+                unit_rounding_type:
+                    label: Unit Rounding Type
+                    tooltip: An algorithm that is used to round the volume specified for this unit (ceil, floor, half down, or half up).
                 single_unit_mode.label: 'Single Unit'
                 single_unit_mode_show_code.label: 'Show Unit Code'
                 general_frontend_inventory_statuses_visibility.label: 'Visible Inventory Statuses'
@@ -525,8 +534,7 @@ oro:
                 default_unit_precision.label: 'Default Primary Unit Precision'
                 product_collections_indexation_cron_schedule:
                     label: 'Indexation Cron Schedule'
-                    tooltip: |
-                        For product collections which have dependencies on other entities in a segment filter, the segment will be indexed based on the cron schedule to improve system responsiveness.
+                    tooltip: For product collections which have dependencies on other entities in a segment filter, the segment will be indexed based on the cron schedule to improve system responsiveness.
                     choice:
                         every_hour.label: Every hour
                         every_two_hours.label: Every two hours
