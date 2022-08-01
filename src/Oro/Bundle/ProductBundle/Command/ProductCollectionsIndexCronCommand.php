@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Oro\Bundle\ProductBundle\Command;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\CronBundle\Command\CronCommandInterface;
+use Oro\Bundle\CronBundle\Command\CronCommandScheduleDefinitionInterface;
 use Oro\Bundle\ProductBundle\Async\Topic\ReindexProductCollectionBySegmentTopic;
 use Oro\Bundle\ProductBundle\EventListener\ProductCollectionsScheduleConfigurationListener;
 use Oro\Bundle\ProductBundle\Exception\FailedToRunReindexProductCollectionJobException;
@@ -20,7 +20,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Schedules indexation of product collections.
  */
-class ProductCollectionsIndexCronCommand extends Command implements CronCommandInterface
+class ProductCollectionsIndexCronCommand extends Command implements CronCommandScheduleDefinitionInterface
 {
     /** @var string */
     protected static $defaultName = 'oro:cron:product-collections:index';
@@ -139,13 +139,11 @@ HELP
         }
     }
 
-    public function getDefaultDefinition()
+    /**
+     * {@inheritDoc}
+     */
+    public function getDefaultDefinition(): string
     {
         return $this->configManager->get(ProductCollectionsScheduleConfigurationListener::CONFIG_FIELD);
-    }
-
-    public function isActive()
-    {
-        return true;
     }
 }

@@ -7,7 +7,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\CronBundle\Command\CronCommandInterface;
+use Oro\Bundle\CronBundle\Command\CronCommandScheduleDefinitionInterface;
 use Oro\Bundle\CustomerBundle\DependencyInjection\Configuration;
 use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendDbIdentifierNameGenerator;
@@ -19,7 +19,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Clears old data in shopping list database table.
  */
-class ClearExpiredShoppingListsCommand extends Command implements CronCommandInterface
+class ClearExpiredShoppingListsCommand extends Command implements CronCommandScheduleDefinitionInterface
 {
     private const CHUNK_SIZE = 10000;
 
@@ -110,13 +110,11 @@ HELP
         return $expiredLastVisitDate;
     }
 
-    public function getDefaultDefinition()
+    /**
+     * {@inheritDoc}
+     */
+    public function getDefaultDefinition(): string
     {
         return '0 0 * * *';
-    }
-
-    public function isActive()
-    {
-        return true;
     }
 }
