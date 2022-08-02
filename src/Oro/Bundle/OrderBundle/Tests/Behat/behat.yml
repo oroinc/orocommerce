@@ -180,6 +180,9 @@ oro_behat_extension:
     Order Form Line Item 1 Offer 1:
       selector: '[name="oro_order_type[lineItems][0][offers]"]'
 
+    Order Form Line Item 2 Offer 1:
+      selector: '[name="oro_order_type[lineItems][1][offers]"]'
+
     First Product Quantity Field In Order:
       selector:
         locator: '//input[@name="oro_order_type[lineItems][0][quantity]"]'

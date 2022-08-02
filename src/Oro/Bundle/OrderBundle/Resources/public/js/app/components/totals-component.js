@@ -30,10 +30,10 @@ define(function(require) {
          */
         initialize: function(options) {
             this._deferredInit();
-            $.when(..._.compact(options._subPromises)).then(function() {
+            $.when(..._.compact(options._subPromises)).then(() => {
                 this.handleSubLayoutInit();
                 this._resolveDeferredInit();
-            }.bind(this));
+            });
 
             this.options = _.defaults(options || {}, this.options);
         },
@@ -44,13 +44,15 @@ define(function(require) {
         handleSubLayoutInit: function() {
             this.currentTotals = this._getDefaultTotals();
 
-            mediator.on('entry-point:order:load:before', this.showLoadingMask, this);
-            mediator.on('entry-point:order:load', this.setTotals, this);
-            mediator.on('entry-point:order:load:after', this.hideLoadingMask, this);
+            this.listenTo(mediator, {
+                'entry-point:order:load:before': this.showLoadingMask,
+                'entry-point:order:load': this.setTotals,
+                'entry-point:order:load:after': this.hideLoadingMask,
 
-            mediator.on('line-items-totals:update', this.updateTotals, this);
-            mediator.on('shipping-cost:updated', this.setTotals, this);
-            mediator.on('order:totals:get:current', this.getCurrentTotals, this);
+                'line-items-totals:update': this.updateTotals,
+                'shipping-cost:updated': this.setTotals,
+                'order:totals:get:current': this.getCurrentTotals
+            });
 
             this.$totals = this.options._sourceElement.find(this.options.selectors.totals);
 
@@ -90,21 +92,6 @@ define(function(require) {
          */
         updateTotals: function() {
             mediator.trigger('entry-point:order:trigger');
-        },
-
-        /**
-         * @inheritdoc
-         */
-        dispose: function() {
-            if (this.disposed) {
-                return;
-            }
-
-            mediator.off('entry-point:order:load:before', this.showLoadingMask, this);
-            mediator.off('entry-point:order:load', this.setTotals, this);
-            mediator.off('entry-point:order:load:after', this.hideLoadingMask, this);
-
-            TotalsComponent.__super__.dispose.call(this);
         }
     });
 

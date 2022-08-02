@@ -19,6 +19,8 @@ use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
+ * Form type for Checkout Address with selector.
+ *
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class CheckoutAddressSelectTypeTest extends FormIntegrationTestCase
@@ -64,7 +66,7 @@ class CheckoutAddressSelectTypeTest extends FormIntegrationTestCase
             ->with([
                 'data' => null,
                 'data_class' => null,
-                'group_label_prefix' => 'oro.checkout.',
+                'group_label_prefix' => 'oro.checkout.'
             ])
             ->willReturnSelf();
         $resolver->expects($this->once())

@@ -384,7 +384,12 @@ oro_behat_extension:
 
     Edit RFQ Line Item:
       selector:
-        locator: '//div[contains (@id,"oro_rfp_frontend_request_requestProducts-uid")]//button[@title="Edit"]'
+        locator: '//div[contains(@class, "request-form-line-container")][1]//button[@data-role="edit"]'
+        type: xpath
+
+    Edit RFQ Line Item 2:
+      selector:
+        locator: '//div[contains(@class, "request-form-line-container")][2]//button[@data-role="edit"]'
         type: xpath
 
     Add a Note to This Item:
