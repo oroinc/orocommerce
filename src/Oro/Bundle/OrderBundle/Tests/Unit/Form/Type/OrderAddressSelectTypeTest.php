@@ -3,8 +3,9 @@
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
-use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\FormBundle\Form\Type\Select2ChoiceType;
 use Oro\Bundle\ImportExportBundle\Serializer\Serializer;
 use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
@@ -18,6 +19,9 @@ use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for Order Address with selector.
+ */
 class OrderAddressSelectTypeTest extends FormIntegrationTestCase
 {
     /** @var \PHPUnit\Framework\MockObject\MockObject|OrderAddressManager */
@@ -79,7 +83,7 @@ class OrderAddressSelectTypeTest extends FormIntegrationTestCase
                 },
                 'choice_label' => function () {
                 },
-                'group_label_prefix' => 'oro.order.',
+                'group_label_prefix' => 'oro.order.'
             ])
             ->willReturnSelf();
         $resolver->expects($this->once())
@@ -132,22 +136,24 @@ class OrderAddressSelectTypeTest extends FormIntegrationTestCase
         $key = 'ca_1';
         $orderAddress = new OrderAddress();
         $orderAddress->setLabel('Customer Address #1');
-        $customerAddress = new CustomerAddress();
+        $customerUserAddress = new CustomerUserAddress();
+        $customerUser = new CustomerUser();
+        $orderAddress->setCustomerUserAddress($customerUserAddress);
 
         $this->orderAddressManager->expects($this->once())
             ->method('updateFromAbstract')
-            ->with($customerAddress)
+            ->with($customerUserAddress)
             ->willReturn($orderAddress);
         $this->orderAddressManager->expects($this->once())
             ->method('getGroupedAddresses')
-            ->willReturn(new TypedOrderAddressCollection(null, 'billing', [
+            ->willReturn(new TypedOrderAddressCollection($customerUser, 'billing', [
                 'Customer Addresses' => [
-                    $key => $customerAddress
+                    $key => $customerUserAddress
                 ]
             ]));
         $this->orderAddressManager->expects($this->any())
             ->method('getIdentifier')
-            ->with($customerAddress)
+            ->with($customerUserAddress)
             ->willReturn($key);
 
         $form = $this->factory->create(OrderAddressSelectType::class, null, [
@@ -159,7 +165,14 @@ class OrderAddressSelectTypeTest extends FormIntegrationTestCase
         $this->assertTrue($form->isValid());
         $this->assertTrue($form->isSynchronized());
 
+        $view = $form->createView();
+
         $this->assertEquals($orderAddress, $form->getData());
+
+        $this->assertNotEmpty($view->vars['attr']['data-addresses']);
+        $this->assertNotEmpty($view->vars['attr']['data-default']);
+        $this->assertEquals($key, $view->vars['attr']['data-default']);
+        $this->assertEquals($key, $view->vars['value']);
     }
 
     /**
