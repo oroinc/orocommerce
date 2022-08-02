@@ -6,7 +6,7 @@ Feature: Check product attribute visibility in product variants grid
 
   Scenario: Create product attributes
     Given I login as administrator
-    And I go to Products/ Product Attributes
+    And go to Products/ Product Attributes
     And click "Create Attribute"
     And fill form with:
       | Field Name | Color  |
@@ -17,7 +17,7 @@ Feature: Check product attribute visibility in product variants grid
       | Black |
       | White |
     And save and close form
-    And I click "Create Attribute"
+    And click "Create Attribute"
     And fill form with:
       | Field Name | Size   |
       | Type       | Select |
@@ -32,33 +32,36 @@ Feature: Check product attribute visibility in product variants grid
 
   Scenario: Update product family
     Given I go to Products/ Product Families
-    And I click "Edit" on row "default_family" in grid
+    And click "Edit" on row "default_family" in grid
     When I fill "Product Family Form" with:
       | Attributes | [Color, Size] |
-    And I save and close form
+    And save and close form
     Then I should see "Successfully updated" flash message
 
   Scenario: Prepare first simple product
-    When I go to Products/Products
-    And I click Edit 1GB81 in grid
-    And I fill in product attribute "Color" with "Black"
-    And I fill in product attribute "Size" with "L"
-    And I save and close form
+    Given I go to Products/Products
+    When I click Edit 1GB81 in grid
+    And fill in product attribute "Color" with "Black"
+    And fill in product attribute "Size" with "L"
+    And save and close form
     Then I should see "Product has been saved" flash message
 
   Scenario: Prepare second simple product
-    When I go to Products/Products
-    And I click Edit 1GB82 in grid
-    And I fill in product attribute "Color" with "White"
-    And I fill in product attribute "Size" with "M"
-    And I save and close form
+    Given I go to Products/Products
+    When I click Edit 1GB82 in grid
+    And fill in product attribute "Color" with "White"
+    And fill in product attribute "Size" with "M"
+    And save and close form
     Then I should see "Product has been saved" flash message
 
   Scenario: Check product variant grid
-    When I go to Products/Products
-    And I click Edit 1GB83 in grid
+    Given I go to Products/Products
+    And click Edit 1GB83 in grid
     When I fill "ProductForm" with:
       | Configurable Attributes | [Color, Size] |
+    And save form
+    Then I should see "Product has been saved" flash message
+    When I press "Product Variants"
     Then I should see following grid:
       | SKU   | Color | Size |
       | 1GB81 | Black | L    |

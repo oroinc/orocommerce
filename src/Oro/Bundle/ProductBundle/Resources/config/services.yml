@@ -1982,3 +1982,10 @@ services:
         tags:
             - { name: oro_featuretogle.voter }
             - { name: oro_featuretogle.feature, feature: attachment_original_filenames }
+
+    oro_product.datagrid.provider.product_variants_selected_fields_provider:
+        class: Oro\Bundle\ProductBundle\DataGrid\Provider\ProductVariantsSelectedFieldsProvider
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: oro_datagrid.selected_fields_provider }
