@@ -55,6 +55,12 @@ define(function(require) {
          */
         loadingMaskView: null,
 
+        listen: {
+            'customer-customer-user:change mediator': 'handleCustomerChange',
+            'order:load:related-data mediator': 'loadingStart',
+            'order:loaded:related-data mediator': 'loadedRelatedData'
+        },
+
         /**
          * @inheritdoc
          */
@@ -71,9 +77,12 @@ define(function(require) {
             this.initLayout().done(_.bind(this.handleLayoutInit, this));
 
             this.loadingMaskView = new LoadingMaskView({container: this.$el});
+        },
 
-            mediator.on('order:load:related-data', this.loadingStart, this);
-            mediator.on('order:loaded:related-data', this.loadedRelatedData, this);
+        handleCustomerChange: function() {
+            // Allow default address usage on customer/customer user change
+            this._fillAddressFields({label: ''});
+            this.useDefaultAddress = true;
         },
 
         /**
@@ -146,7 +155,13 @@ define(function(require) {
 
             const self = this;
             this.$address.change(function(e) {
-                self.useDefaultAddress = false;
+                // Do not block default address usage if there is no default address or selected address is default
+                if (self.useDefaultAddress &&
+                    self.$address.data('default') &&
+                    self.$address.data('default') !== self.$address.val()
+                ) {
+                    self.useDefaultAddress = false;
+                }
                 self.customerAddressChange(e);
             });
         },
@@ -160,20 +175,7 @@ define(function(require) {
 
                 const address = this.$address.data('addresses')[this.$address.val()] || null;
                 if (address) {
-                    const self = this;
-
-                    _.each(address, function(value, name) {
-                        if (_.isObject(value)) {
-                            value = _.first(_.values(value));
-                        }
-                        const $field = self.fieldsByName[self.normalizeName(name)] || null;
-                        if ($field) {
-                            $field.val(value);
-                            if ($field.data('select2')) {
-                                $field.data('selected-data', value).change();
-                            }
-                        }
-                    });
+                    this._fillAddressFields(address, e !== undefined);
                 }
             } else {
                 this._setReadOnlyMode(false);
@@ -182,6 +184,30 @@ define(function(require) {
                     $country.trigger('redraw');
                 }
             }
+        },
+
+        /**
+         * @param {Object} address
+         * @param {Boolean} triggerChange
+         */
+        _fillAddressFields: function(address, triggerChange = true) {
+            const self = this;
+            _.each(address, function(value, name) {
+                if (_.isObject(value)) {
+                    value = _.first(_.values(value));
+                }
+                const $field = self.fieldsByName[self.normalizeName(name)] || null;
+                // set new value only in case if it is different from exising (`null` is transformed to `''`)
+                if ($field && $field.val() !== (value || '')) {
+                    $field.val(value);
+                    if ($field.data('select2')) {
+                        $field.data('selected-data', value);
+                        if (triggerChange) {
+                            $field.change();
+                        }
+                    }
+                }
+            });
         },
 
         _setReadOnlyMode: function(mode) {
@@ -219,29 +245,16 @@ define(function(require) {
             const $oldAddress = this.$address;
             this.setAddress($(address));
 
-            $oldAddress.parent().trigger('content:remove');
-            $oldAddress.inputWidget('dispose');
-            $oldAddress.replaceWith(this.$address);
+            $oldAddress.parent()
+                .trigger('content:remove')
+                .empty()
+                .append(this.$address);
 
-            if (this.useDefaultAddress) {
+            if (this.useDefaultAddress && this.$address.data('default')) {
                 this.$address.val(this.$address.data('default')).change();
             }
 
             this.initLayout().done(_.bind(this.loadingEnd, this));
-        },
-
-        /**
-         * @inheritdoc
-         */
-        dispose: function() {
-            if (this.disposed) {
-                return;
-            }
-
-            mediator.off('order:load:related-data', this.loadingStart, this);
-            mediator.off('order:loaded:related-data', this.loadedRelatedData, this);
-
-            AddressView.__super__.dispose.call(this);
         }
     });
 

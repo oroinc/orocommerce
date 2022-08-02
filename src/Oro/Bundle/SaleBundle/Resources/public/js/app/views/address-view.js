@@ -54,6 +54,11 @@ define(function(require) {
          */
         loadingMaskView: null,
 
+        listen: {
+            'quote:load:related-data mediator': 'loadingStart',
+            'quote:loaded:related-data mediator': 'loadedRelatedData'
+        },
+
         /**
          * @inheritdoc
          */
@@ -70,9 +75,6 @@ define(function(require) {
             this.initLayout().done(_.bind(this.handleLayoutInit, this));
 
             this.loadingMaskView = new LoadingMaskView({container: this.$el});
-
-            mediator.on('quote:load:related-data', this.loadingStart, this);
-            mediator.on('quote:loaded:related-data', this.loadedRelatedData, this);
         },
 
         /**
@@ -176,7 +178,8 @@ define(function(require) {
                             value = _.first(_.values(value));
                         }
                         const $field = self.fieldsByName[self.normalizeName(name)] || null;
-                        if ($field) {
+                        // set new value only in case if it is different from exising (`null` is transformed to `''`)
+                        if ($field && $field.val() !== (value || '')) {
                             $field.val(value);
                             if ($field.data('select2')) {
                                 $field.data('selected-data', value).change();
@@ -253,25 +256,12 @@ define(function(require) {
             const $oldAddress = this.$address;
             this.setAddress($(address));
             this.resetAddressForm();
-            $oldAddress.parent().trigger('content:remove');
-            $oldAddress.inputWidget('dispose');
-            $oldAddress.replaceWith(this.$address);
+            $oldAddress.parent()
+                .trigger('content:remove')
+                .empty()
+                .append(this.$address);
 
             this.initLayout().done(_.bind(this.loadingEnd, this));
-        },
-
-        /**
-         * @inheritdoc
-         */
-        dispose: function() {
-            if (this.disposed) {
-                return;
-            }
-
-            mediator.off('order:load:related-data', this.loadingStart, this);
-            mediator.off('order:loaded:related-data', this.loadedRelatedData, this);
-
-            AddressView.__super__.dispose.call(this);
         }
     });
 
