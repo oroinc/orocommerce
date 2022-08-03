@@ -126,11 +126,11 @@ class InventoryLevelNormalizer extends ConfigurableEntityNormalizer
         }
 
         /** @var InventoryLevel $inventoryLevel */
-        $inventoryLevel = $this->dispatchDenormalizeEvent(
+        $inventoryLevel = $this->dispatchDenormalize(
             $data,
             $this->createObject($type),
             Events::BEFORE_DENORMALIZE_ENTITY
-        );
+        )->getObject();
 
         $productData = $data['product'];
 
@@ -159,7 +159,7 @@ class InventoryLevelNormalizer extends ConfigurableEntityNormalizer
 
         $inventoryLevel->setProductUnitPrecision($productUnitPrecision);
 
-        return $this->dispatchDenormalizeEvent($data, $inventoryLevel, Events::AFTER_DENORMALIZE_ENTITY);
+        return $this->dispatchDenormalize($data, $inventoryLevel, Events::AFTER_DENORMALIZE_ENTITY)->getObject();
     }
 
     protected function determineQuantity(InventoryLevel $inventoryLevel, array $data)
