@@ -1,9 +1,21 @@
 layout:
+    imports:
+        -
+            id: oro_customer_page
     actions:
         - '@setBlockTheme':
             themes: '@OroSale/layouts/default/oro_sale_quote_frontend_choice/layout.html.twig'
         - '@setFormTheme':
             themes: '@OroSale/layouts/default/oro_sale_quote_frontend_choice/form_theme.html.twig'
+
+        - '@setOption':
+              id: page_main_header
+              optionName: visible
+              optionValue: '=data["acl"].isGranted("oro_sale_quote_frontend_view")'
+        - '@setOption':
+              id: head_customer_menu_container
+              optionName: visible
+              optionValue: '=data["acl"].isGranted("oro_sale_quote_frontend_view")'
 
         - '@setOption':
             id: title

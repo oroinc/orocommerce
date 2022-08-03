@@ -1,6 +1,8 @@
 layout:
     imports:
         -
+            id: oro_customer_page
+        -
             id: oro_order_grid
             root: orders_container
             namespace: orders

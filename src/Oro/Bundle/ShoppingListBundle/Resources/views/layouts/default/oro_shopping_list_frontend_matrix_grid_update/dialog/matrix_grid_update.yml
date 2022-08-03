@@ -1,0 +1,43 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+              themes: '@OroShoppingList/layouts/default/oro_shopping_list_frontend_matrix_grid_update/dialog/matrix_grid_update.html.twig'
+        - '@setFormTheme':
+              themes: '@OroShoppingList/layouts/default/oro_shopping_list_frontend_matrix_grid_update/dialog/matrix_grid_update_form.html.twig'
+        - '@addTree':
+            items:
+                matrix_grid_update_form_wrapper:
+                    blockType: container
+                    options:
+                        vars:
+                            form: '=data["oro_shopping_list_matrix_order_form"].getMatrixOrderByUnitFormView(data["product"], data["productUnit"], data["shoppingList"])'
+                            prices: '=data.offsetExists("product") ? data["frontend_product_prices"].getVariantsPricesByProduct(data["product"])'
+                matrix_grid_update_form_start:
+                    blockType: form_start
+                    options:
+                        form: '=data["oro_shopping_list_matrix_order_form"].getMatrixOrderByUnitFormView(data["product"], data["productUnit"], data["shoppingList"])'
+                matrix_grid_update_form_fields:
+                    blockType: form_fields
+                    options:
+                        form: '=data["oro_shopping_list_matrix_order_form"].getMatrixOrderByUnitFormView(data["product"], data["productUnit"], data["shoppingList"])'
+                matrix_grid_update_form_end:
+                    blockType: form_end
+                    options:
+                        form: '=data["oro_shopping_list_matrix_order_form"].getMatrixOrderByUnitFormView(data["product"], data["productUnit"], data["shoppingList"])'
+                matrix_grid_update_form_clear_button:
+                    blockType: button
+                    options:
+                        icon: times
+                        style: 'btn--link clear-button'
+                        attr:
+                            title: oro.frontend.shoppinglist.matrix_grid_order.clear.tooltip
+                            data-role: 'clear'
+                        text:
+                            label: oro.frontend.shoppinglist.matrix_grid_order.clear.text
+            tree:
+                widget_content:
+                    matrix_grid_update_form_wrapper:
+                        matrix_grid_update_form_start: ~
+                        matrix_grid_update_form_fields: ~
+                        matrix_grid_update_form_end: ~
+                        matrix_grid_update_form_clear_button: ~

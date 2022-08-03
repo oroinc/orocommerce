@@ -1,0 +1,13 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: '@OroInventory/layouts/default/oro_product_frontend_product_view/upcoming.html.twig'
+        - '@add':
+            id: upcoming_label
+            parentId: product_view_specification_container
+            siblingId: product_price_subtree_update
+            blockType: block
+            options:
+                vars:
+                    product: '=data["product"]'
+                    visible: '=data["upcoming_product"].isUpcoming(data["product"])'

@@ -1,0 +1,11 @@
+/* @theme: default; */
+
+.product-view-desc-list {
+    margin: $product-view-desc-list-offset;
+
+    &__item {
+        &:not(:first-child) {
+            margin-top: $product-view-desc-list--item-offset;
+        }
+    }
+}

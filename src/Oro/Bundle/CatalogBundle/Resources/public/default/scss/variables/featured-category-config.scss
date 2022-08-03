@@ -1,0 +1,28 @@
+/* @theme: default; */
+
+$featured-category-display: block !default;
+$featured-category-color: get-color('additional', 'darker') !default;
+$featured-category-text-decoration: none !default;
+$featured-category-text-decoration-hover: none !default;
+
+$featured-category-color-hover: get-color('additional', 'darker') !default;
+
+$featured-category-image-display: block !default;
+$featured-category-image-max-width: 100% !default;
+$featured-category-image-max-height: 260px !default;
+$featured-category-image-height: auto !default;
+$featured-category-image-margin: 0 auto !default;
+$featured-category-image-border: 1px solid get-color('additional', 'light') !default;
+
+$featured-category-desc-text-align: center !default;
+
+$featured-category-desc-inner-offset: 16px 0 0 !default;
+$featured-category-description-text-align: center !default;
+
+$featured-category-description-inner-offset: 16px 0 0 !default;
+$featured-category-name-font-size: $base-font-size--m !default;
+
+$featured-category-name-text-decoration: underline !default;
+
+$featured-category-qty-offset: 6px 0 0 !default;
+$featured-category-qty-font-size: $base-font-size--s !default;

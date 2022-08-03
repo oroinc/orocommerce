@@ -1,0 +1,87 @@
+/* @theme: default; */
+
+.product-totals {
+    display: $product-totals-display;
+    align-items: $product-totals-align-items;
+    justify-content: $product-totals-justify-content;
+
+    width: $product-totals-width;
+    min-width: $product-totals-min-width;
+
+    font-family: $product-totals-font-family;
+    text-align: $product-totals-text-align;
+
+    &--nested {
+        padding: $product-totals-nested-offset-inner;
+    }
+
+    &__button {
+        padding: $product-totals-btn-offset-inner;
+    }
+
+    &__wrapper {
+        display: $product-totals-wrapper-display;
+        background: $product-totals-wrapper-background;
+        padding: $product-totals-wrapper-offset-inner;
+        border-radius: $product-totals-wrapper-border-radius;
+        margin: $product-totals-wrapper-offset;
+
+        &--transparent {
+            background: $product-totals-wrapper-transparent-background;
+
+            padding: $product-totals-wrapper-transparent-offset-inner;
+        }
+
+        &--narrow {
+            padding: $product-totals-wrapper-narrow-offset-inner;
+        }
+    }
+
+    &__label {
+        display: $product-totals-label-display;
+        min-width: $product-totals-label-min-width;
+        padding: $product-totals-label-offset-inner;
+    }
+
+    &__total-quantity,
+    &__total-price {
+        display: $product-totals-total-items-display;
+        justify-content: $product-totals-total-items-justify-content;
+    }
+
+    &__separator {
+        color: $product-totals-total-separator-color;
+
+        margin: $product-totals-total-separator-offset;
+    }
+}
+
+.product-item__qty,
+.line-item-form {
+    .product-totals {
+        font-size: $product-totals-line-item-font-size;
+
+        &__wrapper {
+            width: $product-totals-line-item-wrapper-width;
+            margin: $product-totals-line-item-wrapper-offset;
+            padding: $product-totals-line-item-wrapper-offset-inner;
+        }
+
+        &__total-quantity,
+        &__total-price {
+            width: $product-totals-line-item-total-width;
+        }
+    }
+}
+
+@include breakpoint('mobile-landscape') {
+    .product-totals {
+        flex-direction: $product-totals-mobile-landscape-flex-direction;
+
+        &__wrapper {
+            justify-content: $product-totals-wrapper-mobile-landscape-justify-content;
+            width: $product-totals-wrapper-mobile-landscape-width;
+            margin: $product-totals-wrapper-mobile-landscape-offset;
+        }
+    }
+}

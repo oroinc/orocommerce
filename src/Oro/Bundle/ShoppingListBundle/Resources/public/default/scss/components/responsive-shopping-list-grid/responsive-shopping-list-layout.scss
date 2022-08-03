@@ -1,0 +1,67 @@
+/* @theme: default; */
+
+.responsive-order-layout {
+    .totals-container {
+        margin-bottom: 10px;
+    }
+}
+
+.responsive-shopping-list-layout {
+    .order-checkout-widget__container-wrapper {
+        padding: 20px;
+
+        border-radius: 4px;
+        background: $responsive-shopping-list-layout-background;
+    }
+}
+
+@include breakpoint('responsive-shopping-list-grid-overflow') {
+    .responsive-shopping-list-layout {
+        .page-content {
+            &--has-sidebar {
+                padding: $page-content-with-sidebar-tables-s-inner-offset;
+                width: $page-content-width;
+            }
+        }
+
+        .page-sidebar {
+            width: $page-sidebar-tablet-s-width;
+        }
+
+        .order-checkout-widget {
+            &__container-wrapper {
+                width: 40%;
+                margin-left: auto;
+            }
+        }
+    }
+}
+
+@include breakpoint('tablet') {
+    .responsive-order-layout {
+        display: flex;
+        flex-direction: row-reverse;
+    }
+
+    .responsive-shopping-list-layout {
+        .order-checkout-widget {
+            &__container-wrapper {
+                width: 50%;
+            }
+        }
+    }
+}
+
+@include breakpoint('mobile-landscape') {
+    .responsive-order-layout {
+        flex-direction: column;
+    }
+
+    .responsive-shopping-list-layout {
+        .order-checkout-widget {
+            &__container-wrapper {
+                width: 100%;
+            }
+        }
+    }
+}
