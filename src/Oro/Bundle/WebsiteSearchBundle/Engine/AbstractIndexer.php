@@ -23,6 +23,7 @@ abstract class AbstractIndexer implements IndexerInterface
 {
     use ContextTrait;
 
+    const CONTEXT_ENTITY_CLASS_KEY = 'entityClass';
     const CONTEXT_ENTITIES_IDS_KEY = 'entityIds';
     const CONTEXT_WEBSITE_IDS = 'websiteIds';
 
