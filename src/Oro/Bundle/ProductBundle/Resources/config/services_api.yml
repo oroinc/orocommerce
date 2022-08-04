@@ -121,7 +121,6 @@ services:
             - '@oro_translation.manager.translation'
             - '@translator'
             - '@oro_product.formatter.product_unit_label'
-            - '@oro_message_queue.client.message_producer'
             - '%oro_product.product_unit.translations_mapping%'
         tags:
             - { name: oro.api.processor, action: customize_form_data, event: post_submit, class: Oro\Bundle\ProductBundle\Entity\ProductUnit, priority: -100 }
