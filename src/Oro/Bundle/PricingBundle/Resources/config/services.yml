@@ -1257,6 +1257,7 @@ services:
             - '@doctrine'
             - '@oro_config.manager'
             - '@oro_pricing.model.flat_price_list_tree_handler'
+            - '@oro_website_search.formatter.decimal_flat_value_formatter'
         tags:
             - { name: kernel.event_listener, event: oro_website_search.event.index_entity.product, method: onWebsiteSearchIndex }
             - { name: oro_featuretogle.feature, feature: oro_price_lists_flat }
@@ -1267,6 +1268,7 @@ services:
             - '@oro_website_search.manager.website_context_manager'
             - '@doctrine'
             - '@oro_config.manager'
+            - '@oro_website_search.formatter.decimal_flat_value_formatter'
         tags:
             - { name: kernel.event_listener, event: oro_website_search.event.index_entity.product, method: onWebsiteSearchIndex }
             - { name: oro_featuretogle.feature, feature: oro_price_lists_combined }

@@ -16,6 +16,7 @@ use Symfony\Component\Yaml\Yaml;
 class ProductCollectionTest extends WebCatalogTreeTestCase
 {
     use WebsiteSearchExtensionTrait;
+    use ProductSearchEngineCheckTrait;
 
     protected function setUp(): void
     {
@@ -247,6 +248,10 @@ class ProductCollectionTest extends WebCatalogTreeTestCase
 
     public function testGetWithAggregationsFilter()
     {
+        if (!$this->isOrmEngine()) {
+            $this->markTestSkipped('This test works only with ORM search engine.');
+        }
+
         $response = $this->get(
             ['entity' => 'productcollection', 'id' => '<toString(@catalog1_node11_variant1->id)>'],
             ['filter[aggregations]' => 'minimalPrice sum']

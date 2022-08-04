@@ -354,3 +354,6 @@ services:
         class: 'Oro\Bundle\WebsiteSearchBundle\EventListener\SearchProcessingEngineExceptionListener'
         tags:
             - { name: kernel.event_listener, event: oro_website_search.processing_engine_exception, method: process }
+
+    oro_website_search.formatter.decimal_flat_value_formatter:
+        class: 'Oro\Bundle\SearchBundle\Formatter\DecimalFlatValueFormatter'

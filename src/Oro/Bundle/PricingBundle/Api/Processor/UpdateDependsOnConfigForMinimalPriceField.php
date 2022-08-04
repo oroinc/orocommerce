@@ -34,7 +34,7 @@ class UpdateDependsOnConfigForMinimalPriceField implements ProcessorInterface
         if (null !== $minimalPricesField && !$minimalPricesField->isExcluded()) {
             $productUnits = $this->getProductUnits();
             foreach ($productUnits as $productUnit) {
-                $minimalPricesField->addDependsOn('decimal.minimal_price_CPL_ID_CURRENCY_' . $productUnit);
+                $minimalPricesField->addDependsOn('decimal.minimal_price.CPL_ID_CURRENCY_' . $productUnit);
             }
         }
     }

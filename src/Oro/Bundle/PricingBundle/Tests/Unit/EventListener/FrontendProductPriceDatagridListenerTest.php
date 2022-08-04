@@ -145,14 +145,14 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit\Framework\TestCa
                         'columns' => [
                             'minimal_price' => [
                                 'type' => 'frontend-product-price',
-                                'data_name' => 'minimal_price_CPL_ID_CURRENCY_UNIT'
+                                'data_name' => 'minimal_price.CPL_ID_CURRENCY_UNIT'
                             ]
                         ]
                     ],
                     'sorters' => [
                         'columns' => [
                             'minimal_price_sort' => [
-                                'data_name' => 'minimal_price_CPL_ID_CURRENCY',
+                                'data_name' => 'minimal_price.CPL_ID_CURRENCY',
                                 'type' => 'decimal',
                             ]
                         ]
@@ -176,14 +176,14 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit\Framework\TestCa
                         'columns' => [
                             'minimal_price' => [
                                 'type' => 'frontend-product-price',
-                                'data_name' => 'minimal_price_PRICE_LIST_ID_CURRENCY_UNIT'
+                                'data_name' => 'minimal_price.PRICE_LIST_ID_CURRENCY_UNIT'
                             ]
                         ]
                     ],
                     'sorters' => [
                         'columns' => [
                             'minimal_price_sort' => [
-                                'data_name' => 'minimal_price_PRICE_LIST_ID_CURRENCY',
+                                'data_name' => 'minimal_price.PRICE_LIST_ID_CURRENCY',
                                 'type' => 'decimal',
                             ]
                         ]
