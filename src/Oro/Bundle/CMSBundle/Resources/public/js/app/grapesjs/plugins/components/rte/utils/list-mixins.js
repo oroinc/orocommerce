@@ -7,7 +7,9 @@ import {
     changeTagName,
     getParentsUntil,
     getOffsetProp,
-    focusCursor
+    focusCursor,
+    isFormattedText,
+    isTag
 } from './utils';
 
 export default class ListMixin {
@@ -170,6 +172,14 @@ export default class ListMixin {
                     chunks[key] = [...chunks[key], node];
                 } else {
                     chunks[key] = [chunks[key], node];
+                }
+            } else if (isFormattedText(node) || isTag(node, 'span')) {
+                if (Array.isArray(chunks[key])) {
+                    chunks[key] = [...chunks[key], node];
+                } else if (chunks.length === 1 && chunks[key].nodeType === 3) {
+                    chunks[key] = [chunks[key], node];
+                } else {
+                    chunks.push([node]);
                 }
             } else {
                 if (Array.isArray(chunks[key])) {
@@ -374,7 +384,7 @@ export default class ListMixin {
                     return removeSubList();
                 }
 
-                if (isBlockFormatted(container)) {
+                if (isBlockFormatted(container) || isTag(container, 'span')) {
                     removeSubList();
                     cursor();
                     editor.trigger('change:canvasOffset');
@@ -418,7 +428,7 @@ export default class ListMixin {
                     return createSubList();
                 }
 
-                if (isBlockFormatted(container)) {
+                if (isBlockFormatted(container) || isTag(container, 'span')) {
                     createSubList();
                     cursor();
                     editor.trigger('change:canvasOffset');
@@ -452,7 +462,7 @@ export default class ListMixin {
     processList(rte, editor) {
         const {selection, range, isList, cursor, container} = this.exposeSelection(rte);
 
-        const foundOlList = foundClosestParentByTagName(selection.focusNode, this.oppositeListType.toLowerCase());
+        const foundOlList = foundClosestParentByTagName(container, this.oppositeListType.toLowerCase());
         if (foundOlList) {
             this.changeListType(foundOlList, this.listType.toLowerCase());
             cursor();
@@ -497,7 +507,7 @@ export default class ListMixin {
                     return makeList();
                 }
 
-                if (isBlockFormatted(container)) {
+                if (isBlockFormatted(container) || isTag(container, 'span')) {
                     this.insertNodeToList(container);
                     cursor();
                     editor.trigger('change:canvasOffset');
@@ -542,10 +552,12 @@ export default class ListMixin {
         let container = range.commonAncestorContainer;
 
         if (this.isList(rte) &&
-            range.commonAncestorContainer.tagName !== this.listType &&
-            range.commonAncestorContainer.isEqualNode(rte.el)
+            container.tagName !== this.listType &&
+            container.isEqualNode(rte.el)
         ) {
-            container = range.commonAncestorContainer.querySelector(this.listType.toLowerCase());
+            container = container.querySelector(this.listType.toLowerCase());
+        } else if (container.isEqualNode(rte.el) && container.childNodes.length === 1) {
+            container = container.firstChild;
         }
 
         const isList = this.isList(rte) || container.tagName === this.listType;
