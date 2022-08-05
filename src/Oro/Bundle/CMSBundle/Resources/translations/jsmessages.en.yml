@@ -99,6 +99,8 @@ oro.cms:
             quote:
                 label: 'Quote'
                 content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore ipsum dolor sit'
+            text_wrapper:
+                label: 'Text Style'
             customCode:
                 label: 'Custom Code'
                 confirmation:
@@ -467,6 +469,11 @@ oro.cms:
                 title: 'Increase indent'
             outdent:
                 title: 'Decrease indent'
+        wrap_action:
+            title:
+                default: 'Apply styles'
+                active: 'Remove styles'
+                disabled: 'Select text to apply styles'
         color_picker:
             choose_text: 'Ok'
             cancel_text: '⨯'

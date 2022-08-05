@@ -36,7 +36,19 @@ const RteItemView = BaseView.extend({
             .attr(model.get('attributes'))
             .append(model.get('icon'));
 
+        this.$el.tooltip();
+
         return this;
+    },
+
+    dispose() {
+        if (this.disposed) {
+            return;
+        }
+
+        this.$el.tooltip('dispose');
+
+        RteItemView.__super__.dispose.call(this);
     },
 
     onRender() {
@@ -71,6 +83,7 @@ const RteItemView = BaseView.extend({
             el: this.editableEl,
             doc,
             actionbar: this.actionbar,
+            editor: this.editor,
             classes: this.model.get('classes'),
             selection() {
                 return this.doc.getSelection();
@@ -83,8 +96,8 @@ const RteItemView = BaseView.extend({
         };
     },
 
-    executeHandler(name) {
-        this.collection.trigger(name);
+    executeHandler(name, props) {
+        this.collection.trigger(name, props);
     },
 
     /**
@@ -92,19 +105,37 @@ const RteItemView = BaseView.extend({
      * doesn't work in the same way on all browsers
      * @param  {string} value HTML string
      */
-    insertHTML(value) {
+    insertHTML(value, {select} = {}) {
         const doc = this.getDoc();
         const selection = doc.getSelection();
 
         if (selection && selection.rangeCount) {
+            const model = this.editor.Utils.helpers.getModel(this.editableEl);
             const node = doc.createElement('div');
             const range = selection.getRangeAt(0);
             range.deleteContents();
             node.innerHTML = value;
-            [...node.childNodes].reverse().forEach(nd => range.insertNode(nd));
+            [...node.childNodes].reverse().forEach(nd => {
+                nd.setAttribute('data-temp', 'add');
+                range.insertNode(nd);
+            });
             range.collapse(true);
             selection.removeAllRanges();
             selection.addRange(range);
+
+            if (select) {
+                model.once('rte:disable', () => {
+                    const added = model.find('[data-temp="add"]');
+                    if (added.length) {
+                        added.forEach(add => {
+                            add.set('selectable', true);
+                            add.removeAttributes('data-temp');
+                        });
+                        this.editor.select(added);
+                    }
+                });
+                model.trigger('disable');
+            }
         }
     },
 
@@ -119,14 +150,14 @@ const RteItemView = BaseView.extend({
                     ...this.model.attributes,
                     btn: this.el
                 });
-            }
-
-            if (this.model.get('command')) {
+            } else if (this.model.get('command')) {
                 doc.execCommand(this.model.get('command'), false, null);
             }
         }
 
-        this.updateActiveState();
+        if (!this.disposed) {
+            this.updateActiveState();
+        }
     },
 
     onKeyDown(event) {
@@ -168,7 +199,8 @@ const RteItemView = BaseView.extend({
         if (update && typeof update === 'function') {
             update(this.getRteParams(), {
                 ...this.model.attributes,
-                btn: this.el
+                btn: this.el,
+                $btn: this.$el
             });
         }
     }

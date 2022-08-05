@@ -70,7 +70,11 @@ export default `
         outline-offset: -1px;
         outline: 1px dashed rgba(170,170,170,0.7);
     }
-    
+
+    .gjs-dashed [data-gjs-highlightable][data-gjs-type="text-style"] {
+        outline-style: dotted;
+    }
+
     .gjs-dashed [data-gjs-highlightable][data-gjs-type="custom-code"] {
         outline-color: #478409;
         outline-width: 2px;
