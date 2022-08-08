@@ -56,25 +56,25 @@
     }
 }
 
-@include breakpoint('strict-mobile-landscape') {
+@include breakpoint('strict-mobile-big') {
+    .embedded-products {
+        &__item {
+            width: math.div(100%, $embedded-products-item-count-mobile-big);
+
+            &:not(.slick-slide) {
+                min-width: math.div(100%, $embedded-products-item-count-mobile-big);
+            }
+        }
+    }
+}
+
+@include breakpoint('mobile-landscape') {
     .embedded-products {
         &__item {
             width: math.div(100%, $embedded-products-item-count-mobile-landscape);
 
             &:not(.slick-slide) {
                 min-width: math.div(100%, $embedded-products-item-count-mobile-landscape);
-            }
-        }
-    }
-}
-
-@include breakpoint('mobile') {
-    .embedded-products {
-        &__item {
-            width: math.div(100%, $embedded-products-item-count-mobile);
-
-            &:not(.slick-slide) {
-                min-width: math.div(100%, $embedded-products-item-count-mobile);
             }
         }
     }

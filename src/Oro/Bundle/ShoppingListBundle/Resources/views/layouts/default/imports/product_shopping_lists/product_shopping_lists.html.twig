@@ -34,9 +34,9 @@
 {% endblock %}
 
 {% block __product_shopping_lists__shopping_lists_template_preview_widget %}
-    <span class="shopping-lists__cart" aria-hidden="true"></span>
     <div class="shopping-lists__content-wrapper">
         <div class="shopping-lists__text">
+            <span class="shopping-lists__cart" aria-hidden="true"></span>
             <% if (shoppingListsCount == 1) { %>
                 <%- _.__('oro.shoppinglist.actions.in_shopping_list') %>
             <% } else { %>
