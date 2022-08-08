@@ -1,0 +1,91 @@
+Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
+    amandaAddress1:
+        region: '@florida'
+        frontendOwner: '@amanda'
+        country: '@united_states'
+        owner: '@admin'
+        systemOrganization: '@organization'
+        primary: false
+        label: 'Address 1'
+        street: '801 Scenic Hwy'
+        city: 'Haines City'
+        postalCode: '33844'
+        organization: '@organization'
+    amandaAddress2:
+        region: '@new_york'
+        frontendOwner: '@amanda'
+        country: '@united_states'
+        owner: '@admin'
+        systemOrganization: '@organization'
+        primary: true
+        label: 'Address 2'
+        street: '23400 Caldwell Road'
+        city: 'Rochester'
+        postalCode: '14608'
+        organization: '@organization'
+    nancyAddress1:
+        region: '@new_york'
+        frontendOwner: '@nancy'
+        country: '@united_states'
+        owner: '@admin'
+        systemOrganization: '@organization'
+        primary: true
+        label: 'Address 4'
+        street: '2849 Junkins Avenue'
+        city: 'Albany'
+        postalCode: '31707'
+        organization: '@organization'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerAddress:
+    customerAddress1:
+        region: '@florida'
+        frontendOwner: '@customer1'
+        country: '@united_states'
+        owner: '@admin'
+        systemOrganization: '@organization'
+        primary: false
+        label: 'Address 1'
+        street: '905 New Street'
+        city: 'Gamburg'
+        postalCode: '33987'
+        organization: '@organization'
+    customerAddress2:
+        region: '@new_york'
+        frontendOwner: '@customer1'
+        country: '@united_states'
+        owner: '@admin'
+        systemOrganization: '@organization'
+        primary: true
+        label: 'Address 2'
+        street: '23555 Hard Road'
+        city: 'York'
+        postalCode: '12103'
+        organization: '@organization'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUserAddressToAddressType:
+    amandaAddress1ShippingDefault:
+        address: '@amandaAddress1'
+        type: '@shippingType'
+        default: true
+    amandaAddress1BillingDefault:
+        address: '@amandaAddress2'
+        type: '@billingType'
+        default: true
+    nancyAddress1BillingDefault:
+        address: '@nancyAddress1'
+        type: '@shippingType'
+        default: true
+    nancyAddress1ShippingDefault:
+        address: '@nancyAddress1'
+        type: '@billingType'
+        default: true
+
+Oro\Bundle\CustomerBundle\Entity\CustomerAddressToAddressType:
+    customerAddress1ShippingDefault:
+        address: '@customerAddress1'
+        type: '@shippingType'
+        default: true
+    customerAddress1BillingDefault:
+        address: '@customerAddress2'
+        type: '@billingType'
+        default: true

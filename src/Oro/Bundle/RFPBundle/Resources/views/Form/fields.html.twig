@@ -465,6 +465,7 @@
     {% if offers is defined and offers|length %}
         {% set page_component_options = {
         offersSelector: '[name="%s"]'|format(full_name),
+        priceSelector: '#%s'|format(form.parent.price.value.vars.id),
         quantitySelector: '#%s'|format(form.parent.quantity.vars.id),
         unitSelector: '#%s'|format(form.parent.productUnit.vars.id),
         productSelector: '#%s'|format(form.parent.product.vars.id),

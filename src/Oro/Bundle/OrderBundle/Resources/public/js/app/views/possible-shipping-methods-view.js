@@ -68,9 +68,11 @@ define(function(require) {
 
             this.initializeElements(options);
 
-            mediator.on(this.options.events.before, this.showLoadingMask, this);
-            mediator.on(this.options.events.load, this.onOrderChange, this);
-            mediator.on(this.options.events.after, this.hideLoadingMask, this);
+            this.listenTo(mediator, {
+                [`${this.options.events.before}`]: this.showLoadingMask,
+                [`${this.options.events.load}`]: this.onOrderChange,
+                [`${this.options.events.after}`]: this.hideLoadingMask
+            });
         },
 
         render: function() {
@@ -296,8 +298,6 @@ define(function(require) {
             delete this.$form;
             delete this.$document;
             delete this.options;
-
-            mediator.off(null, null, this);
 
             PossibleShippingMethodsView.__super__.dispose.call(this);
         }

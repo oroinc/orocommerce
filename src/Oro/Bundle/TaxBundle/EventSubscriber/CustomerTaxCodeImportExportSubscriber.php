@@ -15,6 +15,9 @@ use Oro\Bundle\TaxBundle\Helper\CustomerTaxCodeImportExportHelper;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Import/export event subscriber for customer tax codes.
+ */
 class CustomerTaxCodeImportExportSubscriber implements EventSubscriberInterface
 {
     /**
@@ -83,7 +86,7 @@ class CustomerTaxCodeImportExportSubscriber implements EventSubscriberInterface
 
         /** @var Customer $customer */
         $customer = $event->getObject();
-        $event->setResultField(
+        $event->setResultFieldValue(
             'tax_code',
             $this->customerTaxCodeImportExportHelper->normalizeCustomerTaxCode(
                 $this->getCustomerTaxCode($customer)

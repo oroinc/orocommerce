@@ -9,6 +9,7 @@ export const lists = ['ul', 'ol', 'li'];
 export const isBlockFormatted = node => node.nodeType === 1 && tags.includes(node.tagName.toLowerCase());
 export const isFormattedText = node => node.nodeType === 1 && formatting.includes(node.tagName.toLowerCase());
 export const isContainLists = node => node.nodeType === 1 && lists.includes(node.tagName.toLowerCase());
+export const isTag = (node, tagName) => node.nodeType === 1 && node.tagName.toLowerCase() === tagName.toLowerCase();
 
 /**
  * Wrap node into wrapper node
@@ -140,7 +141,7 @@ export function getParentsUntil(node, until = document) {
  * @returns {Node}
  */
 export function findParentTag(node, tagName = 'span', reversed = false) {
-    const checkTag = tag => Array.isArray(tagName) ? tagName.includes(tag) : tag === tagName;
+    const checkTag = tag => Array.isArray(tagName) ? tagName.includes(tag) : tag === tagName.toLowerCase();
 
     const nodes = reversed ? getParentsUntil(node) : getParentsUntil(node).reverse();
     const found = nodes.find(item => item.nodeType === 1 && checkTag(item.tagName.toLowerCase()));
@@ -230,4 +231,17 @@ export const focusCursor = (rte, node, end = false) => {
     selection.addRange(range);
 
     node.nodeType === 1 ? node.focus() : node.parentNode.focus();
+};
+
+/**
+ * Check if selection contain node with need tag name
+ * @param {Object} rte
+ * @param {string} tagName
+ * @returns {boolean}
+ */
+export const isTagUnderSelection = (rte, tagName = 'A') => {
+    const {anchorNode, focusNode} = rte.selection();
+    const parentAnchor = anchorNode?.parentNode;
+    const parentFocus = focusNode?.parentNode;
+    return parentAnchor?.nodeName === tagName || parentFocus?.nodeName === tagName;
 };
