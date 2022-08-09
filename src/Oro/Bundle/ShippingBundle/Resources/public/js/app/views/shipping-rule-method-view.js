@@ -277,7 +277,7 @@ define(function(require) {
             }, this);
 
             // replace whitespaces by &nbsp;, for tooltip overflow calculate
-            $preview.html(preview.join(', ').replace(/ /g, '&nbsp;'));
+            $preview.html(preview.map(_.escape).join(', ').replace(/ /g, '&nbsp;'));
 
             this.updatePreviewTooltip($preview, preview);
         },
