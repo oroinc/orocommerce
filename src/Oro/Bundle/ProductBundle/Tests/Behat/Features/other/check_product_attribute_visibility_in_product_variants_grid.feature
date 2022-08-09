@@ -12,7 +12,7 @@ Feature: Check product attribute visibility in product variants grid
       | Field Name | Color  |
       | Type       | Select |
     And click "Continue"
-    And set Options with:
+    And set Options with:g
       | Label |
       | Black |
       | White |
@@ -63,6 +63,6 @@ Feature: Check product attribute visibility in product variants grid
     Then I should see "Product has been saved" flash message
     When I press "Product Variants"
     Then I should see following grid:
-      | SKU   | Color | Size |
-      | 1GB81 | Black | L    |
-      | 1GB82 | White | M    |
+      | SKU   | Inventory status | Color | Size |
+      | 1GB81 | in_stock         | Black | L    |
+      | 1GB82 | in_stock         | White | M    |
