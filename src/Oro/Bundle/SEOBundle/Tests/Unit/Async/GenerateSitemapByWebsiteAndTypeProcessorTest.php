@@ -6,19 +6,16 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\MessageQueueBundle\Entity\Job;
 use Oro\Bundle\SEOBundle\Async\GenerateSitemapByWebsiteAndTypeProcessor;
-use Oro\Bundle\SEOBundle\Async\Topics;
 use Oro\Bundle\SEOBundle\Sitemap\Provider\UrlItemsProviderRegistryInterface;
+use Oro\Bundle\SEOBundle\Topic\GenerateSitemapByWebsiteAndTypeTopic;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Job\JobRunner;
 use Oro\Component\MessageQueue\Transport\Message;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Component\SEO\Provider\UrlItemsProviderInterface;
 use Oro\Component\SEO\Tools\SitemapDumperInterface;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
-use Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException;
 
 class GenerateSitemapByWebsiteAndTypeProcessorTest extends \PHPUnit\Framework\TestCase
 {
@@ -44,17 +41,10 @@ class GenerateSitemapByWebsiteAndTypeProcessorTest extends \PHPUnit\Framework\Te
         $this->sitemapDumper = $this->createMock(SitemapDumperInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
 
-        $urlItemsProviderRegistry = $this->createMock(UrlItemsProviderRegistryInterface::class);
-        $urlItemsProviderRegistry->expects(self::any())
-            ->method('getProvidersIndexedByNames')
-            ->willReturn([
-                'test_type' => $this->createMock(UrlItemsProviderInterface::class)
-            ]);
-
         $this->processor = new GenerateSitemapByWebsiteAndTypeProcessor(
             $this->jobRunner,
             $this->doctrine,
-            $urlItemsProviderRegistry,
+            $this->createMock(UrlItemsProviderRegistryInterface::class),
             $this->sitemapDumper,
             $this->logger
         );
@@ -76,138 +66,8 @@ class GenerateSitemapByWebsiteAndTypeProcessorTest extends \PHPUnit\Framework\Te
     public function testGetSubscribedTopics()
     {
         self::assertEquals(
-            [Topics::GENERATE_SITEMAP_BY_WEBSITE_AND_TYPE],
+            [GenerateSitemapByWebsiteAndTypeTopic::getName()],
             GenerateSitemapByWebsiteAndTypeProcessor::getSubscribedTopics()
-        );
-    }
-
-    public function testProcessForWrongParameters()
-    {
-        $message = $this->getMessage(['key' => 'value']);
-
-        $exception = new UndefinedOptionsException(
-            'The option "key" does not exist. Defined options are: "jobId", "type", "version", "websiteId".'
-        );
-        $this->logger->expects(self::once())
-            ->method('critical')
-            ->with(
-                'Got invalid message.',
-                ['exception' => $exception]
-            );
-
-        self::assertEquals(
-            MessageProcessorInterface::REJECT,
-            $this->processor->process($message, $this->getSession())
-        );
-    }
-
-    public function testProcessForWrongJobIdParameter()
-    {
-        $message = $this->getMessage([
-            'jobId'     => 'wrong',
-            'version'   => 1,
-            'websiteId' => 123,
-            'type'      => 'test_type'
-        ]);
-
-        $exception = new InvalidOptionsException(
-            'The option "jobId" with value "wrong" is expected to be of type "int", but is of type "string".'
-        );
-        $this->logger->expects(self::once())
-            ->method('critical')
-            ->with('Got invalid message.', ['exception' => $exception]);
-
-        self::assertEquals(
-            MessageProcessorInterface::REJECT,
-            $this->processor->process($message, $this->getSession())
-        );
-    }
-
-    public function testProcessForWrongVersionParameter()
-    {
-        $message = $this->getMessage([
-            'jobId'     => 100,
-            'version'   => 'wrong',
-            'websiteId' => 123,
-            'type'      => 'test_type'
-        ]);
-
-        $exception = new InvalidOptionsException(
-            'The option "version" with value "wrong" is expected to be of type "int", but is of type "string".'
-        );
-        $this->logger->expects(self::once())
-            ->method('critical')
-            ->with('Got invalid message.', ['exception' => $exception]);
-
-        self::assertEquals(
-            MessageProcessorInterface::REJECT,
-            $this->processor->process($message, $this->getSession())
-        );
-    }
-
-    public function testProcessForWrongWebsiteIdParameter()
-    {
-        $message = $this->getMessage([
-            'jobId'     => 100,
-            'version'   => 1,
-            'websiteId' => 'wrong',
-            'type'      => 'test_type'
-        ]);
-
-        $exception = new InvalidOptionsException(
-            'The option "websiteId" with value "wrong" is expected to be of type "int", but is of type "string".'
-        );
-        $this->logger->expects(self::once())
-            ->method('critical')
-            ->with('Got invalid message.', ['exception' => $exception]);
-
-        self::assertEquals(
-            MessageProcessorInterface::REJECT,
-            $this->processor->process($message, $this->getSession())
-        );
-    }
-
-    public function testProcessForWrongTypeParameter()
-    {
-        $message = $this->getMessage([
-            'jobId'     => 100,
-            'version'   => 1,
-            'websiteId' => 123,
-            'type'      => 0
-        ]);
-
-        $exception = new InvalidOptionsException(
-            'The option "type" with value 0 is expected to be of type "string", but is of type "int".'
-        );
-        $this->logger->expects(self::once())
-            ->method('critical')
-            ->with('Got invalid message.', ['exception' => $exception]);
-
-        self::assertEquals(
-            MessageProcessorInterface::REJECT,
-            $this->processor->process($message, $this->getSession())
-        );
-    }
-
-    public function testProcessForNotAllowedValueInTypeParameter()
-    {
-        $message = $this->getMessage([
-            'jobId'     => 100,
-            'version'   => 1,
-            'websiteId' => 123,
-            'type'      => 'another_type'
-        ]);
-
-        $exception = new InvalidOptionsException(
-            'The option "type" with value "another_type" is invalid. Accepted values are: "test_type".'
-        );
-        $this->logger->expects(self::once())
-            ->method('critical')
-            ->with('Got invalid message.', ['exception' => $exception]);
-
-        self::assertEquals(
-            MessageProcessorInterface::REJECT,
-            $this->processor->process($message, $this->getSession())
         );
     }
 
