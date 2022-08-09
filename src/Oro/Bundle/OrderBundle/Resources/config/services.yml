@@ -180,6 +180,8 @@ services:
     oro_order.event_listener.order.address:
         class: 'Oro\Bundle\OrderBundle\EventListener\Order\OrderAddressEventListener'
         parent: oro_order.event_listener.order.form.abstract
+        calls:
+            - [setAddressManager, ['@oro_order.manager.order_address']]
         tags:
             - { name: kernel.event_listener, event: oro_order.order, method: onOrderEvent }
 

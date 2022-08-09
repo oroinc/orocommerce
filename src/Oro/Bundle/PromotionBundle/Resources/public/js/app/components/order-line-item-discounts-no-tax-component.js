@@ -40,11 +40,11 @@ define(function(require) {
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
-
-            mediator.on('entry-point:order:load:before', this.showLoadingMask, this);
-            mediator.on('entry-point:order:load', this.setDiscounts, this);
-            mediator.on('entry-point:order:load:after', this.hideLoadingMask, this);
-
+            this.listenTo(mediator, {
+                'entry-point:order:load:before': this.showLoadingMask,
+                'entry-point:order:load': this.setDiscounts,
+                'entry-point:order:load:after': this.hideLoadingMask
+            });
             this.loadingMaskView = new LoadingMaskView({container: this.options._sourceElement});
         },
 
@@ -79,21 +79,6 @@ define(function(require) {
             this.options._sourceElement
                 .find(this.options.selectors.rowTotalAfterDiscount)
                 .text(rowTotalAfterDiscount);
-        },
-
-        /**
-         * @inheritdoc
-         */
-        dispose: function() {
-            if (this.disposed) {
-                return;
-            }
-
-            mediator.off('entry-point:order:load:before', this.showLoadingMask, this);
-            mediator.off('entry-point:order:load', this.setDiscounts, this);
-            mediator.off('entry-point:order:load:after', this.hideLoadingMask, this);
-
-            OrderLineItemAppliedDiscountsComponent.__super__.dispose.call(this);
         }
     });
 

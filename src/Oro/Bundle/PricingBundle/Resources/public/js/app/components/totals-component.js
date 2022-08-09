@@ -156,9 +156,9 @@ define(function(require) {
         },
 
         initializeListeners: function() {
-            _.each(this.options.events, function(event) {
-                mediator.on(event, this.updateTotals, this);
-            }, this);
+            _.each(this.options.events, event => {
+                this.listenTo(mediator, event, this.updateTotals);
+            });
         },
 
         showLoadingMask: function() {
@@ -319,8 +319,6 @@ define(function(require) {
             }
 
             delete this.items;
-
-            mediator.off(null, null, this);
 
             TotalsComponent.__super__.dispose.call(this);
         }
