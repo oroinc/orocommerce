@@ -12,7 +12,7 @@ Feature: Check product attribute visibility in product variants grid
       | Field Name | Color  |
       | Type       | Select |
     And click "Continue"
-    And set Options with:g
+    And set Options with:
       | Label |
       | Black |
       | White |
