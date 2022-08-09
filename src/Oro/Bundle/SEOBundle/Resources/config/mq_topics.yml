@@ -1,0 +1,10 @@
+services:
+  _defaults:
+    tags:
+      - { name: oro_message_queue.topic }
+
+  Oro\Bundle\SEOBundle\Topic\GenerateSitemapTopic: ~
+  Oro\Bundle\SEOBundle\Topic\GenerateSitemapIndexTopic: ~
+  Oro\Bundle\SEOBundle\Topic\GenerateSitemapByWebsiteAndTypeTopic:
+    arguments:
+      - '@oro_seo.sitemap.provider.full_list_urls_provider_registry'

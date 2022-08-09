@@ -3,7 +3,7 @@
 namespace Oro\Bundle\SEOBundle\Tests\Unit\Async;
 
 use Oro\Bundle\SEOBundle\Async\SitemapGenerationScheduler;
-use Oro\Bundle\SEOBundle\Async\Topics;
+use Oro\Bundle\SEOBundle\Topic\GenerateSitemapTopic;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
 class SitemapGenerationSchedulerTest extends \PHPUnit\Framework\TestCase
@@ -26,9 +26,9 @@ class SitemapGenerationSchedulerTest extends \PHPUnit\Framework\TestCase
 
     public function testScheduleSend()
     {
-        $this->messageProducer->expects(static::once())
+        $this->messageProducer->expects(self::once())
             ->method('send')
-            ->with($this->equalTo(Topics::GENERATE_SITEMAP));
+            ->with(self::equalTo(GenerateSitemapTopic::getName()));
 
         $this->sitemapGenerationScheduler->scheduleSend();
     }

@@ -298,7 +298,6 @@ services:
         arguments:
             - '@oro_message_queue.job.runner'
             - '@doctrine'
-            - '@oro_seo.sitemap.provider.full_list_urls_provider_registry'
             - '@oro_seo.sitemap.sitemap_url_dumper'
             - '@logger'
         tags:
