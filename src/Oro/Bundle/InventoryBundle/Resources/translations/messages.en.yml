@@ -91,10 +91,10 @@ oro:
                 inventory_threshold.label: Inventory Threshold
                 highlight_low_inventory:
                     label: Highlight Low Inventory
-                    tooltip: Indicates whether wholesale buyers are able to see that there might not be enough product left in stock for their purchase.
+                    tooltip: Select the option to indicate to the buyers that there might not be enough product left in stock for their purchase.
                 low_inventory_threshold:
                     label: Low Inventory Threshold
-                    tooltip: The minimum stock level defined for the product. Reaching the defined level will trigger a warning message to the buyer in the front store.
+                    tooltip: Set the minimum stock level for the product. Reaching the defined level triggers a warning message to the buyer in the storefront.
                 backorders.label: Backorders
                 decrement_inventory:
                     label: Decrement Inventory
@@ -103,7 +103,7 @@ oro:
                 maximum_quantity_to_order.label: Maximum Quantity To Order
                 hide_labels_past_availability_date:
                     label: Hide Labels Past Availability Date
-                    tooltip: The upcoming products will not be labeled as upcoming if the availability date has already passed. Otherwise, the upcoming product label will be displayed as long as the product is marked as upcoming regardless of its availability date.
+                    tooltip: Enable the option to remove the label for the upcoming products automatically once the availability date has passed. Disable the option to keep the label displayed as long as the product is marked as upcoming regardless of its availability date.
 
         manage_inventory:
             label: Managed Inventory

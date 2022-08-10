@@ -57,7 +57,7 @@ oro:
                 consent:
                     feature_enabled.label: Enable user consents feature
                     enabled_consents.label: Enabled user consents
-                    enabled_consents.tooltip: Select which of the available consents to display in the storefront.
+                    enabled_consents.tooltip: Select the consents to be displayed in the storefront.
             groups:
                 consents:
                     title: Consents

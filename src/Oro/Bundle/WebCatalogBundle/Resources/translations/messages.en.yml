@@ -85,13 +85,13 @@ oro:
             fields:
                 web_catalog:
                     label: Web Catalog
-                    tooltip: Assign a web catalog to the storefront
+                    tooltip: Select a web catalog for the storefront.
                 navigation_root:
                     label: Navigation Root
-                    tooltip: Assign a content node as root for building a navigation tree on the storefront
+                    tooltip: Select a root content node for the storefront. Only the sub-menu nodes that belong to the selected parent node will be visible in the storefront.
                 enable_web_catalog_canonical_url:
                     label: Prefer Self-Contained Web Catalog Canonical URLs
-                    tooltip: When this option is disabled, the canonical URLs will point to the direct URLs of the underlying content types if they are available.
+                    tooltip: Disable the option for the canonical URLs to point to the direct URLs of the underlying content types if they are available.
 
     scope:
         web_catalog.label: Web Catalog

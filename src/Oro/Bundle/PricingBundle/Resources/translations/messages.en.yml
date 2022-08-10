@@ -295,7 +295,7 @@ oro.pricing:
         fields:
             feature_enabled:
                 label: Enable Oro Pricing
-                tooltip: Enable the default OroCommerce pricing management system.
+                tooltip: Select the option to enable the default OroCommerce pricing management system.
             price_lists.title: Price Lists
             precision:
                 label: Subtotals Calculation Precision in Sales Documents

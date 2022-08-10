@@ -168,7 +168,7 @@ oro:
                 feature_enabled.label: Enable Promotions
                 case_insensitive_coupon_search:
                     label: Case-Insensitive Coupon Codes
-                    tooltip: If this option is enabled the letter case will be ignored when applying coupon codes. For example, "freeship" and "FREESHIP" will be considered equal.
+                    tooltip: Enable the option to ignore the letter case when applying coupon codes. In this case, "freeship" and "FREESHIP" are considered equal.
                 discount_strategy.label: Discount Strategy
 
         controller:

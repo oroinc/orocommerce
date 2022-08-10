@@ -199,10 +199,10 @@ oro:
                         if_no_sales_reps_assigned: 'If customer has no sales reps assigned'
                 guest_rfp:
                     title: 'Enable Guest RFQ'
-                    tooltip: 'Enable Guest RFQ'
+                    tooltip: 'Select the option to enable guest users to request quotes on the items they are interested in from the storefront.'
                 default_guest_rfp_owner:
                     title: 'Default guest RFQ owner'
-                    tooltip: 'Default guest RFQ owner'
+                    tooltip: 'Select the default owner of all guest RFQs.'
         message:
             requestproductitem.unit.removed: '{title} - removed'
 

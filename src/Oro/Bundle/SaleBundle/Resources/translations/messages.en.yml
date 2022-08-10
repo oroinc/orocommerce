@@ -284,9 +284,9 @@ oro:
                 add_free_form_items: "Add free-form items"
         form:
             tooltip:
-                  allow_user_configuration: 'When checked, the sales representatives will be able to choose one of the options enabled below.'
-                  guest_contact_info_text: 'You may use this setting to enter the sales contact information that will be shown to non-authenticated visitors.'
-                  enable_guest_quote: 'Enables generation of unique links for sending quotes to guest users. "Guest Website Access" setting should be enabled to allow guests to view the quotes, and "Guest Checkout" setting should be enabled to allow guests to accept the quotes.'
+                  allow_user_configuration: 'Select the option to let sales reps configure the appearance of their contact information in the storefront. The options that are selected below will be enabled for the sales reps in their user configuration settings.'
+                  guest_contact_info_text: 'Provide the sales contact information to be shown to guest customers in the storefront.'
+                  enable_guest_quote: 'Enable the option to generate unique links for sending quotes to guest users. Make sure to enable Guest Website Access to let guests view the quotes, and Guest Checkout to enable guests to accept the quotes.'
         available_customer_options:
             type:
                 dont_display.label: "Don't Display Contact Info"
