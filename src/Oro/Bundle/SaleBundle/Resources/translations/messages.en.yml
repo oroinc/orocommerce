@@ -1,6 +1,7 @@
 oro:
     menu:
         sales_tab.label: 'Sales'
+
     sale:
         quote:
             entity_label: 'Quote'
@@ -97,6 +98,11 @@ oro:
                 quote.return.success: 'Quote #%id% returned'
                 quote.approve.success: 'Quote #%id% approved'
                 quote.decline_by_reviewer.success: 'Quote #%id% declined'
+
+            feature:
+                user_settings:
+                    label: Sales Representative`s Contact Information
+                    description: Enables access to user configuration settings to set up how the sales rep`s contact details are displayed in the storefront footer links.
 
             form:
                 address:
@@ -282,28 +288,44 @@ oro:
                 quote_prices_override: "Override quote prices"
                 quote_review_and_approve: "Review and approve quotes"
                 add_free_form_items: "Add free-form items"
+
+        feature:
+            quote:
+                label: Back-Office Quotes
+                description: Enables back-office quote management, allows access to configuration option Can Be Added To Quotes under System > Configuration > Commerce > Inventory > Allowed Statuses, enables access to operations Expire Quote, Notify Customer by Email, Accept Quote, and provides access to quotes via API.
+            guest_quote:
+                label: Guest Quote
+                description: Enables the Guest Quote configuration feature that controls whether to generate unique links for sending quotes to guest users. Make sure to enable Guest Website Access to let guests view the quotes, and Guest Checkout to enable guests to accept the quotes.
+            quote_frontend:
+                label: Storefront Quotes
+                description: Enables quotes for the storefront and adds the Quotes section under the Account menu for registered customers.
+
         form:
             tooltip:
                   allow_user_configuration: 'Select the option to let sales reps configure the appearance of their contact information in the storefront. The options that are selected below will be enabled for the sales reps in their user configuration settings.'
                   guest_contact_info_text: 'Provide the sales contact information to be shown to guest customers in the storefront.'
                   enable_guest_quote: 'Enable the option to generate unique links for sending quotes to guest users. Make sure to enable Guest Website Access to let guests view the quotes, and Guest Checkout to enable guests to accept the quotes.'
+
         available_customer_options:
             type:
                 dont_display.label: "Don't Display Contact Info"
                 customer_user_owner.label: 'Customer User Owner'
                 customer_owner.label: 'Customer Owner'
                 pre_configured.label: 'Pre-Configured'
+
         available_user_options:
             type:
                 dont_display.label: "Don't Display Contact Info"
                 user_profile_data.label: 'Use User Profile Data'
                 enter_manually.label: 'Enter Manually'
+
         contact_info_user_options:
             type:
                 dont_display.label: "Don't Display Contact Info"
                 user_profile_data.label: 'Use My Profile Data'
                 enter_manually.label: 'Enter Manually'
                 use_system.label: 'Use System'
+
     frontend:
         sale:
             menu:

@@ -11,18 +11,30 @@ features:
             - 'oro_rfp_request_create_order'
         operations:
             - 'oro_rfp_create_quote'
+        entities:
+            - 'Oro\Bundle\RFPBundle\Entity\Request'
+            - 'Oro\Bundle\RFPBundle\Entity\RequestProduct'
+            - 'Oro\Bundle\RFPBundle\Entity\RequestProductItem'
+            - 'Oro\Bundle\RFPBundle\Entity\RequestAdditionalNote'
+            - 'Extend\Entity\EV_Rfp_Customer_Status'
+            - 'Extend\Entity\EV_Rfp_Internal_Status'
         api_resources:
             - 'Oro\Bundle\RFPBundle\Entity\Request'
             - 'Oro\Bundle\RFPBundle\Entity\RequestProduct'
             - 'Oro\Bundle\RFPBundle\Entity\RequestProductItem'
+            - 'Oro\Bundle\RFPBundle\Entity\RequestAdditionalNote'
+            - 'Extend\Entity\EV_Rfp_Customer_Status'
+            - 'Extend\Entity\EV_Rfp_Internal_Status'
+        navigation_items:
+            - 'application_menu.sales_tab.request_list'
         configuration:
             - 'rfp_notifications'
             - 'oro_rfp.frontend_product_visibility'
             - 'oro_rfp.backend_product_visibility'
 
     rfp_frontend:
-        label: oro.rfp.frontend.feature.label
-        description: oro.rfp.forntend.feature.description
+        label: oro.rfp.feature.frontend_rfp.label
+        description: oro.rfp.feature.frontend_rfp.description
         toggle: oro_rfp.frontend_feature_enabled
         dependencies:
             - 'rfp'
@@ -38,9 +50,9 @@ features:
             - 'oro_rfp_frontend_request_update'
 
     guest_rfp:
-        label: oro.rfp.system_configuration.fields.guest_rfp.label
-        description: oro.rfp.system_configuration.fields.guest_rfp.tooltip
+        label: oro.rfp.feature.guest_rfp.label
+        description: oro.rfp.feature.guest_rfp.description
         toggle: oro_rfp.guest_rfp
+        strategy: affirmative
         configuration:
             - 'guest_rfp_owner_section'
-        strategy: affirmative

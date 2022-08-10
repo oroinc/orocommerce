@@ -63,8 +63,8 @@ oro:
                     title: Consents
 
         feature:
-            label: User Consents
-            description: User consents functionality asking users for consents (for example to store personal data or receive emails), store and manage these consents.
+            label: Consents
+            description: Enables back-office users to create and manage consents to ensure data protection and regulations compliance, and storefront users to accept or revoke the consents.
         content_source:
             none: N/A
 

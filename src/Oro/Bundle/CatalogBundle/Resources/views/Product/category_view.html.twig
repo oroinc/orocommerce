@@ -1,7 +1,7 @@
 {% import '@OroUI/macros.html.twig' as UI %}
 {% set categoryTitle  = oro_product_category_title(entity)|oro_html_sanitize %}
 
-{%- if entity and is_granted('EDIT', entity) -%}
+{%- if entity and is_granted('EDIT', entity) and feature_resource_enabled('oro_catalog_category_update', 'routes') -%}
     {% set categoryFullPath  = oro_product_category_full_path(entity) %}
     {% set category = UI.renderUrl(path('oro_catalog_category_update', {'id': entity.id}), categoryTitle, null, categoryFullPath) %}
 {%- else -%}

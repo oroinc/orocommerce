@@ -37,7 +37,10 @@ oro:
             organization:
                 label:            Organization
                 description:      The relationship on organization.
-
+            feature:
+                manage:
+                    label: Inventory Level Management
+                    description: Enables managing the product inventory in a warehouse, such as adjusting the quantity and inventory status of products.
             error:
                 units: "Please add at least one Unit of Quantity to the current product to enable inventory management."
 

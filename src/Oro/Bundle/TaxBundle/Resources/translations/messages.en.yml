@@ -11,6 +11,11 @@ oro.tax:
 
     subtotals.tax: 'Tax'
 
+    feature:
+        manage:
+            label: Tax Management
+            description: Enables creating and managing product and customer tax codes, tax rates, tax rules, and tax jurisdictions.
+
     form:
         choose: 'Choose a tax'
         tooltip.zip_codes: 'If you want to type only one zip code, you can fill any field in the row'

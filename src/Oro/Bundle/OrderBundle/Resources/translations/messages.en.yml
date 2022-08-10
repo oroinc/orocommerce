@@ -413,6 +413,16 @@ oro:
                 address_billing_allow_manual: Enter the billing address manually
                 payment_term_customer_can_override: Override customer payment term
 
+        feature:
+            label: Orders
+            description: Enables creating new and managing submitted orders, adjusting the order information, adding discounts, tracking shipment, or canceling the wrong orders.
+            create:
+                label: Create Orders
+                description: Enables creating orders
+            previously_purchased_products:
+                label: Purchase History
+                description: Enables the Previously Purchased Products page in the storefront that displays the products that were recently purchased by customer users.
+
         form:
             address:
                 choose: Select an address

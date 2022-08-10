@@ -104,6 +104,7 @@ oro.pricing:
             message: Price List was Duplicated successfull
         not_actual:
             recalculation: This price list is currently being recalculated. You may make further edits, but please allow for additional time to see the updated prices on the store frontend.
+
     priceattributepricelist:
         entity_label: Price Attribute
         entity_plural_label: Price Attributes
@@ -270,6 +271,23 @@ oro.pricing:
         product_price.saved.message: Product Price has been saved
         price_attribute_price_list.saved.message: Price Attribute has been saved
 
+    feature:
+        pricing:
+            label: Oro Pricing
+            description: Enables the overall pricing functionality.
+        price_lists:
+            label: Default Price Lists (Oro Pricing)
+            description: Enables management of price lists, price list schedule, price rules, product prices, configuration of default price lists and a set of CLI commands related to price lists functionality.
+            flat:
+                label: Flat Pricing (Oro Pricing)
+                description: Enables simple price management where prices are fetched directly from the price lists without pricing strategies and price merges.
+            combined:
+                label: Combined Price Lists (Oro Pricing)
+                description: Enables access to combined price list functionality of Oro Pricing.
+        price_attributes:
+            label: Price Attributes
+            description: Enables creating and managing price attributes (e.g., map, msrp, shippingCost).
+
     form:
         choose_price_list: Choose a Price List...
         add_rule.label: Add
@@ -361,6 +379,7 @@ oro.pricing:
                 long_label: 'Unit price'
         summary: 'Summary'
         summary_count: '{0} No Items|{1} %count% Item|]1,Inf[ %count% Items'
+
     notification:
         price_list:
             error:

@@ -102,6 +102,15 @@ oro:
         controller:
             shopping_list.saved.message: Shopping List has been saved
 
+        feature:
+            label: Shopping Lists
+            description: Enables a shopping list management feature that allows to view customers’ shopping lists, duplicate them, adjust line item quantity, and create an order from the selected shopping list.
+            guest_shopping_list:
+                label: Guest Shopping List
+                description: Enables guest customers to create a shopping list in the storefront. Only one shopping list is available for guest customers.
+            shopping_list_create:
+                label: Shopping Lists in the Storefront
+                description: Enables access to and management of the shopping lists in the storefront.
         lineitem:
             entity_label: Shopping List Line Item
             entity_plural_label: Shopping List Line Items

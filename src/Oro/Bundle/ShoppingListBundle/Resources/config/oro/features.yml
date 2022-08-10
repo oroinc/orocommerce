@@ -1,22 +1,50 @@
 features:
     rfp_frontend:
         operations:
-            - 'oro_shoppinglist_frontend_request_quote'
+            - oro_shoppinglist_frontend_request_quote
+
+    shopping_lists:
+        label: oro.shoppinglist.feature.label
+        description: oro.shoppinglist.feature.description
+        allow_if_all_abstain: true
+        routes:
+            - oro_shopping_list_index
+            - oro_shopping_list_view
+            - oro_shopping_list_info
+        entities:
+            - Oro\Bundle\ShoppingListBundle\Entity\ShoppingList
+            - Oro\Bundle\ShoppingListBundle\Entity\LineItem
+        api_resources:
+            - Oro\Bundle\ShoppingListBundle\Entity\ShoppingList
+            - Oro\Bundle\ShoppingListBundle\Entity\LineItem
+        operations:
+            - oro_shoppinglist_createorder
+            - oro_shoppinglist_addlineitem
+            - oro_shoppinglist_updatelineitem
+            - oro_shoppinglist_delete
+            - oro_shoppinglist_delete_line_item
+            - oro_shoppinglist_duplicate
+        configuration:
+            - oro_shopping_list.backend_product_visibility
+        navigation_items:
+            - application_menu.sales_tab.shopping_list
+
     shopping_list_create:
-        label: oro.shoppinglist.system_configuration.fields.shopping_list_create.label
-        description: oro.shoppinglist.system_configuration.fields.shopping_list_create.tooltip
+        label: oro.shoppinglist.feature.shopping_list_create.label
+        description: oro.shoppinglist.feature.shopping_list_create.description
         strategy: affirmative
         routes:
-            - 'oro_shopping_list_frontend_create'
-            - 'oro_shopping_list_add_products_to_new_massaction'
+            - oro_shopping_list_frontend_create
+            - oro_shopping_list_add_products_to_new_massaction
         operations:
-            - 'oro_shoppinglist_frontend_duplicate_action'
+            - oro_shoppinglist_frontend_duplicate_action
+
     guest_shopping_list:
-        label: oro.shoppinglist.system_configuration.fields.availability_for_guests.label
-        description: oro.shoppinglist.system_configuration.fields.availability_for_guests.tooltip
+        label: oro.shoppinglist.feature.guest_shopping_list.label
+        description: oro.shoppinglist.feature.guest_shopping_list.description
         toggle: oro_shopping_list.availability_for_guests
         strategy: affirmative
         routes:
-            - 'oro_shopping_list_frontend_view'
-            - 'oro_shopping_list_frontend_update'
-            - 'oro_shopping_list_frontend_create'
+            - oro_shopping_list_frontend_view
+            - oro_shopping_list_frontend_update
+            - oro_shopping_list_frontend_create

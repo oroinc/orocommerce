@@ -265,6 +265,17 @@ oro:
         order.line_items.line_item_has_no_price_allow_rfp.message: Some products have not been added to this order. Please create an RFQ to request price.
         order.line_items.line_item_has_no_price_not_allow_rfp.message: Some products have not been added to this order.
 
+        feature:
+            guest_checkout:
+                label: Guest Checkout
+                description: Enables guest customers to proceed through the steps of the checkout similarly to registered customers.
+            checkout_customer_users_registration:
+                label: Customer User Registration at Checkout
+                description: Enables customer users to register on the checkout page.
+            allow_checkout_without_email_confirmation:
+                label: Checkout Without Email Confirmation
+                description: Enables customers to proceed to the checkout once registration details are provided, without email confirmation.
+
         system_configuration:
             fields:
                 frontend_show_open_orders.title: 'Show Open Orders'

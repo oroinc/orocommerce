@@ -1,0 +1,51 @@
+features:
+    manage_taxes:
+        label: oro.tax.feature.manage.label
+        description: oro.tax.feature.manage.description
+        allow_if_all_abstain: true
+        routes:
+            - oro_tax_index
+            - oro_tax_view
+            - oro_tax_create
+            - oro_tax_update
+            - oro_tax_rule_index
+            - oro_tax_rule_view
+            - oro_tax_rule_create
+            - oro_tax_rule_update
+            - oro_tax_jurisdiction_index
+            - oro_tax_jurisdiction_view
+            - oro_tax_jurisdiction_create
+            - oro_tax_jurisdiction_update
+            - oro_tax_product_tax_code_index
+            - oro_tax_product_tax_code_view
+            - oro_tax_product_tax_code_create
+            - oro_tax_product_tax_code_update
+            - oro_api_patch_product_tax_code
+            - oro_tax_customer_tax_code_index
+            - oro_tax_customer_tax_code_view
+            - oro_tax_customer_tax_code_create
+            - oro_tax_customer_tax_code_update
+        entities:
+            - Oro\Bundle\TaxBundle\Entity\Tax
+            - Oro\Bundle\TaxBundle\Entity\TaxRule
+            - Oro\Bundle\TaxBundle\Entity\TaxJurisdiction
+            - Oro\Bundle\TaxBundle\Entity\ZipCode
+            - Oro\Bundle\TaxBundle\Entity\ProductTaxCode
+            - Oro\Bundle\TaxBundle\Entity\CustomerTaxCode
+        api_resources:
+            - Oro\Bundle\TaxBundle\Entity\Tax
+            - Oro\Bundle\TaxBundle\Entity\TaxRule
+            - Oro\Bundle\TaxBundle\Entity\TaxJurisdiction
+            - Oro\Bundle\TaxBundle\Entity\ZipCode
+            - [Oro\Bundle\TaxBundle\Entity\ProductTaxCode, [create, update, delete, delete_list]]
+            - [Oro\Bundle\TaxBundle\Entity\CustomerTaxCode, [create, update, delete, delete_list]]
+        navigation_items:
+            - application_menu.taxes_tab.tax_list
+            - application_menu.taxes_tab.tax_rule_list
+            - application_menu.taxes_tab.tax_jurisdiction
+            - application_menu.taxes_tab.product_tax_code_list
+            - application_menu.taxes_tab.customer_tax_code_list
+
+    manage_products:
+        routes:
+            - oro_api_patch_product_tax_code

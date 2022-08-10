@@ -249,13 +249,16 @@ oro:
                     qty: 'QTY'
 
         feature:
-            label: 'Request For Quote'
-            description: 'Request For Quote allows users to place Requests for chosen products'
+            label: Back-Office Requests for Quotes
+            description: Enables back-office users to work with submitted requests for quotes, process them and convert them into quotes.
+            guest_rfp:
+                label: Guest RFQ
+                description: Enables the Guest RFQ configuration feature that controls whether to allow guest users to request quotes on the items they are interested in from the storefront.
+            frontend_rfp:
+                label: Storefront Requests for Quotes
+                description: Enables customer users to submit requests for quotes through the storefront.
 
     frontend:
-        feature:
-            label: 'Request For Quote (Store Front)'
-            description: 'Request For Quote allows users to place Requests for chosen products'
         product:
             view:
                 request_a_quote: 'Request a Quote'
