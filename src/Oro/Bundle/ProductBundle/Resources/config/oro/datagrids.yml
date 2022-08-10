@@ -441,12 +441,15 @@ datagrids:
                     - product.status
                     - product.denormalizedDefaultName as productName
                     - product.denormalizedDefaultNameUppercase as productNameUppercase
-                    - IDENTITY(product.inventory_status) AS inventoryStatusName
+                    - productInventoryStatus.name as inventoryStatusName
                 from:
                     - { table: 'Oro\Bundle\ProductBundle\Entity\Product', alias: product }
                 where:
                     and:
                         - product.id <> :parentProduct
+                join:
+                    left:
+                        - { join: product.inventory_status, alias: productInventoryStatus }
             bind_parameters:
                 - parentProduct
         sorters:

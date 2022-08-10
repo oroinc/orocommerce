@@ -26,6 +26,12 @@ Feature: Check product attribute visibility in product variants grid
       | Label |
       | L     |
       | M     |
+    And save and close form
+    And click "Create Attribute"
+    And fill form with:
+      | Field Name | Transparent |
+      | Type       | Boolean     |
+    And click "Continue"
     When I save and close form
     And click update schema
     Then I should see Schema updated flash message
@@ -34,7 +40,7 @@ Feature: Check product attribute visibility in product variants grid
     Given I go to Products/ Product Families
     And click "Edit" on row "default_family" in grid
     When I fill "Product Family Form" with:
-      | Attributes | [Color, Size] |
+      | Attributes | [Color, Size, Transparent] |
     And save and close form
     Then I should see "Successfully updated" flash message
 
@@ -43,6 +49,7 @@ Feature: Check product attribute visibility in product variants grid
     When I click Edit 1GB81 in grid
     And fill in product attribute "Color" with "Black"
     And fill in product attribute "Size" with "L"
+    And fill in product attribute "Transparent" with "No"
     And save and close form
     Then I should see "Product has been saved" flash message
 
@@ -51,6 +58,7 @@ Feature: Check product attribute visibility in product variants grid
     When I click Edit 1GB82 in grid
     And fill in product attribute "Color" with "White"
     And fill in product attribute "Size" with "M"
+    And fill in product attribute "Transparent" with "Yes"
     And save and close form
     Then I should see "Product has been saved" flash message
 
@@ -58,11 +66,11 @@ Feature: Check product attribute visibility in product variants grid
     Given I go to Products/Products
     And click Edit 1GB83 in grid
     When I fill "ProductForm" with:
-      | Configurable Attributes | [Color, Size] |
+      | Configurable Attributes | [Color, Size, Transparent] |
     And save form
     Then I should see "Product has been saved" flash message
     When I press "Product Variants"
     Then I should see following grid:
-      | SKU   | Inventory status | Color | Size |
-      | 1GB81 | in_stock         | Black | L    |
-      | 1GB82 | in_stock         | White | M    |
+      | SKU   | Inventory status | Color | Size | Transparent |
+      | 1GB81 | In Stock         | Black | L    | No          |
+      | 1GB82 | In Stock         | White | M    | Yes         |
