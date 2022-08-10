@@ -141,6 +141,7 @@ operations:
                 attribute: $.lineItem
             - '@assign_value': [$.lineItem.shoppingList, $.data]
             - '@assign_value': [$.lineItem.customerUser, $.data.customerUser]
+            - '@assign_value': [$.lineItem.owner, $.data.owner]
             - '@assign_value': [$.lineItem.organization, $.data.organization]
         actions:
             - '@run_action_group':
@@ -162,6 +163,7 @@ operations:
         button_options:
             icon: fa-pencil-square-o
         frontend_options:
+            title: oro.shoppinglist.lineitem.edit_line_item
             options:
                 modal: true
         form_init:
