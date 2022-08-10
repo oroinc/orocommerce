@@ -14,6 +14,7 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecis
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadVariantFields;
 use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodes;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
 
 /**
  * @dbIsolationPerTest
@@ -35,7 +36,8 @@ class ProductUpdateListTest extends RestJsonApiUpdateListTestCase
             LoadCategoryData::class,
             LoadVariantFields::class,
             LoadLocalizationData::class,
-            LoadProductData::class
+            LoadProductData::class,
+            LoadOrganization::class
         ]);
     }
 
@@ -87,7 +89,7 @@ class ProductUpdateListTest extends RestJsonApiUpdateListTestCase
         $response = $this->cget(
             ['entity' => 'products'],
             [
-                'filter' => ['sku' => ['@product-1->sku', '@product-2->sku']],
+                'filter'           => ['sku' => ['@product-1->sku', '@product-2->sku']],
                 'fields[products]' => 'status'
             ]
         );
@@ -134,5 +136,180 @@ class ProductUpdateListTest extends RestJsonApiUpdateListTestCase
         self::assertEquals('Test variant product', $variantProduct->getName());
         self::assertEquals('simple', $variantProduct->getType());
         self::assertEquals('enabled', $variantProduct->getStatus());
+    }
+
+    public function testTryToUpdateProductWithInvalidData()
+    {
+        $operationId = $this->processUpdateList(
+            Product::class,
+            [
+                'data' => [
+                    [
+                        'meta'          => ['update' => true],
+                        'type'          => 'products',
+                        'id'            => '<toString(@product-1->id)>',
+                        'relationships' => [
+                            'organization' => [
+                                'data' => ['type' => 'organizations', 'id' => '99999']
+                            ],
+                            'names'        => [
+                                'data' => [
+                                    ['type' => 'productnames', 'id' => '<toString(@product-1.names.default->id)>'],
+                                    ['type' => 'productnames', 'id' => '<toString(@product-1.names.en_CA->id)>']
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            false
+        );
+        $this->assertAsyncOperationErrors(
+            [
+                [
+                    'id'     => $operationId . '-1-1',
+                    'status' => 400,
+                    'title'  => 'form constraint',
+                    'detail' => 'The entity does not exist.',
+                    'source' => ['pointer' => '/data/0/relationships/organization/data'],
+                ]
+            ],
+            $operationId
+        );
+
+        $response = $this->get(
+            ['entity' => 'products', 'id' => '<toString(@product-1->id)>'],
+            ['fields[products]' => 'sku,names,organization']
+        );
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    'type'          => 'products',
+                    'id'            => '<toString(@product-1->id)>',
+                    'attributes'    => ['sku' => 'product-1'],
+                    'relationships' => [
+                        'organization' => [
+                            'data' => ['type' => 'organizations', 'id' => '<toString(@organization->id)>']
+                        ],
+                        'names'        => [
+                            'data' => [
+                                ['type' => 'productnames', 'id' => '<toString(@product-1.names.default->id)>'],
+                                ['type' => 'productnames', 'id' => '<toString(@product-1.names.en_CA->id)>']
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            $response
+        );
+    }
+
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
+    public function testTryToUpdateProductWithInvalidDataAndIncludedData()
+    {
+        $operationId = $this->processUpdateList(
+            Product::class,
+            [
+                'data'     => [
+                    [
+                        'meta'          => ['update' => true],
+                        'type'          => 'products',
+                        'id'            => '<toString(@product-1->id)>',
+                        'relationships' => [
+                            'organization' => [
+                                'data' => ['type' => 'organizations', 'id' => '99999']
+                            ],
+                            'names'        => [
+                                'data' => [
+                                    ['type' => 'productnames', 'id' => '<toString(@product-1.names.default->id)>'],
+                                    ['type' => 'productnames', 'id' => '<toString(@product-1.names.en_CA->id)>']
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+                'included' => [
+                    [
+                        'type'          => 'productnames',
+                        'id'            => '<toString(@product-1.names.default->id)>',
+                        'attributes'    => ['string' => 'product-1.names.default', 'fallback' => null],
+                        'relationships' => [
+                            'product'      => ['data' => ['type' => 'products', 'id' => '<toString(@product-1->id)>']],
+                            'localization' => ['data' => null]
+                        ]
+                    ],
+                    [
+                        'type'          => 'productnames',
+                        'id'            => '<toString(@product-1.names.en_CA->id)>',
+                        'attributes'    => ['string' => 'product-1.names.en_CA', 'fallback' => null],
+                        'relationships' => [
+                            'product'      => ['data' => ['type' => 'products', 'id' => '<toString(@product-1->id)>']],
+                            'localization' => ['data' => ['type' => 'localizations', 'id' => '<toString(@en_CA->id)>']]
+                        ]
+                    ]
+                ]
+            ],
+            false
+        );
+        $this->assertAsyncOperationErrors(
+            [
+                [
+                    'id'     => $operationId . '-1-1',
+                    'status' => 400,
+                    'title'  => 'form constraint',
+                    'detail' => 'The entity does not exist.',
+                    'source' => ['pointer' => '/data/0/relationships/organization/data'],
+                ]
+            ],
+            $operationId
+        );
+
+        $response = $this->get(
+            ['entity' => 'products', 'id' => '<toString(@product-1->id)>'],
+            ['fields[products]' => 'sku,names,organization', 'include' => 'names']
+        );
+        $this->assertResponseContains(
+            [
+                'data'     => [
+                    'type'          => 'products',
+                    'id'            => '<toString(@product-1->id)>',
+                    'attributes'    => ['sku' => 'product-1'],
+                    'relationships' => [
+                        'organization' => [
+                            'data' => ['type' => 'organizations', 'id' => '<toString(@organization->id)>']
+                        ],
+                        'names'        => [
+                            'data' => [
+                                ['type' => 'productnames', 'id' => '<toString(@product-1.names.default->id)>'],
+                                ['type' => 'productnames', 'id' => '<toString(@product-1.names.en_CA->id)>']
+                            ]
+                        ]
+                    ]
+                ],
+                'included' => [
+                    [
+                        'type'          => 'productnames',
+                        'id'            => '<toString(@product-1.names.default->id)>',
+                        'attributes'    => ['string' => 'product-1.names.default', 'fallback' => null],
+                        'relationships' => [
+                            'product'      => ['data' => ['type' => 'products', 'id' => '<toString(@product-1->id)>']],
+                            'localization' => ['data' => null]
+                        ]
+                    ],
+                    [
+                        'type'          => 'productnames',
+                        'id'            => '<toString(@product-1.names.en_CA->id)>',
+                        'attributes'    => ['string' => 'product-1.names.en_CA', 'fallback' => null],
+                        'relationships' => [
+                            'product'      => ['data' => ['type' => 'products', 'id' => '<toString(@product-1->id)>']],
+                            'localization' => ['data' => ['type' => 'localizations', 'id' => '<toString(@en_CA->id)>']]
+                        ]
+                    ]
+                ]
+            ],
+            $response
+        );
     }
 }
