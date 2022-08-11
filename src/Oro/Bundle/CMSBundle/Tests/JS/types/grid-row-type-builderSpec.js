@@ -8,13 +8,15 @@ describe('orocms/js/app/grapesjs/type-builders/grid-row-type-builder', () => {
     let gridRowTypeBuilder;
     let editor;
 
-    beforeEach(() => {
+    beforeEach(done => {
         window.setFixtures(html);
         editor = grapesJS.init({
             container: document.querySelector('.page-content-editor')
         });
 
         editor.ComponentRestriction = new ComponentRestriction(editor, {});
+
+        editor.on('load', () => done());
     });
 
     afterEach(() => {

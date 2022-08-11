@@ -9,7 +9,7 @@ describe('orocms/js/app/grapesjs/type-builders/text-type-builder', () => {
     let textTypeBuilder;
     let editor;
 
-    beforeEach(() => {
+    beforeEach(done => {
         window.setFixtures(html);
         editor = grapesJS.init({
             container: document.querySelector('.page-content-editor'),
@@ -17,6 +17,8 @@ describe('orocms/js/app/grapesjs/type-builders/text-type-builder', () => {
         });
 
         editor.ComponentRestriction = new ComponentRestriction(editor, {});
+
+        editor.on('load', () => done());
     });
 
     afterEach(() => {

@@ -9,7 +9,7 @@ describe('orocms/js/app/grapesjs/type-builders/content-block-type-builder', () =
     let contentBlockTypeBuilder;
     let mockElement;
 
-    beforeEach(() => {
+    beforeEach(done => {
         mockElement = document.createElement('DIV');
         mockElement.classList.add('content-block');
 
@@ -19,6 +19,8 @@ describe('orocms/js/app/grapesjs/type-builders/content-block-type-builder', () =
         });
 
         editor.ComponentRestriction = new ComponentRestriction(editor, {});
+
+        editor.on('load', () => done());
     });
 
     afterEach(() => {

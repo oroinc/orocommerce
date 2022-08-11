@@ -11,12 +11,14 @@ describe('orocms/js/app/grapesjs/plugins/components/component-manager', () => {
     let componentManager;
     let componentTypes = {};
 
-    beforeEach(() => {
+    beforeEach(done => {
         window.setFixtures(html);
         editor = grapesJS.init({
             container: document.querySelector('.page-content-editor')
         });
         editor.ComponentRestriction = new ComponentRestriction(editor, {});
+
+        editor.on('load', () => done());
     });
 
     afterEach(() => {
