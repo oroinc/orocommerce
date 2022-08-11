@@ -182,7 +182,10 @@
                     form_widget(variantLinksForm.removeVariants, {'id': 'productRemoveVariants'}),
                     dataGrid.renderGrid('product-product-variants-edit', dataGridParameters, { cssClass: 'inner-grid' })
                 ]
-            }]
+            }],
+            'options': {
+                'initSectionInstantly': true
+            }
         }] ) %}
     {% endif %}
 
