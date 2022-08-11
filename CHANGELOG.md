@@ -8,6 +8,9 @@ The current file describes significant changes in the code that may affect the u
 
 #### CMSBundle
 * WYSIWYG editor. Added a new control option to add/remove cells and rows in the table.
+* Added `renderWysiwygContent` TWIG macro and a layout block type `wysiwyg_content` for rendering WYSIWYG content on storefront.
+  See article [How to Display WYSIWYG Field](https://doc.oroinc.com/bundles/commerce/CMSBundle/WYSIWYG-field/how-to-display-wysiwyg-field/)
+  for more information.
 
 #### ProductBundle
 * Added `product_original_filenames` feature. This feature is enabled when `oro_attachment.original_file_names_enabled`

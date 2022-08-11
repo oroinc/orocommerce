@@ -6,6 +6,9 @@ use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
 use Oro\Bundle\SEOBundle\Provider\WebsiteForSitemapProviderInterface;
 use Oro\Bundle\SEOBundle\Sitemap\Filesystem\PublicSitemapFilesystemAdapter;
 use Oro\Bundle\SEOBundle\Sitemap\Website\WebsiteUrlProvidersServiceInterface;
+use Oro\Bundle\SEOBundle\Topic\GenerateSitemapByWebsiteAndTypeTopic;
+use Oro\Bundle\SEOBundle\Topic\GenerateSitemapIndexTopic;
+use Oro\Bundle\SEOBundle\Topic\GenerateSitemapTopic;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
@@ -22,29 +25,21 @@ use Psr\Log\LoggerInterface;
  */
 class GenerateSitemapProcessor implements MessageProcessorInterface, TopicSubscriberInterface
 {
-    /** @var JobRunner */
-    private $jobRunner;
+    private JobRunner $jobRunner;
 
-    /** @var DependentJobService */
-    private $dependentJob;
+    private DependentJobService $dependentJob;
 
-    /** @var MessageProducerInterface */
-    private $producer;
+    private MessageProducerInterface $producer;
 
-    /** @var WebsiteForSitemapProviderInterface */
-    private $websiteProvider;
+    private WebsiteForSitemapProviderInterface $websiteProvider;
 
-    /** @var WebsiteUrlProvidersServiceInterface */
-    private $websiteUrlProvidersService;
+    private WebsiteUrlProvidersServiceInterface $websiteUrlProvidersService;
 
-    /** @var PublicSitemapFilesystemAdapter */
-    private $fileSystemAdapter;
+    private PublicSitemapFilesystemAdapter $fileSystemAdapter;
 
-    /** @var CanonicalUrlGenerator */
-    private $canonicalUrlGenerator;
+    private CanonicalUrlGenerator $canonicalUrlGenerator;
 
-    /** @var LoggerInterface */
-    private $logger;
+    private LoggerInterface $logger;
 
     public function __construct(
         JobRunner $jobRunner,
@@ -71,7 +66,7 @@ class GenerateSitemapProcessor implements MessageProcessorInterface, TopicSubscr
      */
     public static function getSubscribedTopics()
     {
-        return [Topics::GENERATE_SITEMAP];
+        return [GenerateSitemapTopic::getName()];
     }
 
     /**
@@ -87,7 +82,7 @@ class GenerateSitemapProcessor implements MessageProcessorInterface, TopicSubscr
             $websites = $this->websiteProvider->getAvailableWebsites();
             $result = $this->jobRunner->runUnique(
                 $message->getMessageId(),
-                Topics::GENERATE_SITEMAP,
+                GenerateSitemapTopic::getName(),
                 function (JobRunner $jobRunner, Job $job) use ($version, $websites) {
                     $this->createFinishJob($job, $version, $websites);
                     $this->scheduleGeneratingSitemap($jobRunner, $version, $websites);
@@ -123,8 +118,12 @@ class GenerateSitemapProcessor implements MessageProcessorInterface, TopicSubscr
 
         $context = $this->dependentJob->createDependentJobContext($job->getRootJob());
         $context->addDependentJob(
-            Topics::GENERATE_SITEMAP_INDEX,
-            ['jobId' => $job->getId(), 'version' => $version, 'websiteIds' => $websiteIds]
+            GenerateSitemapIndexTopic::getName(),
+            [
+                GenerateSitemapIndexTopic::JOB_ID      => $job->getId(),
+                GenerateSitemapIndexTopic::VERSION     => $version,
+                GenerateSitemapIndexTopic::WEBSITE_IDS => $websiteIds
+            ]
         );
         $this->dependentJob->saveDependentJob($context);
     }
@@ -162,15 +161,15 @@ class GenerateSitemapProcessor implements MessageProcessorInterface, TopicSubscr
         string $type
     ): void {
         $jobRunner->createDelayed(
-            sprintf('%s:%s:%s', Topics::GENERATE_SITEMAP_BY_WEBSITE_AND_TYPE, $website->getId(), $type),
+            sprintf('%s:%s:%s', GenerateSitemapByWebsiteAndTypeTopic::getName(), $website->getId(), $type),
             function (JobRunner $jobRunner, Job $child) use ($version, $website, $type) {
                 $this->producer->send(
-                    Topics::GENERATE_SITEMAP_BY_WEBSITE_AND_TYPE,
+                    GenerateSitemapByWebsiteAndTypeTopic::getName(),
                     [
-                        'jobId'     => $child->getId(),
-                        'version'   => $version,
-                        'websiteId' => $website->getId(),
-                        'type'      => $type,
+                        GenerateSitemapByWebsiteAndTypeTopic::JOB_ID     => $child->getId(),
+                        GenerateSitemapByWebsiteAndTypeTopic::VERSION    => $version,
+                        GenerateSitemapByWebsiteAndTypeTopic::WEBSITE_ID => $website->getId(),
+                        GenerateSitemapByWebsiteAndTypeTopic::TYPE       => $type,
                     ]
                 );
             }
