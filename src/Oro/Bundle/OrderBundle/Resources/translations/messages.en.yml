@@ -413,6 +413,16 @@ oro:
                 address_billing_allow_manual: Enter the billing address manually
                 payment_term_customer_can_override: Override customer payment term
 
+        feature:
+            label: Orders
+            description: Enables creating new and managing submitted orders, adjusting the order information, adding discounts, tracking shipment, or canceling the wrong orders.
+            create:
+                label: Create Orders
+                description: Enables creating orders
+            previously_purchased_products:
+                label: Purchase History
+                description: Enables the Previously Purchased Products page in the storefront that displays the products that were recently purchased by customer users.
+
         form:
             address:
                 choose: Select an address
@@ -438,16 +448,16 @@ oro:
                 backend_product_visibility.title: 'Can Be Added to Orders'
                 frontend_product_visibility.title: 'Can Be Added to Orders'
                 order_automation_enable_cancellation.title: 'Enable Automatic Order Cancellation'
-                order_automation_enable_cancellation.tooltip: 'All orders with selected internal statuses will be automatically cancelled past their "Do Not Ship Later Than" date.'
+                order_automation_enable_cancellation.tooltip: 'Enable the option to automatically cancel the orders with selected internal statuses when their "Do Not Ship Later Than" date expires.'
                 order_automation_applicable_statuses.title: 'Applicable Statuses'
-                order_automation_applicable_statuses.tooltip: 'Only the orders with the selected internal statuses will be cancelled automatically.'
+                order_automation_applicable_statuses.tooltip: 'Only the orders with the selected internal statuses can be cancelled automatically.'
                 order_automation_target_status.title: 'Target Status'
-                order_automation_target_status.tooltip: 'You may modify the default behavior of changing order status to "Cancelled".'
+                order_automation_target_status.tooltip: 'Change the order status to modify the default behavior.'
                 enable_purchase_history.title: 'Enable Purchase History'
                 order_previously_purchased_period.title: 'Display products purchased within (days)'
                 order_previously_purchased_period.tooltip: 'Enter the number of days that the purchase history should cover.'
                 order_creation_new_internal_order_status.title: 'New Internal Order Status'
-                order_creation_new_internal_order_status.tooltip: 'The selected status will be assigned to new orders upon creation.'
+                order_creation_new_internal_order_status.tooltip: 'Select the status to be assigned to new orders on creation.'
             groups:
                 orders.title: 'Orders'
                 orders_history.title: 'Orders History'

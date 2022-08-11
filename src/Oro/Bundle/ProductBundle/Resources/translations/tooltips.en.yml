@@ -1,8 +1,0 @@
-oro.product:
-    form:
-        tooltip:
-            unit_rounding_type: 'An algorithm that is used to round the volume specified for this unit (ceil, floor, half down, or half up).'
-            unit_precision: 'To allow fractional quantities set the precision to a positive value. Zero value disables fractional quantities, only whole quantities will be allowed.'
-            has_variants: 'Please save the product to add variants'
-            variant_fields: 'Fields with type "select" and "boolean" are available'
-            new_arrival: 'When set to "Yes" the product will be highlighted on the store frontend.'

@@ -1,0 +1,125 @@
+include:
+    - '@OroCustomerBundle:BuyerCustomerFixture.yml'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precision1:
+        unit: '@item'
+        precision: '1'
+        sell: true
+    precision2:
+        unit: '@set'
+        precision: '1'
+        sell: true
+    precision3:
+        unit: '@item'
+        precision: '1'
+        sell: true
+    precision4:
+        unit: '@set'
+        precision: '1'
+        sell: true
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    locvalue1:
+        string: Product1
+    locvalue2:
+        string: Product2
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        organization: '@organization'
+        owner: '@business_unit'
+        sku: 'AA1'
+        primaryUnitPrecision: '@precision1'
+        additionalUnitPrecisions: ['@precision2']
+        __calls:
+            - addName: ['@locvalue1']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        attributeFamily: '@defaultProductFamily'
+    product2:
+        organization: '@organization'
+        owner: '@business_unit'
+        sku: 'AA2'
+        primaryUnitPrecision: '@precision3'
+        additionalUnitPrecisions: [ '@precision4' ]
+        __calls:
+            -   addName: [ '@locvalue2' ]
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        attributeFamily: '@defaultProductFamily'
+
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
+    shoppinglist1:
+        label: 'Shopping List 1'
+        customer: '@customer1'
+        customerUser: '@amanda'
+        organization: '@organization'
+        website: '@website1'
+    shoppinglist4:
+        label: 'Shopping List 4'
+        customerUser: '@marlene'
+        organization: '@organization'
+        website: '@website1'
+    shoppinglist5:
+        label: 'Shopping List 5'
+        customerUser: '@amanda'
+        organization: '@organization'
+        website: '@website1'
+    shoppinglist6:
+        label: 'Shopping List 6'
+        customerUser: '@marlene'
+        organization: '@organization'
+        website: '@website1'
+
+Oro\Bundle\ShoppingListBundle\Entity\LineItem:
+    lineitem1:
+        product: '@product1'
+        quantity: '5'
+        unit: '@item'
+        customerUser: '@amanda'
+        shoppingList: '@shoppinglist1'
+        organization: '@organization'
+    lineitem4:
+       product: '@product1'
+       quantity: '10'
+       unit: '@item'
+       customerUser: '@marlene'
+       shoppingList: '@shoppinglist4'
+       organization: '@organization'
+    lineitem5:
+       product: '@product1'
+       quantity: '1'
+       unit: '@set'
+       customerUser: '@amanda'
+       shoppingList: '@shoppinglist5'
+       organization: '@organization'
+    lineitem6:
+       product: '@product1'
+       quantity: '2'
+       unit: '@item'
+       customerUser: '@amanda'
+       shoppingList: '@shoppinglist5'
+       organization: '@organization'
+    lineitem7:
+        product: '@product1'
+        quantity: '3'
+        unit: '@item'
+        customerUser: '@marlene'
+        shoppingList: '@shoppinglist6'
+        organization: '@organization'
+    lineitem8:
+        product: '@product2'
+        quantity: '4'
+        unit: '@item'
+        customerUser: '@marlene'
+        shoppingList: '@shoppinglist6'
+        organization: '@organization'
+
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
+    shoppinglisttotal:
+        __construct: ['@shoppinglist4','USD']
+        shoppingList: '@shoppinglist4'
+        currency: 'USD'
+        subtotalValue: '20.2'
+        valid: true

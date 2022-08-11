@@ -37,11 +37,13 @@ class CheckoutVoterTest extends \PHPUnit\Framework\TestCase
     {
         $this->authorizationChecker->expects($this->any())
             ->method('isGranted')
-            ->willReturnCallback(function ($attribute) use ($inputData) {
+            ->willReturnCallback(function ($attribute, $object) use ($inputData) {
                 if ($attribute === $inputData['isGrantedAttr']) {
+                    self::assertSame($inputData['object'], $object);
                     return $inputData['isGranted'];
                 }
                 if ($attribute === $inputData['isGrantedAttrCheckout']) {
+                    self::assertEquals('entity:' . Checkout::class, $object);
                     return $inputData['isGrantedCheckout'];
                 }
                 return null;
@@ -57,9 +59,6 @@ class CheckoutVoterTest extends \PHPUnit\Framework\TestCase
 
     public function voteProvider(): array
     {
-        $object = $this->createMock(CheckoutSourceEntityInterface::class);
-        $permissionCreate = 'CREATE;entity:' . Checkout::class;
-
         return [
             '!Entity' => [
                 'input' => [
@@ -90,7 +89,7 @@ class CheckoutVoterTest extends \PHPUnit\Framework\TestCase
                     'isGranted' => false,
                     'isGrantedAttr' => 'VIEW',
                     'isGrantedCheckout' => true,
-                    'isGrantedAttrCheckout' => $permissionCreate,
+                    'isGrantedAttrCheckout' => 'CREATE',
                 ],
                 'expected' => VoterInterface::ACCESS_DENIED,
             ],
@@ -101,7 +100,7 @@ class CheckoutVoterTest extends \PHPUnit\Framework\TestCase
                     'isGranted' => true,
                     'isGrantedAttr' => 'VIEW',
                     'isGrantedCheckout' => false,
-                    'isGrantedAttrCheckout' => $permissionCreate,
+                    'isGrantedAttrCheckout' => 'CREATE',
                 ],
                 'expected' => VoterInterface::ACCESS_DENIED,
             ],
@@ -112,24 +111,24 @@ class CheckoutVoterTest extends \PHPUnit\Framework\TestCase
                     'isGranted' => true,
                     'isGrantedAttr' => 'VIEW',
                     'isGrantedCheckout' => true,
-                    'isGrantedAttrCheckout' => $permissionCreate,
+                    'isGrantedAttrCheckout' => 'CREATE',
                 ],
                 'expected' => VoterInterface::ACCESS_GRANTED,
             ],
             'isGranted on CREATE and VIEW for Entity instance' => [
                 'input' => [
-                    'object' => $object,
+                    'object' => $this->createMock(CheckoutSourceEntityInterface::class),
                     'attributes' => ['CHECKOUT_CREATE'],
                     'isGranted' => true,
                     'isGrantedAttr' => 'VIEW',
                     'isGrantedCheckout' => true,
-                    'isGrantedAttrCheckout' => $permissionCreate,
+                    'isGrantedAttrCheckout' => 'CREATE',
                 ],
                 'expected' => VoterInterface::ACCESS_GRANTED,
             ],
             'ATTRIBUTE_CREATE not in attributes' => [
                 'input' => [
-                    'object' => $object,
+                    'object' => $this->createMock(CheckoutSourceEntityInterface::class),
                     'attributes' => []
                 ],
                 'expected' => VoterInterface::ACCESS_ABSTAIN

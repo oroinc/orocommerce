@@ -1,0 +1,42 @@
+layout:
+    imports:
+        - oro_product_grid
+
+    actions:
+        - '@setBlockTheme':
+            themes: '@OroProduct/layouts/default/oro_product_frontend_product_search/product_search.html.twig'
+
+        - '@add':
+            id: search_title
+            parentId: page_main_header
+            blockType: text
+
+        - '@setOption':
+            id: product_datagrid
+            optionName: grid_name
+            optionValue: frontend-product-search-grid
+
+        - '@setOption':
+            id: product_datagrid
+            optionName: current_row_view
+            optionValue: '=data["oro_product_datagrid_row_view"].getThemeByGridName("frontend-product-search-grid")'
+
+        - '@setOption':
+            id: product_datagrid_toolbar_display_options
+            optionName: current_row_view
+            optionValue: '=data["oro_product_datagrid_row_view"].getThemeByGridName("frontend-product-search-grid")'
+
+        - '@setOption':
+            id: product_datagrid_row_product_sticker_new
+            optionName: visible
+            optionValue: '=data["oro_product_datagrid_row_view"].getThemeByGridName("frontend-product-search-grid")!="no-image-view"'
+
+        - '@setOption':
+            id: product_datagrid_row_product_sticker_new_text
+            optionName: visible
+            optionValue: '=data["oro_product_datagrid_row_view"].getThemeByGridName("frontend-product-search-grid")=="no-image-view"'
+
+        - '@setOption':
+            id: search_title
+            optionName: text
+            optionValue: '=data["oro_product_search"].getSearchString()'

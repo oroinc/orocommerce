@@ -446,6 +446,52 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
             expect(htmlParser(str).html).toEqual(result);
         });
 
+        it('Parse nested span text styling', () => {
+            const str = '<div>content1 <div><span data-type="text-style">nested</span></div> content2</div>';
+            const result = [
+                {
+                    tagName: 'div',
+                    type: 'text',
+                    components: [
+                        {
+                            tagName: '',
+                            type: 'textnode',
+                            content: 'content1 '
+                        },
+                        {
+                            tagName: 'div',
+                            type: 'text',
+                            ...textBlockOptions,
+                            components: [
+                                {
+                                    tagName: 'span',
+                                    type: 'text-style',
+                                    attributes: {
+                                        'data-type': 'text-style'
+                                    },
+                                    textComponent: true,
+                                    components: [
+                                        {
+                                            type: 'textnode',
+                                            content: 'nested',
+                                            tagName: ''
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            tagName: '',
+                            type: 'textnode',
+                            content: ' content2'
+                        }
+                    ]
+                }
+            ];
+
+            expect(htmlParser(str).html).toEqual(result);
+        });
+
         it('Parse nested span text nodes', () => {
             const str = '<div>content1 <div><span>nested</span></div> content2</div>';
             const result = [

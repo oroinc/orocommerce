@@ -8,6 +8,7 @@ use Oro\Bundle\EntityConfigBundle\Config\Config;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\FormBundle\Autocomplete\SearchHandlerInterface;
 use Oro\Bundle\FormBundle\Autocomplete\SearchRegistry;
 use Oro\Bundle\FormBundle\Form\Extension\DataBlockExtension;
@@ -95,6 +96,7 @@ class ProductMiniBlockContentWidgetSettingsTypeTest extends FormIntegrationTestC
                     ProductSelectType::class => new ProductSelectType($this->createMock(TranslatorInterface::class)),
                     OroEntitySelectOrCreateInlineType::class => new OroEntitySelectOrCreateInlineType(
                         $this->createMock(AuthorizationCheckerInterface::class),
+                        $this->createMock(FeatureChecker::class),
                         $configManager,
                         $this->createMock(EntityManager::class),
                         $searchRegistry

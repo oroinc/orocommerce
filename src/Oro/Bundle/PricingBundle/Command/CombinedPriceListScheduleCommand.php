@@ -5,7 +5,8 @@ namespace Oro\Bundle\PricingBundle\Command;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\CronBundle\Command\CronCommandInterface;
+use Oro\Bundle\CronBundle\Command\CronCommandActivationInterface;
+use Oro\Bundle\CronBundle\Command\CronCommandScheduleDefinitionInterface;
 use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilderFacade;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListBuildActivity;
@@ -18,25 +19,27 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Prepares and activates combined price lists based on their schedules.
  */
-class CombinedPriceListScheduleCommand extends Command implements CronCommandInterface
+class CombinedPriceListScheduleCommand extends Command implements
+    CronCommandScheduleDefinitionInterface,
+    CronCommandActivationInterface
 {
     /** @var string */
     protected static $defaultName = 'oro:cron:price-lists:schedule';
 
-    private ManagerRegistry $registry;
+    private ManagerRegistry $doctrine;
     private ConfigManager $configManager;
     private CombinedPriceListScheduleResolver $priceListScheduleResolver;
     private CombinedPriceListTriggerHandler $triggerHandler;
     private CombinedPriceListsBuilderFacade $builder;
 
     public function __construct(
-        ManagerRegistry $registry,
+        ManagerRegistry $doctrine,
         ConfigManager $configManager,
         CombinedPriceListScheduleResolver $priceListScheduleResolver,
         CombinedPriceListTriggerHandler $triggerHandler,
         CombinedPriceListsBuilderFacade $builder
     ) {
-        $this->registry = $registry;
+        $this->doctrine = $doctrine;
         $this->configManager = $configManager;
         $this->priceListScheduleResolver = $priceListScheduleResolver;
         $this->triggerHandler = $triggerHandler;
@@ -61,13 +64,14 @@ HELP
         ;
     }
 
-    public function isActive()
+    /**
+     * {@inheritDoc}
+     */
+    public function isActive(): bool
     {
         $offsetHours = $this->configManager->get('oro_pricing.offset_of_processing_cpl_prices');
 
-        $count = $this->registry
-            ->getManagerForClass(CombinedPriceList::class)
-            ->getRepository(CombinedPriceList::class)
+        $count = $this->doctrine->getRepository(CombinedPriceList::class)
             ->getCPLsForPriceCollectByTimeOffsetCount($offsetHours);
 
         return ($count > 0);
@@ -95,11 +99,10 @@ HELP
     {
         $offsetHours = $this->configManager->get('oro_pricing.offset_of_processing_cpl_prices');
 
-        $combinedPriceLists = $this->registry
-            ->getRepository(CombinedPriceList::class)
+        $combinedPriceLists = $this->doctrine->getRepository(CombinedPriceList::class)
             ->getCPLsForPriceCollectByTimeOffset($offsetHours);
 
-        $buildActivityRepo = $this->registry->getRepository(CombinedPriceListBuildActivity::class);
+        $buildActivityRepo = $this->doctrine->getRepository(CombinedPriceListBuildActivity::class);
         $buildActivityRepo->addBuildActivities($combinedPriceLists);
 
         $this->builder->rebuild($combinedPriceLists);
@@ -109,7 +112,10 @@ HELP
         }
     }
 
-    public function getDefaultDefinition()
+    /**
+     * {@inheritDoc}
+     */
+    public function getDefaultDefinition(): string
     {
         return '*/5 * * * *';
     }

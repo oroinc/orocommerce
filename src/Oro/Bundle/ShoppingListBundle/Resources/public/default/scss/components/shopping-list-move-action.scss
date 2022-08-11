@@ -1,0 +1,12 @@
+/* @theme: default; */
+
+.move-to-shopping-list-fullscreen {
+    position: relative;
+    top: 0;
+    left: 0;
+
+    .ui-dialog-titlebar,
+    .ui-dialog-buttonpane {
+        display: none;
+    }
+}

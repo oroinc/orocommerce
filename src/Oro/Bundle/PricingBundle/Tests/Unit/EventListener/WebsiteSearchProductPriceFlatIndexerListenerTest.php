@@ -12,6 +12,7 @@ use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\EventListener\WebsiteSearchProductPriceFlatIndexerListener;
 use Oro\Bundle\PricingBundle\Model\AbstractPriceListTreeHandler;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\SearchBundle\Formatter\DecimalFlatValueFormatter;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
@@ -64,7 +65,8 @@ class WebsiteSearchProductPriceFlatIndexerListenerTest extends \PHPUnit\Framewor
             $this->websiteContextManager,
             $this->doctrine,
             $this->configManager,
-            $this->priceListTreeHandler
+            $this->priceListTreeHandler,
+            new DecimalFlatValueFormatter()
         );
         $this->listener->setFeatureChecker($this->featureChecker);
         $this->listener->addFeature('feature1');
@@ -195,25 +197,25 @@ class WebsiteSearchProductPriceFlatIndexerListenerTest extends \PHPUnit\Framewor
         $event->expects($this->exactly(4))->method('addPlaceholderField')->withConsecutive(
             [
                 1,
-                'minimal_price_PRICE_LIST_ID_CURRENCY_UNIT',
+                'minimal_price.PRICE_LIST_ID_CURRENCY_UNIT',
                 '10.0000',
                 ['PRICE_LIST_ID' => 1, 'CURRENCY' => 'USD', 'UNIT' => 'liter']
             ],
             [
                 2,
-                'minimal_price_PRICE_LIST_ID_CURRENCY_UNIT',
+                'minimal_price.PRICE_LIST_ID_CURRENCY_UNIT',
                 '11.0000',
                 ['PRICE_LIST_ID' => 1, 'CURRENCY' => 'EUR', 'UNIT' => 'box']
             ],
             [
                 1,
-                'minimal_price_PRICE_LIST_ID_CURRENCY',
+                'minimal_price.PRICE_LIST_ID_CURRENCY',
                 '10.0000',
                 ['PRICE_LIST_ID' => 1, 'CURRENCY' => 'USD']
             ],
             [
                 2,
-                'minimal_price_PRICE_LIST_ID_CURRENCY',
+                'minimal_price.PRICE_LIST_ID_CURRENCY',
                 '11.0000',
                 ['PRICE_LIST_ID' => 1, 'CURRENCY' => 'EUR']
             ]

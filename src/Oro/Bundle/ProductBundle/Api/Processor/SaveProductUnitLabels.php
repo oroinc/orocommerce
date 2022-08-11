@@ -4,12 +4,10 @@ namespace Oro\Bundle\ProductBundle\Api\Processor;
 
 use Oro\Bundle\ApiBundle\Processor\CustomizeFormData\CustomizeFormDataContext;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
-use Oro\Bundle\TranslationBundle\Async\Topic\DumpJsTranslationsTopic;
 use Oro\Bundle\TranslationBundle\Entity\Translation;
 use Oro\Bundle\TranslationBundle\Manager\TranslationManager;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
-use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Symfony\Contracts\Translation\LocaleAwareInterface;
 
 /**
@@ -20,7 +18,6 @@ class SaveProductUnitLabels implements ProcessorInterface
     private TranslationManager $translationManager;
     private LocaleAwareInterface $translator;
     private UnitLabelFormatterInterface $formatter;
-    private MessageProducerInterface $producer;
     /** @var array [domain => [translation key => translation template, ...], ...] */
     private array $mapping;
 
@@ -28,20 +25,18 @@ class SaveProductUnitLabels implements ProcessorInterface
         TranslationManager $translationManager,
         LocaleAwareInterface $translator,
         UnitLabelFormatterInterface $formatter,
-        MessageProducerInterface $producer,
         array $mapping
     ) {
         $this->translationManager = $translationManager;
         $this->translator = $translator;
         $this->formatter = $formatter;
-        $this->producer = $producer;
         $this->mapping = $mapping;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var CustomizeFormDataContext $context */
 
@@ -115,9 +110,6 @@ class SaveProductUnitLabels implements ProcessorInterface
             }
         }
         $this->translationManager->flush();
-
-        // send MQ message to dump JS translations
-        $this->producer->send(DumpJsTranslationsTopic::getName(), []);
     }
 
     private function isSubmittedAtLeastOneLabel(array $data): bool

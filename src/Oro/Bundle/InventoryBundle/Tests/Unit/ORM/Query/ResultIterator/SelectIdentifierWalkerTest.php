@@ -5,92 +5,81 @@ namespace Oro\Bundle\InventoryBundle\Tests\Unit\ORM\Query\ResultIterator;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\ORM\Query\AST\FromClause;
 use Doctrine\ORM\Query\AST\GroupByClause;
+use Doctrine\ORM\Query\AST\IdentificationVariableDeclaration;
 use Doctrine\ORM\Query\AST\PathExpression;
+use Doctrine\ORM\Query\AST\RangeVariableDeclaration;
+use Doctrine\ORM\Query\AST\SelectClause;
+use Doctrine\ORM\Query\AST\SelectExpression;
+use Doctrine\ORM\Query\AST\SelectStatement;
+use Doctrine\ORM\Query\ParserResult;
 use Oro\Bundle\InventoryBundle\ORM\Query\ResultIterator\SelectIdentifierWalker;
 
 class SelectIdentifierWalkerTest extends \PHPUnit\Framework\TestCase
 {
-    use SqlWalkerHelperTrait;
-
-    /**
-     * @var AbstractQuery|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $query;
-
-    /**
-     * @var |\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $parserResult;
-
-    /**
-     * @var |\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $queryComponents = [];
-
-    /**
-     * @var SelectIdentifierWalker
-     */
-    protected $selectIdentifierWalker;
-
-    /**
-     * @var Connection|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $connection;
-
-    /**
-     * @var EntityManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $em;
+    /** @var SelectIdentifierWalker */
+    private $selectIdentifierWalker;
 
     protected function setUp(): void
     {
-        $this->query = $this->getMockBuilder(AbstractQuery::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->em = $this->getMockBuilder(EntityManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->connection = $this->getMockBuilder(Connection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->em->expects($this->any())
+        $em = $this->createMock(EntityManager::class);
+        $em->expects($this->any())
             ->method('getConnection')
-            ->willReturn($this->connection);
+            ->willReturn($this->createMock(Connection::class));
 
-        $this->query->expects($this->any())
+        $query = $this->createMock(AbstractQuery::class);
+        $query->expects($this->any())
             ->method('getEntityManager')
-            ->willReturn($this->em);
+            ->willReturn($em);
+
+        $rootMetadata = new ClassMetadata('Entity\Root');
+        $rootMetadata->setIdentifier(['e']);
 
         $this->selectIdentifierWalker = new SelectIdentifierWalker(
-            $this->query,
-            $this->parserResult,
-            $this->getQueryComponents()
+            $query,
+            $this->createMock(ParserResult::class),
+            ['e' => ['map' => null, 'metadata' => $rootMetadata]]
         );
     }
 
-    public function testWalkSelectStatementShouldSimplyAddDefaultSelect()
+    private function getAst(): SelectStatement
     {
-        $AST = $this->getDefaultAST();
-        $this->selectIdentifierWalker->walkSelectStatement($AST);
-        $this->assertEmpty($AST->groupByClause);
-        $this->assertNull($AST->selectClause->selectExpressions[0]->fieldIdentificationVariable);
-        $this->assertEquals('o', $AST->selectClause->selectExpressions[0]->expression->identificationVariable);
+        return new SelectStatement(
+            new SelectClause([new SelectExpression('e', 'id', null)], false),
+            new FromClause([
+                new IdentificationVariableDeclaration(new RangeVariableDeclaration('Test', 'e'), null, [])
+            ])
+        );
     }
 
-    public function testWalkSelectStatementShouldAddMissingGroupBy()
+    public function testWalkSelectStatementShouldSimplyAddDefaultSelect(): void
     {
-        $AST = $this->getDefaultAST();
+        $ast = $this->getAst();
+
+        $this->selectIdentifierWalker->walkSelectStatement($ast);
+
+        $this->assertEmpty($ast->groupByClause);
+        $this->assertNull($ast->selectClause->selectExpressions[0]->fieldIdentificationVariable);
+        $this->assertEquals('e', $ast->selectClause->selectExpressions[0]->expression->identificationVariable);
+    }
+
+    public function testWalkSelectStatementShouldAddMissingGroupBy(): void
+    {
+        $ast = $this->getAst();
         $pathExpression = new PathExpression(
             PathExpression::TYPE_STATE_FIELD | PathExpression::TYPE_SINGLE_VALUED_ASSOCIATION,
             'test1',
             'test1'
         );
-        $AST->groupByClause = new GroupByClause([$pathExpression]);
-        $this->selectIdentifierWalker->walkSelectStatement($AST);
-        $this->assertCount(2, $AST->groupByClause->groupByItems);
-        $addedGroupBy = $AST->groupByClause->groupByItems[1];
-        $this->assertEquals('o', $addedGroupBy->field);
-        $this->assertEquals('o', $addedGroupBy->identificationVariable);
+        $ast->groupByClause = new GroupByClause([$pathExpression]);
+
+        $this->selectIdentifierWalker->walkSelectStatement($ast);
+
+        $this->assertCount(2, $ast->groupByClause->groupByItems);
+        $addedGroupBy = $ast->groupByClause->groupByItems[1];
+        $this->assertEquals('e', $addedGroupBy->field);
+        $this->assertEquals('e', $addedGroupBy->identificationVariable);
     }
 }

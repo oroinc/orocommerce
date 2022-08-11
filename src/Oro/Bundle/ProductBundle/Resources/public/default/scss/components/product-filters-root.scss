@@ -1,0 +1,25 @@
+/* @theme: default; */
+
+.product-filters-sidebar {
+    display: $product-filters-sidebar-display;
+    flex-wrap: $product-filters-sidebar-flex-wrap;
+    flex-direction: $product-filters-sidebar-flex-direction;
+    align-content: $product-filters-sidebar-align-content;
+    flex-grow: $product-filters-sidebar-flex-grow;
+
+    margin-top: $product-filters-sidebar-offset-top;
+    padding-right: $product-filters-sidebar-inner-offset;
+
+    border-right: $product-filters-sidebar-border;
+    border-image: $product-filters-sidebar-border-image;
+
+    &:not(:first-child) {
+        margin-top: $product-filters-sidebar-not-first-child-offset-top;
+    }
+}
+
+@include breakpoint('tablet') {
+    .product-filters-sidebar {
+        display: none;
+    }
+}

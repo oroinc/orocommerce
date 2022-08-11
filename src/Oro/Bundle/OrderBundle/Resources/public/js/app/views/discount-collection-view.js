@@ -34,6 +34,12 @@ define(function(require) {
             }
         },
 
+        listen: {
+            'totals:update mediator': 'updateSumAndValidators',
+            'widget_initialize mediator': 'attachDialogListeners',
+            'entry-point:order:load mediator': 'refreshCollectionBlock'
+        },
+
         /**
          * @inheritdoc
          */
@@ -50,18 +56,6 @@ define(function(require) {
             events['click ' + this.options.selectors.deleteButton] = 'onDeleteClick';
 
             return events;
-        },
-
-        /**
-         * @inheritdoc
-         */
-        initialize: function() {
-            const handlers = {};
-            handlers['totals:update'] = this.updateSumAndValidators;
-            handlers.widget_initialize = this.attachDialogListeners;
-            handlers['entry-point:order:load'] = this.refreshCollectionBlock;
-
-            this.listenTo(mediator, handlers);
         },
 
         /**

@@ -17,28 +17,19 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ProductSelectTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * @var ProductSelectType
-     */
-    protected $type;
-
-    /**
-     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $translator;
+    /** @var ProductSelectType */
+    private $type;
 
     protected function setUp(): void
     {
-        $this->translator = $this->createMock('Symfony\Contracts\Translation\TranslatorInterface');
-
-        $this->translator
-            ->expects(static::any())
+        $translator = $this->createMock(TranslatorInterface::class);
+        $translator->expects(static::any())
             ->method('trans')
-            ->will(static::returnCallback(function ($id, array $params) {
+            ->willReturnCallback(function ($id, array $params) {
                 return $id . ':' . $params['{title}'];
-            }));
+            });
 
-        $this->type = new ProductSelectType($this->translator);
+        $this->type = new ProductSelectType($translator);
 
         parent::setUp();
     }
@@ -50,8 +41,7 @@ class ProductSelectTypeTest extends FormIntegrationTestCase
 
     public function testConfigureOptions()
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|OptionsResolver $resolver */
-        $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
+        $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with(
@@ -79,14 +69,11 @@ class ProductSelectTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @param array $inputData
-     * @param boolean $withParent
-     *
      * @dataProvider finishViewProvider
      */
-    public function testFinishViewPlaceholderEmpty(array $inputData = [], $withParent = true)
+    public function testFinishViewPlaceholderEmpty(array $inputData, bool $withParent)
     {
-        $form = $this->factory->create(ProductSelectType::class, null);
+        $form = $this->factory->create(ProductSelectType::class);
 
         if ($withParent) {
             $formParent = $this->factory->create(ProductHolderTypeStub::class, $inputData['productHolder']);
@@ -102,10 +89,7 @@ class ProductSelectTypeTest extends FormIntegrationTestCase
         $this->assertArrayNotHasKey('configs', $view->vars);
     }
 
-    /**
-     * @return array
-     */
-    public function finishViewProvider()
+    public function finishViewProvider(): array
     {
         return [
             'without parent form' => [
@@ -135,7 +119,7 @@ class ProductSelectTypeTest extends FormIntegrationTestCase
 
     public function testFinishViewPlaceholder()
     {
-        $form = $this->factory->create(ProductSelectType::class, null);
+        $form = $this->factory->create(ProductSelectType::class);
 
         $formParent = $this->factory->create(ProductHolderTypeStub::class, $this->createProductHolder(1, 'sku'));
 
@@ -149,25 +133,19 @@ class ProductSelectTypeTest extends FormIntegrationTestCase
         $this->assertEquals('oro.product.removed:sku', $view->vars['configs']['placeholder']);
     }
 
-    /**
-     * @param int $id
-     * @param string $productSku
-     * @param Product $product
-     * @return \PHPUnit\Framework\MockObject\MockObject|ProductHolderInterface
-     */
-    protected function createProductHolder($id, $productSku, Product $product = null)
-    {
+    private function createProductHolder(
+        int $id,
+        string $productSku,
+        Product $product = null
+    ): ProductHolderInterface {
         $productHolder = $this->createMock(ProductHolderInterface::class);
-        $productHolder
-            ->expects($this->any())
+        $productHolder->expects($this->any())
             ->method('getEntityIdentifier')
             ->willReturn($id);
-        $productHolder
-            ->expects($this->any())
+        $productHolder->expects($this->any())
             ->method('getProduct')
             ->willReturn($product);
-        $productHolder
-            ->expects($this->any())
+        $productHolder->expects($this->any())
             ->method('getProductSku')
             ->willReturn($productSku);
 
@@ -179,13 +157,14 @@ class ProductSelectTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        $entityType = new EntityType(['1'], OroEntitySelectOrCreateInlineType::NAME);
-
         return [
             new PreloadedExtension(
                 [
                     $this->type,
-                    OroEntitySelectOrCreateInlineType::class => $entityType,
+                    OroEntitySelectOrCreateInlineType::class => new EntityType(
+                        ['1'],
+                        'oro_entity_create_or_select_inline'
+                    )
                 ],
                 []
             ),
@@ -198,8 +177,7 @@ class ProductSelectTypeTest extends FormIntegrationTestCase
      */
     public function testFinishView(array $dataParameters)
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|FormInterface $form */
-        $form = $this->createMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock(FormInterface::class);
 
         $formView = new FormView();
         $this->type->finishView($formView, $form, [
@@ -212,7 +190,7 @@ class ProductSelectTypeTest extends FormIntegrationTestCase
         if (!empty($dataParameters)) {
             $this->assertArrayHasKey('data-select2_query_additional_params', $attr);
             $this->assertEquals(
-                json_encode(['data_parameters' => $dataParameters]),
+                json_encode(['data_parameters' => $dataParameters], JSON_THROW_ON_ERROR),
                 $formView->vars['attr']['data-select2_query_additional_params']
             );
         } else {
@@ -220,10 +198,7 @@ class ProductSelectTypeTest extends FormIntegrationTestCase
         }
     }
 
-    /**
-     * @return array
-     */
-    public function finishViewDataProvider()
+    public function finishViewDataProvider(): array
     {
         return [
             'with data parameters' => [

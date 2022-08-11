@@ -1,0 +1,11 @@
+features:
+    manage_visibilities:
+        label: oro.visibility.productvisibility.feature.manage.label
+        description: oro.visibility.productvisibility.feature.manage.description
+        allow_if_all_abstain: true
+        routes:
+            - oro_product_visibility_edit
+        entities:
+            - Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility
+        api_resources:
+            - [Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility, [create, update, delete, delete_list]]

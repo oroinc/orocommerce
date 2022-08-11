@@ -272,8 +272,8 @@ api:
                                 productType: type
                                 isVariant: is_variant
                                 inventoryStatus: inventory_status
-                                minimalPrice: minimal_price_CPL_ID_CURRENCY
-                                minimalPrice_(?<UNIT>\w+): minimal_price_CPL_ID_CURRENCY_{UNIT}
+                                minimalPrice: minimal_price.CPL_ID_CURRENCY
+                                minimalPrice_(?<UNIT>\w+): minimal_price.CPL_ID_CURRENCY_{UNIT}
                                 product: product_id
                                 productFamily: attribute_family_id
                                 category: category_id
@@ -290,8 +290,8 @@ api:
                                 productType: type
                                 isVariant: is_variant
                                 inventoryStatus: inventory_status
-                                minimalPrice: minimal_price_CPL_ID_CURRENCY
-                                minimalPrice_(?<UNIT>\w+): minimal_price_CPL_ID_CURRENCY_{UNIT}
+                                minimalPrice: minimal_price.CPL_ID_CURRENCY
+                                minimalPrice_(?<UNIT>\w+): minimal_price.CPL_ID_CURRENCY_{UNIT}
                                 product: product_id
                                 productFamily: attribute_family_id
                                 category: category_id
@@ -315,7 +315,7 @@ api:
                     inventoryStatus:
                         property_path: text.inventory_status
                     minimalPrice:
-                        property_path: decimal.minimal_price_CPL_ID_CURRENCY
+                        property_path: decimal.minimal_price.CPL_ID_CURRENCY
             actions:
                 get: false
                 create: false

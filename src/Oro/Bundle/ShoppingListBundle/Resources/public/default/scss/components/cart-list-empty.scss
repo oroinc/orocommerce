@@ -1,0 +1,29 @@
+/* @theme: default; */
+
+.cart-list-empty {
+    position: relative;
+
+    display: flex;
+    width: 100%;
+    min-height: 90px;
+    margin-top: 15px;
+    padding: 20px 20px 20px 90px;
+    align-items: center;
+
+    border: $cart-list-empty-border;
+    border-radius: 5px;
+
+    line-height: 2;
+
+    &__icon {
+        $icon-size: 50px;
+
+        position: absolute;
+        top: 50%;
+        left: 20px;
+
+        margin-top: -$icon-size * .5;
+
+        @include badge(50px, 24px);
+    }
+}

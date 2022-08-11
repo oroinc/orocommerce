@@ -1,4 +1,3 @@
-import _ from 'underscore';
 import __ from 'orotranslation/js/translator';
 import BaseTypeBuilder from 'orocms/js/app/grapesjs/type-builders/base-type-builder';
 import {foundClosestParentByTagName} from 'orocms/js/app/grapesjs/plugins/components/rte/utils/utils';
@@ -12,6 +11,10 @@ const TextTypeBuilder = BaseTypeBuilder.extend({
         label: __('oro.cms.wysiwyg.component.text.label'),
         content: {
             type: 'text',
+            components: [{
+                type: 'textnode',
+                content: __('oro.cms.wysiwyg.component.text.content')
+            }],
             content: __('oro.cms.wysiwyg.component.text.content'),
             style: {
                 'min-height': '18px'
@@ -39,31 +42,8 @@ const TextTypeBuilder = BaseTypeBuilder.extend({
     },
 
     modelMixin: {
-        tagUpdated() {
-            if (!this.collection) {
-                return;
-            }
-            const styles = this.getStyle();
-            const at = this.collection.indexOf(this);
-            const {rteEnabled} = this.view;
-
-            if (rteEnabled) {
-                this.view.disableEditing(false);
-                this.editor.selectRemove(this);
-            }
-
-            this.constructor.__super__.tagUpdated.call(this);
-
-            const model = this.collection.at(at);
-            model.setStyle(styles);
-
-            if (rteEnabled) {
-                this.editor.selectToggle(model);
-                _.defer(() => {
-                    model.trigger('focus');
-                    this.view.setCaretToStart();
-                });
-            }
+        init() {
+            this.on('sync:content', this.syncContent.bind(this));
         },
 
         replaceWith(el, updateStyle = true) {
@@ -83,6 +63,10 @@ const TextTypeBuilder = BaseTypeBuilder.extend({
 
         setContent(content, options = {}) {
             this.set('content', content, options);
+            this.syncContent();
+        },
+
+        syncContent() {
             this.view.syncContent({
                 force: true
             });
@@ -204,22 +188,31 @@ const TextTypeBuilder = BaseTypeBuilder.extend({
          */
         wrapComponent(tagName = 'div') {
             const {model} = this;
-            const content = model.toHTML();
+            const parent = model.parent();
+            const collection = parent.components();
+            const index = model.index();
             const {
                 marginTop,
                 marginBottom,
                 paddingTop,
                 paddingBottom
             } = this.editor.Canvas.getWindow().getComputedStyle(this.el);
-            const [newModel] = model.replaceWith(`<${tagName}>${content}</${tagName}>`);
 
-            newModel.view.el.style = {
-                ...newModel.view.el.style,
+            const newModel = collection.add({
+                type: 'text'
+            }, {
+                at: index
+            });
+
+            model.set('draggable', false);
+            newModel.append(model);
+
+            newModel.view.$el.css({
                 marginTop,
                 marginBottom,
                 paddingTop,
                 paddingBottom
-            };
+            });
 
             this.editor.select(newModel);
             newModel.view.$el.trigger('dblclick');
@@ -228,17 +221,32 @@ const TextTypeBuilder = BaseTypeBuilder.extend({
         /**
          * Remove component wrapper
          */
-        removeWrapper(select = true) {
-            const id = this.model.getId();
-            const [model] = this.model.replaceWith(this.getContent(), select);
-            model.set('attributes', {
-                ...model.get('attributes'),
-                id
+        removeWrapper() {
+            const {model} = this;
+            const index = model.index();
+            const parent = model.parent();
+            const child = model.getChildAt(0);
+            this.pathChildModel(child);
+            parent.append(child, {
+                at: index
             });
-            if (!select) {
-                return;
-            }
-            this.editor.select(model);
+
+            model.remove({
+                silent: true
+            });
+            model.getView().$el.remove();
+        },
+
+        pathChildModel(child) {
+            child.set({
+                layerable: true,
+                selectable: true,
+                hoverable: true,
+                editable: true,
+                draggable: true,
+                droppable: true,
+                highlightable: true
+            });
         },
 
         /**
@@ -256,7 +264,7 @@ const TextTypeBuilder = BaseTypeBuilder.extend({
 
         /**
          * Active RTE handler
-         * @param {Event} e
+         * @param {Event} event
          */
         async onActive(event) {
             if (this.model.parent().get('type') === 'text') {
@@ -278,40 +286,26 @@ const TextTypeBuilder = BaseTypeBuilder.extend({
         /**
          * Disable element content editing
          */
-        async disableEditing(clean = true) {
-            const {model, rte, activeRte, em, $el, cid} = this;
-            if (!model) {
-                return;
-            }
+        async disableEditing(opts) {
+            const {model, $el, cid} = this;
 
-            const editable = model.get('editable');
+            $el.off(`keypress.${cid}`);
 
-            if (rte && editable) {
-                $el.off(`keypress.${cid}`);
-
-                try {
-                    await rte.disable(this, activeRte);
-                } catch (err) {
-                    em.logError(err);
-                }
-
-                if (clean) {
-                    this.syncContent();
-                }
-            }
-
-            this.toggleEvents();
+            await this.constructor.__super__.disableEditing.call(this, opts);
 
             if (this.willRemoved) {
                 return;
             }
 
-            if (clean && this.isSingleLine()) {
-                this.removeWrapper(typeof clean === 'boolean');
+            if (this.isSingleLine()) {
+                this.removeWrapper();
             }
 
-            if (model.get('tagName') && this.getContent() === '') {
-                model.set('content', __('oro.cms.wysiwyg.component.text.content'));
+            if (model.get('tagName') && !model.components().length) {
+                model.append({
+                    type: 'textnode',
+                    content: __('oro.cms.wysiwyg.component.text.content')
+                });
             }
         },
 
@@ -320,52 +314,20 @@ const TextTypeBuilder = BaseTypeBuilder.extend({
             this.constructor.__super__.remove.apply(this, args);
         },
 
-        dispose() {
-            if (this.disposed) {
-                return;
-            }
-
-            this.constructor.__super__.dispose.call(this);
-        },
-
-        updateContentText({model, ...args}) {
-            if (!model) {
-                return;
-            }
-            this.constructor.__super__.updateContentText.apply(this, [model, ...args]);
-        },
-
         /**
          * Merge content from the DOM to the model
          * @param opts
          */
         syncContent(opts = {}) {
-            const {model, rteEnabled} = this;
-            if (!rteEnabled && !opts.force) {
+            const {model, rteEnabled, willRemoved} = this;
+            if ((!rteEnabled && !opts.force) || willRemoved) {
                 return;
             }
-            const content = this.getContent();
-            const comps = model.components();
-            const previousModels = _.clone(comps);
-            const contentOpt = {
-                fromDisable: false,
-                idUpdate: true,
-                previousModels,
-                ...opts
-            };
 
-            comps.length && comps.reset(null, opts);
-            model.set('content', '', contentOpt);
-
-            // Avoid re-render on reset with silent option
-            !opts.silent && model.trigger('change:content', model, '', contentOpt);
-
-            comps.add(this.em.get('Parser').parseTextBlockContentFromString(content), {
-                previousModels,
-                ...opts
-            });
-
-            comps.trigger('resetNavigator');
+            model.components().resetFromString(
+                `<div data-type="temporary-container">${this.getContent()}</div>`,
+                opts
+            );
         }
     }
 });

@@ -663,14 +663,13 @@ Feature: Commerce smoke e2e
     And I click "Shopping List Action Submit"
     Then I should see "Shopping list has been successfully renamed" flash message
 
-  Scenario: Checkout by customer created from admin througth the shopping list updated from admin panel
+  Scenario: Checkout by customer created from admin through the shopping list updated from admin panel
     Given I proceed as the Admin
     And go to Sales/ Shopping Lists
     When click on Updated Shopping List in grid
     And click "Add Line Item"
     Then should see an "Add Line Item Popup" element
     And fill form with:
-      |Owner   |John Doe           |
       |Product |Xiaomi_Redmi_3S_sku|
       |Quantity|12                 |
       |Unit    |item               |

@@ -1,0 +1,139 @@
+/* @theme: default; */
+
+// Default variable overrides
+
+// Color system
+
+// Options
+
+// Body
+// Settings for the `<body>` element.
+
+// Links
+// Style anchor elements.
+
+// Paragraphs
+// Style p element.
+
+// Grid breakpoints
+// Define the minimum dimensions at which your layout will change,
+// adapting to different screen sizes, for use in media queries.
+
+// Components
+// Define common padding and border radius sizes and more.
+
+$border-radius: $base-ui-element-border-radius;
+$border-radius-m: $base-ui-element-border-radius;
+$border-radius-l: $base-ui-element-border-radius;
+
+// Typography
+// Font, line-height, and color for body text, headings, and more.
+
+$font-family-base: $base-font;
+
+$line-height-base: $base-line-height--s;
+
+$dt-font-weight: $font-weight-normal;
+
+// Tables
+// Customizes the `.table` component with basic values, each used across all table variations.
+
+// Buttons + Forms
+// Shared variables that are reassigned to `$input-` and `$btn-` specific variables.
+
+$input-btn-padding-y-sm: $offset-y-s;
+$input-btn-padding-y-lg: $offset-y-m;
+
+// Buttons
+// For each of Bootstrap's buttons, define text, background, and border color.
+
+$btn-padding-y: $input-btn-padding-y;
+$btn-padding-x: $input-btn-padding-x;
+$btn-font-family: $base-font;
+
+// Allows for customizing button radius independently from global border radius
+$btn-border-radius: $border-radius;
+$btn-border-radius-xs: $border-radius-xs;
+$btn-border-radius-s: $border-radius-s;
+$btn-border-radius-m: $border-radius-m;
+$btn-border-radius-l: $border-radius-l;
+
+// Forms
+
+$input-line-height: $base-ui-element-line-height;
+$input-border-radius: $border-radius;
+
+// Navs
+
+$nav-tabs-link-active-color-focus-visible: $base-ui-bth-focus-style;
+
+// Navbar
+// Compute the navbar-brand padding-y so the navbar-brand will have the same height as navbar-text and nav-link
+
+// Dropdowns
+// Dropdown menu container and contents.
+
+$dropdown-border-radius: $border-radius;
+$dropdown-item-padding-y: $offset-y-m;
+$dropdown-item-padding-x: $offset-x;
+
+// Pagination
+
+// Jumbotron
+
+// Cards
+
+// Tooltips
+
+$tooltip-border-radius: $border-radius-xs;
+$tooltip-padding-y: $offset-y-s;
+$tooltip-padding-x: $offset-x-m;
+
+// Form tooltips must come after regular tooltips
+
+// Popovers
+
+$popover-header-bg: $popover-bg;
+$popover-body-padding-y: $popover-header-padding-y;
+$popover-body-padding-x: $popover-header-padding-x;
+$popover-arrow-color: $popover-bg;
+
+$popover-arrow-outer-color: $popover-border-color;
+
+// Toasts
+
+// Badges
+
+// Use a higher than normal value to ensure completely rounded edges when
+// customizing padding or font-size on labels.
+
+// Modals
+
+$modal-title-line-height: $line-height-base;
+$modal-content-border-width: $border-width;
+$modal-content-border-radius: $base-ui-popup-border-radius;
+
+// Alerts
+// Define alert colors, border radius, and padding.
+
+// Progress bars
+
+// List group
+
+// Image thumbnails
+
+// Figures
+
+// Breadcrumbs
+
+// Carousel
+
+// Spinners
+
+// Close
+
+// Code
+
+// Utilities
+
+// Printing

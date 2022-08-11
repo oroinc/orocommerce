@@ -1,0 +1,13 @@
+layout:
+    imports:
+        -
+            id: oro_product_totals
+            root: __product_line_item_form
+            namespace: product
+    actions:
+        - '@setBlockTheme':
+            themes: '@OroPricing/layouts/default/imports/oro_product_list_item/oro_product_totals.html.twig'
+        - '@move':
+            id: __product_totals
+            parentId: __product_line_item_form
+            prepend: true

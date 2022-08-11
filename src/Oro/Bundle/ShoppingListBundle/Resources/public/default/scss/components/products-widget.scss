@@ -1,0 +1,39 @@
+/* @theme: default; */
+
+.product-item__qty {
+    &__current-grid {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .add-product-from-view-component {
+        margin-top: $offset-y;
+
+        @include clearfix();
+    }
+
+    .product-item-shopping-lists {
+        padding: 0 0 $offset-y;
+    }
+
+    .add-to-shopping-list-button {
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .btn-main {
+        .fa {
+            display: none;
+        }
+    }
+
+    .product-add-to-shopping-list-container {
+        display: block;
+    }
+
+    .line_item_form_fields {
+        width: calc(50% - 5px);
+    }
+}

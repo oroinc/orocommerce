@@ -124,7 +124,7 @@ class FrontendProductPriceDatagridListener implements FeatureToggleableInterface
         $filterColumn = $this->priceColumnNameFilter;
         $isFlatPricing = $this->featureChecker->isFeatureEnabled('oro_price_lists_flat');
         if (!$sortColumn) {
-            $sortColumn = $isFlatPricing ? 'minimal_price_PRICE_LIST_ID_CURRENCY' : 'minimal_price_CPL_ID_CURRENCY';
+            $sortColumn = $isFlatPricing ? 'minimal_price.PRICE_LIST_ID_CURRENCY' : 'minimal_price.CPL_ID_CURRENCY';
         }
         if (!$filterColumn) {
             $filterColumn = $isFlatPricing
