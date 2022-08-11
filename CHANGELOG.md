@@ -18,6 +18,9 @@ The current file describes significant changes in the code that may affect the u
 
 ### Changed
 
+#### CMSBundle
+* Update Grapesjs to 0.19.5 version
+
 #### ProductBundle
 * `Oro\Bundle\ProductBundle\Provider\ProductImageFileNameProvider` is applicable if `product_original_filenames` feature is enabled.
 
