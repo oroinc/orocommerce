@@ -9,7 +9,7 @@ use Oro\Bundle\ProductBundle\Layout\DataProvider\ConfigurableProductProvider;
 
 /**
  * Listener saves variant field values of configurable product to OrderLineItem.
- * It will help to display order information when product deleted.
+ * It will help display order information when product deleted.
  */
 class OrderLineItemEventListener
 {
