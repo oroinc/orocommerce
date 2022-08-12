@@ -1,0 +1,10 @@
+/* @theme: custom; */
+
+.middlebar {
+    &__shopping-list {
+        // stylelint-disable-next-line declaration-no-important
+        padding: 0 !important;
+        // stylelint-disable-next-line declaration-no-important
+        background: transparent !important;
+    }
+}
