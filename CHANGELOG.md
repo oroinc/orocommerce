@@ -12,6 +12,9 @@ The current file describes significant changes in the code that may affect the u
 
 ### Changed
 
+#### InventoryBundle
+* Inventory status search index field has been moved to the separate `inventory` indexation group
+
 #### ProductBundle
 * `Oro\Bundle\ProductBundle\Provider\ProductImageFileNameProvider` is applicable if `product_original_filenames` feature is enabled.
 
