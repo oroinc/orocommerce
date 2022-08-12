@@ -69,7 +69,7 @@ class ProductInventoryFieldsChangedListener
             if ('website' === $args->getScope()) {
                 $websiteId = $args->getScopeId();
             }
-            $this->productReindexManager->reindexAllProductsWithFieldGroups($websiteId, true, ['main']);
+            $this->productReindexManager->reindexAllProductsWithFieldGroups($websiteId, true, ['inventory']);
         }
     }
 

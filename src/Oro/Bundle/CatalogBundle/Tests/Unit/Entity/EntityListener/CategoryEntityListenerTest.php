@@ -43,7 +43,7 @@ class CategoryEntityListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->productIndexScheduler->expects($this->once())
             ->method('scheduleProductsReindexWithFieldGroup')
-            ->with([$category], null, true, ['main']);
+            ->with([$category], null, true, ['main', 'inventory']);
 
         $this->categoryCache->expects($this->once())
             ->method('deleteAll');
