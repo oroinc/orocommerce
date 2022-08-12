@@ -2,6 +2,18 @@ The upgrade instructions are available at [Oro documentation website](https://do
 
 The current file describes significant changes in the code that may affect the upgrade of your customizations.
 
+## UNRELEASED
+
+### Changed
+
+#### InventoryBundle
+
+* Inventory status website search index field has been renamed from `inventory_status` to `inv_status`
+  to avoid collision with the field name for the inventory status product attribute
+* Inventory website search index fields (inventory status, low inventory threshold, is upcoming,
+  availability date) have been moved to the separate `inventory` indexation group
+  
+
 ## 5.1.0-alpha.2 (2022-08-01)
 [Show detailed list of changes](incompatibilities-5-1-alpha-2.md)
 

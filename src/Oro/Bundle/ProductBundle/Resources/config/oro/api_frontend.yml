@@ -231,7 +231,7 @@ api:
                     property_path: integer.newArrival
                 inventoryStatus:
                     data_type: string
-                    property_path: text.inventory_status
+                    property_path: text.inv_status
                     target_class: Extend\Entity\EV_Prod_Inventory_Status
                     target_type: to-one
                 unitPrecisions:
@@ -313,7 +313,7 @@ api:
                     newArrival:
                         property_path: integer.newArrival
                     inventoryStatus:
-                        property_path: text.inventory_status
+                        property_path: text.inv_status
                     minimalPrice:
                         property_path: decimal.minimal_price.CPL_ID_CURRENCY
             actions:
