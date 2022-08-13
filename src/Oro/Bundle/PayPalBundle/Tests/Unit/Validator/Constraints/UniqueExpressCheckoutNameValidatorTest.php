@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\Validator\Constraints;
 
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\IntegrationBundle\Entity\Repository\ChannelRepository;
 use Oro\Bundle\IntegrationBundle\Entity\Transport;
@@ -13,42 +13,29 @@ use Oro\Bundle\PayPalBundle\Validator\Constraints\UniqueExpressCheckoutNameValid
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class UniqueExpressCheckoutNameValidatorTest extends ConstraintValidatorTestCase
 {
-    private DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject $doctrineHelper;
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrine;
 
     protected function setUp(): void
     {
-        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
 
         parent::setUp();
     }
 
     protected function createValidator()
     {
-        /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject $translator */
-        $translator = $this->createMock(TranslatorInterface::class);
-        $translator->expects(self::any())
-            ->method('trans')
-            ->withAnyParameters()
-            ->willReturnCallback(static fn ($id) => $id . ' (translated)');
-
-        return new UniqueExpressCheckoutNameValidator(
-            $this->doctrineHelper,
-            $translator
-        );
+        return new UniqueExpressCheckoutNameValidator($this->doctrine);
     }
 
     public function testValidateInvalidConstraint(): void
     {
         $this->expectException(UnexpectedTypeException::class);
 
-        /** @var Constraint $constraint */
-        $constraint = $this->getMockForAbstractClass(Constraint::class);
-
-        $this->validator->validate(new PayPalSettings(), $constraint);
+        $this->validator->validate(new PayPalSettings(), $this->createMock(Constraint::class));
     }
 
     public function testValidateEmptyValues(): void
@@ -71,22 +58,19 @@ class UniqueExpressCheckoutNameValidatorTest extends ConstraintValidatorTestCase
         $integration->setTransport($payPalSettings);
 
         $channelRepository = $this->createMock(ChannelRepository::class);
-        $channelRepository
-            ->expects(self::once())
+        $channelRepository->expects(self::once())
             ->method('findOneBy')
             ->with(['name' => 'expressCheckoutName'])
             ->willReturn(null);
 
         $payPalSettingsRepository = $this->createMock(PayPalSettingsRepository::class);
-        $payPalSettingsRepository
-            ->expects(self::once())
+        $payPalSettingsRepository->expects(self::once())
             ->method('findOneBy')
             ->with(['expressCheckoutName' => 'integrationName'])
             ->willReturn(null);
 
-        $this->doctrineHelper
-            ->expects(self::exactly(2))
-            ->method('getEntityRepository')
+        $this->doctrine->expects(self::exactly(2))
+            ->method('getRepository')
             ->withConsecutive([Channel::class], [PayPalSettings::class])
             ->willReturnOnConsecutiveCalls($channelRepository, $payPalSettingsRepository);
 
@@ -125,15 +109,13 @@ class UniqueExpressCheckoutNameValidatorTest extends ConstraintValidatorTestCase
             ->setTransport($payPalSettings);
 
         $channelRepository = $this->createMock(ChannelRepository::class);
-        $channelRepository
-            ->expects(self::once())
+        $channelRepository->expects(self::once())
             ->method('findOneBy')
             ->with(['name' => 'expressCheckoutName'])
             ->willReturn(new \stdClass());
 
-        $this->doctrineHelper
-            ->expects(self::once())
-            ->method('getEntityRepository')
+        $this->doctrine->expects(self::once())
+            ->method('getRepository')
             ->with(Channel::class)
             ->willReturn($channelRepository);
 
@@ -146,8 +128,7 @@ class UniqueExpressCheckoutNameValidatorTest extends ConstraintValidatorTestCase
     {
         $constraint = new UniqueExpressCheckoutName();
 
-        /** @var Transport|\PHPUnit\Framework\MockObject\MockObject $transport */
-        $transport = $this->getMockForAbstractClass(Transport::class);
+        $transport = $this->createMock(Transport::class);
 
         $integration = new Channel();
         $integration
@@ -155,20 +136,21 @@ class UniqueExpressCheckoutNameValidatorTest extends ConstraintValidatorTestCase
             ->setTransport($transport);
 
         $payPalSettingsRepository = $this->createMock(PayPalSettingsRepository::class);
-        $payPalSettingsRepository
-            ->expects(self::once())
+        $payPalSettingsRepository->expects(self::once())
             ->method('findOneBy')
             ->with(['expressCheckoutName' => 'integrationName'])
             ->willReturn(new \stdClass());
 
-        $this->doctrineHelper
-            ->expects(self::once())
-            ->method('getEntityRepository')
+        $this->doctrine->expects(self::once())
+            ->method('getRepository')
             ->with(PayPalSettings::class)
             ->willReturn($payPalSettingsRepository);
 
         $this->validator->validate($integration, $constraint);
 
-        $this->buildViolation($constraint->integrationNameUniquenessMessage . ' (translated)')->assertRaised();
+        $this
+            ->buildViolation($constraint->integrationNameUniquenessMessage)
+            ->setParameters(['%name%' => 'integrationName'])
+            ->assertRaised();
     }
 }
