@@ -174,7 +174,7 @@ Feature: Localized email notification for RFQ
     And type "Product" in "search"
     And I click "Search Button"
     And I click "Add to Shopping List"
-    Then I should see "Product has been added to" flash message
+    Then I should see "Product has been added to" flash message and I close it
     When I open shopping list widget
     And I click "View List"
     And click "Request Quote"
