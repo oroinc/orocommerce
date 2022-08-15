@@ -4,7 +4,6 @@ import CONSTANTS from 'orocms/js/app/grapesjs/constants';
 const ISOLATION_SCOPE = `${CONSTANTS.ISOLATION_PREFIX}-`;
 
 const componentHtmlIdRegexp = new RegExp(`(<div id="${ISOLATION_SCOPE}([\\w]*))`, 'g');
-// @deprecated
 const componentCssIdRegexp = new RegExp(`(\\[id="${ISOLATION_SCOPE}([\\w]*)"\\])`, 'g');
 const cssSelectorRegexp = /^(?![\@\}\{].*$).*(?:[\[\.\#\,\w\|\-\:\^\+\*\~\$\>\s]+)[\#\.\w\:\-\s\*\(\)\[\]\=\"]+\s?(?=\{)/gm;
 const cssChildrenScopeRegexp = new RegExp(`#${ISOLATION_SCOPE}[\\w]*\\s?`, 'g');
