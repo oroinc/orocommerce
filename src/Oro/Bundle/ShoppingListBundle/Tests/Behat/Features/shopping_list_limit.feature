@@ -19,7 +19,7 @@ Feature: Shopping list limit
     And I click "View Details" for "PSKU1" product
     And I should see "Add to Shopping List"
     And I click "Add to Shopping List"
-    And I should see "Product has been added to" flash message
+    And I should see "Product has been added to" flash message and I close it
     And I should see "In shopping list"
     And I should see "1 Shopping List"
     When I open shopping list widget

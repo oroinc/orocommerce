@@ -661,7 +661,7 @@ Feature: Commerce smoke e2e
     And I fill "Shopping List Rename Action Form" with:
       | Label | Updated Shopping List |
     And I click "Shopping List Action Submit"
-    Then I should see "Shopping list has been successfully renamed" flash message
+    Then I should see "Shopping list has been successfully renamed" flash message and I close it
 
   Scenario: Checkout by customer created from admin through the shopping list updated from admin panel
     Given I proceed as the Admin
