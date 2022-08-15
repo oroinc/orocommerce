@@ -7,16 +7,11 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\ReflectionUtil;
 
 class ShardManagerTest extends WebTestCase
 {
-    use EntityTrait;
-
-    /**
-     * @var ShardManager
-     */
-    private $manager;
+    private ShardManager $manager;
 
     protected function setUp(): void
     {
@@ -35,7 +30,9 @@ class ShardManagerTest extends WebTestCase
 
     public function testGetShardNameWithObject()
     {
-        $attributes = ['priceList' => $this->getEntity(PriceList::class, ['id' => 1])];
+        $priceList = new PriceList();
+        ReflectionUtil::setId($priceList, 1);
+        $attributes = ['priceList' => $priceList];
         $actual = $this->manager->getShardName(ProductPrice::class, $attributes);
         $this->assertSame('oro_price_product_1', $actual);
     }
@@ -43,7 +40,7 @@ class ShardManagerTest extends WebTestCase
     public function testGetShardNameExceptionWhenParamMissing()
     {
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessage("Required attribute 'priceList' for generation of shard name missing.");
+        $this->expectExceptionMessage('Required attribute \'priceList\' for generation of shard name missing.');
 
         $this->manager->getEnabledShardName(ProductPrice::class, []);
     }
@@ -51,7 +48,7 @@ class ShardManagerTest extends WebTestCase
     public function testGetShardNameExceptionWhenParamNotValid()
     {
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessage("Wrong type of 'priceList' to generate shard name.");
+        $this->expectExceptionMessage('Wrong type of \'priceList\' to generate shard name.');
 
         $this->manager->getEnabledShardName(ProductPrice::class, ['priceList' => new \stdClass()]);
     }
@@ -93,17 +90,17 @@ class ShardManagerTest extends WebTestCase
 
     public function testMoveData()
     {
-        $pl1 = $this->createPriceList("PL1");
-        $pl2 = $this->createPriceList("PL2");
-        $prodSku = "PROD1";
+        $pl1 = $this->createPriceList('PL1');
+        $pl2 = $this->createPriceList('PL2');
+        $prodSku = 'PROD1';
         $product = $this->createProduct($prodSku);
 
-        $pricePl1 = $this->createPrice("91907077-73f9-444a-96f5-fb0a66167cc5", $pl1, $product, $prodSku);
-        $pricePl2 = $this->createPrice("27cdc013-1340-46f4-ba80-8ea623772bfe", $pl2, $product, $prodSku);
+        $pricePl1 = $this->createPrice('91907077-73f9-444a-96f5-fb0a66167cc5', $pl1, $product, $prodSku);
+        $pricePl2 = $this->createPrice('27cdc013-1340-46f4-ba80-8ea623772bfe', $pl2, $product, $prodSku);
 
-        $baseTableName = "oro_price_product";
-        $shardName1 = "oro_price_product_".$pl1;
-        $shardName2 = "oro_price_product_".$pl2;
+        $baseTableName = 'oro_price_product';
+        $shardName1 = 'oro_price_product_'.$pl1;
+        $shardName2 = 'oro_price_product_'.$pl2;
 
         try {
             // move data from base table
@@ -118,113 +115,90 @@ class ShardManagerTest extends WebTestCase
             $this->assertFalse($this->manager->exists($shardName1));
             $this->assertFalse($this->manager->exists($shardName2));
         } finally {
-            $this->removeRow("oro_price_list", $pl1);
-            $this->removeRow("oro_price_list", $pl2);
-            $this->removeRow("oro_product", $product);
+            $this->removeRow('oro_price_list', $pl1);
+            $this->removeRow('oro_price_list', $pl2);
+            $this->removeRow('oro_product', $product);
             $this->removeRow($baseTableName, $pricePl1);
             $this->removeRow($baseTableName, $pricePl1);
         }
     }
 
-    /**
-     * @param string $name
-     * @return string
-     */
-    private function createPriceList($name)
+    private function createPriceList(string $name): int
     {
         /** @var Connection $connection */
-        $connection = $this->getContainer()->get("doctrine")->getConnection();
+        $connection = $this->getContainer()->get('doctrine')->getConnection();
         $connection->insert(
-            "oro_price_list",
+            'oro_price_list',
             [
-                "name" => $name,
-                "is_default" => 1,
-                "contain_schedule" => 1,
-                "created_at" => "2017-03-29",
-                "updated_at" => "2017-03-29",
+                'name' => $name,
+                'is_default' => 1,
+                'contain_schedule' => 1,
+                'created_at' => '2017-03-29',
+                'updated_at' => '2017-03-29',
             ]
         );
 
         return $connection->lastInsertId();
     }
 
-    /**
-     * @param string $sku
-     * @return string
-     */
-    private function createProduct($sku)
+    private function createProduct(string $sku): int
     {
         /** @var Connection $connection */
-        $connection = $this->getContainer()->get("doctrine")->getConnection();
+        $connection = $this->getContainer()->get('doctrine')->getConnection();
         $productName = 'product 1';
         $connection->insert(
-            "oro_product",
+            'oro_product',
             [
-                "sku" => $sku,
-                "created_at" => "2017-03-29",
-                "updated_at" => "2017-03-29",
-                "status" => "enabled",
-                "type" => "simple",
-                "name" => $productName,
-                "name_uppercase" => mb_strtoupper($productName)
+                'sku' => $sku,
+                'created_at' => '2017-03-29',
+                'updated_at' => '2017-03-29',
+                'status' => 'enabled',
+                'type' => 'simple',
+                'name' => $productName,
+                'name_uppercase' => mb_strtoupper($productName)
             ]
         );
 
         return $connection->lastInsertId();
     }
 
-    /**
-     * @param string $uid
-     * @param int $pl
-     * @param int $prodId
-     * @param string $prodSku
-     * @return string
-     */
-    private function createPrice($uid, $pl, $prodId, $prodSku)
+    private function createPrice(string $uid, int $pl, int $prodId, string $prodSku): string
     {
         /** @var Connection $connection */
-        $connection = $this->getContainer()->get("doctrine")->getConnection();
+        $connection = $this->getContainer()->get('doctrine')->getConnection();
         $connection->insert(
-            "oro_price_product",
+            'oro_price_product',
             [
-                "id" => $uid,
-                "unit_code" => "item",
-                "product_id" => $prodId,
-                "product_sku" => $prodSku,
-                "price_list_id" => $pl,
-                "quantity" => 1,
-                "value" => 100,
-                "currency" => "USD",
+                'id' => $uid,
+                'unit_code' => 'item',
+                'product_id' => $prodId,
+                'product_sku' => $prodSku,
+                'price_list_id' => $pl,
+                'quantity' => 1,
+                'value' => 100,
+                'currency' => 'USD',
             ]
         );
 
         return $uid;
     }
 
-    /**
-     * @param string $table
-     * @param int $id
-     */
-    private function assertPriceInTable($table, $id)
+    private function assertPriceInTable(string $table, string $id): void
     {
         /** @var Connection $connection */
-        $connection = $this->getContainer()->get("doctrine")->getConnection();
+        $connection = $this->getContainer()->get('doctrine')->getConnection();
         $exists = (boolean)$connection->executeQuery(
-            "SELECT exists(SELECT 1 FROM $table WHERE id = :id)",
-            ["id" => $id]
+            'SELECT exists(SELECT 1 FROM ' . $table . ' WHERE id = :id)',
+            ['id' => $id]
         )->fetchColumn(0);
 
-        $this->assertTrue($exists, sprintf("Failed assert that %s in %s", $id, $table));
+        $this->assertTrue($exists, sprintf('Failed assert that %s in %s', $id, $table));
     }
 
-    /**
-     * @param string $table
-     * @param int $id
-     */
-    private function removeRow($table, $id)
+    private function removeRow(string $table, string $id): void
     {
         /** @var Connection $connection */
-        $connection = $this->getContainer()->get("doctrine")->getConnection();
+        $connection = $this->getContainer()->get('doctrine')->getConnection();
         $connection->delete($table, ['id' => $id]);
     }
 

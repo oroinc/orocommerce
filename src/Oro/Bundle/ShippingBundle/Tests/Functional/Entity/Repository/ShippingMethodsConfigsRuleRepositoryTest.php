@@ -7,9 +7,9 @@ use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodsConfigsRuleRepository;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
+use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
 use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingMethodsConfigsRulesWithConfigs;
 use Oro\Bundle\ShippingBundle\Tests\Functional\Helper\FlatRateIntegrationTrait;
-use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingAddressStub;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class ShippingMethodsConfigsRuleRepositoryTest extends WebTestCase
@@ -171,7 +171,7 @@ class ShippingMethodsConfigsRuleRepositoryTest extends WebTestCase
 
     private function createShippingAddress(array $data): AddressInterface
     {
-        $address = new ShippingAddressStub();
+        $address = new ShippingOrigin();
         $address->setCountry(new Country($data['country']));
         $address->setRegion((new Region($data['region']['combinedCode']))->setCode($data['region']['code']));
         $address->setPostalCode($data['postalCode']);

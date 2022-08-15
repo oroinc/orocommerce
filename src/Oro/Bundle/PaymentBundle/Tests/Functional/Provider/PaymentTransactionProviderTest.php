@@ -2,15 +2,17 @@
 
 namespace Oro\Bundle\PaymentBundle\Tests\Functional\Provider;
 
+use Doctrine\DBAL\Exception\NotNullConstraintViolationException;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
 use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
+use Oro\Bundle\EntityBundle\Exception\NotManageableEntityException;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTransactionData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\ReflectionUtil;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
@@ -19,8 +21,6 @@ use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
  */
 class PaymentTransactionProviderTest extends WebTestCase
 {
-    use EntityTrait;
-
     public function testGetActiveAuthorizePaymentTransactionShouldNotRelyOnFrontendOwnerFromBackend()
     {
         $this->initClient();
@@ -34,7 +34,7 @@ class PaymentTransactionProviderTest extends WebTestCase
 
         $this->assertNotEmpty(
             $paymentTransactionProvider->getActiveAuthorizePaymentTransaction(
-                $this->getEntity(PaymentTransaction::class, ['id' => 1]),
+                $this->createPaymentTransaction(1),
                 '1000',
                 'USD',
                 'payment_method'
@@ -52,7 +52,7 @@ class PaymentTransactionProviderTest extends WebTestCase
             )
         );
 
-        $this->loadFixtures(['Oro\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTransactionData']);
+        $this->loadFixtures([LoadPaymentTransactionData::class]);
 
         $paymentTransactionProvider = $this->getContainer()->get('oro_payment.provider.payment_transaction');
 
@@ -66,7 +66,7 @@ class PaymentTransactionProviderTest extends WebTestCase
 
         $this->assertNotEmpty(
             $paymentTransactionProvider->getActiveAuthorizePaymentTransaction(
-                $this->getEntity(PaymentTransaction::class, ['id' => 1]),
+                $this->createPaymentTransaction(1),
                 '1000',
                 'USD',
                 'payment_method'
@@ -84,7 +84,7 @@ class PaymentTransactionProviderTest extends WebTestCase
             )
         );
 
-        $this->loadFixtures(['Oro\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTransactionData']);
+        $this->loadFixtures([LoadPaymentTransactionData::class]);
 
         $paymentTransactionProvider = $this->getContainer()->get('oro_payment.provider.payment_transaction');
 
@@ -108,7 +108,7 @@ class PaymentTransactionProviderTest extends WebTestCase
             $this->generateBasicAuthHeader(LoadCustomerUserData::EMAIL, LoadCustomerUserData::PASSWORD)
         );
 
-        $this->loadFixtures(['Oro\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTransactionData']);
+        $this->loadFixtures([LoadPaymentTransactionData::class]);
 
         $paymentTransactionProvider = $this->getContainer()->get('oro_payment.provider.payment_transaction');
 
@@ -128,7 +128,7 @@ class PaymentTransactionProviderTest extends WebTestCase
     public function testGetActiveValidatePaymentTransactionEmptyForUser()
     {
         $this->initClient();
-        $this->loadFixtures(['Oro\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTransactionData']);
+        $this->loadFixtures([LoadPaymentTransactionData::class]);
 
         $paymentTransactionProvider = $this->getContainer()->get('oro_payment.provider.payment_transaction');
 
@@ -146,7 +146,7 @@ class PaymentTransactionProviderTest extends WebTestCase
             $this->generateBasicAuthHeader(LoadCustomerUserData::EMAIL, LoadCustomerUserData::PASSWORD)
         );
 
-        $this->loadFixtures(['Oro\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTransactionData']);
+        $this->loadFixtures([LoadPaymentTransactionData::class]);
 
         $paymentTransactionProvider = $this->getContainer()->get('oro_payment.provider.payment_transaction');
 
@@ -158,11 +158,10 @@ class PaymentTransactionProviderTest extends WebTestCase
             )
         );
 
-        /** @var PaymentTransaction $paymentTransaction */
         $paymentTransaction = $paymentTransactionProvider->createPaymentTransaction(
             'paymentMethod',
             'authorize',
-            $this->getEntity(PaymentTransaction::class, ['id' => 1])
+            $this->createPaymentTransaction(1)
         );
 
         $paymentTransaction
@@ -176,13 +175,12 @@ class PaymentTransactionProviderTest extends WebTestCase
 
     public function testTransactionSaveDatabaseException()
     {
-        $this->expectException(\Doctrine\DBAL\Exception\NotNullConstraintViolationException::class);
+        $this->expectException(NotNullConstraintViolationException::class);
 
         $this->initClient();
 
         $paymentTransactionProvider = $this->getContainer()->get('oro_payment.provider.payment_transaction');
-        /** @var \PHPUnit\Framework\MockObject\MockObject|LoggerInterface $logger */
-        $logger = $this->createMock('\Psr\Log\LoggerInterface');
+        $logger = $this->createMock(LoggerInterface::class);
         $logger->expects($this->once())->method('critical');
 
         $paymentTransactionProvider->setLogger($logger);
@@ -191,7 +189,7 @@ class PaymentTransactionProviderTest extends WebTestCase
 
     public function testCreatePaymentTransactionNonManageable()
     {
-        $this->expectException(\Oro\Bundle\EntityBundle\Exception\NotManageableEntityException::class);
+        $this->expectException(NotManageableEntityException::class);
         $this->expectExceptionMessage('Entity class "stdClass" is not manageable.');
 
         $this->initClient();
@@ -247,7 +245,7 @@ class PaymentTransactionProviderTest extends WebTestCase
         $this->assertEquals($expectedPaymentTransaction, $actualPaymentTransaction);
     }
 
-    public function testCreateTransactionForAnonymousCustomreUser()
+    public function testCreateTransactionForAnonymousCustomerUser()
     {
         $this->initClient();
         $this->loadFixtures([LoadPaymentTransactionData::class]);
@@ -267,17 +265,22 @@ class PaymentTransactionProviderTest extends WebTestCase
             ->createPaymentTransaction(
                 'payment_method',
                 PaymentMethodInterface::PURCHASE,
-                $this->getEntity(PaymentTransaction::class, ['id' => 1])
+                $this->createPaymentTransaction(1)
             );
 
         $this->assertNotNull($paymentTransaction->getFrontendOwner());
         $this->assertEquals($customerUser->getEmail(), $paymentTransaction->getFrontendOwner()->getEmail());
     }
 
-    /**
-     * @return CustomerUser|null
-     */
-    protected function getLoggedCustomerUser()
+    private function createPaymentTransaction(int $id): PaymentTransaction
+    {
+        $paymentTransaction = new PaymentTransaction();
+        ReflectionUtil::setId($paymentTransaction, $id);
+
+        return $paymentTransaction;
+    }
+
+    private function getLoggedCustomerUser(): ?CustomerUser
     {
         $token = $this->getContainer()->get('security.token_storage')->getToken();
         if (!$token) {
@@ -285,7 +288,6 @@ class PaymentTransactionProviderTest extends WebTestCase
         }
 
         $user = $token->getUser();
-
         if ($user instanceof CustomerUser) {
             return $user;
         }

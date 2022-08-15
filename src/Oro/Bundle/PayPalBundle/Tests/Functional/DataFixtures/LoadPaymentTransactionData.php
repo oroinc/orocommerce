@@ -8,26 +8,22 @@ use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\ChannelBundle\Entity\Channel;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
+use Oro\Bundle\IntegrationBundle\Entity\Channel as IntegrationChannel;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class LoadPaymentTransactionData extends AbstractFixture implements DependentFixtureInterface
 {
-    use EntityTrait;
+    public const PAYFLOW_AUTHORIZE_TRANSACTION = 'payflow_authorize_transaction';
+    public const PAYFLOW_CHARGE_TRANSACTION = 'payflow_charge_transaction';
+    public const PAYMENTS_PRO_EC_AUTHORIZE_PENDING_TRANSACTION = 'payments_pro_ec_authorize_pending_transaction';
+    public const PAYMENTS_PRO_EC_AUTHORIZE_PAID_TRANSACTION = 'payments_pro_ec_authorize_paid_transaction';
 
     /**
-     * References
-     */
-    const PAYFLOW_AUTHORIZE_TRANSACTION = 'payflow_authorize_transaction';
-    const PAYFLOW_CHARGE_TRANSACTION = 'payflow_charge_transaction';
-    const PAYMENTS_PRO_EC_AUTHORIZE_PENDING_TRANSACTION = 'payments_pro_ec_authorize_pending_transaction';
-    const PAYMENTS_PRO_EC_AUTHORIZE_PAID_TRANSACTION = 'payments_pro_ec_authorize_paid_transaction';
-
-    /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getDependencies(): array
     {
@@ -39,48 +35,38 @@ class LoadPaymentTransactionData extends AbstractFixture implements DependentFix
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
+        $propertyAccessor = PropertyAccess::createPropertyAccessor();
         foreach ($this->getData() as $reference => $data) {
             $paymentTransaction = new PaymentTransaction();
-
             foreach ($data as $property => $value) {
-                $this->setValue($paymentTransaction, $property, $value);
+                $propertyAccessor->setValue($paymentTransaction, $property, $value);
             }
-
             $this->setReference($reference, $paymentTransaction);
-
             $manager->persist($paymentTransaction);
         }
 
         $manager->flush();
     }
 
-    /**
-     * @return array
-     */
-    private function getData()
+    private function getData(): array
     {
         /** @var CustomerUser $frontendOwner */
         $frontendOwner = $this->getReference(LoadCustomerUserData::EMAIL);
-
         /** @var Order $order1 */
         $order1 = $this->getReference(LoadOrders::ORDER_1);
-
         /** @var Order $order2 */
         $order2 = $this->getReference(LoadOrders::ORDER_2);
-
         /** @var Order $order3 */
         $order3 = $this->getReference(LoadOrders::ORDER_3);
-
         /** @var Order $order4 */
         $order4 = $this->getReference(LoadOrders::ORDER_4);
-
         /** @var Channel $channel */
         $channel = $this->getReference(LoadPayPalChannelData::PAYPAL_PAYFLOW_GATAWAY1);
-
+        /** @var IntegrationChannel $paymentsPro1Channel */
         $paymentsPro1Channel = $this->getReference(LoadPayPalChannelData::PAYPAL_PAYMENTS_PRO1);
 
         return [

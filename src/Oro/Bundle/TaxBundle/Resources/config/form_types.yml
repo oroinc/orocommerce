@@ -30,25 +30,16 @@ services:
 
     oro_tax.form.extension.product_tax:
         class: 'Oro\Bundle\TaxBundle\Form\Extension\ProductTaxExtension'
-        arguments:
-            - '@oro_entity.doctrine_helper'
-            - 'Oro\Bundle\TaxBundle\Entity\ProductTaxCode'
         tags:
             - { name: form.type_extension, alias: oro_product, extended_type: Oro\Bundle\ProductBundle\Form\Type\ProductType }
 
     oro_tax.form.extension.customer_tax:
         class: 'Oro\Bundle\TaxBundle\Form\Extension\CustomerTaxExtension'
-        arguments:
-            - '@oro_entity.doctrine_helper'
-            - 'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode'
         tags:
             - { name: form.type_extension, alias: oro_customer_type, extended_type: Oro\Bundle\CustomerBundle\Form\Type\CustomerType }
 
     oro_tax.form.extension.customer_group_tax:
         class: 'Oro\Bundle\TaxBundle\Form\Extension\CustomerGroupTaxExtension'
-        arguments:
-            - '@oro_entity.doctrine_helper'
-            - 'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode'
         tags:
             - { name: form.type_extension, alias: oro_customer_group_type, extended_type: Oro\Bundle\CustomerBundle\Form\Type\CustomerGroupType }
 

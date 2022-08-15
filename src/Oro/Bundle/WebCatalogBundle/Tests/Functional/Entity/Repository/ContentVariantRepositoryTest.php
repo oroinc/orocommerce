@@ -8,30 +8,25 @@ use Oro\Bundle\RedirectBundle\Tests\Functional\DataFixtures\LoadSlugsData;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebCatalogBundle\ContentVariantType\SystemPageContentVariantType;
+use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentVariantRepository;
 use Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures\LoadContentVariantScopes;
 use Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures\LoadContentVariantsData;
 use Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures\LoadContentVariantSlugsData;
 use Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures\LoadWebCatalogData;
-use Oro\Bundle\WebCatalogBundle\Tests\Unit\Entity\Stub\ContentNode;
 
 class ContentVariantRepositoryTest extends WebTestCase
 {
-    /**
-     * @var ContentVariantRepository
-     */
-    protected $repository;
+    private ContentVariantRepository $repository;
 
     protected function setUp(): void
     {
         $this->initClient();
-        $this->loadFixtures(
-            [
-                LoadContentVariantSlugsData::class,
-                LoadContentVariantScopes::class,
-            ]
-        );
+        $this->loadFixtures([
+            LoadContentVariantSlugsData::class,
+            LoadContentVariantScopes::class,
+        ]);
         $this->repository = $this->getContainer()->get('doctrine')
             ->getManagerForClass(ContentVariant::class)
             ->getRepository(ContentVariant::class);
@@ -58,7 +53,7 @@ class ContentVariantRepositoryTest extends WebTestCase
      */
     public function testFindChildrenVariantIds(array $context, array $expected): void
     {
-        \array_walk($context, function (&$item, $key) {
+        array_walk($context, function (&$item) {
             $item = $this->getReference($item);
         });
 

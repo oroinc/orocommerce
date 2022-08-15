@@ -9,9 +9,9 @@ use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\WebCatalogBundle\ContentVariantType\SystemPageContentVariantType;
+use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
-use Oro\Bundle\WebCatalogBundle\Tests\Unit\Entity\Stub\ContentNode;
 
 class LoadContentVariantScopes extends AbstractFixture implements DependentFixtureInterface
 {
