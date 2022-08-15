@@ -19,5 +19,5 @@ Feature: Shopping list title
     When I fill "Shopping List Rename Action Form" with:
       | Label | Shopping List 2 |
     And I click "Shopping List Action Submit"
-    Then I should see "Shopping list has been successfully renamed" flash message
+    Then I should see "Shopping list has been successfully renamed" flash message and I close it
     And I should see "Signed in as: Amanda Cole"
