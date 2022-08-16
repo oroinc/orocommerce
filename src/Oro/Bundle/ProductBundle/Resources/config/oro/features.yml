@@ -4,43 +4,43 @@ features:
         description: oro.product.feature.quick_order_form.description
         toggle: oro_product.enable_quick_order_form
         routes:
-            - 'oro_product_frontend_quick_add'
-            - 'oro_product_frontend_quick_add_import'
-            - 'oro_product_frontend_quick_add_copy_paste'
-            - 'oro_product_frontend_quick_add_validation_result'
+            - oro_product_frontend_quick_add
+            - oro_product_frontend_quick_add_import
+            - oro_product_frontend_quick_add_copy_paste
+            - oro_product_frontend_quick_add_validation_result
         configuration:
-            - 'guest_quick_order_form'
+            - guest_quick_order_form
 
     guest_quick_order:
-        label: oro.product.feature.guest_quick_order_form.label
-        description: oro.product.feature.quick_order_form.description
+        label: oro.product.feature.guest_quick_order.label
+        description: oro.product.feature.guest_quick_order.description
         strategy: affirmative
 
     guest_quick_order_config:
-        label: oro.product.feature.guest_quick_order_form.label
-        description: oro.product.feature.quick_order_form.description
+        label: oro.product.feature.guest_quick_order_config.label
+        description: oro.product.feature.guest_quick_order_config.description
         toggle: oro_product.guest_quick_order_form
 
     guest_quick_order_form:
         label: oro.product.feature.guest_quick_order_form.label
-        description: oro.product.feature.quick_order_form.description
+        description: oro.product.feature.guest_quick_order_form.description
         routes:
-            - 'oro_product_frontend_quick_add'
-            - 'oro_product_frontend_quick_add_import'
-            - 'oro_product_frontend_quick_add_copy_paste'
-            - 'oro_product_frontend_quick_add_validation_result'
+            - oro_product_frontend_quick_add
+            - oro_product_frontend_quick_add_import
+            - oro_product_frontend_quick_add_copy_paste
+            - oro_product_frontend_quick_add_validation_result
         dependencies:
-            - 'guest_quick_order'
+            - guest_quick_order
 
     frontend_products_data_export:
         label: oro.product.feature.frontend_products_data_export.label
         description: oro.product.feature.frontend_products_data_export.description
         toggle: oro_product.product_data_export_enabled
         routes:
-            - 'oro_product_frontend_export'
+            - oro_product_frontend_export
         configuration:
-            - 'oro_product.product_prices_export_enabled'
-            - 'oro_product.product_price_tiers_export_enabled'
+            - oro_product.product_prices_export_enabled
+            - oro_product.product_price_tiers_export_enabled
 
     simple_variations_view_restriction:
         label: oro.product.feature.simple_variations_view_restriction.label
@@ -48,11 +48,115 @@ features:
 
     product_original_filenames_configuration:
         label: oro.product.feature.original_file_names_configuration_enabled.label
+        description: oro.product.feature.original_file_names_configuration_enabled.description
         configuration:
             - oro_product.original_file_names_enabled
 
     product_original_filenames:
         label: oro.product.feature.original_file_names_enabled.label
+        description: oro.product.feature.original_file_names_enabled.description
         toggle: oro_product.original_file_names_enabled
         dependencies:
-            - 'product_original_filenames_configuration'
+            - product_original_filenames_configuration
+
+    manage_products:
+        label: oro.product.feature.products.manage.label
+        description: oro.product.feature.products.manage.description
+        allow_if_all_abstain: true
+        routes:
+            - oro_product_index
+            - oro_product_view
+            - oro_product_info
+            - oro_product_create
+            - oro_product_create_step_two
+            - oro_product_update
+            - oro_product_related_items_update
+            - oro_product_get_changed_slugs
+            - oro_product_get_changed_default_slug
+            - oro_product_possible_products_for_related_products
+            - oro_product_possible_products_for_upsell_products
+            - oro_add_products_widget
+            - oro_api_patch_product_inline_edit_name
+            - oro_api_patch_product_inline_edit_inventory_status
+        entities:
+            - Oro\Bundle\ProductBundle\Entity\Product
+            - Extend\Entity\EV_Prod_Inventory_Status
+            - Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct
+            - Oro\Bundle\ProductBundle\Entity\ProductVariantLink
+            - Oro\Bundle\ProductBundle\Entity\ProductUnit
+            - Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision
+            - Oro\Bundle\ProductBundle\Entity\ProductImage
+            - Oro\Bundle\ProductBundle\Entity\ProductImageType
+            - Oro\Bundle\ProductBundle\Entity\ProductName
+            - Oro\Bundle\ProductBundle\Entity\ProductShortDescription
+            - Oro\Bundle\ProductBundle\Entity\ProductDescription
+        api_resources:
+            - Oro\Bundle\ProductBundle\Entity\Product
+            - Extend\Entity\EV_Prod_Inventory_Status
+            - Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct
+            - Oro\Bundle\ProductBundle\Entity\ProductVariantLink
+            - Oro\Bundle\ProductBundle\Entity\ProductUnit
+            - Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision
+            - Oro\Bundle\ProductBundle\Entity\ProductImage
+            - Oro\Bundle\ProductBundle\Entity\ProductImageType
+            - Oro\Bundle\ProductBundle\Entity\ProductName
+            - Oro\Bundle\ProductBundle\Entity\ProductShortDescription
+            - Oro\Bundle\ProductBundle\Entity\ProductDescription
+        navigation_items:
+            - application_menu.products_tab.product_list
+        placeholder_items:
+            - oro_product_select_related_products_button
+            - oro_product_select_upsell_products_button
+
+    manage_product_families:
+        label: oro.product.feature.product_families.manage.label
+        description: oro.product.feature.product_families.manage.description
+        allow_if_all_abstain: true
+        routes:
+            - oro_attribute_family_index
+            - oro_attribute_family_view
+            - oro_attribute_family_create
+            - oro_attribute_family_update
+            - oro_attribute_family_delete
+        entities:
+            - Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily
+        api_resources:
+            - Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily
+        navigation_items:
+            - application_menu.products_tab.product_attribute_families
+
+    manage_product_attributes:
+        label: oro.product.feature.product_attributes.manage.label
+        description: oro.product.feature.product_attributes.manage.description
+        allow_if_all_abstain: true
+        routes:
+            - oro_attribute_index
+            - oro_attribute_create
+            - oro_attribute_save
+            - oro_attribute_update
+            - oro_attribute_remove
+            - oro_attribute_unremove
+        entities:
+            - Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeGroup
+        api_resources:
+            - Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeGroup
+        navigation_items:
+            - application_menu.products_tab.product_attributes_index
+
+    manage_product_brands:
+        label: oro.product.feature.product_brands.manage.label
+        description: oro.product.feature.product_brands.manage.description
+        allow_if_all_abstain: true
+        routes:
+            - oro_product_brand_index
+            - oro_product_brand_create
+            - oro_product_brand_update
+            - oro_product_brand_get_changed_slugs
+            - oro_api_get_brand
+            - oro_api_delete_brand
+        entities:
+            - Oro\Bundle\ProductBundle\Entity\Brand
+        api_resources:
+            - Oro\Bundle\ProductBundle\Entity\Brand
+        navigation_items:
+            - application_menu.products_tab.brand_list

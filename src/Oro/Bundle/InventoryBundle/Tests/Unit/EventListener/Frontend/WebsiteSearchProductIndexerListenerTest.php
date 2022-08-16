@@ -3,6 +3,7 @@
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\EventListener\Frontend;
 
 use Oro\Bundle\EntityBundle\Fallback\EntityFallbackResolver;
+use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue as InventoryStatus;
 use Oro\Bundle\InventoryBundle\EventListener\Frontend\WebsiteSearchProductIndexerListener;
 use Oro\Bundle\InventoryBundle\Provider\UpcomingProductProvider;
 use Oro\Bundle\InventoryBundle\Tests\Unit\EventListener\Stub\ProductStub;
@@ -41,6 +42,7 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
         $product1Id = 10;
         $product1 = new ProductStub();
         ReflectionUtil::setId($product1, $product1Id);
+        $product1->setInventoryStatus(new InventoryStatus('in_stock', 'In Stock'));
         $product1HighlightLowInventory = true;
         $product1LowInventoryThreshold = 1.1;
         $product1IsUpcoming = true;
@@ -55,6 +57,7 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
         $product3Id = 30;
         $product3 = new ProductStub();
         ReflectionUtil::setId($product3, $product3Id);
+        $product3->setInventoryStatus(new InventoryStatus('in_stock', 'In Stock'));
         $product3HighlightLowInventory = false;
         $product3IsUpcoming = true;
         $product3AvailabilityDate = null;
@@ -87,11 +90,16 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
         self::assertSame(
             [
                 $product1Id => [
+                    'inv_status' => [['value' => 'in_stock', 'all_text' => false]],
                     'low_inventory_threshold' => [['value' => $product1LowInventoryThreshold, 'all_text' => false]],
                     'is_upcoming' => [['value' => 1, 'all_text' => false]],
                     'availability_date' => [['value' => $product1AvailabilityDate, 'all_text' => false]]
                 ],
+                $product2Id => [
+                    'inv_status' => [['value' => '', 'all_text' => false]],
+                ],
                 $product3Id => [
+                    'inv_status' => [['value' => 'in_stock', 'all_text' => false]],
                     'is_upcoming' => [['value' => 1, 'all_text' => false]],
                     'availability_date' => [['value' => null, 'all_text' => false]]
                 ]
@@ -103,7 +111,7 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
     public function contextDataProvider(): \Generator
     {
         yield [[]];
-        yield [[AbstractIndexer::CONTEXT_FIELD_GROUPS => ['main']]];
+        yield [[AbstractIndexer::CONTEXT_FIELD_GROUPS => ['inventory']]];
     }
 
     public function testOnWebsiteSearchIndexUnsupportedFieldGroup(): void

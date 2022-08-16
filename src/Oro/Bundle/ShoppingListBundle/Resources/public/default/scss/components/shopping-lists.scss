@@ -20,17 +20,21 @@
         border-radius: $shopping-lists-content-border-radius;
     }
 
+    &__content-wrapper {
+        overflow: hidden;
+        display: flex;
+        padding: $shopping-lists-content-wrapper-offset;
+    }
+
     &__text {
         display: $shopping-lists-text-display;
 
-        padding: $shopping-lists-text-offset;
-
-        text-align: $shopping-lists-text-text-align;
-        justify-content: $shopping-lists-text-justify-content;
-        word-break: $shopping-lists-text-word-break;
+        @include ellipsis();
     }
 
     &__cart {
+        padding-right: $shopping-lists-cart-offset;
+
         @include fa-icon($shopping-lists-cart-icon, before, true) {
             font-size: $shopping-lists-cart-font-size;
         }

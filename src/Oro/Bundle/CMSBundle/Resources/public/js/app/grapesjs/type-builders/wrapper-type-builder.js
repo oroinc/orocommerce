@@ -44,6 +44,10 @@ const WrapperTypeBuilder = BaseTypeBuilder.extend({
 
     constructor: function WrapperTypeBuilder(...args) {
         return WrapperTypeBuilder.__super__.constructor.apply(this, args);
+    },
+
+    isComponent() {
+        return false;
     }
 });
 

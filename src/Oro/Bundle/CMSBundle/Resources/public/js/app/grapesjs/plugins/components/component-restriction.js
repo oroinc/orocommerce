@@ -82,15 +82,15 @@ define(function(require) {
          * Check existing component types
          */
         resolveRestriction: function() {
-            const DomComponents = this.editor.DomComponents;
+            const Components = this.editor.Components;
             const BlockManager = this.editor.BlockManager;
-            const componentTypes = DomComponents.componentTypes;
+            const componentTypes = Components.componentTypes;
 
-            DomComponents.componentTypes = _.reject(componentTypes, function(type) {
+            Components.componentTypes = _.reject(componentTypes, function(type) {
                 return !this.isAllowedTag(type.model.prototype.defaults.tagName);
             }, this);
 
-            const types = _.pluck(DomComponents.componentTypes, 'id');
+            const types = _.pluck(Components.componentTypes, 'id');
             const _res = [];
 
             _.each(BlockManager.getAll().models, function(model) {

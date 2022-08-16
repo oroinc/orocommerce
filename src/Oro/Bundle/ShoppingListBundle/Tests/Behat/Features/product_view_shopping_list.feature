@@ -43,7 +43,7 @@ Feature: Product view shopping list
     And click "Search Button"
     And click "View Details" for "PSKU_ITEM" product
     When I click "Add to Shopping List"
-    Then I should see "Product has been added to" flash message
+    Then I should see "Product has been added to" flash message and I close it
 
   Scenario: Check that product name is displayed properly in shopping cart dropdown
     And type "PSKU1" in "search"

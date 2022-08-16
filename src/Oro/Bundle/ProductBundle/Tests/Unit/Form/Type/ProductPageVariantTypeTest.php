@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\FormBundle\Autocomplete\SearchHandlerInterface;
 use Oro\Bundle\FormBundle\Autocomplete\SearchRegistry;
 use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
@@ -22,64 +23,46 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class ProductPageVariantTypeTest extends FormIntegrationTestCase
 {
     /**
-     * @return array
+     * {@inheritDoc}
      */
     protected function getExtensions()
     {
-        /** @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject $authorizationChecker */
-        $authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
-
-        /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject $configManager */
-        $configManager = $this->createMock(ConfigManager::class);
-
         $classMetadata = new ClassMetadata(Product::class);
         $classMetadata->setIdentifier(['id']);
 
-        /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject $entityManager */
         $entityManager = $this->createMock(EntityManager::class);
-        $entityManager
-            ->expects(self::any())
+        $entityManager->expects(self::any())
             ->method('getClassMetadata')
             ->willReturn($classMetadata);
 
         $handler = $this->createMock(SearchHandlerInterface::class);
-        $handler
-            ->expects(self::any())
+        $handler->expects(self::any())
             ->method('getProperties')
             ->willReturn([]);
-
-        $handler
-            ->expects(self::any())
+        $handler->expects(self::any())
             ->method('getEntityName')
             ->willReturn(Product::class);
 
-        /** @var SearchRegistry|\PHPUnit\Framework\MockObject\MockObject $searchRegistry */
         $searchRegistry = $this->createMock(SearchRegistry::class);
-        $searchRegistry
-            ->expects(self::any())
+        $searchRegistry->expects(self::any())
             ->method('getSearchHandler')
-            ->will($this->returnValue($handler));
-
-        /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject $configProvider */
-        $configProvider = $this->createMock(ConfigProvider::class);
-
-        /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject $translator */
-        $translator = $this->createMock(TranslatorInterface::class);
+            ->willReturn($handler);
 
         return [
             new PreloadedExtension(
                 [
-                    ProductSelectType::class => new ProductSelectType($translator),
+                    ProductSelectType::class => new ProductSelectType($this->createMock(TranslatorInterface::class)),
                     OroEntitySelectOrCreateInlineType::class => new OroEntitySelectOrCreateInlineType(
-                        $authorizationChecker,
-                        $configManager,
+                        $this->createMock(AuthorizationCheckerInterface::class),
+                        $this->createMock(FeatureChecker::class),
+                        $this->createMock(ConfigManager::class),
                         $entityManager,
                         $searchRegistry
                     ),
                     OroJquerySelect2HiddenType::class => new OroJquerySelect2HiddenType(
                         $entityManager,
                         $searchRegistry,
-                        $configProvider
+                        $this->createMock(ConfigProvider::class)
                     )
                 ],
                 []
@@ -90,7 +73,7 @@ class ProductPageVariantTypeTest extends FormIntegrationTestCase
 
     public function testBuildForm()
     {
-        $form = $this->factory->create(ProductPageVariantType::class, null);
+        $form = $this->factory->create(ProductPageVariantType::class);
 
         $this->assertTrue($form->has('productPageProduct'));
         $productPageProductOptions = $form->get('productPageProduct')->getConfig()->getOptions();

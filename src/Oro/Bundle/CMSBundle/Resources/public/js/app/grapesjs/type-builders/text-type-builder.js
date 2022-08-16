@@ -44,6 +44,11 @@ const TextTypeBuilder = BaseTypeBuilder.extend({
     modelMixin: {
         init() {
             this.on('sync:content', this.syncContent.bind(this));
+
+            if (this.get('content')) {
+                this.components(this.get('content'));
+                this.set('content', '');
+            }
         },
 
         replaceWith(el, updateStyle = true) {
@@ -62,7 +67,7 @@ const TextTypeBuilder = BaseTypeBuilder.extend({
         },
 
         setContent(content, options = {}) {
-            this.set('content', content, options);
+            this.components(content, options);
             this.syncContent();
         },
 

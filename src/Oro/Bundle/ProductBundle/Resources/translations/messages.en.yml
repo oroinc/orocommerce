@@ -181,7 +181,7 @@ oro:
             choose: Choose Product...
             product_required: Please select a product first...
             tooltip:
-                show_on_product_view: The new product icon will be displayed on the product view page.
+                show_on_product_view: Select whether to display the NEW icon on the product view page.
         form.add_row: Add More Rows
 
         productdescription:
@@ -478,52 +478,51 @@ oro:
             fields:
                 original_file_names_enabled:
                     label: 'Enable Original File Names'
-                    tooltip: 'When enabled, the original image file name will be appended to the system-generated hash value.'
+                    tooltip: 'Enable the option to append the original image file name to the system-generated hash value. All non-alphanumeric characters (e.g., “:),~”) are replaced with “-” (dash).'
                 allow_partial_product_search:
                     label: 'Allow Partial Product Search'
-                    tooltip: 'When enabled, the customer can find a product in the global search and on quick order form using a substring inside a word. Enabling this option may have a performance impact on search behaviour.'
+                    tooltip: 'Select the option to enable a customer to find a product in the global search and on quick order form using a substring inside a word. Enabling this option may have a performance impact on search behavior.'
                 brand_direct_url_prefix.label: 'Brand URL Prefix'
                 enable_related_products.label: 'Enable Related Products'
                 related_products_bidirectional:
                     label: 'Assign in Both Directions'
-                    tooltip: 'If this option is enabled, the current product will automatically be added as a related product to all of its related products.'
+                    tooltip: 'Enable this option to make products interrelated when one product is added as a related product of the other one.'
                 max_number_of_related_products:
                     label: 'Maximum Number of Assigned Items'
-                    tooltip: 'A limit of related products that may be added to any product.'
+                    tooltip: 'Set the maximum number of related products that can be added to a product.'
                 enable_upsell_products.label: 'Enable Up-sell Products'
                 max_number_of_upsell_products:
                     label: 'Maximum Number of Assigned Items'
-                    tooltip: 'You may use this option to set the limit on the number of up-sell items that the catalog managers can link.'
+                    tooltip: 'Set the maximum number of up-sell products that can be added to a product.'
                 related_products_max_items:
                     label: 'Maximum Items'
-                    tooltip: 'The limit of related products that may be added to any product (applied after filtering out the products that are not visible to the current user).'
+                    tooltip: 'Set the maximum number of related products that can be added to any product. Changes are applied after filtering out the products that are not visible to the current user.'
                 related_products_min_items:
                     label: 'Minimum Items'
-                    tooltip: 'The minimum number of related products that may be shown to the buyer. If the actual number of products is lower than this value, the related products section is hidden in the storefront for the product.'
+                    tooltip: 'Set the minimum number of related products to be displayed to a customer. If the actual number of products is lower than this value, the Related Products section is hidden in the storefront for the product.'
                 related_products_show_add_button:
                     label: 'Show Add Button'
-                    tooltip: 'Enables a buyer to order a related product from the related products section in the main product details. When the option is disabled, a buyer needs to open the related product details before they can add it to the shopping list.'
+                    tooltip: 'Select the option to enable a buyer to order a related product from the Related Products section directly. When disabled, a buyer needs to open the related product details page to add it to the shopping list.'
                 related_products_use_slider_on_mobile:
                     label: 'Use Slider On Mobile'
-                    tooltip: 'When enabled, one related product is displayed below the main product information. Other related products are accessible using the horizontal slider. Click < and > to slide through the related products.'
+                    tooltip: 'Enable the option to display one related product below the main product information. Other related products are accessible using the horizontal slider. Click < and > to slide through the related products.'
                 upsell_products_max_items:
                     label: 'Maximum Items'
-                    tooltip: 'The limit of up-sell products that are shown to the buyer (applied after filtering out the products that are not visible to the current user).'
+                    tooltip: 'Set the maximum number of up-sell products that are shown to the buyer. Changes are applied after filtering out the products that are not visible to the current user.'
                 upsell_products_min_items:
                     label: 'Minimum Items'
-                    tooltip: 'The minimum number of up-sell products that may be shown to the buyer. If the actual number of products is lower than this value, the up-sell products section is hidden in the storefront for the product.'
+                    tooltip: 'Set the minimum number of up-sell products to be displayed to a customer. If the actual number of products is lower than this value, the Up-sell Products section is hidden in the storefront for the product.'
                 upsell_products_show_add_button:
                     label: 'Show Add Button'
-                    tooltip: 'Enables a buyer to order the product from the up-sell products section in the main product details. When disabled, a buyer needs to open the up-sell product details before they can add it to the shopping list.'
+                    tooltip: 'Select the option to enable a buyer to order a product from the Up-sell Products section directly. When disabled, a buyer needs to open the up-sell product details page to add it to the shopping list.'
                 upsell_products_use_slider_on_mobile:
                     label: 'Use Slider On Mobile'
-                    tooltip: 'When the option is enabled, one up-sell product is displayed below the main product information. Other up-sell products are accessible using the horizontal slider. Click < and > to slide through the up-sell products.'
+                    tooltip: 'Enable the option to display one up-sell product below the main product information. Other up-sell products are accessible using the horizontal slider. Click < and > to slide through the up-sell products.'
                 enable_quick_order_form.title: Enable Quick Order Form
                 guest_quick_order_form.title: Enable Guest Quick Order Form
                 guest_quick_order_form.tooltip: >
-                  Allows guests to use the quick order form. By default, this option is disabled.
-                  For the quick order form to be displayed, at least one of the following options should be enabled:
-                  guest RFQ, guest shopping list or guest checkout.
+                  Select the option to enable guest users to use the quick order form.
+                  To display the quick order form in the storefront, ensure to additionally enable guest RFQ, guest shopping list, or guest checkout.
                 unit_rounding_type:
                     label: Unit Rounding Type
                     tooltip: An algorithm that is used to round the volume specified for this unit (ceil, floor, half down, or half up).
@@ -534,7 +533,7 @@ oro:
                 default_unit_precision.label: 'Default Primary Unit Precision'
                 product_collections_indexation_cron_schedule:
                     label: 'Indexation Cron Schedule'
-                    tooltip: For product collections which have dependencies on other entities in a segment filter, the segment will be indexed based on the cron schedule to improve system responsiveness.
+                    tooltip: Select the cron schedule for segments indexation. The schedule is used for product collections which have dependencies on other entities in a segment filter. Sheduling indexation improves system responsiveness.
                     choice:
                         every_hour.label: Every hour
                         every_two_hours.label: Every two hours
@@ -545,14 +544,14 @@ oro:
                 product_collections_indexation_partial:
                     label: Enable Partial Indexation
                     tooltip: |
-                        Perform indexation only for products added to or removed from the collection.
+                        Enable the option to perform indexation only for products added to or removed from the collection.
                 product_collection_mass_action_limitation:
                     label: 'Mass action limit'
-                    tooltip: 'This limitation prevents the handling of too many products when using mass action.'
+                    tooltip: 'Set the limited number of products that can be handled (added, deleted) using mass action. This option only notifies a user of the exceeded mass action limit. The action can still be forced, if needed.'
                 product_image_watermark_file.label: 'File'
                 product_image_watermark_size:
                     label: 'Size'
-                    tooltip: 'The size of the watermark in percentage compared to the whole image.'
+                    tooltip: 'Set the size of the watermark in percentage compared to the whole image.'
                 product_image_watermark_position:
                     label: 'Position'
                     topleft.label: 'Top Left'
@@ -566,96 +565,96 @@ oro:
                     bottomright.label: 'Bottom Right'
                 product_image_placeholder:
                     label: 'Product Image Placeholder'
-                    tooltip: 'This image will be displayed on the product listing and product view pages for the products that do not have any associated images.'
+                    tooltip: 'Select the image file to be displayed on the product listing and product view pages for the products that have no associated images.'
                 featured_products_segment:
                     label: Segment
                     tooltip: |
-                        Selected segment will be used as "Featured Products" block data source.
-                        To modify existing or create new segment go to "Reports & Segments > Manage Segments" section.
-                        Only segments with type "Product" are listed here.
+                        Select the segment to display products in the Featured Products block on the home page in the storefront.
+                        Segments are located under Reports & Segments > Manage Segments.
+                        Only segments with the Product type are listed here.
                 page_template.label: Page Template
                 product_direct_url_prefix.label: 'Product URL prefix'
                 show_on_product_view:
                     label: Show on Product View
-                    tooltip: The new product icon will be displayed on the product view page.
+                    tooltip: Select whether to display the NEW icon on the product view page.
                     type:
                         yes.label: Yes
                         no.label: No
                 new_arrivals_products_segment:
                     label: Product Segment
                     tooltip: |
-                        Selected segment will be used as "New Arrivals" block data source.
-                        To modify existing or create new segment go to "Reports & Segments > Manage Segments" section.
-                        Only segments with type "Product" are listed here.
+                        Select the segment to display products in the New Arrivals block on the home page in the storefront.
+                        Segments are located under Reports & Segments > Manage Segments.
+                        Only segments with the Product type are listed here.
                 new_arrivals_max_items:
                     label: Maximum Items
-                    tooltip: Show not more than the specified number of items (additionaly limits the list of items retrieved from the selected segment after filtering out the products that are not visible to the current user).
+                    tooltip: Set the maximum number of items that the New Arrivals block should contain.
                 new_arrivals_min_items:
                     label: Minimum Items
-                    tooltip: Hide the "News Arrivals" block completely if the number of items is lower than the specified value.
+                    tooltip: Set the minimum number of items that the New Arrivals block should contain. If the number of items is less than the set value, the block is hidden.
                 new_arrivals_use_slider_on_mobile:
                     label: Use Slider On Mobile
-                    tooltip: When slider is enabled, the "New Arrivals" block will occupy less screen space, while showing larger product images.
+                    tooltip: When the slider is enabled, the New Arrivals block occupies less screen space, while showing larger product images.
                 image_preview_on_product_listing_enabled:
                     label: 'Enable Image Preview on Product Listing'
-                    tooltip: 'If enabled, the customers will see product image gallery instead of going to the product view page when they click on a product image in the product listing.'
+                    tooltip: 'Select the option to enable a customer to see a pop up image gallery, rather than the product page, when they click on the product image on the product listing page in the storefront.'
                 popup_gallery_on_product_view:
                     label: 'Popup Gallery on Product View'
                     tooltip: 'Select whether to use popup or inline view for the image gallery in the storefront. Inline gallery view may work better for some product templates.'
                 matrix_form_on_product_view:
-                    tooltip: 'Controls the appearance of configurable products with up to 2 attributes as editable matrix forms at product view pages.'
+                    tooltip: 'Select the way to display a matrix form for configurable products with up to 2 attributes on a product view page.'
                     label: 'Product Views'
                     none.label: 'No Matrix Form'
                     inline.label: 'Inline Matrix Form'
                     popup.label: 'Popup Matrix Form'
                 matrix_form_on_product_listing:
-                    tooltip: 'Controls the appearance of configurable products with up to 2 attributes as editable matrix forms on product listings. Applies only to list views; inline matrix is not supported in gallery view.'
+                    tooltip: 'Select the way to display a matrix form for configurable products with up to 2 attributes on a product listing page. Applies only to list views; inline matrix is not supported in gallery views.'
                     label: 'Product Listings'
                     none.label: 'No Matrix Form'
                     inline.label: 'Inline Matrix Form'
                     popup.label: 'Popup Matrix Form'
                 matrix_form_allow_empty:
                     label: 'Allow to add empty products'
-                    tooltip: 'If enabled, the customers will be able to add empty configurable products to shopping lists'
+                    tooltip: 'Select the option to enable a customer to add a configurable product with an empty matrix form to a shopping list.'
                 display_simple_variations:
                     label: 'Display simple variations'
                     tooltip: >
-                        This setting manages the availability of simple products that represent individual
-                        variations of a configurable product. It does not affect standalone simple products.
+                        Select whether to display or hide all the single products that represent individual variations of a configurable product.
+                        It does not affect standalone simple products.
                     everywhere.label: 'Everywhere'
                     hide_catalog.label: 'Hide from the catalog and search'
                     hide_completely.label: 'Hide completely'
                 limit_filters_sorters_on_product_listing:
                     label: 'Hide Unrelated Product Filters And Sorting Options'
-                    tooltip: 'Limit filters on the product catalog page to display only those attributes that are relevant to the selected product family in the current product collection. If a multi-attribute product has only one attribute, the filter is not displayed for it in the storefront.'
+                    tooltip: 'Enable the option to remove unrelated filters and sorting options from the product collection page to display only those attributes that belong to the current product family. If a multi-attribute product has only one attribute, the filter is hidden in the storefront.'
                 disable_filters_on_product_listing:
                     label: "Don't Change Initial Filter State"
-                    tooltip: 'If checked, all relevant filters that have been displayed on the initial page load and their options will remain visible on the page and will be disabled after they become non-relevant as the user refines the search results. Otherwise, any filters and options that become non-relevant, will be hidden.'
+                    tooltip: 'Enable the option to display all attributes within a filter. Alll unrelated attributes remain visible but become inactive in the filter dropdown. Disable the option to remove all filter attributes that become non-relevant.'
                 filters_display_settings:
                     label: 'Default Filter Panel State'
-                    tooltip: 'Set the default state of the filter panel in storefront product grids either to collapsed or expanded. When the panel is collapsed, the list of all applied filters is displayed textually above the grid.'
+                    tooltip: 'Set the default state of the filter panel in storefront product grids. Select <strong>expanded</strong> to show all filter bars or <strong>collapsed</strong> to reduce the screen space and substitute filters with the text representation of all applied filters.'
                     options:
                         collapsed: 'Collapsed'
                         expanded: 'Expanded'
                 search_autocomplete_max_products:
                     label: 'Number Of Products In Search Autocomplete'
-                    tooltip: 'Maximum number of products shown in the storefront autocomplete dropdown.'
+                    tooltip: 'Set the maximum number of products displayed in the storefront autocomplete dropdown.'
 
                 filters_position:
                     label: 'Filter Panel Position'
-                    tooltip: 'Position of filters on the storefront product listing pages.'
+                    tooltip: 'Select the required position of the filter bar in the storefront.'
                     options:
                         top: 'Top'
                         sidebar: 'Sidebar'
                 product_data_export_enabled:
                     label: 'Enable Product Grid Export'
-                    tooltip: 'If this option is enabled, customers will be able to export selected product data on the storefront. Please check individual field settings for Product entity in Entity Management, product attribute settings and price attribute settings to see what data will be included in the exported file.'
+                    tooltip: 'Select the option to enable customers in the storefront to export selected product data. Please check individual field settings for the Product entity under Entity Management, product attribute settings, and price attribute settings to see what data can be included in the exported file.'
                 product_prices_export_enabled:
                     label: 'Include Product Prices'
-                    tooltip: 'If this option is enabled, the exported data will include the product prices per unit (only the primary unit of the product will used) for the minimum quantity that can be purchased, which is normally displayed to the customer as their price in the product listing. If multiple currencies are enabled, only the price in the currently selected currency will be included.'
+                    tooltip: 'Enable the option to add product prices per unit to the exported product data file. Data are displayed only for the primary unit, minimum quantity that can be purchased, and the currency currently selected in the storefront.'
                 product_price_tiers_export_enabled:
                     label: 'Include Price Tiers'
-                    tooltip: 'Price tiers (if defined) will be exported into a single additional column as multi-line text value along with the starting quantity and product unit for each price tier. The product units that have no prices defined will be omitted in the exported file.'
+                    tooltip: 'Enable this option to include price tiers to the exported product data file, if available. Price tiers are exported into a single column as multi-line text value along with the starting quantity and product unit for each price tier. If product units have no price, they are omitted in the exported file.'
                 microdata_without_prices_disabled:
                     label: 'Disable Product Microdata Without Prices'
                     tooltip: 'Some search crawlers (e.g. Google) mark pages containing embedded Schema.org Microdata without price information as invalid pages and may exclude them from search index. Unless you have an alternative custom solution (e.g. reviews or aggregated ratings system) in place, we recommend to disable Schema.org Microdata on product pages that do not include any pricing information available to such crawlers (anonymous/guest users).'
@@ -862,7 +861,7 @@ oro:
                         tooltip: Selected product segment will be used as data source. To modify existing or create new segment go to "Reports & Segments > Manage Segments" section. Only segments with type "Product" are listed here.
                     maximum_items:
                         label: Maximum Items
-                        tooltip: Show not more than the specified number of items (additionaly limits the list of items retrieved from the selected segment after filtering out the products that are not visible to the current user).
+                        tooltip: Set the maximum number of items that the New Arrivals block should contain.
                     minimum_items:
                         label: Minimum Items
                         tooltip: Hide the block completely if the number of items is lower than the specified value.
@@ -878,6 +877,48 @@ oro:
                         value:
                             no: No
                             yes: Yes
+
+        feature:
+            quick_order_form:
+                label: Quick Order Form
+                description: Enables the quick order form for logged-in customer users in the storefront.
+            guest_quick_order:
+                label: Guest Quick Order
+                description: Enables a set of guest quick order form configuration settings that control whether to display the quick order form to unregistered users in the storefront.
+            guest_quick_order_config:
+                label: Guest Quick Order Configuration
+                description: Enables admin users to configure whether to allow unregistered users to use the quick order form in the storefront.
+            guest_quick_order_form:
+                label: Storefront Guest Quick Order Form
+                description: Enables unregistered users to use the quick order form in the storefront.
+            simple_variations_view_restriction:
+                label: Display Simple Variations
+                description: Controls whether variants of a configurable product are accessible via a direct link or hidden by toggling the Display Simple Variations option in the system configuration.
+            frontend_products_data_export:
+                label: Export of Storefront Product Data
+                description: Enables customers in the storefront to export selected product data.
+            original_file_names_enabled:
+                label: Access to Original File Names Feature
+                description: Enables access to configuration option Original File Names in the system configuration.
+            original_file_names_configuration_enabled:
+                label: Product Images Original File Names
+                description: Enables the original file name to append to the system-generated hash value. All non-alphanumeric characters (e.g., ":", ")", ",", "~") are replaced with "-" (dash). Not displayed when Attachment Original File Names is enabled.
+            products:
+                manage:
+                    label: Product Management
+                    description: Enables creating single and configurable products, setting images, prices, inventory, shipping options, and selecting the related and upsell products for each individual product.
+            product_families:
+                manage:
+                    label: Product Family Management
+                    description: Enables creating and managing product families that organize product attributes into related product groups.
+            product_attributes:
+                manage:
+                    label: Product Attribute Management
+                    description: Enables creating and managing product attributes (e.g., names, sku, descriptions, brand, etc).
+            product_brands:
+                manage:
+                    label: Product Brand Management
+                    description: Enables creating and managing product brands.
 
     product_unit.each:
         label:
@@ -1025,12 +1066,6 @@ oro:
             product_page_product.label: Product
 
     feature:
-        quick_order_form:
-            label: Quick Order Form
-            description: Quick Order Form functionality allows users to have a simpler and faster way of making orders or requests for quote
-        guest_quick_order_form:
-            label: Guest Quick Order Form
-            description: Enable Quick Order Form for guests
         quick_add_import_help_widget:
             important: Important
             invalid_records: We have not been able to identify some of the product references in the uploaded file. Please review the data below and make necessary corrections to upload again.
@@ -1046,16 +1081,6 @@ oro:
                 message: Enter item numbers in Column A and quantities needed in Column B. Please do not include any prefixes, dashes, or other punctuation in the item numbers.
             save_the_file:
                 message: Save the file on your computer. CSV format (.csv) is recommended and click Upload.
-        frontend_products_data_export:
-            label: Enable Product Grid Export
-            description: If this option is enabled, customers will be able to export selected product data on the storefront. Please check individual field settings for Product entity in Entity Management, product attribute settings and price attribute settings to see what data will be included in the exported file.
-        simple_variations_view_restriction:
-            label: Restrict product variations visibility
-            description: When enabled excludes product variations from the generated sitemap and prevents the individual product variation pages access through direct links
-        original_file_names_enabled:
-            label: 'Enable Original File Names'
-        original_file_names_configuration_enabled:
-            label: 'Enable Original File Names Configuration Options'
 
     importexport:
         export:

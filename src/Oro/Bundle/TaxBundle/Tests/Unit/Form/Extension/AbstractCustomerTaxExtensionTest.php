@@ -2,15 +2,29 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Form\Extension;
 
-use Doctrine\Common\Collections\Collection;
+use Oro\Bundle\TaxBundle\Entity\AbstractTaxCode;
 use Oro\Bundle\TaxBundle\Entity\CustomerTaxCode;
 use Oro\Bundle\TaxBundle\Form\Type\CustomerTaxCodeAutocompleteType;
+use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 
 abstract class AbstractCustomerTaxExtensionTest extends AbstractTaxExtensionTest
 {
+    /**
+     * {@inheritDoc}
+     */
+    protected function createTaxCode(int $id = null): AbstractTaxCode
+    {
+        $taxCode = new CustomerTaxCode();
+        if (null !== $id) {
+            ReflectionUtil::setId($taxCode, $id);
+        }
+
+        return $taxCode;
+    }
+
     public function testBuildForm()
     {
         $customerTaxExtension = $this->getExtension();
@@ -41,38 +55,20 @@ abstract class AbstractCustomerTaxExtensionTest extends AbstractTaxExtensionTest
 
     public function testOnPostSetDataExistingEntity()
     {
-        $customer = $this->createTaxCodeTarget(1);
-        $event = $this->createEvent($customer);
-
+        $entity = $this->createTaxCodeTarget(1);
+        $event = $this->createEvent($entity);
         $taxCode = $this->createTaxCode();
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $taxCodeForm */
-        $taxCodeForm = $event->getForm()->get('taxCode');
 
-        $customer->expects($this->any())
+        $entity->expects($this->any())
             ->method('getTaxCode')
             ->willReturn($taxCode);
 
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $taxCodeForm */
+        $taxCodeForm = $event->getForm()->get('taxCode');
         $taxCodeForm->expects($this->once())
             ->method('setData')
             ->with($taxCode);
 
         $this->getExtension()->onPostSetData($event);
     }
-
-    /**
-     * @param int|null $id
-     * @return CustomerTaxCode
-     */
-    protected function createTaxCode($id = null)
-    {
-        return $this->getEntity(CustomerTaxCode::class, ['id' => $id]);
-    }
-
-    /**
-     * Return testable collection of CustomerTaxCode
-     *
-     * @param CustomerTaxCode $customerTaxCode
-     * @return Collection
-     */
-    abstract protected function getTestableCollection(CustomerTaxCode $customerTaxCode);
 }

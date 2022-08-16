@@ -8,11 +8,12 @@ describe('orocms/js/app/grapesjs/plugins/components/component-restriction', () =
     let componentRestriction;
     let editor;
 
-    beforeEach(() => {
+    beforeEach(done => {
         window.setFixtures(html);
         editor = grapesJS.init({
             container: document.querySelector('.page-content-editor')
         });
+        editor.on('load', () => done());
     });
 
     afterEach(() => {

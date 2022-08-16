@@ -14,6 +14,7 @@ use Oro\Bundle\ConsentBundle\Form\Type\ConsentSelectWithPriorityType;
 use Oro\Bundle\ConsentBundle\SystemConfig\ConsentConfigConverter;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\FormBundle\Autocomplete\SearchHandlerInterface;
 use Oro\Bundle\FormBundle\Autocomplete\SearchRegistry;
 use Oro\Bundle\FormBundle\Form\Extension\SortableExtension;
@@ -37,25 +38,11 @@ class ConsentCollectionTypeTest extends FormIntegrationTestCase
     /** @var ConsentCollectionType */
     private $formType;
 
-    /** @var ConsentCollectionTransformer */
-    private $collectionTransformer;
-
-    /** @var SearchRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    private $searchRegistry;
-
-    /** @var SearchHandlerInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $searchHandler;
-
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
-        $doctrine = $this->createMock(ManagerRegistry::class);
-
-        $consentConfigConverter = new ConsentConfigConverter($doctrine);
-        $this->collectionTransformer = new ConsentCollectionTransformer($consentConfigConverter);
-        $this->formType = new ConsentCollectionType($this->collectionTransformer);
+        $this->formType = new ConsentCollectionType(
+            new ConsentCollectionTransformer(new ConsentConfigConverter($this->createMock(ManagerRegistry::class)))
+        );
 
         parent::setUp();
     }
@@ -65,7 +52,7 @@ class ConsentCollectionTypeTest extends FormIntegrationTestCase
      */
     public function testSubmit(array $submitted, array $expected)
     {
-        $form = $this->factory->create(ConsentCollectionType::class, null);
+        $form = $this->factory->create(ConsentCollectionType::class);
         $form->submit($submitted);
 
         $this->assertTrue($form->isValid());
@@ -73,10 +60,7 @@ class ConsentCollectionTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expected, $form->getData());
     }
 
-    /**
-     * @return array
-     */
-    public function submitDataProvider()
+    public function submitDataProvider(): array
     {
         return [
             [
@@ -113,42 +97,42 @@ class ConsentCollectionTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
     protected function getExtensions()
     {
         $entityType = new EntityType([]);
 
-        /** @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject $authorizationChecker */
-        $authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
-
-        /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject $configManager */
-        $configManager = $this->createMock(ConfigManager::class);
-
-        /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject $entityManager */
-        $entityManager = $this->createMock(EntityManager::class);
         $metadata = $this->createMock(ClassMetadata::class);
-        $entityManager->expects($this->any())
-            ->method('getClassMetadata')
-            ->willReturn($metadata);
         $metadata->expects($this->any())
             ->method('getSingleIdentifierFieldName')
             ->willReturn('id');
 
-        /** @var EntityRepository|\PHPUnit\Framework\MockObject\MockObject $repository */
         $repository = $this->createMock(EntityRepository::class);
         $repository->expects($this->any())
             ->method('find')
             ->willReturnCallback(function ($id) {
                 return $this->getEntity(Consent::class, ['id' => $id]);
             });
+
+        $entityManager = $this->createMock(EntityManager::class);
+        $entityManager->expects($this->any())
+            ->method('getClassMetadata')
+            ->willReturn($metadata);
         $entityManager->expects($this->any())
             ->method('getRepository')
             ->with(Consent::class)
             ->willReturn($repository);
 
-        /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject $configProvider */
-        $configProvider = $this->createMock(ConfigProvider::class);
+        $searchHandler = $this->createMock(SearchHandlerInterface::class);
+        $searchHandler->expects($this->any())
+            ->method('getProperties')
+            ->willReturn(['code', 'label']);
+
+        $searchRegistry = $this->createMock(SearchRegistry::class);
+        $searchRegistry->expects($this->any())
+            ->method('getSearchHandler')
+            ->willReturn($searchHandler);
 
         return [
             new PreloadedExtension(
@@ -158,15 +142,16 @@ class ConsentCollectionTypeTest extends FormIntegrationTestCase
                     ConsentSelectWithPriorityType::class => new ConsentSelectWithPriorityType(),
                     ConsentSelectType::class => new ConsentSelectType(),
                     OroEntitySelectOrCreateInlineType::class => new OroEntitySelectOrCreateInlineType(
-                        $authorizationChecker,
-                        $configManager,
+                        $this->createMock(AuthorizationCheckerInterface::class),
+                        $this->createMock(FeatureChecker::class),
+                        $this->createMock(ConfigManager::class),
                         $entityManager,
-                        $this->getMockSearchRegistry()
+                        $searchRegistry
                     ),
                     OroJquerySelect2HiddenType::class => new OroJquerySelect2HiddenType(
                         $entityManager,
-                        $this->getMockSearchRegistry(),
-                        $configProvider
+                        $searchRegistry,
+                        $this->createMock(ConfigProvider::class)
                     ),
                     'oro_select2_choice' => new Select2Type($this->formType, 'hidden'),
                     EntityType::class => $entityType,
@@ -187,31 +172,5 @@ class ConsentCollectionTypeTest extends FormIntegrationTestCase
     public function testGetBlockPrefix()
     {
         $this->assertEquals('oro_consent_collection', $this->formType->getBlockPrefix());
-    }
-
-    /**
-     * @return SearchRegistry|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function getMockSearchRegistry()
-    {
-        if (!$this->searchRegistry) {
-            $this->searchRegistry = $this->createMock(SearchRegistry::class);
-            $this->searchRegistry->method('getSearchHandler')->willReturn($this->getMockSearchHandler());
-        }
-
-        return $this->searchRegistry;
-    }
-
-    /**
-     * @return SearchHandlerInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function getMockSearchHandler()
-    {
-        if (!$this->searchHandler) {
-            $this->searchHandler = $this->createMock(SearchHandlerInterface::class);
-            $this->searchHandler->method('getProperties')->willReturn(['code', 'label']);
-        }
-
-        return $this->searchHandler;
     }
 }

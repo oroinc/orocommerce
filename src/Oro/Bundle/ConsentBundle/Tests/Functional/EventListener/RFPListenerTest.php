@@ -7,12 +7,9 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
 use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Component\Testing\Unit\EntityTrait;
 
 class RFPListenerTest extends WebTestCase
 {
-    use EntityTrait;
-
     public function testCustomerUserGeneratedOnAnonymousCustomer()
     {
         $this->initClient();
@@ -24,12 +21,10 @@ class RFPListenerTest extends WebTestCase
                 new CustomerVisitor()
             )
         );
-        /** @var Request $rfq */
-        $rfq = $this->getEntity(Request::class, [
-            'email' => 'test_rfq@test.com',
-            'first_name' => 'Test',
-            'last_name' => 'RFQ'
-        ]);
+        $rfq = new Request();
+        $rfq->setEmail('test_rfq@test.com');
+        $rfq->setFirstName('Test');
+        $rfq->setLastName('RFQ');
 
         $registry = $this->getContainer()->get('doctrine');
         $em = $registry->getManagerForClass(Request::class);

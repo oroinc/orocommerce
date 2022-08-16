@@ -25,7 +25,7 @@ Feature: Shopping list duplication
     And I click "Shopping List Actions"
     And I click "Duplicate"
     And I click "Yes, duplicate"
-    Then I should see "The shopping list has been duplicated" flash message
+    Then I should see "The shopping list has been duplicated" flash message and I close it
     And I should not see "Some products are not available and cannot be added to shopping list" flash message
     And I should see "Shopping List A (copied "
     And I should see following grid:
@@ -52,7 +52,7 @@ Feature: Shopping list duplication
     And I click "Shopping List Actions"
     And I click "Duplicate"
     And I click "Yes, duplicate"
-    Then I should see "The shopping list has been duplicated" flash message
+    Then I should see "The shopping list has been duplicated" flash message and I close it
     And I should see "Some products are not available and cannot be added to shopping list" flash message
     And I should see "Shopping List B (copied "
     And I should see following grid:

@@ -76,7 +76,19 @@ oro:
                 web_catalog_list:
                     label: 'Web Catalogs'
                     description: 'Show list of existing web catalogs'
-
+        feature:
+            web_catalog:
+                label: Web Catalog
+                description: Select the web catalog to populate the storefront product catalog menu. If a web catalog is not selected, the menu uses the product structure of the master catalog.
+            manage:
+                label: Web Catalog Management
+                description: Enables the web catalog feature with content nodes that help customize and personalize the OroCommerce storefront menu versions.
+            navigation_root_system_configuration:
+                label: Navigation Root
+                description: Enables building a navigation tree in the storefront by selecting a root content node.
+            web_catalog_canonical_url:
+                label: Self-Contained Web Catalog Canonical URLs
+                description: When disabled, canonical URLs point to the direct URLs of the underlying content types, if available.
         form:
             choose: 'Choose a Web Catalog...'
             add_variant.label: 'Add %variantName%'
@@ -85,13 +97,13 @@ oro:
             fields:
                 web_catalog:
                     label: Web Catalog
-                    tooltip: Assign a web catalog to the storefront
+                    tooltip: Select a web catalog for the storefront.
                 navigation_root:
                     label: Navigation Root
-                    tooltip: Assign a content node as root for building a navigation tree on the storefront
+                    tooltip: Select a root content node for the storefront. Only the sub-menu nodes that belong to the selected parent node will be visible in the storefront.
                 enable_web_catalog_canonical_url:
                     label: Prefer Self-Contained Web Catalog Canonical URLs
-                    tooltip: When this option is disabled, the canonical URLs will point to the direct URLs of the underlying content types if they are available.
+                    tooltip: Disable the option for the canonical URLs to point to the direct URLs of the underlying content types if they are available.
 
     scope:
         web_catalog.label: Web Catalog

@@ -404,6 +404,9 @@ const ImportDialogView = BaseView.extend({
             className: this.entityClass,
             fieldName: this.fieldName
         }).then(({success, errors}) => {
+            if (success) {
+                this.editor.CodeValidator.restrictFaild = false;
+            }
             return {success, errors: _.sortBy(errors, 'line')};
         });
     },

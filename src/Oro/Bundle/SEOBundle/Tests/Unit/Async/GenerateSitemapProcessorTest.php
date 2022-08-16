@@ -5,10 +5,12 @@ namespace Oro\Bundle\SEOBundle\Tests\Unit\Async;
 use Oro\Bundle\MessageQueueBundle\Entity\Job;
 use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
 use Oro\Bundle\SEOBundle\Async\GenerateSitemapProcessor;
-use Oro\Bundle\SEOBundle\Async\Topics;
 use Oro\Bundle\SEOBundle\Provider\WebsiteForSitemapProviderInterface;
 use Oro\Bundle\SEOBundle\Sitemap\Filesystem\PublicSitemapFilesystemAdapter;
 use Oro\Bundle\SEOBundle\Sitemap\Website\WebsiteUrlProvidersServiceInterface;
+use Oro\Bundle\SEOBundle\Topic\GenerateSitemapByWebsiteAndTypeTopic;
+use Oro\Bundle\SEOBundle\Topic\GenerateSitemapIndexTopic;
+use Oro\Bundle\SEOBundle\Topic\GenerateSitemapTopic;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
@@ -106,7 +108,7 @@ class GenerateSitemapProcessorTest extends \PHPUnit\Framework\TestCase
 
         $this->jobRunner->expects(self::once())
             ->method('runUnique')
-            ->with($messageId, Topics::GENERATE_SITEMAP)
+            ->with($messageId, GenerateSitemapTopic::getName())
             ->willReturnCallback(function ($jobId, $name, $callback) use ($job) {
                 return $callback($this->jobRunner, $job);
             });
@@ -117,7 +119,7 @@ class GenerateSitemapProcessorTest extends \PHPUnit\Framework\TestCase
     public function testGetSubscribedTopics(): void
     {
         self::assertEquals(
-            [Topics::GENERATE_SITEMAP],
+            [GenerateSitemapTopic::getName()],
             GenerateSitemapProcessor::getSubscribedTopics()
         );
     }
@@ -204,7 +206,7 @@ class GenerateSitemapProcessorTest extends \PHPUnit\Framework\TestCase
             ->willReturnCallback(function (DependentJobContext $context) use ($job) {
                 $dependentJobs = $context->getDependentJobs();
                 self::assertCount(1, $dependentJobs);
-                self::assertEquals(Topics::GENERATE_SITEMAP_INDEX, $dependentJobs[0]['topic']);
+                self::assertEquals(GenerateSitemapIndexTopic::getName(), $dependentJobs[0]['topic']);
                 self::assertEquals($job->getId(), $dependentJobs[0]['message']['jobId']);
                 self::assertGreaterThan(0, $dependentJobs[0]['message']['version']);
                 self::assertEquals([123, 234], $dependentJobs[0]['message']['websiteIds']);
@@ -221,7 +223,7 @@ class GenerateSitemapProcessorTest extends \PHPUnit\Framework\TestCase
         $this->canonicalUrlGenerator->expects(self::exactly(count($websites)))
             ->method('clearCache')
             ->withConsecutive([$websites[0]], [$websites[0]]);
-        $jobNameTemplate = Topics::GENERATE_SITEMAP_BY_WEBSITE_AND_TYPE . ':%s:%s';
+        $jobNameTemplate = GenerateSitemapByWebsiteAndTypeTopic::getName() . ':%s:%s';
         $this->jobRunner->expects(self::exactly(count($providerNames) * count($websites)))
             ->method('createDelayed')
             ->withConsecutive(
@@ -235,7 +237,7 @@ class GenerateSitemapProcessorTest extends \PHPUnit\Framework\TestCase
             });
         $this->producer->expects(self::exactly(count($providerNames) * count($websites)))
             ->method('send')
-            ->with(Topics::GENERATE_SITEMAP_BY_WEBSITE_AND_TYPE);
+            ->with(GenerateSitemapByWebsiteAndTypeTopic::getName());
 
         $this->logger->expects(self::never())
             ->method(self::anything());

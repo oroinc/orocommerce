@@ -43,7 +43,7 @@ class CategoryEntityListener
 
     private function scheduleCategoryReindex(Category $category): void
     {
-        $this->productIndexScheduler->scheduleProductsReindex([$category], null, true, ['main']);
+        $this->productIndexScheduler->scheduleProductsReindex([$category], null, true, ['main', 'inventory']);
         $this->categoryCache->clear();
     }
 }

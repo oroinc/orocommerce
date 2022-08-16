@@ -30,6 +30,7 @@ const CodeValidator = BaseClass.extend({
             editor
         });
         this.invalid = false;
+        this.restrictFaild = false;
 
         this.editor.once('load', this.onLoadEditor.bind(this));
     },
@@ -98,7 +99,7 @@ const CodeValidator = BaseClass.extend({
      * Lock editor till user fix problem
      */
     lockEditor() {
-        if (!this.invalid) {
+        if (!this.isInvalid()) {
             return;
         }
 
@@ -109,7 +110,7 @@ const CodeValidator = BaseClass.extend({
      * Unlock editor if source code became valid
      */
     unLockEditor() {
-        if (this.invalid) {
+        if (this.isInvalid()) {
             return;
         }
 
@@ -183,7 +184,7 @@ const CodeValidator = BaseClass.extend({
      * @returns {boolean}
      */
     isInvalid() {
-        return this.invalid;
+        return this.invalid || this.restrictFaild;
     },
 
     /**
@@ -198,12 +199,18 @@ const CodeValidator = BaseClass.extend({
      * Get restricted tags validation
      * @returns {(string|Array)}
      */
-    restrictionValidate() {
-        if (!this.parentView.allow_tags) {
+    restrictionValidate(content) {
+        if (!this.parentView.allow_tags && !content) {
             return [];
         }
 
-        return this.ComponentRestriction.validate(escapeWrapper(this.$textInputElement.val()));
+        const res = this.ComponentRestriction.validate(escapeWrapper(content ?? this.$textInputElement.val()));
+        this.restrictFaild = !!res.length;
+        if (this.restrictFaild) {
+            this.lockEditor();
+        }
+
+        return res;
     },
 
     onDispose() {

@@ -87,6 +87,11 @@ oro:
                 enabled: Payment rule has been enabled successfully
                 disabled: Payment rule has been disabled successfully
 
+            feature:
+                manage:
+                    label: Payment Rule Management
+                    description: Enables creating a payment rule to activate a particular payment method for the provided destinations and websites.
+
         paymentmethodsconfigsruledestination:
             entity_label: Payment Methods Configs Rule Destination
             entity_plural_label: Payment Methods Configs Rule Destinations

@@ -5,20 +5,36 @@ namespace Oro\Bundle\TaxBundle\Tests\Unit\EventListener;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\TaxBundle\Entity\AbstractTaxCode;
 use Oro\Bundle\TaxBundle\EventListener\CustomerTaxCodeGridListener;
 
-class CustomerTaxCodeGridListenerTest extends AbstractTaxCodeGridListenerTest
+class CustomerTaxCodeGridListenerTest extends \PHPUnit\Framework\TestCase
 {
-    public function testOnBuildBefore()
+    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
+    private $featureChecker;
+
+    /** @var CustomerTaxCodeGridListener */
+    private $listener;
+
+    protected function setUp(): void
+    {
+        $this->featureChecker = $this->createMock(FeatureChecker::class);
+
+        $this->listener = new CustomerTaxCodeGridListener(AbstractTaxCode::class, $this->featureChecker);
+    }
+
+    public function testOnBuildBefore(): void
     {
         $gridConfig = DatagridConfiguration::create(['name' => 'customers-grid']);
         $gridConfig->offsetSetByPath('[source][query][from]', [['alias' => 'customers']]);
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|DatagridInterface $dataGrid */
-        $dataGrid = $this->createMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
-        $event = new BuildBefore($dataGrid, $gridConfig);
+        $this->featureChecker->expects(self::once())
+            ->method('isResourceEnabled')
+            ->with(AbstractTaxCode::class, 'entities')
+            ->willReturn(true);
 
+        $event = new BuildBefore($this->createMock(DatagridInterface::class), $gridConfig);
         $this->listener->onBuildBefore($event);
 
         $this->assertEquals(
@@ -30,17 +46,17 @@ class CustomerTaxCodeGridListenerTest extends AbstractTaxCodeGridListenerTest
                         ],
                         'join' => [
                             'left' => [
-                                [
-                                    'join' => 'customer_group.taxCode',
-                                    'alias' => 'customerGroupTaxCodes',
-                                ],
-                            ],
+                                ['join' => 'customer_group.taxCode', 'alias' => 'customerGroupTaxCodes']
+                            ]
                         ],
-                        'from' => [['alias' => 'customers']],
-                    ],
+                        'from' => [['alias' => 'customers']]
+                    ]
                 ],
                 'columns' => [
-                    'customerGroupTaxCode' => ['label' => 'oro.tax.taxcode.customergroup.label', 'renderable' => false]
+                    'customerGroupTaxCode' => [
+                        'label' => 'oro.tax.taxcode.customergroup.label',
+                        'renderable' => false
+                    ]
                 ],
                 'sorters' => [
                     'columns' => [
@@ -58,26 +74,41 @@ class CustomerTaxCodeGridListenerTest extends AbstractTaxCodeGridListenerTest
                                 'field_options' => [
                                     'multiple' => false,
                                     'class' => AbstractTaxCode::class,
-                                    'choice_label' => 'code',
+                                    'choice_label' => 'code'
                                 ]
-                            ],
+                            ]
                         ]
                     ]
                 ],
-                'name' => 'customers-grid',
+                'name' => 'customers-grid'
             ],
             $gridConfig->toArray()
         );
     }
 
-    /**
-     * @return CustomerTaxCodeGridListener
-     */
-    protected function createListener()
+    public function testOnBuildBeforeWhenTaxCodeClassDisabled(): void
     {
-        return new CustomerTaxCodeGridListener(
-            'Oro\Bundle\TaxBundle\Entity\AbstractTaxCode',
-            '\stdClass'
+        $gridConfig = DatagridConfiguration::create(['name' => 'customers-grid']);
+        $gridConfig->offsetSetByPath('[source][query][from]', [['alias' => 'customers']]);
+
+        $this->featureChecker->expects(self::once())
+            ->method('isResourceEnabled')
+            ->with(AbstractTaxCode::class, 'entities')
+            ->willReturn(false);
+
+        $event = new BuildBefore($this->createMock(DatagridInterface::class), $gridConfig);
+        $this->listener->onBuildBefore($event);
+
+        $this->assertEquals(
+            [
+                'source' => [
+                    'query' => [
+                        'from' => [['alias' => 'customers']]
+                    ]
+                ],
+                'name' => 'customers-grid'
+            ],
+            $gridConfig->toArray()
         );
     }
 }

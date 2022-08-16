@@ -2,59 +2,20 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Form\Extension;
 
-use Doctrine\ORM\EntityRepository;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\TaxBundle\Entity\AbstractTaxCode;
 use Oro\Bundle\TaxBundle\Form\Extension\AbstractTaxExtension;
-use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
 
 abstract class AbstractTaxExtensionTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
+    abstract protected function getExtension(): AbstractTaxExtension;
 
-    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
-    protected $doctrineHelper;
+    abstract protected function createTaxCodeTarget(int $id = null): object;
 
-    /** @var EntityRepository|\PHPUnit\Framework\MockObject\MockObject */
-    protected $entityRepository;
+    abstract protected function createTaxCode(int $id = null): AbstractTaxCode;
 
-    protected function setUp(): void
-    {
-        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
-        $this->doctrineHelper->expects($this->any())
-            ->method('getEntityIdentifier')
-            ->willReturnCallback(function ($entity) {
-                return $entity->getId();
-            });
-    }
-
-    /**
-     * @return AbstractTaxExtension
-     */
-    abstract protected function getExtension();
-
-    public function testOnPostSetDataNoEntity()
-    {
-        $event = $this->createEvent(null);
-
-        $this->getExtension()->onPostSetData($event);
-    }
-
-    public function testOnPostSetDataNewEntity()
-    {
-        $event = $this->createEvent($this->createTaxCodeTarget());
-
-        $this->getExtension()->onPostSetData($event);
-    }
-
-    /**
-     * @param mixed $data
-     *
-     * @return FormEvent
-     */
-    protected function createEvent($data)
+    protected function createEvent(mixed $data): FormEvent
     {
         $taxCodeForm = $this->createMock(FormInterface::class);
 
@@ -66,20 +27,6 @@ abstract class AbstractTaxExtensionTest extends \PHPUnit\Framework\TestCase
 
         return new FormEvent($mainForm, $data);
     }
-
-    /**
-     * @param int|null $id
-     *
-     * @return object|\PHPUnit\Framework\MockObject\MockObject
-     */
-    abstract protected function createTaxCodeTarget($id = null);
-
-    /**
-     * @param int|null $id
-     *
-     * @return AbstractTaxCode
-     */
-    abstract protected function createTaxCode($id = null);
 
     protected function assertTaxCodeAdd(FormEvent $event, AbstractTaxCode $taxCode)
     {
@@ -94,6 +41,20 @@ abstract class AbstractTaxExtensionTest extends \PHPUnit\Framework\TestCase
         $taxCodeForm->expects($this->once())
             ->method('getData')
             ->willReturn($taxCode);
+    }
+
+    public function testOnPostSetDataNoEntity()
+    {
+        $event = $this->createEvent(null);
+
+        $this->getExtension()->onPostSetData($event);
+    }
+
+    public function testOnPostSetDataNewEntity()
+    {
+        $event = $this->createEvent($this->createTaxCodeTarget());
+
+        $this->getExtension()->onPostSetData($event);
     }
 
     public function testOnPostSubmitNoEntity()
