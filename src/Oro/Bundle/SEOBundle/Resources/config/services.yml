@@ -250,7 +250,7 @@ services:
             - ['setEntityClass', ['Oro\Bundle\CMSBundle\Entity\Page']]
             - ['setChangeFrequencySettingsKey', ['oro_seo.sitemap_changefreq_cms_page']]
             - ['setPrioritySettingsKey', ['oro_seo.sitemap_priority_cms_page']]
-            - ['setExcludeProviderKey', ['oro_seo.sitemap_exclude_landing_pages']]
+            - ['setProvider', ['@oro_seo.sitemap.provider.restrict_cms_page_by_web_catalog_provider']]
         tags:
             - { name: oro_seo.sitemap.url_items_provider, alias: 'page' }
 
@@ -361,8 +361,17 @@ services:
         arguments:
             - '@oro_config.manager'
             - '@oro_seo.sitemap.provider.web_catalog_scope_criteria_provider'
+        calls:
+            - ['setProvider', ['@oro_seo.sitemap.provider.restrict_cms_page_by_web_catalog_provider']]
         tags:
             - { name: kernel.event_listener, event: oro_seo.event.restrict_sitemap_entity.cms_page , method: restrictQueryBuilder }
+
+    oro_seo.sitemap.provider.restrict_cms_page_by_web_catalog_provider:
+        class: Oro\Bundle\SEOBundle\Sitemap\Provider\CmsPageSitemapRestrictionProvider
+        public: false
+        arguments:
+            - '@oro_config.manager'
+        tags:
             - { name: oro_featuretogle.feature, feature: frontend_master_catalog }
 
     oro_seo.event_listener.restrict_sitemap_product_by_status:
