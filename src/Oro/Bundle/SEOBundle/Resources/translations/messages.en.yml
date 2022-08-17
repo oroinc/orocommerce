@@ -32,8 +32,10 @@ oro:
                         hourly.label: Hourly (0 * * * *)
                 sitemap_exclude_landing_pages:
                     label: Exclude direct URLs of landing pages
-                    tooltip: Select the option to enable users to access landing pages either directly or via the web сatalog nodes they are assigned to.
-
+                    tooltip: Landing pages may be accessed either directly or via the Web Catalog nodes that they are assigned to
+                sitemap_include_landing_pages_not_in_web_catalog:
+                    label: Include Landing Pages Not Used In Web Catalog
+                    tooltip: Enable the option to include both assigned to web catalog nodes and unassigned landing pages into the sitemap file
 oro.product.meta_titles:
     label: Meta title
     description: The meta title used for SEO optimization (it is a list of localized entities to hold the localized text for each localization)
