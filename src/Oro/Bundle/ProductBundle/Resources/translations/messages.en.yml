@@ -653,6 +653,15 @@ oro:
                 microdata_without_prices_disabled:
                     label: 'Disable Product Microdata Without Prices'
                     tooltip: 'Some search crawlers (e.g. Google) mark pages containing embedded Schema.org Microdata without price information as invalid pages and may exclude them from search index. Unless you have an alternative custom solution (e.g. reviews or aggregated ratings system) in place, we recommend to disable Schema.org Microdata on product pages that do not include any pricing information available to such crawlers (anonymous/guest users).'
+                microdata_description_field_enabled:
+                    label: 'Include Product Description'
+                microdata_description_field:
+                    label: 'Used Product Description Field'
+                    choice:
+                        meta.label: 'SEO Meta Description'
+                        short.label: 'Simplified Short Description'
+                        long.label: 'Simplified [Long] Description'
+
             notice:
                 product_image_watermark: >
                    The updated product image watermark settings will be used for the newly uploaded images only.
