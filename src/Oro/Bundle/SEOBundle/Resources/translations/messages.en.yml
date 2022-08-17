@@ -33,6 +33,9 @@ oro:
                 sitemap_exclude_landing_pages:
                     label: Exclude direct URLs of landing pages
                     tooltip: Landing pages may be accessed either directly or via the Web Catalog nodes that they are assigned to
+                sitemap_include_landing_pages_not_in_web_catalog:
+                    label: Include Landing Pages Not Used In Web Catalog
+                    tooltip: Enable the option to include both assigned to web catalog nodes and unassigned landing pages into the sitemap file
 
 oro.product.meta_titles:
     label: Meta title
