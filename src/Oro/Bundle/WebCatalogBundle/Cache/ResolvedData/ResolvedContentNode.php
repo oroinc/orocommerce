@@ -42,6 +42,11 @@ class ResolvedContentNode implements ContentNodeInterface
     protected $rewriteVariantTitle = true;
 
     /**
+     * @var int
+     */
+    protected $priority = 0;
+
+    /**
      * @param int $id
      * @param string $identifier
      * @param Collection $titles
@@ -123,6 +128,18 @@ class ResolvedContentNode implements ContentNodeInterface
     public function setChildNodes(ArrayCollection $childNodes): self
     {
         $this->childNodes = $childNodes;
+
+        return $this;
+    }
+
+    public function getPriority(): int
+    {
+        return $this->priority;
+    }
+
+    public function setPriority(int $priority): self
+    {
+        $this->priority = $priority;
 
         return $this;
     }

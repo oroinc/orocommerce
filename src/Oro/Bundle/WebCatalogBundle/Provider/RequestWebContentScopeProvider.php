@@ -18,6 +18,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 class RequestWebContentScopeProvider
 {
     private const REQUEST_SCOPE_ATTRIBUTE    = '_web_content_scope';
+    private const REQUEST_SCOPES_ATTRIBUTE = '_web_content_scopes';
     private const REQUEST_CRITERIA_ATTRIBUTE = '_web_content_criteria';
 
     /** @var RequestStack */
@@ -63,6 +64,27 @@ class RequestWebContentScopeProvider
         $request->attributes->set(self::REQUEST_SCOPE_ATTRIBUTE, $scope);
 
         return $scope;
+    }
+
+    public function getScopes(): ?array
+    {
+        $request = $this->requestStack->getCurrentRequest();
+        if (null === $request) {
+            return null;
+        }
+
+        if ($request->attributes->has(self::REQUEST_SCOPES_ATTRIBUTE)) {
+            return $request->attributes->get(self::REQUEST_SCOPES_ATTRIBUTE);
+        }
+
+        $scopes = [];
+        $criteria = $this->getRequestScopeCriteria($request);
+        if (null !== $criteria) {
+            $scopes = $this->getSlugRepository()->findMostSuitableUsedScopes($criteria);
+        }
+        $request->attributes->set(self::REQUEST_SCOPES_ATTRIBUTE, $scopes);
+
+        return $scopes;
     }
 
     public function getScopeCriteria(): ?ScopeCriteria
