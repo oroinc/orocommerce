@@ -21,6 +21,7 @@ use Symfony\Contracts\Cache\ItemInterface;
  */
 class MenuDataProvider
 {
+    private const PRIORITY = 'priority';
     private const IDENTIFIER = 'identifier';
     private const LABEL = 'label';
     private const URL = 'url';
@@ -60,25 +61,63 @@ class MenuDataProvider
 
     public function getItems(int $maxNodesNestedLevel = null) : array
     {
-        $scope = $this->requestWebContentScopeProvider->getScope();
-        if (null !== $scope) {
-            $cacheKey = $this->getCacheKey($scope, $maxNodesNestedLevel);
-            $rootItem = $this->cache->get($cacheKey, function (ItemInterface $item) use ($scope, $maxNodesNestedLevel) {
-                if ($this->cacheLifeTime > 0) {
-                    $item->expiresAfter($this->cacheLifeTime);
+        $scopes = $this->requestWebContentScopeProvider->getScopes();
+        if ($scopes) {
+            $cacheKey = $this->getCacheKey($scopes, $maxNodesNestedLevel);
+            $rootItem = $this->cache->get(
+                $cacheKey,
+                function (ItemInterface $item) use ($scopes, $maxNodesNestedLevel) {
+                    if ($this->cacheLifeTime > 0) {
+                        $item->expiresAfter($this->cacheLifeTime);
+                    }
+                    return $this->getResolvedItems($scopes, $maxNodesNestedLevel);
                 }
-                return $this->getResolvedRootItem($scope, $maxNodesNestedLevel);
-            });
+            );
 
-            if (array_key_exists(self::CHILDREN, $rootItem)) {
-                return $rootItem[self::CHILDREN];
-            }
+            return $rootItem[self::CHILDREN] ?? [];
         }
 
         return [];
     }
 
-    private function getResolvedRootItem(Scope $scope, int $maxNodesNestedLevel = null) : array
+    private function getResolvedItems(array $scopes, int $maxNodesNestedLevel = null): array
+    {
+        $resolvedItems = [];
+        foreach ($scopes as $scope) {
+            $resolvedItems[] = $this->getResolvedRootItem($scope, $maxNodesNestedLevel);
+        }
+
+        $rootItem = $this->mergeItems(array_filter($resolvedItems));
+        if ($rootItem) {
+            $rootItem = reset($rootItem);
+        }
+
+        return $rootItem;
+    }
+
+    private function mergeItems(array $resolvedItems): array
+    {
+        if (!$resolvedItems) {
+            return [];
+        }
+
+        return array_reduce($resolvedItems, function ($accum, $item) {
+            $identifier = $item[self::PRIORITY];
+            if (array_key_exists($identifier, $accum)) {
+                $children = array_merge($accum[$identifier][self::CHILDREN], $item[self::CHILDREN]);
+                $accum[$identifier][self::CHILDREN] = $children;
+            } else {
+                $accum[$identifier] = $item;
+            }
+
+            $accum[$identifier][self::CHILDREN] = $this->mergeItems($accum[$identifier][self::CHILDREN]);
+            ksort($accum);
+
+            return $accum;
+        }, []);
+    }
+
+    private function getResolvedRootItem(Scope $scope, int $maxNodesNestedLevel = null): array
     {
         $rootItem = [];
         $rootNode = $this->getRootNode();
@@ -105,6 +144,7 @@ class MenuDataProvider
 
         $result[self::IDENTIFIER] = $node->getIdentifier();
         $result[self::LABEL] = (string)$this->localizationHelper->getLocalizedValue($node->getTitles());
+        $result[self::PRIORITY] = $node->getPriority();
         $result[self::URL] = (string)$this->localizationHelper
             ->getLocalizedValue($node->getResolvedContentVariant()->getLocalizedUrls());
 
@@ -137,15 +177,18 @@ class MenuDataProvider
         return $this->doctrine->getRepository(ContentNode::class);
     }
 
-    private function getCacheKey(Scope $scope, ?int $maxNodesNestedLevel): string
+    private function getCacheKey(array $scopes, ?int $maxNodesNestedLevel): string
     {
+        $scopes = array_map(fn (Scope $scope) => $scope->getId(), $scopes);
+        sort($scopes);
         $rootNode = $this->getRootNode();
         $localization = $this->localizationHelper->getCurrentLocalization();
+        $scopesKey = implode("_", array_fill(0, count($scopes), "%s"));
 
         return sprintf(
             'menu_items_%s_%s_%s_%s',
             (string)$maxNodesNestedLevel,
-            $scope ? $scope->getId() : 0,
+            vsprintf($scopesKey, $scopes) ?: 0,
             $rootNode ? $rootNode->getId() : 0,
             $localization ? $localization->getId() : 0
         );

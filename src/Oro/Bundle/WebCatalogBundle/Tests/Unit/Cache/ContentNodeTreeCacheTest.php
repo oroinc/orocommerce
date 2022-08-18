@@ -59,11 +59,15 @@ class ContentNodeTreeCacheTest extends TestCase
         $this->assertFalse($this->contentNodeTreeCache->fetch(2, 5));
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function testFetchWhenCachedDataExist()
     {
         $cacheData = [
             'id' => 1,
             'identifier' => 'root',
+            'priority' => 1,
             'resolveVariantTitle' => true,
             'titles' => [
                 ['string' => 'Title 1', 'localization' => null, 'fallback' => FallbackType::NONE],
@@ -82,6 +86,7 @@ class ContentNodeTreeCacheTest extends TestCase
             'childNodes' => [
                 [
                     'id' => 2,
+                    'priority' => 2,
                     'identifier' => 'root__second',
                     'resolveVariantTitle' => false,
                     'titles' => [
@@ -100,6 +105,7 @@ class ContentNodeTreeCacheTest extends TestCase
         $expected = new ResolvedContentNode(
             1,
             'root',
+            1,
             new ArrayCollection(
                 [
                     (new LocalizedFallbackValue())->setString('Title 1'),
@@ -114,21 +120,23 @@ class ContentNodeTreeCacheTest extends TestCase
                 ->addLocalizedUrl((new LocalizedFallbackValue())->setString('/test')),
             true
         );
-        $expected->addChildNode(
-            new ResolvedContentNode(
-                2,
-                'root__second',
-                new ArrayCollection(
-                    [
-                        (new LocalizedFallbackValue())->setString('Child Title 1')
-                    ]
-                ),
-                (new ResolvedContentVariant())
-                    ->setData(['id' => 7, 'type' => 'test_type', 'test' => 2])
-                    ->addLocalizedUrl((new LocalizedFallbackValue())->setString('/test/content')),
-                false
-            )
+
+        $childResolvedNode = new ResolvedContentNode(
+            2,
+            'root__second',
+            2,
+            new ArrayCollection(
+                [
+                    (new LocalizedFallbackValue())->setString('Child Title 1')
+                ]
+            ),
+            (new ResolvedContentVariant())
+                ->setData(['id' => 7, 'type' => 'test_type', 'test' => 2])
+                ->addLocalizedUrl((new LocalizedFallbackValue())->setString('/test/content')),
+            false
         );
+
+        $expected->addChildNode($childResolvedNode);
 
         $this->cache->expects($this->once())
             ->method('getItem')
@@ -169,11 +177,15 @@ class ContentNodeTreeCacheTest extends TestCase
         $this->contentNodeTreeCache->save(2, 5, null);
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function testShouldSaveCacheIfNodeResolved()
     {
         $resolvedNode = new ResolvedContentNode(
             1,
             'root',
+            1,
             new ArrayCollection(
                 [
                     (new LocalizedFallbackValue())->setString('Title 1'),
@@ -186,27 +198,29 @@ class ContentNodeTreeCacheTest extends TestCase
                 ->addLocalizedUrl((new LocalizedFallbackValue())->setString('/test')),
             true
         );
-        $resolvedNode->addChildNode(
-            new ResolvedContentNode(
-                2,
-                'root__second',
-                new ArrayCollection([(new LocalizedFallbackValue())->setString('Child Title 1')]),
-                (new ResolvedContentVariant())->addLocalizedUrl((new LocalizedFallbackValue())->setString('/test/c'))
-                    ->setData([
-                        'id' => 7,
-                        'type' => 'test_type',
-                        'skipped_null' => null,
-                        'sub_array' => ['a' => 'b'],
-                        'sub_iterator' => new ArrayCollection(
-                            ['c' => $this->getEntity(Localization::class, ['id' => 3])]
-                        )
-                    ]),
-                false
-            )
+
+        $childResolveNode = new ResolvedContentNode(
+            2,
+            'root__second',
+            2,
+            new ArrayCollection([(new LocalizedFallbackValue())->setString('Child Title 1')]),
+            (new ResolvedContentVariant())->addLocalizedUrl((new LocalizedFallbackValue())->setString('/test/c'))
+                ->setData([
+                    'id' => 7,
+                    'type' => 'test_type',
+                    'skipped_null' => null,
+                    'sub_array' => ['a' => 'b'],
+                    'sub_iterator' => new ArrayCollection(
+                        ['c' => $this->getEntity(Localization::class, ['id' => 3])]
+                    )
+                ]),
+            false
         );
+        $resolvedNode->addChildNode($childResolveNode);
         $convertedNode = [
             'id' => $resolvedNode->getId(),
             'identifier' => $resolvedNode->getIdentifier(),
+            'priority' => 1,
             'resolveVariantTitle' => true,
             'titles' => [
                 ['string' => 'Title 1', 'localization' => null, 'fallback' => null],
@@ -224,6 +238,7 @@ class ContentNodeTreeCacheTest extends TestCase
                 [
                     'id' => 2,
                     'identifier' => 'root__second',
+                    'priority' => 2,
                     'resolveVariantTitle' => false,
                     'titles' => [['string' => 'Child Title 1', 'localization' => null, 'fallback' => null]],
                     'contentVariant' => [

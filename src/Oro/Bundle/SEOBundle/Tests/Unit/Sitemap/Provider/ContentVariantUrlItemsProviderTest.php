@@ -332,11 +332,11 @@ class ContentVariantUrlItemsProviderTest extends \PHPUnit\Framework\TestCase
         $variant = new ResolvedContentVariant();
         $variant->addLocalizedUrl((new LocalizedFallbackValue())->setString('/test1'));
         $variant->addLocalizedUrl((new LocalizedFallbackValue())->setString('/test2'));
-        $resolvedContentNode = new ResolvedContentNode(1, 1, new ArrayCollection(), $variant);
+        $resolvedContentNode = new ResolvedContentNode(1, 1, 1, new ArrayCollection(), $variant);
 
         $childVariant = new ResolvedContentVariant();
         $childVariant->addLocalizedUrl((new LocalizedFallbackValue())->setString('/test1/child'));
-        $resolvedChildContentNode = new ResolvedContentNode(2, 2, new ArrayCollection(), $childVariant);
+        $resolvedChildContentNode = new ResolvedContentNode(2, 2, 2, new ArrayCollection(), $childVariant);
 
         $resolvedContentNode->addChildNode($resolvedChildContentNode);
 
