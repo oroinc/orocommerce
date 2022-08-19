@@ -60,7 +60,7 @@ const ComponentManager = BaseClass.extend({
                 : true;
 
             if (!isAllowedContentType) {
-                this.editor.DomComponents.removeType(id);
+                this.editor.Components.removeType(id);
                 this.editor.BlockManager.remove(id);
                 continue;
             }

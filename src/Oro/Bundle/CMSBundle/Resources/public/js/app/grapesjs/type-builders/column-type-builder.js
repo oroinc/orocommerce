@@ -70,7 +70,9 @@ const ColumnTypeBuilder = BaseTypeBuilder.extend({
 
         remove(...args) {
             const {unitWidth} = this.get('resizable');
-            const originWidth = parseFloat(this.getStyle().width.replace(unitWidth, ''));
+            const originWidth = this.getStyle().width
+                ? parseFloat(this.getStyle().width.replace(unitWidth, ''))
+                : 0;
             const index = this.collection.findIndex(model => model.cid === this.cid);
             let referenceModel;
 

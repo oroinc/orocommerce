@@ -18,6 +18,13 @@ The current file describes significant changes in the code that may affect the u
 
 ### Changed
 
+#### InventoryBundle
+* Inventory website search index fields (inventory status, low inventory threshold, is upcoming,
+  availability date) have been moved to the separate `inventory` indexation group
+
+#### CMSBundle
+* Update Grapesjs to 0.19.5 version
+
 #### ProductBundle
 * `Oro\Bundle\ProductBundle\Provider\ProductImageFileNameProvider` is applicable if `product_original_filenames` feature is enabled.
 

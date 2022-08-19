@@ -324,7 +324,16 @@ class ProductPriceRepository extends BaseProductPriceRepository
         int $version,
         int $batchSize = self::BUFFER_SIZE
     ) {
-        $tableName = $shardManager->getEnabledShardName($this->_entityName, ['priceList' => $priceList]);
+        yield from $this->getProductsByPriceListIdAndVersion($shardManager, $priceList->getId(), $version, $batchSize);
+    }
+
+    public function getProductsByPriceListIdAndVersion(
+        ShardManager $shardManager,
+        int $priceListId,
+        int $version,
+        int $batchSize = self::BUFFER_SIZE
+    ) {
+        $tableName = $shardManager->getEnabledShardName($this->_entityName, ['priceList' => $priceListId]);
         $connection = $this->_em->getConnection();
         $qb = $connection->createQueryBuilder();
 
@@ -332,7 +341,7 @@ class ProductPriceRepository extends BaseProductPriceRepository
             ->from($tableName, 'pp')
             ->where($qb->expr()->eq('pp.price_list_id', ':priceListId'))
             ->andWhere($qb->expr()->eq('pp.version', ':version'))
-            ->setParameter('priceListId', $priceList->getId())
+            ->setParameter('priceListId', $priceListId)
             ->setParameter('version', $version);
 
         $stmt = $qb->execute();

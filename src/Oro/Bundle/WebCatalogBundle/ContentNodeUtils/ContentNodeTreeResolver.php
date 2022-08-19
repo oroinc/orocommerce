@@ -172,13 +172,17 @@ class ContentNodeTreeResolver implements ContentNodeTreeResolverInterface
 
         $node = $nodes[$nodeId];
 
-        return new ResolvedContentNode(
+        $resolveContentNode = new ResolvedContentNode(
             $nodeId,
             $this->getIdentifier($node),
             $node->getTitles(),
             $this->createResolvedContentVariant($variants[$nodeId], $variantMetadata),
             $node->isRewriteVariantTitle()
         );
+
+        // The "left" tree option used as the priority of the menu item.
+        $resolveContentNode->setPriority($node->getLeft());
+        return $resolveContentNode;
     }
 
     private function createResolvedContentVariant(

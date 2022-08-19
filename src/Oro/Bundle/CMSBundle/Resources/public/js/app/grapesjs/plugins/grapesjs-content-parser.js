@@ -32,7 +32,7 @@ export const htmlParser = (html, config, compTypes, parserCss) => {
     }
 
     return {
-        html: parsedHtml,
+        html: parsedHtml || [],
         css: parserCss ? parserCss([...body.querySelectorAll('style')].reduce((acc, style) => {
             acc += style.innerHTML;
             return acc;
@@ -299,14 +299,17 @@ function parseNodes(el, config, ct = '', parent = {}) {
  * @constructor
  */
 export default function ContentParser(editor) {
-    const cTypes = editor.DomComponents.componentTypes;
-
-    editor.Parser.parseHtml = html => htmlParser(html, editor.getConfig(), cTypes, editor.Parser.getConfig().parserCss);
+    editor.Parser.parseHtml = html => htmlParser(
+        html,
+        editor.getConfig(),
+        editor.Components.componentTypes,
+        editor.Parser.getConfig().parserCss
+    );
 
     const originDestroy = editor.destroy;
     editor.destroy = () => {
-        const Parser = {...editor.Parser};
+        const Parser = {...editor.em.get('Parser')};
         originDestroy.call(editor);
-        editor.Parser = Parser;
+        editor.em.set('Parser', Parser);
     };
 }

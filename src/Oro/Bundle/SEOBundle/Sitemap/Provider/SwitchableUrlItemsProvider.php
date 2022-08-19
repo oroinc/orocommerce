@@ -18,10 +18,7 @@ class SwitchableUrlItemsProvider extends UrlItemsProvider
      */
     protected $excludeProviderKey;
 
-    /**
-     * @var ConfigManager
-     */
-    private $configManager;
+    private SwitchableUrlItemsProviderInterface $provider;
 
     public function __construct(
         CanonicalUrlGenerator $canonicalUrlGenerator,
@@ -29,14 +26,20 @@ class SwitchableUrlItemsProvider extends UrlItemsProvider
         EventDispatcherInterface $eventDispatcher,
         ManagerRegistry $registry
     ) {
-        $this->configManager = $configManager;
-
         parent::__construct($canonicalUrlGenerator, $configManager, $eventDispatcher, $registry);
     }
 
+    /**
+     * @param string $excludeProviderKey
+     */
     public function setExcludeProviderKey(string $excludeProviderKey)
     {
         $this->excludeProviderKey = $excludeProviderKey;
+    }
+
+    public function setProvider(SwitchableUrlItemsProviderInterface $provider): void
+    {
+        $this->provider = $provider;
     }
 
     /**
@@ -44,7 +47,7 @@ class SwitchableUrlItemsProvider extends UrlItemsProvider
      */
     public function getUrlItems(WebsiteInterface $website, $version)
     {
-        if ($this->configManager->get($this->excludeProviderKey, false, false, $website)) {
+        if ($this->provider->isUrlItemsExcluded($website)) {
             return [];
         }
 

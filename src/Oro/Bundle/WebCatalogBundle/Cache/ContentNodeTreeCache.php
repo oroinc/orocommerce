@@ -138,6 +138,7 @@ class ContentNodeTreeCache
             $resolvedVariant,
             $nodeData['resolveVariantTitle']
         );
+        $resolvedNode->setPriority($nodeData['priority']);
 
         foreach ($nodeData['childNodes'] as $childNodeData) {
             $resolvedNode->addChildNode($this->deserializeCachedNode($childNodeData));
@@ -164,12 +165,13 @@ class ContentNodeTreeCache
     private function convertResolvedContentNode(ResolvedContentNode $resolvedNode): array
     {
         return [
-            'id'                  => $resolvedNode->getId(),
-            'identifier'          => $resolvedNode->getIdentifier(),
+            'id' => $resolvedNode->getId(),
+            'priority' => $resolvedNode->getPriority(),
+            'identifier' => $resolvedNode->getIdentifier(),
             'resolveVariantTitle' => $resolvedNode->isRewriteVariantTitle(),
-            'titles'              => $this->convertLocalizedValuesArray($resolvedNode->getTitles()),
-            'contentVariant'      => $this->convertResolvedContentVariant($resolvedNode->getResolvedContentVariant()),
-            'childNodes'          => $this->convertArray($resolvedNode->getChildNodes())
+            'titles' => $this->convertLocalizedValuesArray($resolvedNode->getTitles()),
+            'contentVariant' => $this->convertResolvedContentVariant($resolvedNode->getResolvedContentVariant()),
+            'childNodes' => $this->convertArray($resolvedNode->getChildNodes())
         ];
     }
 

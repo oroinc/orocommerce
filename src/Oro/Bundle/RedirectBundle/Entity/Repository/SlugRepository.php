@@ -377,6 +377,21 @@ class SlugRepository extends EntityRepository
     }
 
     /**
+     * Find all most suitable scopes that fit the criteria.
+     *
+     * @param ScopeCriteria $criteria
+     *
+     * @return Scope[]
+     */
+    public function findMostSuitableUsedScopes(ScopeCriteria $criteria): array
+    {
+        $qb = $this->getUsedScopesQueryBuilder();
+        $criteria->applyWhereWithPriorityForScopes($qb, 'scope');
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
      * @return array|string[]
      */
     public function getUsedRoutes()
