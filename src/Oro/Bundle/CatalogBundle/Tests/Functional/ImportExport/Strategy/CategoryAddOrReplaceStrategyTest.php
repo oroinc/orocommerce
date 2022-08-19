@@ -13,31 +13,25 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationToken;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\ReflectionUtil;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class CategoryAddOrReplaceStrategyTest extends WebTestCase
 {
-    use EntityTrait, CatalogTrait;
+    use CatalogTrait;
 
-    /** @var Context */
-    private $context;
-
-    /** @var CategoryAddOrReplaceStrategy */
-    private $strategy;
+    private Context $context;
+    private CategoryAddOrReplaceStrategy $strategy;
 
     protected function setUp(): void
     {
         $this->initClient();
-
-        $this->loadFixtures(
-            [
-                LoadCategoryData::class,
-                LoadOrganization::class,
-            ]
-        );
+        $this->loadFixtures([
+            LoadCategoryData::class,
+            LoadOrganization::class,
+        ]);
 
         $container = $this->getContainer();
 
@@ -91,7 +85,7 @@ class CategoryAddOrReplaceStrategyTest extends WebTestCase
         $this->context->setValue('rawItemData', ['parentCategory.title' => $parentCategory]);
 
         $category = $this->createCategoryWithTitle('title');
-        $category->setParentCategory(new Category());
+        $category->setParentCategory($this->createCategory());
 
         $this->assertSame(
             $expectedParentCategory ? $this->getReference($expectedParentCategory) : null,
@@ -124,7 +118,7 @@ class CategoryAddOrReplaceStrategyTest extends WebTestCase
 
         $category = $this->createCategoryWithTitle('title');
         $expectedCategory = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
-        $category->setParentCategory($this->getEntity(Category::class, ['id' => $expectedCategory->getId()]));
+        $category->setParentCategory($this->createCategory($expectedCategory->getId()));
 
         $this->assertSame($expectedCategory, $this->strategy->process($category)->getParentCategory());
     }
@@ -134,7 +128,7 @@ class CategoryAddOrReplaceStrategyTest extends WebTestCase
         $newCategory = $this->strategy->process($this->createCategoryWithTitle('new_category'));
 
         $category = $this->createCategoryWithTitle('title');
-        $category->setParentCategory(new Category());
+        $category->setParentCategory($this->createCategory());
 
         $this->context->setValue('rawItemData', ['parentCategory.title' => 'All Products / new_category']);
 
@@ -150,7 +144,8 @@ class CategoryAddOrReplaceStrategyTest extends WebTestCase
             $this->createCategoryWithTitle('title')
         );
 
-        $categoryRepo = $this->getCategoryRepository();
+        /** @var CategoryRepository $categoryRepo */
+        $categoryRepo = $this->getContainer()->get('doctrine')->getRepository(Category::class);
         $rootCategory = $this->getRootCategory();
         $maxLeft = $categoryRepo->getMaxLeft();
 
@@ -191,7 +186,7 @@ class CategoryAddOrReplaceStrategyTest extends WebTestCase
     public function testProcessWhenParentIsNotFoundById(): void
     {
         $category = $this->createCategoryWithTitle('sample category');
-        $category->setParentCategory($this->getEntity(Category::class, ['id' => '999999999']));
+        $category->setParentCategory($this->createCategory('999999999'));
 
         $category = $this->strategy->process($category);
 
@@ -205,7 +200,7 @@ class CategoryAddOrReplaceStrategyTest extends WebTestCase
     public function testProcessWhenParentIsNotFoundByTitle(): void
     {
         $category = $this->createCategoryWithTitle('sample category');
-        $category->setParentCategory(new Category());
+        $category->setParentCategory($this->createCategory());
 
         $this->context->setValue('rawItemData', $itemData = ['parentCategory.title' => 'All Products / non-existing']);
 
@@ -235,7 +230,7 @@ class CategoryAddOrReplaceStrategyTest extends WebTestCase
 
     public function testProcessWhenCategoryHasNoTitle()
     {
-        $category = $this->strategy->process(new Category());
+        $category = $this->strategy->process($this->createCategory());
 
         $this->assertNull($category);
         $this->assertContains(
@@ -244,18 +239,21 @@ class CategoryAddOrReplaceStrategyTest extends WebTestCase
         );
     }
 
-    private function createCategoryWithTitle(string $title): Category
+    private function createCategory(int $id = null): Category
     {
-        return (new Category())->addTitle(
-            (new CategoryTitle())->setString($title)
-        );
+        $category = new Category();
+        if (null !== $id) {
+            ReflectionUtil::setId($category, $id);
+        }
+
+        return $category;
     }
 
-    private function getCategoryRepository(): CategoryRepository
+    private function createCategoryWithTitle(string $title): Category
     {
-        /** @var CategoryRepository $categoryRepo */
-        $categoryRepo = $this->getContainer()->get('doctrine')->getRepository(Category::class);
+        $category = $this->createCategory();
+        $category->addTitle((new CategoryTitle())->setString($title));
 
-        return $categoryRepo;
+        return $category;
     }
 }

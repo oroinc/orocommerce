@@ -8,7 +8,7 @@ describe('orocms/js/app/grapesjs/type-builders/image-type-builder', () => {
     let pictureTypeBuilder;
     let editor;
 
-    beforeEach(() => {
+    beforeEach(done => {
         window.setFixtures(html);
         editor = grapesJS.init({
             container: document.querySelector('.page-content-editor')
@@ -23,6 +23,8 @@ describe('orocms/js/app/grapesjs/type-builders/image-type-builder', () => {
                 }
             }
         });
+
+        editor.on('load', () => done());
     });
 
     afterEach(() => {

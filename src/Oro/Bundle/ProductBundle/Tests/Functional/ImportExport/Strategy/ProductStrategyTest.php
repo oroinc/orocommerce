@@ -18,14 +18,10 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadBusinessUnit;
 use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
-use Oro\Component\Testing\Unit\EntityTrait;
 
 class ProductStrategyTest extends WebTestCase
 {
-    use EntityTrait;
-
-    /** @var ProductStrategy */
-    protected $strategy;
+    private ProductStrategy $strategy;
 
     protected function setUp(): void
     {
@@ -68,8 +64,7 @@ class ProductStrategyTest extends WebTestCase
 
         /** @var ProductUnit $unit */
         $unit = $this->getReference(LoadProductUnits::BOX);
-        /** @var AttributeFamily $attributeFamily */
-        $attributeFamily = $this->getEntity(AttributeFamily::class, ['code' => 'default_family']);
+        $attributeFamily = $this->createAttributeFamily('default_family');
         $newProductSku = 'PR-V1';
 
         // Prepare new product that is imported in same batch and will be used later as variant link
@@ -118,8 +113,7 @@ class ProductStrategyTest extends WebTestCase
         $this->strategy->setImportExportContext($context);
         /** @var ProductUnit $unit */
         $unit = $this->getReference(LoadProductUnits::BOX);
-        /** @var AttributeFamily $attributeFamily */
-        $attributeFamily = $this->getEntity(AttributeFamily::class, ['code' => 'default_family']);
+        $attributeFamily = $this->createAttributeFamily('default_family');
         $newProductSku = 'PR-V1';
         // Prepare new product that is imported in same batch and will be used later as variant link
         $newProduct = $this->createProduct(
@@ -155,8 +149,7 @@ class ProductStrategyTest extends WebTestCase
         $this->strategy->setImportExportContext($context);
         /** @var ProductUnit $unit */
         $unit = $this->getReference(LoadProductUnits::BOX);
-        /** @var AttributeFamily $attributeFamily */
-        $attributeFamily = $this->getEntity(AttributeFamily::class, ['code' => 'default_family']);
+        $attributeFamily = $this->createAttributeFamily('default_family');
         $newProductSku = 'PR-V1';
         // Prepare new product that is imported in same batch and will be used later as variant link
         $newProduct = $this->createProduct(
@@ -181,8 +174,7 @@ class ProductStrategyTest extends WebTestCase
         /** @var ProductUnit $unit */
         $unit = $this->getReference(LoadProductUnits::BOX);
 
-        /** @var AttributeFamily $attributeFamily */
-        $attributeFamily = $this->getEntity(AttributeFamily::class, ['code' => 'default_family']);
+        $attributeFamily = $this->createAttributeFamily('default_family');
 
         // Prepare new product that is imported in same batch and will be used later as variant link
         $newProduct = $this->createProduct('PR-V2', $attributeFamily, $unit, $this->getInventoryStatus());
@@ -215,34 +207,20 @@ class ProductStrategyTest extends WebTestCase
         );
     }
 
-    /**
-     * @return AbstractEnumValue
-     */
-    private function getInventoryStatus()
+    private function getInventoryStatus(): AbstractEnumValue
     {
-        $inventoryStatusClassName = ExtendHelper::buildEnumValueClassName('prod_inventory_status');
-        /** @var AbstractEnumValue $inventoryStatus */
-        $inventoryStatus = $this->getContainer()
+        return $this->getContainer()
             ->get('doctrine')
-            ->getRepository($inventoryStatusClassName)
+            ->getRepository(ExtendHelper::buildEnumValueClassName('prod_inventory_status'))
             ->find('in_stock');
-
-        return $inventoryStatus;
     }
 
-    /**
-     * @param string $sku
-     * @param AttributeFamily $attributeFamily
-     * @param ProductUnit $unit
-     * @param AbstractEnumValue $inventoryStatus
-     * @return Product
-     */
-    protected function createProduct(
-        $sku,
+    private function createProduct(
+        string $sku,
         AttributeFamily $attributeFamily,
         ProductUnit $unit,
         AbstractEnumValue $inventoryStatus
-    ) {
+    ): Product {
         $newProduct = new Product();
         $productName = new ProductName();
         $productName->setString($sku);
@@ -259,5 +237,13 @@ class ProductStrategyTest extends WebTestCase
         $newProduct->setOrganization($this->getReference('organization'));
 
         return $newProduct;
+    }
+
+    private function createAttributeFamily(string $code): AttributeFamily
+    {
+        $family = new AttributeFamily();
+        $family->setCode($code);
+
+        return $family;
     }
 }

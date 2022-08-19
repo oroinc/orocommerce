@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CatalogBundle\Tests\Functional\ImportExport\Writer;
+namespace Oro\Bundle\CatalogBundle\Tests\Unit\ImportExport\Writer;
 
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\CatalogBundle\Entity\Category;

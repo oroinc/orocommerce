@@ -4,22 +4,54 @@ namespace Oro\Bundle\TaxBundle\Tests\Unit\Form\Extension;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductType;
+use Oro\Bundle\TaxBundle\Entity\AbstractTaxCode;
 use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
-use Oro\Bundle\TaxBundle\Entity\Repository\ProductTaxCodeRepository;
+use Oro\Bundle\TaxBundle\Form\Extension\AbstractTaxExtension;
 use Oro\Bundle\TaxBundle\Form\Extension\ProductTaxExtension;
 use Oro\Bundle\TaxBundle\Form\Type\ProductTaxCodeAutocompleteType;
+use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 
 class ProductTaxExtensionTest extends AbstractTaxExtensionTest
 {
-    /** @var ProductTaxCodeRepository|\PHPUnit\Framework\MockObject\MockObject */
-    protected $entityRepository;
-
-    protected function getExtension()
+    /**
+     * {@inheritDoc}
+     */
+    protected function getExtension(): AbstractTaxExtension
     {
-        return new ProductTaxExtension($this->doctrineHelper, 'OroTaxBundle:ProductTaxCode');
+        return new ProductTaxExtension();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function createTaxCodeTarget(int $id = null): object
+    {
+        $entity = $this->getMockBuilder(Product::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['getId'])
+            ->addMethods(['setTaxCode', 'getTaxCode'])
+            ->getMock();
+        $entity->expects($this->any())
+            ->method('getId')
+            ->willReturn($id);
+
+        return $entity;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function createTaxCode(int $id = null): AbstractTaxCode
+    {
+        $taxCode = new ProductTaxCode();
+        if (null !== $id) {
+            ReflectionUtil::setId($taxCode, $id);
+        }
+
+        return $taxCode;
     }
 
     public function testGetExtendedTypes(): void
@@ -57,9 +89,10 @@ class ProductTaxExtensionTest extends AbstractTaxExtensionTest
 
     public function testOnPostSetDataExistingProduct()
     {
-        $taxCode = $this->createTaxCode();
         $product = $this->createTaxCodeTarget(1);
         $event = $this->createEvent($product);
+        $taxCode = $this->createTaxCode();
+
         $product->expects($this->any())
             ->method('getTaxCode')
             ->willReturn($taxCode);
@@ -104,34 +137,5 @@ class ProductTaxExtensionTest extends AbstractTaxExtensionTest
         $this->assertTaxCodeAdd($event, $newTaxCode);
 
         $this->getExtension()->onPostSubmit($event);
-    }
-
-    /**
-     * @param int|null $id
-     *
-     * @return Product|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected function createTaxCodeTarget($id = null)
-    {
-        $mock = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getId'])
-            ->addMethods(['setTaxCode', 'getTaxCode'])
-            ->getMock();
-        $mock->expects($this->any())
-            ->method('getId')
-            ->willReturn($id);
-
-        return $mock;
-    }
-
-    /**
-     * @param int|null $id
-     *
-     * @return ProductTaxCode
-     */
-    protected function createTaxCode($id = null)
-    {
-        return $this->getEntity(ProductTaxCode::class, ['id' => $id]);
     }
 }

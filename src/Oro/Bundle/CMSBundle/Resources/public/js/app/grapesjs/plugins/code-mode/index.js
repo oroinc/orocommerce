@@ -75,14 +75,14 @@ export default GrapesJS.plugins.add('grapesjs-code-mode', (editor, {editorView} 
         if (typeof css === 'string') {
             editor.storeProtectedCss = editor.getUnIsolatedCssFromString(css);
         }
-        return originGetPureStyle(css);
+        return originGetPureStyle.call(editor, css);
     };
 
     editor.getPureStyleString = css => {
         if (typeof css === 'string') {
             editor.storeProtectedCss = editor.getUnIsolatedCssFromString(css);
         }
-        return origingGetPureStyleString(css);
+        return origingGetPureStyleString.call(editor, css);
     };
 
     editor.setComponents = (components, {fromImport, ...rest} = {}) => {
@@ -90,7 +90,7 @@ export default GrapesJS.plugins.add('grapesjs-code-mode', (editor, {editorView} 
             editor.storeProtectedCss = exposeStyles(components);
         }
 
-        return originSetComponents(components, rest);
+        return originSetComponents.call(editor, components, rest);
     };
 
     const onLoad = () => {

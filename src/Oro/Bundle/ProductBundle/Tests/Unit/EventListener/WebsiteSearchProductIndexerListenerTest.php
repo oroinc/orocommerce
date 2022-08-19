@@ -8,7 +8,6 @@ use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityConfigBundle\Entity\Repository\AttributeFamilyRepository;
 use Oro\Bundle\EntityConfigBundle\Manager\AttributeManager;
-use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue as InventoryStatus;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
@@ -19,7 +18,6 @@ use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Oro\Bundle\ProductBundle\EventListener\WebsiteSearchProductIndexerListener;
 use Oro\Bundle\ProductBundle\Search\ProductIndexDataModel;
 use Oro\Bundle\ProductBundle\Search\ProductIndexDataProviderInterface;
-use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductWithInventoryStatus;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
@@ -220,7 +218,6 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
             'sku_uppercase' => [['value' => 'SKU123АБВ', 'all_text' => true]],
             'status' => [['value' => Product::STATUS_ENABLED, 'all_text' => false]],
             'type' => [['value' => Product::TYPE_CONFIGURABLE, 'all_text' => false]],
-            'inventory_status' => [['value' => 'in_stock', 'all_text' => false]],
             'is_variant' => [['value' => 0, 'all_text' => false]],
             'newArrival' => [['value' => 1, 'all_text' => false]],
             'all_text_LOCALIZATION_ID' => [
@@ -349,12 +346,11 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
 
     private function getProduct(int $productId, AttributeFamily $attributeFamily): Product
     {
-        $product = new ProductWithInventoryStatus();
+        $product = new Product();
         ReflectionUtil::setId($product, $productId);
         $product->setSku('sku123Абв');
         $product->setStatus(Product::STATUS_ENABLED);
         $product->setType(Product::TYPE_CONFIGURABLE);
-        $product->setInventoryStatus(new InventoryStatus('in_stock', 'In Stock'));
         $product->setNewArrival(true);
         $product->setCreatedAt(new \DateTime('2017-09-09 00:00:00'));
         $product->setAttributeFamily($attributeFamily);

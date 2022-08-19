@@ -189,7 +189,7 @@ class ProductRepository extends WebsiteSearchRepository
             'text.sku',
             'text.names_LOCALIZATION_ID as name',
             'text.image_product_small as image',
-            'text.inventory_status',
+            'text.inv_status as inventory_status',
         ];
 
         $event = new CollectAutocompleteFieldsEvent($fields);

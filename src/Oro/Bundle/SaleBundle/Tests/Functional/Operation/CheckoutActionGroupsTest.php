@@ -10,7 +10,6 @@ use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteCheckoutsData;
 use Oro\Component\Action\Exception\InvalidParameterException;
-use Oro\Component\Testing\Unit\EntityTrait;
 
 /**
  * @dbIsolationPerTest
@@ -19,26 +18,19 @@ use Oro\Component\Testing\Unit\EntityTrait;
  */
 class CheckoutActionGroupsTest extends FrontendActionTestCase
 {
-    use EntityTrait;
-
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->initClient(
             [],
             $this->generateBasicAuthHeader(LoadCustomerUserData::LEVEL_1_EMAIL, LoadCustomerUserData::LEVEL_1_PASSWORD)
         );
-        $this->loadFixtures(
-            [
-                LoadCustomerUserData::class,
-                LoadQuoteCheckoutsData::class,
-            ]
-        );
+        $this->loadFixtures([
+            LoadCustomerUserData::class,
+            LoadQuoteCheckoutsData::class,
+        ]);
     }
 
-    public function testUpdateBillingAddressWithoutRrequiredParameters()
+    public function testUpdateBillingAddressWithoutRequiredParameters()
     {
         $this->expectException(InvalidParameterException::class);
         $this->expectExceptionMessage(
@@ -56,8 +48,8 @@ class CheckoutActionGroupsTest extends FrontendActionTestCase
 
         $checkout->setShipToBillingAddress(true);
 
-        $billingAddress = $this->createEntity(OrderAddress::class, ['phone' => '123']);
-        $shippingAddress = $this->createEntity(OrderAddress::class, ['phone' => '234']);
+        $billingAddress = $this->createOrderAddress('123');
+        $shippingAddress = $this->createOrderAddress('234');
         $shippingAddressId = $shippingAddress->getId();
 
         $checkout->setBillingAddress($billingAddress)->setShippingAddress($shippingAddress);
@@ -88,8 +80,8 @@ class CheckoutActionGroupsTest extends FrontendActionTestCase
 
         $checkout->setShipToBillingAddress(true);
 
-        $billingAddress = $this->createEntity(OrderAddress::class, ['phone' => '123']);
-        $shippingAddress = $this->createEntity(OrderAddress::class, ['phone' => '234']);
+        $billingAddress = $this->createOrderAddress('123');
+        $shippingAddress = $this->createOrderAddress('234');
         $shippingAddressId = $shippingAddress->getId();
 
         $checkout->setBillingAddress($billingAddress)->setShippingAddress($shippingAddress);
@@ -132,13 +124,13 @@ class CheckoutActionGroupsTest extends FrontendActionTestCase
 
         $checkout->setShipToBillingAddress(true);
 
-        $billingAddress = $this->createEntity(OrderAddress::class, ['phone' => '123']);
-        $shippingAddress = $this->createEntity(OrderAddress::class, ['phone' => '234']);
+        $billingAddress = $this->createOrderAddress('123');
+        $shippingAddress = $this->createOrderAddress('234');
         $shippingAddressId = $shippingAddress->getId();
 
         $checkout->setBillingAddress($billingAddress)->setShippingAddress($shippingAddress);
 
-        $result = $this->executeActionGroup(
+        $this->executeActionGroup(
             'b2b_flow_checkout_update_shipping_address',
             [
                 'checkout' => $checkout,
@@ -155,7 +147,7 @@ class CheckoutActionGroupsTest extends FrontendActionTestCase
         $this->assertSame($billingAddress, $checkout->getBillingAddress());
     }
 
-    public function testUpdateShippingMethodWithoutRrequiredParameters()
+    public function testUpdateShippingMethodWithoutRequiredParameters()
     {
         $this->expectException(InvalidParameterException::class);
         $this->expectExceptionMessage(
@@ -199,8 +191,8 @@ class CheckoutActionGroupsTest extends FrontendActionTestCase
         /* @var Checkout $checkout */
         $checkout = $this->getReference(LoadQuoteCheckoutsData::CHECKOUT_1);
 
-        $billingAddress = $this->createEntity(OrderAddress::class, ['phone' => '123']);
-        $shippingAddress = $this->createEntity(OrderAddress::class, ['phone' => '234']);
+        $billingAddress = $this->createOrderAddress('123');
+        $shippingAddress = $this->createOrderAddress('234');
 
         $checkout->setBillingAddress($billingAddress)->setShippingAddress($shippingAddress);
 
@@ -239,7 +231,7 @@ class CheckoutActionGroupsTest extends FrontendActionTestCase
         );
     }
 
-    public function testPurchaseWithoutRrequiredParameters()
+    public function testPurchaseWithoutRequiredParameters()
     {
         $this->expectException(InvalidParameterException::class);
         $this->expectExceptionMessage(
@@ -255,8 +247,8 @@ class CheckoutActionGroupsTest extends FrontendActionTestCase
         /* @var Checkout $checkout */
         $checkout = $this->getReference(LoadQuoteCheckoutsData::CHECKOUT_1);
 
-        $billingAddress = $this->createEntity(OrderAddress::class, ['phone' => '123']);
-        $shippingAddress = $this->createEntity(OrderAddress::class, ['phone' => '234']);
+        $billingAddress = $this->createOrderAddress('123');
+        $shippingAddress = $this->createOrderAddress('234');
 
         $checkout->setBillingAddress($billingAddress)->setShippingAddress($shippingAddress);
 
@@ -284,7 +276,7 @@ class CheckoutActionGroupsTest extends FrontendActionTestCase
         $this->assertEquals('value1', $responseData['option1']);
     }
 
-    public function testFinishCheckoutWithoutRrequiredParameters()
+    public function testFinishCheckoutWithoutRequiredParameters()
     {
         $this->expectException(InvalidParameterException::class);
         $this->expectExceptionMessage(
@@ -300,8 +292,8 @@ class CheckoutActionGroupsTest extends FrontendActionTestCase
         /* @var Checkout $checkout */
         $checkout = $this->getReference(LoadQuoteCheckoutsData::CHECKOUT_1);
 
-        $billingAddress = $this->createEntity(OrderAddress::class, ['phone' => '123']);
-        $shippingAddress = $this->createEntity(OrderAddress::class, ['phone' => '234']);
+        $billingAddress = $this->createOrderAddress('123');
+        $shippingAddress = $this->createOrderAddress('234');
 
         $checkout->setBillingAddress($billingAddress)->setShippingAddress($shippingAddress);
 
@@ -349,14 +341,9 @@ class CheckoutActionGroupsTest extends FrontendActionTestCase
         $this->getContainer()->get('oro_entity_config.config_manager')->clear();
     }
 
-    /**
-     * @param Order $order
-     * @return float
-     */
-    protected function getOrderSubtotal(Order $order)
+    private function getOrderSubtotal(Order $order): float
     {
         $total = 0;
-
         foreach ($order->getLineItems() as $lineItem) {
             $total += $lineItem->getQuantity() * $lineItem->getPrice()->getValue();
         }
@@ -364,41 +351,24 @@ class CheckoutActionGroupsTest extends FrontendActionTestCase
         return $total;
     }
 
-    /**
-     * @param string $class
-     * @param array $properties
-     * @return object
-     */
-    protected function createEntity($class, array $properties)
+    private function createOrderAddress(string $phone): OrderAddress
     {
-        $em = $this->getContainer()->get('doctrine')->getManagerForClass($class);
+        $entity = new OrderAddress();
+        $entity->setPhone($phone);
 
-        $entity = $this->getEntity($class, $properties);
-
+        $em = $this->getContainer()->get('doctrine')->getManagerForClass(OrderAddress::class);
         $em->persist($entity);
         $em->flush();
 
         return $entity;
     }
 
-    /**
-     * @param string $class
-     * @param mixed $id
-     * @return object|null
-     */
-    protected function findEntity($class, $id)
+    private function findEntity(string $class, mixed $id): ?object
     {
-        $em = $this->getContainer()->get('doctrine')->getManagerForClass($class);
-
-        return $em->find($class, $id);
+        return $this->getContainer()->get('doctrine')->getManagerForClass($class)->find($class, $id);
     }
 
-    /**
-     * @param object|string $entity
-     * @param array $excludeProps
-     * @return array
-     */
-    protected function entityToArray($entity, array $excludeProps = [])
+    private function entityToArray(object|string $entity, array $excludeProps = []): array
     {
         $data = [];
 

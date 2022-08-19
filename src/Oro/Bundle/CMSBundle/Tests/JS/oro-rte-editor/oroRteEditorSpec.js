@@ -7,7 +7,7 @@ describe('orocms/js/app/grapesjs/plugins/oro-rte-editor', () => {
     let editor;
     let rteEditor;
 
-    beforeEach(() => {
+    beforeEach(done => {
         window.setFixtures(html);
         editor = grapesJS.init({
             container: document.querySelector('.page-content-editor'),
@@ -15,6 +15,8 @@ describe('orocms/js/app/grapesjs/plugins/oro-rte-editor', () => {
         });
 
         rteEditor = editor.RteEditor;
+
+        editor.on('load', () => done());
     });
 
     afterEach(() => {

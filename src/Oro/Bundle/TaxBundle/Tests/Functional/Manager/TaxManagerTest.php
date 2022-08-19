@@ -20,10 +20,13 @@ use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadOrderItems;
 use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadOrderWithLineItemsAndTaxes;
 use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodes;
 use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxes;
+use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxRules;
 use Oro\Bundle\TaxBundle\Tests\ResultComparatorTrait;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Component\Testing\Unit\LoadTestCaseDataTrait;
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -31,33 +34,21 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
  */
 class TaxManagerTest extends WebTestCase
 {
-    use LoadTestCaseDataTrait;
     use ResultComparatorTrait;
     use ConfigManagerAwareTestTrait;
 
-    /** @var ConfigManager */
-    protected $configManager;
-
-    /** @var PropertyAccessor */
-    protected $propertyAccessor;
-
-    /** @var ManagerRegistry */
-    protected $doctrine;
-
-    /** @var LoaderInterface */
-    protected $loader;
-
-    /**
-     * @var TaxManager
-     */
-    protected $taxManager;
+    private ConfigManager $configManager;
+    private PropertyAccessor $propertyAccessor;
+    private ManagerRegistry $doctrine;
+    private LoaderInterface $loader;
+    private TaxManager $taxManager;
 
     protected function setUp(): void
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
 
-        $this->configManager = self::getConfigManager('global');
+        $this->configManager = self::getConfigManager();
         $this->propertyAccessor = $this->getContainer()->get('property_accessor');
         $this->doctrine = $this->getContainer()->get('doctrine');
         $this->loader = $this->getContainer()->get('oro_test.alice_fixture_loader');
@@ -72,18 +63,10 @@ class TaxManagerTest extends WebTestCase
 
     /**
      * @dataProvider methodsDataProvider
-     * @param string $method
-     * @param string $reference
-     * @param array $configuration
-     * @param array $databaseBefore
-     * @param array $databaseBeforeSecondPart
-     * @param bool  $disableTaxCalculation
-     * @param array $expectedResult
-     * @param array $databaseAfter
      */
     public function testMethods(
-        $method,
-        $reference,
+        string $method,
+        string $reference,
         array $configuration,
         array $databaseBefore,
         array $databaseBeforeSecondPart,
@@ -91,11 +74,7 @@ class TaxManagerTest extends WebTestCase
         array $expectedResult = [],
         array $databaseAfter = []
     ) {
-        $this->loadFixtures(
-            [
-                'Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxRules',
-            ]
-        );
+        $this->loadFixtures([LoadTaxRules::class]);
 
         foreach ($configuration as $key => $value) {
             $this->configManager->set(sprintf('oro_tax.%s', $key), $value);
@@ -110,20 +89,19 @@ class TaxManagerTest extends WebTestCase
         $this->assertDatabase($databaseAfter);
     }
 
-    /**
-     * @return array
-     */
-    public function methodsDataProvider()
+    public function methodsDataProvider(): array
     {
-        return $this->getTestCaseData(__DIR__);
+        $cases = [];
+        $finder = (new Finder())->files()->in(__DIR__ . '/test_cases')->name('*.yml');
+        /** @var SplFileInfo $file */
+        foreach ($finder as $file) {
+            $cases[$file->getRelativePathname()] = Yaml::parse($file->getContents());
+        }
+
+        return $cases;
     }
 
-    /**
-     * @param string $method
-     * @param object $object
-     * @param array $expectedResult
-     */
-    protected function executeMethod($method, $object, $expectedResult)
+    private function executeMethod(string $method, object $object, array $expectedResult): void
     {
         $manager = $this->getContainer()->get('oro_tax.manager.tax_manager');
 
@@ -135,11 +113,11 @@ class TaxManagerTest extends WebTestCase
         $this->compareResult($expectedResult, $manager->{$method}($object, true));
     }
 
-    protected function prepareDatabase(
+    private function prepareDatabase(
         array $databaseBefore,
         array $databaseBeforeSecondPart,
         bool $disableTaxCalculation
-    ) {
+    ): void {
         if ($disableTaxCalculation) {
             // Disable taxation for load fixtures
             $previousTaxEnableState = $this->configManager->get('oro_tax.tax_enable');
@@ -148,8 +126,9 @@ class TaxManagerTest extends WebTestCase
 
         $objectsData = [];
         foreach ([$databaseBefore, $databaseBeforeSecondPart] as $database) {
-            $objectsData = array_merge($objectsData, $this->loadDatabase($database));
+            $objectsData[] = $this->loadDatabase($database);
         }
+        $objectsData = array_merge(...$objectsData);
 
         if ($disableTaxCalculation) {
             // Restore previous taxation state after load fixtures
@@ -160,11 +139,7 @@ class TaxManagerTest extends WebTestCase
         }
     }
 
-    /**
-     * @param array $database
-     * @return array
-     */
-    protected function loadDatabase(array $database)
+    private function loadDatabase(array $database): array
     {
         foreach ($database as $class => $items) {
             foreach ($items as $reference => $item) {
@@ -176,11 +151,7 @@ class TaxManagerTest extends WebTestCase
         return $this->loader->load($database);
     }
 
-    /**
-     * @param array $config
-     * @return array
-     */
-    protected function getReferenceFromDoctrine($config)
+    private function getReferenceFromDoctrine(array $config): array
     {
         foreach ($config as $key => $item) {
             if (is_array($item)) {
@@ -197,7 +168,7 @@ class TaxManagerTest extends WebTestCase
         return $config;
     }
 
-    protected function assertDatabase(array $databaseAfter)
+    private function assertDatabase(array $databaseAfter): void
     {
         foreach ($databaseAfter as $class => $items) {
             $repository = $this->doctrine->getRepository($class);
@@ -208,8 +179,10 @@ class TaxManagerTest extends WebTestCase
                         $item[$key] = $this->getReference($param['reference'])->getId();
                     }
                 }
-
-                $this->assertNotEmpty($repository->findBy($item), sprintf('%s %s', $class, json_encode($item)));
+                $this->assertNotEmpty(
+                    $repository->findBy($item),
+                    sprintf('%s %s', $class, json_encode($item, JSON_THROW_ON_ERROR))
+                );
             }
         }
     }
@@ -233,11 +206,11 @@ class TaxManagerTest extends WebTestCase
             ]
         ];
 
-        self::assertGetTaxReturnsCorrectTaxes($order, $initialTaxes);
+        $this->assertGetTaxReturnsCorrectTaxes($order, $initialTaxes);
 
         $this->changeTaxTo('tax.TAX1', 20);
 
-        self::assertGetTaxReturnsCorrectTaxes($order, $initialTaxes);
+        $this->assertGetTaxReturnsCorrectTaxes($order, $initialTaxes);
     }
 
     public function testOrderTaxRecalculatedIfOrderItemQuantityChanged()
@@ -249,7 +222,7 @@ class TaxManagerTest extends WebTestCase
         /** @var Order $order */
         $order = $this->getReference(LoadOrders::ORDER_1);
 
-        self::assertSimpleOrderTaxesPrecondition();
+        $this->assertSimpleOrderTaxesPrecondition();
 
         $this->changeTaxTo('tax.TAX1', 20);
 
@@ -263,7 +236,7 @@ class TaxManagerTest extends WebTestCase
                 'currency' => 'USD'
             ]
         ];
-        self::assertGetTaxReturnsCorrectTaxes($order, $newTaxes);
+        $this->assertGetTaxReturnsCorrectTaxes($order, $newTaxes);
     }
 
     public function testOrderTaxRecalculatedIfOrderItemPriceChanged()
@@ -275,7 +248,7 @@ class TaxManagerTest extends WebTestCase
         /** @var Order $order */
         $order = $this->getReference(LoadOrders::ORDER_1);
 
-        self::assertSimpleOrderTaxesPrecondition();
+        $this->assertSimpleOrderTaxesPrecondition();
 
         $this->changeTaxTo('tax.TAX1', 20);
 
@@ -294,7 +267,7 @@ class TaxManagerTest extends WebTestCase
                 'currency' => 'USD'
             ]
         ];
-        self::assertGetTaxReturnsCorrectTaxes($order, $newTaxes);
+        $this->assertGetTaxReturnsCorrectTaxes($order, $newTaxes);
     }
 
     public function testOrderTaxRecalculatedIfOrderItemProductChanged()
@@ -306,7 +279,7 @@ class TaxManagerTest extends WebTestCase
         /** @var Order $order */
         $order = $this->getReference(LoadOrders::ORDER_1);
 
-        self::assertSimpleOrderTaxesPrecondition();
+        $this->assertSimpleOrderTaxesPrecondition();
 
         $this->changeTaxTo('tax.TAX1', 20);
 
@@ -322,7 +295,7 @@ class TaxManagerTest extends WebTestCase
                 'currency' => 'USD'
             ]
         ];
-        self::assertGetTaxReturnsCorrectTaxes($order, $newTaxes);
+        $this->assertGetTaxReturnsCorrectTaxes($order, $newTaxes);
     }
 
     public function testOrderTaxRecalculatedIfOrderItemProductUnitChanged()
@@ -334,7 +307,7 @@ class TaxManagerTest extends WebTestCase
         /** @var Order $order */
         $order = $this->getReference(LoadOrders::ORDER_1);
 
-        self::assertSimpleOrderTaxesPrecondition();
+        $this->assertSimpleOrderTaxesPrecondition();
 
         $this->changeTaxTo('tax.TAX1', 20);
 
@@ -350,7 +323,7 @@ class TaxManagerTest extends WebTestCase
                 'currency' => 'USD'
             ]
         ];
-        self::assertGetTaxReturnsCorrectTaxes($order, $newTaxes);
+        $this->assertGetTaxReturnsCorrectTaxes($order, $newTaxes);
     }
 
     public function testOrderTaxRecalculatedIfOrderItemsCollectionChanged()
@@ -362,7 +335,7 @@ class TaxManagerTest extends WebTestCase
         /** @var Order $order */
         $order = $this->getReference(LoadOrders::ORDER_1);
 
-        self::assertSimpleOrderTaxesPrecondition();
+        $this->assertSimpleOrderTaxesPrecondition();
 
         $this->changeTaxTo('tax.TAX1', 20);
 
@@ -378,7 +351,7 @@ class TaxManagerTest extends WebTestCase
                 'currency' => 'USD'
             ]
         ];
-        self::assertGetTaxReturnsCorrectTaxes($order, $newTaxes);
+        $this->assertGetTaxReturnsCorrectTaxes($order, $newTaxes);
     }
 
     public function testOrderTaxRecalculatedIfOrderCustomerChanged()
@@ -390,7 +363,7 @@ class TaxManagerTest extends WebTestCase
         /** @var Order $order */
         $order = $this->getReference(LoadOrders::ORDER_1);
 
-        self::assertSimpleOrderTaxesPrecondition();
+        $this->assertSimpleOrderTaxesPrecondition();
 
         $this->changeTaxTo('tax.TAX1', 20);
 
@@ -404,7 +377,7 @@ class TaxManagerTest extends WebTestCase
                 'currency' => 'USD'
             ]
         ];
-        self::assertGetTaxReturnsCorrectTaxes($order, $newTaxes);
+        $this->assertGetTaxReturnsCorrectTaxes($order, $newTaxes);
     }
 
     public function testOrderTaxRecalculatedIfOrderBillingAddressPostalCodeChanged()
@@ -416,7 +389,7 @@ class TaxManagerTest extends WebTestCase
         /** @var Order $order */
         $order = $this->getReference(LoadOrders::ORDER_1);
 
-        self::assertSimpleOrderTaxesPrecondition();
+        $this->assertSimpleOrderTaxesPrecondition();
 
         $this->changeTaxTo('tax.TAX1', 20);
 
@@ -431,7 +404,7 @@ class TaxManagerTest extends WebTestCase
                 'currency' => 'USD'
             ]
         ];
-        self::assertGetTaxReturnsCorrectTaxes($order, $newTaxes);
+        $this->assertGetTaxReturnsCorrectTaxes($order, $newTaxes);
     }
 
     public function testOrderTaxRecalculatedIfOrderBillingAddressStateChanged()
@@ -443,7 +416,7 @@ class TaxManagerTest extends WebTestCase
         /** @var Order $order */
         $order = $this->getReference(LoadOrders::ORDER_1);
 
-        self::assertSimpleOrderTaxesPrecondition();
+        $this->assertSimpleOrderTaxesPrecondition();
 
         $this->changeTaxTo('tax.TAX1', 20);
 
@@ -458,7 +431,7 @@ class TaxManagerTest extends WebTestCase
                 'currency' => 'USD'
             ]
         ];
-        self::assertGetTaxReturnsCorrectTaxes($order, $newTaxes);
+        $this->assertGetTaxReturnsCorrectTaxes($order, $newTaxes);
     }
 
     public function testOrderTaxRecalculatedIfOrderBillingAddressCountryChanged()
@@ -470,7 +443,7 @@ class TaxManagerTest extends WebTestCase
         /** @var Order $order */
         $order = $this->getReference(LoadOrders::ORDER_1);
 
-        self::assertSimpleOrderTaxesPrecondition();
+        $this->assertSimpleOrderTaxesPrecondition();
 
         $this->changeTaxTo('tax.TAX1', 20);
 
@@ -485,7 +458,7 @@ class TaxManagerTest extends WebTestCase
                 'currency' => 'USD'
             ]
         ];
-        self::assertGetTaxReturnsCorrectTaxes($order, $newTaxes);
+        $this->assertGetTaxReturnsCorrectTaxes($order, $newTaxes);
     }
 
     public function testOrderTaxRecalculatedIfOrderShippingAddressPostalCodeChanged()
@@ -497,7 +470,7 @@ class TaxManagerTest extends WebTestCase
         /** @var Order $order */
         $order = $this->getReference(LoadOrders::ORDER_1);
 
-        self::assertSimpleOrderTaxesPrecondition();
+        $this->assertSimpleOrderTaxesPrecondition();
 
         $this->changeTaxTo('tax.TAX1', 20);
 
@@ -512,7 +485,7 @@ class TaxManagerTest extends WebTestCase
                 'currency' => 'USD'
             ]
         ];
-        self::assertGetTaxReturnsCorrectTaxes($order, $newTaxes);
+        $this->assertGetTaxReturnsCorrectTaxes($order, $newTaxes);
     }
 
     public function testOrderTaxRecalculatedIfOrderShippingAddressStateChanged()
@@ -524,7 +497,7 @@ class TaxManagerTest extends WebTestCase
         /** @var Order $order */
         $order = $this->getReference(LoadOrders::ORDER_1);
 
-        self::assertSimpleOrderTaxesPrecondition();
+        $this->assertSimpleOrderTaxesPrecondition();
 
         $this->changeTaxTo('tax.TAX1', 20);
 
@@ -539,7 +512,7 @@ class TaxManagerTest extends WebTestCase
                 'currency' => 'USD'
             ]
         ];
-        self::assertGetTaxReturnsCorrectTaxes($order, $newTaxes);
+        $this->assertGetTaxReturnsCorrectTaxes($order, $newTaxes);
     }
 
     public function testOrderTaxRecalculatedIfOrderShippingAddressCountryChanged()
@@ -551,17 +524,17 @@ class TaxManagerTest extends WebTestCase
         /** @var Order $order */
         $order = $this->getReference(LoadOrders::ORDER_1);
 
-        self::assertSimpleOrderTaxesPrecondition();
+        $this->assertSimpleOrderTaxesPrecondition();
 
         $this->changeTaxTo('tax.TAX1', 20);
 
         $address = $order->getShippingAddress();
         $address->setCountry(null);
         $newTaxes = [];
-        self::assertGetTaxReturnsCorrectTaxes($order, $newTaxes);
+        $this->assertGetTaxReturnsCorrectTaxes($order, $newTaxes);
     }
 
-    protected function clearCache()
+    private function clearCache(): void
     {
         $this->getContainer()->get('oro_tax.taxation_provider.cache')->clear();
         $matchers = self::getContainer()->get('oro_tax.address_matcher_registry')->getMatchers();
@@ -572,7 +545,7 @@ class TaxManagerTest extends WebTestCase
         }
     }
 
-    protected function setTaxesConfiguration()
+    private function setTaxesConfiguration(): void
     {
         $this->configManager->set('oro_tax.use_as_base_by_default', 'destination');
         $this->configManager->set('oro_tax.destination', 'shipping_address');
@@ -586,7 +559,7 @@ class TaxManagerTest extends WebTestCase
      * - fixtures was changed
      * - test isolation broken
      */
-    protected function assertSimpleOrderTaxesPrecondition()
+    private function assertSimpleOrderTaxesPrecondition(): void
     {
         /** @var Order $order */
         $order = $this->getReference(LoadOrders::ORDER_1);
@@ -601,15 +574,10 @@ class TaxManagerTest extends WebTestCase
             ]
         ];
 
-        self::assertGetTaxReturnsCorrectTaxes($order, $initialTaxes);
+        $this->assertGetTaxReturnsCorrectTaxes($order, $initialTaxes);
     }
 
-    /**
-     * @param object $entity
-     * @param array $expectedTaxes
-     * @throws \Oro\Bundle\TaxBundle\Exception\TaxationDisabledException
-     */
-    protected function assertGetTaxReturnsCorrectTaxes($entity, array $expectedTaxes)
+    private function assertGetTaxReturnsCorrectTaxes(object $entity, array $expectedTaxes): void
     {
         $this->clearCache();
         $taxesCalculationResult = $this->taxManager->getTax($entity);
@@ -618,7 +586,7 @@ class TaxManagerTest extends WebTestCase
         self::assertEquals($expectedTaxes, $actualTaxes);
     }
 
-    protected function changeTaxTo(string $code, float $newRate)
+    private function changeTaxTo(string $code, float $newRate): void
     {
         /** @var Tax $tax */
         $tax = $this->getReference($code);
@@ -627,12 +595,7 @@ class TaxManagerTest extends WebTestCase
         $this->clearCache();
     }
 
-    /**
-     * @param TaxResultElement[] $taxes
-     *
-     * @return array|array[]
-     */
-    protected function convertTaxesToComparable(array $taxes)
+    private function convertTaxesToComparable(array $taxes): array
     {
         return array_map(function (TaxResultElement $element) {
             return $element->getArrayCopy();

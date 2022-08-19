@@ -18,6 +18,7 @@ styles:
         - 'bundles/orocustomtheme/CustomerBundle/scss/styles.scss'
 
         - 'bundles/orocustomtheme/FrontendBundle/scss/variables/page-main-config.scss'
+        - 'bundles/orocustomtheme/FrontendBundle/scss/variables/middlebar-config.scss'
         - 'bundles/orocustomtheme/FrontendBundle/scss/variables/breadcrumbs-config.scss'
         - 'bundles/orocustomtheme/FrontendBundle/scss/variables/search-container-config.scss'
         - 'bundles/orocustomtheme/FrontendBundle/scss/styles.scss'

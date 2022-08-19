@@ -8,8 +8,8 @@ export default GrapesJS.plugins.add('grapesjs-components', function(editor, opti
     // Overwrite default addType method
     // Check and update manually componentTypes array
     // Check functionality at next version GrapesJS, if need delete wrap function
-    editor.DomComponents.addType = _.wrap(editor.DomComponents.addType, (func, typeName, methods) => {
-        const dom = func.call(editor.DomComponents, typeName, methods);
+    editor.Components.addType = _.wrap(editor.Components.addType, (func, typeName, methods) => {
+        const dom = func.call(editor.Components, typeName, methods);
 
         const index = _.findIndex(dom.componentTypes, type => type.id === typeName);
 
