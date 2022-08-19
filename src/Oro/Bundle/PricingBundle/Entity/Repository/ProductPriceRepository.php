@@ -313,14 +313,14 @@ class ProductPriceRepository extends BaseProductPriceRepository
 
     /**
      * @param ShardManager $shardManager
-     * @param PriceList $priceList
+     * @param int $priceList
      * @param int $version
      * @param int $batchSize
      * @return \Generator
      */
     public function getProductsByPriceListAndVersion(
         ShardManager $shardManager,
-        PriceList $priceList,
+        int $priceList,
         int $version,
         int $batchSize = self::BUFFER_SIZE
     ) {
@@ -332,7 +332,7 @@ class ProductPriceRepository extends BaseProductPriceRepository
             ->from($tableName, 'pp')
             ->where($qb->expr()->eq('pp.price_list_id', ':priceListId'))
             ->andWhere($qb->expr()->eq('pp.version', ':version'))
-            ->setParameter('priceListId', $priceList->getId())
+            ->setParameter('priceListId', $priceList)
             ->setParameter('version', $version);
 
         $stmt = $qb->execute();
