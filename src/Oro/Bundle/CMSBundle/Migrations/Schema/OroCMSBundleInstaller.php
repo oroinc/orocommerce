@@ -36,6 +36,7 @@ class OroCMSBundleInstaller implements
     const MAX_IMAGE_SLIDE_MAIN_IMAGE_SIZE_IN_MB = 10;
     const MAX_IMAGE_SLIDE_MEDIUM_IMAGE_SIZE_IN_MB = 10;
     const MAX_IMAGE_SLIDE_SMALL_IMAGE_SIZE_IN_MB = 10;
+    const MAX_CONTENT_TEMPLATE_PREVIEW_IMAGE_SIZE_IN_MB = 10;
 
     /**
      * @var ExtendExtension
@@ -124,6 +125,14 @@ class OroCMSBundleInstaller implements
         $table->addColumn('updated_at', 'datetime');
         $table->addColumn('user_owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
+
+        $this->attachmentExtension->addImageRelation(
+            $schema,
+            'oro_cms_content_template',
+            'previewImage',
+            ['attachment' => ['acl_protected' => true, 'use_dam' => false]],
+            self::MAX_CONTENT_TEMPLATE_PREVIEW_IMAGE_SIZE_IN_MB
+        );
 
         $table->setPrimaryKey(['id']);
     }

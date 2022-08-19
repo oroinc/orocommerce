@@ -233,6 +233,7 @@ oro.cms:
         disabled:
             label: 'Disabled'
         cloned_name_suffix: ' (Copy)'
+        preview_image.label: Preview
 
 oro.entity_extend.form.data_type:
     wysiwyg: WYSIWYG

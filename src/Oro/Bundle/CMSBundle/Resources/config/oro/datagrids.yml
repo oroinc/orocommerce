@@ -440,14 +440,21 @@ datagrids:
                     - template.createdAt
                     - template.updatedAt
                     - CONCAT(owner.firstName, ' ', owner.lastName) as ownerName
+                    - preview.id as previewImage
                 from:
                     - { table: 'Oro\Bundle\CMSBundle\Entity\ContentTemplate', alias: template }
                 join:
                     left:
                         - { join: template.owner, alias: owner }
+                        - { join: template.previewImage, alias: preview }
         columns:
             name:
                 label: oro.cms.contenttemplate.name.label
+            previewImage:
+                label: oro.cms.contenttemplate.preview_image.label
+                type: twig
+                frontend_type: html
+                template: '@OroCMS/ContentTemplate/Datagrid/previewImage.html.twig'
             enabled:
                 label: oro.cms.contenttemplate.enabled.label
                 frontend_type: select

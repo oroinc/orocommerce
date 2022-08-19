@@ -509,6 +509,8 @@ oro.cms:
                 main_image: 'Main image'
                 select_breakpoints: 'Click to select breakpoint'
                 unknown_type: 'unknown'
+        screenshot_plugin:
+            onerror: 'Something went wrong during create template preview'
     change_type:
         confirmation:
             title: 'Change Type'

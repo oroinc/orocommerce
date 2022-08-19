@@ -252,6 +252,51 @@ oro_behat_extension:
                 type: 'xpath'
                 locator: '//img[contains(@alt,"example1_svg_wysiwyg_image")]//preceding-sibling::source[@type="image/webp"][last()]'
 
+        ContentTemplateWithTags Preview Small Image:
+            selector:
+                locator: '//tr[contains(@class,"grid-row")]//img[@alt="ContentTemplateWithTags" and contains(@src,"/filter/content_template_preview_small/")]'
+                type: xpath
+
+        ContentTemplateWithTags Preview Small Picture:
+            selector:
+                type: xpath
+                locator: '//tr[contains(@class,"grid-row")]//img[@alt="ContentTemplateWithTags" and contains(@src,"/filter/content_template_preview_small/")]/parent::picture'
+
+        ContentTemplateWithTags Preview Original Picture:
+            selector:
+                type: xpath
+                locator: '//img[contains(@class,"images-list__item") and contains(@src,"/filter/content_template_preview_original/")]/parent::picture'
+
+        ContentTemplateWithTags (Copy) Preview Small Image:
+            selector:
+                locator: '//tr[contains(@class,"grid-row")]//img[@alt="ContentTemplateWithTags (Copy)" and contains(@src,"/filter/content_template_preview_small/")]'
+                type: xpath
+
+        ContentTemplateWithTags (Copy) Preview Small Picture:
+            selector:
+                type: xpath
+                locator: '//tr[contains(@class,"grid-row")]//img[@alt="ContentTemplateWithTags (Copy)" and contains(@src,"/filter/content_template_preview_small/")]/parent::picture'
+
+        TestName1 Content Template Preview Small Image:
+            selector:
+                locator: '//tr[contains(@class,"grid-row")]//img[@alt="TestName1" and contains(@src,"/filter/content_template_preview_small/")]'
+                type: xpath
+
+        TestName1 Content Template Preview Small Picture:
+            selector:
+                type: xpath
+                locator: '//tr[contains(@class,"grid-row")]//img[@alt="TestName1" and contains(@src,"/filter/content_template_preview_small/")]/parent::picture'
+
+        TestContentTemplate1 Default Preview Small Image:
+            selector:
+                locator: '//tr[contains(@class,"grid-row")]//img[@alt="TestContentTemplate1" and contains(@src,"bundles/orocms/images/no_image.png")]'
+                type: xpath
+
+        Content Template Default Preview Original Image:
+            selector:
+                type: xpath
+                locator: '//img[contains(@class,"images-list__item") and contains(@src,"bundles/orocms/images/no_image.png")]'
+
     suites:
         OroCMSBundle:
             contexts:

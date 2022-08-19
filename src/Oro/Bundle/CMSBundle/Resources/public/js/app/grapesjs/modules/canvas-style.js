@@ -26,6 +26,10 @@ export default `
         padding: 54px 15px;
         text-align: center;
         font-family: Arial, Helvetica, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #4a4a4b;
     }
     
     .content-placeholder .content-placeholder-title {

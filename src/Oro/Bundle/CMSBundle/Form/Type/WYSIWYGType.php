@@ -59,6 +59,7 @@ class WYSIWYGType extends AbstractType
         $options['page-component']['options']['allow_tags'] = $allowedElements;
         $options['page-component']['options']['allowed_iframe_domains'] = $allowedIframeDomains;
         $options['page-component']['options']['autoRender'] = $options['auto_render'];
+        $options['page-component']['options']['builderPlugins'] = $options['builder_plugins'];
         $options['page-component']['options']['entityClass'] = $dataClass;
         $options['page-component']['options']['stylesInputSelector'] = sprintf(
             '[data-grapesjs-styles="%s"]',
@@ -92,6 +93,7 @@ class WYSIWYGType extends AbstractType
                 'autocomplete' => 'off'
             ],
             'auto_render' => true,
+            'builder_plugins' => [],
             'error_bubbling' => true,
             'entity_class' => null,
         ]);

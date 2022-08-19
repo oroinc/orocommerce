@@ -51,19 +51,34 @@
 {% block content_data %}
     {% set id = 'contenttemplate-edit' %}
 
+    {% set contentTemplateContent %}
+        <div class="page-content-editor">
+            {{ form_widget(form.content) }}
+            {{ form_widget(form.content_style) }}
+            {{ form_widget(form.content_properties) }}
+        </div>
+    {% endset %}
+
     {% set dataBlocks = [
         {
             'title': 'oro.cms.contenttemplate.entity_label'|trans,
             'class': 'active',
             'subblocks': [{
-            'title': '',
-            'data': [
-                form_row(form.name),
-                form_row(form.tags),
-                form_row(form.enabled),
-                form_row(form.content)
-            ]
-        }]
+                'title': '',
+                'data': [
+                    form_row(form.name),
+                    form_row(form.previewImage),
+                    form_row(form.tags),
+                    form_row(form.enabled)
+                ]
+            }]
+        },
+        {
+            'title': 'oro.cms.contenttemplate.content.label'|trans,
+            'subblocks': [{
+                'title': '',
+                'data': [contentTemplateContent]
+            }]
         }
     ] %}
 

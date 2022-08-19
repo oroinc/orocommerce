@@ -2,10 +2,14 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\AttachmentBundle\Form\Type\ImageType;
+use Oro\Bundle\AttachmentBundle\Tests\Unit\Fixtures\TestFile;
 use Oro\Bundle\CMSBundle\Entity\ContentTemplate;
 use Oro\Bundle\CMSBundle\Form\Type\ContentTemplateType;
 use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGType;
 use Oro\Bundle\CMSBundle\Provider\HTMLPurifierScopeProvider;
+use Oro\Bundle\CMSBundle\Tests\Unit\Entity\Stub\ContentTemplateStub;
+use Oro\Bundle\CMSBundle\Tests\Unit\Form\Type\Stub\ImageTypeStub;
 use Oro\Bundle\CMSBundle\Tests\Unit\Form\Type\Stub\TagSelectTypeStub;
 use Oro\Bundle\CMSBundle\Tools\DigitalAssetTwigTagsConverter;
 use Oro\Bundle\CMSBundle\Validator\Constraints\TwigContentValidator;
@@ -53,7 +57,14 @@ class ContentTemplateTypeTest extends FormIntegrationTestCase
                         $htmlTagProvider,
                         $purifierScopeProvider,
                         $digitalAssetTwigTagsConverter
-                    )
+                    ),
+                    ImageType::class => new ImageTypeStub(
+                        [
+                            1001 => (new TestFile())->setId(1001),
+                            1002 => (new TestFile())->setId(1002),
+                        ],
+                        'oro_image'
+                    ),
                 ],
                 []
             ),
@@ -97,6 +108,7 @@ class ContentTemplateTypeTest extends FormIntegrationTestCase
         $this->assertFormContainsField('content', $form);
         $this->assertFormContainsField('tags', $form);
         $this->assertFormContainsField('enabled', $form);
+        $this->assertFormContainsField('previewImage', $form);
     }
 
     /**
@@ -124,7 +136,7 @@ class ContentTemplateTypeTest extends FormIntegrationTestCase
 
     public function testFailureSubmit(): void
     {
-        $existingData = new ContentTemplate();
+        $existingData = new ContentTemplateStub();
         $requestData = [
             'name' => '',
             'enabled' => true,
@@ -153,21 +165,24 @@ class ContentTemplateTypeTest extends FormIntegrationTestCase
 
     private function submitSuccessDataProvider(): array
     {
+        $previewImageFoo = (new TestFile())->setId(1001);
+        $previewImageBar = (new TestFile())->setId(1002);
+
         return [
-            'new_empty_entity' => [
-                'existingData' => new ContentTemplate(),
+            'new empty entity' => [
+                'existingData' => new ContentTemplateStub(),
                 'requestData' => [
                     'name' => 'TestNewEmptyEntityName',
                     'enabled' => true,
-                    'content' => 'TestNewEmptyEntityContent'
+                    'content' => 'TestNewEmptyEntityContent',
                 ],
-                'expectedData' => (new ContentTemplate())
+                'expectedData' => (new ContentTemplateStub())
                     ->setName('TestNewEmptyEntityName')
                     ->setContent('TestNewEmptyEntityContent')
-                    ->setEnabled(true)
+                    ->setEnabled(true),
             ],
-            'existing_entity' => [
-                'existingData' => (new ContentTemplate())
+            'existing entity' => [
+                'existingData' => (new ContentTemplateStub())
                     ->setName('Test')
                     ->setContent('TestNewEmptyEntityContent')
                     ->setEnabled(false),
@@ -176,10 +191,42 @@ class ContentTemplateTypeTest extends FormIntegrationTestCase
                     'enabled' => true,
                     'content' => 'TestContent',
                 ],
-                'expectedData' => (new ContentTemplate())
+                'expectedData' => (new ContentTemplateStub())
                     ->setName('TestExistingEntityName')
                     ->setContent('TestContent')
                     ->setEnabled(true)
+            ],
+            'new empty entity with preview image' => [
+                'existingData' => new ContentTemplateStub(),
+                'requestData' => [
+                    'name' => 'TestNewEmptyEntityName',
+                    'enabled' => true,
+                    'content' => 'TestNewEmptyEntityContent',
+                    'previewImage' => 1001,
+                ],
+                'expectedData' => (new ContentTemplateStub())
+                    ->setName('TestNewEmptyEntityName')
+                    ->setContent('TestNewEmptyEntityContent')
+                    ->setEnabled(true)
+                    ->setPreviewImage($previewImageFoo)
+            ],
+            'existing entity with preview image' => [
+                'existingData' => (new ContentTemplateStub())
+                    ->setName('Test')
+                    ->setContent('TestNewEmptyEntityContent')
+                    ->setEnabled(false)
+                    ->setPreviewImage($previewImageFoo),
+                'requestData' => [
+                    'name' => 'TestExistingEntityName',
+                    'enabled' => true,
+                    'content' => 'TestContent',
+                    'previewImage' => 1002,
+                ],
+                'expectedData' => (new ContentTemplateStub())
+                    ->setName('TestExistingEntityName')
+                    ->setContent('TestContent')
+                    ->setEnabled(true)
+                    ->setPreviewImage($previewImageBar)
             ]
         ];
     }
