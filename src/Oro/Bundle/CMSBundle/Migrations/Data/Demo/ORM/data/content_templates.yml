@@ -1,0 +1,144 @@
+-
+    name: 'One column. Title and button'
+    tags: ['Call to Action']
+    content: one_column_title_and_button_call_to_action.html
+    contentStyle: css/one_column_title_and_button_call_to_action.css
+    previewImage: preview/one_column_title_and_button_call_to_action.png
+-
+    name: 'One column. Banner'
+    tags: ['Call to Action']
+    content: one_column_banner_call_to_action.html
+    contentStyle: css/one_column_banner_call_to_action.css
+    previewImage: preview/one_column_banner_call_to_action.png
+-
+    name: 'One column. Text and button'
+    tags: ['Call to Action']
+    content: one_column_text_and_button_call_to_action.html
+    contentStyle: css/one_column_text_and_button_call_to_action.css
+    previewImage: preview/one_column_text_and_button_call_to_action.png
+-
+    name: 'Two columns. Text and button'
+    tags: ['Call to Action']
+    content: two_columns_text_and_button_call_to_action.html
+    contentStyle: css/two_columns_text_and_button_call_to_action.css
+    previewImage: preview/two_columns_text_and_button_call_to_action.png
+-
+    name: 'Three columns'
+    tags: ['Call to Action']
+    content: three_columns_call_to_action.html
+    contentStyle: css/three_columns_call_to_action.css
+    previewImage: preview/three_columns_call_to_action.png
+-
+    name: 'Two columns. Text and images'
+    tags: [Team]
+    content: two_columns_text_and_images_team.html
+    contentStyle: css/two_columns_text_and_images_team.css
+    previewImage: preview/two_columns_text_and_images_team.png
+-
+    name: 'Four columns'
+    tags: [Team]
+    content: four_columns_team.html
+    contentStyle: css/four_columns_team.css
+    previewImage: preview/four_columns_team.png
+-
+    name: 'Four columns. Small images'
+    tags: [Team]
+    content: four_columns_small_images_team.html
+    contentStyle: css/four_columns_small_images_team.css
+    previewImage: preview/four_columns_small_images_team.png
+-
+    name: 'Seven columns. Large images'
+    tags: [Team]
+    content: seven_columns_large_images_team.html
+    contentStyle: css/seven_columns_large_images_team.css
+    previewImage: preview/seven_columns_large_images_team.png
+-
+    name: 'Two columns. Image and text'
+    tags: [Category]
+    content: two_columns_image_and_text_category.html
+    contentStyle: css/two_columns_image_and_text_category.css
+    previewImage: preview/two_columns_image_and_text_category.png
+-
+    name: 'Two columns. Text'
+    tags: [Category]
+    content: two_columns_text_category.html
+    contentStyle: css/two_columns_text_category.css
+    previewImage: preview/two_columns_text_category.png
+-
+    name: 'Three columns'
+    tags: [Category]
+    content: three_columns_category.html
+    contentStyle: css/three_columns_category.css
+    previewImage: preview/three_columns_category.png
+-
+    name: 'Two columns. Text and image'
+    tags: [Category]
+    content: two_columns_text_and_image_category.html
+    contentStyle: css/two_columns_text_and_image_category.css
+    previewImage: preview/two_columns_text_and_image_category.png
+-
+    name: 'Two columns. Text and images'
+    tags: [Category]
+    content: two_columns_text_and_images_category.html
+    contentStyle: css/two_columns_text_and_images_category.css
+    previewImage: preview/two_columns_text_and_images_category.png
+-
+    name: 'Four columns. Text'
+    tags: [Features]
+    content: four_columns_text_features.html
+    contentStyle: css/four_columns_text_features.css
+    previewImage: preview/four_columns_text_features.png
+-
+    name: 'Two and one columns. Button'
+    tags: [Features]
+    content: two_and_one_columns_button_features.html
+    contentStyle: css/two_and_one_columns_button_features.css
+    previewImage: preview/two_and_one_columns_button_features.png
+-
+    name: 'Two columns. Text'
+    tags: [Features]
+    content: two_columns_text_features.html
+    contentStyle: css/two_columns_text_features.css
+    previewImage: preview/two_columns_text_features.png
+-
+    name: 'Two columns. Text and image'
+    tags: [Features]
+    content: two_columns_text_and_image_features.html
+    contentStyle: css/two_columns_text_and_image_features.css
+    previewImage: preview/two_columns_text_and_image_features.png
+-
+    name: 'Four columns. Text and images'
+    tags: [Features]
+    content: four_columns_text_and_images_features.html
+    contentStyle: css/four_columns_text_and_images_features.css
+    previewImage: preview/four_columns_text_and_images_features.png
+-
+    name: 'Three columns. Text'
+    tags: [Testimonials]
+    content: three_columns_text_testimonials.html
+    contentStyle: css/three_columns_text_testimonials.css
+    previewImage: preview/three_columns_text_testimonials.png
+-
+    name: 'One column'
+    tags: [Testimonials]
+    content: one_column_testimonials.html
+    contentStyle: css/one_column_testimonials.css
+    previewImage: preview/one_column_testimonials.png
+-
+    name: 'Three columns'
+    tags: [Testimonials]
+    content: three_columns_testimonials.html
+    contentStyle: css/three_columns_testimonials.css
+    previewImage: preview/three_columns_testimonials.png
+-
+    name: 'One column. Text and images'
+    tags: [Testimonials]
+    content: one_column_text_and_images_testimonials.html
+    contentStyle: css/one_column_text_and_images_testimonials.css
+    previewImage: preview/one_column_text_and_images_testimonials.png
+-
+    name: 'Four columns'
+    tags: [Testimonials]
+    content: four_columns_testimonials.html
+    contentStyle: css/four_columns_testimonials.css
+    previewImage: preview/four_columns_testimonials.png

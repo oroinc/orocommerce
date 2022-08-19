@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CMSBundle\Form\Type;
 
+use Oro\Bundle\AttachmentBundle\Form\Type\ImageType;
 use Oro\Bundle\CMSBundle\Entity\ContentTemplate;
 use Oro\Bundle\TagBundle\Form\Type\TagSelectType;
 use Symfony\Component\Form\AbstractType;
@@ -27,11 +28,29 @@ class ContentTemplateType extends AbstractType
                 ]
             )
             ->add(
+                'previewImage',
+                ImageType::class,
+                [
+                    'label' => 'oro.cms.contenttemplate.preview_image.label',
+                    'required' => false,
+                    'attr' => [
+                        'class' => 'hide'
+                    ]
+                ]
+            )
+            ->add(
                 'content',
                 WYSIWYGType::class,
                 [
                     'label' => 'oro.cms.contenttemplate.content.label',
-                    'required' => true
+                    'required' => true,
+                    'builder_plugins' => [
+                        'template-screenshot-plugin' => [
+                            'previewFieldName' => 'oro_cms_content_template[previewImage][file]',
+                            'width' => 1100,
+                            'height' => 450
+                        ]
+                    ]
                 ]
             )
             ->add(

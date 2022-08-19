@@ -62,18 +62,28 @@ operations:
             - content-template-grid
         acl_resource: oro_cms_content_template_create
         actions:
-            - '@assign_value': [$enabled, false]
+            - '@assign_value': [$.clone.enabled, false]
             - '@trans':
                 attribute: $.suffix
                 id: 'oro.cms.contenttemplate.cloned_name_suffix'
             - '@add_string_suffix':
-                  attribute: $name
+                  attribute: $.clone.name
                   maxLength: 255
                   string: $name
                   stringSuffix: $.suffix
             - '@copy_tagging':
                 source: $.data
                 destination: $.clone
+            - '@tree':
+                conditions:
+                    '@not_empty': [ $.data.previewImage ]
+                actions:
+                    - '@call_service_method':
+                        service: oro_attachment.file_manager
+                        method: cloneFileEntity
+                        method_parameters: [ $.data.previewImage ]
+                        attribute: $.clone.previewImage
+            - '@flush_entity': $.clone
 
     CMS_CREATE_DRAFT:
         extends: CREATE_DRAFT

@@ -19,6 +19,7 @@ import 'orocms/js/app/grapesjs/plugins/import/import';
 import 'orocms/js/app/grapesjs/plugins/code/code';
 import 'orocms/js/app/grapesjs/plugins/panel-scrolling-hints';
 import 'orocms/js/app/grapesjs/plugins/code-mode';
+import 'orocms/js/app/grapesjs/plugins/screenshot';
 import RteEditorPlugin from 'orocms/js/app/grapesjs/plugins/oro-rte-editor';
 import {escapeWrapper, getWrapperAttrs} from 'orocms/js/app/grapesjs/plugins/components/content-isolation';
 import i18nMessages from 'orocms/js/app/grapesjs/plugins/i18n-messages';
@@ -44,7 +45,7 @@ const GrapesjsEditorView = BaseView.extend({
      * @inheritdoc
      */
     optionNames: BaseView.prototype.optionNames.concat([
-        'autoRender', 'allow_tags', 'allowed_iframe_domains', 'builderPlugins', 'currentTheme', 'canvasConfig',
+        'autoRender', 'allow_tags', 'allowed_iframe_domains', 'currentTheme', 'canvasConfig',
         'contextClass', 'storageManager', 'stylesInputSelector', 'storagePrefix', 'themes',
         'entityClass', 'disableDeviceManager'
     ]),
@@ -331,6 +332,13 @@ const GrapesjsEditorView = BaseView.extend({
             extendOptions.allowedIframeDomains = this.allowed_iframe_domains;
         }
 
+        if (options.builderPlugins) {
+            this.builderPlugins = {
+                ...this.builderPlugins,
+                ...options.builderPlugins
+            };
+        }
+
         this.builderPlugins['grapesjs-components'] = _.extend({},
             this.builderPlugins['grapesjs-components'],
             extendOptions
@@ -417,6 +425,8 @@ const GrapesjsEditorView = BaseView.extend({
 
         this.builder.destroy();
         this.disposeElements();
+
+        this.stopListening();
 
         this.builder = null;
         this.enabled = false;

@@ -8,6 +8,7 @@
     h5,
     h6 {
         margin-bottom: $cms-typography-heading-offset;
+        color: inherit;
 
         &:last-child {
             margin-bottom: 0;
@@ -61,6 +62,10 @@
             font-size: $cms-typography-blockquote-fa-icon-font-size;
             color: $cms-typography-blockquote-fa-icon-color;
         }
+
+        &:last-child {
+            margin-bottom: 0;
+        }
     }
 
     hr {
@@ -95,6 +100,10 @@
         height: auto;
         display: block;
         margin: $cms-typography-img-offset;
+
+        &.bordered {
+            border: $cms-typography-img-border;
+        }
     }
 
     figure {
@@ -120,6 +129,11 @@
         position: $cms-typography-figcaption-position;
 
         color: $cms-typography-figcaption-color;
+
+        &.centered {
+            flex-direction: column;
+            text-transform: none;
+        }
     }
 
     strong,
@@ -208,5 +222,23 @@
 
     .list-style-greek {
         list-style-type: lower-greek;
+    }
+
+    .offset {
+        &-inner {
+            padding: $offset-y;
+        }
+
+        &-bottom {
+            margin-bottom: $offset-y;
+        }
+    }
+
+    .extra-text {
+        color: $cms-typography-extra-text-color;
+    }
+
+    .extra-block-bg {
+        background-color: $cms-typography-extra-block-bg-color;
     }
 }

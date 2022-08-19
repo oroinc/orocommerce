@@ -20,14 +20,11 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class WYSIWYGTypeTest extends FormIntegrationTestCase
 {
-    /** @var HtmlTagProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $htmlTagProvider;
+    private HtmlTagProvider|\PHPUnit\Framework\MockObject\MockObject $htmlTagProvider;
 
-    /** @var HTMLPurifierScopeProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $purifierScopeProvider;
+    private HTMLPurifierScopeProvider|\PHPUnit\Framework\MockObject\MockObject $purifierScopeProvider;
 
-    /** @var DigitalAssetTwigTagsConverter|\PHPUnit\Framework\MockObject\MockObject */
-    private $digitalAssetTwigTagsConverter;
+    private DigitalAssetTwigTagsConverter|\PHPUnit\Framework\MockObject\MockObject $digitalAssetTwigTagsConverter;
 
     protected function setUp(): void
     {
@@ -51,13 +48,13 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
             $this->purifierScopeProvider,
             $this->digitalAssetTwigTagsConverter
         );
-        $this->assertEquals(TextareaType::class, $type->getParent());
+        self::assertEquals(TextareaType::class, $type->getParent());
     }
 
     public function testConfigureOptions(): void
     {
         $resolver = $this->createMock(OptionsResolver::class);
-        $resolver->expects($this->once())
+        $resolver->expects(self::once())
             ->method('setDefaults')
             ->with([
                 'page-component' => [
@@ -73,6 +70,7 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
                     'autocomplete' => 'off'
                 ],
                 'auto_render' => true,
+                'builder_plugins' => [],
                 'error_bubbling' => true,
                 'entity_class' => null,
             ])
@@ -91,11 +89,11 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
      */
     public function testSubmit(string $htmlValue, array $allowedElements, bool $isValid): void
     {
-        $this->purifierScopeProvider->expects($this->once())
+        $this->purifierScopeProvider->expects(self::once())
             ->method('getScope')
             ->willReturn('default');
 
-        $this->htmlTagProvider->expects($this->once())
+        $this->htmlTagProvider->expects(self::once())
             ->method('getAllowedElements')
             ->with('default')
             ->willReturn($allowedElements);
@@ -106,18 +104,18 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
         ]);
 
         $form->submit($htmlValue);
-        $this->assertEquals($htmlValue, $form->getData());
-        $this->assertEquals($isValid, $form->isValid());
+        self::assertEquals($htmlValue, $form->getData());
+        self::assertEquals($isValid, $form->isValid());
     }
 
     public function testFinishView(): void
     {
-        $this->purifierScopeProvider->expects($this->once())
+        $this->purifierScopeProvider->expects(self::once())
             ->method('getScope')
             ->with(Page::class, 'wysiwyg')
             ->willReturn('default');
 
-        $this->htmlTagProvider->expects($this->once())
+        $this->htmlTagProvider->expects(self::once())
             ->method('getAllowedElements')
             ->with('default')
             ->willReturn(['h1', 'h2', 'h3']);
@@ -135,14 +133,20 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
                 'options' => ['view' => 'app/view']
             ],
             'auto_render' => true,
+            'builder_plugins' => [
+                'bar-plugin' => [
+                    'foo' => 'baz',
+                ],
+            ],
         ]);
 
-        $this->assertEquals('wysiwyg', $view->vars['attr']['data-grapesjs-field']);
-        $this->assertEquals('component/module', $view->vars['attr']['data-page-component-module']);
-        $this->assertEquals(
+        self::assertEquals('wysiwyg', $view->vars['attr']['data-grapesjs-field']);
+        self::assertEquals('component/module', $view->vars['attr']['data-page-component-module']);
+        self::assertEquals(
             '{"view":"app\/view","allow_tags":["h1","h2","h3"]'
             . ',"allowed_iframe_domains":[]'
             . ',"autoRender":true'
+            . ',"builderPlugins":{"bar-plugin":{"foo":"baz"}}'
             . ',"entityClass":"Oro\\\\Bundle\\\\CMSBundle\\\\Entity\\\\Page"'
             . ',"stylesInputSelector":"[data-grapesjs-styles=\"wysiwyg_style\"]",'
             . '"propertiesInputSelector":"[data-grapesjs-properties=\"wysiwyg_properties\"]"}',
@@ -152,12 +156,12 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
 
     public function testFinishViewWithEntityClassOption(): void
     {
-        $this->purifierScopeProvider->expects($this->once())
+        $this->purifierScopeProvider->expects(self::once())
             ->method('getScope')
             ->with(Page::class, 'wysiwyg')
             ->willReturn('default');
 
-        $this->htmlTagProvider->expects($this->once())
+        $this->htmlTagProvider->expects(self::once())
             ->method('getAllowedElements')
             ->with('default')
             ->willReturn(['h1', 'h2', 'h3']);
@@ -175,14 +179,20 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
                 'options' => ['view' => 'app/view']
             ],
             'auto_render' => true,
+            'builder_plugins' => [
+                'bar-plugin' => [
+                    'foo' => 'baz',
+                ],
+            ],
         ]);
 
-        $this->assertEquals('wysiwyg', $view->vars['attr']['data-grapesjs-field']);
-        $this->assertEquals('component/module', $view->vars['attr']['data-page-component-module']);
-        $this->assertEquals(
+        self::assertEquals('wysiwyg', $view->vars['attr']['data-grapesjs-field']);
+        self::assertEquals('component/module', $view->vars['attr']['data-page-component-module']);
+        self::assertEquals(
             '{"view":"app\/view","allow_tags":["h1","h2","h3"]'
             . ',"allowed_iframe_domains":[]'
             . ',"autoRender":true'
+            . ',"builderPlugins":{"bar-plugin":{"foo":"baz"}}'
             . ',"entityClass":"Oro\\\\Bundle\\\\CMSBundle\\\\Entity\\\\Page"'
             . ',"stylesInputSelector":"[data-grapesjs-styles=\"wysiwyg_style\"]",'
             . '"propertiesInputSelector":"[data-grapesjs-properties=\"wysiwyg_properties\"]"}',
@@ -192,12 +202,12 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
 
     public function testFinishViewForEmptyScope(): void
     {
-        $this->purifierScopeProvider->expects($this->once())
+        $this->purifierScopeProvider->expects(self::once())
             ->method('getScope')
             ->with(Page::class, 'wysiwyg')
             ->willReturn(null);
 
-        $this->htmlTagProvider->expects($this->never())
+        $this->htmlTagProvider->expects(self::never())
             ->method('getAllowedElements');
 
         $view = new FormView();
@@ -213,13 +223,19 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
                 'options' => ['view' => 'app/view']
             ],
             'auto_render' => true,
+            'builder_plugins' => [
+                'bar-plugin' => [
+                    'foo' => 'baz',
+                ],
+            ],
         ]);
 
-        $this->assertEquals('component/module', $view->vars['attr']['data-page-component-module']);
-        $this->assertEquals(
+        self::assertEquals('component/module', $view->vars['attr']['data-page-component-module']);
+        self::assertEquals(
             '{"view":"app\/view","allow_tags":false,'
             . '"allowed_iframe_domains":false,'
             . '"autoRender":true,'
+            . '"builderPlugins":{"bar-plugin":{"foo":"baz"}},'
             . '"entityClass":"Oro\\\\Bundle\\\\CMSBundle\\\\Entity\\\\Page",'
             . '"stylesInputSelector":"[data-grapesjs-styles=\"wysiwyg_style\"]",'
             . '"propertiesInputSelector":"[data-grapesjs-properties=\"wysiwyg_properties\"]"}',
@@ -243,9 +259,6 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
     protected function getExtensions(): array
     {
         return [

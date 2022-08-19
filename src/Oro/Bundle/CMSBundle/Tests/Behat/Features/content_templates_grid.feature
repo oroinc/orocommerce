@@ -1,4 +1,5 @@
 @ticket-BB-21406
+@ticket-BB-21457
 @fixture-OroCMSBundle:ContentTemplateFixture.yml
 
 Feature: Content Templates Grid
@@ -11,39 +12,43 @@ Feature: Content Templates Grid
     And I go to Marketing/Content Templates
     And records in grid should be 10
     When I filter Name as Contains "TestContentTemplate1"
-    And records in grid should be 2
-    Then I reset Name filter
+    Then records in grid should be 2
+    And image "TestContentTemplate1 Default Preview Small Image" is loaded
+    When I click on "TestContentTemplate1 Default Preview Small Image"
+    Then I should see an "Content Template Default Preview Original Image" element
+    And I close large image preview
 
   Scenario: Check Enabled Yes filter
-    Given records in grid should be 10
+    When I reset Name filter
+    Then records in grid should be 10
     When I check "Yes" in "Enabled: All" filter strictly
     Then records in grid should be 6
-    And I reset "Enabled" filter
 
   Scenario: Check Enabled No filter
-    Given records in grid should be 10
+    When I reset "Enabled" filter
+    Then records in grid should be 10
     When I check "No" in "Enabled: All" filter strictly
     Then records in grid should be 4
-    And I reset "Enabled" filter
 
   Scenario: Check Created At filter
-    Given records in grid should be 10
+    When I reset "Enabled" filter
+    Then records in grid should be 10
     When I filter Created At as between "now" and "now + 1"
     Then there are no records in grid
     When I filter Created At as between "now - 3" and "now + 1"
     Then records in grid should be 10
-    And I reset "Created At" filter
 
   Scenario: Check Updated At filter
-    Given records in grid should be 10
+    When I reset "Created At" filter
+    Then records in grid should be 10
     When I filter Updated At as between "now + 1" and "now + 2"
     Then there are no records in grid
     When I filter Updated At as between "now - 3" and "now + 1 "
     Then records in grid should be 10
-    And I reset "Updated At" filter
 
   Scenario: Sorting grid by name
-    When sort grid by Name
+    When I reset "Updated At" filter
+    And sort grid by Name
     Then TestContentTemplate1 must be first record
     But when I sort grid by Name again
     Then TestContentTemplate9 must be first record
@@ -93,17 +98,17 @@ Feature: Content Templates Grid
     When I go to Marketing/Content Templates
     And I click edit "TestContentTemplate1 (Copy)" in grid
     And fill "Content Template Form" with:
-      | Owner   | John Doe             |
+      | Owner   | John Doe              |
       | Name    | TestContentTemplate12 |
-      | Enabled | true                 |
-      | Tags    | Tag1                 |
+      | Enabled | true                  |
+      | Tags    | Tag1                  |
     And I fill in WYSIWYG "Content Template Form Content" with "Updated TestContentTemplateGridName content"
     And I save and close form
     Then I should see "Content template has been updated" flash message
     And I should see Content Template with:
       | Name    | TestContentTemplate12 |
-      | Enabled | Yes                  |
-      | Tags    | Tag1                 |
+      | Enabled | Yes                   |
+      | Tags    | Tag1                  |
     And I should see "Updated TestContentTemplateGridName content"
 
   Scenario: Delete cloned content template from grid

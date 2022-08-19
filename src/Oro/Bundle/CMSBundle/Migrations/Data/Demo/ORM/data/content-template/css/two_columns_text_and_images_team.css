@@ -1,0 +1,4 @@
+.two-columns-text-and-images-team .grid-double-column {
+    --grid-column-count: 2;
+    --grid-template-columns: 160px 1fr;
+}
