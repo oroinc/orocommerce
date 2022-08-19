@@ -19,6 +19,25 @@ services:
         tags:
             - { name: monolog.logger, channel: oro_pricing }
 
+    oro_pricing.async.versioned_price_list_processor:
+        class: 'Oro\Bundle\PricingBundle\Async\VersionedPriceListProcessor'
+        arguments:
+            - '@doctrine'
+            - '@oro_message_queue.job.runner'
+            - '@oro_message_queue.job.dependent_job_service'
+            - '@oro_message_queue.client.message_producer'
+            - '@oro_pricing.combined_price_list_activation_status_helper'
+            - '@oro_pricing.shard_manager'
+
+    oro_pricing.async.versioned_flat_price_processor:
+        class: 'Oro\Bundle\PricingBundle\Async\VersionedFlatPriceProcessor'
+        arguments:
+            - '@oro_message_queue.client.message_producer'
+            - '@oro_message_queue.job.runner'
+            - '@doctrine'
+            - '@oro_pricing.shard_manager'
+            - '@oro_product.storage.product_website_reindex_request_data_storage'
+
     oro_pricing.async.flat_price_processor:
         class: 'Oro\Bundle\PricingBundle\Async\FlatPriceProcessor'
         arguments:

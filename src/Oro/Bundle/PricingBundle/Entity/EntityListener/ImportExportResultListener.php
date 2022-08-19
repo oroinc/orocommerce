@@ -6,8 +6,8 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\ImportExportBundle\Entity\ImportExportResult;
-use Oro\Bundle\PricingBundle\Async\Topic\ResolveCombinedPriceByPriceListTopic;
-use Oro\Bundle\PricingBundle\Async\Topic\ResolveFlatPriceTopic;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolveCombinedPriceByVersionedPriceListTopic;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolveVersionedFlatPriceTopic;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
@@ -56,19 +56,26 @@ class ImportExportResultListener implements FeatureToggleableInterface
 
     public function postPersist(ImportExportResult $importExportResult)
     {
+        if (!$this->isSupported($importExportResult)) {
+            return;
+        }
+
+        $entityManager = $this->doctrine->getManagerForClass(PriceList::class);
         $options = $importExportResult->getOptions();
-        if (array_key_exists('price_list_id', $options)) {
-            $version = $options['importVersion'] ?? null;
-            $priceList = $this->doctrine
-                ->getManagerForClass(PriceList::class)
-                ->find(PriceList::class, $options['price_list_id']);
-            if ($priceList !== null) {
-                $this->handlePriceListPricesMassUpdate($priceList, $version);
+        $priceListId = $options['price_list_id'];
+        $version = $options['importVersion'];
+        $priceList = $entityManager->find(PriceList::class, $priceListId);
+        if ($priceList !== null) {
+            $this->processLexemes($priceList, $version);
+            if ($this->isFeaturesEnabled()) {
+                $this->emitCplTriggers($priceList, $version);
+            } else {
+                $this->emitFlatTriggers($priceList, $version);
             }
         }
     }
 
-    private function handlePriceListPricesMassUpdate(PriceList $priceList, ?int $version = null)
+    private function processLexemes(PriceList $priceList, ?int $version = null): void
     {
         $lexemes = $this->lexemeTriggerHandler->findEntityLexemes(
             PriceList::class,
@@ -78,12 +85,6 @@ class ImportExportResultListener implements FeatureToggleableInterface
 
         foreach ($this->getProductBatches($priceList, $version) as $products) {
             $this->lexemeTriggerHandler->processLexemes($lexemes, $products);
-
-            if ($this->isFeaturesEnabled()) {
-                $this->emitCplTriggers($priceList, $products);
-            } else {
-                $this->emitFlatTriggers($priceList, $products);
-            }
         }
     }
 
@@ -100,25 +101,31 @@ class ImportExportResultListener implements FeatureToggleableInterface
         }
     }
 
+    private function isSupported(ImportExportResult $importExportResult): bool
+    {
+        $options = $importExportResult->getOptions();
+
+        return isset($options['price_list_id']) && isset($options['importVersion']);
+    }
+
     private function getProductPriceRepository(): ProductPriceRepository
     {
         return $this->doctrine->getRepository(ProductPrice::class);
     }
 
-    private function emitCplTriggers(PriceList $priceList, array $products): void
+    private function emitCplTriggers(PriceList $priceList, int $version): void
     {
-        $this->priceListTriggerHandler->handlePriceListTopic(
-            ResolveCombinedPriceByPriceListTopic::getName(),
-            $priceList,
-            $products
+        $this->producer->send(
+            ResolveCombinedPriceByVersionedPriceListTopic::getName(),
+            ['priceLists' => [$priceList->getId()], 'version' => $version]
         );
     }
 
-    private function emitFlatTriggers(PriceList $priceList, array $products): void
+    private function emitFlatTriggers(PriceList $priceList, int $version): void
     {
         $this->producer->send(
-            ResolveFlatPriceTopic::getName(),
-            ['priceList' => $priceList->getId(), 'products' => $products]
+            ResolveVersionedFlatPriceTopic::getName(),
+            ['priceLists' => [$priceList->getId()], 'version' => $version]
         );
     }
 }
