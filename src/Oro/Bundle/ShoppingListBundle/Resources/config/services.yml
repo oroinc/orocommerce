@@ -716,7 +716,7 @@ services:
         arguments:
             - '@translator'
             - '@security.authorization_checker'
-            - "@security.acl.voter.basic_permissions"
+            - '@security.acl.voter.basic_permissions'
             - '@oro_security.token_accessor'
 
     oro_shopping_list.datagrid.mass_action.handler.delete:
