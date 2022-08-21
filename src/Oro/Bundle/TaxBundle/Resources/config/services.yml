@@ -1,10 +1,9 @@
 services:
     oro_tax.form.autocomplete.product_tax_code.search_handler:
-        public: false
         parent: oro_form.autocomplete.search_handler
         arguments:
             - 'Oro\Bundle\TaxBundle\Entity\ProductTaxCode'
-            - ["code"]
+            - ['code']
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: oro_product_tax_code }
 
@@ -13,16 +12,15 @@ services:
         parent: oro_form.autocomplete.search_handler
         arguments:
             - 'Oro\Bundle\TaxBundle\Entity\ProductTaxCode'
-            - ["code"]
+            - ['code']
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: oro_product_tax_code_entity_search }
 
     oro_tax.form.autocomplete.customer_tax_code.search_handler:
-        public: false
         parent: oro_form.autocomplete.search_handler
         arguments:
             - 'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode'
-            - ["code"]
+            - ['code']
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: oro_customer_tax_code }
 
@@ -65,20 +63,18 @@ services:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-create-step-two, method: onEdit }
 
     oro_tax.form.autocomplete.tax.search_handler:
-        public: false
         parent: oro_form.autocomplete.search_handler
         arguments:
             - 'Oro\Bundle\TaxBundle\Entity\Tax'
-            - ["code"]
+            - ['code']
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: oro_tax_autocomplete, acl_resource: oro_tax_view }
 
     oro_tax.form.autocomplete.tax_jurisdiction.search_handler:
-        public: false
         parent: oro_form.autocomplete.search_handler
         arguments:
             - 'Oro\Bundle\TaxBundle\Entity\TaxJurisdiction'
-            - ["code"]
+            - ['code']
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: oro_tax_jurisdiction_autocomplete, acl_resource: oro_tax_jurisdiction_view }
 

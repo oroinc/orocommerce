@@ -15,11 +15,10 @@ services:
         public: true
 
     oro_pricing.form.autocomplete.price_list.search_handler:
-        public: false
         parent: oro_form.autocomplete.search_handler
         arguments:
             - 'Oro\Bundle\PricingBundle\Entity\PriceList'
-            - ["name"]
+            - ['name']
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: Oro\Bundle\PricingBundle\Form\Type\PriceListType, acl_resource: oro_pricing_price_list_view }
 
@@ -1234,14 +1233,13 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_product.quick_add_rows_collection_ready, method: onQuickAddRowsCollectionReady }
 
-
     oro_pricing.form.autocomplete.product_with_prices.search_handler:
         class: Oro\Bundle\PricingBundle\Autocomplete\ProductWithPricesSearchHandler
         arguments:
             - 'Oro\Bundle\ProductBundle\Entity\Product'
-            - "@oro_product.website_search.repository.product"
-            - "@oro_pricing.model.product_price_scope_criteria_request_handler"
-            - "@doctrine"
+            - '@oro_product.website_search.repository.product'
+            - '@oro_pricing.model.product_price_scope_criteria_request_handler'
+            - '@doctrine'
             - '@oro_pricing.formatter.product_price_formatter'
             - '@oro_pricing.user_currency_manager'
             - '@oro_pricing.provider.product_price'

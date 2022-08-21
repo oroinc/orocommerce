@@ -3,11 +3,10 @@ parameters:
 
 services:
     oro_payment_term.form.autocomplete.payment_term.search_handler:
-        public: false
         parent: oro_form.autocomplete.search_handler
         arguments:
             - 'Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm'
-            - ["label"]
+            - ['label']
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: Oro\Bundle\PaymentTermBundle\Form\Type\PaymentTermType, acl_resource: oro_payment_term_view }
 

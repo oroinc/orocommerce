@@ -141,11 +141,10 @@ services:
             - '@oro_redirect.routing.matched_url_decision_maker'
 
     oro_web_catalog.form.autocomplete.web_catalog.search_handler:
-        public: false
         parent: oro_form.autocomplete.search_handler
         arguments:
             - 'Oro\Bundle\WebCatalogBundle\Entity\WebCatalog'
-            - ["name"]
+            - ['name']
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: Oro\Bundle\WebCatalogBundle\Form\Type\WebCatalogType, acl_resource: oro_web_catalog_view }
 

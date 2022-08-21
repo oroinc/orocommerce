@@ -1,10 +1,9 @@
 services:
     oro_cms.form.autocomplete.page.search_handler:
-        public: false
         parent: oro_form.autocomplete.search_handler
         arguments:
             - 'Oro\Bundle\CMSBundle\Entity\Page'
-            - [ "defaultTitle.string"]
+            - ['defaultTitle.string']
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: Oro\Bundle\CMSBundle\Form\Type\PageType, acl_resource: oro_cms_page_view }
 
@@ -271,7 +270,7 @@ services:
             - '@translator'
             - '@property_accessor'
         tags:
-            - { name: oro_form.autocomplete.search_handler, alias: 'oro_cms_content_widget_types' }
+            - { name: oro_form.autocomplete.search_handler, alias: oro_cms_content_widget_types }
 
     oro_cms.provider.content_widget_type:
         class: Oro\Bundle\CMSBundle\Provider\ContentWidgetTypeProvider
