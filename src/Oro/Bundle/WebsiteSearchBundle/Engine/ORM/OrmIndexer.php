@@ -171,6 +171,11 @@ class OrmIndexer extends AbstractIndexer
             $existingDocuments[$item->getRecordId()] = $item;
         }
 
+        // Save entities directly with real alias if entity ids passed to context
+        if ($this->getContextEntityIds($context)) {
+            $entityAliasTemp = $this->getEntityAlias($entityClass, $context);
+        }
+
         $entityIds = array_keys($entitiesData);
         foreach ($entitiesData as $entityId => $entityData) {
             // if entity was removed there is no need to do anything
@@ -180,6 +185,7 @@ class OrmIndexer extends AbstractIndexer
             }
 
             $item = $existingDocuments[$entityId];
+            $item->setAlias($entityAliasTemp);
             foreach ($fieldTypes as $fieldType) {
                 $this->processFieldsCollection($item, $newFields, $newRegexps, $entityData, $fieldType);
             }
