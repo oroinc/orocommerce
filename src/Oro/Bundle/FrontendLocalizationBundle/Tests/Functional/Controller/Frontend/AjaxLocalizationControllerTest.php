@@ -2,10 +2,13 @@
 
 namespace Oro\Bundle\FrontendLocalizationBundle\Tests\Functional\Controller\Frontend;
 
-use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
+use Oro\Bundle\CMSBundle\Entity\Page;
+use Oro\Bundle\CMSBundle\Tests\Functional\DataFixtures\LoadPageData;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
-use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
+use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadDisabledLocalizationData;
+use Oro\Bundle\RedirectBundle\Tests\Functional\DataFixtures\LoadSlugsData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\TranslationBundle\Entity\Language;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,25 +26,40 @@ class AjaxLocalizationControllerTest extends WebTestCase
         );
 
         $this->loadFixtures([
-            LoadLocalizationData::class,
+            LoadSlugsData::class,
+            LoadDisabledLocalizationData::class
         ]);
     }
 
     /**
      * @dataProvider setCurrentLocalizationProvider
-     *
-     * @param string $code
-     * @param array $expectedResult
      */
-    public function testSetCurrentLocalizationAction($code, array $expectedResult)
-    {
+    public function testSetCurrentLocalizationAction(
+        string $code,
+        string $redirectRoute,
+        ?string $routeParameters,
+        ?array $queryParameters,
+        array $expectedResult,
+        string $current
+    ): void {
         $localization = $this->getLocalizationByCode($code);
+        if ($routeParameters) {
+            /** @var Page $page */
+            $page = $this->getReference($routeParameters);
+            $routeParameters = json_encode(['id' => $page->getId()], JSON_THROW_ON_ERROR);
+        }
 
         $this->ajaxRequest(
             Request::METHOD_POST,
             $this->getUrl('oro_frontend_localization_frontend_set_current_localization'),
-            ['localization' => $localization->getId()]
+            [
+                'localization' => $localization->getId(),
+                'redirectRoute' => $redirectRoute,
+                'redirectRouteParameters' => $routeParameters,
+                'redirectQueryParameters' => json_encode($queryParameters, JSON_THROW_ON_ERROR)
+            ]
         );
+
         $result = $this->client->getResponse();
 
         $this->assertJsonResponseStatusCodeEquals($result, 200);
@@ -49,25 +67,48 @@ class AjaxLocalizationControllerTest extends WebTestCase
         $data = json_decode($result->getContent(), true);
         $this->assertSame($expectedResult, $data);
 
+        // Do not access localization from UserLocalizationManager service directly,
+        // it has local cache and will reflect after client request.
         $website = $this->client->getContainer()->get('oro_website.manager')->getDefaultWebsite();
-        /* @var $localizationManager UserLocalizationManager */
-        $localizationManager = $this->getContainer()->get('oro_frontend_localization.manager.user_localization');
-        $currentLocalization = $localizationManager->getCurrentLocalization($website);
+        $tokenStorage = $this->getContainer()->get('oro_security.token_accessor');
+        /** @var CustomerUser $user */
+        $user = $tokenStorage->getUser();
+        $currentLocalization = $user->getWebsiteSettings($website)->getLocalization();
 
         $this->assertNotEmpty($localization);
         $this->assertNotEmpty($currentLocalization);
-        $this->assertEquals($localization->getId(), $currentLocalization->getId());
+        $this->assertEquals($current, $currentLocalization->getFormattingCode());
     }
 
-    /**
-     * @return array
-     */
-    public function setCurrentLocalizationProvider()
+    public function setCurrentLocalizationProvider(): array
     {
         return [
-            [
-                'localization' => 'en',
-                'expectedResult' => ['success' => true] ,
+            'set to en and redirect to root' => [
+                'code' => 'en',
+                'redirectRoute' => 'oro_frontend_root',
+                'routeParameters' => null,
+                'queryParameters' => null,
+                'expectedResult' => ['success' => true, 'redirectTo' => '/'],
+                'current' => 'en_US'
+            ],
+            'Set to en_CA and redirect to localized page' => [
+                'code' => 'en_CA',
+                'redirectRoute' => 'oro_cms_frontend_page_view',
+                'routeParameters' => LoadPageData::PAGE_3,
+                'queryParameters' => ['random' => '1234567890'],
+                'expectedResult' => [
+                    'success' => true,
+                    'redirectTo' => 'http://localhost/localized-slug/en_ca/page3?random=1234567890'
+                ],
+                'current' => 'en_CA'
+            ],
+            'Set to a disabled localization' => [
+                'code' => 'es_MX',
+                'redirectRoute' => 'oro_frontend_root',
+                'routeParameters' => null,
+                'queryParameters' => null,
+                'expectedResult' => ['success' => false],
+                'current' => 'en_CA'
             ],
         ];
     }
