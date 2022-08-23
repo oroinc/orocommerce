@@ -27,6 +27,7 @@ class MenuDataProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
+    private const PRIORITY = 'priority';
     private const IDENTIFIER = 'identifier';
     private const LABEL = 'label';
     private const URL = 'url';
@@ -93,8 +94,8 @@ class MenuDataProviderTest extends \PHPUnit\Framework\TestCase
         $scope = new Scope();
 
         $this->requestWebContentScopeProvider->expects($this->once())
-            ->method('getScope')
-            ->willReturn($scope);
+            ->method('getScopes')
+            ->willReturn([$scope]);
 
         $this->webCatalogProvider->expects($this->any())
             ->method('getNavigationRoot')
@@ -163,8 +164,8 @@ class MenuDataProviderTest extends \PHPUnit\Framework\TestCase
         $scope = new Scope();
 
         $this->requestWebContentScopeProvider->expects($this->once())
-            ->method('getScope')
-            ->willReturn($scope);
+            ->method('getScopes')
+            ->willReturn([$scope]);
 
         $this->webCatalogProvider->expects($this->any())
             ->method('getNavigationRoot')
@@ -231,8 +232,8 @@ class MenuDataProviderTest extends \PHPUnit\Framework\TestCase
         ];
 
         $this->requestWebContentScopeProvider->expects($this->once())
-            ->method('getScope')
-            ->willReturn($scope);
+            ->method('getScopes')
+            ->willReturn([$scope]);
 
         $localization = $this->getEntity(Localization::class, ['id' => 42]);
         $this->localizationHelper->expects($this->once())
@@ -280,21 +281,31 @@ class MenuDataProviderTest extends \PHPUnit\Framework\TestCase
                 'expectedData' => []
             ],
             'root with children' => [
-                'resolvedRootNode' => $this->getResolvedContentNode(1, 'root', 'node1', '/', [
-                    $this->getResolvedContentNode(1, 'root__node2', 'node2', '/node2', [
-                        $this->getResolvedContentNode(1, 'node3', 'node3', '/node3')
+                'resolvedRootNode' => $this->getResolvedContentNode(1, 'root', 'node1', '/', 1, [
+                    $this->getResolvedContentNode(2, 'root__node2', 'node2', '/node2', 2, [
+                        $this->getResolvedContentNode(4, 'node4', 'node4', '/node4', 4),
+                        $this->getResolvedContentNode(3, 'node3', 'node3', '/node3', 3)
                     ])
                 ]),
                 'expectedData' => [
-                    [
+                    2 => [
                         self::IDENTIFIER => 'root__node2',
                         self::LABEL => 'node2',
                         self::URL => '/node2',
+                        self::PRIORITY => 2,
                         self::CHILDREN => [
-                            [
+                            3 => [
                                 self::IDENTIFIER => 'node3',
                                 self::LABEL => 'node3',
                                 self::URL => '/node3',
+                                self::PRIORITY => 3,
+                                self::CHILDREN => []
+                            ],
+                            4 => [
+                                self::IDENTIFIER => 'node4',
+                                self::LABEL => 'node4',
+                                self::URL => '/node4',
+                                self::PRIORITY => 4,
                                 self::CHILDREN => []
                             ]
                         ]
@@ -302,37 +313,40 @@ class MenuDataProviderTest extends \PHPUnit\Framework\TestCase
                 ]
             ],
             'with maxNodesNestedLevel' => [
-                'resolvedRootNode' => $this->getResolvedContentNode(1, 'root', 'node1', '/', [
-                    $this->getResolvedContentNode(1, 'root__node2', 'node2', '/node2', [
-                        $this->getResolvedContentNode(1, 'node3', 'node3', '/node3')
+                'resolvedRootNode' => $this->getResolvedContentNode(1, 'root', 'node1', '/', 1, [
+                    $this->getResolvedContentNode(1, 'root__node2', 'node2', '/node2', 2, [
+                        $this->getResolvedContentNode(1, 'node3', 'node3', '/node3', 3)
                     ])
                 ]),
                 'expectedData' => [
-                    [
+                    2 => [
                         self::IDENTIFIER => 'root__node2',
                         self::LABEL => 'node2',
                         self::URL => '/node2',
+                        self::PRIORITY => 2,
                         self::CHILDREN => []
                     ]
                 ],
                 'maxNodesNestedLevel' => 1
             ],
             'with maxNodesNestedLevel equals to tree nesting level' => [
-                'resolvedRootNode' => $this->getResolvedContentNode(1, 'root', 'node1', '/', [
-                    $this->getResolvedContentNode(1, 'root__node2', 'node2', '/node2', [
-                        $this->getResolvedContentNode(1, 'node3', 'node3', '/node3')
+                'resolvedRootNode' => $this->getResolvedContentNode(1, 'root', 'node1', '/', 1, [
+                    $this->getResolvedContentNode(1, 'root__node2', 'node2', '/node2', 2, [
+                        $this->getResolvedContentNode(1, 'node3', 'node3', '/node3', 3)
                     ])
                 ]),
                 'expectedData' => [
-                    [
+                    2 => [
                         self::IDENTIFIER => 'root__node2',
                         self::LABEL => 'node2',
                         self::URL => '/node2',
+                        self::PRIORITY => 2,
                         self::CHILDREN => [
-                            [
+                            3 => [
                                 self::IDENTIFIER => 'node3',
                                 self::LABEL => 'node3',
                                 self::URL => '/node3',
+                                self::PRIORITY => 3,
                                 self::CHILDREN => []
                             ]
                         ]
@@ -348,6 +362,7 @@ class MenuDataProviderTest extends \PHPUnit\Framework\TestCase
         string $identifier,
         string $title,
         string $url,
+        int $priority = 0,
         array $children = []
     ): ResolvedContentNode {
         $nodeVariant = new ResolvedContentVariant();
@@ -359,6 +374,7 @@ class MenuDataProviderTest extends \PHPUnit\Framework\TestCase
         $resolvedRootNode = new ResolvedContentNode(
             $id,
             $identifier,
+            $priority,
             $nodeTitleCollection,
             $nodeVariant
         );

@@ -75,21 +75,19 @@ services:
             - { name: twig.extension }
 
     oro_product.form.autocomplete.product.search_handler:
-        public: false
         parent: oro_form.autocomplete.search_handler
         arguments:
             - 'Oro\Bundle\ProductBundle\Entity\Product'
-            - ["sku", "defaultName.string"]
+            - ['sku', 'defaultName.string']
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: Oro\Bundle\ProductBundle\Form\Type\ProductType, acl_resource: oro_product_view }
             - { name: oro_form.autocomplete.search_handler, alias: oro_product_frontend, acl_resource: oro_product_frontend_view }
 
     oro_product.form.autocomplete.brand.search_handler:
-        public: false
         parent: oro_form.autocomplete.search_handler
         arguments:
             - 'Oro\Bundle\ProductBundle\Entity\Brand'
-            - ["name"]
+            - ['name']
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: Oro\Bundle\ProductBundle\Form\Type\BrandType }
 
@@ -512,7 +510,6 @@ services:
 
     oro_product.autocomplete.product_visibility_limited.search_handler:
         class: 'Oro\Bundle\ProductBundle\Autocomplete\ProductVisibilityLimitedSearchHandler'
-        public: false
         arguments:
             - 'Oro\Bundle\ProductBundle\Entity\Product'
             - '@request_stack'
@@ -525,14 +522,14 @@ services:
             - [setAclHelper, ['@oro_security.acl_helper']]
             - [setPropertyAccessor, ['@property_accessor']]
         tags:
-            - { name: oro_form.autocomplete.search_handler, alias: "oro_product_visibility_limited" }
+            - { name: oro_form.autocomplete.search_handler, alias: oro_product_visibility_limited }
 
     oro_product.autocomplete.configurable_product_visibility_limited.search_handler:
         parent: oro_product.autocomplete.product_visibility_limited.search_handler
         calls:
             - [enableConfigurableProducts]
         tags:
-            - { name: oro_form.autocomplete.search_handler, alias: "oro_all_product_visibility_limited" }
+            - { name: oro_form.autocomplete.search_handler, alias: oro_all_product_visibility_limited }
 
     oro_product.autocomplete.product_families.search_handler:
         class: 'Oro\Bundle\ProductBundle\Autocomplete\ProductFamilySearchHandler'
@@ -541,16 +538,15 @@ services:
             - '@property_accessor'
             - '@oro_security.acl_helper'
         tags:
-            - { name: oro_form.autocomplete.search_handler, alias: 'oro_product_families' }
+            - { name: oro_form.autocomplete.search_handler, alias: oro_product_families }
 
     oro_product.autocomplete.oro_product_visibility_limited_with_prices.search_handler:
         class: 'Oro\Bundle\ProductBundle\Autocomplete\ProductVisibilityLimitedWithPricesSearchHandler'
-        public: false
         arguments:
             - '@oro_pricing.form.autocomplete.product_with_prices.search_handler'
             - '@oro_product.autocomplete.product_visibility_limited.search_handler'
         tags:
-            - { name: oro_form.autocomplete.search_handler, alias: "oro_product_visibility_limited_with_prices" }
+            - { name: oro_form.autocomplete.search_handler, alias: oro_product_visibility_limited_with_prices }
 
     oro_product.product.manager:
         class: 'Oro\Bundle\ProductBundle\Entity\Manager\ProductManager'

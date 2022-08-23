@@ -300,21 +300,19 @@ services:
             - { name: form.type, alias: oro_promotion_shipping_discount_options }
 
     oro_promotion.form.autocomplete.promotion.search_handler:
-        public: false
         parent: oro_form.autocomplete.search_handler
         arguments:
             - 'Oro\Bundle\PromotionBundle\Entity\Promotion'
-            - ["rule.name"]
+            - ['rule.name']
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: Oro\Bundle\PromotionBundle\Form\Type\PromotionType, acl_resource: oro_promotion_view }
 
     oro_promotion.form.autocomplete.promotion_use_coupons.search_handler:
         class: Oro\Bundle\PromotionBundle\Form\Autocomplete\PromotionsUseCouponsSearchHandler
-        public: false
         parent: oro_form.autocomplete.search_handler
         arguments:
             - 'Oro\Bundle\PromotionBundle\Entity\Promotion'
-            - ["rule.name"]
+            - ['rule.name']
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: oro_promotion_use_coupons, acl_resource: oro_promotion_view }
 
@@ -638,7 +636,7 @@ services:
         calls:
             - [setCouponApplicabilityQueryBuilderModifier, ['@oro_promotion.model.coupon_applicability_query_builder_modifier']]
         tags:
-            - { name: oro_form.autocomplete.search_handler, alias: 'oro_coupon', acl_resource: 'oro_promotion_coupon_view' }
+            - { name: oro_form.autocomplete.search_handler, alias: oro_coupon, acl_resource: oro_promotion_coupon_view }
 
     oro_promotion.event_listener.select_coupon_grid_listener:
         class: Oro\Bundle\PromotionBundle\EventListener\SelectCouponGridListener
