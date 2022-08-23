@@ -82,20 +82,21 @@ class LoadSlugsData extends AbstractFixture implements DependentFixtureInterface
             $this->getReference('es')
         );
 
-        $this->createSlug(
+        $page3->addSlug($this->createSlug(
             $manager,
             self::PAGE_3_DEFAULT,
             'oro_cms_frontend_page_view',
             ['id' => $page3->getId()]
-        );
-        $this->createSlug(
+        ));
+        $page3->addSlug($this->createSlug(
             $manager,
             self::PAGE_3_LOCALIZED_EN_CA,
             'oro_cms_frontend_page_view',
             ['id' => $page3->getId()],
             null,
             $this->getReference('en_CA')
-        );
+        ));
+        $manager->persist($page3);
 
         $manager->flush();
     }

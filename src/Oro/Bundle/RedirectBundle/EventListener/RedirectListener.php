@@ -3,6 +3,8 @@
 namespace Oro\Bundle\RedirectBundle\EventListener;
 
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\FrontendLocalizationBundle\DependencyInjection\Configuration;
 use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManagerInterface;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
@@ -17,6 +19,7 @@ use Symfony\Component\HttpKernel\Event\RequestEvent;
 
 /**
  * Redirect listener for the slug with current localization
+ * @deprecated localization will base on slug in the future.
  */
 class RedirectListener
 {
@@ -45,6 +48,8 @@ class RedirectListener
      */
     protected $websiteManager;
 
+    protected ConfigManager $configManager;
+
     public function __construct(
         UserLocalizationManagerInterface $userLocalizationManager,
         SlugSourceEntityProviderInterface $slugSourceEntityProvider,
@@ -61,6 +66,10 @@ class RedirectListener
 
     public function onRequest(RequestEvent $event)
     {
+        if (!$this->isSupported()) {
+            return;
+        }
+
         $request = $event->getRequest();
         if (!$request->attributes->has('_used_slug')) {
             return;
@@ -170,5 +179,20 @@ class RedirectListener
         }
 
         return $parts;
+    }
+
+    protected function isSupported(): bool
+    {
+        $website = $this->websiteManager->getCurrentWebsite();
+        $this->configManager->setScopeIdFromEntity($website);
+        return !$this->configManager->get(
+            Configuration::getConfigKeyByName(Configuration::SWITCH_LOCALIZATION_BASED_ON_URL),
+            Configuration::SWITCH_LOCALIZATION_BASED_ON_URL_DEFAULT_VALUE
+        );
+    }
+
+    public function setConfigManager(ConfigManager $configManager): void
+    {
+        $this->configManager = $configManager;
     }
 }
