@@ -3,46 +3,41 @@
 namespace Oro\Bundle\FrontendLocalizationBundle\Layout\DataProvider;
 
 use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManagerInterface;
+use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\LocaleBundle\Provider\LocalizationProviderInterface;
 
 /**
  * Layout dataprovider for getting localizations and language codes.
  */
 class FrontendLocalizationProvider
 {
-    /**
-     * @var UserLocalizationManagerInterface
-     */
-    protected $userLocalizationManager;
+    protected LocalizationProviderInterface $localizationProvider;
 
-    public function __construct(UserLocalizationManagerInterface $userLocalizationManager)
-    {
-        $this->userLocalizationManager = $userLocalizationManager;
+    protected UserLocalizationManagerInterface $localizationManager;
+
+    public function __construct(
+        LocalizationProviderInterface $localizationProvider,
+        UserLocalizationManagerInterface $localizationManager
+    ) {
+        $this->localizationProvider = $localizationProvider;
+        $this->localizationManager = $localizationManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getEnabledLocalizations()
+    public function getEnabledLocalizations(): array
     {
-        return $this->userLocalizationManager->getEnabledLocalizations();
+        return $this->localizationManager->getEnabledLocalizations();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getCurrentLocalization()
+    public function getCurrentLocalization(): ?Localization
     {
-        return $this->userLocalizationManager->getCurrentLocalization();
+        return $this->localizationProvider->getCurrentLocalization();
     }
 
-    /**
-     * @return string
-     */
-    public function getCurrentLanguageCode()
+    public function getCurrentLanguageCode(): string
     {
         $localization = $this->getCurrentLocalization();
         if (!$localization) {
-            $localization = $this->userLocalizationManager->getDefaultLocalization();
+            $localization = $this->localizationManager->getDefaultLocalization();
         }
 
         return $this->convertLanguageCode($localization->getLanguageCode());
@@ -50,12 +45,8 @@ class FrontendLocalizationProvider
 
     /**
      * Converts language code to comply with [RFC1766](http://www.ietf.org/rfc/rfc1766.txt)
-     *
-     * @param string $languageCode
-     *
-     * @return string
      */
-    private function convertLanguageCode(string $languageCode)
+    private function convertLanguageCode(string $languageCode): string
     {
         return str_replace('_', '-', $languageCode);
     }

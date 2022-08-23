@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Provider;
 
-use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManagerInterface;
+use Oro\Bundle\LocaleBundle\Provider\LocalizationProviderInterface;
 use Oro\Bundle\ProductBundle\ContentVariantType\ProductCollectionContentVariantType;
 use Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
@@ -16,29 +16,20 @@ class ContentVariantContextUrlProvider implements ContextUrlProviderInterface
 {
     const USED_SLUG_KEY = '_used_slug';
 
-    /**
-     * @var RequestStack
-     */
-    private $requestStack;
+    private RequestStack $requestStack;
 
-    /**
-     * @var UrlCacheInterface
-     */
-    private $cache;
+    private UrlCacheInterface $cache;
 
-    /**
-     * @var UserLocalizationManagerInterface
-     */
-    private $userLocalizationManager;
+    private LocalizationProviderInterface $localizationProvider;
 
     public function __construct(
         RequestStack $requestStack,
         UrlCacheInterface $cache,
-        UserLocalizationManagerInterface $userLocalizationManager
+        LocalizationProviderInterface $localizationProvider
     ) {
         $this->requestStack = $requestStack;
         $this->cache = $cache;
-        $this->userLocalizationManager = $userLocalizationManager;
+        $this->localizationProvider = $localizationProvider;
     }
 
     /**
@@ -50,7 +41,7 @@ class ContentVariantContextUrlProvider implements ContextUrlProviderInterface
 
         if (!$contextUrl) {
             $localizationId = null;
-            if ($localization = $this->userLocalizationManager->getCurrentLocalization()) {
+            if ($localization = $this->localizationProvider->getCurrentLocalization()) {
                 $localizationId = $localization->getId();
             }
 

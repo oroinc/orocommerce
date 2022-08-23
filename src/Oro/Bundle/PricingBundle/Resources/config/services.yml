@@ -1504,7 +1504,7 @@ services:
         arguments:
             - '@.inner'
             - '@oro_frontend.request.frontend_helper'
-            - '@oro_frontend_localization.manager.user_localization'
+            - '@oro_locale.provider.current_localization'
             - '@oro_pricing.user_currency_manager'
             - '@oro_layout.layout_context_holder'
             - '@oro_layout.theme_manager'
