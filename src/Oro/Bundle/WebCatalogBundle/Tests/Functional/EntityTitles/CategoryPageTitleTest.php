@@ -3,6 +3,7 @@
 namespace Oro\Bundle\WebCatalogBundle\Tests\Functional\EntityTitles;
 
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebCatalogBundle\Tests\Functional\EntityTitles\DataFixtures\AbstractLoadWebCatalogData;
 use Oro\Bundle\WebCatalogBundle\Tests\Functional\EntityTitles\DataFixtures\LoadWebCatalogCategoryData;
@@ -22,6 +23,7 @@ class CategoryPageTitleTest extends WebTestCase
             ]
         );
         $this->getContainer()->get('oro_catalog.tests.layout.data_provider.category.cache')->deleteAll();
+        $this->getContainer()->get('oro_search.search.engine.indexer')->reindex(Product::class);
     }
 
     protected function tearDown(): void

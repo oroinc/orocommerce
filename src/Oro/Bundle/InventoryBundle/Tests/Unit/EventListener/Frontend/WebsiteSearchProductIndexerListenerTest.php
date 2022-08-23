@@ -17,6 +17,8 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
 
     protected function setUp(): void
     {
+        $this->markTestSkipped('BB-21644');
+
         $this->listener = new WebsiteSearchProductIndexerListener();
     }
 
