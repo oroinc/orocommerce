@@ -10,6 +10,8 @@ services:
         arguments:
             - '@doctrine'
     Oro\Bundle\PricingBundle\Async\Topic\ResolveCombinedPriceByPriceListTopic: ~
+    Oro\Bundle\PricingBundle\Async\Topic\ResolveCombinedPriceByVersionedPriceListTopic: ~
+    Oro\Bundle\PricingBundle\Async\Topic\ResolveVersionedFlatPriceTopic: ~
     Oro\Bundle\PricingBundle\Async\Topic\ResolveCombinedPriceListCurrenciesTopic: ~
     Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceListAssignedProductsTopic: ~
     Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceRulesTopic: ~
