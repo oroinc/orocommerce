@@ -56,6 +56,30 @@ trait ProductVisibilityTrait
         CustomerGroup $customerGroup,
         WebsiteInterface $website
     ) {
+        $fieldName = $this->getCustomerGroupProductVisibilityFieldNameResolvedByWebsite(
+            $queryBuilder,
+            $customerGroup,
+            $website
+        );
+
+        return sprintf(
+            'COALESCE(%s, 0) * 10',
+            $this->addCategoryConfigFallback($fieldName)
+        );
+    }
+
+    /**
+     * @param QueryBuilder $queryBuilder
+     * @param CustomerGroup $customerGroup
+     * @param WebsiteInterface $website
+     *
+     * @return string
+     */
+    private function getCustomerGroupProductVisibilityFieldNameResolvedByWebsite(
+        QueryBuilder $queryBuilder,
+        CustomerGroup $customerGroup,
+        WebsiteInterface $website
+    ) {
         $queryBuilder->leftJoin(
             'OroVisibilityBundle:VisibilityResolved\CustomerGroupProductVisibilityResolved',
             'customer_group_product_visibility_resolved',
@@ -76,10 +100,7 @@ trait ProductVisibilityTrait
 
         $queryBuilder->setParameter('customerGroupScope', $scope);
 
-        return sprintf(
-            'COALESCE(%s, 0) * 10',
-            $this->addCategoryConfigFallback('customer_group_product_visibility_resolved.visibility')
-        );
+        return 'customer_group_product_visibility_resolved.visibility';
     }
 
     /**
