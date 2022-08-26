@@ -1,12 +1,12 @@
 <?php
 
-namespace Oro\Bundle\SEOBundle\Topic;
+namespace Oro\Bundle\SEOBundle\Async\Topic;
 
 use Oro\Component\MessageQueue\Topic\AbstractTopic;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Topic for generate sitemap index
+ * Topic for generating the sitemap index file.
  */
 class GenerateSitemapIndexTopic extends AbstractTopic
 {
@@ -14,17 +14,14 @@ class GenerateSitemapIndexTopic extends AbstractTopic
     public const VERSION = 'version';
     public const WEBSITE_IDS = 'websiteIds';
 
-    private const TOPIC_NAME = 'oro.seo.generate_sitemap_index';
-    private const TOPIC_DESCRIPTION = 'Generates sitemaps index';
-
     public static function getName(): string
     {
-        return self::TOPIC_NAME;
+        return 'oro.seo.generate_sitemap_index';
     }
 
     public static function getDescription(): string
     {
-        return self::TOPIC_DESCRIPTION;
+        return 'Generates sitemaps index file';
     }
 
     public function configureMessageBody(OptionsResolver $resolver): void

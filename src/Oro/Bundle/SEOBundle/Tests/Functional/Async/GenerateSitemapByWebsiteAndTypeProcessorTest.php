@@ -6,19 +6,18 @@ use Oro\Bundle\GaufretteBundle\FileManager;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\JobsAwareTestTrait;
 use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
 use Oro\Bundle\SEOBundle\Async\GenerateSitemapByWebsiteAndTypeProcessor;
+use Oro\Bundle\SEOBundle\Async\Topic\GenerateSitemapByWebsiteAndTypeTopic;
 use Oro\Bundle\SEOBundle\Sitemap\Dumper\SitemapDumper;
-use Oro\Bundle\SEOBundle\Topic\GenerateSitemapByWebsiteAndTypeTopic;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Traits\DefaultWebsiteIdTestTrait;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\Message;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Component\MessageQueue\Util\JSON;
 
 class GenerateSitemapByWebsiteAndTypeProcessorTest extends WebTestCase
 {
-    use JobsAwareTestTrait,
-        DefaultWebsiteIdTestTrait;
+    use JobsAwareTestTrait;
+    use DefaultWebsiteIdTestTrait;
 
     private const PROVIDER = 'login_urls';
 
@@ -47,12 +46,14 @@ class GenerateSitemapByWebsiteAndTypeProcessorTest extends WebTestCase
     {
         $message = new Message();
         $message->setMessageId(UUIDGenerator::v4());
-        $message->setBody(JSON::encode([
-            GenerateSitemapByWebsiteAndTypeTopic::JOB_ID => $this->createUniqueJob()->getId(),
-            GenerateSitemapByWebsiteAndTypeTopic::VERSION => time(),
-            GenerateSitemapByWebsiteAndTypeTopic::WEBSITE_ID => $this->getDefaultWebsiteId(),
-            GenerateSitemapByWebsiteAndTypeTopic::TYPE => self::PROVIDER,
-        ]));
+        $message->setBody(
+            [
+                GenerateSitemapByWebsiteAndTypeTopic::JOB_ID => $this->createUniqueJob()->getId(),
+                GenerateSitemapByWebsiteAndTypeTopic::VERSION => time(),
+                GenerateSitemapByWebsiteAndTypeTopic::WEBSITE_ID => $this->getDefaultWebsiteId(),
+                GenerateSitemapByWebsiteAndTypeTopic::TYPE => self::PROVIDER,
+            ]
+        );
 
         $result = $this->processor->process($message, $this->createMock(SessionInterface::class));
 
@@ -64,12 +65,14 @@ class GenerateSitemapByWebsiteAndTypeProcessorTest extends WebTestCase
     {
         $message = new Message();
         $message->setMessageId(UUIDGenerator::v4());
-        $message->setBody(JSON::encode([
-            GenerateSitemapByWebsiteAndTypeTopic::JOB_ID => 123456789,
-            GenerateSitemapByWebsiteAndTypeTopic::VERSION => time(),
-            GenerateSitemapByWebsiteAndTypeTopic::WEBSITE_ID => $this->getDefaultWebsiteId(),
-            GenerateSitemapByWebsiteAndTypeTopic::TYPE => self::PROVIDER,
-        ]));
+        $message->setBody(
+            [
+                GenerateSitemapByWebsiteAndTypeTopic::JOB_ID => 123456789,
+                GenerateSitemapByWebsiteAndTypeTopic::VERSION => time(),
+                GenerateSitemapByWebsiteAndTypeTopic::WEBSITE_ID => $this->getDefaultWebsiteId(),
+                GenerateSitemapByWebsiteAndTypeTopic::TYPE => self::PROVIDER,
+            ]
+        );
 
         $result = $this->processor->process($message, $this->createMock(SessionInterface::class));
 
@@ -81,12 +84,14 @@ class GenerateSitemapByWebsiteAndTypeProcessorTest extends WebTestCase
     {
         $message = new Message();
         $message->setMessageId(UUIDGenerator::v4());
-        $message->setBody(JSON::encode([
-            GenerateSitemapByWebsiteAndTypeTopic::JOB_ID => $this->createUniqueJob()->getId(),
-            GenerateSitemapByWebsiteAndTypeTopic::VERSION => time(),
-            GenerateSitemapByWebsiteAndTypeTopic::WEBSITE_ID => 123456789,
-            GenerateSitemapByWebsiteAndTypeTopic::TYPE => self::PROVIDER,
-        ]));
+        $message->setBody(
+            [
+                GenerateSitemapByWebsiteAndTypeTopic::JOB_ID => $this->createUniqueJob()->getId(),
+                GenerateSitemapByWebsiteAndTypeTopic::VERSION => time(),
+                GenerateSitemapByWebsiteAndTypeTopic::WEBSITE_ID => 123456789,
+                GenerateSitemapByWebsiteAndTypeTopic::TYPE => self::PROVIDER,
+            ]
+        );
 
         $result = $this->processor->process($message, $this->createMock(SessionInterface::class));
 
@@ -94,14 +99,13 @@ class GenerateSitemapByWebsiteAndTypeProcessorTest extends WebTestCase
         self::assertFalse($this->tmpFileManager->hasFile($this->getFileName()));
     }
 
-    private function getFileName(?int $websiteId = null, string $fileNumber = '1'): string
+    private function getFileName(): string
     {
-        $websiteId = $websiteId ?? $this->getDefaultWebsiteId();
         return sprintf(
-            '%s/'.SitemapDumper::SITEMAP_FILENAME_TEMPLATE . '.gz',
-            $websiteId,
+            '%s/' . SitemapDumper::SITEMAP_FILENAME_TEMPLATE . '.gz',
+            $this->getDefaultWebsiteId(),
             self::PROVIDER,
-            $fileNumber
+            1
         );
     }
 }

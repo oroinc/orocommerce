@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\SEOBundle\Topic;
+namespace Oro\Bundle\SEOBundle\Async\Topic;
 
 use Oro\Bundle\SEOBundle\Sitemap\Provider\UrlItemsProviderRegistryInterface;
 use Oro\Component\MessageQueue\Topic\AbstractTopic;
@@ -11,26 +11,26 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class GenerateSitemapByWebsiteAndTypeTopic extends AbstractTopic
 {
-    private const TOPIC_NAME = 'oro.seo.generate_sitemap_by_website_and_type';
-    private const TOPIC_DESCRIPTION = 'Generates sitemap by website id and type';
-
-    public const JOB_ID     = 'jobId';
-    public const VERSION    = 'version';
+    public const JOB_ID = 'jobId';
+    public const VERSION = 'version';
     public const WEBSITE_ID = 'websiteId';
-    public const TYPE       = 'type';
+    public const TYPE = 'type';
 
-    public function __construct(private readonly UrlItemsProviderRegistryInterface $urlItemsProviderRegistry)
+    private UrlItemsProviderRegistryInterface $urlItemsProviderRegistry;
+
+    public function __construct(UrlItemsProviderRegistryInterface $urlItemsProviderRegistry)
     {
+        $this->urlItemsProviderRegistry = $urlItemsProviderRegistry;
     }
 
     public static function getName(): string
     {
-        return self::TOPIC_NAME;
+        return 'oro.seo.generate_sitemap_by_website_and_type';
     }
 
     public static function getDescription(): string
     {
-        return self::TOPIC_DESCRIPTION;
+        return 'Generates sitemap by website id and type';
     }
 
     public function configureMessageBody(OptionsResolver $resolver): void
