@@ -182,7 +182,11 @@ define(function(require) {
                     this.canvasEl.classList.add(breakpoint.name);
                 }
 
-                DeviceManager.add(breakpoint.name, breakpoint.widthDevice, breakpoint);
+                DeviceManager.add({
+                    id: breakpoint.name,
+                    width: breakpoint.widthDevice,
+                    widthMedia: breakpoint.max ? breakpoint.max + 'px' : ''
+                });
 
                 deviceButton.add({
                     id: breakpoint.name,
