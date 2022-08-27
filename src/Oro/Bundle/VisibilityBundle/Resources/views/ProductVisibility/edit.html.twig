@@ -9,10 +9,21 @@
     {% import '@OroUI/macros.html.twig' as UI %}
 
     {{ UI.cancelButton(path('oro_product_index')) }}
-    {% set html = UI.saveAndCloseButton() %}
-    {% if entity.id or is_granted('oro_product_update') %}
-        {% set html = html ~ UI.saveAndStayButton() %}
+
+    {% set html = '' %}
+    {% if is_granted('oro_product_view') %}
+        {% set html = html ~ UI.saveAndCloseButton({
+            'route' : 'oro_product_view',
+            'params' : {'id': '$id'}
+        }) %}
     {% endif %}
+    {% if is_granted('oro_product_visibility_edit') %}
+        {% set html = html ~ UI.saveAndStayButton({
+            'route' : 'oro_product_visibility_edit',
+            'params': {'id': '$id'}
+        }) %}
+    {% endif %}
+
     {{ UI.dropdownSaveButton({'html': html}) }}
 {% endblock navButtons %}
 

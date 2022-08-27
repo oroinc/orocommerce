@@ -105,6 +105,8 @@ class CustomerTaxCodeControllerTest extends WebTestCase
                 'oro_tax_customer_tax_code_type[description]' => $description,
             ]
         );
+        $redirectAction = $crawler->selectButton('Save and Close')->attr('data-action');
+        $form->setValues(['input_action' => $redirectAction]);
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);

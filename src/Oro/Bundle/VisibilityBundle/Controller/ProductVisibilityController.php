@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\VisibilityBundle\Controller;
 
-use Oro\Bundle\FormBundle\Model\UpdateHandler;
+use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Form\Type\ScopedDataType;
@@ -19,6 +19,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -32,12 +33,8 @@ class ProductVisibilityController extends AbstractController
      * @Route("/edit/{id}", name="oro_product_visibility_edit", requirements={"id"="\d+"})
      * @Template
      * @AclAncestor("oro_product_update")
-     *
-     * @param Request $request
-     * @param Product $product
-     * @return array
      */
-    public function editAction(Request $request, Product $product)
+    public function editAction(Request $request, Product $product): array|RedirectResponse
     {
         $scopes = $this->get(VisibilityRootScopesProvider::class)->getScopes($product);
         if (0 === count($scopes)) {
@@ -45,27 +42,13 @@ class ProductVisibilityController extends AbstractController
         } else {
             $preloadedScopes = [reset($scopes)];
         }
-        $form = $this->createScopedDataForm($product, $preloadedScopes);
 
-        $handler = new VisibilityFormDataHandler($form, $request, $this->get(EventDispatcherInterface::class));
-
-        return $this->get(UpdateHandler::class)->handleUpdate(
+        return $this->get(UpdateHandlerFacade::class)->update(
             $product,
-            $form,
-            function (Product $product) {
-                return [
-                    'route' => 'oro_product_visibility_edit',
-                    'parameters' => ['id' => $product->getId()],
-                ];
-            },
-            function (Product $product) {
-                return [
-                    'route' => 'oro_product_view',
-                    'parameters' => ['id' => $product->getId()],
-                ];
-            },
+            $this->createScopedDataForm($product, $preloadedScopes),
             $this->get(TranslatorInterface::class)->trans('oro.visibility.event.saved.message'),
-            $handler
+            $request,
+            new VisibilityFormDataHandler($this->get(EventDispatcherInterface::class))
         );
     }
 
@@ -78,12 +61,8 @@ class ProductVisibilityController extends AbstractController
      * @ParamConverter("product", options={"id" = "productId"})
      * @Template("@OroVisibility/ProductVisibility/widget/scope.html.twig")
      * @AclAncestor("oro_product_update")
-     *
-     * @param Product $product
-     * @param Scope $scope
-     * @return array
      */
-    public function scopeWidgetAction(Product $product, Scope $scope)
+    public function scopeWidgetAction(Product $product, Scope $scope): array
     {
         /** @var Form $form */
         $form = $this->createScopedDataForm($product, [$scope]);
@@ -95,12 +74,7 @@ class ProductVisibilityController extends AbstractController
         ];
     }
 
-    /**
-     * @param Product $product
-     * @param array $preloadedScopes
-     * @return FormInterface
-     */
-    protected function createScopedDataForm(Product $product, array $preloadedScopes = [])
+    protected function createScopedDataForm(Product $product, array $preloadedScopes = []): FormInterface
     {
         return $this->createForm(
             ScopedDataType::class,
@@ -121,7 +95,7 @@ class ProductVisibilityController extends AbstractController
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public static function getSubscribedServices()
     {
@@ -131,7 +105,7 @@ class ProductVisibilityController extends AbstractController
                 TranslatorInterface::class,
                 VisibilityRootScopesProvider::class,
                 EventDispatcherInterface::class,
-                UpdateHandler::class,
+                UpdateHandlerFacade::class
             ]
         );
     }

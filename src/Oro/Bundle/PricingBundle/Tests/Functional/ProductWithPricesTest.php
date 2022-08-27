@@ -111,7 +111,7 @@ class ProductWithPricesTest extends WebTestCase
             $formData['names']['values']['localizations'][$localization->getId()]['fallback'] = FallbackType::SYSTEM;
         }
         $crawler = $this->client->request($form->getMethod(), $form->getUri(), [
-            'input_action' => 'save_and_stay',
+            'input_action' => '{"route":"oro_product_update","params":{"id":"$id"}}',
             'oro_product' => $formData
         ]);
         $result = $this->client->getResponse();

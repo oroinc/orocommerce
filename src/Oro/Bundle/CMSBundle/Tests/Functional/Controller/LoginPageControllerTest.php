@@ -92,8 +92,11 @@ class LoginPageControllerTest extends WebTestCase
 
         $form['oro_cms_login_page[topContent]'] = $topContent;
         $form['oro_cms_login_page[bottomContent]'] = $bottomContent;
+        // we need to specify input_action form parameter manually because JS is not executed
+        // and the value of this parameter have no correct redirect route data
+        $form['input_action'] = '{"route":"oro_cms_loginpage_view","params":{"id":"$id"}}';
 
-        $this->client->followRedirects(true);
+        $this->client->followRedirects();
         $crawler = $this->client->submit($form);
 
         $result = $this->client->getResponse();

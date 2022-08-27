@@ -251,7 +251,7 @@ class PageControllerTest extends WebTestCase
         $form['oro_cms_page[slug][mode]'] = 'new';
         $form['oro_cms_page[slug][slug]'] = $slug;
 
-        $form->setValues(['input_action' => 'save_and_stay']);
+        $form->setValues(['input_action' => '{"route":"oro_cms_page_update","params":{"id":"$id"}}']);
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
@@ -304,7 +304,7 @@ class PageControllerTest extends WebTestCase
                 break;
         }
 
-        $form->setValues(['input_action' => 'save_and_stay']);
+        $form->setValues(['input_action' => '{"route":"oro_cms_page_update","params":{"id":"$id"}}']);
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);

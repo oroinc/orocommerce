@@ -612,7 +612,6 @@ class RequestControllerTest extends WebTestCase
         $productPrice = $this->getPriceByReference('product_price.1');
 
         $parameters = [
-            'input_action' => 'save_and_stay',
             'oro_rfp_frontend_request' => $formData
         ];
         $parameters['oro_rfp_frontend_request']['_token'] = $crfToken;

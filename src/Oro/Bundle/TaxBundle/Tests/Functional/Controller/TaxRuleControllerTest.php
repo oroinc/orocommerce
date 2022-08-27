@@ -152,6 +152,8 @@ class TaxRuleControllerTest extends WebTestCase
                 'oro_tax_rule_type[taxJurisdiction]' => $taxJurisdiction->getId(),
             ]
         );
+        $redirectAction = $crawler->selectButton('Save and Close')->attr('data-action');
+        $form->setValues(['input_action' => $redirectAction]);
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);

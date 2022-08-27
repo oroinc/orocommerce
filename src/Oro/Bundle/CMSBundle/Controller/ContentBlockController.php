@@ -4,7 +4,7 @@ namespace Oro\Bundle\CMSBundle\Controller;
 
 use Oro\Bundle\CMSBundle\Entity\ContentBlock;
 use Oro\Bundle\CMSBundle\Form\Type\ContentBlockType;
-use Oro\Bundle\FormBundle\Model\UpdateHandler;
+use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
@@ -23,10 +23,8 @@ class ContentBlockController extends AbstractController
      * @Route("/", name="oro_cms_content_block_index")
      * @Template
      * @AclAncestor("oro_cms_content_block_view")
-     *
-     * @return array
      */
-    public function indexAction()
+    public function indexAction(): array
     {
         return [
             'entity_class' => ContentBlock::class
@@ -34,10 +32,6 @@ class ContentBlockController extends AbstractController
     }
 
     /**
-     * @param ContentBlock $contentBlock
-     *
-     * @return array
-     *
      * @Route("/{id}", name="oro_cms_content_block_view", requirements={"id"="\d+"})
      * @Template
      * @Acl(
@@ -47,7 +41,7 @@ class ContentBlockController extends AbstractController
      *      permission="VIEW"
      * )
      */
-    public function viewAction(ContentBlock $contentBlock)
+    public function viewAction(ContentBlock $contentBlock): array
     {
         $scopeEntities = $this->get(ScopeManager::class)->getScopeEntities('cms_content_block');
 
@@ -58,7 +52,6 @@ class ContentBlockController extends AbstractController
     }
 
     /**
-     * @return array|RedirectResponse
      * @Route("/create", name="oro_cms_content_block_create")
      * @Template("@OroCMS/ContentBlock/update.html.twig")
      * @Acl(
@@ -68,7 +61,7 @@ class ContentBlockController extends AbstractController
      *      permission="CREATE"
      * )
      */
-    public function createAction()
+    public function createAction(): array|RedirectResponse
     {
         $contentBlock = new ContentBlock();
 
@@ -76,8 +69,6 @@ class ContentBlockController extends AbstractController
     }
 
     /**
-     * @param ContentBlock $contentBlock
-     * @return array
      * @Route("/update/{id}", name="oro_cms_content_block_update", requirements={"id"="\d+"})
      * @Template
      * @Acl(
@@ -87,20 +78,16 @@ class ContentBlockController extends AbstractController
      *      permission="EDIT"
      * )
      */
-    public function updateAction(ContentBlock $contentBlock)
+    public function updateAction(ContentBlock $contentBlock): array|RedirectResponse
     {
         return $this->update($contentBlock);
     }
 
-    /**
-     * @param ContentBlock $contentBlock
-     * @return array|RedirectResponse
-     */
-    protected function update(ContentBlock $contentBlock)
+    protected function update(ContentBlock $contentBlock): array|RedirectResponse
     {
         $form = $this->createForm(ContentBlockType::class, $contentBlock);
 
-        return $this->get(UpdateHandler::class)->update(
+        return $this->get(UpdateHandlerFacade::class)->update(
             $contentBlock,
             $form,
             $this->get(TranslatorInterface::class)->trans('oro.cms.controller.contentblock.saved.message')
@@ -108,7 +95,7 @@ class ContentBlockController extends AbstractController
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public static function getSubscribedServices()
     {
@@ -116,8 +103,8 @@ class ContentBlockController extends AbstractController
             parent::getSubscribedServices(),
             [
                 TranslatorInterface::class,
-                UpdateHandler::class,
                 ScopeManager::class,
+                UpdateHandlerFacade::class
             ]
         );
     }

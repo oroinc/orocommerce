@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Controller;
 
-use Oro\Bundle\FormBundle\Model\UpdateHandler;
+use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListType;
@@ -28,10 +28,8 @@ class PriceListController extends AbstractController
      *      class="OroPricingBundle:PriceList",
      *      permission="VIEW"
      * )
-     * @param PriceList $priceList
-     * @return array
      */
-    public function viewAction(PriceList $priceList)
+    public function viewAction(PriceList $priceList): array
     {
         return [
             'entity' => $priceList,
@@ -43,10 +41,8 @@ class PriceListController extends AbstractController
      * @Route("/info/{id}", name="oro_pricing_price_list_info", requirements={"id"="\d+"})
      * @Template("@OroPricing/PriceList/widget/info.html.twig")
      * @AclAncestor("oro_pricing_price_list_view")
-     * @param PriceList $priceList
-     * @return array
      */
-    public function infoAction(PriceList $priceList)
+    public function infoAction(PriceList $priceList): array
     {
         return [
             'entity' => $priceList
@@ -57,10 +53,8 @@ class PriceListController extends AbstractController
      * @Route("/", name="oro_pricing_price_list_index")
      * @Template
      * @AclAncestor("oro_pricing_price_list_view")
-     *
-     * @return array
      */
-    public function indexAction()
+    public function indexAction(): array
     {
         return [
             'entity_class' => PriceList::class
@@ -78,9 +72,8 @@ class PriceListController extends AbstractController
      *      class="OroPricingBundle:PriceList",
      *      permission="CREATE"
      * )
-     * @return array|RedirectResponse
      */
-    public function createAction()
+    public function createAction(): array|RedirectResponse
     {
         return $this->update(new PriceList());
     }
@@ -96,46 +89,31 @@ class PriceListController extends AbstractController
      *      class="OroPricingBundle:PriceList",
      *      permission="EDIT"
      * )
-     * @param PriceList $priceList
-     * @return array|RedirectResponse
      */
-    public function updateAction(PriceList $priceList)
+    public function updateAction(PriceList $priceList): array|RedirectResponse
     {
         return $this->update($priceList);
     }
 
-    /**
-     * @param PriceList $priceList
-     * @return array|RedirectResponse
-     */
-    protected function update(PriceList $priceList)
+    protected function update(PriceList $priceList): array|RedirectResponse
     {
-        return $this->get(UpdateHandler::class)->handleUpdate(
+        return $this->get(UpdateHandlerFacade::class)->update(
             $priceList,
             $this->createForm(PriceListType::class, $priceList),
-            function (PriceList $priceList) {
-                return [
-                    'route' => 'oro_pricing_price_list_update',
-                    'parameters' => ['id' => $priceList->getId()]
-                ];
-            },
-            function (PriceList $priceList) {
-                return [
-                    'route' => 'oro_pricing_price_list_view',
-                    'parameters' => ['id' => $priceList->getId()]
-                ];
-            },
             $this->get(TranslatorInterface::class)->trans('oro.pricing.controller.price_list.saved.message')
         );
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public static function getSubscribedServices()
     {
         return array_merge(
             parent::getSubscribedServices(),
             [
                 TranslatorInterface::class,
-                UpdateHandler::class
+                UpdateHandlerFacade::class
             ]
         );
     }
