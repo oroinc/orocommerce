@@ -209,15 +209,20 @@ class PriceListTest extends RestJsonApiTestCase
 
         static::assertNotNull($lexeme);
 
-        static::assertMessagesSent(
+        self::assertMessagesSent(
             RebuildCombinedPriceListsTopic::getName(),
             [
                 [
-                    'website' => $this->getReference('US')->getId()
-                ],
-                [
-                    'website'  => $this->getReference('Canada')->getId(),
-                    'customer' => $this->getReference('customer.level_1_1')->getId()
+                    'assignments' =>
+                        [
+                            [
+                                'customer' => $this->getReference('customer.level_1_1')->getId(),
+                                'website' => $this->getReference('Canada')->getId(),
+                            ],
+                            [
+                                'website' => $this->getReference('US')->getId()
+                            ],
+                        ]
                 ]
             ]
         );
@@ -267,17 +272,20 @@ class PriceListTest extends RestJsonApiTestCase
             ->getRepository(PriceRuleLexeme::class)
             ->findOneBy(['priceList' => $updatedPriceList]);
 
-        static::assertNotNull($lexeme);
-
-        static::assertMessagesSent(
+        self::assertNotNull($lexeme);
+        self::assertMessagesSent(
             RebuildCombinedPriceListsTopic::getName(),
             [
                 [
-                    'website' => $this->getReference('US')->getId()
-                ],
-                [
-                    'website'  => $this->getReference('Canada')->getId(),
-                    'customer' => $this->getReference('customer.level_1_1')->getId()
+                    'assignments' => [
+                        [
+                            'website' => $this->getReference('Canada')->getId(),
+                            'customer' => $this->getReference('customer.level_1_1')->getId()
+                        ],
+                        [
+                            'website' => $this->getReference('US')->getId()
+                        ]
+                    ]
                 ]
             ]
         );

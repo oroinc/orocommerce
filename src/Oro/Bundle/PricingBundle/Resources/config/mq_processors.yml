@@ -93,6 +93,7 @@ services:
             - '@oro_message_queue.job.dependent_job_service'
         calls:
             - [setTopic, ['@Oro\Bundle\PricingBundle\Async\Topic\RebuildCombinedPriceListsTopic']]
+            - [setManagerRegistry, ['@doctrine']]
         tags:
             - { name: monolog.logger, channel: oro_pricing }
 
