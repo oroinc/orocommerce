@@ -76,6 +76,8 @@ services:
             - '@oro_message_queue.client.message_producer'
             - '@oro_message_queue.job.runner'
             - '@oro_message_queue.job.dependent_job_service'
+        calls:
+            - [setManagerRegistry, ['@doctrine']]
         tags:
             - { name: monolog.logger, channel: oro_pricing }
 

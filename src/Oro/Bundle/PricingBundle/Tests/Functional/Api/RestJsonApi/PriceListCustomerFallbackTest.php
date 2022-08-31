@@ -48,12 +48,15 @@ class PriceListCustomerFallbackTest extends AbstractApiPriceListRelationTest
             ]);
 
         static::assertNotNull($relation);
-
         static::assertMessageSent(
             RebuildCombinedPriceListsTopic::getName(),
             [
-                'website'  => $this->getWebsiteForTest()->getId(),
-                'customer' => $customer->getId()
+                'assignments' => [
+                    [
+                        'website'  => $this->getWebsiteForTest()->getId(),
+                        'customer' => $customer->getId()
+                    ]
+                ]
             ]
         );
     }
@@ -79,14 +82,20 @@ class PriceListCustomerFallbackTest extends AbstractApiPriceListRelationTest
             $this->getEntityManager()->find(PriceListCustomerFallback::class, $relationId2)
         );
 
-        $this->assertFirstRelationMessageSent();
-
         static::assertMessageSent(
             RebuildCombinedPriceListsTopic::getName(),
             [
-                'website'       => $this->getReference(LoadWebsiteData::WEBSITE2)->getId(),
-                'customer'      => $this->getReference('customer.level_1.2')->getId(),
-                'customerGroup' => $this->getReference('customer_group.group2')->getId()
+                'assignments' => [
+                    [
+                        'website'  => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
+                        'customer' => $this->getReference('customer.level_1_1')->getId()
+                    ],
+                    [
+                        'website'       => $this->getReference(LoadWebsiteData::WEBSITE2)->getId(),
+                        'customer'      => $this->getReference('customer.level_1.2')->getId(),
+                        'customerGroup' => $this->getReference('customer_group.group2')->getId()
+                    ]
+                ]
             ]
         );
     }
@@ -156,8 +165,12 @@ class PriceListCustomerFallbackTest extends AbstractApiPriceListRelationTest
         static::assertMessageSent(
             RebuildCombinedPriceListsTopic::getName(),
             [
-                'website'  => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
-                'customer' => $this->getReference('customer.level_1_1')->getId()
+                'assignments' => [
+                    [
+                        'website'  => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
+                        'customer' => $this->getReference('customer.level_1_1')->getId()
+                    ]
+                ]
             ]
         );
     }
