@@ -14,6 +14,7 @@ services:
     Oro\Bundle\PricingBundle\Async\Topic\RebuildCombinedPriceListsTopic:
         arguments:
             - '@doctrine'
+    Oro\Bundle\PricingBundle\Async\Topic\MassRebuildCombinedPriceListsTopic: ~
     Oro\Bundle\PricingBundle\Async\Topic\ResolveCombinedPriceByPriceListTopic: ~
     Oro\Bundle\PricingBundle\Async\Topic\ResolveCombinedPriceByVersionedPriceListTopic: ~
     Oro\Bundle\PricingBundle\Async\Topic\ResolveVersionedFlatPriceTopic: ~
