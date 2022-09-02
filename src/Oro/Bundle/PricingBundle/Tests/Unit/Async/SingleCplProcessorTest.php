@@ -215,6 +215,7 @@ class SingleCplProcessorTest extends TestCase
             ->method('getCombinedPriceListById')
             ->willThrowException($e);
 
+
         $this->logger->expects($this->once())
             ->method('warning')
             ->with(
@@ -241,7 +242,9 @@ class SingleCplProcessorTest extends TestCase
             ->willReturn(JSON::encode([
                 'cpl' => 1,
                 'jobId' => 100,
-                'products' => []
+                'products' => [],
+                'assign_to' => [],
+                'version' => 1
             ]));
 
         $e = $this->createMock(DeadlockException::class);
@@ -287,7 +290,7 @@ class SingleCplProcessorTest extends TestCase
         $this->assertCplBuild($cpl, $products, $assignTo);
 
         $this->combinedPriceListsBuilderFacade->expects($this->once())
-            ->method('processAssignments')
+            ->method('processVersionedAssignments')
             ->with($cpl, $assignTo);
 
         $this->logger->expects($this->never())
@@ -323,7 +326,7 @@ class SingleCplProcessorTest extends TestCase
         $this->assertCplBuild($activeCpl, $products, $assignTo);
 
         $this->combinedPriceListsBuilderFacade->expects($this->once())
-            ->method('processAssignments')
+            ->method('processVersionedAssignments')
             ->with($cpl, $assignTo);
 
         $this->logger->expects($this->never())
@@ -364,7 +367,7 @@ class SingleCplProcessorTest extends TestCase
                 CombinedPriceListsUpdateEvent::NAME
             );
         $this->combinedPriceListsBuilderFacade->expects($this->once())
-            ->method('processAssignments')
+            ->method('processVersionedAssignments')
             ->with($cpl, $assignTo);
 
         $this->logger->expects($this->never())
@@ -457,7 +460,8 @@ class SingleCplProcessorTest extends TestCase
                 'cpl' => 1,
                 'jobId' => 100,
                 'products' => $products,
-                'assign_to' => $assignTo
+                'assign_to' => $assignTo,
+                'version' => 1
             ]));
 
         return $message;

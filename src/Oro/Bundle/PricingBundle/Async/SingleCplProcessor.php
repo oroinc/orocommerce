@@ -123,6 +123,7 @@ class SingleCplProcessor implements MessageProcessorInterface, TopicSubscriberIn
         $cpl = $messageData['cpl'];
         $products = $messageData['products'];
         $assignTo = $messageData['assign_to'];
+        $version = $messageData['version'];
 
         /** @var EntityManagerInterface $em */
         $em = $this->doctrine->getManagerForClass(CombinedPriceList::class);
@@ -130,7 +131,7 @@ class SingleCplProcessor implements MessageProcessorInterface, TopicSubscriberIn
         $this->indexationTriggerHandler->startCollectVersioned($job->getRootJob()->getId());
         try {
             $this->buildCombinedPriceList($cpl, $products, $assignTo);
-            $this->combinedPriceListsBuilderFacade->processAssignments($cpl, $assignTo);
+            $this->combinedPriceListsBuilderFacade->processVersionedAssignments($cpl, $assignTo, $version);
             $this->removeActivityRecords($cpl, $job->getRootJob()->getId(), empty($products));
 
             // Indexation requests are collected here and not triggered immediately, so we should write these

@@ -157,16 +157,14 @@ class ScalableCombinedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('getBody')
             ->willReturn(JSON::encode($body));
 
-        $associations = [
-            [
-                'collection' => [new PriceListSequenceMember($this->getEntity(PriceList::class, ['id' => 10]), false)],
-                'assign_to' => ['config' => true]
-            ]
+        $association = [
+            'collection' => [new PriceListSequenceMember($this->getEntity(PriceList::class, ['id' => 10]), false)],
+            'assign_to' => ['config' => true]
         ];
         $this->cplAssociationsProvider->expects($this->once())
             ->method('getCombinedPriceListsWithAssociations')
             ->with($isForce, $website, $targetEntity)
-            ->willReturn($associations);
+            ->willReturn([$association]);
 
         $rootJob = $this->createMock(Job::class);
         $rootJob->expects($this->any())
@@ -214,11 +212,14 @@ class ScalableCombinedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('send')
             ->with(
                 CombineSingleCombinedPriceListPricesTopic::getName(),
-                [
-                    'collection' => $associations[0]['collection'],
-                    'assign_to' => $associations[0]['assign_to'],
-                    'jobId' => 42
-                ]
+                $this->callback(function ($args) use ($association) {
+                    $this->assertEquals($association['collection'], $args['collection']);
+                    $this->assertEquals($association['assign_to'], $args['assign_to']);
+                    $this->assertEquals(42, $args['jobId']);
+                    $this->assertIsInt($args['version']);
+
+                    return true;
+                })
             );
 
         $this->assertEquals(

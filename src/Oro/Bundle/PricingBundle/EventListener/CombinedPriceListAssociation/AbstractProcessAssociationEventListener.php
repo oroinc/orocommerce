@@ -61,9 +61,29 @@ abstract class AbstractProcessAssociationEventListener
         }
     }
 
+    protected function processVersionedAssignments(
+        CombinedPriceList $cpl,
+        Website $website,
+        ?int $version,
+        array $targetEntities
+    ): void {
+        foreach ($targetEntities as $targetEntity) {
+            $this->actualizeVersionedActiveCplRelation($cpl, $website, $version, $targetEntity);
+        }
+    }
+
     protected function actualizeActiveCplRelation(
         CombinedPriceList $cpl,
         Website $website,
+        object $targetEntity = null
+    ): BaseCombinedPriceListRelation {
+        return $this->actualizeVersionedActiveCplRelation($cpl, $website, null, $targetEntity);
+    }
+
+    protected function actualizeVersionedActiveCplRelation(
+        CombinedPriceList $cpl,
+        Website $website,
+        ?int $version,
         object $targetEntity = null
     ): BaseCombinedPriceListRelation {
         $activeCpl = $this->scheduleResolver->getActiveCplByFullCPL($cpl);
@@ -71,8 +91,9 @@ abstract class AbstractProcessAssociationEventListener
             $activeCpl = $cpl;
         }
 
-        return $this->getCombinedPriceListRepository()
-            ->updateCombinedPriceListConnection($cpl, $activeCpl, $website, $targetEntity);
+        return $this
+            ->getCombinedPriceListRepository()
+            ->updateVersionedCombinedPriceListConnection($cpl, $activeCpl, $website, $version, $targetEntity);
     }
 
     protected function getCombinedPriceListRepository(): CombinedPriceListRepository
