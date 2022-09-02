@@ -5,6 +5,7 @@ import unorderedList from './unordered-list';
 import orderedList from './ordered-list';
 import indent from './indent';
 import outdent from './outdent';
+import wrap from './wrap';
 
 export default [
     ...simple,
@@ -13,5 +14,6 @@ export default [
     link,
     formatBlock,
     outdent,
-    indent
+    indent,
+    wrap
 ];

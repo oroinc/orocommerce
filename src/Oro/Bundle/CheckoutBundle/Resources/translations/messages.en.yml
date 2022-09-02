@@ -265,25 +265,36 @@ oro:
         order.line_items.line_item_has_no_price_allow_rfp.message: Some products have not been added to this order. Please create an RFQ to request price.
         order.line_items.line_item_has_no_price_not_allow_rfp.message: Some products have not been added to this order.
 
+        feature:
+            guest_checkout:
+                label: Guest Checkout
+                description: Enables guest customers to proceed through the steps of the checkout similarly to registered customers.
+            checkout_customer_users_registration:
+                label: Customer User Registration at Checkout
+                description: Enables customer users to register on the checkout page.
+            allow_checkout_without_email_confirmation:
+                label: Checkout Without Email Confirmation
+                description: Enables customers to proceed to the checkout once registration details are provided, without email confirmation.
+
         system_configuration:
             fields:
                 frontend_show_open_orders.title: 'Show Open Orders'
                 frontend_open_orders_separate_page.title: 'Show Open Orders On a Separate Page'
                 guest_checkout:
                     title: 'Enable Guest Checkout'
-                    tooltip: 'Enable Guest Checkout'
+                    tooltip: 'Select the option to enable guest customers to proceed through the steps of the checkout similarly to registered customers.'
                 registration_allowed:
                     title: 'Allow registration'
-                    tooltip: 'Allow customer users registration on checkout page'
+                    tooltip: 'Select the option to enable customer users to register on the checkout page.'
                 allow_checkout_without_email_confirmation:
                     title: 'Allow checkout without email confirmation'
-                    tooltip: 'Gives possibility to proceed checkout after enter registration data without email confirmation'
+                    tooltip: 'Select the option to enable customers to proceed to the checkout once registration details are provided, without email confirmation. '
                 default_guest_checkout_owner:
                     title: 'Default guest checkout owner'
-                    tooltip: 'Allows guests to create order'
+                    tooltip: 'Select the default owner of all guest checkouts.'
                 checkout_max_line_items_per_page:
                     label: 'Maximum Line Items Per Page'
-                    tooltip: 'The provided value will be used as the implied maximum number of checkout line items to display at once. If the number of checkout line items exceeds this value, the "Show All Items" will no longer be available and this number will be shown as the maximum pager value.'
+                    tooltip: 'Set the value to be used as the implied maximum number of checkout line items to be displayed per page. If the number of checkout line items exceeds this limit, the Show All Items button hides, and this number is displayed as the maximum pager value.'
             groups:
                 open_orders.title: 'Open Orders'
                 checkout.title: 'Checkout'

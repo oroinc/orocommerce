@@ -1,0 +1,23 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: '@OroPricing/layouts/default/imports/oro_product_price_table/oro_product_price_table.html.twig'
+        - '@addTree':
+            items:
+                __product_price_container:
+                    blockType: product_prices
+                    options:
+                        productPrices: '=product ? data["frontend_product_prices"].getByProduct(product) : []'
+                        attributeFamily: '=context.offsetExists("attribute_family") ? context["attribute_family"] : null'
+                        isPriceUnitsVisible: '=product ? data["oro_price_unit_visibility"].isPriceUnitsVisibleByProduct(product) : true'
+                        vars:
+                            applicableForConfiguredProduct: true
+                __product_price_table:
+                    blockType: container
+                __product_price_table_body:
+                    blockType: block
+            tree:
+                __root:
+                    __product_price_container:
+                        __product_price_table:
+                            __product_price_table_body: ~

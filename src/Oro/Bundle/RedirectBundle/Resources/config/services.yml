@@ -23,17 +23,6 @@ services:
         tags:
             - { name: container.hot_path }
 
-    oro_redirect.event_listener.redirect:
-        class: Oro\Bundle\RedirectBundle\EventListener\RedirectListener
-        arguments:
-            - '@oro_frontend_localization.manager.user_localization'
-            - '@oro_redirect.provider.slug_source_entity_provider_registry'
-            - '@doctrine'
-            - '@oro_redirect.generator.canonical_url'
-            - '@oro_website.manager'
-        tags:
-            - { name: kernel.event_listener, event: kernel.request, method: onRequest, priority: -30 }
-
     oro_redirect.routing.slug_redirect_matcher:
         class: Oro\Bundle\RedirectBundle\Routing\SlugRedirectMatcher
         arguments:
@@ -175,6 +164,7 @@ services:
 
     oro_redirect.direct_url_message_factory:
         class: Oro\Bundle\RedirectBundle\Model\DirectUrlMessageFactory
+        public: true
         arguments:
             - '@doctrine'
             - '@oro_config.manager'
@@ -187,6 +177,7 @@ services:
             - '@oro_redirect.direct_url_message_factory'
             - '@logger'
             - '@oro_redirect.url_cache'
+            - '@oro_redirect.cache.dumper.sluggable_url_dumper'
         tags:
             - { name: 'oro_message_queue.client.message_processor' }
 
@@ -303,7 +294,7 @@ services:
         arguments:
             - '@oro_redirect.url_provider'
             - '@oro_redirect.provider.context_url_provider_registry'
-            - '@oro_frontend_localization.manager.user_localization'
+            - '@oro_locale.provider.current_localization'
             - '@oro_config.manager'
         tags:
             - { name: container.hot_path }

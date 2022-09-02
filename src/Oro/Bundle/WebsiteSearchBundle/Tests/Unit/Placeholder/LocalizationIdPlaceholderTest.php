@@ -3,24 +3,28 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Placeholder;
 
 use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\LocaleBundle\Manager\LocalizationManager;
 use Oro\Bundle\LocaleBundle\Provider\CurrentLocalizationProvider;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class LocalizationIdPlaceholderTest extends \PHPUnit\Framework\TestCase
+class LocalizationIdPlaceholderTest extends TestCase
 {
-    /** @var LocalizationIdPlaceholder */
-    private $placeholder;
+    private LocalizationIdPlaceholder $placeholder;
 
-    /** @var CurrentLocalizationProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $localizationProvider;
+    private LocalizationManager|MockObject $localizationManager;
+
+    private CurrentLocalizationProvider|MockObject $localizationProvider;
 
     protected function setUp(): void
     {
         $this->localizationProvider = $this->getMockBuilder(CurrentLocalizationProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $this->localizationManager = $this->createMock(LocalizationManager::class);
 
-        $this->placeholder = new LocalizationIdPlaceholder($this->localizationProvider);
+        $this->placeholder = new LocalizationIdPlaceholder($this->localizationProvider, $this->localizationManager);
     }
 
     protected function tearDown(): void
@@ -28,13 +32,13 @@ class LocalizationIdPlaceholderTest extends \PHPUnit\Framework\TestCase
         unset($this->placeholder, $this->localizationProvider);
     }
 
-    public function testGetPlaceholder()
+    public function testGetPlaceholder(): void
     {
         $this->assertIsString($this->placeholder->getPlaceholder());
         $this->assertEquals('LOCALIZATION_ID', $this->placeholder->getPlaceholder());
     }
 
-    public function testReplaceDefault()
+    public function testReplaceDefaultByCurrentLocalization(): void
     {
         $localization = $this->getMockBuilder(Localization::class)->getMock();
 
@@ -52,7 +56,29 @@ class LocalizationIdPlaceholderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('string_1', $value);
     }
 
-    public function testGetValueWithUnknownLocalization()
+    public function testReplaceDefaultByDefaultLocalization(): void
+    {
+        $localization = $this->getMockBuilder(Localization::class)->getMock();
+
+        $this->localizationProvider->expects($this->once())
+            ->method('getCurrentLocalization')
+            ->willReturn(null);
+
+        $this->localizationManager->expects($this->once())
+            ->method('getDefaultLocalization')
+            ->willReturn($localization);
+
+        $localization->expects($this->once())
+            ->method('getId')
+            ->willReturn(1);
+
+        $value = $this->placeholder->replaceDefault('string_LOCALIZATION_ID');
+
+        $this->assertIsString($value);
+        $this->assertEquals('string_1', $value);
+    }
+
+    public function testGetValueWithUnknownLocalization(): void
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage("Can't get current localization");
@@ -61,13 +87,17 @@ class LocalizationIdPlaceholderTest extends \PHPUnit\Framework\TestCase
             ->method('getCurrentLocalization')
             ->willReturn(null);
 
+        $this->localizationManager->expects($this->once())
+            ->method('getDefaultLocalization')
+            ->willReturn(null);
+
         $this->assertEquals(
             'string_LOCALIZATION_ID',
             $this->placeholder->replaceDefault('string_LOCALIZATION_ID')
         );
     }
 
-    public function testReplace()
+    public function testReplace(): void
     {
         $this->localizationProvider->expects($this->never())->method($this->anything());
 
@@ -77,7 +107,7 @@ class LocalizationIdPlaceholderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testReplaceWithoutValue()
+    public function testReplaceWithoutValue(): void
     {
         $this->localizationProvider->expects($this->never())->method($this->anything());
 

@@ -128,7 +128,11 @@ const GrapesjsEditorView = BaseView.extend({
         /**
          * Modal Export Title text
          */
-        textViewCode: __('oro.cms.wysiwyg.export.title')
+        textViewCode: __('oro.cms.wysiwyg.export.title'),
+
+        deviceManager: {
+            devices: []
+        }
     },
 
     /**
@@ -482,17 +486,7 @@ const GrapesjsEditorView = BaseView.extend({
 
         this.builderDelegateEvents();
 
-        this.builder.setComponents(escapeWrapper(this.$el.val()));
-
-        const wrapperAttrs = getWrapperAttrs(this.$el.val());
-        if (!_.isEmpty(wrapperAttrs)) {
-            wrapperAttrs.class && this.builder.getWrapper().addClass(wrapperAttrs.class);
-        }
-
         this.rte = this.builder.RichTextEditor;
-
-        this.builder.setStyle(this.builder.getPureStyleString(this.$stylesInputElement.val()));
-
         if (_.isRTL()) {
             this.rtlFallback();
         }
@@ -516,7 +510,6 @@ const GrapesjsEditorView = BaseView.extend({
         this.listenTo(this.builder, 'component:remove:before', this.componentBeforeRemove.bind(this));
         this.listenTo(this.builder, 'component:remove', this.componentRemove.bind(this));
         this.listenTo(this.builder, 'rteToolbarPosUpdate', this.updateRtePosition.bind(this));
-        this.listenTo(this.builder, 'selector', this.onSelector.bind(this));
         this.listenTo(this.state, 'change', this.updatePropertyField.bind(this));
 
         // Fix reload form when click export to zip dialog
@@ -754,6 +747,33 @@ const GrapesjsEditorView = BaseView.extend({
 
                 $(e.target).tooltip('show');
             });
+
+        this.toggleSelectorManager(model);
+    },
+
+    /**
+     * Toggle Selector Manager in current model doesn't support selector manager
+     * @param {Backbone.Model} model
+     */
+    toggleSelectorManager(model) {
+        const {SelectorManager} = this.builder;
+        const styleManagerEl = SelectorManager.selectorTags.el;
+        const messageContainer = document.createElement('div');
+        messageContainer.classList.add('gjs-sm-header');
+        messageContainer.innerText = __('oro.cms.wysiwyg.style_manager.unsupport');
+        if (model.get('disableSelectorManager')) {
+            styleManagerEl.style.display = 'none';
+            if (!SelectorManager.selectorTags.messageContainer) {
+                styleManagerEl.after(messageContainer);
+                SelectorManager.selectorTags.messageContainer = messageContainer;
+            }
+        } else {
+            styleManagerEl.style.display = '';
+            if (SelectorManager.selectorTags.messageContainer) {
+                SelectorManager.selectorTags.messageContainer.remove();
+                delete SelectorManager.selectorTags.messageContainer;
+            }
+        }
     },
 
     /**
@@ -808,6 +828,16 @@ const GrapesjsEditorView = BaseView.extend({
         mediator.trigger('page:afterChange');
 
         this.$el.closest('.ui-dialog-content').dialog('option', 'minWidth', MIN_EDITOR_WIDTH);
+
+        if (this.$el.valid()) {
+            this.builder.setComponents(escapeWrapper(this.$el.val()));
+            this.builder.setStyle(this.builder.getPureStyleString(this.$stylesInputElement.val()));
+        }
+
+        const wrapperAttrs = getWrapperAttrs(this.$el.val());
+        if (!_.isEmpty(wrapperAttrs)) {
+            wrapperAttrs.class && this.builder.getWrapper().addClass(wrapperAttrs.class);
+        }
 
         this.enabled = true;
         _.delay(() => {
@@ -913,18 +943,6 @@ const GrapesjsEditorView = BaseView.extend({
 
     updatePropertyField() {
         this.$propertiesInputElement.val(JSON.stringify(this.state.toJSON()));
-    },
-
-    /**
-     * Handle change selector to Selector Manager and escaping label
-     * @param {Object} selector
-     */
-    onSelector({event, model}) {
-        if (event === 'change:label' || event === 'add') {
-            model.set('label', _.escape(model.get('label')), {
-                silent: true
-            });
-        }
     },
 
     /**

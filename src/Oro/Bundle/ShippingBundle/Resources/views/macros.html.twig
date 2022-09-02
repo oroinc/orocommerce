@@ -21,7 +21,7 @@
 {% macro renderProductShippingOptions(shippingOptions) %}
     {% import _self as shippingMacros %}
     {% if shippingOptions and shippingOptions|length > 0 %}
-        <table class="grid table table-condensed table-bordered shipping-options-result-grid">
+        <table class="grid grid-main-container table table-condensed table-bordered shipping-options-result-grid">
             {{ shippingMacros._renderItemsHead() }}
             <tbody>
                 {% for key, options in shippingOptions %}

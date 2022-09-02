@@ -12,6 +12,7 @@ use Oro\Bundle\ImportExportBundle\Serializer\Serializer;
 use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Manager\OrderAddressManager;
+use Oro\Bundle\OrderBundle\Manager\TypedOrderAddressCollection;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\ChoiceList\Loader\CallbackChoiceLoader;
@@ -82,10 +83,27 @@ class OrderAddressSelectType extends AbstractType
      */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
+        /** @var TypedOrderAddressCollection $collection */
         $collection = $options['address_collection'];
+        $addresses = $this->getPlainData($collection->toArray());
 
-        $view->vars['attr']['data-addresses'] = json_encode($this->getPlainData($collection->toArray()));
+        $view->vars['attr']['data-addresses'] = json_encode($addresses);
         $view->vars['attr']['data-default'] = $collection->getDefaultAddressKey();
+
+        // Keep value chosen in address selector
+        $address = $form->getData();
+        $value = $view->vars['value'] ?? null;
+        if (($value === null || $value === '') && $address instanceof OrderAddress) {
+            if ($address->getCustomerUserAddress()) {
+                $value = $this->addressManager->getIdentifier($address->getCustomerUserAddress());
+            } elseif ($address->getCustomerAddress()) {
+                $value = $this->addressManager->getIdentifier($address->getCustomerAddress());
+            }
+
+            if (array_key_exists($value, $addresses)) {
+                $view->vars['value'] = $value;
+            }
+        }
     }
 
     /**
@@ -126,7 +144,9 @@ class OrderAddressSelectType extends AbstractType
                 'choice_value' => function ($choice) {
                     if (is_scalar($choice)) {
                         return $choice;
-                    } elseif ($choice instanceof CustomerAddress || $choice instanceof CustomerUserAddress) {
+                    }
+
+                    if ($choice instanceof CustomerAddress || $choice instanceof CustomerUserAddress) {
                         return $this->addressManager->getIdentifier($choice);
                     }
 
@@ -139,7 +159,7 @@ class OrderAddressSelectType extends AbstractType
 
                     return $key;
                 },
-                'group_label_prefix' => self::DEFAULT_GROUP_LABEL_PREFIX,
+                'group_label_prefix' => self::DEFAULT_GROUP_LABEL_PREFIX
             ])
             ->setAllowedValues('address_type', [AddressType::TYPE_BILLING, AddressType::TYPE_SHIPPING])
             ->setAllowedTypes('object', CustomerOwnerAwareInterface::class);

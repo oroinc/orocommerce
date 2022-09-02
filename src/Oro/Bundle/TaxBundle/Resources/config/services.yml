@@ -1,10 +1,9 @@
 services:
     oro_tax.form.autocomplete.product_tax_code.search_handler:
-        public: false
         parent: oro_form.autocomplete.search_handler
         arguments:
             - 'Oro\Bundle\TaxBundle\Entity\ProductTaxCode'
-            - ["code"]
+            - ['code']
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: oro_product_tax_code }
 
@@ -13,16 +12,15 @@ services:
         parent: oro_form.autocomplete.search_handler
         arguments:
             - 'Oro\Bundle\TaxBundle\Entity\ProductTaxCode'
-            - ["code"]
+            - ['code']
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: oro_product_tax_code_entity_search }
 
     oro_tax.form.autocomplete.customer_tax_code.search_handler:
-        public: false
         parent: oro_form.autocomplete.search_handler
         arguments:
             - 'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode'
-            - ["code"]
+            - ['code']
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: oro_customer_tax_code }
 
@@ -34,54 +32,49 @@ services:
             - "@request_stack"
 
     oro_tax.event_listener.customer_form_view:
-        class: 'Oro\Bundle\TaxBundle\EventListener\CustomerFormViewListener'
+        class: Oro\Bundle\TaxBundle\EventListener\CustomerFormViewListener
         arguments:
-            - "@oro_entity.doctrine_helper"
-            - "@request_stack"
-            - 'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode'
-            - 'Oro\Bundle\CustomerBundle\Entity\Customer'
+            - '@request_stack'
+            - '@oro_entity.doctrine_helper'
+            - '@oro_featuretoggle.checker.feature_checker'
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-view, method: onView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-edit, method: onEdit }
 
     oro_tax.event_listener.customer_group_form_view:
-        class: 'Oro\Bundle\TaxBundle\EventListener\CustomerGroupFormViewListener'
+        class: Oro\Bundle\TaxBundle\EventListener\CustomerGroupFormViewListener
         arguments:
-            - "@oro_entity.doctrine_helper"
-            - "@request_stack"
-            - 'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode'
-            - 'Oro\Bundle\CustomerBundle\Entity\CustomerGroup'
+            - '@request_stack'
+            - '@oro_entity.doctrine_helper'
+            - '@oro_featuretoggle.checker.feature_checker'
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-group-view, method: onView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-group-edit, method: onEdit }
 
     oro_tax.event_listener.product_form_view:
-        class: 'Oro\Bundle\TaxBundle\EventListener\ProductFormViewListener'
+        class: Oro\Bundle\TaxBundle\EventListener\ProductFormViewListener
         arguments:
-            - "@oro_entity.doctrine_helper"
-            - "@request_stack"
-            - 'Oro\Bundle\TaxBundle\Entity\ProductTaxCode'
-            - 'Oro\Bundle\ProductBundle\Entity\Product'
+            - '@request_stack'
+            - '@oro_entity.doctrine_helper'
+            - '@oro_featuretoggle.checker.feature_checker'
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onEdit }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-create-step-two, method: onEdit }
 
     oro_tax.form.autocomplete.tax.search_handler:
-        public: false
         parent: oro_form.autocomplete.search_handler
         arguments:
             - 'Oro\Bundle\TaxBundle\Entity\Tax'
-            - ["code"]
+            - ['code']
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: oro_tax_autocomplete, acl_resource: oro_tax_view }
 
     oro_tax.form.autocomplete.tax_jurisdiction.search_handler:
-        public: false
         parent: oro_form.autocomplete.search_handler
         arguments:
             - 'Oro\Bundle\TaxBundle\Entity\TaxJurisdiction'
-            - ["code"]
+            - ['code']
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: oro_tax_jurisdiction_autocomplete, acl_resource: oro_tax_jurisdiction_view }
 
@@ -91,34 +84,34 @@ services:
             - { name: validator.constraint_validator, alias: oro_tax_zip_code_fields }
 
     oro_tax.event_listener.customer_grid:
-        class: 'Oro\Bundle\TaxBundle\EventListener\TaxCodeGridListener'
+        class: Oro\Bundle\TaxBundle\EventListener\TaxCodeGridListener
         arguments:
             - 'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode'
-            - 'Oro\Bundle\CustomerBundle\Entity\Customer'
+            - '@oro_featuretoggle.checker.feature_checker'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.customer-customers-select-grid, method: onBuildBefore }
 
     oro_tax.event_listener.customer_grid_groups:
-        class: 'Oro\Bundle\TaxBundle\EventListener\CustomerTaxCodeGridListener'
+        class: Oro\Bundle\TaxBundle\EventListener\CustomerTaxCodeGridListener
         arguments:
             - 'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode'
-            - 'Oro\Bundle\CustomerBundle\Entity\CustomerGroup'
+            - '@oro_featuretoggle.checker.feature_checker'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.customer-customers-select-grid, method: onBuildBefore }
 
     oro_tax.event_listener.customer_group_grid:
-        class: 'Oro\Bundle\TaxBundle\EventListener\TaxCodeGridListener'
+        class: Oro\Bundle\TaxBundle\EventListener\TaxCodeGridListener
         arguments:
             - 'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode'
-            - 'Oro\Bundle\CustomerBundle\Entity\CustomerGroup'
+            - '@oro_featuretoggle.checker.feature_checker'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.customer-groups-select-grid, method: onBuildBefore }
 
     oro_tax.event_listener.product_grid:
-        class: 'Oro\Bundle\TaxBundle\EventListener\ProductTaxCodeGridListener'
+        class: Oro\Bundle\TaxBundle\EventListener\ProductTaxCodeGridListener
         arguments:
             - 'Oro\Bundle\TaxBundle\Entity\ProductTaxCode'
-            - 'Oro\Bundle\ProductBundle\Entity\Product'
+            - '@oro_featuretoggle.checker.feature_checker'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.products-grid, method: onBuildBefore }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.products-select-grid, method: onBuildBefore }

@@ -6,8 +6,8 @@ use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\CatalogBundle\Provider\ProductsContentVariantProvider;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryContentVariants;
 use Oro\Bundle\FrontendTestFrameworkBundle\Entity\TestContentVariant;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
-use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class ProductsContentVariantProviderTest extends WebTestCase

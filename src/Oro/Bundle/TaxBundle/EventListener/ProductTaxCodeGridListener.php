@@ -9,7 +9,10 @@ use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
  */
 class ProductTaxCodeGridListener extends TaxCodeGridListener
 {
-    protected function addColumn(DatagridConfiguration $config)
+    /**
+     * {@inheritDoc}
+     */
+    protected function addColumn(DatagridConfiguration $config): void
     {
         $config->offsetSetByPath(
             sprintf('[columns][%s]', $this->getDataName()),
@@ -21,8 +24,8 @@ class ProductTaxCodeGridListener extends TaxCodeGridListener
                     'editor' => [
                         'view' => 'orotax/js/app/views/editor/product-tax-code-editor-view',
                         'view_options' => [
-                            'value_field_name' => 'taxCode',
-                        ],
+                            'value_field_name' => $this->getTaxCodeField()
+                        ]
                     ],
                     'autocomplete_api_accessor' => [
                         'class' => 'oroui/js/tools/search-api-accessor',
@@ -38,7 +41,10 @@ class ProductTaxCodeGridListener extends TaxCodeGridListener
         );
     }
 
-    protected function addFilter(DatagridConfiguration $config)
+    /**
+     * {@inheritDoc}
+     */
+    protected function addFilter(DatagridConfiguration $config): void
     {
         parent::addFilter($config);
 

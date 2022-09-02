@@ -152,7 +152,7 @@ datagrids:
                     - text.type as type
                     - datetime.created_at as createdAt
                     - datetime.updated_at as updatedAt
-                    - text.inventory_status as inventoryStatus
+                    - text.inv_status as inventoryStatus
                 from:
                     - oro_product_WEBSITE_ID
         columns:
@@ -174,7 +174,7 @@ datagrids:
                     data_name: names_LOCALIZATION_ID
                 inventoryStatus:
                     type:      enum
-                    data_name: inventory_status
+                    data_name: inv_status
                     enum_code: prod_inventory_status
         properties:
             id: ~
@@ -441,12 +441,15 @@ datagrids:
                     - product.status
                     - product.denormalizedDefaultName as productName
                     - product.denormalizedDefaultNameUppercase as productNameUppercase
-                    - IDENTITY(product.inventory_status) AS inventoryStatusId
+                    - productInventoryStatus.name as inventoryStatusName
                 from:
                     - { table: 'Oro\Bundle\ProductBundle\Entity\Product', alias: product }
                 where:
                     and:
                         - product.id <> :parentProduct
+                join:
+                    left:
+                        - { join: product.inventory_status, alias: productInventoryStatus }
             bind_parameters:
                 - parentProduct
         sorters:
@@ -480,10 +483,10 @@ datagrids:
                     options:
                         field_options:
                             choices: "@oro_product.provider.product_status_provider->getAvailableProductStatuses"
-                inventoryStatusId:
+                inventoryStatusName:
                     label:     oro.product.inventory_status.label
                     type:      enum
-                    data_name: inventoryStatusId
+                    data_name: inventoryStatusName
                     enum_code: prod_inventory_status
 
     product-product-variants-edit:

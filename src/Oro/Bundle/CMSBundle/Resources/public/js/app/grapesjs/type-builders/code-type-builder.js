@@ -9,7 +9,7 @@ const CodeTypeBuilder = BaseTypeBuilder.extend({
         label: __('oro.cms.wysiwyg.component.code.label'),
         category: 'Basic',
         attributes: {
-            'class': 'fa fa-code'
+            'class': 'fa fa-file-code-o'
         }
     },
 

@@ -1,0 +1,13 @@
+{% use '@OroPricing/layouts/default/imports/prices.html.twig' %}
+
+{% block __oro_product_price_table__product_price_container_widget %}
+    {{ block('product_price_container') }}
+{% endblock %}
+
+{% block __oro_product_price_table__product_price_table_widget %}
+    {{ block('product_price_table') }}
+{% endblock %}
+
+{% block __oro_product_price_table__product_price_table_body_widget %}
+    {{ block('product_price_table_body') }}
+{% endblock %}

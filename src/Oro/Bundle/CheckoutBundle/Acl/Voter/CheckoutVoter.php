@@ -16,7 +16,7 @@ use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
  */
 class CheckoutVoter implements VoterInterface
 {
-    const ATTRIBUTE_CREATE = 'CHECKOUT_CREATE';
+    private const ATTRIBUTE_CREATE = 'CHECKOUT_CREATE';
 
     private AuthorizationCheckerInterface $authorizationChecker;
 
@@ -38,12 +38,12 @@ class CheckoutVoter implements VoterInterface
             return self::ACCESS_ABSTAIN;
         }
 
-        if (!is_a(EntityClassResolverUtil::getEntityClass($object), CheckoutSourceEntityInterface::class, true)) {
+        if (!EntityClassResolverUtil::isEntityClass($object, CheckoutSourceEntityInterface::class)) {
             return self::ACCESS_ABSTAIN;
         }
 
         if ($this->authorizationChecker->isGranted(BasicPermission::VIEW, $object)
-            && $this->authorizationChecker->isGranted(BasicPermission::CREATE . ';entity:' . Checkout::class)
+            && $this->authorizationChecker->isGranted(BasicPermission::CREATE, 'entity:' . Checkout::class)
         ) {
             return self::ACCESS_GRANTED;
         }

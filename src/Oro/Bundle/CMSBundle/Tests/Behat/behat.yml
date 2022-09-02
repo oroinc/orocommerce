@@ -229,6 +229,37 @@ oro_behat_extension:
             
         Import Button:
             selector: 'span[data-original-title="Import"]'
+
+        Example1 svg wysiwyg image:
+            selector:
+                type: 'xpath'
+                locator: '//img[contains(@alt,"example1_svg_wysiwyg_image")]'
+
+        Example1 svg wysiwyg picture source:
+            selector:
+                type: 'xpath'
+                locator: '//img[contains(@alt,"example1_svg_wysiwyg_image")]//preceding-sibling::source[@type="image/webp"][last()]'
+
+        Page URL Slug Form:
+            selector: 'form[name="oro_cms_page"]'
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+            options:
+                mapping:
+                    URL Slug default value: 'oro_cms_page[slugPrototypesWithRedirect][slugPrototypes][values][default]'
+                    URL Slug English (United States) value:
+                        type: 'xpath'
+                        locator: '//label[text() = "URL Slug"]/ancestor::div[contains(@class, "control-group")]//div[text() = "English (United States)"]/following-sibling::div//input[contains(@class, "fallback-item-value-input")]'
+                    URL Slug English (United States) use fallback:
+                        type: 'xpath'
+                        locator: '//label[text() = "URL Slug"]/ancestor::div[contains(@class, "control-group")]//div[text() = "English (United States)"]/following-sibling::div//input[@type="checkbox"]'
+                    URL Slug French value:
+                        type: 'xpath'
+                        locator: '//label[text() = "URL Slug"]/ancestor::div[contains(@class, "control-group")]//div[text() = "French"]/following-sibling::div//input[contains(@class, "fallback-item-value-input")]'
+                    URL Slug French use fallback:
+                        type: 'xpath'
+                        locator: '//label[text() = "URL Slug"]/ancestor::div[contains(@class, "control-group")]//div[text() = "French"]/following-sibling::div//input[@type="checkbox"]'
+
+
     suites:
         OroCMSBundle:
             contexts:

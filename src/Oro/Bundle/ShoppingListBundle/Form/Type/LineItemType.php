@@ -34,7 +34,6 @@ class LineItemType extends AbstractType
         /** @var LineItem $data */
         $data = $builder->getData();
         $isExisting = $data && $data->getId();
-
         $builder
             ->add(
                 'product',
@@ -135,6 +134,7 @@ class LineItemType extends AbstractType
         $resolver->setDefaults(
             [
                 'data_class' => $this->dataClass,
+                'ownership_disabled' => true,
                 'validation_groups' => function (FormInterface $form) {
                     return $form->getData()->getId() ? ['update'] : ['create'];
                 },

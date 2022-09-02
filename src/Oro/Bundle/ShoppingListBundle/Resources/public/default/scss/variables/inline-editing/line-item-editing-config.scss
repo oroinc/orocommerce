@@ -1,0 +1,11 @@
+/* @theme: default; */
+
+$edit-mode-cell-width: 225px !default;
+$view-mode-cell-width: $edit-mode-cell-width !default;
+$edit-mode-cell-background-color: transparent !default;
+$view-mode-cell-background-color: $edit-mode-cell-background-color !default;
+
+// Mobile
+
+$edit-mode-cell-top-offset-mobile: 6px !default;
+$edit-mode-cell-bottom-offset-mobile: 6px !default;

@@ -228,6 +228,7 @@
     &mdl-dialog {
         border-radius: 4px;
         box-shadow: $grapejs-shadow;
+        animation: none;
 
         .#{$app-prefix}btn-prim {
             display: inline-flex;

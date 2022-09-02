@@ -29,7 +29,7 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
     protected function setUp(): void
     {
         $this->initClient();
-        $this->scopeManager = $this->getContainer()->get('oro_scope.scope_manager');
+        $this->scopeManager = self::getContainer()->get('oro_scope.scope_manager');
         $this->client->useHashNavigation(true);
         $this->loadFixtures([
             LoadCustomerUserData::class,
@@ -40,12 +40,12 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
     /**
      * @dataProvider checkCalculatedCategoriesDataProvider
      */
-    public function testCheckCalculatedCategories(array $visibleCategories, array $invisibleCategories)
+    public function testCheckCalculatedCategories(array $visibleCategories, array $invisibleCategories): void
     {
         $configManager = self::getConfigManager();
         $configManager->set('oro_visibility.category_visibility', CategoryVisibility::VISIBLE);
         $configManager->flush();
-        $this->getContainer()->get('oro_visibility.visibility.cache.cache_builder')
+        self::getContainer()->get('oro_visibility.visibility.cache.cache_builder')
             ->buildCache();
 
         $this->assertTreeCategories($visibleCategories, $invisibleCategories);
@@ -78,11 +78,11 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
         string $categoryToHide,
         array $visibleCategories,
         array $invisibleCategories
-    ) {
+    ): void {
         /** @var Category $category */
         $category = $this->getReference($categoryToHide);
         $this->createCustomerGroupCategoryVisibility($category, CustomerGroupCategoryVisibility::HIDDEN);
-        $this->getContainer()->get('oro_visibility.visibility.cache.cache_builder')->buildCache();
+        self::getContainer()->get('oro_visibility.visibility.cache.cache_builder')->buildCache();
         $this->assertTreeCategories($visibleCategories, $invisibleCategories);
     }
 
@@ -115,12 +115,12 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
         string $categoryToShow,
         array $visibleCategories,
         array $invisibleCategories
-    ) {
+    ): void {
         /** @var Category $category */
         $category = $this->getReference($categoryToShow);
 
         $this->updateCustomerGroupCategoryVisibility($category, CustomerGroupCategoryVisibility::VISIBLE);
-        $this->getContainer()->get('oro_visibility.visibility.cache.cache_builder')->buildCache();
+        self::getContainer()->get('oro_visibility.visibility.cache.cache_builder')->buildCache();
         $this->assertTreeCategories($visibleCategories, $invisibleCategories);
     }
 
@@ -153,11 +153,11 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
         string $categoryToShow,
         array $visibleCategories,
         array $invisibleCategories
-    ) {
+    ): void {
         /** @var Category $category */
         $category = $this->getReference($categoryToShow);
         $this->updateCustomerCategoryVisibility($category, CustomerCategoryVisibility::HIDDEN);
-        $this->getContainer()->get('oro_visibility.visibility.cache.cache_builder')->buildCache();
+        self::getContainer()->get('oro_visibility.visibility.cache.cache_builder')->buildCache();
         $this->assertTreeCategories($visibleCategories, $invisibleCategories);
     }
 
@@ -168,12 +168,12 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
                 'categoryToShow' => 'category_1',
                 'visibleCategories' => [
                     'All Products',
-                ],
-                'invisibleCategories' => [
-                    'category_1',
                     'category_1_2',
                     'category_1_2_3',
                     'category_1_2_3_4',
+                ],
+                'invisibleCategories' => [
+                    'category_1',
                     'category_1_5',
                     'category_1_5_6',
                     'category_1_5_6_7',
@@ -190,11 +190,11 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
         string $categoryToShow,
         array $visibleCategories,
         array $invisibleCategories
-    ) {
+    ): void {
         /** @var Category $category */
         $category = $this->getReference($categoryToShow);
         $this->updateCustomerCategoryVisibility($category, CustomerCategoryVisibility::VISIBLE);
-        $this->getContainer()->get('oro_visibility.visibility.cache.cache_builder')->buildCache();
+        self::getContainer()->get('oro_visibility.visibility.cache.cache_builder')->buildCache();
         $this->assertTreeCategories($visibleCategories, $invisibleCategories);
     }
 
@@ -221,7 +221,7 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
 
     private function createCustomerGroupCategoryVisibility(Category $category, string $visibility): void
     {
-        $em = $this->getContainer()->get('doctrine')
+        $em = self::getContainer()->get('doctrine')
             ->getManagerForClass(CustomerGroupCategoryVisibility::class);
 
         $customerGroupVisibility = new CustomerGroupCategoryVisibility();
@@ -242,7 +242,7 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
 
     private function updateCustomerGroupCategoryVisibility(Category $category, string $visibility): void
     {
-        $em = $this->getContainer()->get('doctrine')
+        $em = self::getContainer()->get('doctrine')
             ->getManagerForClass(CustomerGroupCategoryVisibility::class);
 
         /** @var CustomerGroup $customerGroup */
@@ -264,7 +264,7 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
 
     private function updateCustomerCategoryVisibility(Category $category, string $visibility): void
     {
-        $em = $this->getContainer()->get('doctrine')
+        $em = self::getContainer()->get('doctrine')
             ->getManagerForClass(CustomerCategoryVisibility::class);
 
         /** @var Customer $customer */
@@ -286,7 +286,7 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
 
     private function getCustomerUser(): CustomerUser
     {
-        return $this->getContainer()->get('doctrine')
+        return self::getContainer()->get('doctrine')
             ->getRepository(CustomerUser::class)
             ->findOneBy(['email' => LoadCustomerUserData::EMAIL]);
     }
@@ -294,7 +294,7 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
     private function getActualCategories(): array
     {
         $customerUser = $this->getCustomerUser();
-        $categories = $this->getContainer()
+        $categories = self::getContainer()
             ->get('oro_catalog.provider.category_tree_provider')
             ->getCategories($customerUser, $this->getRootCategory());
 
@@ -310,14 +310,14 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
     {
         $treeCategories = $this->getActualCategories();
 
-        $this->assertCount(count($visibleCategories), $treeCategories);
+        self::assertCount(count($visibleCategories), $treeCategories);
 
         foreach ($visibleCategories as $categoryName) {
-            $this->assertContains($categoryName, $treeCategories);
+            self::assertContains($categoryName, $treeCategories);
         }
 
         foreach ($invisibleCategories as $categoryName) {
-            $this->assertNotContains($categoryName, $treeCategories);
+            self::assertNotContains($categoryName, $treeCategories);
         }
     }
 }

@@ -1,0 +1,21 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: '@OroRFP/layouts/default/oro_product_frontend_product_view/layout.html.twig'
+        - '@add':
+            id: units_request_for_quote
+            parentId: product_price_table
+            prepend: false
+            blockType: units_request_for_quote
+            options:
+                visible: '=data["feature"].isFeatureEnabled("rfp_frontend")'
+                units: '=data["product_units_without_prices"].getProductUnits(data["oro_product_variant"].getProductVariantOrProduct(data))'
+                isPriceUnitsVisible: '=data["oro_price_unit_visibility"].isPriceUnitsVisibleByProduct(data["oro_product_variant"].getProductVariantOrProduct(data))'
+        - '@add':
+            id: request_a_quote_form_button
+            parentId: line_item_buttons
+            blockType: block
+            options:
+                visible: '=data["product_units_without_prices"].getProductUnits(data["oro_product_variant"].getProductVariantOrProduct(data))!=null && data["feature"].isFeatureEnabled("rfp_frontend")'
+                vars:
+                    product: '=data["oro_product_variant"].getProductVariantOrProduct(data)'

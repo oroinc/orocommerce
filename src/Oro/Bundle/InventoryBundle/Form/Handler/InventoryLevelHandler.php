@@ -5,6 +5,7 @@ namespace Oro\Bundle\InventoryBundle\Form\Handler;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\FormBundle\Form\DataTransformer\DataChangesetTransformer;
+use Oro\Bundle\FormBundle\Form\Handler\FormHandlerInterface;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\InventoryBundle\Form\DataTransformer\InventoryLevelGridDataTransformer as LevelTransformer;
 use Oro\Bundle\InventoryBundle\Inventory\InventoryManager;
@@ -15,57 +16,32 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * This handler is saving the data when updating inventory levels
  */
-class InventoryLevelHandler
+class InventoryLevelHandler implements FormHandlerInterface
 {
-    /**
-     * @var FormInterface
-     */
-    protected $form;
-
-    /**
-     * @var ObjectManager
-     */
-    protected $manager;
-
-    /**
-     * @var Request
-     */
-    protected $request;
-
-    /**
-     * @var RoundingServiceInterface
-     */
-    protected $roundingService;
-
-    /**
-     * @var InventoryManager
-     */
-    private $inventoryManager;
+    protected ObjectManager $manager;
+    protected RoundingServiceInterface $roundingService;
+    private InventoryManager $inventoryManager;
 
     public function __construct(
-        FormInterface $form,
         ObjectManager $manager,
-        Request $request,
         RoundingServiceInterface $rounding,
         InventoryManager $inventoryManager
     ) {
-        $this->form = $form;
         $this->manager = $manager;
-        $this->request = $request;
         $this->roundingService = $rounding;
         $this->inventoryManager = $inventoryManager;
     }
 
     /**
-     * @return bool
+     * {@inheritDoc}
      */
-    public function process()
+    public function process($data, FormInterface $form, Request $request)
     {
-        if ($this->request->isMethod('POST')) {
-            $this->form->handleRequest($this->request);
+        if ($request->isMethod('POST')) {
+            $form->handleRequest($request);
 
-            if ($this->form->isSubmitted() && $this->form->isValid()) {
-                $formData = $this->form->getData();
+            if ($form->isSubmitted() && $form->isValid()) {
+                $formData = $form->getData();
 
                 if ($formData && count($formData)) {
                     $this->handleInventoryLevels($formData);
@@ -79,7 +55,7 @@ class InventoryLevelHandler
         return false;
     }
 
-    protected function handleInventoryLevels($levelsData)
+    protected function handleInventoryLevels($levelsData): void
     {
         foreach ($levelsData as $levelData) {
             $inventoryLevel = $this->getInventoryLevelObject($levelData);
@@ -100,11 +76,8 @@ class InventoryLevelHandler
      *      'precision' => <ProductUnitPrecision>,
      *      'data' => ['levelQuantity' => <string|float|int|null>]
      * ]
-     *
-     * @param array $levelData
-     * @return InventoryLevel
      */
-    protected function getInventoryLevelObject(array $levelData)
+    protected function getInventoryLevelObject(array $levelData): InventoryLevel
     {
         /** @var ProductUnitPrecision $precision */
         $precision = $levelData[LevelTransformer::PRECISION_KEY];
@@ -121,11 +94,7 @@ class InventoryLevelHandler
         return $level;
     }
 
-    /**
-     * @param ProductUnitPrecision $precision
-     * @return InventoryLevel|null
-     */
-    protected function findInventoryLevel(ProductUnitPrecision $precision)
+    protected function findInventoryLevel(ProductUnitPrecision $precision):? InventoryLevel
     {
         return $this->manager->getRepository(InventoryLevel::class)->findOneBy(
             ['productUnitPrecision' => $precision]

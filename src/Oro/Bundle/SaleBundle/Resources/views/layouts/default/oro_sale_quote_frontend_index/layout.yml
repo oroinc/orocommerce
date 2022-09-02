@@ -1,6 +1,8 @@
 layout:
     imports:
         -
+            id: oro_customer_page
+        -
             id: oro_sale_quote_grid
             root: page_content
             namespace: quotes

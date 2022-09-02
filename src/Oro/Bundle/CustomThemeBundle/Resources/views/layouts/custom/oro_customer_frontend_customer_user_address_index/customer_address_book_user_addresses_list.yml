@@ -1,0 +1,57 @@
+layout:
+    imports:
+        -
+           id: oro_customer_user_address_list
+           root: customer_address_book_user_addresses_list
+           namespace: user_addresses
+
+    actions:
+        - '@setBlockTheme':
+            themes: '@OroCustomTheme/layouts/custom/oro_customer_frontend_customer_user_address_index/layout.html.twig'
+
+        - '@add':
+            id: customer_address_book_user_addresses_list
+            blockType: container
+            parentId: customer_address_book_page
+
+        - '@add':
+            id: customer_address_book_user_addresses_list_create_button
+            blockType: link
+            parentId: user_addresses_user_addresses_head
+            options:
+                visible: '=data["acl"].isGranted("oro_customer_frontend_customer_user_address_create")'
+                route_name: oro_customer_frontend_customer_user_address_create
+                route_parameters:
+                    entityId: '=data["entity"].getId()'
+                text: 'oro.customer.address.add'
+                icon: plus fa--small
+                attr:
+                    class: 'btn btn--size-s btn--info'
+
+        - '@setOption':
+            id: customer_address_book_user_addresses_list
+            optionName: visible
+            optionValue: '=data["acl"].isGranted("oro_customer_frontend_customer_user_address_view")'
+
+        - '@setOption':
+            id: user_addresses_user_addresses_list
+            optionName: componentOptions
+            optionValue: '=data["customer_user_address_provider"].getComponentOptions(data["entity"])'
+
+        - '@setOption':
+            id: user_addresses_user_addresses_head_title
+            optionName: text
+            optionValue: 'oro.customer.frontend.customer_user_address_book.customer_user_addresses'
+
+        - '@setOption':
+            id: user_addresses_user_addresses_head_title
+            optionName: icon
+            optionValue: 'map-o'
+
+        - '@remove':
+            id: customer_address_book_user_addresses
+
+        - '@remove':
+            id: user_addresses_user_addresses_list_template__manage_addresses
+
+    conditions: 'context["customer_user_address_count"] <= 3'

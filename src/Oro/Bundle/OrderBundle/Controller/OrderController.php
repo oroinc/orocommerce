@@ -3,7 +3,7 @@
 namespace Oro\Bundle\OrderBundle\Controller;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
-use Oro\Bundle\FormBundle\Model\UpdateHandler;
+use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Event\OrderEvent;
 use Oro\Bundle\OrderBundle\Form\Type\OrderType;
@@ -38,12 +38,8 @@ class OrderController extends AbstractController
      *      permission="VIEW",
      *      category="orders"
      * )
-     *
-     * @param Order $order
-     *
-     * @return array
      */
-    public function viewAction(Order $order)
+    public function viewAction(Order $order): array
     {
         return [
             'entity' => $order,
@@ -55,12 +51,8 @@ class OrderController extends AbstractController
      * @Route("/info/{id}", name="oro_order_info", requirements={"id"="\d+"})
      * @Template
      * @AclAncestor("oro_order_view")
-     *
-     * @param Order $order
-     *
-     * @return array
      */
-    public function infoAction(Order $order)
+    public function infoAction(Order $order): array
     {
         if ($order->getSourceEntityClass() && $order->getSourceEntityId()) {
             $sourceEntity = $this->getDoctrine()
@@ -78,10 +70,8 @@ class OrderController extends AbstractController
      * @Route("/", name="oro_order_index")
      * @Template
      * @AclAncestor("oro_order_view")
-     *
-     * @return array
      */
-    public function indexAction()
+    public function indexAction(): array
     {
         return [
             'entity_class' => Order::class,
@@ -99,11 +89,8 @@ class OrderController extends AbstractController
      *      class="OroOrderBundle:Order",
      *      permission="CREATE"
      * )
-     *
-     * @param Request $request
-     * @return array|RedirectResponse
      */
-    public function createAction(Request $request)
+    public function createAction(Request $request): array|RedirectResponse
     {
         $order = new Order();
         $order->setWebsite($this->get(WebsiteManager::class)->getDefaultWebsite());
@@ -123,26 +110,15 @@ class OrderController extends AbstractController
      *      class="OroOrderBundle:Order",
      *      permission="EDIT"
      * )
-     *
-     * @param Order $order
-     *
-     * @param Request $request
-     * @return array|RedirectResponse
      */
-    public function updateAction(Order $order, Request $request)
+    public function updateAction(Order $order, Request $request): array|RedirectResponse
     {
         return $this->update($order, $request);
     }
 
-    /**
-     * @param Order $order
-     * @param Request $request
-     *
-     * @return array|RedirectResponse
-     */
-    protected function update(Order $order, Request $request)
+    protected function update(Order $order, Request $request): array|RedirectResponse
     {
-        if (in_array($request->getMethod(), ['POST', 'PUT'], true)) {
+        if (\in_array($request->getMethod(), ['POST', 'PUT'], true)) {
             $orderRequestHandler = $this->get(OrderRequestHandler::class);
             $order->setCustomer($orderRequestHandler->getCustomer());
             $order->setCustomerUser($orderRequestHandler->getCustomerUser());
@@ -150,30 +126,19 @@ class OrderController extends AbstractController
 
         $form = $this->createForm(OrderType::class, $order);
 
-        return $this->get(UpdateHandler::class)->handleUpdate(
+        return $this->get(UpdateHandlerFacade::class)->update(
             $order,
             $form,
-            function (Order $order) {
-                return [
-                    'route' => 'oro_order_update',
-                    'parameters' => ['id' => $order->getId()],
-                ];
-            },
-            function (Order $order) {
-                return [
-                    'route' => 'oro_order_view',
-                    'parameters' => ['id' => $order->getId()],
-                ];
-            },
             $this->get(TranslatorInterface::class)->trans('oro.order.controller.order.saved.message'),
+            $request,
             null,
             function (Order $order, FormInterface $form, Request $request) {
                 $submittedData = $request->get($form->getName());
                 $event = new OrderEvent($form, $form->getData(), $submittedData);
                 $this->get(EventDispatcherInterface::class)->dispatch($event, OrderEvent::NAME);
                 $orderData = $event->getData()->getArrayCopy();
-
                 $orderAddressSecurityProvider = $this->get(OrderAddressSecurityProvider::class);
+
                 return [
                     'form' => $form->createView(),
                     'entity' => $order,
@@ -189,7 +154,7 @@ class OrderController extends AbstractController
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public static function getSubscribedServices()
     {
@@ -198,9 +163,9 @@ class OrderController extends AbstractController
             OrderRequestHandler::class,
             TotalProvider::class,
             OrderAddressSecurityProvider::class,
-            UpdateHandler::class,
             TranslatorInterface::class,
             EventDispatcherInterface::class,
+            UpdateHandlerFacade::class
         ]);
     }
 }

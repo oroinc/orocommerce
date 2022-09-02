@@ -1,0 +1,9 @@
+layout:
+    imports:
+        -
+            id: oro_product_price
+            root: product_view_specification_container
+    actions:
+        - '@setBlockTheme':
+            themes: '@OroPricing/layouts/default/oro_product_frontend_product_view/mobile.html.twig'
+    conditions: 'context["is_mobile"]'

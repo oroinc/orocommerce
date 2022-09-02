@@ -31,13 +31,19 @@ class WebsiteSearchProductIndexerListener
 
     public function onWebsiteSearchIndex(IndexEntityEvent $event): void
     {
-        if (!$this->hasContextFieldGroup($event->getContext(), 'main')) {
+        if (!$this->hasContextFieldGroup($event->getContext(), 'inventory')) {
             return;
         }
 
         /** @var Product[] $products */
         $products = $event->getEntities();
         foreach ($products as $product) {
+            $event->addField(
+                $product->getId(),
+                'inv_status',
+                $product->getInventoryStatus() ? $product->getInventoryStatus()->getId() : ''
+            );
+
             if ($this->entityFallbackResolver->getFallbackValue($product, 'highlightLowInventory')) {
                 $lowInventoryThreshold = $this->entityFallbackResolver->getFallbackValue(
                     $product,

@@ -43,6 +43,9 @@ class PaymentTermControllerTest extends WebTestCase
         $createForm = $crawler->selectButton(self::SAVE_AND_CLOSE_BUTTON)->form();
         $createForm['oro_payment_term[label]'] = self::TERM_LABEL_NEW;
 
+        $action = $crawler->selectButton(self::SAVE_AND_CLOSE_BUTTON)->attr('data-action');
+        $createForm['input_action'] = $action;
+
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($createForm);
 
@@ -66,6 +69,9 @@ class PaymentTermControllerTest extends WebTestCase
         $createForm = $crawler->selectButton(self::SAVE_AND_CLOSE_BUTTON)->form();
         $createForm['oro_payment_term[label]'] = self::TERM_LABEL_TAG;
 
+        $action = $crawler->selectButton(self::SAVE_AND_CLOSE_BUTTON)->attr('data-action');
+        $createForm['input_action'] = $action;
+
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($createForm);
 
@@ -83,6 +89,9 @@ class PaymentTermControllerTest extends WebTestCase
 
         $createForm = $crawler->selectButton(self::SAVE_AND_CLOSE_BUTTON)->form();
         $createForm['oro_payment_term[label]'] = self::TERM_LABEL_TAG . self::TERM_LABEL_NEW;
+
+        $action = $crawler->selectButton(self::SAVE_AND_CLOSE_BUTTON)->attr('data-action');
+        $createForm['input_action'] = $action;
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($createForm);
@@ -108,6 +117,9 @@ class PaymentTermControllerTest extends WebTestCase
 
         $updateForm = $crawler->selectButton(self::SAVE_AND_CLOSE_BUTTON)->form();
         $updateForm['oro_payment_term[label]'] = self::TERM_LABEL_UPDATED;
+
+        $action = $crawler->selectButton(self::SAVE_AND_CLOSE_BUTTON)->attr('data-action');
+        $updateForm['input_action'] = $action;
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($updateForm);

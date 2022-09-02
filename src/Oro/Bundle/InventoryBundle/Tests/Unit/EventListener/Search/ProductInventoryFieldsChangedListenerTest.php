@@ -221,7 +221,7 @@ class ProductInventoryFieldsChangedListenerTest extends \PHPUnit\Framework\TestC
 
         $this->productReindexManager->expects(self::once())
             ->method('reindexAllProducts')
-            ->with(self::identicalTo($websiteId), true, ['main']);
+            ->with(self::identicalTo($websiteId), true, ['inventory']);
 
         $args = new ConfigUpdateEvent(
             new ConfigChangeSet([$optionName => ['new' => true, 'old' => false]]),

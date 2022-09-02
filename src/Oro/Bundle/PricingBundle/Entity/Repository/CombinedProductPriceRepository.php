@@ -34,6 +34,7 @@ use Oro\Component\DoctrineUtils\ORM\UnionQueryBuilder;
 class CombinedProductPriceRepository extends BaseProductPriceRepository
 {
     private const BATCH_SIZE = 100000;
+    private const BATCH_SIZE_GROUP_BY = 10;
 
     public function copyPricesByPriceList(
         ShardQueryExecutorInterface $insertFromSelectQueryExecutor,
@@ -296,17 +297,20 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         array $products,
         ?CombinedPriceList $configCpl = null
     ): iterable {
-        $qb = $this->getQbForMinimalPrices($websiteId, $products, $configCpl);
-        $qb->select(
-            'IDENTITY(mp.product) as product',
-            'MIN(mp.value) as value',
-            'mp.currency',
-            'IDENTITY(mp.priceList) as cpl',
-            'IDENTITY(mp.unit) as unit'
-        );
-        $qb->groupBy('mp.priceList, mp.product, mp.currency, mp.unit');
+        $cplIds = $this->getCplIdsForWebsite($websiteId, $configCpl);
+        foreach (array_chunk($products, self::BATCH_SIZE_GROUP_BY) as $productsBatch) {
+            $qb = $this->getQbForMinimalPrices($productsBatch, $cplIds);
+            $qb->select(
+                'IDENTITY(mp.product) as product',
+                'MIN(mp.value) as value',
+                'mp.currency',
+                'IDENTITY(mp.priceList) as cpl',
+                'IDENTITY(mp.unit) as unit'
+            );
+            $qb->groupBy('mp.priceList, mp.product, mp.currency, mp.unit');
 
-        return $qb->getQuery()->getArrayResult();
+            yield from $qb->getQuery()->getArrayResult();
+        }
     }
 
     public function findMinByWebsiteForSort(
@@ -314,16 +318,19 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         array $products,
         ?CombinedPriceList $configCpl = null
     ): iterable {
-        $qb = $this->getQbForMinimalPrices($websiteId, $products, $configCpl);
-        $qb->select(
-            'IDENTITY(mp.product) as product',
-            'MIN(mp.value) as value',
-            'mp.currency',
-            'IDENTITY(mp.priceList) as cpl'
-        );
-        $qb->groupBy('mp.priceList, mp.product, mp.currency');
+        $cplIds = $this->getCplIdsForWebsite($websiteId, $configCpl);
+        foreach (array_chunk($products, self::BATCH_SIZE_GROUP_BY) as $productsBatch) {
+            $qb = $this->getQbForMinimalPrices($productsBatch, $cplIds);
+            $qb->select(
+                'IDENTITY(mp.product) as product',
+                'MIN(mp.value) as value',
+                'mp.currency',
+                'IDENTITY(mp.priceList) as cpl'
+            );
+            $qb->groupBy('mp.priceList, mp.product, mp.currency');
 
-        return $qb->getQuery()->getArrayResult();
+            yield from $qb->getQuery()->getArrayResult();
+        }
     }
 
     public function insertMinimalPricesByPriceList(
@@ -450,9 +457,8 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
     }
 
     protected function getQbForMinimalPrices(
-        int $websiteId,
         array $products,
-        ?CombinedPriceList $configCpl = null
+        array $cplIds
     ): QueryBuilder {
         $qb = $this->createQueryBuilder('mp');
 
@@ -463,7 +469,7 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
                     $qb->expr()->in('mp.product', ':products')
                 )
             )
-            ->setParameter('cplIds', $this->getCplIdsForWebsite($websiteId, $configCpl))
+            ->setParameter('cplIds', $cplIds)
             ->setParameter(
                 'products',
                 array_map(

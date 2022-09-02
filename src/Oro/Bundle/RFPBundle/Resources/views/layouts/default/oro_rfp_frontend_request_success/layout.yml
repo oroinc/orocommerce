@@ -1,0 +1,22 @@
+layout:
+    imports:
+        -
+            id: oro_customer_page
+    actions:
+        - '@setBlockTheme':
+            themes: '@OroRFP/layouts/default/oro_rfp_frontend_request_success/layout.html.twig'
+
+        - '@addTree':
+            items:
+                rfp_success_message:
+                    blockType: rfp_request_success
+                    options:
+                        request: '=data["entity"]'
+            tree:
+                page_content:
+                    rfp_success_message: ~
+
+        - '@setOption':
+            id: breadcrumbs
+            optionName: visible
+            optionValue: false

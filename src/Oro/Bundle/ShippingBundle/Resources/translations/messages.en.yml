@@ -67,6 +67,10 @@ oro:
             organization.label: Organization
             websites.label: Websites
             method.label: Method
+            feature:
+                manage:
+                    label: Shipping Rule Management
+                    description: Enables creating a shipping rule to activate a particular shipping method for the provided destinations and websites.
         shippingmethodconfig:
             disabled: Disabled
             entity_label: Shipping Rule Method Config

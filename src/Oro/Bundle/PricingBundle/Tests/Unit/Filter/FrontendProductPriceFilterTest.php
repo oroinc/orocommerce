@@ -77,18 +77,18 @@ class FrontendProductPriceFilterTest extends \PHPUnit\Framework\TestCase
             ->method('addRestriction')
             ->withConsecutive(
                 [
-                    new CommonComparison('decimal.minimal_price_CPL_ID_CURRENCY_kg', Comparison::GTE, 100),
+                    new CommonComparison('decimal.minimal_price.CPL_ID_CURRENCY_kg', Comparison::GTE, 100),
                     FilterUtility::CONDITION_AND,
                     false,
                 ],
                 [
-                    new CommonComparison('decimal.minimal_price_CPL_ID_CURRENCY_kg', Comparison::LTE, 150),
+                    new CommonComparison('decimal.minimal_price.CPL_ID_CURRENCY_kg', Comparison::LTE, 150),
                     FilterUtility::CONDITION_AND,
                     false,
                 ]
             );
 
-        $this->filter->init('test', [FilterUtility::DATA_NAME_KEY => 'minimal_price_CPL_ID_CURRENCY_UNIT']);
+        $this->filter->init('test', [FilterUtility::DATA_NAME_KEY => 'minimal_price.CPL_ID_CURRENCY_UNIT']);
         $this->assertTrue(
             $this->filter->apply(
                 $ds,
@@ -115,12 +115,12 @@ class FrontendProductPriceFilterTest extends \PHPUnit\Framework\TestCase
                     FilterUtility::CONDITION_OR,
                     [
                         new CommonComparison(
-                            'decimal.minimal_price_CPL_ID_CURRENCY_kg',
+                            'decimal.minimal_price.CPL_ID_CURRENCY_kg',
                             Comparison::LTE,
                             new Value(100)
                         ),
                         new CommonComparison(
-                            'decimal.minimal_price_CPL_ID_CURRENCY_kg',
+                            'decimal.minimal_price.CPL_ID_CURRENCY_kg',
                             Comparison::GTE,
                             new Value(150)
                         ),
@@ -128,7 +128,7 @@ class FrontendProductPriceFilterTest extends \PHPUnit\Framework\TestCase
                 )
             );
 
-        $this->filter->init('test', [FilterUtility::DATA_NAME_KEY => 'minimal_price_CPL_ID_CURRENCY_UNIT']);
+        $this->filter->init('test', [FilterUtility::DATA_NAME_KEY => 'minimal_price.CPL_ID_CURRENCY_UNIT']);
         $this->assertTrue(
             $this->filter->apply(
                 $ds,
@@ -157,7 +157,7 @@ class FrontendProductPriceFilterTest extends \PHPUnit\Framework\TestCase
             ->getMock();
 
         $restriction = new CommonComparison(
-            'decimal.minimal_price_CPL_ID_CURRENCY_' . $unit,
+            'decimal.minimal_price.CPL_ID_CURRENCY_' . $unit,
             $comparisonOperator,
             $fieldValue
         );
@@ -165,7 +165,7 @@ class FrontendProductPriceFilterTest extends \PHPUnit\Framework\TestCase
             ->method('addRestriction')
             ->with($restriction, FilterUtility::CONDITION_AND);
 
-        $this->filter->init('test', [FilterUtility::DATA_NAME_KEY => 'minimal_price_CPL_ID_CURRENCY_UNIT']);
+        $this->filter->init('test', [FilterUtility::DATA_NAME_KEY => 'minimal_price.CPL_ID_CURRENCY_UNIT']);
         $this->assertTrue(
             $this->filter->apply(
                 $ds,

@@ -6,15 +6,6 @@ import reservedId from './reserved-id.js';
 import cssValidation from './css-validation.js';
 
 const HTMLValidator = BaseClass.extend({
-    /**
-     * Constraints method collections
-     */
-    constraints: [
-        idCollision,
-        reservedId,
-        cssValidation
-    ],
-
     editor: null,
 
     lineMessage: 'oro.htmlpurifier.formatted_error_line',
@@ -24,13 +15,22 @@ const HTMLValidator = BaseClass.extend({
         HTMLValidator.__super__.constructor.call(this, {editor, ...rest});
     },
 
+    getConstraints({constraints = []} = {}) {
+        return [
+            idCollision,
+            reservedId,
+            cssValidation,
+            ...constraints
+        ];
+    },
+
     validate(htmlString, options = {}) {
         const errors = [];
         const domParser = new DOMParser();
         const htmlStringLines = htmlString.split('\n');
         const htmlFragment = domParser.parseFromString(htmlString, 'text/html');
 
-        const constraints = this.constraints.map(constraint => {
+        const constraints = this.getConstraints(options).map(constraint => {
             const cache = {};
             return params => constraint({cache, ...params});
         });

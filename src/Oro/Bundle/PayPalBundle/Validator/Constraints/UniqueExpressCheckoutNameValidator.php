@@ -2,36 +2,23 @@
 
 namespace Oro\Bundle\PayPalBundle\Validator\Constraints;
 
-use Doctrine\ORM\EntityRepository;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * Checks whether express checkout name does not already used in base integration name.
+ * Validates whether express checkout name does not already used in base integration name.
  */
 class UniqueExpressCheckoutNameValidator extends ConstraintValidator
 {
-    public const ALIAS = 'oro_paypal.validator.unique_express_checkout_name_validator';
+    private ManagerRegistry $doctrine;
 
-    /**
-     * @var DoctrineHelper
-     */
-    private $doctrineHelper;
-
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
-
-    public function __construct(DoctrineHelper $doctrineHelper, TranslatorInterface $translator)
+    public function __construct(ManagerRegistry $doctrine)
     {
-        $this->doctrineHelper = $doctrineHelper;
-        $this->translator = $translator;
+        $this->doctrine = $doctrine;
     }
 
     /**
@@ -76,26 +63,19 @@ class UniqueExpressCheckoutNameValidator extends ConstraintValidator
 
     private function integrationNameAlreadyTaken(string $expressCheckoutName): bool
     {
-        return $this->getRepository(Channel::class)->findOneBy(['name' => $expressCheckoutName]) !== null;
-    }
-
-    private function getRepository(string $entityName): EntityRepository
-    {
-        return $this->doctrineHelper->getEntityRepository($entityName);
+        return $this->doctrine->getRepository(Channel::class)->findOneBy(['name' => $expressCheckoutName]) !== null;
     }
 
     private function validateIntegrationNameUniqueness(
         Channel $integration,
         UniqueExpressCheckoutName $constraint
     ): void {
-        $repository = $this->getRepository(PayPalSettings::class);
-
+        $repository = $this->doctrine->getRepository(PayPalSettings::class);
         if ($repository->findOneBy(['expressCheckoutName' => $integration->getName()])) {
-            $this->context->buildViolation($this->translator->trans(
+            $this->context->addViolation(
                 $constraint->integrationNameUniquenessMessage,
-                ['%name%' => $integration->getName()],
-                'validators'
-            ))->addViolation();
+                ['%name%' => $integration->getName()]
+            );
         }
     }
 }

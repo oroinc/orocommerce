@@ -20,12 +20,28 @@
                     <span class="fa-angle-down"></span>
                 </span>
             </div>
-
+            {% set currentRoute = app.request.get('_route') %}
+            {% set routeParameters = app.request.get('_route_params') %}
+            {% if routeParameters['_used_slug'] is defined %}
+                {% set urlParts = [routeParameters['_used_slug'].url] %}
+                {% if routeParameters['_context_url_attributes'] is defined %}
+                    {% for key, context in routeParameters['_context_url_attributes'] %}
+                        {% if context['_used_slug'] is defined %}
+                            {% set urlParts = urlParts|merge([context['_used_slug'].url]) %}
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+                {% set routeParameters = routeParameters|merge({'_used_slug_url': urlParts}) %}
+            {% endif %}
+            {% set queryParameters = app.request.query.all %}
             <div class="oro-toolbar__dropdown" role="menu" aria-labelledby="{{ togglerId }}">
                 <div data-page-component-module="orofrontendlocalization/js/app/components/localization-switcher-component"
                      data-page-component-options="{{ {
-                        'selectedLocalization': selected_localization.id,
-                        'localizationSwitcherRoute': 'oro_frontend_localization_frontend_set_current_localization'
+                         'selectedLocalization': selected_localization.id,
+                         'localizationSwitcherRoute': 'oro_frontend_localization_frontend_set_current_localization',
+                         'currentRoute': currentRoute,
+                         'currentRouteParameters': routeParameters|json_encode,
+                         'currentQueryParameters': queryParameters|json_encode
                      }|json_encode }}"
                      data-dom-relocation-options="{{ {
                          responsive: [
@@ -72,7 +88,7 @@
                         maxScreenType: 'tablet',
                     },
                     component: 'oroui/js/app/components/view-component',
-                    view: 'orofrontend/blank/js/app/views/fullscreen-popup-view',
+                    view: 'orofrontend/default/js/app/views/fullscreen-popup-view',
                     popupIcon: 'fa-globe fa--gray fa--x-large',
                     popupLabel: 'oro.frontendlocalization.select.label'|trans,
                     contentElement: '[data-localization-menu-container]',

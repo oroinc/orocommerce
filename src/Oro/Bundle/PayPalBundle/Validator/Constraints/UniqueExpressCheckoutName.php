@@ -5,27 +5,12 @@ namespace Oro\Bundle\PayPalBundle\Validator\Constraints;
 use Symfony\Component\Validator\Constraint;
 
 /**
- * PayPalSettings express checkout mame constraint.
+ * This constraint is used to check whether express checkout name does not already used in base integration name.
  */
 class UniqueExpressCheckoutName extends Constraint
 {
-    /**
-     * @var string
-     */
-    public $expressCheckoutNameMessage = 'oro.paypal.express_checkout_name.differs_from_integration_name';
-
-    /**
-     * @var string
-     */
-    public $integrationNameUniquenessMessage = 'oro.paypal.express_checkout_name.unique_integration_name';
-
-    /**
-     * {@inheritDoc}
-     */
-    public function validatedBy(): string
-    {
-        return UniqueExpressCheckoutNameValidator::ALIAS;
-    }
+    public string $expressCheckoutNameMessage = 'oro.paypal.express_checkout_name.differs_from_integration_name';
+    public string $integrationNameUniquenessMessage = 'oro.paypal.express_checkout_name.unique_integration_name';
 
     /**
      * {@inheritDoc}

@@ -1,0 +1,31 @@
+layout:
+    imports:
+        -
+            id: matrix_grid_order
+            root: __root
+            namespace: matrix
+        -
+            id: line_item_buttons
+            root: __matrix_form_summary
+            namespace: matrix
+    actions:
+        - '@setBlockTheme':
+            themes: '@OroShoppingList/layouts/default/imports/product_list_matrix_grid_order/product_list_matrix_grid_order.html.twig'
+        - '@move':
+            id: __matrix_line_item_buttons
+            parentId: __matrix_totals
+            prepend: false
+
+        - '@setOption':
+            id: __matrix_wrapper
+            optionName: form
+            optionValue: '=data["oro_shopping_list_matrix_order_form"].getMatrixOrderFormView(product, shoppingList)'
+        - '@setOption':
+            id: __matrix_wrapper
+            optionName: visible
+            optionValue: '=data["feature"].isFeatureEnabled("guest_shopping_list") || context["is_logged_in"]'
+        - '@setOption':
+            id: __matrix_line_item_form_buttons_shopping_list
+            optionName: productShoppingLists
+            optionValue: 'undefined'
+

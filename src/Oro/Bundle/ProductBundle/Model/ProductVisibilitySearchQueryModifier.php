@@ -13,7 +13,7 @@ class ProductVisibilitySearchQueryModifier
     public function modifyByInventoryStatus(Query $query, array $productInventoryStatuses)
     {
         $query->getCriteria()->andWhere(
-            Criteria::expr()->in('inventory_status', $productInventoryStatuses)
+            Criteria::expr()->in('inv_status', $productInventoryStatuses)
         );
     }
 

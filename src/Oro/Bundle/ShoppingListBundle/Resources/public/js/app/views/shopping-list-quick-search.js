@@ -1,7 +1,7 @@
 import {extend} from 'underscore';
 import BaseView from 'oroui/js/app/views/base/view';
 import ElementsHelper from 'orofrontend/js/app/elements-helper';
-import DropdownSearch from 'orofrontend/blank/js/app/views/dropdown-search';
+import DropdownSearch from 'orofrontend/default/js/app/views/dropdown-search';
 
 const ShoppingListQuickSearch = BaseView.extend(extend({}, ElementsHelper, {
     optionNames: BaseView.prototype.optionNames.concat([

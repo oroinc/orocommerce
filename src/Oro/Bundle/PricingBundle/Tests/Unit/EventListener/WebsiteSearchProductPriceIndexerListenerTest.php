@@ -11,6 +11,7 @@ use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use Oro\Bundle\PricingBundle\EventListener\WebsiteSearchProductPriceIndexerListener;
 use Oro\Bundle\PricingBundle\Tests\Unit\Entity\Repository\Stub\CombinedProductPriceRepository;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\SearchBundle\Formatter\DecimalFlatValueFormatter;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
@@ -55,7 +56,8 @@ class WebsiteSearchProductPriceIndexerListenerTest extends \PHPUnit\Framework\Te
         $this->listener = new WebsiteSearchProductPriceIndexerListener(
             $this->websiteContextManager,
             $this->doctrine,
-            $this->configManager
+            $this->configManager,
+            new DecimalFlatValueFormatter()
         );
         $this->listener->setFeatureChecker($this->featureChecker);
         $this->listener->addFeature('feature1');
@@ -179,25 +181,25 @@ class WebsiteSearchProductPriceIndexerListenerTest extends \PHPUnit\Framework\Te
         $event->expects($this->exactly(4))->method('addPlaceholderField')->withConsecutive(
             [
                 1,
-                'minimal_price_CPL_ID_CURRENCY_UNIT',
+                'minimal_price.CPL_ID_CURRENCY_UNIT',
                 '10.0000',
                 ['CPL_ID' => 1, 'CURRENCY' => 'USD', 'UNIT' => 'liter']
             ],
             [
                 2,
-                'minimal_price_CPL_ID_CURRENCY_UNIT',
+                'minimal_price.CPL_ID_CURRENCY_UNIT',
                 '11.0000',
                 ['CPL_ID' => 1, 'CURRENCY' => 'EUR', 'UNIT' => 'box']
             ],
             [
                 1,
-                'minimal_price_CPL_ID_CURRENCY',
+                'minimal_price.CPL_ID_CURRENCY',
                 '10.0000',
                 ['CPL_ID' => 1, 'CURRENCY' => 'USD']
             ],
             [
                 2,
-                'minimal_price_CPL_ID_CURRENCY',
+                'minimal_price.CPL_ID_CURRENCY',
                 '11.0000',
                 ['CPL_ID' => 1, 'CURRENCY' => 'EUR']
             ]

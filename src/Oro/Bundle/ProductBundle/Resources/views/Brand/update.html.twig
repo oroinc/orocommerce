@@ -1,7 +1,12 @@
 {% extends '@OroUI/actions/update.html.twig' %}
 {% import '@OroUI/macros.html.twig' as UI %}
 
-{% oro_title_set({params : {"%name%": entity.name|default('N/A'|trans)}}) %}
+{% oro_title_set({
+    params : {
+        "%name%": entity.name|default('N/A'|trans),
+        "%entityName%": 'oro.product.brand.entity_label'|trans
+    }
+}) %}
 
 {% set formAction = form.vars.value.id
     ? path('oro_product_brand_update', { id: form.vars.value.id })

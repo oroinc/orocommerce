@@ -20,34 +20,22 @@ class InventoryLevelHandlerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var MockObject|FormInterface
-     */
-    protected $form;
+    /** @var MockObject|FormInterface */
+    private $form;
 
-    /**
-     * @var MockObject|ObjectManager
-     */
-    protected $manager;
+    /** @var MockObject|ObjectManager */
+    private $manager;
 
-    /**
-     * @var MockObject|RoundingServiceInterface
-     */
-    protected $roundingService;
+    /** @var MockObject|RoundingServiceInterface */
+    private $roundingService;
 
-    /**
-     * @var Request
-     */
-    protected $request;
+    /** @var Request */
+    private $request;
 
-    /**
-     * @var InventoryLevelHandler
-     */
-    protected $handler;
+    /** @var InventoryLevelHandler */
+    private $handler;
 
-    /**
-     * @var MockObject|InventoryManager
-     */
+    /** @var MockObject|InventoryManager */
     private $inventoryManager;
 
     protected function setUp(): void
@@ -59,23 +47,21 @@ class InventoryLevelHandlerTest extends \PHPUnit\Framework\TestCase
         $this->request = new Request();
 
         $this->handler = new InventoryLevelHandler(
-            $this->form,
             $this->manager,
-            $this->request,
             $this->roundingService,
             $this->inventoryManager
         );
     }
 
-    public function testProcessGet()
+    public function testProcessGet(): void
     {
         $this->form->expects($this->never())
             ->method('handleRequest');
 
-        $this->handler->process();
+        $this->handler->process([], $this->form, $this->request);
     }
 
-    public function testProcessInvalidForm()
+    public function testProcessInvalidForm(): void
     {
         $this->request->setMethod('POST');
 
@@ -91,16 +77,13 @@ class InventoryLevelHandlerTest extends \PHPUnit\Framework\TestCase
         $this->form->expects($this->never())
             ->method('getData');
 
-        $this->handler->process();
+        $this->handler->process([], $this->form, $this->request);
     }
 
     /**
-     * @param mixed $formData
-     * @param InventoryLevel[] $existingLevels
-     * @param array $expectedLevels
      * @dataProvider processDataProvider
      */
-    public function testProcess($formData, array $existingLevels, array $expectedLevels)
+    public function testProcess(mixed $formData, array $existingLevels, array $expectedLevels): void
     {
         $this->request->setMethod('POST');
 
@@ -115,15 +98,12 @@ class InventoryLevelHandlerTest extends \PHPUnit\Framework\TestCase
                 return \round($value, $precision ?? 0, $roundType ?? 0);
             });
 
-        $this->handler->process();
+        $this->handler->process([], $this->form, $this->request);
 
         $this->assertExpectedLevels($expectedLevels, $persistedEntities, $removedEntities, $existingLevels);
     }
 
-    /**
-     * @return array
-     */
-    public function processDataProvider()
+    public function processDataProvider(): array
     {
         return [
             'no data' => [
@@ -179,7 +159,7 @@ class InventoryLevelHandlerTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testProcessRemovedAndPersistedEntities()
+    public function testProcessRemovedAndPersistedEntities(): void
     {
         $precisionId = 3;
         $precisionQuantity = 31;
@@ -227,17 +207,12 @@ class InventoryLevelHandlerTest extends \PHPUnit\Framework\TestCase
                 return \round($value, $precision ?? 0, $roundType ?? 0);
             });
 
-        $this->handler->process();
+        $this->handler->process([], $this->form, $this->request);
 
         $this->assertExpectedLevels($expectedLevels, $persistedEntities, $removedEntities, $existingLevels);
     }
 
-    /**
-     * @param int $id
-     * @param int $precision
-     * @return ProductUnitPrecision
-     */
-    protected function createPrecision($id, $precision = 0)
+    protected function createPrecision(int $id, int $precision = 0): ProductUnitPrecision
     {
         return $this->getEntity(
             ProductUnitPrecision::class,
@@ -245,14 +220,7 @@ class InventoryLevelHandlerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @param int $id
-     * @param int $precisionId
-     * @param int|float $quantity
-     * @param int $precision
-     * @return InventoryLevel
-     */
-    protected function createLevel($id, $precisionId, $quantity, $precision = 0)
+    protected function createLevel(?int $id, int $precisionId, int|float $quantity, int $precision = 0): InventoryLevel
     {
         return $this->getEntity(
             InventoryLevel::class,
@@ -266,10 +234,10 @@ class InventoryLevelHandlerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @param InventoryLevel[] $levels
-     * @param int $id
+     * @param int|null         $id
      * @return InventoryLevel|null
      */
-    protected function findLevelById(array $levels, $id)
+    protected function findLevelById(array $levels, ?int $id):? InventoryLevel
     {
         foreach ($levels as $level) {
             if ($level->getId() === $id) {
@@ -280,10 +248,7 @@ class InventoryLevelHandlerTest extends \PHPUnit\Framework\TestCase
         return null;
     }
 
-    /**
-     * @param mixed $formData
-     */
-    private function mockForm($formData)
+    private function mockForm(mixed $formData): void
     {
         $this->form->expects($this->once())
             ->method('handleRequest')
@@ -301,10 +266,8 @@ class InventoryLevelHandlerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * Mock repository behaviour
-     * @param array $existingLevels
-     * @return ObjectRepository|MockObject
      */
-    private function mockRepository(array $existingLevels)
+    private function mockRepository(array $existingLevels): ObjectRepository|MockObject
     {
         $repository = $this->createMock(ObjectRepository::class);
         $repository->method('findOneBy')
@@ -329,7 +292,7 @@ class InventoryLevelHandlerTest extends \PHPUnit\Framework\TestCase
         array $persistedEntities,
         array $removedEntities,
         array $existingLevels
-    ) {
+    ): void {
         foreach ($expectedLevels as $expectedLevel) {
             /** @var InventoryLevel $entity */
             $entity = $expectedLevel['entity'];
@@ -352,10 +315,10 @@ class InventoryLevelHandlerTest extends \PHPUnit\Framework\TestCase
      */
     private function mockManager(
         array $existingLevels,
-        $formData,
+        mixed $formData,
         array &$persistedEntities,
         array &$removedEntities
-    ) {
+    ): void {
         $repository = $this->mockRepository($existingLevels);
         $this->manager->method('getRepository')
             ->with(InventoryLevel::class)

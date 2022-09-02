@@ -96,11 +96,14 @@ class CategoryProvider
                 $categoryDTOs = [];
                 $categoryDTOs[$rootCategory->getMaterializedPath()] = new DTO\Category($rootCategory);
                 $categories = $this->categoryTreeProvider->getCategories($user, $rootCategory, false);
+                $categoryIds = array_map(static fn (Category $category) => $category->getId(), $categories);
+                $categoryIds[] = $rootCategory->getId();
                 foreach ($categories as $category) {
                     $dto = new DTO\Category($category);
                     $categoryDTOs[$category->getMaterializedPath()] = $dto;
-                    if ($category->getParentCategory()) {
-                        $categoryDTOs[$category->getParentCategory()->getMaterializedPath()]
+                    $parentCategory = $this->getParentCategoryRecursive($category, $categoryIds);
+                    if ($parentCategory) {
+                        $categoryDTOs[$parentCategory->getMaterializedPath()]
                             ->addChildCategory($dto);
                     }
                 }
@@ -128,10 +131,19 @@ class CategoryProvider
 
         if ($parent !== null) {
             $parents = $this->getCategoryRepository()->getPath($parent);
+
             return is_array($parents) ? $parents : [];
-        } else {
-            return [];
         }
+
+        return [];
+    }
+
+    /**
+     * @return Category[]
+     */
+    public function getCategoryPath(): array
+    {
+        return $this->categoryTreeProvider->getParentCategories($this->getCustomerUser(), $this->getCurrentCategory());
     }
 
     /**
@@ -207,5 +219,27 @@ class CategoryProvider
     private function getCategoryRepository(): CategoryRepository
     {
         return $this->registry->getManagerForClass(Category::class)->getRepository(Category::class);
+    }
+
+
+    private function getCustomerUser(): ?CustomerUser
+    {
+        $token = $this->tokenAccessor->getToken();
+
+        return $token?->getUser() instanceof CustomerUser ? $token->getUser() : null;
+    }
+
+    private function getParentCategoryRecursive(Category $category, array $availableCategoryIds): ?Category
+    {
+        $parentCategory = $category->getParentCategory();
+        if (!$parentCategory) {
+            return null;
+        }
+
+        if (in_array($parentCategory->getId(), $availableCategoryIds, true)) {
+            return $parentCategory;
+        }
+
+        return $this->getParentCategoryRecursive($parentCategory, $availableCategoryIds);
     }
 }

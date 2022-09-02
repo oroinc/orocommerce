@@ -30,14 +30,10 @@ class ContentNodeController extends AbstractController
 {
     /**
      * @Route("/root/{id}", name="oro_content_node_update_root", requirements={"id"="\d+"})
-     *
      * @AclAncestor("oro_web_catalog_update")
      * @Template("@OroWebCatalog/ContentNode/update.html.twig")
-     *
-     * @param WebCatalog $webCatalog
-     * @return array
      */
-    public function createRootAction(WebCatalog $webCatalog)
+    public function createRootAction(WebCatalog $webCatalog): array|RedirectResponse
     {
         $rootNode = $this->getTreeHandler()->getTreeRootByWebCatalog($webCatalog);
         if (!$rootNode) {
@@ -52,13 +48,9 @@ class ContentNodeController extends AbstractController
 
     /**
      * @Route("/create/parent/{id}", name="oro_content_node_create", requirements={"id"="\d+"})
-     *
      * @Template("@OroWebCatalog/ContentNode/update.html.twig")
-     *
-     * @param ContentNode $parentNode
-     * @return array
      */
-    public function createAction(ContentNode $parentNode)
+    public function createAction(ContentNode $parentNode): array|RedirectResponse
     {
         if (!$this->isGranted('oro_web_catalog_update', $parentNode->getWebCatalog())) {
             throw $this->createAccessDeniedException();
@@ -73,13 +65,9 @@ class ContentNodeController extends AbstractController
 
     /**
      * @Route("/update/{id}", name="oro_content_node_update", requirements={"id"="\d+"})
-     *
      * @Template("@OroWebCatalog/ContentNode/update.html.twig")
-     *
-     * @param ContentNode $contentNode
-     * @return array
      */
-    public function updateAction(ContentNode $contentNode)
+    public function updateAction(ContentNode $contentNode): array|RedirectResponse
     {
         if (!$this->isGranted('oro_web_catalog_update', $contentNode->getWebCatalog())) {
             throw $this->createAccessDeniedException();
@@ -92,11 +80,8 @@ class ContentNodeController extends AbstractController
      * @Route("/move", name="oro_content_node_move", methods={"PUT"})
      * @CsrfProtection()
      * @AclAncestor("oro_web_catalog_update")
-     *
-     * @param Request $request
-     * @return JsonResponse
      */
-    public function moveAction(Request $request)
+    public function moveAction(Request $request): JsonResponse
     {
         $nodeId = (int)$request->get('id');
         $parentId = (int)$request->get('parent');
@@ -121,14 +106,9 @@ class ContentNodeController extends AbstractController
      *     name="oro_content_node_get_possible_urls",
      *     requirements={"id"="\d+", "newParentId"="\d+"}
      * )
-     *
      * @ParamConverter("newParentContentNode", options={"id" = "newParentId"})
-     *
-     * @param ContentNode $contentNode
-     * @param ContentNode $newParentContentNode
-     * @return JsonResponse
      */
-    public function getPossibleUrlsAction(ContentNode $contentNode, ContentNode $newParentContentNode)
+    public function getPossibleUrlsAction(ContentNode $contentNode, ContentNode $newParentContentNode): JsonResponse
     {
         if (!$this->isGranted('oro_web_catalog_update', $contentNode->getWebCatalog())
             || !$this->isGranted('oro_web_catalog_update', $newParentContentNode->getWebCatalog())) {
@@ -146,12 +126,8 @@ class ContentNodeController extends AbstractController
      *     name="oro_content_node_get_changed_urls",
      *     requirements={"id"="\d+"}
      * )
-     *
-     * @param ContentNode $node
-     * @param Request $request
-     * @return JsonResponse
      */
-    public function getChangedUrlsAction(ContentNode $node, Request $request)
+    public function getChangedUrlsAction(ContentNode $node, Request $request): JsonResponse
     {
         if (!$this->isGranted('oro_web_catalog_update', $node->getWebCatalog())) {
             throw $this->createAccessDeniedException();
@@ -172,17 +148,11 @@ class ContentNodeController extends AbstractController
         return new JsonResponse($urlChanges);
     }
 
-    /**
-     * @param ContentNode $node
-     * @return array|RedirectResponse
-     */
-    protected function updateTreeNode(ContentNode $node)
+    protected function updateTreeNode(ContentNode $node): array|RedirectResponse
     {
-        $form = $this->createForm(ContentNodeType::class, $node);
-
         return $this->get(UpdateHandlerFacade::class)->update(
             $node,
-            $form,
+            $this->createForm(ContentNodeType::class, $node),
             $this->get(TranslatorInterface::class)->trans('oro.webcatalog.controller.contentnode.saved.message'),
             null,
             $this->get(ContentNodeHandler::class),
@@ -190,16 +160,13 @@ class ContentNodeController extends AbstractController
         );
     }
 
-    /**
-     * @return ContentNodeTreeHandler
-     */
-    protected function getTreeHandler()
+    protected function getTreeHandler(): ContentNodeTreeHandler
     {
         return $this->get(ContentNodeTreeHandler::class);
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public static function getSubscribedServices()
     {
@@ -210,7 +177,7 @@ class ContentNodeController extends AbstractController
             UpdateHandlerFacade::class,
             TranslatorInterface::class,
             ContentNodeHandler::class,
-            ContentNodeFormTemplateDataProvider::class,
+            ContentNodeFormTemplateDataProvider::class
         ]);
     }
 

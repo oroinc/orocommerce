@@ -22,7 +22,7 @@ const MapTypeBuilder = BaseTypeBuilder.extend({
 }, {
     isAllowed(options) {
         const {componentType, editor} = options;
-        const mapModel = editor.DomComponents.getType(componentType).model;
+        const mapModel = editor.Components.getType(componentType).model;
 
         return editor.ComponentRestriction.isAllowedDomain(mapModel.prototype.defaults.mapUrl);
     }

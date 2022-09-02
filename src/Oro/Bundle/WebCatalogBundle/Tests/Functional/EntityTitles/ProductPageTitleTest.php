@@ -3,10 +3,12 @@
 namespace Oro\Bundle\WebCatalogBundle\Tests\Functional\EntityTitles;
 
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebCatalogBundle\Tests\Functional\EntityTitles\DataFixtures\AbstractLoadWebCatalogData;
 use Oro\Bundle\WebCatalogBundle\Tests\Functional\EntityTitles\DataFixtures\LoadWebCatalogProductData;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\WebsiteSearchExtensionTrait;
+use Symfony\Component\HttpFoundation\Request;
 
 class ProductPageTitleTest extends WebTestCase
 {
@@ -30,7 +32,11 @@ class ProductPageTitleTest extends WebTestCase
 
     public function testWebCatalogTitles()
     {
-        $crawler = $this->client->request('GET', AbstractLoadWebCatalogData::CONTENT_NODE_SLUG);
+        $product = $this->getReference(LoadProductData::PRODUCT_1);
+        $crawler = $this->client->request(
+            Request::METHOD_GET,
+            sprintf('%s-%s', AbstractLoadWebCatalogData::CONTENT_NODE_SLUG, $product->getId())
+        );
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);

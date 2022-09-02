@@ -30,7 +30,6 @@ Feature: Move node in tree
     And I drag and drop "By Brand" before "Products"
     And I click "Apply" in modal window
     Then I should see "By Brand" after "New Arrivals" in tree
-
     When I click "Save"
     And I should see "Content Node has been saved" flash message
     Then I should see "By Brand" after "New Arrivals" in tree

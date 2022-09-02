@@ -17,7 +17,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * This subscriber could help decoupled customer entity to append tax code in export file quickly and easily.
+ * Import/export event subscriber for customer tax codes.
  */
 class CustomerTaxCodeImportExportSubscriber implements EventSubscriberInterface
 {
@@ -86,7 +86,7 @@ class CustomerTaxCodeImportExportSubscriber implements EventSubscriberInterface
 
         /** @var Customer $customer */
         $customer = $event->getObject();
-        $event->setResultField(
+        $event->setResultFieldValue(
             'tax_code',
             $this->customerTaxCodeImportExportHelper->normalizeCustomerTaxCode(
                 $this->getCustomerTaxCode($customer)

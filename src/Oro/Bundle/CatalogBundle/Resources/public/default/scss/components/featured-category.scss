@@ -1,0 +1,50 @@
+/* @theme: default; */
+
+.featured-category {
+    display: $featured-category-display;
+
+    color: $featured-category-color;
+    text-decoration: $featured-category-text-decoration;
+
+    &__image {
+        display: $featured-category-image-display;
+        max-width: $featured-category-image-max-width;
+        max-height: $featured-category-image-max-height;
+        height: $featured-category-image-height;
+
+        margin: $featured-category-image-margin;
+
+        border: $featured-category-image-border;
+    }
+
+    &__desc {
+        text-align: $featured-category-desc-text-align;
+
+        padding: $featured-category-desc-inner-offset;
+    }
+
+    &__description {
+        text-align: $featured-category-description-text-align;
+
+        padding: $featured-category-description-inner-offset;
+    }
+
+    &__name {
+        font-size: $featured-category-name-font-size;
+    }
+
+    &__qty {
+        margin: $featured-category-qty-offset;
+
+        font-size: $featured-category-qty-font-size;
+    }
+
+    &:hover {
+        color: $featured-category-color-hover;
+        text-decoration: $featured-category-text-decoration-hover;
+
+        .featured-category__name {
+            text-decoration: $featured-category-name-text-decoration;
+        }
+    }
+}

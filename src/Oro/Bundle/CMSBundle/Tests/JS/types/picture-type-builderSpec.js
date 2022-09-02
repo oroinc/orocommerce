@@ -8,7 +8,7 @@ describe('orocms/js/app/grapesjs/type-builders/image-type-builder', () => {
     let pictureTypeBuilder;
     let editor;
 
-    beforeEach(() => {
+    beforeEach(done => {
         window.setFixtures(html);
         editor = grapesJS.init({
             container: document.querySelector('.page-content-editor')
@@ -23,6 +23,8 @@ describe('orocms/js/app/grapesjs/type-builders/image-type-builder', () => {
                 }
             }
         });
+
+        editor.on('load', () => done());
     });
 
     afterEach(() => {
@@ -161,7 +163,7 @@ describe('orocms/js/app/grapesjs/type-builders/image-type-builder', () => {
             it('check "toHTML"', () => {
                 expect(pictureComponent.toHTML()).toEqual(
                     // eslint-disable-next-line
-                    '<picture><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIHZpZXdCb3g9IjAgMCAyNCAyNCIgc3R5bGU9ImZpbGw6IHJnYmEoMCwwLDAsMC4xNSk7IHRyYW5zZm9ybTogc2NhbGUoMC43NSkiPgogICAgICAgIDxwYXRoIGQ9Ik04LjUgMTMuNWwyLjUgMyAzLjUtNC41IDQuNSA2SDVtMTYgMVY1YTIgMiAwIDAgMC0yLTJINWMtMS4xIDAtMiAuOS0yIDJ2MTRjMCAxLjEuOSAyIDIgMmgxNGMxLjEgMCAyLS45IDItMnoiPjwvcGF0aD4KICAgICAgPC9zdmc+"/></picture>'
+                    '<picture><img src="#" alt="no-alt"/></picture>'
                 );
             });
 

@@ -22,7 +22,9 @@ describe('orocms/js/app/grapesjs/plugins/import/import-dialog-view', () => {
 
         grapesjsEditorView.builder.on('editor:rendered', () => done());
         editor = grapesjsEditorView.builder;
-        editor.setComponents('<div class="test">Test content</div><style>.test {color: red;}</style>');
+        editor.on('load', () => editor.setComponents(
+            '<div class="test">Test content</div><style>.test {color: red;}</style>'
+        ));
     });
 
     afterEach(() => {

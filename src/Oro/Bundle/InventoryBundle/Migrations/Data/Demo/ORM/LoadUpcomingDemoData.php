@@ -13,6 +13,7 @@ use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\InventoryBundle\Provider\UpcomingProductProvider;
 use Oro\Bundle\MigrationBundle\Fixture\AbstractEntityReferenceFixture;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductDemoData;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
 /**
@@ -47,6 +48,11 @@ class LoadUpcomingDemoData extends AbstractEntityReferenceFixture implements Dep
             $this->addFallbacksToEntity($manager, ParentCategoryFallbackProvider::FALLBACK_ID, $category);
         }
 
+        $outOfStockStatus = LoadProductDemoData::getProductInventoryStatus(
+            $manager,
+            Product::INVENTORY_STATUS_OUT_OF_STOCK
+        );
+
         $i = 0;
         $proportion = floor(count($products) / 10);
         foreach ($products as $product) {
@@ -59,6 +65,10 @@ class LoadUpcomingDemoData extends AbstractEntityReferenceFixture implements Dep
                     $fallbackEntity->setScalarValue(1);
                     $manager->persist($fallbackEntity);
                     $accessor->setValue($product, UpcomingProductProvider::IS_UPCOMING, $fallbackEntity);
+
+                    // It is not always the case, but generally it makes more sense that the products marked as upcoming
+                    // are also set to "Out of Stock".
+                    $product->setInventoryStatus($outOfStockStatus);
                 }
             }
         }

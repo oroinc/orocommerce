@@ -248,6 +248,7 @@ class CategoryControllerTest extends WebTestCase
                 ],
             ]
         );
+        $parameters['input_action'] = '{"route": "oro_catalog_category_index"}';
 
         $crawler = $this->client->request(
             'POST',

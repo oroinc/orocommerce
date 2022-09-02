@@ -1,0 +1,47 @@
+/* @theme: default; */
+
+.cms-page {
+    :first-child {
+        margin-top: 0;
+    }
+
+    &__figure_right,
+    &__figure_left {
+        clear: both;
+    }
+
+    &__figure_right {
+        float: right;
+        margin-left: $cms-typography-figcaption-offset-left;
+    }
+
+    &__figure_left {
+        float: left;
+        margin-right: $cms-typography-figcaption-offset-right;
+    }
+
+    table {
+        @extend %table;
+
+        margin-bottom: $offset-twice;
+    }
+
+    iframe[src*='maps'] {
+        width: 100%;
+    }
+
+    .cms-panel-end {
+        display: flex;
+        justify-content: flex-end;
+    }
+}
+
+@include breakpoint('tablet-small') {
+    .cms-page {
+        &__figure_right,
+        &__figure_left {
+            float: none;
+            margin: $cms-typography-figure-offset;
+        }
+    }
+}
