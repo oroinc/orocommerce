@@ -53,7 +53,7 @@ class ProcessAssociationWebsiteEventListenerTest extends TestCase
         /** @var CombinedPriceList $cpl */
         $cpl = $this->getEntity(CombinedPriceList::class, ['id' => 1]);
         $associations = ['config' => true];
-        $processEvent = new ProcessEvent($cpl, $associations);
+        $processEvent = new ProcessEvent($cpl, $associations, 100);
 
         $this->activeCombinedPriceListResolver->expects($this->never())
             ->method($this->anything());
@@ -72,7 +72,7 @@ class ProcessAssociationWebsiteEventListenerTest extends TestCase
         $cpl = $this->getEntity(CombinedPriceList::class, ['id' => 1]);
         $website = $this->getEntity(Website::class, ['id' => 10]);
         $associations = ['website' => ['ids' => [10]]];
-        $processEvent = new ProcessEvent($cpl, $associations, $isSkipNotifications);
+        $processEvent = new ProcessEvent($cpl, $associations, 100, $isSkipNotifications);
 
         $websiteRepo = $this->createMock(WebsiteRepository::class);
         $websiteRepo->expects($this->any())
@@ -88,7 +88,7 @@ class ProcessAssociationWebsiteEventListenerTest extends TestCase
         $cplRepo = $this->createMock(CombinedPriceListRepository::class);
         $cplRepo->expects($this->once())
             ->method('updateCombinedPriceListConnection')
-            ->with($cpl, $cpl, $website, null)
+            ->with($cpl, $cpl, $website, 100, null)
             ->willReturn($relation);
         $this->registry->expects($this->any())
             ->method('getRepository')
@@ -122,7 +122,7 @@ class ProcessAssociationWebsiteEventListenerTest extends TestCase
         /** @var CombinedPriceList $cpl */
         $cpl = $this->getEntity(CombinedPriceList::class, ['id' => 1]);
         $associations = ['website' => ['ids' => [10]]];
-        $processEvent = new ProcessEvent($cpl, $associations);
+        $processEvent = new ProcessEvent($cpl, $associations, 100);
 
         $websiteRepo = $this->createMock(WebsiteRepository::class);
         $websiteRepo->expects($this->any())

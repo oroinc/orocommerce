@@ -103,7 +103,8 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
                                 [
                                     'collection' => $associationData['collection'],
                                     'assign_to' => $associationData['assign_to'],
-                                    'jobId' => $child->getId()
+                                    'jobId' => $child->getId(),
+                                    'version' => time()
                                 ]
                             );
                         }

@@ -84,7 +84,7 @@ class BuildPricesDemoDataFixturesListener extends AbstractDemoDataFixturesListen
             $this->combinedPriceListsBuilderFacade->rebuild([$cpl]);
             $assignTo = $association['assign_to'] ?? [];
             if (!empty($assignTo)) {
-                $this->combinedPriceListsBuilderFacade->processAssignments($cpl, $assignTo, true);
+                $this->combinedPriceListsBuilderFacade->processAssignments($cpl, $assignTo, null, true);
             }
             $this->combinedPriceListsBuilderFacade->triggerProductIndexation($cpl, $assignTo);
         }
