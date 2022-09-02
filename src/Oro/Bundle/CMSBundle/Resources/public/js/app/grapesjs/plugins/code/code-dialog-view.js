@@ -105,7 +105,7 @@ define(function(require) {
         initialize: function(options) {
             this.codeViewer = this.editor.CodeManager.getViewer('CodeMirror').clone();
             this.codeViewer.set(this.codeViewerOptions);
-            this.content = _.unescape(this.editor.getSelected().getEl().innerHTML);
+            this.content = _.unescape(this.editor.getSelected().getContent());
             CodeDialogView.__super__.initialize.call(this, options);
         },
 
@@ -184,7 +184,7 @@ define(function(require) {
         onSave: function() {
             if (!this.disabled) {
                 const codeContent = _.escape(this.viewerEditor.getValue().trim());
-                this.editor.getSelected().components(codeContent);
+                this.editor.getSelected().setContent(codeContent);
                 this.dialog.remove();
             }
         },
