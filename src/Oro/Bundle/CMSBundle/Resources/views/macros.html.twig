@@ -1,0 +1,8 @@
+{% macro renderWysiwygContent(content, contentStyle) %}
+    {%- if contentStyle|trim|length -%}
+        {%- apply spaceless -%}
+            <style type="text/css">{{ contentStyle|render_content }}</style>
+        {%- endapply -%}
+    {%- endif %}
+    {{- content|render_content -}}
+{% endmacro %}

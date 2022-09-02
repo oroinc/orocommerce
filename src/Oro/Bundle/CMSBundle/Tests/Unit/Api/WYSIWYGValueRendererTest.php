@@ -7,11 +7,9 @@ use Twig\Environment;
 
 class WYSIWYGValueRendererTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var Environment|\PHPUnit\Framework\MockObject\MockObject */
-    private $twig;
+    private Environment|\PHPUnit\Framework\MockObject\MockObject $twig;
 
-    /** @var WYSIWYGValueRenderer */
-    private $wysiwygValueRenderer;
+    private WYSIWYGValueRenderer $wysiwygValueRenderer;
 
     protected function setUp(): void
     {
@@ -22,21 +20,15 @@ class WYSIWYGValueRendererTest extends \PHPUnit\Framework\TestCase
 
     public function testRender(): void
     {
-        $this->twig->expects(self::exactly(2))
+        $expected = 'rendered value with style';
+        $value = 'sample value';
+        $style = 'sample style';
+        $this->twig->expects(self::once())
             ->method('render')
-            ->withConsecutive(
-                ['@OroCMS/Api/Field/render_content.html.twig', ['value' => 'value']],
-                ['@OroCMS/Api/Field/render_content.html.twig', ['value' => 'style']]
-            )
-            ->willReturnOnConsecutiveCalls(
-                'rendered value',
-                'rendered style'
-            );
+            ->with('@OroCMS/Api/Field/render_content.html.twig', ['value' => $value, 'style' => $style])
+            ->willReturn($expected);
 
-        self::assertEquals(
-            '<style type="text/css">rendered style</style>rendered value',
-            $this->wysiwygValueRenderer->render('value', 'style')
-        );
+        self::assertEquals($expected, $this->wysiwygValueRenderer->render($value, $style));
     }
 
     public function testRenderForNullValueAndStyle(): void
@@ -49,27 +41,25 @@ class WYSIWYGValueRendererTest extends \PHPUnit\Framework\TestCase
 
     public function testRenderForNullValue(): void
     {
+        $expected = 'rendered style';
+        $style = 'sample style';
         $this->twig->expects(self::once())
             ->method('render')
-            ->with('@OroCMS/Api/Field/render_content.html.twig', ['value' => 'style'])
-            ->willReturn('rendered style');
+            ->with('@OroCMS/Api/Field/render_content.html.twig', ['value' => '', 'style' => $style])
+            ->willReturn($expected);
 
-        self::assertEquals(
-            '<style type="text/css">rendered style</style>',
-            $this->wysiwygValueRenderer->render(null, 'style')
-        );
+        self::assertEquals($expected, $this->wysiwygValueRenderer->render(null, $style));
     }
 
     public function testRenderForNullStyle(): void
     {
+        $expected = 'rendered value';
+        $value = 'sample value';
         $this->twig->expects(self::once())
             ->method('render')
-            ->with('@OroCMS/Api/Field/render_content.html.twig', ['value' => 'value'])
-            ->willReturn('rendered value');
+            ->with('@OroCMS/Api/Field/render_content.html.twig', ['value' => $value, 'style' => ''])
+            ->willReturn($expected);
 
-        self::assertEquals(
-            'rendered value',
-            $this->wysiwygValueRenderer->render('value', null)
-        );
+        self::assertEquals($expected, $this->wysiwygValueRenderer->render($value, null));
     }
 }
