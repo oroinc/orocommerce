@@ -80,6 +80,7 @@ class FeatureContext extends OroFeatureContext implements
         $unitPrice->focus();
         $unitPrice->setValue('5.0');
         $unitPrice->blur();
+        $this->waitForAjax();
 
         $this->getPage()->pressButton('Save and Close');
 

@@ -18,14 +18,11 @@ class CategoryTreeHandlerListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var CategoryVisibilityProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $categoryVisibilityProvider;
+    private CategoryVisibilityProvider|\PHPUnit\Framework\MockObject\MockObject $categoryVisibilityProvider;
 
-    /** @var CategoryTreeHandlerListener */
-    private $listener;
+    private CategoryTreeHandlerListener $listener;
 
-    /** @var array */
-    private static $categories = [
+    private static array $categories = [
         ['id' => 1, 'parent' => null],
         ['id' => 2, 'parent' => 1],
         ['id' => 3, 'parent' => 1],
@@ -58,7 +55,7 @@ class CategoryTreeHandlerListenerTest extends \PHPUnit\Framework\TestCase
         array $expected,
         array $hiddenCategoryIds,
         UserInterface $user = null
-    ) {
+    ): void {
         $categories = $this->prepareCategories($categories);
         $expected = $this->prepareCategories($expected);
         $event = new CategoryTreeCreateAfterEvent($categories);
@@ -76,17 +73,14 @@ class CategoryTreeHandlerListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->listener->onCreateAfter($event);
         $actual = $event->getCategories();
-        $this->assertEquals(count($expected), count($actual));
+        $this->assertCount(count($expected), $actual);
 
         foreach ($actual as $id => $category) {
             $this->assertEquals($expected[$id]->getId(), $category->getId());
         }
     }
 
-    /**
-     * @return array
-     */
-    public function onCreateAfterDataProvider()
+    public function onCreateAfterDataProvider(): array
     {
         return [
             'tree for backend user' => [
@@ -100,6 +94,12 @@ class CategoryTreeHandlerListenerTest extends \PHPUnit\Framework\TestCase
                 'expected' => [
                     ['id' => 1, 'parent' => null],
                     ['id' => 2, 'parent' => 1],
+                    ['id' => 6, 'parent' => 4],
+                    ['id' => 7, 'parent' => 4],
+                    ['id' => 12, 'parent' => 10],
+                    ['id' => 13, 'parent' => 10],
+                    ['id' => 14, 'parent' => 11],
+                    ['id' => 15, 'parent' => 11],
                 ],
                 'hiddenCategoryIds' => [3, 4, 5, 8, 9, 10, 11],
                 'user' => null
@@ -115,6 +115,12 @@ class CategoryTreeHandlerListenerTest extends \PHPUnit\Framework\TestCase
                     ['id' => 7, 'parent' => 4],
                     ['id' => 8, 'parent' => 5],
                     ['id' => 9, 'parent' => 5],
+                    ['id' => 10, 'parent' => 3],
+                    ['id' => 11, 'parent' => 3],
+                    ['id' => 12, 'parent' => 10],
+                    ['id' => 13, 'parent' => 10],
+                    ['id' => 14, 'parent' => 11],
+                    ['id' => 15, 'parent' => 11],
                 ],
                 'hiddenCategoryIds' => [3],
                 'user' => new CustomerUser()
@@ -126,7 +132,7 @@ class CategoryTreeHandlerListenerTest extends \PHPUnit\Framework\TestCase
      * @param array $categories
      * @return Category[]
      */
-    private function prepareCategories(array $categories)
+    private function prepareCategories(array $categories): array
     {
         /** @var Category[] $categoriesCollection */
         $categoriesCollection = [];
@@ -148,15 +154,10 @@ class CategoryTreeHandlerListenerTest extends \PHPUnit\Framework\TestCase
         return $categoriesCollection;
     }
 
-    /**
-     * @param int $id
-     * @param Category[] $categoriesCollection
-     * @return null
-     */
-    private function getParent($id, $categoriesCollection)
+    private function getParent(?int $id, array $categories): ?Category
     {
         $parent = null;
-        foreach ($categoriesCollection as $category) {
+        foreach ($categories as $category) {
             if ($category->getId() === $id) {
                 $parent = $category;
             }

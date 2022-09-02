@@ -5,7 +5,13 @@
 #}
 {% extends '@OroSearch/Search/searchResultItem.html.twig' %}
 
-{% set showImage = false %}
+{% set showImage = true %}
+
+{% set mainProductImage = entity.getImagesByType('main').first() %}
+{% if mainProductImage %}
+    {% set image = mainProductImage.image %}
+{% endif %}
+
 
 {% set recordUrl = indexer_item.recordUrl %}
 

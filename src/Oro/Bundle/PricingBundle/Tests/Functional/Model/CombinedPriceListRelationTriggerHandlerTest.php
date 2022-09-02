@@ -55,7 +55,11 @@ class CombinedPriceListRelationTriggerHandlerTest extends WebTestCase
         self::assertMessageSent(
             RebuildCombinedPriceListsTopic::getName(),
             [
-                'website' => $website->getId()
+                'assignments' => [
+                    [
+                        'website' => $website->getId()
+                    ]
+                ]
             ]
         );
     }
@@ -75,7 +79,11 @@ class CombinedPriceListRelationTriggerHandlerTest extends WebTestCase
         self::assertMessageSent(
             RebuildCombinedPriceListsTopic::getName(),
             [
-                'website' => $website->getId()
+                'assignments' => [
+                    [
+                        'website' => $website->getId()
+                    ]
+                ]
             ]
         );
     }
@@ -97,9 +105,13 @@ class CombinedPriceListRelationTriggerHandlerTest extends WebTestCase
         self::assertMessageSent(
             RebuildCombinedPriceListsTopic::getName(),
             [
-                'website'       => $website->getId(),
-                'customer'      => $customer->getId(),
-                'customerGroup' => $customer->getGroup()->getId()
+                'assignments' => [
+                    [
+                        'website'       => $website->getId(),
+                        'customer'      => $customer->getId(),
+                        'customerGroup' => $customer->getGroup()->getId()
+                    ]
+                ]
             ]
         );
     }
@@ -127,8 +139,12 @@ class CombinedPriceListRelationTriggerHandlerTest extends WebTestCase
         self::assertMessageSent(
             RebuildCombinedPriceListsTopic::getName(),
             [
-                'website'  => $website->getId(),
-                'customer' => $customer->getId()
+                'assignments' => [
+                    [
+                        'website'  => $website->getId(),
+                        'customer' => $customer->getId()
+                    ]
+                ]
             ]
         );
     }
@@ -159,9 +175,13 @@ class CombinedPriceListRelationTriggerHandlerTest extends WebTestCase
         self::assertMessageSent(
             RebuildCombinedPriceListsTopic::getName(),
             [
-                'website'       => $website->getId(),
-                'customer'      => $customer->getId(),
-                'customerGroup' => $group->getId()
+                'assignments' => [
+                    [
+                        'website'       => $website->getId(),
+                        'customer'      => $customer->getId(),
+                        'customerGroup' => $group->getId()
+                    ]
+                ]
             ]
         );
     }
@@ -174,7 +194,9 @@ class CombinedPriceListRelationTriggerHandlerTest extends WebTestCase
 
         self::assertMessageSent(
             RebuildCombinedPriceListsTopic::getName(),
-            []
+            [
+                'assignments' => [[]]
+            ]
         );
     }
 
@@ -194,8 +216,12 @@ class CombinedPriceListRelationTriggerHandlerTest extends WebTestCase
         self::assertMessageSent(
             RebuildCombinedPriceListsTopic::getName(),
             [
-                'website'       => $website->getId(),
-                'customerGroup' => $customerGroup->getId()
+                'assignments' => [
+                    [
+                        'website'       => $website->getId(),
+                        'customerGroup' => $customerGroup->getId()
+                    ]
+                ]
             ]
         );
     }
@@ -223,8 +249,12 @@ class CombinedPriceListRelationTriggerHandlerTest extends WebTestCase
         self::assertMessageSent(
             RebuildCombinedPriceListsTopic::getName(),
             [
-                'website'       => $website->getId(),
-                'customerGroup' => $group->getId()
+                'assignments' => [
+                    [
+                        'website'       => $website->getId(),
+                        'customerGroup' => $group->getId()
+                    ]
+                ]
             ]
         );
     }
@@ -260,26 +290,24 @@ class CombinedPriceListRelationTriggerHandlerTest extends WebTestCase
 
         self::assertNotEmpty($group1->getId());
         self::assertNotEmpty($group2->getId());
-        self::assertMessagesCount(RebuildCombinedPriceListsTopic::getName(), 3);
+        self::assertMessagesCount(RebuildCombinedPriceListsTopic::getName(), 1);
         self::assertMessageSent(
             RebuildCombinedPriceListsTopic::getName(),
             [
-                'website'       => $website->getId(),
-                'customerGroup' => $group1->getId()
-            ]
-        );
-        self::assertMessageSent(
-            RebuildCombinedPriceListsTopic::getName(),
-            [
-                'website'       => $website->getId(),
-                'customerGroup' => $group2->getId()
-            ]
-        );
-        self::assertMessageSent(
-            RebuildCombinedPriceListsTopic::getName(),
-            [
-                'website'       => $website->getId(),
-                'customerGroup' => $customerGroup->getId()
+                'assignments' => [
+                    [
+                        'customerGroup' => $customerGroup->getId(),
+                        'website'       => $website->getId()
+                    ],
+                    [
+                        'customerGroup' => $group1->getId(),
+                        'website'       => $website->getId()
+                    ],
+                    [
+                        'customerGroup' => $group2->getId(),
+                        'website'       => $website->getId()
+                    ]
+                ]
             ]
         );
     }
@@ -299,7 +327,11 @@ class CombinedPriceListRelationTriggerHandlerTest extends WebTestCase
         self::assertMessageSent(
             RebuildCombinedPriceListsTopic::getName(),
             [
-                'force' => true
+                'assignments' => [
+                    [
+                        'force' => true
+                    ]
+                ]
             ]
         );
     }
@@ -316,8 +348,12 @@ class CombinedPriceListRelationTriggerHandlerTest extends WebTestCase
         self::assertMessageSent(
             RebuildCombinedPriceListsTopic::getName(),
             [
-                'website'       => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
-                'customer'      => $this->getReference('customer.level_1.3')->getId()
+                'assignments' => [
+                    [
+                        'website'       => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
+                        'customer'      => $this->getReference('customer.level_1.3')->getId()
+                    ]
+                ]
             ]
         );
     }
@@ -335,6 +371,9 @@ class CombinedPriceListRelationTriggerHandlerTest extends WebTestCase
         array $expectedMessages
     ) {
         $priceList = $this->getReference($priceListReference);
+        $this->resolveReferences($expectedMessages);
+        $this->resolveReferences($fallbackSettings);
+
         $this->createFallbacks($fallbackSettings);
 
         $this->handler->handlePriceListStatusChange($priceList);
@@ -356,9 +395,10 @@ class CombinedPriceListRelationTriggerHandlerTest extends WebTestCase
                 [],
                 [
                     [
-                        'website' => LoadWebsiteData::WEBSITE1
+                        'assignments' => [
+                            ['website' => LoadWebsiteData::WEBSITE1]
+                        ]
                     ]
-
                 ]
             ],
             'W:t, G:f, C:t' => [
@@ -367,15 +407,19 @@ class CombinedPriceListRelationTriggerHandlerTest extends WebTestCase
                     [
                         'website' => LoadWebsiteData::WEBSITE1,
                         'group'   => 'customer_group.group1'
-                    ]
+                    ],
                 ],
                 [
                     [
-                        'website' => LoadWebsiteData::WEBSITE1
-                    ],
-                    [
-                        'website'       => LoadWebsiteData::WEBSITE1,
-                        'customerGroup' => 'customer_group.group1'
+                        'assignments' => [
+                            [
+                                'customerGroup' => 'customer_group.group1',
+                                'website'       => LoadWebsiteData::WEBSITE1,
+                            ],
+                            [
+                                'website' => LoadWebsiteData::WEBSITE1
+                            ]
+                        ]
                     ]
                 ]
             ],
@@ -393,16 +437,20 @@ class CombinedPriceListRelationTriggerHandlerTest extends WebTestCase
                 ],
                 [
                     [
-                        'website' => LoadWebsiteData::WEBSITE1
-                    ],
-                    [
-                        'website'       => LoadWebsiteData::WEBSITE1,
-                        'customerGroup' => 'customer_group.group1'
-                    ],
-                    [
-                        'website'       => LoadWebsiteData::WEBSITE1,
-                        'customerGroup' => 'customer_group.group1',
-                        'customer'      => 'customer.level_1.3'
+                        'assignments' => [
+                            [
+                                'customerGroup' => 'customer_group.group1',
+                                'website'       => LoadWebsiteData::WEBSITE1,
+                                'customer'      => 'customer.level_1.3'
+                            ],
+                            [
+                                'customerGroup' => 'customer_group.group1',
+                                'website'       => LoadWebsiteData::WEBSITE1,
+                            ],
+                            [
+                                'website' => LoadWebsiteData::WEBSITE1
+                            ]
+                        ]
                     ]
                 ],
             ],
@@ -416,12 +464,16 @@ class CombinedPriceListRelationTriggerHandlerTest extends WebTestCase
                 ],
                 [
                     [
-                        'website' => LoadWebsiteData::WEBSITE1
-                    ],
-                    [
-                        'website'       => LoadWebsiteData::WEBSITE1,
-                        'customerGroup' => 'customer_group.group1',
-                        'customer'      => 'customer.level_1.3'
+                        'assignments' => [
+                            [
+                                'customerGroup' => 'customer_group.group1',
+                                'website'       => LoadWebsiteData::WEBSITE1,
+                                'customer'      => 'customer.level_1.3'
+                            ],
+                            [
+                                'website' => LoadWebsiteData::WEBSITE1
+                            ]
+                        ]
                     ]
                 ],
             ],
@@ -431,18 +483,22 @@ class CombinedPriceListRelationTriggerHandlerTest extends WebTestCase
                 ],
                 [
                     [
-                        'website'  => LoadWebsiteData::WEBSITE1,
-                        'customer' => 'customer.level_1_1'
-                    ],
-                    [
-                        'website'       => LoadWebsiteData::WEBSITE1,
-                        'customerGroup' => 'customer_group.group2',
-                        'customer'      => 'customer.level_1.2'
-                    ],
-                    [
-                        'website'       => LoadWebsiteData::WEBSITE1,
-                        'customerGroup' => 'customer_group.group1',
-                        'customer'      => 'customer.level_1.3'
+                        'assignments' => [
+                            [
+                                'customer'      => 'customer.level_1.2',
+                                'customerGroup' => 'customer_group.group2',
+                                'website'       => LoadWebsiteData::WEBSITE1,
+                            ],
+                            [
+                                'customer'      => 'customer.level_1.3',
+                                'customerGroup' => 'customer_group.group1',
+                                'website'       => LoadWebsiteData::WEBSITE1,
+                            ],
+                            [
+                                'customer' => 'customer.level_1_1',
+                                'website'  => LoadWebsiteData::WEBSITE1,
+                            ]
+                        ]
                     ]
                 ],
             ],
@@ -456,18 +512,22 @@ class CombinedPriceListRelationTriggerHandlerTest extends WebTestCase
                 ],
                 [
                     [
-                        'website'  => LoadWebsiteData::WEBSITE1,
-                        'customer' => 'customer.level_1_1'
-                    ],
-                    [
-                        'website'       => LoadWebsiteData::WEBSITE1,
-                        'customerGroup' => 'customer_group.group2',
-                        'customer'      => 'customer.level_1.2'
-                    ],
-                    [
-                        'website'       => LoadWebsiteData::WEBSITE1,
-                        'customerGroup' => 'customer_group.group1',
-                        'customer'      => 'customer.level_1.3'
+                        'assignments' => [
+                            [
+                                'customer'      => 'customer.level_1.2',
+                                'customerGroup' => 'customer_group.group2',
+                                'website'       => LoadWebsiteData::WEBSITE1,
+                            ],
+                            [
+                                'customer'      => 'customer.level_1.3',
+                                'customerGroup' => 'customer_group.group1',
+                                'website'       => LoadWebsiteData::WEBSITE1,
+                            ],
+                            [
+                                'customer' => 'customer.level_1_1',
+                                'website'  => LoadWebsiteData::WEBSITE1,
+                            ],
+                        ]
                     ]
                 ],
             ],
@@ -477,12 +537,16 @@ class CombinedPriceListRelationTriggerHandlerTest extends WebTestCase
                 ],
                 [
                     [
-                        'website'       => LoadWebsiteData::WEBSITE1,
-                        'customerGroup' => 'customer_group.group1'
-                    ],
-                    [
-                        'website'       => LoadWebsiteData::WEBSITE1,
-                        'customerGroup' => 'customer_group.group2'
+                        'assignments' => [
+                            [
+                                'website'       => LoadWebsiteData::WEBSITE1,
+                                'customerGroup' => 'customer_group.group1'
+                            ],
+                            [
+                                'website'       => LoadWebsiteData::WEBSITE1,
+                                'customerGroup' => 'customer_group.group2'
+                            ]
+                        ]
                     ]
                 ]
             ],
@@ -496,12 +560,16 @@ class CombinedPriceListRelationTriggerHandlerTest extends WebTestCase
                 ],
                 [
                     [
-                        'website'       => LoadWebsiteData::WEBSITE1,
-                        'customerGroup' => 'customer_group.group1'
-                    ],
-                    [
-                        'website'       => LoadWebsiteData::WEBSITE1,
-                        'customerGroup' => 'customer_group.group2'
+                        'assignments' => [
+                            [
+                                'website'       => LoadWebsiteData::WEBSITE1,
+                                'customerGroup' => 'customer_group.group1'
+                            ],
+                            [
+                                'website'       => LoadWebsiteData::WEBSITE1,
+                                'customerGroup' => 'customer_group.group2'
+                            ]
+                        ]
                     ]
                 ]
             ],
@@ -515,17 +583,21 @@ class CombinedPriceListRelationTriggerHandlerTest extends WebTestCase
                 ],
                 [
                     [
-                        'website'       => LoadWebsiteData::WEBSITE1,
-                        'customerGroup' => 'customer_group.group1'
-                    ],
-                    [
-                        'website'       => LoadWebsiteData::WEBSITE1,
-                        'customerGroup' => 'customer_group.group1',
-                        'customer'      => 'customer.level_1.3'
-                    ],
-                    [
-                        'website'       => LoadWebsiteData::WEBSITE1,
-                        'customerGroup' => 'customer_group.group2'
+                        'assignments' => [
+                            [
+                                'website'       => LoadWebsiteData::WEBSITE1,
+                                'customerGroup' => 'customer_group.group1',
+                                'customer'      => 'customer.level_1.3'
+                            ],
+                            [
+                                'website'       => LoadWebsiteData::WEBSITE1,
+                                'customerGroup' => 'customer_group.group1'
+                            ],
+                            [
+                                'website'       => LoadWebsiteData::WEBSITE1,
+                                'customerGroup' => 'customer_group.group2'
+                            ]
+                        ]
                     ]
                 ]
             ],
@@ -543,17 +615,21 @@ class CombinedPriceListRelationTriggerHandlerTest extends WebTestCase
                 ],
                 [
                     [
-                        'website'       => LoadWebsiteData::WEBSITE1,
-                        'customerGroup' => 'customer_group.group1'
-                    ],
-                    [
-                        'website'       => LoadWebsiteData::WEBSITE1,
-                        'customerGroup' => 'customer_group.group1',
-                        'customer'      => 'customer.level_1.3'
-                    ],
-                    [
-                        'website'       => LoadWebsiteData::WEBSITE1,
-                        'customerGroup' => 'customer_group.group2'
+                        'assignments' => [
+                            [
+                                'website'       => LoadWebsiteData::WEBSITE1,
+                                'customerGroup' => 'customer_group.group1',
+                                'customer'      => 'customer.level_1.3'
+                            ],
+                            [
+                                'website'       => LoadWebsiteData::WEBSITE1,
+                                'customerGroup' => 'customer_group.group1'
+                            ],
+                            [
+                                'website'       => LoadWebsiteData::WEBSITE1,
+                                'customerGroup' => 'customer_group.group2'
+                            ],
+                        ]
                     ]
                 ]
             ]
@@ -568,29 +644,27 @@ class CombinedPriceListRelationTriggerHandlerTest extends WebTestCase
     private function resolveReferences(array &$data): void
     {
         foreach ($data as &$item) {
-            foreach ($item as $key => $reference) {
-                if ($reference) {
-                    $item[$key] = $this->getReference($reference);
-                }
+            if (is_array($item)) {
+                $this->resolveReferences($item);
+            } else {
+                $item = $this->getReference($item);
             }
         }
     }
 
     private function resolveIds(array &$expectedMessages): void
     {
-        $this->resolveReferences($expectedMessages);
-        foreach ($expectedMessages as &$expectedMessage) {
-            foreach ($expectedMessage as $key => $value) {
-                if ($value) {
-                    $expectedMessage[$key] = $value->getId();
-                }
+        foreach ($expectedMessages as &$item) {
+            if (is_array($item)) {
+                $this->resolveIds($item);
+            } else {
+                $item = $item->getId();
             }
         }
     }
 
     private function createFallbacks(array $fallbackSettings): void
     {
-        $this->resolveReferences($fallbackSettings);
         foreach ($fallbackSettings as $fallbackData) {
             if (array_key_exists('customer', $fallbackData)) {
                 $fallback = new PriceListCustomerFallback();

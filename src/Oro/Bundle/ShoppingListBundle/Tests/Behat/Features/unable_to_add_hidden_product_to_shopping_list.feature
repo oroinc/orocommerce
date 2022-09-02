@@ -43,4 +43,4 @@ Feature: Unable to add hidden product to shopping list
   Scenario: Able to add visible product to shopping list
     Given I proceed as the Guest
     And I click "Add to Shopping List"
-    And I should see "Product has been added to" flash message
+    And I should see "Product has been added to" flash message and I close it

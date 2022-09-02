@@ -40,10 +40,6 @@
 {% endblock %}
 
 {% block _category_long_descriptions_widget %}
-    {%- if long_descriptions.wysiwygStyle|length -%}
-        {%- apply spaceless -%}
-            <style type="text/css">{{ long_descriptions.wysiwygStyle|render_content }}</style>
-        {%- endapply -%}
-    {%- endif -%}
-    <div class="category-long-description cms-typography">{{ long_descriptions.wysiwyg|render_content }}</div>
+    {%- import '@OroCMS/macros.html.twig' as CMS -%}
+    <div class="category-long-description cms-typography">{{ CMS.renderWysiwygContent(long_descriptions.wysiwyg, long_descriptions.wysiwygStyle) }}</div>
 {% endblock %}

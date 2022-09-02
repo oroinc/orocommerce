@@ -20,8 +20,8 @@ class LoadSlugsData extends AbstractFixture implements DependentFixtureInterface
     const SLUG_URL_PAGE_2 = '/slug/page2';
     const SLUG_URL_LOCALIZATION_1 = '/slug/en/page';
     const SLUG_URL_LOCALIZATION_2 = '/slug/es/page';
-    const SLUG_TEST_DUPLICATE_URL = '/slug/first';
-    const SLUG_TEST_DUPLICATE_REFERENCE = 'reference:/slug/first';
+    const SLUG_TEST_URL = '/slug/first';
+    const SLUG_TEST_REFERENCE = 'reference:/slug/first';
     const SLUG_TEST_ONLY = '__test-only__';
     const PAGE_3_DEFAULT = '/localized-slug/en/page3';
     const PAGE_3_LOCALIZED_EN_CA = '/localized-slug/en_ca/page3';
@@ -48,12 +48,11 @@ class LoadSlugsData extends AbstractFixture implements DependentFixtureInterface
         $this->createSlug($manager, self::SLUG_URL_USER, 'oro_customer_frontend_customer_user_index', []);
         $this->createSlug(
             $manager,
-            self::SLUG_TEST_DUPLICATE_URL,
+            self::SLUG_TEST_URL,
             'oro_cms_frontend_page_view',
-            ['id' => $page->getId()],
-            self::SLUG_TEST_DUPLICATE_REFERENCE
+            [],
+            self::SLUG_TEST_REFERENCE
         );
-        $this->createSlug($manager, self::SLUG_TEST_DUPLICATE_URL, 'oro_customer_frontend_customer_user_index', []);
         $pageSlug = $this->createSlug($manager, self::SLUG_URL_PAGE, 'oro_customer_frontend_customer_user_index', []);
         $pageSlug->setSlugPrototype('page');
 
@@ -83,20 +82,21 @@ class LoadSlugsData extends AbstractFixture implements DependentFixtureInterface
             $this->getReference('es')
         );
 
-        $this->createSlug(
+        $page3->addSlug($this->createSlug(
             $manager,
             self::PAGE_3_DEFAULT,
             'oro_cms_frontend_page_view',
             ['id' => $page3->getId()]
-        );
-        $this->createSlug(
+        ));
+        $page3->addSlug($this->createSlug(
             $manager,
             self::PAGE_3_LOCALIZED_EN_CA,
             'oro_cms_frontend_page_view',
             ['id' => $page3->getId()],
             null,
             $this->getReference('en_CA')
-        );
+        ));
+        $manager->persist($page3);
 
         $manager->flush();
     }
@@ -129,7 +129,10 @@ class LoadSlugsData extends AbstractFixture implements DependentFixtureInterface
         }
 
         $manager->persist($slug);
-        $this->addReference($reference ?: $url, $slug);
+        if ($reference) {
+            $this->addReference($reference, $slug);
+        }
+        $this->addReference($url, $slug);
 
         return $slug;
     }

@@ -740,7 +740,7 @@ Feature: Consent management via Management Console UI
     And type "Lenovo_Vibe1_sku" in "search"
     And I click "Search Button"
     And I click "Add to Shopping List" for "Lenovo_Vibe1_sku" product
-    And I should see "Product has been added to" flash message
+    And I should see "Product has been added to" flash message and I close it
     And I open shopping list widget
     And I click "View List"
     And click on "Create Order"
@@ -790,7 +790,7 @@ Feature: Consent management via Management Console UI
     And type "Lenovo_Vibe1_sku" in "search"
     And I click "Search Button"
     And I click "Add to Shopping List" for "Lenovo_Vibe1_sku" product
-    And I should see "Product has been added to" flash message
+    And I should see "Product has been added to" flash message and I close it
     And I open shopping list widget
     And I click "View List"
     And click on "Create Order"

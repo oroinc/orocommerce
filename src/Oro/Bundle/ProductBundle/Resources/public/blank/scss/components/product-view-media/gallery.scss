@@ -17,10 +17,13 @@
         max-width: $product-view-media-gallery-tab-content-max-width;
     }
 
+    &__picture,
     &__image {
         max-width: 100%;
         max-height: $product-view-media-gallery-image-max-height;
+    }
 
+    &__image {
         &[data-lazy] {
             display: none;
         }

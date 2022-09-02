@@ -105,13 +105,13 @@ Feature: Product view page for configurable product
       | Color       | White |
       | Refurbished | No    |
     When I click "Add to Shopping List"
-    Then I should see "Product has been added to" flash message
+    Then I should see "Product has been added to" flash message and I close it
     And I should see "In shopping list"
     When I fill "Configurable Product Form" with:
       | Color       | Black |
       | Refurbished | Yes   |
     And I click "Add to Shopping List"
-    Then I should see "Product has been added to" flash message
+    Then I should see "Product has been added to" flash message and I close it
     And I should see "In shopping list"
 
   Scenario: Check that product links from Shopping List navigates to product view page with preselected attributes

@@ -39,7 +39,7 @@ Feature: Guest shopping list merging functionality
     And I click "View Details" for "PSKU1" product
     And I should see "Add to Shopping List"
     And I click "Add to Shopping List"
-    And I should see "Product has been added to" flash message
+    And I should see "Product has been added to" flash message and I close it
     And I should see "In shopping list"
     And I hover on "Shopping List Widget"
     And I should see "1 Item | $0.00" in the "Shopping List Widget" element
@@ -59,13 +59,13 @@ Feature: Guest shopping list merging functionality
     And I click "Search Button"
     And I should see "Control Product"
     When I click "Add to Shopping List" for "CONTROL1" product
-    Then I should see "Product has been added to" flash message
+    Then I should see "Product has been added to" flash message and I close it
     And type "PSKU1" in "search"
     And I click "Search Button"
     And I should see "Product1"
     And I should see "Add to Shopping List"
     And I click "Add to Shopping List"
-    And I should see "Product has been added to" flash message
+    And I should see "Product has been added to" flash message and I close it
 
   Scenario: Check guest shopping list was merged to existing customer shopping list
     Given I signed in as AmandaRCole@example.org on the store frontend in old session

@@ -132,12 +132,8 @@
 
     <div {{ block('block_attributes') }}>
         <div class="collapse-view__container cms-typography" data-collapse-container>
-            {%- if translated_value.wysiwygStyle|length -%}
-                {%- apply spaceless -%}
-                    <style type="text/css">{{ translated_value.wysiwygStyle|render_content }}</style>
-                {%- endapply -%}
-            {%- endif -%}
-            {{ description|render_content }}
+            {%- import '@OroCMS/macros.html.twig' as CMS -%}
+            {{ CMS.renderWysiwygContent(description, translated_value.wysiwygStyle) }}
         </div>
         {# For button bellow attr "aria-hidden" will be toggled programmatically when collapse-widget is initialized or destroyed #}
         <button class="collapse-view__trigger" data-collapse-trigger aria-hidden="true" aria-label="{{ 'oro.ui.collapse.more'|trans }}">
@@ -398,16 +394,13 @@
 {% endblock %}
 
 {% block attribute_localized_fallback_widget %}
-    {%- if translated_value.wysiwygStyle is defined and translated_value.wysiwygStyle|length -%}
-        {%- apply spaceless -%}
-            <style type="text/css">{{ translated_value.wysiwygStyle|render_content }}</style>
-        {%- endapply -%}
-    {%- endif -%}
-
     {% set valueIsWysiwyg = translated_value.wysiwyg is defined and translated_value.wysiwyg != null %}
     {% set valueIsText = translated_value.text is defined and translated_value.text != null %}
-    {% if valueIsWysiwyg or valueIsText  %}
-        <div class="cms-typography">{{ translated_value|oro_html_sanitize }}</div>
+    {% if valueIsWysiwyg %}
+        {%- import '@OroCMS/macros.html.twig' as CMS -%}
+        <div class="cms-typography">{{ CMS.renderWysiwygContent(translated_value.wysiwyg, translated_value.wysiwygStyle|default('')) }}</div>
+    {% elseif valueIsText %}
+        <div class="cms-typography">{{ translated_value.text|oro_html_sanitize }}</div>
     {% else %}
         {{ translated_value|oro_html_sanitize }}
     {% endif %}

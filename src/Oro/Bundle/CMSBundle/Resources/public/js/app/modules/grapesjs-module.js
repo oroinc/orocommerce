@@ -24,10 +24,15 @@ import ColumnTypeBuilder from 'orocms/js/app/grapesjs/type-builders/column-type-
 import RowTypeBuilder from 'orocms/js/app/grapesjs/type-builders/row-type-builder';
 import PictureTypeBuilder from 'orocms/js/app/grapesjs/type-builders/picture-type-builder';
 import SourceTypeBuilder from 'orocms/js/app/grapesjs/type-builders/source-type-builder';
+import TextWrapperTypeBuilder from 'orocms/js/app/grapesjs/type-builders/text-wrapper-type-builder';
+import CustomCodeTypeBuilder from 'orocms/js/app/grapesjs/type-builders/custom-code-type-builder';
 
 ComponentManager.registerComponentTypes({
     'wrapper': {
         Constructor: WrapperTypeBuilder
+    },
+    'text-style': {
+        Constructor: TextWrapperTypeBuilder
     },
     'quote': {
         Constructor: QuoteTypeBuilder
@@ -102,5 +107,8 @@ ComponentManager.registerComponentTypes({
     },
     'grid': {
         Constructor: GridTypeBuilder
+    },
+    'custom-code': {
+        Constructor: CustomCodeTypeBuilder
     }
 });

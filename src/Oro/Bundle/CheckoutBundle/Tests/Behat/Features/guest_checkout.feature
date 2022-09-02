@@ -48,7 +48,7 @@ Feature: Guest Checkout
     And I click "Search Button"
     And I click "400-Watt Bulb Work Light"
     And I click "Add to Shopping List"
-    And I should see "Product has been added to" flash message
+    And I should see "Product has been added to" flash message and I close it
     When I click "Shopping List"
     And I should see "400-Watt Bulb Work Light"
     Then I should not see following buttons:

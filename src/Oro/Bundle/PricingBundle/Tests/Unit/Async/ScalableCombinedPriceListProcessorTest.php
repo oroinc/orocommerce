@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Async;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\MessageQueueBundle\Entity\Job;
@@ -53,6 +55,11 @@ class ScalableCombinedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
     private $dependentJob;
 
     /**
+     * @var ManagerRegistry
+     */
+    private $doctrine;
+
+    /**
      * @var ScalableCombinedPriceListProcessor
      */
     private $processor;
@@ -64,6 +71,7 @@ class ScalableCombinedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
         $this->jobRunner = $this->createMock(JobRunner::class);
         $this->producer = $this->createMock(MessageProducerInterface::class);
         $this->dependentJob = $this->createMock(DependentJobService::class);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
 
         $this->processor = new ScalableCombinedPriceListProcessor(
             $this->cplAssociationsProvider,
@@ -72,6 +80,7 @@ class ScalableCombinedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
             $this->dependentJob
         );
         $this->processor->setLogger($this->logger);
+        $this->processor->setManagerRegistry($this->doctrine);
     }
 
     public function testGetSubscribedTopics()
@@ -87,7 +96,9 @@ class ScalableCombinedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')
-            ->willReturn(['force' => true, 'website' => null, 'customer' => null, 'customerGroup' => null]);
+            ->willReturn([
+                'assignments' => [['force' => true, 'website' => null, 'customer' => null, 'customerGroup' => null]]
+            ]);
 
         $associations = [
             [
@@ -120,8 +131,9 @@ class ScalableCombinedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider messageDataProvider
      */
-    public function testProcess(array $body, array $jobNameData, ?Website $website, ?object $targetEntity)
+    public function testProcess(array $body, ?Website $website, ?object $targetEntity, bool $isForce)
     {
+        $this->assertReference();
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')
@@ -135,7 +147,7 @@ class ScalableCombinedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
         ];
         $this->cplAssociationsProvider->expects($this->once())
             ->method('getCombinedPriceListsWithAssociations')
-            ->with($body['force'] ?? false, $website, $targetEntity)
+            ->with($isForce, $website, $targetEntity)
             ->willReturn($associations);
 
         $rootJob = $this->createMock(Job::class);
@@ -153,8 +165,11 @@ class ScalableCombinedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
         $this->jobRunner->expects($this->once())
             ->method('runUnique')
             ->willReturnCallback(
-                function ($ownerId, $name, $closure) use ($job, $jobNameData) {
-                    $this->assertEquals('oro_pricing.price_lists.cpl.rebuild:'. md5(json_encode($jobNameData)), $name);
+                function ($ownerId, $name, $closure) use ($job, $body) {
+                    $this->assertEquals(
+                        RebuildCombinedPriceListsTopic::getName() . ':' . md5(json_encode($body)),
+                        $name
+                    );
 
                     return $closure($this->jobRunner, $job);
                 }
@@ -202,38 +217,72 @@ class ScalableCombinedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
         $customerGroup = $this->getEntity(CustomerGroup::class, ['id' => 100]);
 
         yield 'full rebuild' => [
-            ['force' => true, 'website' => null, 'customer' => null, 'customerGroup' => null],
-            ['force' => true, 'website' => null, 'customer' => null, 'customerGroup' => null],
+            [
+                'assignments' => [['force' => true, 'website' => null, 'customer' => null, 'customerGroup' => null]]
+            ],
             null,
-            null
+            null,
+            true
         ];
 
         yield 'per website' => [
-            ['force' => false, 'website' => $website, 'customer' => null, 'customerGroup' => null],
-            ['force' => false, 'website' => 1, 'customer' => null, 'customerGroup' => null],
+            [
+                'assignments' => [
+                    ['force' => false, 'website' => $website, 'customer' => null, 'customerGroup' => null]
+                ]
+            ],
             $website,
-            null
+            null,
+            false
         ];
 
         yield 'per website2' => [
-            ['force' => false, 'website' => $website2, 'customer' => null, 'customerGroup' => null],
-            ['force' => false, 'website' => 2, 'customer' => null, 'customerGroup' => null],
+            [
+                'assignments' => [
+                    ['force' => false, 'website' => $website2, 'customer' => null, 'customerGroup' => null]
+                ]
+            ],
             $website2,
-            null
+            null,
+            false
         ];
 
         yield 'per website and customer' => [
-            ['force' => false, 'website' => $website, 'customer' => $customer, 'customerGroup' => null],
-            ['force' => false, 'website' => 1, 'customer' => 10, 'customerGroup' => null],
+            [
+                'assignments' => [
+                    ['force' => false, 'website' => $website, 'customer' => $customer, 'customerGroup' => null]
+                ]
+            ],
             $website,
-            $customer
+            $customer,
+            false
         ];
 
         yield 'per website and customer group' => [
-            ['force' => false, 'website' => $website, 'customer' => null, 'customerGroup' => $customerGroup],
-            ['force' => false, 'website' => 1, 'customer' => null, 'customerGroup' => 100],
+            [
+                'assignments' => [
+                    ['force' => false, 'website' => $website, 'customer' => null, 'customerGroup' => $customerGroup]
+                ]
+            ],
             $website,
-            $customerGroup
+            $customerGroup,
+            false
         ];
+    }
+
+    private function assertReference()
+    {
+        $manager = $this->createMock(EntityManagerInterface::class);
+        $this->doctrine
+            ->expects($this->any())
+            ->method('getManagerForClass')
+            ->willReturn($manager);
+
+        $manager
+            ->expects($this->any())
+            ->method('getReference')
+            ->willReturnCallback(function ($className, $value) {
+                return $this->getEntity($className, ['id' => is_object($value) ? $value->getId() : $value]);
+            });
     }
 }

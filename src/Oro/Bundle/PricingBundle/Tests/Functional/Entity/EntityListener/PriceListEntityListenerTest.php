@@ -70,14 +70,15 @@ class PriceListEntityListenerTest extends WebTestCase
         self::assertMessageSent(
             RebuildCombinedPriceListsTopic::getName(),
             [
-                'customer' => $customer->getId(),
-                'website' => $websiteCA->getId()
-            ]
-        );
-        self::assertMessageSent(
-            RebuildCombinedPriceListsTopic::getName(),
-            [
-                'website' => $websiteUS->getId()
+                'assignments' => [
+                    [
+                        'customer' => $customer->getId(),
+                        'website' => $websiteCA->getId()
+                    ],
+                    [
+                        'website' => $websiteUS->getId()
+                    ]
+                ]
             ]
         );
     }

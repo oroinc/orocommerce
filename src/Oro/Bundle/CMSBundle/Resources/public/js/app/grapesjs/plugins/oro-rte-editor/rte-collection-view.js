@@ -78,7 +78,10 @@ const RteCollectionView = BaseCollectionView.extend({
         for (const mutation of mutationsList) {
             const isSpanAdded = [...mutation.addedNodes].filter(node => {
                 const isNotSavedSpan = ![...this.spansToSave].find(span => span.isEqualNode(node));
-                return node.nodeType === 1 && node.tagName === 'SPAN' && isNotSavedSpan;
+                return node.nodeType === 1 &&
+                    node.tagName === 'SPAN' &&
+                    isNotSavedSpan &&
+                    node.getAttribute('data-gjs-type') !== 'text-style';
             });
 
             if (mutation.type === 'childList' && isSpanAdded.length) {
@@ -162,7 +165,10 @@ const RteCollectionView = BaseCollectionView.extend({
         this.spansToRemove.forEach(span => span.replaceWith(...span.childNodes));
         this.spansToSave = [];
         this.spansToRemove = [];
+        this.editableEl.normalize();
         RteCollectionView.__super__.dispose.call(this);
+
+        this.editor.trigger('rte:disable');
     },
 
     /**

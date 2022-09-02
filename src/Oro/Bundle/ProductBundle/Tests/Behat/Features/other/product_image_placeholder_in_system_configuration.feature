@@ -41,7 +41,7 @@ Feature: Product Image Placeholder in system configuration
     And follow "Commerce/Design/Theme" on configuration sidebar
     When uncheck "Use default" for "Product Image Placeholder" field
     And fill "Product Image Placeholder Config" with:
-      | Image | tiger.svg |
+      | Image | example1.xcf |
     And save form
     Then I should see "Product Image Placeholder Config" validation errors:
       | Image | This file is not a valid image. |

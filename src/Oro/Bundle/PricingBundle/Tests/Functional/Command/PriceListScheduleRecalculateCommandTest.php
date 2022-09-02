@@ -133,7 +133,7 @@ class PriceListScheduleRecalculateCommandTest extends WebTestCase
                 'params' => [],
                 'expectedMessages' => [
                     // 1 message for customer per website (there are 4 websites)
-                    RebuildCombinedPriceListsTopic::getName() => 4
+                    RebuildCombinedPriceListsTopic::getName() => 1
                 ],
                 'website' => [],
                 'customerGroup' => [],
@@ -147,7 +147,7 @@ class PriceListScheduleRecalculateCommandTest extends WebTestCase
                 'params' => [],
                 'expectedMessages' => [
                     // 1 message for customer per website (there are 4 websites)
-                    RebuildCombinedPriceListsTopic::getName() => 4
+                    RebuildCombinedPriceListsTopic::getName() => 1
                 ],
                 'website' => [],
                 'customerGroup' => [],
@@ -161,7 +161,7 @@ class PriceListScheduleRecalculateCommandTest extends WebTestCase
                 'params' => [],
                 'expectedMessages' => [
                     // 1 message for customer per website (there are 4 websites)
-                    RebuildCombinedPriceListsTopic::getName() => 4
+                    RebuildCombinedPriceListsTopic::getName() => 1
                 ],
                 'website' => [],
                 'customerGroup' => [],
@@ -175,7 +175,7 @@ class PriceListScheduleRecalculateCommandTest extends WebTestCase
                 'params' => [],
                 'expectedMessages' => [
                     // 1 message for customer group per website (there are 4 websites)
-                    RebuildCombinedPriceListsTopic::getName() => 4
+                    RebuildCombinedPriceListsTopic::getName() => 1
                 ],
                 'website' => [],
                 'customerGroup' => ['customer_group.group1'], // doesn't have own price list
@@ -189,7 +189,7 @@ class PriceListScheduleRecalculateCommandTest extends WebTestCase
                 'params' => [],
                 'expectedMessages' => [
                     // PL assigned to website and to website for customer
-                    RebuildCombinedPriceListsTopic::getName() => 2
+                    RebuildCombinedPriceListsTopic::getName() => 1
                 ],
                 'website' => [],
                 'customerGroup' => [],
@@ -205,7 +205,7 @@ class PriceListScheduleRecalculateCommandTest extends WebTestCase
                 'expectedMessages' => [
                     // base PL assigned to website and to website for customer
                     // dependent PL assigned to website
-                    RebuildCombinedPriceListsTopic::getName() => 3
+                    RebuildCombinedPriceListsTopic::getName() => 1
                 ],
                 'website' => [],
                 'customerGroup' => [],

@@ -35,7 +35,7 @@ Feature: Guest shopping lists owner
     When I click "View Details" for "PSKU1" product
     Then I should see "Add to Shopping List"
     When I click "Add to Shopping List"
-    Then I should see "Product has been added to" flash message
+    Then I should see "Product has been added to" flash message and I close it
     And I should see "In shopping list"
 
   Scenario: Check shopping list saved with correct owner

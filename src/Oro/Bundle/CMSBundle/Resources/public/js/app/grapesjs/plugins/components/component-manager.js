@@ -60,7 +60,7 @@ const ComponentManager = BaseClass.extend({
                 : true;
 
             if (!isAllowedContentType) {
-                this.editor.DomComponents.removeType(id);
+                this.editor.Components.removeType(id);
                 this.editor.BlockManager.remove(id);
                 continue;
             }
@@ -70,6 +70,10 @@ const ComponentManager = BaseClass.extend({
             instance.execute();
             this.typeBuilders.push(instance);
         }
+    },
+
+    getTypeBuilder(type) {
+        return this.typeBuilders.find(({componentType}) => componentType === type);
     }
 }, {
     componentTypes: {},

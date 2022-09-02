@@ -20,6 +20,7 @@ datagrids:
                     - payment_status.paymentStatus as paymentStatus
                     - order1.shippingMethod
                     - order1.shippingMethodType
+                    - order1.totalDiscountsAmount
                 from:
                     - { table: 'Oro\Bundle\OrderBundle\Entity\Order', alias: order1 }
                 join:

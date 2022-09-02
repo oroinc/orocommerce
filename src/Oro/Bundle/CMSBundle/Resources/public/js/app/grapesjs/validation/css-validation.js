@@ -13,7 +13,7 @@ function cssValidation(parameters) {
     try {
         const css = cache['styleTags'][0].innerText;
         cache['styleTags'].shift();
-        editor.Parser.parseCss(css);
+        editor.em.get('Parser').parseCss(css);
     } catch (e) {
         if (!cache[htmlStringLine]) {
             cache[htmlStringLine] = e;
