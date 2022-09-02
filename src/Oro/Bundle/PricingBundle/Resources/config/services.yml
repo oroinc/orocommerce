@@ -1380,14 +1380,12 @@ services:
 
     oro_pricing.sql_walker.price_shard:
         class: Oro\Bundle\PricingBundle\ORM\Walker\PriceShardOutputResultModifier
-        public: false
         abstract: true
         tags:
             - { name: oro_entity.sql_walker }
 
     oro_pricing.sql_walker.temp_table:
         class: Oro\Bundle\PricingBundle\ORM\Walker\TempTableOutputResultModifier
-        public: false
         abstract: true
         tags:
             - { name: oro_entity.sql_walker }
