@@ -33,7 +33,12 @@ class ProcessAssociationCustomerGroupEventListener extends AbstractProcessAssoci
                     'websiteId' => $websiteId,
                     'customerGroups' => array_keys($customerGroups)
                 ];
-                $this->processAssignments($event->getCombinedPriceList(), $website, $customerGroups);
+                $this->processVersionedAssignments(
+                    $event->getCombinedPriceList(),
+                    $website,
+                    $event->getVersion(),
+                    $customerGroups
+                );
             }
         }
 

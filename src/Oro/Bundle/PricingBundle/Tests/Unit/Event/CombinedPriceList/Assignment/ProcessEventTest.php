@@ -16,5 +16,9 @@ class ProcessEventTest extends TestCase
         $this->assertSame($cpl, $event->getCombinedPriceList());
         $this->assertSame($associations, $event->getAssociations());
         $this->assertTrue($event->isSkipUpdateNotification());
+        $this->assertNull($event->getVersion());
+
+        $event->setVersion(100);
+        $this->assertEquals(100, $event->getVersion());
     }
 }

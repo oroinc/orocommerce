@@ -32,7 +32,7 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
      */
     public function getMigrationVersion()
     {
-        return 'v1_21_2';
+        return 'v1_22_3';
     }
 
     /**
@@ -314,6 +314,7 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
         $table->addColumn('combined_price_list_id', 'integer', ['notnull' => true]);
         $table->addColumn('website_id', 'integer', ['notnull' => true]);
         $table->addColumn('full_combined_price_list_id', 'integer', ['notnull' => true]);
+        $table->addColumn('version', 'integer', ['notnull' => false]);
         $table->addUniqueIndex(['customer_id', 'website_id'], 'oro_cpl_to_cus_ws_unq');
         $table->setPrimaryKey(['id']);
     }
@@ -329,6 +330,7 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
         $table->addColumn('website_id', 'integer', ['notnull' => true]);
         $table->addColumn('combined_price_list_id', 'integer', ['notnull' => true]);
         $table->addColumn('full_combined_price_list_id', 'integer', ['notnull' => true]);
+        $table->addColumn('version', 'integer', ['notnull' => false]);
         $table->addUniqueIndex(['customer_group_id', 'website_id'], 'oro_cpl_to_cus_gr_ws_unq');
         $table->setPrimaryKey(['id']);
     }
@@ -343,6 +345,7 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
         $table->addColumn('combined_price_list_id', 'integer', ['notnull' => true]);
         $table->addColumn('website_id', 'integer', ['notnull' => true]);
         $table->addColumn('full_combined_price_list_id', 'integer', ['notnull' => true]);
+        $table->addColumn('version', 'integer', ['notnull' => false]);
         $table->addUniqueIndex(['website_id'], 'oro_cpl_to_ws_unq');
         $table->setPrimaryKey(['id']);
     }

@@ -7,6 +7,8 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 
 /**
+ * Base class of price list relations.
+ *
  * @ORM\MappedSuperclass
  */
 class BaseCombinedPriceListRelation implements WebsiteAwareInterface
@@ -48,6 +50,15 @@ class BaseCombinedPriceListRelation implements WebsiteAwareInterface
      * )
      */
     protected $fullChainPriceList;
+
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="version", type="integer", nullable=true)
+     */
+    protected $version;
+
 
     /**
      * @return CombinedPriceList
@@ -105,6 +116,18 @@ class BaseCombinedPriceListRelation implements WebsiteAwareInterface
     {
         $this->fullChainPriceList = $fullChainPriceList;
 
+        return $this;
+    }
+
+    public function getVersion(): ?int
+    {
+        return $this->version;
+    }
+
+    public function setVersion(?int $version): self
+    {
+        $this->version = $version;
+        
         return $this;
     }
 
