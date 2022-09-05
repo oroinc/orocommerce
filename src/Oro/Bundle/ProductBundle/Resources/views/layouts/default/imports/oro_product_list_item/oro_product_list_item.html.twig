@@ -1,10 +1,45 @@
+{% block __oro_product_list_item__product_content_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-item__content product-item__content--{{ class_prefix }}',
+    }) %}
+    {% if
+        microdataWithoutPricesDisabled == false or
+        productPrices is defined and productPrices is not empty or
+        product is defined and product.prices is defined and matrixFormType == 'none' and product.prices is not empty
+    %}
+        {% set attr = layout_attr_defaults(attr, {
+            'itemscope': '',
+            'itemtype': 'http://schema.org/Product'
+        }) %}
+    {% endif %}
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __oro_product_list_item__product_short_description_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product__description product__description--{{ class_prefix }}'
+    }) %}
+
+    {% if (class_prefix == 'list-view') %}
+        <div {{ block('block_attributes') }}>
+            <div class="product__description-content cms-typography">{{ product.shortDescription|oro_html_sanitize }}</div>
+            <meta itemprop="description" content="{{ product.schemaOrgDescription }}" />
+            <span itemprop="brand" itemtype="https://schema.org/Brand" itemscope>
+                <meta itemprop="name" content="{{ product.schemaOrgBrandName }}" />
+            </span>
+        </div>
+    {% endif %}
+{% endblock %}
+
 {% block __oro_product_list_item__product_details_widget %}
     {% set attr = layout_attr_defaults(attr, {
-    '~class': ' product__view-details-link product__view-details-link--{{ class_prefix }}'
+        '~class': ' product__view-details-link product__view-details-link--{{ class_prefix }}'
     }) %}
     <div {{ block('block_attributes') }}>
         <a href="{{ path('oro_product_frontend_product_view', {id: product.id}) }}" class="view-product"{% if isTargetBlank is defined and isTargetBlank %} target="_blank"{% endif %}
-            aria-label="{{ 'oro.product.frontend.index.view_details_aria_label'|trans }}"
+           aria-label="{{ 'oro.product.frontend.index.view_details_aria_label'|trans }}"
         >
             {{ 'oro.product.frontend.index.view_details'|trans }}<span class="fa-angle-right fa--link-r" aria-hidden="true"></span>
         </a>

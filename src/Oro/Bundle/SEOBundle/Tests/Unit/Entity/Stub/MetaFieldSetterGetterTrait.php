@@ -4,6 +4,7 @@ namespace Oro\Bundle\SEOBundle\Tests\Unit\Entity\Stub;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 
 trait MetaFieldSetterGetterTrait
@@ -58,6 +59,11 @@ trait MetaFieldSetterGetterTrait
         if (!$this->metaDescriptions->contains($value)) {
             $this->metaDescriptions->add($value);
         }
+    }
+
+    public function getMetaDescription(Localization $localization): LocalizedFallbackValue
+    {
+        return $this->metaDescriptions->current();
     }
 
     /**
