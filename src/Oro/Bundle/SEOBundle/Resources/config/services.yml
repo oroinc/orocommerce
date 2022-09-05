@@ -460,3 +460,14 @@ services:
         parent: oro_gaufrette.file_manager
         arguments:
             - 'sitemaps_tmp_data'
+
+    oro_product.data_provider.schema_org_product_seo_description:
+        class: 'Oro\Bundle\ProductBundle\Provider\SchemaOrgProductDescriptionCommonProvider'
+        arguments:
+            - !service
+                class: Oro\Component\PropertyAccess\PropertyAccessor
+            - '@oro_ui.html_tag_helper'
+            - '@oro_locale.helper.localization'
+            - 'metaDescriptions'
+        tags:
+            - { name: oro_product.description_provider, key: 'oro_product_seo_description' }

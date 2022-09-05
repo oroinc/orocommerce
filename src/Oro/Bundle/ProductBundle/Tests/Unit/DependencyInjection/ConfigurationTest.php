@@ -253,8 +253,8 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                     'value' => true,
                     'scope' => 'app'
                 ],
-                Configuration::MICRODATA_DESCRIPTION_FIELD => [
-                    'value' => 1,
+                Configuration::SCHEMA_ORG_DESCRIPTION_FIELD => [
+                    'value' => Configuration::SCHEMA_ORG_DEFAULT_DESCRIPTION,
                     'scope' => 'app'
                 ],
             ]
