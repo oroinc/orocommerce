@@ -5,8 +5,19 @@
             'itemtype': 'http://schema.org/Product'
         }) %}
     {% endif %}
-
+    {% set schemaOrgDescriptionContent %}
+        {% if
+            schemaOrgDescriptionEnabled and
+            schemaOrgDescription is defined and
+            schemaOrgDescription is not empty
+        %}
+            <meta itemprop="description" content="{{ schemaOrgDescription }}" />
+        {% endif %}
+    {% endset %}
     <div {{ block('block_attributes') }}>
+        {% if schemaOrgDescriptionContent is defined %}
+            {{ schemaOrgDescriptionContent }}
+        {% endif %}
         {{ block_widget(block) }}
     </div>
 {% endblock %}

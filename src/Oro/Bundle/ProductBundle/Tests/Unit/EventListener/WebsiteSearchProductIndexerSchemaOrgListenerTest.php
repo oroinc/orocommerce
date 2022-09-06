@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Stub\LocalizationStub;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
@@ -34,6 +35,10 @@ class WebsiteSearchProductIndexerSchemaOrgListenerTest extends \PHPUnit\Framewor
 
     private WebsiteSearchProductIndexerSchemaOrgListener $listener;
 
+    private ConfigManager|\PHPUnit\Framework\MockObject\MockObject $configManager;
+
+    private const CONFIG_KEY = "oro_product.microdata_description_field_enabled";
+
     protected function setUp(): void
     {
         $this->websiteContextManager = $this->createMock(WebsiteContextManager::class);
@@ -50,13 +55,22 @@ class WebsiteSearchProductIndexerSchemaOrgListenerTest extends \PHPUnit\Framewor
             ->with(Website::class)
             ->willReturn($this->websiteRepository);
 
+        $this->configManager = $this->createMock(ConfigManager::class);
+
+        $this->configManager
+            ->expects(self::once())
+            ->method('get')
+            ->with(self::CONFIG_KEY)
+            ->willReturn(true);
+
         $this->brand = new Brand();
 
         $this->listener = new WebsiteSearchProductIndexerSchemaOrgListener(
             $this->websiteLocalizationProvider,
             $this->websiteContextManager,
             $this->schemaOrgProductDescriptionProvider,
-            $managerRegistry
+            $managerRegistry,
+            $this->configManager
         );
     }
 

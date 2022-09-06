@@ -35,6 +35,7 @@ services:
                         product: {required: true}
                         productTheme: {default: null}
                         microdataWithoutPricesDisabled: {default: false},
+                        schemaOrgDescriptionEnabled: {default: false},
             - [setName, ['product_view_container']]
         tags:
              - { name: layout.block_type, alias: product_view_container }
@@ -42,7 +43,7 @@ services:
     oro_product.layout.type.product_view_microdata_container:
         parent: oro_layout.block_type.abstract_configurable_container
         calls:
-            - [setOptionsConfig, [{productPrices: {required: true}}]]
+            - [setOptionsConfig, [{productPrices: {required: true}, schemaOrgDescriptionEnabled: {required: true}, schemaOrgDescription: {required: true}}]]
             - [setName, ['product_view_microdata_container']]
         tags:
              - { name: layout.block_type, alias: product_view_microdata_container }

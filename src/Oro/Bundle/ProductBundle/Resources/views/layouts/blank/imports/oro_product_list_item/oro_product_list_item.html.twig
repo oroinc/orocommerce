@@ -49,8 +49,21 @@
             'itemscope': '',
             'itemtype': 'http://schema.org/Product'
         }) %}
+        {% set productSchemaOrgContent %}
+            {% if product.schemaOrgDescription is defined and product.schemaOrgDescription is not empty %}
+                <meta itemprop="description" content="{{ product.schemaOrgDescription }}" />
+            {% endif %}
+            {% if product.schemaOrgBrandName is defined and product.schemaOrgBrandName is not empty %}
+                <span itemprop="brand" itemtype="https://schema.org/Brand" itemscope>
+                    <meta itemprop="name" content="{{ product.schemaOrgBrandName }}" />
+                </span>
+            {% endif %}
+        {% endset %}
     {% endif %}
     <div {{ block('block_attributes') }}>
+        {% if productSchemaOrgContent is defined %}
+            {{ productSchemaOrgContent }}
+        {% endif %}
         {{ block_widget(block) }}
     </div>
 {% endblock %}
@@ -206,10 +219,20 @@
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' product__description product__description--{{ class_prefix }}'
     }) %}
-
+    {% set productSchemaOrgDescriptionContent %}
+        {% if product.schemaOrgDescription is defined and product.schemaOrgDescription is not empty %}
+            <meta itemprop="description" content="{{ product.schemaOrgDescription }}" />
+        {% endif %}
+        {% if product.schemaOrgBrandName is defined and product.schemaOrgBrandName is not empty %}
+            <span itemprop="brand" itemtype="https://schema.org/Brand" itemscope>
+                <meta itemprop="name" content="{{ product.schemaOrgBrandName }}" />
+            </span>
+        {% endif %}
+    {% endset %}
     {% if (class_prefix == 'list-view') %}
         <div {{ block('block_attributes') }} >
-            <div class="product__description-content cms-typography" itemprop="description">{{ product.shortDescription|oro_html_sanitize }}</div>
+            {{ productSchemaOrgDescriptionContent }}
+            <div class="product__description-content cms-typography">{{ product.shortDescription|oro_html_sanitize }}</div>
         </div>
     {% endif %}
 {% endblock %}

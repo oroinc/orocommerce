@@ -2066,5 +2066,21 @@ services:
             - '@oro_website_search.manager.website_context_manager'
             - '@oro_product.data_provider.schema_org_product_description'
             - '@doctrine'
+            - '@oro_config.manager'
         tags:
             - { name: kernel.event_listener, event: oro_website_search.event.index_entity.product, method: onWebsiteSearchIndex, priority: -255 }
+
+    oro_product.layout.data_provider.schema_org_product_description:
+      class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\SchemaOrgProductDescriptionLayoutDataProvider'
+      arguments:
+        - '@oro_product.data_provider.schema_org_product_description'
+      tags:
+        - { name: layout.data_provider, alias: oro_product_schema_org_product_description }
+
+    oro_product.event_listener.website_related_product_list_schema_org:
+      class: 'Oro\Bundle\ProductBundle\EventListener\BuildProductListSchemaOrgListener'
+      arguments:
+          - '@oro_config.manager'
+      tags:
+        - { name: kernel.event_listener, event: oro_product.product_list.build_query, method: onBuildQueryProductList, priority: -255 }
+        - { name: kernel.event_listener, event: oro_product.product_list.build_result, method: onBuildResultProductList, priority: -255 }
