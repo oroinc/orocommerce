@@ -51,6 +51,14 @@
         }) %}
     {% endif %}
     <div {{ block('block_attributes') }}>
+        {% if product.schemaOrgDescription is defined %}
+            <meta itemprop="description" content="{{ product.schemaOrgDescription }}" />
+        {% endif %}
+        <span itemprop="brand" itemtype="https://schema.org/Brand" itemscope>
+            {% if product.schemaOrgBrandName is defined %}
+                <meta itemprop="name" content="{{ product.schemaOrgBrandName }}" />
+            {% endif %}
+        </span>
         {{ block_widget(block) }}
     </div>
 {% endblock %}

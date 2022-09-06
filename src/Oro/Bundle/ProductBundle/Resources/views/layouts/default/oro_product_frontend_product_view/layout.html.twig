@@ -41,8 +41,10 @@
             'itemtype': 'http://schema.org/Product'
         }) %}
     {% endif %}
-
     <div {{ block('block_attributes') }}>
+        {% if schemaOrgDescription %}
+            <meta itemprop="description" content="{{ schemaOrgDescription }}" />
+        {% endif %}
         {{ block_widget(block) }}
     </div>
 {% endblock %}
@@ -115,8 +117,7 @@
 
 {% block _product_view_description_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product-view__description',
-        'itemprop': 'description'
+        '~class': ' product-view__description'
     }) %}
 
     <div {{ block('block_attributes') }}>
@@ -214,8 +215,13 @@
 {% endblock %}
 
 {% block _product_view_attribute_group_general_attribute_product_brand_brand_widget %}
-    {% set attr = layout_attr_defaults(attr, {'~class': ' brand'}) %}
-    <div {{ block('block_attributes') }} itemprop="brand" itemscope itemtype="http://schema.org/Brand">
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' brand',
+        'itemprop': 'brand',
+        'itemscope': '',
+        'itemtype': 'http://schema.org/Brand'
+    }) %}
+    <div {{ block('block_attributes') }} >
         {% if label|trans|first != '_' %}
             <span class="product-view-brand">{{ label|trans }}:</span>
         {% endif %}
