@@ -13,19 +13,19 @@
             dataUrl: 'oro_shopping_list_frontend_add_product',
             dataAttributes: {},
             btnCss: 'btn--info ',
-            iCss: 'fa fa-shopping-cart fa--fw fa--аs-line',
+            iCss: 'fa fa-shopping-cart fa--fw fa--as-line',
             labelInIcon: false
         } %}
         {% set removeOptions = buttonOptions|merge({
             dataUrl: 'oro_shopping_list_frontend_remove_product',
             actionLabel: 'oro.shoppinglist.actions.remove_from_shopping_list'|trans,
-            iCss: 'fa fa-remove fa--fw fa--аs-line',
+            iCss: 'fa fa-remove fa--fw fa--as-line',
             labelInIcon: false
         }) %}
 
         {% set newOptions = buttonOptions|merge({
             ariaLabel: 'oro.shoppinglist.actions.add_to_new_shopping_list.aria_label'|trans,
-            iCss: 'fa fa-plus fa--fw fa--аs-line',
+            iCss: 'fa fa-plus fa--fw fa--as-line',
             labelInIcon: false
         }) %}
 

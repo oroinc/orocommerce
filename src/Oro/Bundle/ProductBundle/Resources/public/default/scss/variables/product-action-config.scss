@@ -1,12 +1,9 @@
 /* @theme: default; */
 
-// In Grid
-$product-action-in-grid-offset: $offset-x-s !default;
-
 // In Sticky Panel
 
-$product-action-in-sticky-width: 100% !default;
-$product-action-in-sticky-offset: $offset-x-m !default;
+$product-action-in-sticky-max-width: 600px !default;
+$product-action-in-sticky-margin: 0 auto !default;
 
 // Mobile
 $product-action-toggle-icon-mobile: null !default;

@@ -100,59 +100,62 @@
     {% if toolbarPosition != 'bottom' %}
         <div{{ block('block_attributes') }}>
             {% set row_view_key = constant('Oro\\Bundle\\ProductBundle\\DataGrid\\DataGridThemeHelper::GRID_THEME_PARAM_NAME') %}
-            <span class="datagrid-tool__label">{{ 'oro.product.frontend.grid.toolbar.display.label'|trans }}: &nbsp;</span>
-            <div class="btn-group catalog-switcher" role="group" aria-label="{{ 'oro.product.grid.action.catalog_switcher.aria_label'|trans }}">
-                {% set url_prefix = app.request.baseUrl ~ app.request.pathInfo %}
-                {% set query_parameters = app.request.query.all() %}
+            {% set url_prefix = app.request.baseUrl ~ app.request.pathInfo %}
+            {% set query_parameters = app.request.query.all() %}
+            {% set view_list = view_list|default([
+                {
+                    title: 'oro.product.grid.action.catalog_switcher.gallery_view.aria_label',
+                    row_view: constant('Oro\\Bundle\\ProductBundle\\DataGrid\\DataGridThemeHelper::VIEW_TILES'),
+                    icon: 'fa-th'
+                },
+                {
+                    title: 'oro.product.grid.action.catalog_switcher.list_view.aria_label',
+                    row_view: constant('Oro\\Bundle\\ProductBundle\\DataGrid\\DataGridThemeHelper::VIEW_GRID'),
+                    icon: 'fa-th-list'
+                },
+                {
+                    title: 'oro.product.grid.action.catalog_switcher.compact_view.aria_label',
+                    row_view: constant('Oro\\Bundle\\ProductBundle\\DataGrid\\DataGridThemeHelper::VIEW_LIST'),
+                    icon: 'fa-bars'
+                }
+            ]) %}
 
-                {% set row_view = constant('Oro\\Bundle\\ProductBundle\\DataGrid\\DataGridThemeHelper::VIEW_TILES') %}
-                {% set view_trigger = {
-                    'row-view': 'gallery-view'
-                } %}
-                <a href="{{ url_prefix ~ '?' ~ query_parameters|merge({(gridName): {(row_view_key): row_view}})|url_encode }}"
-                   class="btn btn--default btn--size-s {% if current_row_view == row_view %}active{% endif %}"
-                   data-toggle="tooltip"
-                   data-trigger="hover"
-                   data-container="#{{ catalogSwitcherId }}"
-                   data-catalog-view-trigger="{{ view_trigger|json_encode }}"
-                   title="{{ 'oro.product.grid.action.catalog_switcher.gallery_view.aria_label'|trans }}"
-                   aria-pressed="{{ (current_row_view == row_view) ? 'true' : 'false' }}"
-                   aria-label="{{ 'oro.product.grid.action.catalog_switcher.gallery_view.aria_label'|trans }}"
-               >
-                    <span class="fa-th fa--no-offset" aria-hidden="true"></span>
-                </a>
-                {% set row_view = constant('Oro\\Bundle\\ProductBundle\\DataGrid\\DataGridThemeHelper::VIEW_GRID') %}
-                {% set view_trigger = {
-                    'row-view': 'list-view'
-                } %}
-                <a href="{{ url_prefix ~ '?' ~ query_parameters|merge({(gridName): {(row_view_key): row_view}})|url_encode }}"
-                   class="btn btn--default btn--size-s {% if current_row_view == row_view %}active{% endif %}"
-                   data-toggle="tooltip"
-                   data-trigger="hover"
-                   data-container="#{{ catalogSwitcherId }}"
-                   data-catalog-view-trigger="{{ view_trigger|json_encode }}"
-                   title="{{ 'oro.product.grid.action.catalog_switcher.list_view.aria_label'|trans }}"
-                   aria-pressed="{{ (current_row_view == row_view) ? 'true' : 'false' }}"
-                   aria-label="{{ 'oro.product.grid.action.catalog_switcher.list_view.aria_label'|trans }}"
-               >
-                    <span class="fa-th-list fa--no-offset" aria-hidden="true"></span>
-                </a>
-                {% set row_view = constant('Oro\\Bundle\\ProductBundle\\DataGrid\\DataGridThemeHelper::VIEW_LIST') %}
-                {% set view_trigger = {
-                    'row-view': 'no-image-view'
-                } %}
-                <a href="{{ url_prefix ~ '?' ~ query_parameters|merge({(gridName): {(row_view_key): row_view}})|url_encode }}"
-                   class="btn btn--default btn--size-s {% if current_row_view == row_view %}active{% endif %}"
-                   data-toggle="tooltip"
-                   data-trigger="hover"
-                   data-container="#{{ catalogSwitcherId }}"
-                   data-catalog-view-trigger="{{ view_trigger|json_encode }}"
-                   title="{{ 'oro.product.grid.action.catalog_switcher.compact_view.aria_label'|trans }}"
-                   aria-pressed="{{ (current_row_view == row_view) ? 'true' : 'false' }}"
-                   aria-label="{{ 'oro.product.grid.action.catalog_switcher.compact_view.aria_label'|trans }}"
-               >
-                    <span class="fa-bars fa--no-offset" aria-hidden="true"></span>
-                </a>
+            <span class="datagrid-tool__label">{{ 'oro.product.frontend.grid.toolbar.display.label'|trans }}: &nbsp;</span>
+            {% set togglerId = 'dropdown-'|uniqid %}
+            {% set currentItem = view_list|filter(item => item.row_view == current_row_view)|first %}
+            {% set tooltipTemplate = '<div class="tooltip tooltip--high" role="tooltip"><div class="arrow"></div><div class="tooltip-inner"></div></div>' %}
+
+            <div class="dropdown btn-group catalog-switcher">
+                <button id="{{ togglerId }}"
+                    type="button"
+                    data-toggle="dropdown"
+                    data-placement="bottom-end"
+                    class="dropdown-toggle btn btn--default btn--size-s"
+                    aria-haspopup="true"
+                    aria-expanded="false"
+                >
+                    <span class="{{ currentItem.icon }} fa--no-offset" aria-hidden="true"></span>
+                    <span class="catalog-switcher__tooltip-trigger"
+                        data-toggle="tooltip"
+                        data-trigger="hover"
+                        data-template="{{ tooltipTemplate }}"
+                        title="{{ 'oro.product.grid.action.catalog_switcher.aria_label'|trans }}"
+                        aria-label="{{ 'oro.product.grid.action.catalog_switcher.aria_label'|trans }}"
+                    ></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="{{ togglerId }}">
+                    {% for view_item in view_list %}
+                    <li>
+                        <a href="{{ url_prefix ~ '?' ~ query_parameters|merge({(gridName): {(row_view_key): view_item.row_view}})|url_encode }}"
+                            class="dropdown-item"
+                            data-catalog-view-trigger="{{ {'row-view': view_item.row_view}|json_encode }}"
+                        >
+                            <span class="fa {{ view_item.icon }} fa--fw fa--as-line" aria-hidden="true"></span>
+                            {{ view_item.title|trans }}
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
             </div>
         </div>
     {% endif %}
