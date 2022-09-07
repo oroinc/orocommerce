@@ -105,7 +105,7 @@ define(function(require) {
         initialize: function(options) {
             this.codeViewer = this.editor.CodeManager.getViewer('CodeMirror').clone();
             this.codeViewer.set(this.codeViewerOptions);
-            this.content = _.unescape(this.editor.getSelected().getEl().innerHTML);
+            this.content = _.unescape(this.editor.getSelected().getContent());
             CodeDialogView.__super__.initialize.call(this, options);
         },
 
@@ -125,29 +125,23 @@ define(function(require) {
          */
         render: function() {
             CodeDialogView.__super__.render.call(this);
+            const container = this.editor.Commands.isActive('fullscreen') ? this.editor.getEl() : 'body';
 
-            this.codeViewer.init(this.$el.find('[data-role="code"]')[0]);
-            this.viewerEditor = this.codeViewer.editor;
-            // Disable auto formatting text in the editor.
-            this.viewerEditor.autoFormatRange = null;
-            this.codeViewer.setContent(this.content);
             this.importButton = this.$el.find('[data-role="code-edit"]');
 
             this.dialog = new DialogWidget({
-                autoRender: true,
+                autoRender: false,
                 el: this.el,
                 title: this.modalCodeTitle,
-                loadingElement: this.editor.getEl(),
+                incrementalPosition: false,
+                loadingElement: container,
                 dialogOptions: {
                     autoResize: false,
                     resizable: false,
                     modal: true,
-                    height: 400,
-                    minHeight: 435,
-                    maxHeight: 435,
+                    height: 495,
                     minWidth: 856,
-                    maxWidth: 856,
-                    appendTo: this.editor.getEl(),
+                    appendTo: container,
                     dialogClass: 'ui-dialog--import-template',
                     close: () => {
                         this.dispose();
@@ -155,8 +149,19 @@ define(function(require) {
                 }
             });
 
-            this.viewerEditor.refresh();
+            this.dialog.once('renderComplete', this.initCodeEditor.bind(this));
+            this.dialog.render();
             this.importButton.on('click', this.onSave.bind(this));
+        },
+
+        initCodeEditor() {
+            this.codeViewer.init(this.$el.find('[data-role="code"]')[0]);
+            this.viewerEditor = this.codeViewer.editor;
+            // Disable auto formatting text in the editor.
+            this.viewerEditor.autoFormatRange = null;
+            this.codeViewer.setContent(this.content);
+            this.viewerEditor.refresh();
+            this.adjustHeight();
         },
 
         /**
@@ -179,9 +184,21 @@ define(function(require) {
         onSave: function() {
             if (!this.disabled) {
                 const codeContent = _.escape(this.viewerEditor.getValue().trim());
-                this.editor.getSelected().components(codeContent);
+                this.editor.getSelected().setContent(codeContent);
                 this.dialog.remove();
             }
+        },
+
+        /**
+         * Adjust height code editor
+         */
+        adjustHeight() {
+            if (!this.dialog) {
+                return;
+            }
+            const height = this.$el.find('.validation-failed').height() || 0;
+            this.viewerEditor.setSize(this.dialog.widget.width(), this.dialog.widget.height() - height);
+            this.dialog.resetDialogPosition();
         }
     });
 

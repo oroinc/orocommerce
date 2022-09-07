@@ -1,5 +1,6 @@
 @regression
 @ticket-BB-21200
+@ticket-BAP-21015
 
 Feature: Schema update after removing new attribute
   Check the correctness of removing the new attribute without updating the schema after attribute creation.
@@ -22,6 +23,6 @@ Feature: Schema update after removing new attribute
     Then I should see "Are you sure you want to delete this attribute?"
     When I click "Yes"
     Then I should see "Attribute successfully deleted" flash message
-    And should see "Update schema"
-    When I click update schema
-    Then I should see "Schema updated" flash message
+    # any attribute in state NEW (that has not been applied against DB) will be deleted immediately w/o
+    # requirement to update schema
+    And should not see "Update schema"

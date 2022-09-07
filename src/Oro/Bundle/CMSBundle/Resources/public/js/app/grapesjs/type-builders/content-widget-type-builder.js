@@ -5,18 +5,6 @@ import DialogWidget from 'oro/dialog-widget';
 import template from 'tpl-loader!orocms/templates/grapesjs-content-widget.html';
 import routing from 'routing';
 
-/**
- * Insert string into string via position
- * @param str
- * @param insert
- * @param startOffset
- * @param endOffset
- * @returns {string}
- */
-function insetIntoString(str, insert, startOffset, endOffset) {
-    return [str.slice(0, startOffset), insert, str.slice(endOffset)].join('');
-}
-
 function createDialog(gridName, editor, onClose) {
     const container = editor.Commands.isActive('fullscreen') ? editor.getEl() : 'body';
     const dialogOptions = {
@@ -70,7 +58,8 @@ const ContentWidgetTypeBuilder = BaseTypeBuilder.extend({
 
         initialize(...args) {
             if (this.get('tagName') === 'span') {
-                this.set('draggable', false);
+                this.set('textable', true);
+                this.set('draggable', '[data-gjs-type="text"]');
 
                 const classes = _.without(this.get('classes'), 'content-widget');
 
@@ -179,31 +168,18 @@ const ContentWidgetTypeBuilder = BaseTypeBuilder.extend({
 
             dialog.render();
         },
-        'inline-content-widget-settings': (editor, sender, event) => {
+        'inline-content-widget-settings': (editor, sender, {rte, selection}) => {
             const gridName = 'cms-inline-content-widget-grid';
             const dialog = createDialog(gridName, editor);
 
             dialog.on('grid-row-select', data => {
                 const sel = editor.getSelected();
-                if (event && event.selection) {
-                    const originalText = sel.view.el.innerHTML;
-
-                    const offset = originalText.indexOf(event.nodeValue);
-
-                    if (offset > 0) {
-                        event.offset += offset;
-                        event.extentOffset += offset;
-                    }
-
-                    sel.setContent(insetIntoString(
-                        originalText
-                        , `<span
-                                data-title="${data.model.get('name')}"
-                                data-type="${data.model.get('widgetType')}"
-                                class="content-widget-inline"
-                                >{{ widget("${data.model.get('name')}") }}</span>`
-                        , event.offset, event.extentOffset
-                    ));
+                if (selection.type !== 'None') {
+                    rte.insertHTML(`<span
+                        data-title="${data.model.get('name')}"
+                        data-type="${data.model.get('widgetType')}"
+                        class="content-widget-inline"
+                        >{{ widget("${data.model.get('name')}") }}</span>`);
                 } else {
                     sel.onContentBlockChange(sel, data.model);
                 }
@@ -233,15 +209,10 @@ const ContentWidgetTypeBuilder = BaseTypeBuilder.extend({
             },
             result: rte => {
                 const selection = rte.selection();
-                const offset = rte.selection().anchorOffset;
-                const extentOffset = rte.selection().extentOffset;
-                const nodeValue = rte.selection().anchorNode.nodeValue;
 
                 this.editor.runCommand('inline-content-widget-settings', {
                     selection,
-                    offset,
-                    extentOffset,
-                    nodeValue
+                    rte
                 });
             }
         });

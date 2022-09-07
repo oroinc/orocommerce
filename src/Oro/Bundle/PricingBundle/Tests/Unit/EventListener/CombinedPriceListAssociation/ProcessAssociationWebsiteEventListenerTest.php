@@ -47,6 +47,7 @@ class ProcessAssociationWebsiteEventListenerTest extends TestCase
         $cpl = $this->getEntity(CombinedPriceList::class, ['id' => 1]);
         $associations = ['config' => true];
         $processEvent = new ProcessEvent($cpl, $associations);
+        $processEvent->setVersion(100);
 
         $this->scheduleResolver->expects($this->never())
             ->method($this->anything());
@@ -66,6 +67,7 @@ class ProcessAssociationWebsiteEventListenerTest extends TestCase
         $website = $this->getEntity(Website::class, ['id' => 10]);
         $associations = ['website' => ['ids' => [10]]];
         $processEvent = new ProcessEvent($cpl, $associations, $isSkipNotifications);
+        $processEvent->setVersion(100);
 
         $websiteRepo = $this->createMock(WebsiteRepository::class);
         $websiteRepo->expects($this->any())
@@ -80,8 +82,8 @@ class ProcessAssociationWebsiteEventListenerTest extends TestCase
         $relation->setWebsite($website);
         $cplRepo = $this->createMock(CombinedPriceListRepository::class);
         $cplRepo->expects($this->once())
-            ->method('updateCombinedPriceListConnection')
-            ->with($cpl, $cpl, $website, null)
+            ->method('updateVersionedCombinedPriceListConnection')
+            ->with($cpl, $cpl, $website, 100, null)
             ->willReturn($relation);
         $this->registry->expects($this->any())
             ->method('getRepository')
@@ -115,7 +117,7 @@ class ProcessAssociationWebsiteEventListenerTest extends TestCase
         /** @var CombinedPriceList $cpl */
         $cpl = $this->getEntity(CombinedPriceList::class, ['id' => 1]);
         $associations = ['website' => ['ids' => [10]]];
-        $processEvent = new ProcessEvent($cpl, $associations);
+        $processEvent = new ProcessEvent($cpl, $associations, 100);
 
         $websiteRepo = $this->createMock(WebsiteRepository::class);
         $websiteRepo->expects($this->any())

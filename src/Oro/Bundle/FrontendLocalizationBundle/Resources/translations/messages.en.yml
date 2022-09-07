@@ -1,3 +1,7 @@
 oro:
     frontendlocalization:
         select.label: 'Select your language'
+        system_configuration:
+            fields:
+                switch_localization_based_on_url.label: Automatically Switch Localization Based on URL
+                switch_localization_based_on_url.tooltip: Enable the automatic switch of the customer user's initial localization to the target localization of the URL page they visit.

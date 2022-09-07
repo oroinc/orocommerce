@@ -55,14 +55,16 @@ class CombineSingleCombinedPriceListPricesTopicTest extends AbstractTopicTestCas
         $body = [
             'jobId' => 100,
             'collection' => [['p' => 1, 'm' => true]],
-            'assign_to' => ['config' => true]
+            'assign_to' => ['config' => true],
+            'version' => 1
         ];
         $expectedBody = [
             'jobId' => 100,
             'cpl' => false,
             'assign_to' => ['config' => true],
             'products' => [],
-            'collection' => [['p' => 1, 'm' => true]]
+            'collection' => [['p' => 1, 'm' => true]],
+            'version' => 1
         ];
         $actual = $optionsResolver->resolve($body);
         self::assertEquals($expectedBody, $actual);
@@ -85,7 +87,8 @@ class CombineSingleCombinedPriceListPricesTopicTest extends AbstractTopicTestCas
         $body = [
             'jobId' => 100,
             'collection' => [['p' => 1, 'm' => true]],
-            'assign_to' => ['config' => true]
+            'assign_to' => ['config' => true],
+            'version' => 1,
         ];
         $expectedBody = [
             'jobId' => 100,
@@ -93,6 +96,7 @@ class CombineSingleCombinedPriceListPricesTopicTest extends AbstractTopicTestCas
             'assign_to' => ['config' => true],
             'products' => [],
             'collection' => [['p' => 1, 'm' => true]],
+            'version' => 1,
         ];
         $actual = $optionsResolver->resolve($body);
         self::assertEquals($expectedBody, $actual);
@@ -105,14 +109,16 @@ class CombineSingleCombinedPriceListPricesTopicTest extends AbstractTopicTestCas
             'provided CPL' => [
                 'rawBody' => [
                     'jobId' => 100,
-                    'cpl' => 1
+                    'cpl' => 1,
+                    'version' => 1
                 ],
                 'expectedMessage' => [
                     'jobId' => 100,
                     'cpl' => $this->getEntity(CombinedPriceList::class, ['id' => 1]),
                     'products' => [],
                     'collection' => [],
-                    'assign_to' => []
+                    'assign_to' => [],
+                    'version' => null
                 ]
             ],
 
@@ -127,7 +133,8 @@ class CombineSingleCombinedPriceListPricesTopicTest extends AbstractTopicTestCas
                     'cpl' => $this->getEntity(CombinedPriceList::class, ['id' => 1]),
                     'products' => [1, 2],
                     'collection' => [],
-                    'assign_to' => []
+                    'assign_to' => [],
+                    'version' => null
                 ]
             ],
 
@@ -135,14 +142,16 @@ class CombineSingleCombinedPriceListPricesTopicTest extends AbstractTopicTestCas
                 'rawBody' => [
                     'jobId' => 100,
                     'collection' => [],
-                    'assign_to' => ['config' => true]
+                    'assign_to' => ['config' => true],
+                    'version' => 1
                 ],
                 'expectedMessage' => [
                     'jobId' => 100,
                     'cpl' => $this->getEntity(CombinedPriceList::class, ['id' => 1]),
                     'assign_to' => ['config' => true],
                     'products' => [],
-                    'collection' => []
+                    'collection' => [],
+                    'version' => 1
                 ]
             ],
 
@@ -150,7 +159,8 @@ class CombineSingleCombinedPriceListPricesTopicTest extends AbstractTopicTestCas
                 'rawBody' => [
                     'jobId' => 100,
                     'collection' => [['p' => 1, 'm' => true]],
-                    'assign_to' => ['config' => true]
+                    'assign_to' => ['config' => true],
+                    'version' => 1
                 ],
                 'expectedMessage' => [
                     'jobId' => 100,
@@ -158,6 +168,7 @@ class CombineSingleCombinedPriceListPricesTopicTest extends AbstractTopicTestCas
                     'assign_to' => ['config' => true],
                     'products' => [],
                     'collection' => [['p' => 1, 'm' => true]],
+                    'version' => 1
                 ]
             ]
         ];

@@ -184,38 +184,53 @@ class ProductVisibilityProvider
     {
         $qb = $this->createProductsQuery($products);
 
-        $productVisibilityTerm = $this->getProductVisibilityResolvedTermByWebsite(
+        $productConfigValue = $this->getProductConfigValue();
+        $categoryConfigValue = $this->getCategoryConfigValue();
+
+        $productVisibilityTerm = $this->buildProductVisibilityResolvedTermByWebsite(
             $qb,
             $this->getWebsiteById($websiteId)
         );
 
-        $anonymousGroupVisibilityTerm = implode('+', [
-            $productVisibilityTerm,
-            $this->getCustomerGroupProductVisibilityResolvedTermByWebsite(
-                $qb,
-                $this->getAnonymousCustomerGroup(),
-                $this->getWebsiteById($websiteId)
-            )
-        ]);
+        $anonymousGroupVisibilityTerm = $this->getCustomerGroupProductVisibilityFieldNameResolvedByWebsite(
+            $qb,
+            $this->getAnonymousCustomerGroup(),
+            $this->getWebsiteById($websiteId),
+        );
 
         $qb
-            ->addSelect(sprintf(
-                'CASE WHEN %s > 0 THEN %d ELSE %d END as visibility_new',
-                $productVisibilityTerm,
-                BaseVisibilityResolved::VISIBILITY_VISIBLE,
-                BaseVisibilityResolved::VISIBILITY_HIDDEN
-            ))
-            ->addSelect(sprintf(
-                'CASE WHEN %s > 0 THEN %d ELSE %d END as visibility_anonymous',
-                $anonymousGroupVisibilityTerm,
-                BaseVisibilityResolved::VISIBILITY_VISIBLE,
-                BaseVisibilityResolved::VISIBILITY_HIDDEN
-            ));
+            ->addSelect(sprintf('%s as visibility_new', $productVisibilityTerm))
+            ->addSelect(sprintf('%s as visibility_anonymous', $anonymousGroupVisibilityTerm));
 
         $visibilities = $qb->getQuery()->getArrayResult();
 
         foreach ($visibilities as &$visibility) {
-            $visibility['is_visible_by_default'] = $this->getCategoryConfigValue();
+            $visibility['visibility_new'] = $visibility['visibility_new'] === 0
+                ? $categoryConfigValue
+                : $visibility['visibility_new'];
+
+            $visibilityNew = $visibility['visibility_new'] = $visibility['visibility_new'] === null
+                ? $productConfigValue
+                : $visibility['visibility_new'];
+
+            $visibility['visibility_new'] = $visibility['visibility_new'] > 0
+                ? BaseVisibilityResolved::VISIBILITY_VISIBLE
+                : BaseVisibilityResolved::VISIBILITY_HIDDEN;
+
+            $visibility['visibility_anonymous'] = $visibility['visibility_anonymous'] === 0
+                ? $categoryConfigValue
+                : $visibility['visibility_anonymous'];
+
+            $visibility['visibility_anonymous'] = $visibility['visibility_anonymous'] === null
+                ? 0
+                : $visibility['visibility_anonymous'];
+
+            $visibility['visibility_anonymous'] = ($visibilityNew + $visibility['visibility_anonymous'] * 10) > 0
+                ? BaseVisibilityResolved::VISIBILITY_VISIBLE
+                : BaseVisibilityResolved::VISIBILITY_HIDDEN;
+
+
+            $visibility['is_visible_by_default'] = $categoryConfigValue;
         }
 
         return $visibilities;

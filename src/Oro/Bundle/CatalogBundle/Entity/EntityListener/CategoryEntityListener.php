@@ -46,7 +46,8 @@ class CategoryEntityListener
 
     private function scheduleCategoryReindex(Category $category): void
     {
-        $this->productIndexScheduler->scheduleProductsReindexWithFieldGroup([$category], null, true, ['main']);
+        $this->productIndexScheduler
+            ->scheduleProductsReindexWithFieldGroup([$category], null, true, ['main', 'inventory']);
         $this->categoryCache->deleteAll();
     }
 }

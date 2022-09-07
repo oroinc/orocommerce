@@ -5,7 +5,7 @@
 @fixture-OroPromotionBundle:shopping_list_for_promotion_with_bad_expression.yml
 
 Feature: Promotions with incorrect lineItems expression
-  In order to make sure that incorrect promotion rule expression doesn't leads to storefront errors by incorrect array access in promotion expression
+  In order to make sure that incorrect promotion rule expression doesn't lead to storefront errors by incorrect array access in promotion expression
   As an administrator
   I need to have ability to create promotion with incorrect rule expression and be sure that storefront works without errors
 

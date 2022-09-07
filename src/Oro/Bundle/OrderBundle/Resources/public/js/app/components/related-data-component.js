@@ -31,8 +31,10 @@ define(function(require) {
             this.options = $.extend(true, {}, this.options, options || {});
             this.view = new FormView(this.options);
 
-            mediator.on('customer-customer-user:change', this.onChangeCustomerUser, this);
-            mediator.on('entry-point:order:load', this.loadRelatedData, this);
+            this.listenTo(mediator, {
+                'customer-customer-user:change': this.onChangeCustomerUser,
+                'entry-point:order:load': this.loadRelatedData
+            });
         },
 
         onChangeCustomerUser: function() {
@@ -46,20 +48,6 @@ define(function(require) {
          */
         loadRelatedData: function(response) {
             mediator.trigger('order:loaded:related-data', response);
-        },
-
-        /**
-         * @inheritdoc
-         */
-        dispose: function() {
-            if (this.disposed) {
-                return;
-            }
-
-            mediator.off('customer-customer-user:change', this.onChangeCustomerUser, this);
-            mediator.off('entry-point:order:load', this.loadRelatedData, this);
-
-            RelatedDataComponent.__super__.dispose.call(this);
         }
     });
 

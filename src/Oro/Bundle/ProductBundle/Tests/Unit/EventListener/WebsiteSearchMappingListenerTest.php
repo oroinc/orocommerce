@@ -218,6 +218,7 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
             [
                 Product::class   => [
                     'alias'  => 'products',
+                    'synonyms_enabled' => false,
                     'fields' => [
                         'firstname' => [
                             'name'            => 'firstname',
@@ -303,6 +304,7 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
                 ],
                 \stdClass::class => [
                     'alias'  => 'std',
+                    'synonyms_enabled' => false,
                     'fields' => [
                         'first' => [
                             'name'            => 'first',
@@ -413,6 +415,7 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
             [
                 Product::class   => [
                     'alias'  => 'products',
+                    'synonyms_enabled' => false,
                     'fields' => [
                         'firstname' => [
                             'name'            => 'firstname',
@@ -474,6 +477,7 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
                 ],
                 \stdClass::class => [
                     'alias'  => 'std',
+                    'synonyms_enabled' => false,
                     'fields' => [
                         'first' => [
                             'name'            => 'first',

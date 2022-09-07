@@ -70,7 +70,7 @@ const BaseTypeBuilder = BaseClass.extend({
             throw new Error('Option "componentType" is required');
         }
 
-        const parentTypeComponent = this.editor.DomComponents.getType(this.parentType || 'default');
+        const parentTypeComponent = this.editor.Components.getType(this.parentType || 'default');
 
         this.Model = this.createModelConstructor(parentTypeComponent.model);
         this.View = this.createViewConstructor(parentTypeComponent.view);
@@ -86,8 +86,7 @@ const BaseTypeBuilder = BaseClass.extend({
             throw new Error(`Component "${this.componentType}" contains unresolved tags`);
         }
 
-        const dom = this.editor.DomComponents;
-
+        const dom = this.editor.Components;
         dom.addType(this.componentType, {
             model: this.Model,
             view: this.View

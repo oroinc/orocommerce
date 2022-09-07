@@ -73,6 +73,12 @@ oro_behat_extension:
                     URL Slugs English (United States) use fallback:
                         type: 'xpath'
                         locator: '//label[text() = "URL Slug"]/ancestor::div[contains(@class, "control-group")]//div[text() = "English (United States)"]/following-sibling::div//input[contains(@class, "checkbox-view__input")]'
+                    URL Slugs French value:
+                        type: 'xpath'
+                        locator: '//label[text() = "URL Slug"]/ancestor::div[contains(@class, "control-group")]//div[text() = "French"]/following-sibling::div//input[contains(@class, "fallback-item-value-input")]'
+                    URL Slugs French use fallback:
+                        type: 'xpath'
+                        locator: '//label[text() = "URL Slug"]/ancestor::div[contains(@class, "control-group")]//div[text() = "French"]/following-sibling::div//input[@type="checkbox"]'
                     Slug: 'oro_web_catalog_content_node[slugPrototypesWithRedirect][slugPrototypes][values][default]'
                     Meta Title: 'oro_web_catalog_content_node[metaTitles][values][default]'
                     Meta Description: 'oro_web_catalog_content_node[metaDescriptions][values][default]'

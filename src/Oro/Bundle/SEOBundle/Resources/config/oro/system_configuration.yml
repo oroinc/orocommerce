@@ -91,6 +91,15 @@ system_configuration:
                 tooltip: oro.seo.system_configuration.fields.sitemap_exclude_landing_pages.tooltip
                 label:   oro.seo.system_configuration.fields.sitemap_exclude_landing_pages.label
 
+        oro_seo.sitemap_include_landing_pages_not_in_web_catalog:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            options:
+                required: false
+                tooltip: oro.seo.system_configuration.fields.sitemap_include_landing_pages_not_in_web_catalog.tooltip
+                label:   oro.seo.system_configuration.fields.sitemap_include_landing_pages_not_in_web_catalog.label
+
+
     tree:
         system_configuration:
             platform:
@@ -115,3 +124,4 @@ system_configuration:
                                             - oro_seo.sitemap_changefreq_cms_page
                                             - oro_seo.sitemap_priority_cms_page
                                             - oro_seo.sitemap_exclude_landing_pages
+                                            - oro_seo.sitemap_include_landing_pages_not_in_web_catalog

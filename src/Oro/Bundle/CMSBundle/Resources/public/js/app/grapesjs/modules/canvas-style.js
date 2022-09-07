@@ -71,6 +71,10 @@ export default `
         outline: 1px dashed rgba(170,170,170,0.7);
     }
     
+    .gjs-dashed [data-gjs-highlightable][data-gjs-type="text-style"] {
+        outline-style: dotted;
+    }
+
     .gjs-dashed [data-gjs-highlightable][data-gjs-type="custom-code"] {
         outline-color: #478409;
         outline-width: 2px;
@@ -78,15 +82,5 @@ export default `
 
     [data-gjs-type="video"] {
         max-width: 100%;
-    }
-    
-    [data-gjs-type="code"] {
-        border-top: 3px solid #f5f5f5;
-        border-bottom: 3px solid #f5f5f5;
-        padding: 16px 22px;
-        margin: 0 0 16px;
-        display: block;
-        font-family: Courier,Courier New,monospace;
-        line-height: 1.43;
     }
 `;

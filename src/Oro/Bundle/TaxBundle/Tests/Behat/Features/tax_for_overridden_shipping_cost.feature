@@ -41,7 +41,7 @@ Feature: Tax for overridden shipping cost
     And fill "Order Form" with:
       | Customer User | Amanda Cole |
       | Product       | SKU123      |
-    And I type "5" in "First Product Quantity Field In Order"
+      | Quantity      | 5           |
     And I click "Calculate Shipping"
     And I click "Shipping Method Flat Rate Radio Button"
     Then I should see "Subtotal $10.00"
@@ -72,7 +72,7 @@ Feature: Tax for overridden shipping cost
     And fill "Order Form" with:
       | Customer User | Amanda Cole |
       | Product       | SKU123      |
-    And I type "5" in "First Product Quantity Field In Order"
+      | Quantity      | 5           |
     When I save and close form
     And I click "Save" in modal window
     Then I should see "Order has been saved" flash message
@@ -99,8 +99,8 @@ Feature: Tax for overridden shipping cost
     Then there are 2 records in grid
     And I should see following grid containing rows:
       | Order Number | Total  |
-      |            1 | $10.90 |
-      |            2 | $10.90 |
+      | 1            | $10.90 |
+      | 2            | $10.90 |
 
   Scenario: Turn on tax calculation after promotion and create order
     Given I go to System/Configuration
@@ -115,7 +115,7 @@ Feature: Tax for overridden shipping cost
     And fill "Order Form" with:
       | Customer User | Amanda Cole |
       | Product       | SKU123      |
-    And I type "5" in "First Product Quantity Field In Order"
+      | Quantity      | 5           |
     When I save and close form
     And I click "Save" in modal window
     Then I should see "Order has been saved" flash message
@@ -142,6 +142,6 @@ Feature: Tax for overridden shipping cost
     Then there are 3 records in grid
     And I should see following grid containing rows:
       | Order Number | Total  |
-      |            1 | $10.90 |
-      |            2 | $10.90 |
-      |            3 | $10.90 |
+      | 1            | $10.90 |
+      | 2            | $10.90 |
+      | 3            | $10.90 |

@@ -1,6 +1,2 @@
-{%- if contentBlock.contentStyle|length -%}
-    {%- apply spaceless -%}
-        <style type="text/css">{{- contentBlock.contentStyle|render_content -}}</style>
-    {%- endapply -%}
-{%- endif -%}
-<div>{{- contentBlock.content|render_content -}}</div>
+{%- import '@OroCMS/macros.html.twig' as CMS -%}
+<div>{{ CMS.renderWysiwygContent(contentBlock.content, contentBlock.contentStyle) }}</div>

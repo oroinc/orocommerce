@@ -1,0 +1,43 @@
+system_configuration:
+    fields:
+        oro_frontend_localization.switch_localization_based_on_url:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            options:
+                label: oro.frontendlocalization.system_configuration.fields.switch_localization_based_on_url.label
+                tooltip: oro.frontendlocalization.system_configuration.fields.switch_localization_based_on_url.tooltip
+                required: false
+
+    tree:
+        system_configuration:
+            platform:
+                children:
+                    general_setup:
+                        children:
+                            localization:
+                                children:
+                                    localization_settings:
+                                        children:
+                                            - oro_frontend_localization.switch_localization_based_on_url
+
+        website_configuration:
+            platform:
+                children:
+                    general_setup:
+                        children:
+                            localization:
+                                children:
+                                    localization_settings:
+                                        children:
+                                            - oro_frontend_localization.switch_localization_based_on_url
+
+        organization_configuration:
+            platform:
+                children:
+                    general_setup:
+                        children:
+                            localization:
+                                children:
+                                    localization_settings:
+                                        children:
+                                            - oro_frontend_localization.switch_localization_based_on_url
