@@ -6,12 +6,10 @@ import template from 'tpl-loader!orocms/templates/grapesjs-content-widget.html';
 import routing from 'routing';
 
 function createDialog(gridName, editor, onClose) {
-    const container = editor.Commands.isActive('fullscreen') ? editor.getEl() : 'body';
     const dialogOptions = {
         modal: true,
         resizable: true,
-        autoResize: true,
-        appendTo: container
+        autoResize: true
     };
 
     if (_.isFunction(onClose)) {
@@ -21,7 +19,6 @@ function createDialog(gridName, editor, onClose) {
     return new DialogWidget({
         title: __('oro.cms.wysiwyg.content_widget.title'),
         url: routing.generate('oro_datagrid_widget', _.extend(editor.Config.requestParams, {gridName: gridName})),
-        loadingElement: container,
         dialogOptions
     });
 }
