@@ -54,8 +54,12 @@ class PriceListToCustomerGroupTest extends AbstractApiPriceListRelationTest
         static::assertMessageSent(
             RebuildCombinedPriceListsTopic::getName(),
             [
-                'website'       => $this->getWebsiteForCreateAction()->getId(),
-                'customerGroup' => $this->getReference('customer_group.group3')->getId()
+                'assignments' => [
+                    [
+                        'website'       => $this->getWebsiteForCreateAction()->getId(),
+                        'customerGroup' => $this->getReference('customer_group.group3')->getId()
+                    ]
+                ]
             ]
         );
     }
@@ -82,13 +86,19 @@ class PriceListToCustomerGroupTest extends AbstractApiPriceListRelationTest
             $this->getEntityManager()->find(PriceListToCustomerGroup::class, $relationId2)
         );
 
-        $this->assertFirstRelationMessageSent();
-
         static::assertMessageSent(
             RebuildCombinedPriceListsTopic::getName(),
             [
-                'website'       => $this->getReference(LoadWebsiteData::WEBSITE2)->getId(),
-                'customerGroup' => $this->getReference('customer_group.group3')->getId()
+                'assignments' => [
+                    [
+                        'website'       => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
+                        'customerGroup' => $this->getReference('customer_group.group1')->getId()
+                    ],
+                    [
+                        'website'       => $this->getReference(LoadWebsiteData::WEBSITE2)->getId(),
+                        'customerGroup' => $this->getReference('customer_group.group3')->getId()
+                    ]
+                ]
             ]
         );
     }
@@ -178,8 +188,12 @@ class PriceListToCustomerGroupTest extends AbstractApiPriceListRelationTest
         static::assertMessageSent(
             RebuildCombinedPriceListsTopic::getName(),
             [
-                'website'       => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
-                'customerGroup' => $this->getReference('customer_group.group1')->getId()
+                'assignments' => [
+                    [
+                        'website'       => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
+                        'customerGroup' => $this->getReference('customer_group.group1')->getId()
+                    ],
+                ]
             ]
         );
     }

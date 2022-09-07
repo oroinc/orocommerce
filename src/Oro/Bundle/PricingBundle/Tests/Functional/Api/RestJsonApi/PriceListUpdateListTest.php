@@ -126,11 +126,15 @@ class PriceListUpdateListTest extends RestJsonApiUpdateListTestCase
             RebuildCombinedPriceListsTopic::getName(),
             [
                 [
-                    'website' => $this->getReference('US')->getId()
-                ],
-                [
-                    'website'  => $this->getReference('Canada')->getId(),
-                    'customer' => $this->getReference('customer.level_1_1')->getId()
+                    'assignments' => [
+                        [
+                            'website' => $this->getReference('Canada')->getId(),
+                            'customer' => $this->getReference('customer.level_1_1')->getId()
+                        ],
+                        [
+                            'website' => $this->getReference('US')->getId()
+                        ]
+                    ]
                 ]
             ]
         );
@@ -206,13 +210,17 @@ class PriceListUpdateListTest extends RestJsonApiUpdateListTestCase
             RebuildCombinedPriceListsTopic::getName(),
             [
                 [
-                    'customer' => $customerLevel13->getId(),
-                    'customerGroup' => $customerGroup1->getId(),
-                    'website' => $this->getReference('US')->getId()
-                ],
-                [
-                    'customerGroup' => $customerGroup2->getId(),
-                    'website' => $this->getReference('US')->getId()
+                    'assignments' => [
+                        [
+                            'customer' => $customerLevel13->getId(),
+                            'customerGroup' => $customerGroup1->getId(),
+                            'website' => $this->getReference('US')->getId()
+                        ],
+                        [
+                            'customerGroup' => $customerGroup2->getId(),
+                            'website' => $this->getReference('US')->getId()
+                        ]
+                    ]
                 ]
             ]
         );

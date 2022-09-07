@@ -24,6 +24,12 @@ define(function(require) {
             }
         },
 
+        listen: {
+            'entry-point:order:load:before mediator': 'showLoadingMask',
+            'entry-point:order:load mediator': 'refreshCollectionBlock',
+            'entry-point:order:load:after mediator': 'hideLoadingMask'
+        },
+
         /**
          * @inheritdoc
          */
@@ -42,18 +48,6 @@ define(function(require) {
             events['click ' + this.options.selectors.removeButton] = 'removeAppliedPromotion';
 
             return events;
-        },
-
-        /**
-         * @inheritdoc
-         */
-        initialize: function() {
-            const handlers = {};
-            handlers['entry-point:order:load:before'] = this.showLoadingMask;
-            handlers['entry-point:order:load'] = this.refreshCollectionBlock;
-            handlers['entry-point:order:load:after'] = this.hideLoadingMask;
-
-            this.listenTo(mediator, handlers);
         },
 
         /**

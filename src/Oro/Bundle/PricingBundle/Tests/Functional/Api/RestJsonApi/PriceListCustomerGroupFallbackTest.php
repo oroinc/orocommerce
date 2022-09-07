@@ -46,12 +46,15 @@ class PriceListCustomerGroupFallbackTest extends AbstractApiPriceListRelationTes
             ]);
 
         static::assertNotNull($relation);
-
         static::assertMessageSent(
             RebuildCombinedPriceListsTopic::getName(),
             [
-                'website'       => $this->getWebsiteForCreateAction()->getId(),
-                'customerGroup' => $this->getReference('customer_group.group3')->getId()
+                'assignments' => [
+                    [
+                        'website'       => $this->getWebsiteForCreateAction()->getId(),
+                        'customerGroup' => $this->getReference('customer_group.group3')->getId()
+                    ]
+                ]
             ]
         );
     }
@@ -77,13 +80,19 @@ class PriceListCustomerGroupFallbackTest extends AbstractApiPriceListRelationTes
             $this->getEntityManager()->find(PriceListCustomerGroupFallback::class, $relationId2)
         );
 
-        $this->assertFirstRelationMessageSent();
-
         static::assertMessageSent(
             RebuildCombinedPriceListsTopic::getName(),
             [
-                'website'       => $this->getReference(LoadWebsiteData::WEBSITE2)->getId(),
-                'customerGroup' => $this->getReference('customer_group.group2')->getId()
+                'assignments' => [
+                    [
+                        'website'       => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
+                        'customerGroup' => $this->getReference('customer_group.group1')->getId()
+                    ],
+                    [
+                        'website'       => $this->getReference(LoadWebsiteData::WEBSITE2)->getId(),
+                        'customerGroup' => $this->getReference('customer_group.group2')->getId()
+                    ]
+                ]
             ]
         );
     }
@@ -103,7 +112,17 @@ class PriceListCustomerGroupFallbackTest extends AbstractApiPriceListRelationTes
 
         static::assertSame(1, $updatedRelation->getFallback());
 
-        $this->assertFirstRelationMessageSent();
+        static::assertMessageSent(
+            RebuildCombinedPriceListsTopic::getName(),
+            [
+                'assignments' => [
+                    [
+                        'customerGroup' => $this->getReference('customer_group.group1')->getId(),
+                        'website'       => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
+                    ]
+                ]
+            ]
+        );
     }
 
     public function testGetSubResources()
@@ -161,8 +180,12 @@ class PriceListCustomerGroupFallbackTest extends AbstractApiPriceListRelationTes
         static::assertMessageSent(
             RebuildCombinedPriceListsTopic::getName(),
             [
-                'website'       => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
-                'customerGroup' => $this->getReference('customer_group.group1')->getId()
+                'assignments' => [
+                    [
+                        'customerGroup' => $this->getReference('customer_group.group1')->getId(),
+                        'website'       => $this->getReference(LoadWebsiteData::WEBSITE1)->getId()
+                    ]
+                ]
             ]
         );
     }

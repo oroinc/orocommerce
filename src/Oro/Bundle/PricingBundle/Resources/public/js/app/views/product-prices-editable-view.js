@@ -127,7 +127,7 @@ define(function(require) {
 
         setPriceValue: function(price) {
             this.model.set('price', this.calcTotalPrice(price));
-            this.getElement('priceValue').trigger('blur');
+            this.getElement('priceValue').trigger('change');
         },
 
         updateUI: function() {

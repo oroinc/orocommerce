@@ -111,11 +111,6 @@ class WebsiteSearchProductIndexerListener
             $event->addField($product->getId(), 'sku_uppercase', mb_strtoupper($product->getSku()), true);
             $event->addField($product->getId(), 'status', $product->getStatus());
             $event->addField($product->getId(), 'type', $product->getType());
-            $event->addField(
-                $product->getId(),
-                'inventory_status',
-                $product->getInventoryStatus() ? $product->getInventoryStatus()->getId() : ''
-            );
             $event->addField($product->getId(), 'is_variant', (int)$product->isVariant());
 
             if ($product->getAttributeFamily() instanceof AttributeFamily) {

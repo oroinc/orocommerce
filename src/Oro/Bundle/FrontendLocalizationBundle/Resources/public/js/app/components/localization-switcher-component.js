@@ -14,7 +14,10 @@ define(function(require) {
         options: {
             localizationSwitcherRoute: 'oro_frontend_localization_frontend_set_current_localization',
             localizationElement: '[data-localization]',
-            selectedLocalization: null
+            selectedLocalization: null,
+            currentRoute: 'oro_frontend_root',
+            currentRouteParameters: null,
+            currentQueryParameters: null
         },
 
         /**
@@ -44,19 +47,36 @@ define(function(require) {
 
             mediator.execute('showLoading');
             this.syncActiveLocalization(newLocalization)
-                // try to refresh page if localization is successfully changed
-                // and return promise of page refresh action result
-                .then(() => mediator.execute('refreshPage'))
+                // if localization is successfully changed,
+                // page will redirect to a new page with appropriate slug if localized slug is in using.
+                .then(function(data) {
+                    if (!_.isUndefined(data.redirectTo)) {
+                        const url = data.redirectTo;
+                        mediator.execute('redirectTo', {url: url}, {redirect: true});
+                    } else {
+                        mediator.execute('showFlashMessage', 'error', 'Selected language is not enabled.');
+                    }
+                })
                 .fail(() => {
                     // rollback selected localization if refresh was canceled
-                    this.syncActiveLocalization(initialLocalization)
-                        .done(() => mediator.execute('hideLoading'));
+                    this.syncActiveLocalization(initialLocalization);
                 });
         },
 
         syncActiveLocalization(localization) {
             const url = routing.generate(this.options.localizationSwitcherRoute);
-            return $.post(url, {localization});
+            const {
+                currentRoute: redirectRoute,
+                currentRouteParameters: redirectRouteParameters,
+                currentQueryParameters: redirectQueryParameters
+            } = this.options;
+
+            return $.post(url, {
+                localization: localization,
+                redirectRoute: redirectRoute,
+                redirectRouteParameters: redirectRouteParameters,
+                redirectQueryParameters: redirectQueryParameters
+            }).always(() => mediator.execute('hideLoading'));
         },
 
         dispose: function() {

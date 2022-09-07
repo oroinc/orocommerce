@@ -57,22 +57,38 @@ oro_behat_extension:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
       options:
         mapping:
-          Default Value: 'oro_product[slugPrototypesWithRedirect][slugPrototypes][values][default]'
-          English Default: 'oro_product[slugPrototypesWithRedirect][slugPrototypes][values][localizations][1][use_fallback]'
-          English: 'oro_product[slugPrototypesWithRedirect][slugPrototypes][values][localizations][1][value]'
-          French Default: 'oro_product[slugPrototypesWithRedirect][slugPrototypes][values][localizations][2][use_fallback]'
-          French: 'oro_product[slugPrototypesWithRedirect][slugPrototypes][values][localizations][2][value]'
+          URL Slug default value: 'oro_product[slugPrototypesWithRedirect][slugPrototypes][values][default]'
+          URL Slug English (United States) value:
+            type: 'xpath'
+            locator: '//label[text() = "URL Slug"]/ancestor::div[contains(@class, "control-group")]//div[text() = "English (United States)"]/following-sibling::div//input[contains(@class, "fallback-item-value-input")]'
+          URL Slug English (United States) use fallback:
+            type: 'xpath'
+            locator: '//label[text() = "URL Slug"]/ancestor::div[contains(@class, "control-group")]//div[text() = "English (United States)"]/following-sibling::div//input[@type="checkbox"]'
+          URL Slug French value:
+            type: 'xpath'
+            locator: '//label[text() = "URL Slug"]/ancestor::div[contains(@class, "control-group")]//div[text() = "French"]/following-sibling::div//input[contains(@class, "fallback-item-value-input")]'
+          URL Slug French use fallback:
+            type: 'xpath'
+            locator: '//label[text() = "URL Slug"]/ancestor::div[contains(@class, "control-group")]//div[text() = "French"]/following-sibling::div//input[@type="checkbox"]'
 
     Category URL Slug Form:
       selector: 'form[name="oro_catalog_category"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
       options:
         mapping:
-          Default Value: 'oro_catalog_category[slugPrototypesWithRedirect][slugPrototypes][values][default]'
-          English Default: 'oro_catalog_category[slugPrototypesWithRedirect][slugPrototypes][values][localizations][1][use_fallback]'
-          English: 'oro_catalog_category[slugPrototypesWithRedirect][slugPrototypes][values][localizations][1][value]'
-          French Default: 'oro_catalog_category[slugPrototypesWithRedirect][slugPrototypes][values][localizations][2][use_fallback]'
-          French: 'oro_catalog_category[slugPrototypesWithRedirect][slugPrototypes][values][localizations][2][value]'
+          URL Slug default value: 'oro_catalog_category[slugPrototypesWithRedirect][slugPrototypes][values][default]'
+          URL Slug English (United States) value:
+            type: 'xpath'
+            locator: '//label[text() = "URL Slug"]/ancestor::div[contains(@class, "control-group")]//div[text() = "English (United States)"]/following-sibling::div//input[contains(@class, "fallback-item-value-input")]'
+          URL Slug English (United States) use fallback:
+            type: 'xpath'
+            locator: '//label[text() = "URL Slug"]/ancestor::div[contains(@class, "control-group")]//div[text() = "English (United States)"]/following-sibling::div//input[@type="checkbox"]'
+          URL Slug French value:
+            type: 'xpath'
+            locator: '//label[text() = "URL Slug"]/ancestor::div[contains(@class, "control-group")]//div[text() = "French"]/following-sibling::div//input[contains(@class, "fallback-item-value-input")]'
+          URL Slug French use fallback:
+            type: 'xpath'
+            locator: '//label[text() = "URL Slug"]/ancestor::div[contains(@class, "control-group")]//div[text() = "French"]/following-sibling::div//input[@type="checkbox"]'
 
     Product1:
       selector:

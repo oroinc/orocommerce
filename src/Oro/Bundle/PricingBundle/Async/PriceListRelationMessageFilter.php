@@ -73,6 +73,8 @@ class PriceListRelationMessageFilter implements MessageFilterInterface
             } else {
                 $this->removeAllMessagesExceptFullRebuildMessage($buffer, $fullRebuildMessageId);
             }
+
+            $this->reduceMessages($buffer);
         } finally {
             $this->processedMessages = null;
             $this->changedWebsites = null;
@@ -172,6 +174,17 @@ class PriceListRelationMessageFilter implements MessageFilterInterface
                 }
             }
         }
+    }
+
+    private function reduceMessages(MessageBuffer $buffer): void
+    {
+        $messages = $buffer->getMessagesForTopic(RebuildCombinedPriceListsTopic::getName());
+        $merged = [];
+        foreach ($messages as $messageId => $message) {
+            $merged[] = $message;
+            $buffer->removeMessage($messageId);
+        }
+        $buffer->addMessage(RebuildCombinedPriceListsTopic::getName(), ['assignments' => $merged]);
     }
 
     private function isRedundantCustomerGroupMessage(array $message): bool

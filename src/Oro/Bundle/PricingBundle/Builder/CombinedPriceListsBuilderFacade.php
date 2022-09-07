@@ -138,12 +138,23 @@ class CombinedPriceListsBuilderFacade
         array $assignTo,
         bool $skipUpdateNotification = false
     ): void {
+        $this->processVersionedAssignments($cpl, $assignTo, null, $skipUpdateNotification);
+    }
+
+    public function processVersionedAssignments(
+        CombinedPriceList $cpl,
+        array $assignTo,
+        ?int $version,
+        bool $skipUpdateNotification = false
+    ): void {
         // Nothing to do if there are no assignments
         if (empty($assignTo)) {
             return;
         }
 
         $event = new ProcessEvent($cpl, $assignTo, $skipUpdateNotification);
+        $event->setVersion($version);
+
         $this->dispatcher->dispatch($event, $event::NAME);
     }
 

@@ -42,6 +42,8 @@ class PriceListRuleCompilerTest extends WebTestCase
 
     protected function setUp(): void
     {
+        $this->markTestSkipped('BB-21644');
+
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
         $this->loadFixtures(
@@ -836,6 +838,7 @@ class PriceListRuleCompilerTest extends WebTestCase
 
         $shardManager = $this->getContainer()->get('oro_pricing.shard_manager');
         $query->setHint(PriceShardOutputResultModifier::ORO_PRICING_SHARD_MANAGER, $shardManager);
+        $query->expireQueryCache()->expireResultCache();
 
         $actual = $query->getResult();
         ArrayUtil::sortBy($actual, false, 'value');

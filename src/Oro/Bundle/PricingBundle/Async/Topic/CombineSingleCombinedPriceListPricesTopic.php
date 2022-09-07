@@ -73,5 +73,14 @@ class CombineSingleCombinedPriceListPricesTopic implements TopicInterface
                 return null;
             }
         );
+
+        // Assignment version. Used to prevent assignment overriding if newer version exists.
+        $resolver
+            ->setDefined('version')
+            ->setDefault('version', null)
+            ->setAllowedTypes('version', ['int', 'null'])
+            ->setNormalizer('version', function (Options $options, $value) {
+                return $options['assign_to'] ? $value : null;
+            });
     }
 }

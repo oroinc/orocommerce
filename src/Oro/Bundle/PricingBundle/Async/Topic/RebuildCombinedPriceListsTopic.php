@@ -44,6 +44,7 @@ class RebuildCombinedPriceListsTopic implements TopicInterface
         $this->configureMessageBodyIncludeWebsite($resolver);
         $this->configureMessageBodyIncludeCustomerGroup($resolver);
         $this->configureMessageBodyIncludeCustomer($resolver);
+        $this->configureMessageBodyIncludeAssignments($resolver);
     }
 
     private function configureMessageBodyIncludeWebsite(OptionsResolver $resolver): void
@@ -118,5 +119,60 @@ class RebuildCombinedPriceListsTopic implements TopicInterface
                 return $entity;
             }
         );
+    }
+
+    public function configureMessageBodyIncludeAssignments(OptionsResolver $resolver): void
+    {
+        $resolver
+            ->setDefined('assignments')
+            ->setDefault('assignments', [])
+            ->setAllowedTypes('assignments', ['array'])
+            ->setAllowedValues('assignments', function (&$elements) {
+                $assigmentResolver = $this->getAssignmentResolver();
+                $elements = array_map([$assigmentResolver, 'resolve'], $elements);
+
+                return true;
+            })
+            ->setNormalizer('assignments', function (Options $options, array $value) {
+                if (!$value) {
+                    $assigment = [
+                        'force' => $options['force'],
+                        'website' => $options['website'],
+                        'customer' => $options['customer'],
+                        'customerGroup' => $options['customerGroup'],
+                    ];
+
+                    $value[] = $assigment;
+                }
+
+                return $value;
+            });
+    }
+
+    private function getAssignmentResolver(): OptionsResolver
+    {
+        $assignmentItemResolver = new OptionsResolver();
+        $assignmentItemResolver
+            ->setDefined('force')
+            ->setDefault('force', false)
+            ->setAllowedTypes('force', 'bool');
+
+        $assignmentItemResolver
+            ->setDefined('website')
+            ->setDefault('website', null)
+            ->setAllowedTypes('website', ['null', 'int'])
+            ->setRequired('website');
+
+        $assignmentItemResolver
+            ->setDefined('customer')
+            ->setDefault('customer', null)
+            ->setAllowedTypes('customer', ['null', 'int']);
+
+        $assignmentItemResolver
+            ->setDefined('customerGroup')
+            ->setDefault('customerGroup', null)
+            ->setAllowedTypes('customerGroup', ['null', 'int']);
+
+        return $assignmentItemResolver;
     }
 }

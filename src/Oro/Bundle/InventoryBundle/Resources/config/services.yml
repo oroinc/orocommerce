@@ -167,3 +167,8 @@ services:
             - [setDoctrineHelper, ['@oro_entity.doctrine_helper']]
         tags:
             - { name: kernel.event_listener, event: oro_product.product.duplicate.after, method: onDuplicateAfter }
+
+    oro_inventory.event_listener.frontend_website_search_index:
+        class: Oro\Bundle\InventoryBundle\EventListener\Frontend\WebsiteSearchProductIndexerListener
+        tags:
+            - { name: kernel.event_listener, event: oro_website_search.event.index_entity.product, method: onWebsiteSearchIndex, priority: -200 }

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Async;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
@@ -56,6 +57,11 @@ class ScalableCombinedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
     private $dependentJob;
 
     /**
+     * @var ManagerRegistry
+     */
+    private $doctrine;
+
+    /**
      * @var ScalableCombinedPriceListProcessor
      */
     private $processor;
@@ -67,6 +73,7 @@ class ScalableCombinedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
         $this->jobRunner = $this->createMock(JobRunner::class);
         $this->producer = $this->createMock(MessageProducerInterface::class);
         $this->dependentJob = $this->createMock(DependentJobService::class);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
 
         $this->processor = new ScalableCombinedPriceListProcessor(
             $this->cplAssociationsProvider,
@@ -75,7 +82,6 @@ class ScalableCombinedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
             $this->dependentJob
         );
         $this->processor->setLogger($this->logger);
-
         $registry = $this->createMock(ManagerRegistry::class);
         $registry->expects($this->any())
             ->method('getRepository')
@@ -89,7 +95,8 @@ class ScalableCombinedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
 
                 return $repo;
             });
-        $this->processor->setTopic(new RebuildCombinedPriceListsTopic($registry));
+        $this->processor->setTopic(new RebuildCombinedPriceListsTopic($this->doctrine));
+        $this->processor->setManagerRegistry($this->doctrine);
     }
 
     public function testGetSubscribedTopics()
@@ -105,9 +112,11 @@ class ScalableCombinedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')
-            ->willReturn(
-                JSON::encode(['force' => true, 'website' => null, 'customer' => null, 'customerGroup' => null])
-            );
+            ->willReturn(JSON::encode(
+                [
+                    'assignments' => [['force' => true, 'website' => null, 'customer' => null, 'customerGroup' => null]]
+                ]
+            ));
 
         $associations = [
             [
@@ -140,25 +149,22 @@ class ScalableCombinedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider messageDataProvider
      */
-    public function testProcess(array $body, ?Website $website, ?object $targetEntity)
+    public function testProcess(array $body, ?Website $website, ?object $targetEntity, bool $isForce)
     {
-        $jsonBody = JSON::encode($body);
-
+        $this->assertReference();
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')
-            ->willReturn($jsonBody);
+            ->willReturn(JSON::encode($body));
 
-        $associations = [
-            [
-                'collection' => [new PriceListSequenceMember($this->getEntity(PriceList::class, ['id' => 10]), false)],
-                'assign_to' => ['config' => true]
-            ]
+        $association = [
+            'collection' => [new PriceListSequenceMember($this->getEntity(PriceList::class, ['id' => 10]), false)],
+            'assign_to' => ['config' => true]
         ];
         $this->cplAssociationsProvider->expects($this->once())
             ->method('getCombinedPriceListsWithAssociations')
-            ->with($body['force'] ?? false, $website, $targetEntity)
-            ->willReturn($associations);
+            ->with($isForce, $website, $targetEntity)
+            ->willReturn([$association]);
 
         $rootJob = $this->createMock(Job::class);
         $rootJob->expects($this->any())
@@ -175,8 +181,11 @@ class ScalableCombinedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
         $this->jobRunner->expects($this->once())
             ->method('runUnique')
             ->willReturnCallback(
-                function ($ownerId, $name, $closure) use ($job, $jsonBody) {
-                    $this->assertEquals('oro_pricing.price_lists.cpl.rebuild:'. md5($jsonBody), $name);
+                function ($ownerId, $name, $closure) use ($job, $body) {
+                    $this->assertEquals(
+                        RebuildCombinedPriceListsTopic::getName() . ':' . md5(json_encode($body)),
+                        $name
+                    );
 
                     return $closure($this->jobRunner, $job);
                 }
@@ -203,11 +212,14 @@ class ScalableCombinedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('send')
             ->with(
                 CombineSingleCombinedPriceListPricesTopic::getName(),
-                [
-                    'collection' => $associations[0]['collection'],
-                    'assign_to' => $associations[0]['assign_to'],
-                    'jobId' => 42
-                ]
+                $this->callback(function ($args) use ($association) {
+                    $this->assertEquals($association['collection'], $args['collection']);
+                    $this->assertEquals($association['assign_to'], $args['assign_to']);
+                    $this->assertEquals(42, $args['jobId']);
+                    $this->assertIsInt($args['version']);
+
+                    return true;
+                })
             );
 
         $this->assertEquals(
@@ -224,33 +236,72 @@ class ScalableCombinedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
         $customerGroup = $this->getEntity(CustomerGroup::class, ['id' => 100]);
 
         yield 'full rebuild' => [
-            ['force' => true, 'website' => null, 'customer' => null, 'customerGroup' => null],
+            [
+                'assignments' => [['force' => true, 'website' => null, 'customer' => null, 'customerGroup' => null]]
+            ],
             null,
-            null
+            null,
+            true
         ];
 
         yield 'per website' => [
-            ['force' => false, 'website' => 1, 'customer' => null, 'customerGroup' => null],
+            [
+                'assignments' => [
+                    ['force' => false, 'website' => 1, 'customer' => null, 'customerGroup' => null]
+                ]
+            ],
             $website,
-            null
+            null,
+            false
         ];
 
         yield 'per website2' => [
-            ['force' => false, 'website' => 2, 'customer' => null, 'customerGroup' => null],
+            [
+                'assignments' => [
+                    ['force' => false, 'website' => 2, 'customer' => null, 'customerGroup' => null]
+                ]
+            ],
             $website2,
-            null
+            null,
+            false
         ];
 
         yield 'per website and customer' => [
-            ['force' => false, 'website' => 1, 'customer' => 10, 'customerGroup' => null],
+            [
+                'assignments' => [
+                    ['force' => false, 'website' => 1, 'customer' => 10, 'customerGroup' => null]
+                ]
+            ],
             $website,
-            $customer
+            $customer,
+            false
         ];
 
         yield 'per website and customer group' => [
-            ['force' => false, 'website' => 1, 'customer' => null, 'customerGroup' => 100],
+            [
+                'assignments' => [
+                    ['force' => false, 'website' => 1, 'customer' => null, 'customerGroup' => 100]
+                ]
+            ],
             $website,
-            $customerGroup
+            $customerGroup,
+            false
         ];
+    }
+
+    private function assertReference()
+    {
+        $manager = $this->createMock(EntityManagerInterface::class);
+        $this->doctrine
+            ->expects($this->any())
+            ->method('getManagerForClass')
+            ->willReturn($manager);
+
+        $manager
+            ->expects($this->any())
+            ->method('getReference')
+            ->willReturnCallback(function ($className, $value) {
+                return $this->getEntity($className, ['id' => is_object($value) ? $value->getId() : $value]);
+            });
     }
 }

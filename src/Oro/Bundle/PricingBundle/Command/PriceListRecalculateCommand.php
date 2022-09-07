@@ -168,7 +168,7 @@ This command can also be used with the <info>--all</info> option to recalculate 
   <info>php %command.full_name% --all</info>
 
 The two additional options <info>--disable-triggers</info> (not available in MySQL-based databases) and
-<info>--use-insert-select</info> may help to speed up the calculations on large data sets.
+<info>--use-insert-select</info> may help speed up the calculations on large data sets.
 
   <info>php %command.full_name% --all --disable-triggers --use-insert-select</info>
 

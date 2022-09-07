@@ -12,6 +12,9 @@ The current file describes significant changes in the code that may affect the u
 
 ### Changed
 
+#### InventoryBundle
+* Inventory status search index field has been moved to the separate `inventory` indexation group
+
 #### ProductBundle
 * `Oro\Bundle\ProductBundle\Provider\ProductImageFileNameProvider` is applicable if `product_original_filenames` feature is enabled.
 
@@ -184,7 +187,7 @@ public function rebuildPrices(Website, $website = null, object $targetEntity = n
 #### ShoppingListBundle
 * Added two additional permissions `RENAME_SHOPPING_LIST` and `SET_AS_DEFAULT_SHOPPING_LIST`
 related to the ShoppingList entity management functionality.
-* Added the `oro_shopping_list_frontend_url` twig function which will help to display a link to the shopping list
+* Added the `oro_shopping_list_frontend_url` twig function which will help display a link to the shopping list
 in accordance with user permissions.
 
 ### Changed

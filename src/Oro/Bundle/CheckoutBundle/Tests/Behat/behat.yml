@@ -39,6 +39,14 @@ oro_behat_extension:
       selector: 'select[name="oro_workflow_transition[billing_address][customerAddress]"]'
       class: Oro\Bundle\FormBundle\Tests\Behat\Element\Select
 
+    Checkout Billing Address:
+      selector: 'select[name="oro_workflow_transition[billing_address][customerAddress]"]'
+      class: Oro\Bundle\FormBundle\Tests\Behat\Element\Select
+
+    Checkout Shipping Address:
+      selector: 'select[name="oro_workflow_transition[shipping_address][customerAddress]"]'
+      class: Oro\Bundle\FormBundle\Tests\Behat\Element\Select
+
     Select Shipping Address:
       selector: '[name="oro_workflow_transition[shipping_address][customerAddress]"]'
 

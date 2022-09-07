@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\Search;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\WebsiteManagerTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFrontendProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\SearchBundle\Engine\EngineInterface;
 use Oro\Bundle\SearchBundle\Engine\IndexerInterface;
@@ -14,6 +15,7 @@ use Oro\Bundle\SearchBundle\Query\Result\Item;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Item as ItemEntity;
+use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 
 class ProductWebsiteSearchTest extends WebTestCase
 {
@@ -32,13 +34,9 @@ class ProductWebsiteSearchTest extends WebTestCase
         $this->indexer = $this->getContainer()->get('oro_website_search.indexer');
         $this->searchEngine = $this->getContainer()->get('oro_website_search.engine');
 
-        $this->loadFixtures([LoadProductData::class]);
-    }
-
-    protected function tearDown(): void
-    {
-        $this->indexer->resetIndex(Product::class);
-        parent::tearDown();
+        $this->loadFixtures([
+            LoadFrontendProductData::class,
+        ]);
     }
 
     public function testPartialIndexationAfterFullIndexation()
@@ -96,5 +94,34 @@ class ProductWebsiteSearchTest extends WebTestCase
     {
         $em = $this->getContainer()->get('doctrine')->getManagerForClass(ItemEntity::class);
         $em->clear();
+    }
+
+    /**
+     * Need to make sure that partial indexation for all products does not remove them from the index
+     */
+    public function testPartialIndexationDoesNotRemoveTheData()
+    {
+        $productCount = $this->getProductsCount();
+
+        $this->assertGreaterThan(0, $productCount);
+
+        $this->getContainer()->get('event_dispatcher')->dispatch(
+            new ReindexationRequestEvent([Product::class], [$this->getDefaultWebsiteId()], [], false, ['main']),
+            ReindexationRequestEvent::EVENT_NAME
+        );
+
+        $this->assertEquals($productCount, $this->getProductsCount());
+    }
+
+    /**
+     * @return int
+     */
+    private function getProductsCount()
+    {
+        $query = new Query();
+        $query->from('oro_product_WEBSITE_ID');
+
+        $searchEngine = $this->getContainer()->get('oro_website_search.engine');
+        return $searchEngine->search($query)->getRecordsCount();
     }
 }

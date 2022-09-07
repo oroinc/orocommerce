@@ -1938,3 +1938,10 @@ services:
             - '@oro_config.manager'
         tags:
             - { name: layout.context_configurator }
+
+    oro_product.datagrid.provider.product_variants_selected_fields_provider:
+        class: Oro\Bundle\ProductBundle\DataGrid\Provider\ProductVariantsSelectedFieldsProvider
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: oro_datagrid.selected_fields_provider }

@@ -50,7 +50,8 @@ class CombineSingleCombinedPriceListPricesTopicTest extends AbstractTopicTestCas
         $body = [
             'jobId' => 100,
             'collection' => [['p' => 1, 'm' => true]],
-            'assign_to' => ['config' => true]
+            'assign_to' => ['config' => true],
+            'version' => 1,
         ];
         $expectedBody = [
             'jobId' => 100,
@@ -58,6 +59,7 @@ class CombineSingleCombinedPriceListPricesTopicTest extends AbstractTopicTestCas
             'assign_to' => ['config' => true],
             'products' => [],
             'collection' => [['p' => 1, 'm' => true]],
+            'version' => 1,
         ];
         self::assertEquals($expectedBody, $optionsResolver->resolve($body));
     }
@@ -68,13 +70,15 @@ class CombineSingleCombinedPriceListPricesTopicTest extends AbstractTopicTestCas
             'provided CPL' => [
                 'rawBody' => [
                     'jobId' => 100,
-                    'cpl' => 1
+                    'cpl' => 1,
+                    'version' => 1
                 ],
                 'expectedMessage' => [
                     'jobId' => 100,
                     'cpl' => $this->getEntity(CombinedPriceList::class, ['id' => 1]),
                     'products' => [],
-                    'assign_to' => []
+                    'assign_to' => [],
+                    'version' => null
                 ]
             ],
 
@@ -88,7 +92,8 @@ class CombineSingleCombinedPriceListPricesTopicTest extends AbstractTopicTestCas
                     'jobId' => 100,
                     'cpl' => $this->getEntity(CombinedPriceList::class, ['id' => 1]),
                     'products' => [1, 2],
-                    'assign_to' => []
+                    'assign_to' => [],
+                    'version' => null
                 ]
             ],
 
@@ -96,14 +101,16 @@ class CombineSingleCombinedPriceListPricesTopicTest extends AbstractTopicTestCas
                 'rawBody' => [
                     'jobId' => 100,
                     'collection' => [],
-                    'assign_to' => ['config' => true]
+                    'assign_to' => ['config' => true],
+                    'version' => 1
                 ],
                 'expectedMessage' => [
                     'jobId' => 100,
                     'cpl' => $this->getEntity(CombinedPriceList::class, ['id' => 1]),
                     'assign_to' => ['config' => true],
                     'products' => [],
-                    'collection' => []
+                    'collection' => [],
+                    'version' => 1
                 ]
             ],
 
@@ -111,7 +118,8 @@ class CombineSingleCombinedPriceListPricesTopicTest extends AbstractTopicTestCas
                 'rawBody' => [
                     'jobId' => 100,
                     'collection' => [['p' => 1, 'm' => true]],
-                    'assign_to' => ['config' => true]
+                    'assign_to' => ['config' => true],
+                    'version' => 1
                 ],
                 'expectedMessage' => [
                     'jobId' => 100,
@@ -119,6 +127,7 @@ class CombineSingleCombinedPriceListPricesTopicTest extends AbstractTopicTestCas
                     'assign_to' => ['config' => true],
                     'products' => [],
                     'collection' => [['p' => 1, 'm' => true]],
+                    'version' => 1
                 ]
             ]
         ];

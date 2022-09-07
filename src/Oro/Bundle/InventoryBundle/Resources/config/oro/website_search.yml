@@ -1,0 +1,7 @@
+Oro\Bundle\ProductBundle\Entity\Product:
+    fields:
+        -
+            name: inventory_status
+            type: text
+            fulltext: false
+            group: inventory

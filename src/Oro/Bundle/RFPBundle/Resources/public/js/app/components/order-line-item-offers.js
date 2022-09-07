@@ -4,6 +4,7 @@ define(function(require) {
     const BaseComponent = require('oroui/js/app/components/base/component');
     const _ = require('underscore');
     const $ = require('jquery');
+    const mediator = require('oroui/js/mediator');
 
     const OrderLineItemOffers = BaseComponent.extend({
         /**
@@ -53,24 +54,34 @@ define(function(require) {
             this.$product = $(this.options.productSelector);
             this.$product
                 .on('change', _.bind(this.onProductChange, this));
+
+            this.objects = {};
+            // Init order with RFQ items
+            mediator.trigger('entry-point:order:trigger-delayed');
         },
 
         /**
          * @param {jQuery.Event} e
          */
         onRadioClick: function(e) {
-            const target = $(e.target);
+            const $target = $(e.target);
+            let hasChanges = false;
 
-            const quantity = target.data('quantity');
-            if (this.findObject(this.options.quantitySelector) !== quantity) {
-                this.findObject(this.options.quantitySelector).val(quantity);
-            }
+            // Disable entry point listeners and load data after all values are set.
+            // Listeners will be enabled by the entry point after AJAX request processed.
+            mediator.trigger('entry-point:listeners:off');
+            // Fill corresponding inputs with values from data attributes of offer if value differs.
+            _.each(['quantity', 'price', 'unit'], (function(field) {
+                const data = $target.data(field).toString();
+                const $el = this.findObject(this.options[field + 'Selector']);
+                if (data.length > 0 && $el.val() !== data) {
+                    $el.val(data).trigger('change');
+                    hasChanges = true;
+                }
+            }.bind(this)));
 
-            const unit = target.data('unit');
-            if (this.findObject(this.options.unitSelector) !== unit) {
-                this.findObject(this.options.unitSelector)
-                    .val(target.data('unit'))
-                    .trigger('change');
+            if (hasChanges) {
+                mediator.trigger('entry-point:order:trigger');
             }
         },
 

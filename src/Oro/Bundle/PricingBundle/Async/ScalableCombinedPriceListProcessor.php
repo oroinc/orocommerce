@@ -2,12 +2,16 @@
 
 namespace Oro\Bundle\PricingBundle\Async;
 
+use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\MessageQueueBundle\Compatibility\TopicAwareTrait;
 use Oro\Bundle\PricingBundle\Async\Topic\CombineSingleCombinedPriceListPricesTopic;
 use Oro\Bundle\PricingBundle\Async\Topic\RebuildCombinedPriceListsTopic;
 use Oro\Bundle\PricingBundle\Async\Topic\RunCombinedPriceListPostProcessingStepsTopic;
 use Oro\Bundle\PricingBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\PricingBundle\Provider\CombinedPriceListAssociationsProvider;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
@@ -16,6 +20,7 @@ use Oro\Component\MessageQueue\Job\Job;
 use Oro\Component\MessageQueue\Job\JobRunner;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
+use Oro\Component\PhpUtils\ArrayUtil;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\NullLogger;
@@ -35,6 +40,7 @@ class ScalableCombinedPriceListProcessor implements
     private JobRunner $jobRunner;
     private MessageProducerInterface $producer;
     private DependentJobService $dependentJob;
+    private ManagerRegistry $doctrine;
 
     public function __construct(
         CombinedPriceListAssociationsProvider $combinedPriceListByEntityProvider,
@@ -55,6 +61,11 @@ class ScalableCombinedPriceListProcessor implements
     public static function getSubscribedTopics()
     {
         return [RebuildCombinedPriceListsTopic::getName()];
+    }
+
+    public function setManagerRegistry(ManagerRegistry $doctrine): void
+    {
+        $this->doctrine = $doctrine;
     }
 
     /**
@@ -107,7 +118,8 @@ class ScalableCombinedPriceListProcessor implements
                                 [
                                     'collection' => $associationData['collection'],
                                     'assign_to' => $associationData['assign_to'],
-                                    'jobId' => $child->getId()
+                                    'jobId' => $child->getId(),
+                                    'version' => time()
                                 ]
                             );
                         }
@@ -133,15 +145,43 @@ class ScalableCombinedPriceListProcessor implements
 
     private function getAssociations(array $body): array
     {
-        $targetEntity = null;
-        if ($body['website']) {
-            $targetEntity = $body['customer'] ?: $body['customerGroup'];
+        $associations = [];
+        foreach ($body['assignments'] as $item) {
+            $this->mergeAssociations($associations, $this->getCombinedPriceListAssociations($item));
         }
 
-        return $this->cplAssociationsProvider->getCombinedPriceListsWithAssociations(
-            $body['force'] ?? false,
-            $body['website'],
-            $targetEntity
-        );
+        return $associations;
+    }
+
+    private function mergeAssociations(array &$associations, array $association): void
+    {
+        foreach ($association as $identifier => $data) {
+            if (!array_key_exists($identifier, $associations)) {
+                $associations[$identifier] = $data;
+            } else {
+                $associations[$identifier]['assign_to'] = ArrayUtil::arrayMergeRecursiveDistinct(
+                    $associations[$identifier]['assign_to'] ?? [],
+                    $data['assign_to']
+                );
+            }
+        }
+    }
+
+    private function getCombinedPriceListAssociations(array $item): array
+    {
+        $isForce = $item['force'];
+        $website = $this->getReference($item, 'website', Website::class);
+        $targetEntity =
+            $this->getReference($item, 'customer', Customer::class) ?:
+            $this->getReference($item, 'customerGroup', CustomerGroup::class);
+
+        return $this->cplAssociationsProvider->getCombinedPriceListsWithAssociations($isForce, $website, $targetEntity);
+    }
+
+    private function getReference(array $item, string $key, string $className): ?object
+    {
+        return isset($item[$key])
+            ? $this->doctrine->getManagerForClass($className)->getReference($className, $item[$key])
+            : null;
     }
 }
