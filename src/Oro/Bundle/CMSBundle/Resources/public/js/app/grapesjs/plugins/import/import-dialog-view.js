@@ -188,8 +188,6 @@ const ImportDialogView = BaseView.extend({
      * @inheritdoc
      */
     render({content, dialogOptions = {}, renderProps = {}} = {}) {
-        const container = this.editor.Commands.isActive('fullscreen') ? this.editor.getEl() : 'body';
-
         this.renderProps = renderProps;
         ImportDialogView.__super__.render.call(this);
 
@@ -202,7 +200,6 @@ const ImportDialogView = BaseView.extend({
             el: this.el,
             title: this.modalImportTitle,
             incrementalPosition: false,
-            loadingElement: container,
             dialogOptions: {
                 allowMaximize: true,
                 autoResize: false,
@@ -210,7 +207,6 @@ const ImportDialogView = BaseView.extend({
                 modal: true,
                 height: 495,
                 minWidth: 856,
-                appendTo: container,
                 dialogClass: 'ui-dialog--import-template',
                 close: () => {
                     this.editor.Commands.stop(this.commandId);

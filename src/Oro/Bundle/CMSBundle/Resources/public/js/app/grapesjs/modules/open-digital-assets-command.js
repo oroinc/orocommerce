@@ -64,17 +64,13 @@ const openDigitalAssetsCommand = {
     },
 
     _openChooseDialog: function(editor) {
-        const container = editor.Commands.isActive('fullscreen') ? editor.getEl() : 'body';
-
         return new DigitalAssetDialogWidget({
             title: this.options.title,
             url: routing.generate(
                 this.options.routeName,
                 _.extend(editor.Config.requestParams, this.options.routeParams || {})
             ),
-            loadingElement: this.options.loadingElement || container,
             dialogOptions: {
-                appendTo: container,
                 modal: true
             }
         });
