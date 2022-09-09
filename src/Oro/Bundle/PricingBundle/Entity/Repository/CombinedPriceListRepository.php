@@ -262,58 +262,65 @@ class CombinedPriceListRepository extends BasePriceListRepository
         );
     }
 
-    /**
-     * @param CombinedPriceList $combinedPriceList
-     * @param CombinedPriceList $activeCpl
-     * @param Website $website
-     * @param Customer|CustomerGroup $targetEntity
-     * @return BaseCombinedPriceListRelation
-     */
     public function updateCombinedPriceListConnection(
         CombinedPriceList $combinedPriceList,
         CombinedPriceList $activeCpl,
         Website $website,
         $targetEntity = null
-    ) {
+    ): BaseCombinedPriceListRelation {
+        return $this->updateVersionedCombinedPriceListConnection(
+            $combinedPriceList,
+            $activeCpl,
+            $website,
+            null,
+            $targetEntity
+        );
+    }
+
+    public function updateVersionedCombinedPriceListConnection(
+        CombinedPriceList $combinedPriceList,
+        CombinedPriceList $activeCpl,
+        Website $website,
+        ?int $version,
+        $targetEntity = null
+    ): BaseCombinedPriceListRelation {
         $em = $this->getEntityManager();
-        $relation = null;
         if ($targetEntity instanceof Customer) {
-            $relation = $em->getRepository(CombinedPriceListToCustomer::class)
+            $relation = $em
+                ->getRepository(CombinedPriceListToCustomer::class)
                 ->findOneBy(['customer' => $targetEntity, 'website' => $website]);
             if (!$relation) {
                 $relation = new CombinedPriceListToCustomer();
                 $relation->setCustomer($targetEntity);
-                $relation->setWebsite($website);
-                $relation->setPriceList($combinedPriceList);
-                $relation->setFullChainPriceList($combinedPriceList);
-                $em->persist($relation);
             }
         } elseif ($targetEntity instanceof CustomerGroup) {
-            $relation = $em->getRepository(CombinedPriceListToCustomerGroup::class)
+            $relation = $em
+                ->getRepository(CombinedPriceListToCustomerGroup::class)
                 ->findOneBy(['customerGroup' => $targetEntity, 'website' => $website]);
             if (!$relation) {
                 $relation = new CombinedPriceListToCustomerGroup();
                 $relation->setCustomerGroup($targetEntity);
-                $relation->setWebsite($website);
-                $relation->setPriceList($combinedPriceList);
-                $relation->setFullChainPriceList($combinedPriceList);
-                $em->persist($relation);
             }
         } elseif (!$targetEntity) {
-            $relation = $em->getRepository(CombinedPriceListToWebsite::class)
+            $relation = $em
+                ->getRepository(CombinedPriceListToWebsite::class)
                 ->findOneBy(['website' => $website]);
             if (!$relation) {
                 $relation = new CombinedPriceListToWebsite();
-                $relation->setWebsite($website);
-                $relation->setPriceList($combinedPriceList);
-                $relation->setFullChainPriceList($combinedPriceList);
-                $em->persist($relation);
             }
         } else {
             throw new \InvalidArgumentException(sprintf('Unknown target "%s"', get_class($targetEntity)));
         }
+
+        if ($version && $relation->getVersion() > $version) {
+            return $relation;
+        }
+
         $relation->setFullChainPriceList($combinedPriceList);
+        $relation->setWebsite($website);
         $relation->setPriceList($activeCpl);
+        $relation->setVersion($version);
+        $em->persist($relation);
         $em->flush($relation);
 
         return $relation;

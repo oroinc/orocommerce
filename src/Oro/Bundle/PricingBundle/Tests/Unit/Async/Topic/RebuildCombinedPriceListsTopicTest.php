@@ -44,6 +44,11 @@ class RebuildCombinedPriceListsTopicTest extends AbstractTopicTestCase
         return new RebuildCombinedPriceListsTopic($this->registry);
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     *
+     * @return array
+     */
     public function validBodyDataProvider(): array
     {
         return [
@@ -53,7 +58,15 @@ class RebuildCombinedPriceListsTopicTest extends AbstractTopicTestCase
                     'force' => false,
                     'website' => null,
                     'customerGroup' => null,
-                    'customer' => null
+                    'customer' => null,
+                    'assignments' => [
+                        [
+                            'force' => false,
+                            'website' => null,
+                            'customer' => null,
+                            'customerGroup' => null,
+                        ]
+                    ]
                 ]
             ],
 
@@ -63,7 +76,15 @@ class RebuildCombinedPriceListsTopicTest extends AbstractTopicTestCase
                     'force' => true,
                     'website' => null,
                     'customerGroup' => null,
-                    'customer' => null
+                    'customer' => null,
+                    'assignments' => [
+                        [
+                            'force' => true,
+                            'website' => null,
+                            'customer' => null,
+                            'customerGroup' => null,
+                        ]
+                    ]
                 ]
             ],
 
@@ -73,7 +94,15 @@ class RebuildCombinedPriceListsTopicTest extends AbstractTopicTestCase
                     'force' => false,
                     'website' => $this->getEntity(Website::class, ['id' => 2]),
                     'customerGroup' => null,
-                    'customer' => null
+                    'customer' => null,
+                    'assignments' => [
+                        [
+                            'force' => false,
+                            'website' => $this->getEntity(Website::class, ['id' => 2]),
+                            'customer' => null,
+                            'customerGroup' => null,
+                        ]
+                    ]
                 ]
             ],
 
@@ -83,7 +112,15 @@ class RebuildCombinedPriceListsTopicTest extends AbstractTopicTestCase
                     'force' => true,
                     'website' => $this->getEntity(Website::class, ['id' => 2]),
                     'customerGroup' => $this->getEntity(CustomerGroup::class, ['id' => 4]),
-                    'customer' => null
+                    'customer' => null,
+                    'assignments' => [
+                        [
+                            'force' => true,
+                            'website' => $this->getEntity(Website::class, ['id' => 2]),
+                            'customer' => null,
+                            'customerGroup' => $this->getEntity(CustomerGroup::class, ['id' => 4]),
+                        ]
+                    ]
                 ]
             ],
 
@@ -93,7 +130,114 @@ class RebuildCombinedPriceListsTopicTest extends AbstractTopicTestCase
                     'force' => false,
                     'website' => $this->getEntity(Website::class, ['id' => 2]),
                     'customerGroup' => null,
-                    'customer' => $this->getEntity(Customer::class, ['id' => 4])
+                    'customer' => $this->getEntity(Customer::class, ['id' => 4]),
+                    'assignments' => [
+                        [
+                            'force' => false,
+                            'website' => $this->getEntity(Website::class, ['id' => 2]),
+                            'customer' => $this->getEntity(Customer::class, ['id' => 4]),
+                            'customerGroup' => null,
+                        ]
+                    ]
+                ]
+            ],
+
+            'assignments' => [
+                'rawBody' => [
+                    'website' => 2,
+                    'customer' => 4,
+                    'assignments' => [
+                        [
+                            'force' => false,
+                            'website' => null,
+                            'customer' => null,
+                            'customerGroup' => null,
+                        ]
+                    ]
+                ],
+                'expectedMessage' => [
+                    'force' => false,
+                    'website' => $this->getEntity(Website::class, ['id' => 2]),
+                    'customerGroup' => null,
+                    'customer' => $this->getEntity(Customer::class, ['id' => 4]),
+                    'assignments' => [
+                        [
+                            'force' => false,
+                            'website' => null,
+                            'customer' => null,
+                            'customerGroup' => null,
+                        ],
+                        // If assignments exist, ignore other message data.
+                    ]
+                ]
+            ],
+            [
+                'rawBody' => [
+                    'assignments' => [
+                        [],
+                        [
+                            'force' => true,
+                        ],
+                        [
+                            'website' => 1,
+                        ],
+                        [
+                            'customer' => 1,
+                        ],
+                        [
+                            'customerGroup' => 1,
+                        ],
+                        [
+                            'force' => true,
+                            'website' => 1,
+                            'customer' => 2,
+                            'customerGroup' => 3
+                        ]
+                    ],
+                ],
+                'expectedMessage' => [
+                    'force' => false,
+                    'website' => null,
+                    'customerGroup' => null,
+                    'customer' => null,
+                    'assignments' => [
+                        [
+                            'force' => false,
+                            'website' => null,
+                            'customer' => null,
+                            'customerGroup' => null
+                        ],
+                        [
+                            'force' => true,
+                            'website' => null,
+                            'customer' => null,
+                            'customerGroup' => null
+                        ],
+                        [
+                            'force' => false,
+                            'website' => 1,
+                            'customer' => null,
+                            'customerGroup' => null
+                        ],
+                        [
+                            'force' => false,
+                            'website' => null,
+                            'customer' => 1,
+                            'customerGroup' => null
+                        ],
+                        [
+                            'force' => false,
+                            'website' => null,
+                            'customer' => null,
+                            'customerGroup' => 1
+                        ],
+                        [
+                            'force' => true,
+                            'website' => 1,
+                            'customer' => 2,
+                            'customerGroup' => 3
+                        ]
+                    ],
                 ]
             ],
         ];

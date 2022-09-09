@@ -87,14 +87,4 @@ export default `
     [data-gjs-type="video"] {
         max-width: 100%;
     }
-    
-    [data-gjs-type="code"] {
-        border-top: 3px solid #f5f5f5;
-        border-bottom: 3px solid #f5f5f5;
-        padding: 16px 22px;
-        margin: 0 0 16px;
-        display: block;
-        font-family: Courier,Courier New,monospace;
-        line-height: 1.43;
-    }
 `;

@@ -6,8 +6,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\MessageQueueBundle\Entity\Job;
 use Oro\Bundle\SEOBundle\Async\GenerateSitemapByWebsiteAndTypeProcessor;
+use Oro\Bundle\SEOBundle\Async\Topic\GenerateSitemapByWebsiteAndTypeTopic;
 use Oro\Bundle\SEOBundle\Sitemap\Provider\UrlItemsProviderRegistryInterface;
-use Oro\Bundle\SEOBundle\Topic\GenerateSitemapByWebsiteAndTypeTopic;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Job\JobRunner;
@@ -19,20 +19,15 @@ use Psr\Log\LoggerInterface;
 
 class GenerateSitemapByWebsiteAndTypeProcessorTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var JobRunner|\PHPUnit\Framework\MockObject\MockObject */
-    private $jobRunner;
+    private JobRunner|\PHPUnit\Framework\MockObject\MockObject $jobRunner;
 
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    private $doctrine;
+    private ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject $doctrine;
 
-    /** @var SitemapDumperInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $sitemapDumper;
+    private SitemapDumperInterface|\PHPUnit\Framework\MockObject\MockObject $sitemapDumper;
 
-    /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $logger;
+    private LoggerInterface|\PHPUnit\Framework\MockObject\MockObject $logger;
 
-    /** @var GenerateSitemapByWebsiteAndTypeProcessor */
-    private $processor;
+    private GenerateSitemapByWebsiteAndTypeProcessor $processor;
 
     protected function setUp(): void
     {
@@ -76,10 +71,10 @@ class GenerateSitemapByWebsiteAndTypeProcessorTest extends \PHPUnit\Framework\Te
         $jobId = 100;
         $websiteId = 123;
         $message = $this->getMessage([
-            'jobId'     => $jobId,
-            'version'   => 1,
+            'jobId' => $jobId,
+            'version' => 1,
             'websiteId' => $websiteId,
-            'type'      => 'test_type'
+            'type' => 'test_type',
         ]);
 
         $this->jobRunner->expects(self::once())
@@ -112,17 +107,17 @@ class GenerateSitemapByWebsiteAndTypeProcessorTest extends \PHPUnit\Framework\Te
         );
     }
 
-    public function testProcessWhenDumpFailed()
+    public function testProcessWhenDumpFailed(): void
     {
         $jobId = 100;
         $version = 1;
         $websiteId = 123;
         $type = 'test_type';
         $message = $this->getMessage([
-            'jobId'     => $jobId,
-            'version'   => $version,
+            'jobId' => $jobId,
+            'version' => $version,
             'websiteId' => $websiteId,
-            'type'      => $type
+            'type' => $type,
         ]);
 
         $this->jobRunner->expects(self::once())
@@ -162,17 +157,17 @@ class GenerateSitemapByWebsiteAndTypeProcessorTest extends \PHPUnit\Framework\Te
         );
     }
 
-    public function testProcess()
+    public function testProcess(): void
     {
         $jobId = 100;
         $version = 1;
         $websiteId = 123;
         $type = 'test_type';
         $message = $this->getMessage([
-            'jobId'     => $jobId,
-            'version'   => $version,
+            'jobId' => $jobId,
+            'version' => $version,
             'websiteId' => $websiteId,
-            'type'      => $type
+            'type' => $type,
         ]);
 
         $this->jobRunner->expects(self::once())

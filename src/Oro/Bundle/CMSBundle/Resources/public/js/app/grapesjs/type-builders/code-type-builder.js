@@ -3,8 +3,6 @@ import __ from 'orotranslation/js/translator';
 import BaseTypeBuilder from 'orocms/js/app/grapesjs/type-builders/base-type-builder';
 
 const CodeTypeBuilder = BaseTypeBuilder.extend({
-    parentType: 'text',
-
     button: {
         label: __('oro.cms.wysiwyg.component.code.label'),
         category: 'Basic',
@@ -14,16 +12,43 @@ const CodeTypeBuilder = BaseTypeBuilder.extend({
     },
 
     modelMixin: {
-        initialize(...args) {
-            this.constructor.__super__.initialize.call(this, ...args);
-            /**
-             * The model data changes along with the content editing, in which case it needs to be repeated
-             * 'unescape' and 'escape' content data.
-             *
-             * As an example, drag a component to any location, this will provoke the re-render component
-             * content from escaped model data.
-             */
-            this.attributes.content = _.escape(_.unescape(this.attributes.content));
+        defaults: {
+            tagName: 'pre'
+        },
+
+        init() {
+            const components = this.get('components');
+
+            if (!components.length) {
+                components.add({
+                    tagName: 'code'
+                });
+            }
+
+            this.propagateChildProps();
+        },
+
+        getContent() {
+            const contentComp = this.findType('textnode')[0];
+            return contentComp ? contentComp.get('content') : '';
+        },
+
+        setContent(value) {
+            this.components(`<code>${value}</code>`);
+            this.propagateChildProps();
+        },
+
+        propagateChildProps() {
+            const components = this.get('components');
+            components.forEach(component => component.set({
+                layerable: 0,
+                selectable: 0,
+                hoverable: 0,
+                editable: 0,
+                draggable: 0,
+                droppable: 0,
+                highlightable: 0
+            }));
         }
     },
 
@@ -38,7 +63,7 @@ const CodeTypeBuilder = BaseTypeBuilder.extend({
         }
     },
 
-    template: _.template(`<pre>${__('oro.cms.wysiwyg.component.code.placeholder')}</pre>`),
+    template: _.template(`<pre><code>${__('oro.cms.wysiwyg.component.code.placeholder')}</code></pre>`),
 
     constructor: function CodeTypeBuilder(options) {
         CodeTypeBuilder.__super__.constructor.call(this, options);
@@ -47,7 +72,10 @@ const CodeTypeBuilder = BaseTypeBuilder.extend({
     isComponent(el) {
         let result = null;
 
-        if (el.tagName === 'PRE') {
+        if (
+            (el.nodeType === 1 && el.tagName === 'PRE') &&
+            (el.firstChild.nodeType === 1 && el.firstChild.tagName === 'CODE')
+        ) {
             result = {
                 type: this.componentType
             };

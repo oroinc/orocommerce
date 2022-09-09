@@ -50,6 +50,7 @@ class RebuildCombinedPriceListsTopic extends AbstractTopic
         $this->configureMessageBodyIncludeWebsite($resolver);
         $this->configureMessageBodyIncludeCustomerGroup($resolver);
         $this->configureMessageBodyIncludeCustomer($resolver);
+        $this->configureMessageBodyIncludeAssignments($resolver);
     }
 
     private function configureMessageBodyIncludeWebsite(OptionsResolver $resolver): void
@@ -118,5 +119,61 @@ class RebuildCombinedPriceListsTopic extends AbstractTopic
 
                 return $entity;
             });
+    }
+
+    public function configureMessageBodyIncludeAssignments(OptionsResolver $resolver): void
+    {
+        $resolver
+            ->define('assignments')
+            ->allowedTypes('array')
+            ->default(function (OptionsResolver $resolver) {
+                $resolver = $resolver->setPrototype(true);
+                $this->configureAssignmentsResolver($resolver);
+            })
+            ->normalize(function (Options $options, array $value) {
+                if (!$value) {
+                    $assigment = [
+                        'force' => $options['force'],
+                        'website' => $options['website'],
+                        'customer' => $options['customer'],
+                        'customerGroup' => $options['customerGroup'],
+                    ];
+
+                    $value[] = $assigment;
+                }
+
+                return $value;
+            });
+    }
+
+    private function configureAssignmentsResolver(OptionsResolver $assignmentItemResolver): void
+    {
+        $assignmentItemResolver
+            ->define('force')
+            ->info(
+                'Set `force` to true to rebuild combined price lists for entities with default and self fallback. ' .
+                'Passing `force` without restrictions by other entities means rebuilding all combined price lists.'
+            )
+            ->default(false)
+            ->allowedTypes('bool');
+
+        $assignmentItemResolver
+            ->define('website')
+            ->info('Website ID for which combined price lists should be rebuilt')
+            ->default(null)
+            ->allowedTypes('null', 'int')
+            ->required();
+
+        $assignmentItemResolver
+            ->define('customer')
+            ->info('Customer ID for whom combined price list should be rebuilt. Requires Website.')
+            ->default(null)
+            ->allowedTypes('null', 'int');
+
+        $assignmentItemResolver
+            ->define('customerGroup')
+            ->info('Customer Group ID for which combined price lists should be rebuilt. Requires Website.')
+            ->default(null)
+            ->allowedTypes('null', 'int');
     }
 }

@@ -105,7 +105,7 @@ define(function(require) {
         initialize: function(options) {
             this.codeViewer = this.editor.CodeManager.getViewer('CodeMirror').clone();
             this.codeViewer.set(this.codeViewerOptions);
-            this.content = _.unescape(this.editor.getSelected().getEl().innerHTML);
+            this.content = _.unescape(this.editor.getSelected().getContent());
             CodeDialogView.__super__.initialize.call(this, options);
         },
 
@@ -125,7 +125,6 @@ define(function(require) {
          */
         render: function() {
             CodeDialogView.__super__.render.call(this);
-            const container = this.editor.Commands.isActive('fullscreen') ? this.editor.getEl() : 'body';
 
             this.importButton = this.$el.find('[data-role="code-edit"]');
 
@@ -134,14 +133,12 @@ define(function(require) {
                 el: this.el,
                 title: this.modalCodeTitle,
                 incrementalPosition: false,
-                loadingElement: container,
                 dialogOptions: {
                     autoResize: false,
                     resizable: false,
                     modal: true,
                     height: 495,
                     minWidth: 856,
-                    appendTo: container,
                     dialogClass: 'ui-dialog--import-template',
                     close: () => {
                         this.dispose();
@@ -184,7 +181,7 @@ define(function(require) {
         onSave: function() {
             if (!this.disabled) {
                 const codeContent = _.escape(this.viewerEditor.getValue().trim());
-                this.editor.getSelected().components(codeContent);
+                this.editor.getSelected().setContent(codeContent);
                 this.dialog.remove();
             }
         },

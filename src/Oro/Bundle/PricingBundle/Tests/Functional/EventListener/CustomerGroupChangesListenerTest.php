@@ -71,8 +71,12 @@ class CustomerGroupChangesListenerTest extends WebTestCase
         self::assertMessageSent(
             RebuildCombinedPriceListsTopic::getName(),
             [
-                'website'       => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
-                'customer'      => $this->getReference('customer.level_1.3')->getId()
+                'assignments' => [
+                    [
+                        'website' => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
+                        'customer' => $this->getReference('customer.level_1.3')->getId()
+                    ]
+                ]
             ]
         );
     }

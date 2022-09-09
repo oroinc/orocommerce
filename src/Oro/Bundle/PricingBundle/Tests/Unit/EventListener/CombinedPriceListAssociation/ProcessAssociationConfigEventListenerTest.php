@@ -46,7 +46,7 @@ class ProcessAssociationConfigEventListenerTest extends TestCase
         /** @var CombinedPriceList $cpl */
         $cpl = $this->getEntity(CombinedPriceList::class, ['id' => 1]);
         $associations = ['website' => ['ids' => [1]]];
-        $processEvent = new ProcessEvent($cpl, $associations);
+        $processEvent = new ProcessEvent($cpl, $associations, 100);
 
         $this->scheduleResolver->expects($this->never())
             ->method($this->anything());
@@ -148,7 +148,7 @@ class ProcessAssociationConfigEventListenerTest extends TestCase
         /** @var CombinedPriceList $cpl */
         $cpl = $this->getEntity(CombinedPriceList::class, ['id' => 1]);
         $associations = ['config' => true];
-        $processEvent = new ProcessEvent($cpl, $associations);
+        $processEvent = new ProcessEvent($cpl, $associations, 100);
 
         $this->scheduleResolver->expects($this->once())
             ->method('getActiveCplByFullCPL')

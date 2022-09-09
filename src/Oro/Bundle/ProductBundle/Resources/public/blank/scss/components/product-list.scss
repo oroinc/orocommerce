@@ -30,24 +30,14 @@
             margin-left: -#{$product-item-gallery-view-offset-x-tablet-small};
             margin-right: -#{$product-item-gallery-view-offset-x-tablet-small};
         }
-
-        &--no-image-view {
-            overflow: hidden;
-        }
     }
 }
 
 @include breakpoint('strict-mobile-landscape') {
     .product-list {
-        &--list-view {
-            overflow: hidden;
-        }
-
         &--gallery-view {
             margin-left: -#{$product-item-gallery-view-offset-x-mobile-landscape};
             margin-right: -#{$product-item-gallery-view-offset-x-mobile-landscape};
-
-            overflow: hidden;
         }
     }
 }

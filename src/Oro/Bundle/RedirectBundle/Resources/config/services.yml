@@ -31,6 +31,8 @@ services:
             - '@doctrine'
             - '@oro_redirect.generator.canonical_url'
             - '@oro_website.manager'
+        calls:
+            - [setConfigManager, ['@oro_config.manager']]
         tags:
             - { name: kernel.event_listener, event: kernel.request, method: onRequest, priority: -30 }
 
