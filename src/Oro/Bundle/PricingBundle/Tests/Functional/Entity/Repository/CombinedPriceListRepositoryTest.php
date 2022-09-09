@@ -181,7 +181,7 @@ class CombinedPriceListRepositoryTest extends WebTestCase
             $targetEntity = $this->getReference($targetEntity);
         }
 
-        $this->getRepository()->updateCombinedPriceListConnection($priceList, $priceList, $website, $targetEntity);
+        $this->getRepository()->updateCombinedPriceListConnection($priceList, $priceList, $website, 0, $targetEntity);
         /** @var BasePriceListRelation $actual */
         $actual = $getActual($website, $targetEntity);
         $this->assertEquals($priceList->getId(), $actual->getPriceList()->getId());

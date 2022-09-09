@@ -201,7 +201,7 @@ services:
         arguments:
             - '@request_stack'
             - '@oro_redirect.url_cache'
-            - '@oro_frontend_localization.manager.user_localization'
+            - '@oro_locale.provider.current_localization'
         tags:
             - { name: oro_redirect.context_url_provider, alias: 'category' }
 

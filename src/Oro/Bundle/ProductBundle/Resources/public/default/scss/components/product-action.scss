@@ -1,24 +1,14 @@
 /* @theme: default; */
 
 .product-action-area {
+    display: flex;
+    gap: $offset-x-m;
+
     &:empty {
         display: none;
     }
 
     .product-action {
-        display: inline-block;
-
-        vertical-align: middle;
-
-        &:last-child {
-            padding-left: $product-action-in-grid-offset;
-        }
-
-        &:first-child {
-            padding-left: 0;
-            padding-right: $product-action-in-grid-offset;
-        }
-
         &:empty {
             display: none;
         }
@@ -29,17 +19,16 @@
     }
 
     &.in-sticky {
+        display: block;
+
         .product-action {
             display: block;
-            min-width: $product-action-in-sticky-width;
+            background-color: $datagrid-massaction-sticky-mode-background-color;
+        }
 
-            &:first-child {
-                padding-right: $product-action-in-sticky-offset;
-            }
-
-            &:last-child {
-                padding-left: $product-action-in-sticky-offset;
-            }
+        .datagrid-massaction {
+            max-width: $product-action-in-sticky-max-width;
+            margin: $product-action-in-sticky-margin;
         }
     }
 }

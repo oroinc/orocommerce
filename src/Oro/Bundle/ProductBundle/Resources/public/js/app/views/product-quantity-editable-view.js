@@ -4,7 +4,7 @@ define(function(require) {
     const BaseView = require('oroui/js/app/views/base/view');
     const ApiAccessor = require('oroui/js/tools/api-accessor');
     const mediator = require('oroui/js/mediator');
-    const tools = require('oroui/js/tools');
+    const loadModules = require('oroui/js/app/services/load-modules');
     const $ = require('jquery');
     const _ = require('underscore');
     const __ = require('orotranslation/js/translator');
@@ -146,7 +146,7 @@ define(function(require) {
 
             if (options.validation.showErrorsHandler) {
                 const waitors = [];
-                waitors.push(tools.loadModuleAndReplace(options.validation, 'showErrorsHandler')
+                waitors.push(loadModules.fromObjectProp(options.validation, 'showErrorsHandler')
                     .then(() => {
                         validationOptions.showErrors = options.validation.showErrorsHandler;
                         this.updateValidation($form, validationOptions);

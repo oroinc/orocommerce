@@ -133,6 +133,10 @@ define(function(require) {
             }).wrapAll('<div class="item-container"></div>');
 
             return this;
+        },
+
+        getMainLauncher() {
+            return this.launchers.filter(launcher => launcher.action.is_current)[0] || this.launchers[0];
         }
     });
 

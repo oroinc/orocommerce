@@ -4,6 +4,13 @@ The current file describes significant changes in the code that may affect the u
 
 ## UNRELEASED
 
+### Added
+
+#### CMSBundle
+* Added `renderWysiwygContent` TWIG macro and a layout block type `wysiwyg_content` for rendering WYSIWYG content on storefront.
+  See article [How to Display WYSIWYG Field](https://doc.oroinc.com/bundles/commerce/CMSBundle/WYSIWYG-field/how-to-display-wysiwyg-field/)
+  for more information.
+
 ### Changed
 
 #### InventoryBundle
@@ -12,7 +19,11 @@ The current file describes significant changes in the code that may affect the u
   to avoid collision with the field name for the inventory status product attribute
 * Inventory website search index fields (inventory status, low inventory threshold, is upcoming,
   availability date) have been moved to the separate `inventory` indexation group
-  
+
+### Removed
+
+#### CMSBundle
+* Removed `text_with_placeholders`, `wysiwyg_style` layout block types. Use `wysiwyg_content` instead.
 
 ## 5.1.0-alpha.2 (2022-08-01)
 [Show detailed list of changes](incompatibilities-5-1-alpha-2.md)
@@ -21,7 +32,7 @@ The current file describes significant changes in the code that may affect the u
 
 #### PricingBundle
 
-* Price index fields have been renamed (pay attention to a dot notation): 
+* Price index fields have been renamed (pay attention to a dot notation):
   `minimal_price_CPL_ID_CURRENCY_UNIT` to `minimal_price.CPL_ID_CURRENCY_UNIT`,
   `minimal_price_CPL_ID_CURRENCY` to `minimal_price.CPL_ID_CURRENCY`,
   `minimal_price_PRICE_LIST_ID_CURRENCY_UNIT` to `minimal_price.PRICE_LIST_ID_CURRENCY_UNIT`,

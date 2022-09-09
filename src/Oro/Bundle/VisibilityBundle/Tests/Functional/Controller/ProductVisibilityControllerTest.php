@@ -43,6 +43,7 @@ class ProductVisibilityControllerTest extends WebTestCase
         $this->assertSame(200, $response->getStatusCode());
 
         $form = $crawler->selectButton('Save and Close')->form();
+        $redirectAction = $crawler->selectButton('Save and Close')->attr('data-action');
 
         /** @var ChoiceFormField $allForm */
         $allForm = $form['oro_scoped_data_type'][$scope->getId()]['all'];
@@ -86,6 +87,7 @@ class ProductVisibilityControllerTest extends WebTestCase
                         ], JSON_THROW_ON_ERROR),
                     ],
                 ],
+                'input_action' => $redirectAction
             ]
         );
 

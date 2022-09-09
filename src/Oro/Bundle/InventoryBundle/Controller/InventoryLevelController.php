@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\InventoryBundle\Controller;
 
-use Oro\Bundle\FormBundle\Model\UpdateHandler;
+use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\InventoryBundle\Form\Extension\InventoryLevelExportTemplateTypeExtension;
 use Oro\Bundle\InventoryBundle\Form\Extension\InventoryLevelExportTypeExtension;
@@ -35,9 +35,8 @@ class InventoryLevelController extends AbstractController
      *      class="OroInventoryBundle:InventoryLevel",
      *      permission="VIEW"
      * )
-     * @return array
      */
-    public function indexAction()
+    public function indexAction(): array
     {
         return [
             'entity_class' => InventoryLevel::class,
@@ -59,12 +58,8 @@ class InventoryLevelController extends AbstractController
      *      class="OroInventoryBundle:InventoryLevel",
      *      permission="EDIT"
      * )
-     *
-     * @param Product $product
-     * @param Request $request
-     * @return array|RedirectResponse
      */
-    public function updateAction(Product $product, Request $request)
+    public function updateAction(Product $product, Request $request): array|RedirectResponse
     {
         if (!$this->isGranted('EDIT', $product)) {
             throw new AccessDeniedException();
@@ -77,19 +72,16 @@ class InventoryLevelController extends AbstractController
         );
 
         $handler = new InventoryLevelHandler(
-            $form,
-            $this->getDoctrine()->getManagerForClass('OroInventoryBundle:InventoryLevel'),
-            $request,
+            $this->getDoctrine()->getManagerForClass(InventoryLevel::class),
             $this->get(QuantityRoundingService::class),
             $this->get(InventoryManager::class)
         );
 
-        $result = $this->get(UpdateHandler::class)->handleUpdate(
+        $result = $this->get(UpdateHandlerFacade::class)->update(
             $product,
             $form,
-            null,
-            null,
-            null,
+            '',
+            $request,
             $handler
         );
 
@@ -100,11 +92,7 @@ class InventoryLevelController extends AbstractController
         return array_merge($result, $this->widgetNoDataReasonsCheck($product));
     }
 
-    /**
-     * @param Product $product
-     * @return array
-     */
-    private function widgetNoDataReasonsCheck(Product $product)
+    private function widgetNoDataReasonsCheck(Product $product): array
     {
         $noDataReason = '';
         if (0 === count($product->getUnitPrecisions())) {
@@ -117,7 +105,7 @@ class InventoryLevelController extends AbstractController
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public static function getSubscribedServices()
     {
@@ -125,9 +113,9 @@ class InventoryLevelController extends AbstractController
             parent::getSubscribedServices(),
             [
                 TranslatorInterface::class,
-                UpdateHandler::class,
                 QuantityRoundingService::class,
-                InventoryManager::class
+                InventoryManager::class,
+                UpdateHandlerFacade::class
             ]
         );
     }

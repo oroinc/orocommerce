@@ -15,9 +15,10 @@ class GenerateSitemapByWebsiteAndTypeTopicTest extends AbstractTopicTestCase
     {
         $urlProvider = $this->createMock(UrlItemsProviderRegistryInterface::class);
         $urlProvider
-            ->expects(self::once())
+            ->expects(self::any())
             ->method('getProvidersIndexedByNames')
             ->willReturn(['type' => 'type']);
+
         return new GenerateSitemapByWebsiteAndTypeTopic($urlProvider);
     }
 

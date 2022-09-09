@@ -146,7 +146,8 @@ class SingleCplProcessorTest extends TestCase
                 'cpl' => $this->getEntity(CombinedPriceList::class, ['id' => 1]),
                 'jobId' => 100,
                 'products' => [],
-                'assign_to' => []
+                'assign_to' => [],
+                'version' => 1
             ]);
 
         $e = new \Exception();
@@ -187,7 +188,8 @@ class SingleCplProcessorTest extends TestCase
                 'cpl' => false,
                 'jobId' => 100,
                 'products' => [],
-                'assign_to' => []
+                'assign_to' => [],
+                'version' => 1
             ]);
 
         $this->logger->expects($this->once())
@@ -214,7 +216,8 @@ class SingleCplProcessorTest extends TestCase
                 'cpl' => $this->getEntity(CombinedPriceList::class, ['id' => 1]),
                 'jobId' => 100,
                 'products' => [],
-                'assign_to' => []
+                'assign_to' => [],
+                'version' => 1
             ]);
 
         $e = $this->createMock(DeadlockException::class);
@@ -424,7 +427,8 @@ class SingleCplProcessorTest extends TestCase
                 'cpl' => $this->getEntity(CombinedPriceList::class, ['id' => 1]),
                 'jobId' => 100,
                 'products' => $products,
-                'assign_to' => $assignTo
+                'assign_to' => $assignTo,
+                'version' => 1
             ]);
 
         return $message;

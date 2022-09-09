@@ -1,0 +1,44 @@
+{% block _tabbed_content_content_widget_tabs_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " tabbed-content tabbed-content--tabs"
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _tabbed_content_content_widget_tabs_items_widget %}
+    {%- import '@OroCMS/macros.html.twig' as CMS -%}
+
+    {% set tabs = [] %}
+    {% for item in tabbedContentItems %}
+        {% set tabContent %}
+            {{ CMS.renderWysiwygContent(item.content, item.contentStyle|default('')) }}
+        {% endset %}
+
+        {% set tabs = tabs|merge([
+            {
+                'alias': ('tabbed-content-item-' ~ item.id ~ '-')|uniqid,
+                'label': item.title,
+                'url': '#',
+                'content': tabContent
+            }
+        ]) %}
+    {% endfor %}
+
+    {% if not isMobileVersion() %}
+        {% set tabsOptions = {
+            verticalTabs: true,
+            useDropdown: false,
+        } %}
+    {% endif %}
+
+    {% set attr = attr|merge({
+        'class': attr.class|default('') ~ ' tabbed-content__items-container',
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ tabPanel(tabs, tabsOptions|default({})) }}
+    </div>
+{% endblock %}

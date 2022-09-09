@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\RFPBundle\Controller;
 
-use Oro\Bundle\FormBundle\Model\UpdateHandler;
+use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
 use Oro\Bundle\RFPBundle\Entity\Request as RFPRequest;
 use Oro\Bundle\RFPBundle\Form\Type\RequestType;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
@@ -27,11 +27,8 @@ class RequestController extends AbstractController
      *      class="OroRFPBundle:Request",
      *      permission="VIEW"
      * )
-     *
-     * @param RFPRequest $rfpRequest
-     * @return array
      */
-    public function viewAction(RFPRequest $rfpRequest)
+    public function viewAction(RFPRequest $rfpRequest): array
     {
         return [
             'entity' => $rfpRequest,
@@ -42,11 +39,8 @@ class RequestController extends AbstractController
      * @Route("/info/{id}", name="oro_rfp_request_info", requirements={"id"="\d+"})
      * @Template
      * @AclAncestor("oro_rfp_request_view")
-     *
-     * @param RFPRequest $rfpRequest
-     * @return array
      */
-    public function infoAction(RFPRequest $rfpRequest)
+    public function infoAction(RFPRequest $rfpRequest): array
     {
         return [
             'entity' => $rfpRequest,
@@ -57,10 +51,8 @@ class RequestController extends AbstractController
      * @Route("/", name="oro_rfp_request_index")
      * @Template
      * @AclAncestor("oro_rfp_request_view")
-     *
-     * @return array
      */
-    public function indexAction()
+    public function indexAction(): array
     {
         return [
             'entity_class' => RFPRequest::class,
@@ -76,45 +68,23 @@ class RequestController extends AbstractController
      *     permission="EDIT",
      *     class="OroRFPBundle:Request"
      * )
-     *
-     * @param RFPRequest $rfpRequest
-     *
-     * @return array|RedirectResponse
      */
-    public function updateAction(RFPRequest $rfpRequest)
+    public function updateAction(RFPRequest $rfpRequest): array|RedirectResponse
     {
         return $this->update($rfpRequest);
     }
 
-    /**
-     * @param RFPRequest $rfpRequest
-     * @return array|RedirectResponse
-     */
-    protected function update(RFPRequest $rfpRequest)
+    protected function update(RFPRequest $rfpRequest): array|RedirectResponse
     {
-        $handler = $this->get(UpdateHandler::class);
-
-        return $handler->handleUpdate(
+        return $this->get(UpdateHandlerFacade::class)->update(
             $rfpRequest,
             $this->createForm(RequestType::class, $rfpRequest),
-            function (RFPRequest $request) {
-                return [
-                    'route' => 'oro_rfp_request_update',
-                    'parameters' => ['id' => $request->getId()],
-                ];
-            },
-            function (RFPRequest $request) {
-                return [
-                    'route' => 'oro_rfp_request_view',
-                    'parameters' => ['id' => $request->getId()],
-                ];
-            },
             $this->get(TranslatorInterface::class)->trans('oro.rfp.controller.request.saved.message')
         );
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public static function getSubscribedServices()
     {
@@ -122,7 +92,7 @@ class RequestController extends AbstractController
             parent::getSubscribedServices(),
             [
                 TranslatorInterface::class,
-                UpdateHandler::class,
+                UpdateHandlerFacade::class
             ]
         );
     }

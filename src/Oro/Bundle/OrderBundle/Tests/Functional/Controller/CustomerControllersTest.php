@@ -62,6 +62,35 @@ class CustomerControllersTest extends WebTestCase
         $this->checkDatagridResponse($response);
     }
 
+    public function testCustomerUserOrdersGridSorting()
+    {
+        $response = $this->client->requestGrid(
+            [
+                'gridName' => 'customer-user-orders-grid',
+                'customer-user-orders-grid[customer_user_id]' => $this->customerUser->getId(),
+            ]
+        );
+        $this->checkDatagridResponse($response);
+
+        $response = $this->client->requestGrid(
+            [
+                'gridName' => 'customer-user-orders-grid',
+                'customer-user-orders-grid[customer_user_id]' => $this->customerUser->getId(),
+                'customer-user-orders-grid[_sort_by]' => ['totalDiscountsAmount' => 'DESC'],
+            ]
+        );
+        $this->checkDatagridResponse($response);
+
+        $response = $this->client->requestGrid(
+            [
+                'gridName' => 'customer-user-orders-grid',
+                'customer-user-orders-grid[customer_user_id]' => $this->customerUser->getId(),
+                'customer-user-orders-grid[_sort_by]' => ['totalDiscountsAmount' => 'ASC'],
+            ]
+        );
+        $this->checkDatagridResponse($response);
+    }
+
     private function checkDatagridResponse(Response $response): void
     {
         $result = $this->getJsonResponseContent($response, 200);

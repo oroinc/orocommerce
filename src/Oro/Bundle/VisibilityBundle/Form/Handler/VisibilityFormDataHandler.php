@@ -3,50 +3,36 @@
 namespace Oro\Bundle\VisibilityBundle\Form\Handler;
 
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
-use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\FormBundle\Form\Handler\FormHandlerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-class VisibilityFormDataHandler
+/**
+ * The handler for visibility form.
+ */
+class VisibilityFormDataHandler implements FormHandlerInterface
 {
-    /**
-     * @var FormInterface
-     */
-    protected $form;
+    protected EventDispatcherInterface $eventDispatcher;
 
-    /** @var Request */
-    protected $request;
-
-    /** @var EventDispatcherInterface */
-    protected $eventDispatcher;
-
-    public function __construct(
-        FormInterface $form,
-        Request $request,
-        EventDispatcherInterface $eventDispatcher
-    ) {
-        $this->form = $form;
-        $this->request = $request;
+    public function __construct(EventDispatcherInterface $eventDispatcher)
+    {
         $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
-     * Process form
-     *
-     * @param Product $entity
-     * @return bool  True on successful processing, false otherwise
+     * {@inheritDoc}
      */
-    public function process(Product $entity)
+    public function process($entity, FormInterface $form, Request $request)
     {
-        $this->form->setData($entity);
+        $form->setData($entity);
 
-        if ($this->request->isMethod('POST')) {
-            $this->form->handleRequest($this->request);
+        if ($request->isMethod('POST')) {
+            $form->handleRequest($request);
 
-            if ($this->form->isSubmitted() && $this->form->isValid()) {
+            if ($form->isSubmitted() && $form->isValid()) {
                 $this->eventDispatcher->dispatch(
-                    new AfterFormProcessEvent($this->form, $entity),
+                    new AfterFormProcessEvent($form, $entity),
                     'oro_product.product.edit'
                 );
 

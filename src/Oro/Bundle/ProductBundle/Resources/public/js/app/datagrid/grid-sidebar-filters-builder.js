@@ -1,4 +1,3 @@
-import _ from 'underscore';
 import $ from 'jquery';
 import mediator from 'oroui/js/mediator';
 import FilterItemsHintView from 'oroproduct/js/app/views/sidebar-filters/filter-items-hint-view';
@@ -40,14 +39,6 @@ export default {
             filter.labelPrefix = '';
             filter.animationDuration = 300;
         });
-
-        const toolbarOptions = options.metadata.options.toolbarOptions;
-        const toolbarClassNames = ['datagrid-toolbar--no-x-offset'];
-
-        if (toolbarOptions.className) {
-            toolbarClassNames.push(toolbarOptions.className);
-        }
-        toolbarOptions.className = _.uniq(toolbarClassNames).join(' ');
 
         return deferred.resolve();
     },

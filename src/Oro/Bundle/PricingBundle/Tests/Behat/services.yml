@@ -5,3 +5,6 @@ services:
             - '@fob_symfony.kernel'
         tags:
             - { name: 'oro_behat.isolator', priority: 500 }
+
+    Oro\Bundle\PricingBundle\Tests\Behat\ReferenceRepositoryInitializer:
+        tags: [ oro_behat.reference_repository_initializer ]

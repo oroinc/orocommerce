@@ -80,6 +80,13 @@ $cms-typography-address-font-style: italic !default;
 
 $cms-typography-time-color: get-color('additional', 'middle') !default;
 
+// NavTabs
+$cms-typography-nav-tabs-inner-offset: 0 !default;
+$cms-typography-nav-tabs-offset: 0 !default;
+
+// Tabs
+$cms-typography-tabbed-content-bottom-offset: $offset-triple !default;
+
 // Extra
 $cms-typography-extra-text-color: get-color('additional', 'middle') !default;
 $cms-typography-extra-block-bg-color: get-color('additional', 'base') !default;

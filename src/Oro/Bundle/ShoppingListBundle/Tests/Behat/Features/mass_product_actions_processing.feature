@@ -37,9 +37,11 @@ Feature: Mass Product Actions processing
     And I signed in as AmandaRCole@example.org on the store frontend
     And I click "All Products"
     And I should see mass action checkbox in row with PSKU1 content for "Product Frontend Grid"
-    When I click "Gallery View"
+    When I click "Catalog Switcher Toggle"
+    And I click "Gallery View"
     Then I should see mass action checkbox in row with PSKU1 content for "Product Frontend Grid"
-    When I click "No Image View"
+    When I click "Catalog Switcher Toggle"
+    And I click "No Image View"
     And I check PSKU1 record in "Product Frontend Grid" grid
     And I fill line item with "PSKU1" in frontend product grid:
       | Quantity | 10   |
@@ -48,7 +50,7 @@ Feature: Mass Product Actions processing
     And I fill line item with "PSKU2" in frontend product grid:
       | Quantity | 15   |
       | Unit     | item |
-    And I click "Create New Shopping List" link from mass action dropdown in "Product Frontend Grid"
+    And I click "Create New Shopping List" in "ProductFrontendMassPanelInBottomSticky" element
     Then should see an "Create New Shopping List popup" element
     And type "Shopping List of Amanda" in "Shopping List Name"
     And click "Create and Add"
@@ -70,7 +72,7 @@ Feature: Mass Product Actions processing
       | Quantity | 7    |
       | Unit     | set  |
     And I click "Header"
-    And I click "Add to Shopping List of Amanda" link from mass action dropdown in "Product Frontend Grid"
+    And I click "Add to Shopping List of Amanda" in "ProductFrontendMassPanelInBottomSticky" element
     Then I should see "1 product was added" flash message
     When I hover on "Shopping Cart"
     And I click "Shopping List of Amanda" on shopping list widget
@@ -87,6 +89,7 @@ Feature: Mass Product Actions processing
     And I check PSKU2 record in "Product Frontend Grid" grid
 
   Scenario: Show warning message when products are selected and trying to refresh the page
+    When I click "Catalog Switcher Toggle"
     And I click "List View"
     And I accept alert
     Then I should see PSKU2 unchecked record in "Product Frontend Grid"
@@ -112,14 +115,14 @@ Feature: Mass Product Actions processing
     And I type "PSKU3" in "search"
     And I click "Search Button"
     And I check PSKU3 record in "Product Frontend Grid" grid
-    And click "Product Frontend Mass Action Button"
-    Then I should not see "Shopping List of Amanda"
+    Then I should not see "ProductFrontendMassOpenInDropdown"
+    Then I should not see "Shopping List of Amanda" in the "ProductFrontendMassPanelInBottomSticky" element
     And I uncheck PSKU3 record in "Product Frontend Grid" grid
     # Guest, shouldn't see others lists
     When click "Sign Out"
     And I type "PSKU3" in "search"
     And I click "Search Button"
     And I check PSKU3 record in "Product Frontend Grid" grid
-    And click "Product Frontend Mass Action Button"
-    Then I should not see "Shopping List of Amanda"
-    And I should see "Add to Shopping list"
+    Then I should not see "ProductFrontendMassOpenInDropdown"
+    And I should not see "Shopping List of Amanda" in the "ProductFrontendMassPanelInBottomSticky" element
+    And I should see "Add to current Shopping list" in the "ProductFrontendMassPanelInBottomSticky" element

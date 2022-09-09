@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Controller;
 
-use Oro\Bundle\FormBundle\Model\UpdateHandler;
+use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Oro\Bundle\PricingBundle\Form\Type\PriceAttributePriceListType;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
@@ -22,10 +22,8 @@ class PriceAttributePriceListController extends AbstractController
      * @Route("/", name="oro_pricing_price_attribute_price_list_index")
      * @Template
      * @AclAncestor("oro_pricing_price_attribute_price_list_view")
-     *
-     * @return array
      */
-    public function indexAction()
+    public function indexAction(): array
     {
         return [
             'entity_class' => PriceAttributePriceList::class
@@ -41,11 +39,8 @@ class PriceAttributePriceListController extends AbstractController
      *      class="OroPricingBundle:PriceAttributePriceList",
      *      permission="VIEW"
      * )
-     *
-     * @param PriceAttributePriceList $priceAttribute
-     * @return array
      */
-    public function viewAction(PriceAttributePriceList $priceAttribute)
+    public function viewAction(PriceAttributePriceList $priceAttribute): array
     {
         return [
             'entity' => $priceAttribute,
@@ -61,10 +56,8 @@ class PriceAttributePriceListController extends AbstractController
      *      class="OroPricingBundle:PriceAttributePriceList",
      *      permission="CREATE"
      * )
-     *
-     * @return array
      */
-    public function createAction()
+    public function createAction(): array|RedirectResponse
     {
         return $this->update(new PriceAttributePriceList());
     }
@@ -78,39 +71,20 @@ class PriceAttributePriceListController extends AbstractController
      *      class="OroPricingBundle:PriceAttributePriceList",
      *      permission="EDIT"
      * )
-     *
-     * @param PriceAttributePriceList $priceAttribute
-     * @return array
      */
-    public function updateAction(PriceAttributePriceList $priceAttribute)
+    public function updateAction(PriceAttributePriceList $priceAttribute): array|RedirectResponse
     {
         return $this->update($priceAttribute);
     }
 
-    /**
-     * @param PriceAttributePriceList $priceAttribute
-     * @return array|RedirectResponse
-     */
-    protected function update(PriceAttributePriceList $priceAttribute)
+    protected function update(PriceAttributePriceList $priceAttribute): array|RedirectResponse
     {
-        $translator = $this->get(TranslatorInterface::class);
-
-        return $this->get(UpdateHandler::class)->handleUpdate(
+        return $this->get(UpdateHandlerFacade::class)->update(
             $priceAttribute,
             $this->createForm(PriceAttributePriceListType::class, $priceAttribute),
-            function (PriceAttributePriceList $priceAttribute) {
-                return [
-                    'route' => 'oro_pricing_price_attribute_price_list_update',
-                    'parameters' => ['id' => $priceAttribute->getId()],
-                ];
-            },
-            function (PriceAttributePriceList $priceAttribute) {
-                return [
-                    'route' => 'oro_pricing_price_attribute_price_list_view',
-                    'parameters' => ['id' => $priceAttribute->getId()],
-                ];
-            },
-            $translator->trans('oro.pricing.controller.price_attribute_price_list.saved.message')
+            $this->get(TranslatorInterface::class)->trans(
+                'oro.pricing.controller.price_attribute_price_list.saved.message'
+            )
         );
     }
 
@@ -118,10 +92,8 @@ class PriceAttributePriceListController extends AbstractController
      * @Route("/info/{id}", name="oro_pricing_price_attribute_price_list_info", requirements={"id"="\d+"})
      * @Template("@OroPricing/PriceAttributePriceList/widget/info.html.twig")
      * @AclAncestor("oro_pricing_price_attribute_price_list_view")
-     * @param PriceAttributePriceList $priceAttribute
-     * @return array
      */
-    public function infoAction(PriceAttributePriceList $priceAttribute)
+    public function infoAction(PriceAttributePriceList $priceAttribute): array
     {
         return [
             'entity' => $priceAttribute
@@ -129,15 +101,15 @@ class PriceAttributePriceListController extends AbstractController
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public static function getSubscribedServices()
     {
         return array_merge(
             parent::getSubscribedServices(),
             [
-                UpdateHandler::class,
                 TranslatorInterface::class,
+                UpdateHandlerFacade::class
             ]
         );
     }

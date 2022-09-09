@@ -1,10 +1,9 @@
 services:
     oro_cms.form.autocomplete.page.search_handler:
-        public: false
         parent: oro_form.autocomplete.search_handler
         arguments:
             - 'Oro\Bundle\CMSBundle\Entity\Page'
-            - [ "defaultTitle.string"]
+            - ['defaultTitle.string']
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: Oro\Bundle\CMSBundle\Form\Type\PageType, acl_resource: oro_cms_page_view }
 
@@ -251,11 +250,6 @@ services:
            # Must be called before oro_message_queue.consumption.doctrine_clear_identity_map_extension
            - { name: oro_message_queue.consumption.extension }
 
-    oro_cms.entity_listener.image_slide:
-        class: Oro\Bundle\CMSBundle\Entity\EntityListener\ImageSlideEntityListener
-        tags:
-            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\CMSBundle\Entity\ImageSlide', event: preRemove }
-
     oro_cms.content_widget.type_registry:
         class: Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetTypeRegistry
         arguments:
@@ -271,7 +265,7 @@ services:
             - '@translator'
             - '@property_accessor'
         tags:
-            - { name: oro_form.autocomplete.search_handler, alias: 'oro_cms_content_widget_types' }
+            - { name: oro_form.autocomplete.search_handler, alias: oro_cms_content_widget_types }
 
     oro_cms.provider.content_widget_type:
         class: Oro\Bundle\CMSBundle\Provider\ContentWidgetTypeProvider
@@ -335,8 +329,9 @@ services:
             - '@oro_cms.layout_manager'
             - '@oro_frontend.request.frontend_helper'
             - '@oro_cms.content_widget.frontend_emulator'
-            - '@logger'
             - '%kernel.debug%'
+        calls:
+            - [setLogger, ['@logger']]
         tags:
             - { name: monolog.logger, channel: oro_cms }
 
@@ -425,20 +420,6 @@ services:
         tags:
             - { name: kernel.event_listener, event: entity_form.render.before, method: onBeforeFormRender, priority: -255 }
 
-    oro_cms.content_widget_type.image_slider:
-        class: Oro\Bundle\CMSBundle\ContentWidget\ImageSliderContentWidgetType
-        arguments:
-            - '@doctrine'
-        tags:
-            - { name: oro_cms.content_widget.type }
-
-    oro_cms.event_listener.content_widget_form:
-        class: Oro\Bundle\CMSBundle\EventListener\ContentWidgetFormEventListener
-        arguments:
-            - '@doctrine'
-        tags:
-            - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.oro_cms_content_widget, method: onBeforeFlush }
-
     oro_cms.provider.preview_metadata:
         decorates: oro_digital_asset.provider.preview_metadata
         class: Oro\Bundle\CMSBundle\Provider\PreviewMetadataProvider
@@ -510,9 +491,9 @@ services:
         arguments:
             - '@oro_cms.decorator.wysiwyg_entity_audit_inverse_strategy.inner'
 
-    oro_cms.twig.image_slider_extension:
-        class: 'Oro\Bundle\CMSBundle\Twig\ImageSliderExtension'
+    oro_cms.validator.not_empty_content_widget_layout:
+        class: Oro\Bundle\CMSBundle\Validator\Constraints\NotEmptyContentWidgetLayoutValidator
         arguments:
-            - '@oro_platform.twig.service_locator'
+            - '@oro_cms.provider.content_widget_layout'
         tags:
-            - { name: twig.extension }
+            - { name: validator.constraint_validator }

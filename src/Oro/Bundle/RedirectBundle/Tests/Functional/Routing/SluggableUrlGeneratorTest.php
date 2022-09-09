@@ -5,8 +5,8 @@ namespace Oro\Bundle\RedirectBundle\Tests\Functional\Routing;
 use Oro\Bundle\CacheBundle\Provider\FilesystemCache;
 use Oro\Bundle\CacheBundle\Provider\PhpFileCache;
 use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
-use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\LocaleBundle\Provider\LocalizationProviderInterface;
 use Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface;
 use Oro\Bundle\RedirectBundle\Cache\UrlKeyValueCache;
 use Oro\Bundle\RedirectBundle\Cache\UrlLocalCache;
@@ -47,16 +47,16 @@ class SluggableUrlGeneratorTest extends WebTestCase
         $localizedSlug = $this->getReference(LoadSlugsData::SLUG_URL_LOCALIZATION_2);
 
         $localization = $this->createLocalization($localizedSlug->getLocalization()->getId());
-        /** @var UserLocalizationManager|MockObject $localizationManager */
-        $localizationManager = $this->createMock(UserLocalizationManager::class);
-        $localizationManager->expects(self::exactly(2))
+        /** @var LocalizationProviderInterface|MockObject $localizationProvider */
+        $localizationProvider = $this->createMock(LocalizationProviderInterface::class);
+        $localizationProvider->expects(self::exactly(2))
             ->method('getCurrentLocalization')
             ->willReturnOnConsecutiveCalls(
                 null,
                 $localization
             );
 
-        $urlGenerator = $this->getUrlGenerator($urlProviderType, $urlCacheService, $localizationManager);
+        $urlGenerator = $this->getUrlGenerator($urlProviderType, $urlCacheService, $localizationProvider);
 
         self::assertEquals(
             $defaultSlug->getUrl(),
@@ -77,13 +77,13 @@ class SluggableUrlGeneratorTest extends WebTestCase
         $defaultSlug = $this->getReference(LoadSlugsData::SLUG_URL_PAGE_2);
 
         $localization = $this->createLocalization(1);
-        /** @var UserLocalizationManager|MockObject $localizationManager */
-        $localizationManager = $this->createMock(UserLocalizationManager::class);
-        $localizationManager->expects(self::any())
+        /** @var LocalizationProviderInterface|MockObject $localizationProvider */
+        $localizationProvider = $this->createMock(LocalizationProviderInterface::class);
+        $localizationProvider->expects(self::any())
             ->method('getCurrentLocalization')
             ->willReturn($localization);
 
-        $urlGenerator = $this->getUrlGenerator($urlProviderType, $urlCacheService, $localizationManager);
+        $urlGenerator = $this->getUrlGenerator($urlProviderType, $urlCacheService, $localizationProvider);
 
         self::assertEquals(
             $defaultSlug->getUrl(),
@@ -102,13 +102,13 @@ class SluggableUrlGeneratorTest extends WebTestCase
         $slug = $this->getReference(LoadSlugsData::PAGE_3_LOCALIZED_EN_CA);
 
         $localization = $this->createLocalization($slug->getLocalization()->getId());
-        /** @var UserLocalizationManager|MockObject $localizationManager */
-        $localizationManager = $this->createMock(UserLocalizationManager::class);
-        $localizationManager->expects(self::any())
+        /** @var LocalizationProviderInterface|MockObject $localizationProvider */
+        $localizationProvider = $this->createMock(LocalizationProviderInterface::class);
+        $localizationProvider->expects(self::any())
             ->method('getCurrentLocalization')
             ->willReturn($localization);
 
-        $urlGenerator = $this->getUrlGenerator($urlProviderType, $urlCacheService, $localizationManager);
+        $urlGenerator = $this->getUrlGenerator($urlProviderType, $urlCacheService, $localizationProvider);
 
         self::assertEquals(
             $slug->getUrl(),
@@ -139,7 +139,7 @@ class SluggableUrlGeneratorTest extends WebTestCase
     private function getUrlGenerator(
         string $urlProviderType,
         string $urlCacheType,
-        UserLocalizationManager $localizationManager
+        LocalizationProviderInterface $localizationProvider
     ): SluggableUrlGenerator {
         $urlCache = $this->createCache($urlCacheType);
         $cacheUrlProvider = new SluggableUrlCacheAwareProvider($urlCache);
@@ -162,7 +162,7 @@ class SluggableUrlGeneratorTest extends WebTestCase
         $urlGenerator = new SluggableUrlGenerator(
             $urlProvider,
             new ContextUrlProviderRegistry($contextUrlProviders),
-            $localizationManager,
+            $localizationProvider,
             self::getConfigManager(null)
         );
         $urlGenerator->setBaseGenerator($this->getContainer()->get('router.default'));

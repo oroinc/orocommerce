@@ -71,7 +71,7 @@ class CategoryControllerTest extends WebTestCase
         $form = $crawler->selectButton('Save')->form();
         $this->updateFallbackField($form, $minScalar, $minFallback, 'oro_catalog_category', 'minimumQuantityToOrder');
         $this->updateFallbackField($form, $maxScalar, $maxFallback, 'oro_catalog_category', 'maximumQuantityToOrder');
-        $form['input_action'] = 'save_and_stay';
+        $form['input_action'] = $crawler->selectButton('Save')->attr('data-action');
         $values = $form->getPhpValues();
         $values['oro_catalog_category']['_token'] = $this->getCsrfToken('category')->getValue();
 

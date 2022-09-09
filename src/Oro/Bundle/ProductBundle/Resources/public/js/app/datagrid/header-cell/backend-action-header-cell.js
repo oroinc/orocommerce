@@ -31,8 +31,8 @@ define(function(require, exports, module) {
         }
     };
     const modes = {
-        DROPDOWN: 'Dropdown',
         GROUP: 'Group',
+        GROUPDROPDOWN: 'GroupDropdown',
         FULLSCREEN: 'Fullscreen'
     };
 
@@ -63,7 +63,7 @@ define(function(require, exports, module) {
          * Possible way to render actions
          * {string}
          */
-        renderMode: modes.DROPDOWN,
+        renderMode: modes.GROUPDROPDOWN,
 
         /**
          * @inheritdoc
@@ -107,7 +107,7 @@ define(function(require, exports, module) {
             return BackendActionHeaderCell.__super__.delegateListeners.call(this);
         },
 
-        _showMassActionsInSticky() {
+        _isOptimizedScreen() {
             return viewportManager.isApplicable({maxScreenType: this.optimizedScreenSize});
         },
 
@@ -118,14 +118,14 @@ define(function(require, exports, module) {
         defineRenderingStrategy() {
             const prevRenderMode = this.renderMode;
 
-            if (this._showMassActionsInSticky()) {
+            if (this._isOptimizedScreen()) {
                 if (this._showMassActionsInFullscreen()) {
                     this.renderMode = modes.FULLSCREEN;
                 } else {
                     this.renderMode = modes.GROUP;
                 }
             } else {
-                this.renderMode = modes.DROPDOWN;
+                this.renderMode = modes.GROUPDROPDOWN;
             }
 
             if (prevRenderMode !== this.renderMode) {
@@ -174,14 +174,6 @@ define(function(require, exports, module) {
             this.render();
         },
 
-        getTemplateData: function() {
-            const data = BackendActionHeaderCell.__super__.getTemplateData.call(this);
-
-            data.inSticky = this._showMassActionsInSticky();
-
-            return data;
-        },
-
         getActionContainer() {
             return this.$('[data-action-panel]');
         },
@@ -203,11 +195,11 @@ define(function(require, exports, module) {
 
             panel.$el.removeClass(this._replaceablePanelClasses);
             switch (this.renderMode) {
-                case modes.DROPDOWN:
-                    this._renderAsDropdown();
-                    break;
                 case modes.GROUP:
                     return this._renderAsGroup();
+                    break;
+                case modes.GROUPDROPDOWN:
+                    return this._renderAsGroupDropdown();
                     break;
                 case modes.FULLSCREEN:
                     return this._renderAsFullscreen();
@@ -217,42 +209,68 @@ define(function(require, exports, module) {
             }
         },
 
-        _renderAsDropdown() {
+        _renderAsGroupDropdown() {
             const panel = this.subview('actionsPanel');
             const togglerId = _.uniqueId('dropdown-');
+            const extraClasses = 'btn-group--full dropup';
+            const $mainLuncher = panel.getMainLauncher().render().$el.clone(true, true);
 
-            this.getActionContainer().append(
-                panel.render().$el
-            );
-            panel.launchers.forEach(launcher => {
-                launcher.$el.addClass('dropdown-item');
-                launcher.$('.icon').addClass('fa fa--fw fa--аs-line');
-            });
-            panel.$el.children().wrapAll($('<div></div>', {
-                'class': 'dropdown-menu datagrid-massaction__dropdown-menu',
-                'aria-labelledby': togglerId
-            }));
-            $('<button></button>', {
-                'id': togglerId,
-                'type': 'button',
-                'class': 'btn btn--default btn--size-s dropdown-toggle',
-                'aria-haspopup': 'true',
-                'aria-expanded': 'false',
-                'data-inherit-parent-width': 'loosely',
-                'data-flip': false,
-                'data-toggle': 'dropdown',
-                'html': $('<span></span>', {
-                    'class': 'caret',
-                    'aria-hidden': 'true',
-                    'text': _.escape(__('oro.product.frontend.choose_action'))
-                })
-            }).prependTo(panel.$el);
+            if (panel.actions.length > 1) {
+                this.getActionContainer().append(
+                    panel.render().$el
+                );
+
+                panel.$el.addClass(extraClasses);
+
+                panel.launchers.forEach(launcher => {
+                    launcher.$el.addClass('dropdown-item');
+                    launcher.$('.icon').addClass('fa fa--fw fa--as-line');
+                });
+
+                const $dropdownToggle = $('<button></button>', {
+                    'id': togglerId,
+                    'type': 'button',
+                    'class': 'btn btn--info dropdown-toggle',
+                    'aria-label': __('oro.product.frontend.choose_action'),
+                    'data-toggle': 'dropdown',
+                    'data-placement': 'top-end'
+                });
+
+                panel.$el.children().wrapAll($('<div></div>', {
+                    'class': 'dropdown-menu',
+                    'aria-labelledby': togglerId
+                }));
+
+                $dropdownToggle.prependTo(panel.$el);
+
+                $mainLuncher
+                    .addClass('btn btn--full btn--info btn--clip-text')
+                    .removeClass('disabled')
+                    .prependTo(panel.$el);
+            } else {
+                this.getActionContainer().append(
+                    panel.renderMainLauncher().$el
+                );
+                panel.launchers.forEach(launcher => {
+                    launcher.$el.addClass('btn btn--full btn--info btn--clip-text');
+                });
+
+                panel.$el.addClass(extraClasses);
+            }
+
+            this._replaceablePanelClasses = `${extraClasses} show`;
 
             return panel;
         },
 
-        _doActivateDropdown(selectState) {
-            this[(selectState.isEmpty() && selectState.get('inset')) ? 'disable' : 'enable']();
+        _doActivateGroupDropdown(selectState) {
+            if (selectState.isEmpty()) {
+                this.getActionContainer().addClass('hidden');
+                this.subview('actionsPanel').disable();
+            } else {
+                this.getActionContainer().removeClass('hidden');
+                this.subview('actionsPanel').enable();
+            }
         },
 
         _renderAsGroup() {
@@ -298,7 +316,7 @@ define(function(require, exports, module) {
             panel.$el.addClass(this._replaceablePanelClasses);
             panel.launchers.forEach(launcher => {
                 launcher.$el.addClass('dropdown-item');
-                launcher.$('.icon').addClass('fa fa--fw fa--аs-line');
+                launcher.$('.icon').addClass('fa fa--fw fa--as-line');
             });
 
             return panel;
@@ -360,7 +378,7 @@ define(function(require, exports, module) {
             const fullscreen = this.subview('fullscreen');
 
             // Remove fullscreen popup in large screen
-            if (fullscreen && !this._showMassActionsInSticky()) {
+            if (fullscreen && !this._isOptimizedScreen()) {
                 this.stopListening(fullscreen);
                 this.removeSubview('fullscreen');
             }

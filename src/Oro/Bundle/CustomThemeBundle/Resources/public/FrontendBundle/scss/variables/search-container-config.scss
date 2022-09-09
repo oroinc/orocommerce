@@ -7,5 +7,5 @@ $search-container-tablet-margin: 0 !default;
 $search-container-tablet-padding: $offset-y !default;
 $search-container-tablet-border: 1px solid get-color('additional', 'light') !default;
 
-$search-widget-input-submit-tablet-top: auto !default;
+$search-widget-input-submit-tablet-top: $search-container-tablet-padding !default;
 $search-widget-input-submit-tablet-right: $offset-x !default;

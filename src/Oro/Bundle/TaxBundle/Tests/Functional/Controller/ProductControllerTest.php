@@ -45,6 +45,7 @@ class ProductControllerTest extends WebTestCase
         $form = $crawler->selectButton('Save and Close')->form();
 
         $formValues = $form->getPhpValues();
+        $formValues['input_action'] = $crawler->selectButton('Save and Close')->attr('data-action');
         $formValues['oro_product']['sku'] = self::TEST_SKU;
         $formValues['oro_product']['owner'] = $this->getBusinessUnitId();
         $formValues['oro_product']['inventory_status'] = Product::INVENTORY_STATUS_IN_STOCK;

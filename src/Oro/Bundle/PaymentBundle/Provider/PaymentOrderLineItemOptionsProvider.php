@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PaymentBundle\Provider;
 
-use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManagerInterface;
+use Oro\Bundle\LocaleBundle\Provider\LocalizationProviderInterface;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\PaymentBundle\Model\LineItemOptionModel;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
@@ -13,20 +13,14 @@ use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
  */
 class PaymentOrderLineItemOptionsProvider
 {
-    /**
-     * @var HtmlTagHelper
-     */
-    private $htmlTagHelper;
+    private HtmlTagHelper $htmlTagHelper;
 
-    /**
-     * @var UserLocalizationManagerInterface
-     */
-    private $userLocalizationManager;
+    private LocalizationProviderInterface $localizationProvider;
 
-    public function __construct(HtmlTagHelper $htmlTagHelper, UserLocalizationManagerInterface $userLocalizationManager)
+    public function __construct(HtmlTagHelper $htmlTagHelper, LocalizationProviderInterface $localizationProvider)
     {
         $this->htmlTagHelper = $htmlTagHelper;
-        $this->userLocalizationManager = $userLocalizationManager;
+        $this->localizationProvider = $localizationProvider;
     }
 
     /**
@@ -36,7 +30,7 @@ class PaymentOrderLineItemOptionsProvider
     public function getLineItemOptions(LineItemsAwareInterface $entity): array
     {
         $lineItems = $entity->getLineItems();
-        $localization = $this->userLocalizationManager->getCurrentLocalization();
+        $localization = $this->localizationProvider->getCurrentLocalization();
 
         $result = [];
         foreach ($lineItems as $lineItem) {

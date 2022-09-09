@@ -17,7 +17,7 @@
     {% set toolbarPosition = attr['data-grid-toolbar']|default('') %}
 
     {% if toolbarPosition != 'bottom' %}
-        <div class="datagrid-toolbar__side" data-section="left-side">
+        <div class="datagrid-toolbar__start" data-section="left-side">
             {{ block_widget(block) }}
         </div>
     {% endif %}
@@ -27,17 +27,9 @@
     {% set toolbarPosition = attr['data-grid-toolbar']|default('') %}
 
     {% if toolbarPosition != 'bottom' %}
-        <div class="datagrid-toolbar__rightside" data-section="right-side">
+        <div class="datagrid-toolbar__end" data-section="right-side">
             {{ block_widget(block) }}
         </div>
-    {% endif %}
-{% endblock %}
-
-{% block __oro_datagrid_server_render__datagrid_items_counter_widget %}
-    {% set toolbarPosition = attr['data-grid-toolbar']|default('') %}
-
-    {% if toolbarPosition != 'bottom' %}
-        <div{{ block('block_attributes') }}>{{ block_widget(block) }}</div>
     {% endif %}
 {% endblock %}
 
@@ -87,7 +79,7 @@
 
     {% if pageSize.hide == false and pageSize.items|length > 0 and toolbarPosition != 'bottom' %}
         <div{{ block('block_attributes') }}>
-            <div class="page-size pull-right form-horizontal">
+            <div class="page-size form-horizontal">
                 {% set labelId = 'datagrid-toolbar-label-'|uniqid %}
                 <span id="{{ labelId }}" class="datagrid-tool__label">{{ "oro.datagrid.pagesize.labelShort"|trans }}: &nbsp;</span>
                 <div class="action-selectbox-custom-in-pager">

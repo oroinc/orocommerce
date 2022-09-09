@@ -133,7 +133,10 @@
 
             {% if toolbarOptions.placement.bottom %}
                 <div class="toolbar">
-                    {{ block_widget(block[id ~ '_toolbar'], {attr: {'data-grid-toolbar':'bottom'}}) }}
+                    {{ block_widget(block[id ~ '_toolbar'], {attr: {
+                        'data-grid-toolbar':'bottom',
+                        'class': ' datagrid-toolbar-bottom'
+                    }}) }}
                 </div>
             {% endif %}
         </div>

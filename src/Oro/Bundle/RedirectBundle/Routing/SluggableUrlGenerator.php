@@ -3,7 +3,7 @@
 namespace Oro\Bundle\RedirectBundle\Routing;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManagerInterface;
+use Oro\Bundle\LocaleBundle\Provider\LocalizationProviderInterface;
 use Oro\Bundle\RedirectBundle\Helper\UrlParameterHelper;
 use Oro\Bundle\RedirectBundle\Provider\ContextUrlProviderRegistry;
 use Oro\Bundle\RedirectBundle\Provider\SluggableUrlProviderInterface;
@@ -21,45 +21,27 @@ class SluggableUrlGenerator implements UrlGeneratorInterface
     const CONTEXT_TYPE = 'context_type';
     const CONTEXT_DATA = 'context_data';
 
-    /**
-     * @var UrlGeneratorInterface
-     */
-    private $generator;
+    private UrlGeneratorInterface $generator;
 
-    /**
-     * @var ContextUrlProviderRegistry
-     */
-    private $contextUrlProvider;
+    private ContextUrlProviderRegistry $contextUrlProvider;
 
-    /**
-     * @var SluggableUrlProviderInterface
-     */
-    private $sluggableUrlProvider;
+    private SluggableUrlProviderInterface $sluggableUrlProvider;
 
-    /**
-     * @var UserLocalizationManagerInterface
-     */
-    private $userLocalizationManager;
+    private LocalizationProviderInterface $localizationProvider;
 
-    /**
-     * @var ConfigManager
-     */
-    private $configManager;
+    private ConfigManager $configManager;
 
-    /**
-     * @var bool|null
-     */
-    private $sluggableUrlsEnabled;
+    private ?bool $sluggableUrlsEnabled = null;
 
     public function __construct(
         SluggableUrlProviderInterface $sluggableUrlProvider,
         ContextUrlProviderRegistry $contextUrlProvider,
-        UserLocalizationManagerInterface $userLocalizationManager,
+        LocalizationProviderInterface $localizationProvider,
         ConfigManager $configManager
     ) {
         $this->sluggableUrlProvider = $sluggableUrlProvider;
         $this->contextUrlProvider = $contextUrlProvider;
-        $this->userLocalizationManager = $userLocalizationManager;
+        $this->localizationProvider = $localizationProvider;
         $this->configManager = $configManager;
     }
 
@@ -163,9 +145,7 @@ class SluggableUrlGenerator implements UrlGeneratorInterface
 
     private function getLocalizationId(): ?int
     {
-        $localization = $this->userLocalizationManager->getCurrentLocalization();
-
-        return $localization ? $localization->getId() : null;
+        return $this->localizationProvider->getCurrentLocalization()?->getId();
     }
 
     private function isSluggableUrlsEnabled(): bool

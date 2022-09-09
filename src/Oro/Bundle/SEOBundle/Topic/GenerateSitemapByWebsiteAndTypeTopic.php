@@ -14,13 +14,16 @@ class GenerateSitemapByWebsiteAndTypeTopic extends AbstractTopic
     private const TOPIC_NAME = 'oro.seo.generate_sitemap_by_website_and_type';
     private const TOPIC_DESCRIPTION = 'Generates sitemap by website id and type';
 
-    public const JOB_ID     = 'jobId';
-    public const VERSION    = 'version';
+    public const JOB_ID = 'jobId';
+    public const VERSION = 'version';
     public const WEBSITE_ID = 'websiteId';
-    public const TYPE       = 'type';
+    public const TYPE = 'type';
 
-    public function __construct(private readonly UrlItemsProviderRegistryInterface $urlItemsProviderRegistry)
+    private UrlItemsProviderRegistryInterface $urlItemsProviderRegistry;
+
+    public function __construct(UrlItemsProviderRegistryInterface $urlItemsProviderRegistry)
     {
+        $this->urlItemsProviderRegistry = $urlItemsProviderRegistry;
     }
 
     public static function getName(): string

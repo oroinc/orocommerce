@@ -27,7 +27,7 @@ class ProcessAssociationWebsiteEventListener extends AbstractProcessAssociationE
             return;
         }
         foreach ($websites as $website) {
-            $this->actualizeActiveCplRelation($event->getCombinedPriceList(), $website);
+            $this->actualizeActiveCplRelation($event->getCombinedPriceList(), $website, $event->getVersion());
         }
 
         if (!$event->isSkipUpdateNotification()) {

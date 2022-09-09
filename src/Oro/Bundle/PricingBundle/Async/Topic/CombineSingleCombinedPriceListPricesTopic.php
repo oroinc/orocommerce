@@ -74,6 +74,13 @@ class CombineSingleCombinedPriceListPricesTopic extends AbstractTopic
             ->default([])
             ->allowedTypes('array');
 
+        $resolver
+            ->define('version')
+            ->info('Assignment version. Used to prevent assignment overriding if newer version exists.')
+            ->default(null)
+            ->allowedTypes('int', 'null')
+            ->normalize(fn (Options $options, $value) => $options['assign_to'] ? $value : null);
+
         $resolver->define('cpl')
             ->info(
                 'ID (optional) of existing Combined Price List for which combined prices should be rebuilt.'

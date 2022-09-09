@@ -150,6 +150,7 @@ class OrderControllerTest extends WebTestCase
         ];
         $discountItems = $this->getDiscountItems();
         $submittedData = $this->getSubmittedData($form, $orderCustomer, $lineItems, $discountItems);
+        $submittedData['input_action'] = '{"route":"oro_order_update","params":{"id":"$id"}}';
 
         $this->client->followRedirects(true);
 
@@ -240,6 +241,7 @@ class OrderControllerTest extends WebTestCase
         ];
 
         $submittedData = $this->getUpdatedData($form, $orderCustomer, $lineItems, $discountItems);
+        $submittedData['input_action'] = '{"route":"oro_order_update","params":{"id":"$id"}}';
 
         $this->client->followRedirects(true);
 
@@ -320,6 +322,8 @@ class OrderControllerTest extends WebTestCase
                 'oro_order_type['. $addressType .'][customerAddress]' => 'a_'. $orderCustomerAddress->getId(),
             ]
         );
+        $redirectAction = $crawler->selectButton('Save and Close')->attr('data-action');
+        $form->setValues(['input_action' => $redirectAction]);
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
@@ -371,6 +375,8 @@ class OrderControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_order_update', ['id' => $id]));
 
         $form = $crawler->selectButton('Save')->form();
+        $redirectAction = $crawler->selectButton('Save')->attr('data-action');
+        $form->setValues(['input_action' => $redirectAction]);
         $form['oro_order_type[overriddenShippingCostAmount]'] = [
             'value' => self::OVERRIDDEN_SHIPPING_COST_AMOUNT,
             'currency' => 'USD',
@@ -403,6 +409,8 @@ class OrderControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_order_update', ['id' => $id]));
 
         $form = $crawler->selectButton('Save')->form();
+        $redirectAction = $crawler->selectButton('Save')->attr('data-action');
+        $form->setValues(['input_action' => $redirectAction]);
         $form['oro_order_type[overriddenShippingCostAmount][value]'] = '';
 
         $this->client->followRedirects(true);
@@ -432,6 +440,8 @@ class OrderControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_order_update', ['id' => $id]));
 
         $form = $crawler->selectButton('Save')->form();
+        $redirectAction = $crawler->selectButton('Save')->attr('data-action');
+        $form->setValues(['input_action' => $redirectAction]);
         $form['oro_order_type[overriddenShippingCostAmount][value]'] = 0;
 
         $this->client->followRedirects(true);
@@ -493,6 +503,7 @@ class OrderControllerTest extends WebTestCase
         $discountItems = $this->getDiscountItems();
 
         $submittedData = $this->getSubmittedData($form, $orderCustomer, $lineItems, $discountItems);
+        $submittedData['input_action'] = '{"route":"oro_order_update","params":{"id":"$id"}}';
 
         $this->client->followRedirects(true);
         $this->client->request($form->getMethod(), $form->getUri(), $submittedData);

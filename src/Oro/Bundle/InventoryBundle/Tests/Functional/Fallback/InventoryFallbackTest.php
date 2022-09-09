@@ -205,7 +205,7 @@ abstract class InventoryFallbackTest extends WebTestCase
 
         $highlightLowInventoryOption = LowInventoryProvider::HIGHLIGHT_LOW_INVENTORY_OPTION;
 
-        $formValues['input_action'] = 'save_and_close';
+        $formValues['input_action'] = $crawler->selectButton('Save and Close')->attr('data-action');
         if (is_null($ownValue)) {
             unset($formValues['oro_product']['manageInventory']['scalarValue']);
             unset($formValues['oro_product'][$highlightLowInventoryOption]['scalarValue']);

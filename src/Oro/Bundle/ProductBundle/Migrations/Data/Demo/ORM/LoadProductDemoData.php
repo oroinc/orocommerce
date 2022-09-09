@@ -92,7 +92,7 @@ class LoadProductDemoData extends AbstractFixture implements
         $handler = fopen($filePath, 'rb');
         $headers = fgetcsv($handler, 1000, ',');
 
-        $outOfStockStatus = $this->getOutOfStockInventoryStatus($manager);
+        $inStockStatus = static::getProductInventoryStatus($manager, Product::INVENTORY_STATUS_IN_STOCK);
 
         $allImageTypes = $this->getImageTypes();
         $defaultAttributeFamily = $this->getDefaultAttributeFamily($manager);
@@ -134,7 +134,7 @@ class LoadProductDemoData extends AbstractFixture implements
                 ->setOrganization($organization)
                 ->setAttributeFamily($defaultAttributeFamily)
                 ->setSku($row['sku'])
-                ->setInventoryStatus($outOfStockStatus)
+                ->setInventoryStatus($inStockStatus)
                 ->setStatus(Product::STATUS_ENABLED)
                 ->addName($name)
                 ->addDescription($description)
@@ -202,17 +202,19 @@ class LoadProductDemoData extends AbstractFixture implements
     }
 
     /**
-     * @param ObjectManager $manager
-     * @return AbstractEnumValue|object
+     * Returns product inventory status enum value entity based on its value ID.
      *
-     * @throws \InvalidArgumentException
+     * Examples:
+     *     $inStock = LoadProductDemoData::getProductInventoryStatus($manager, Product::INVENTORY_STATUS_OUT_OF_STOCK);
+     *     $outOfStock = LoadProductDemoData::getProductInventoryStatus($manager, Product::INVENTORY_STATUS_IN_STOCK);
+     *     $disc = LoadProductDemoData::getProductInventoryStatus($manager, Product::INVENTORY_STATUS_DISCONTINUED);
      */
-    protected function getOutOfStockInventoryStatus(ObjectManager $manager)
+    public static function getProductInventoryStatus(ObjectManager $manager, string $status): ?AbstractEnumValue
     {
         $inventoryStatusClassName = ExtendHelper::buildEnumValueClassName(self::ENUM_CODE_INVENTORY_STATUS);
 
         return $manager->getRepository($inventoryStatusClassName)->findOneBy([
-            'id' => Product::INVENTORY_STATUS_OUT_OF_STOCK
+            'id' => $status
         ]);
     }
 

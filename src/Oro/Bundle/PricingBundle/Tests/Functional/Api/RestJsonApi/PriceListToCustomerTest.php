@@ -4,7 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\Api\RestJsonApi;
 
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
-use Oro\Bundle\PricingBundle\Async\Topic\RebuildCombinedPriceListsTopic;
+use Oro\Bundle\PricingBundle\Async\Topic\MassRebuildCombinedPriceListsTopic;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomer;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations;
@@ -61,10 +61,14 @@ class PriceListToCustomerTest extends AbstractApiPriceListRelationTest
     protected function assertFirstRelationMessageSent()
     {
         static::assertMessageSent(
-            RebuildCombinedPriceListsTopic::getName(),
+            MassRebuildCombinedPriceListsTopic::getName(),
             [
-                'website'  => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
-                'customer' => $this->getReference('customer.level_1_1')->getId()
+                'assignments' => [
+                    [
+                        'website'  => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
+                        'customer' => $this->getReference('customer.level_1_1')->getId()
+                    ]
+                ]
             ]
         );
     }
@@ -97,10 +101,14 @@ class PriceListToCustomerTest extends AbstractApiPriceListRelationTest
         $this->assertNotNull($createdCustomer);
 
         static::assertMessageSent(
-            RebuildCombinedPriceListsTopic::getName(),
+            MassRebuildCombinedPriceListsTopic::getName(),
             [
-                'website'  => $website->getId(),
-                'customer' => $customer->getId()
+                'assignments' => [
+                    [
+                        'website'  => $website->getId(),
+                        'customer' => $customer->getId()
+                    ]
+                ]
             ]
         );
     }
@@ -137,25 +145,23 @@ class PriceListToCustomerTest extends AbstractApiPriceListRelationTest
 
         static::assertCount(0, $entitiesAfterDelete);
         static::assertMessageSent(
-            RebuildCombinedPriceListsTopic::getName(),
+            MassRebuildCombinedPriceListsTopic::getName(),
             [
-                'website'  => $customerRelationUS1->getWebsite()->getId(),
-                'customer' => $customerRelationUS1->getCustomer()->getId()
-            ]
-        );
-        static::assertMessageSent(
-            RebuildCombinedPriceListsTopic::getName(),
-            [
-                'website'       => $customerRelationUS6->getWebsite()->getId(),
-                'customer'      => $customerRelationUS6->getCustomer()->getId(),
-                'customerGroup' => $customerRelationUS6->getCustomer()->getGroup()->getId()
-            ]
-        );
-        static::assertMessageSent(
-            RebuildCombinedPriceListsTopic::getName(),
-            [
-                'website'  => $customerRelationCanada1->getWebsite()->getId(),
-                'customer' => $customerRelationCanada1->getCustomer()->getId()
+                'assignments' => [
+                    [
+                        'customer' => $customerRelationUS1->getCustomer()->getId(),
+                        'website'  => $customerRelationUS1->getWebsite()->getId(),
+                    ],
+                    [
+                        'customer' => $customerRelationCanada1->getCustomer()->getId(),
+                        'website'  => $customerRelationCanada1->getWebsite()->getId(),
+                    ],
+                    [
+                        'customer'      => $customerRelationUS6->getCustomer()->getId(),
+                        'website'       => $customerRelationUS6->getWebsite()->getId(),
+                        'customerGroup' => $customerRelationUS6->getCustomer()->getGroup()->getId(),
+                    ]
+                ]
             ]
         );
     }

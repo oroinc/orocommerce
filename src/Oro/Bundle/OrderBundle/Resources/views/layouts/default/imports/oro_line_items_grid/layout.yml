@@ -48,8 +48,3 @@ layout:
             optionName: grid_parameters
             optionValue:
                 order_id: '=data["order"].getId()'
-
-        - '@setOption':
-            id: __datagrid_toolbar
-            optionName: attr.class
-            optionValue: 'datagrid-toolbar simplistic'

@@ -78,7 +78,7 @@ Feature: Mass Product Actions Availability
     Then I should see "Product visibility has been saved" flash message
 
     When I proceed as the Buyer
-    And I click "Create New Shopping List" link from mass action dropdown in "Product Frontend Grid"
+    And I click "Create New Shopping List" in "ProductFrontendMassPanelInBottomSticky" element
     And I click "Create and Add"
     Then I should see "No products were added"
     And I reload the page
@@ -102,7 +102,7 @@ Feature: Mass Product Actions Availability
     Then I should see "Product visibility has been saved" flash message
 
     When I proceed as the Buyer
-    And I click "Add to Shopping List" link from mass action dropdown in "Product Frontend Grid"
+    And I click "Add to Shopping List" in "ProductFrontendMassPanelInBottomSticky" element
     Then I should see "No products were added"
     And I reload the page
     And there is no records in "Product Frontend Grid"

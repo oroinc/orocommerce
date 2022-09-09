@@ -109,9 +109,16 @@ oro.cms:
             image_slides.label: Slides
             usages.label: Usages
             slider_options.label: Slider Options
+            tabbed_content_items.label: Tabs
+
+        layouts:
+            tabbed_content:
+                tabs.label: Tabs mode
+                accordion.label: Accordion mode
 
     content_widget_type:
         image_slider.label: Image Slider
+        tabbed_content.label: Tabbed Content
 
         slider_options:
             slides_to_show.label: 'Number of Slides to Show'
@@ -160,6 +167,25 @@ oro.cms:
             main_image.label: Upload a background image for the slide, or select an existing one.
             medium_image.label: Upload a background image for the slide, or select an existing one.
             small_image.label: Upload a background image for the slide, or select an existing one.
+
+    tabbedcontentitem:
+        entity_label: Tabbed Content Item
+        entity_plural_label: Tabbed Content Items
+        entity_grid_all_view_label: All %entity_plural_label%
+        id.label: ID
+        title:
+            label: Title
+            tooltip: Name to be displayed in the tab title
+        item_order:
+            label: Tab order
+            tooltip: Order of the current item in the widget
+        content:
+            label: Content
+            tooltip: Content of the tab, visible upon triggering it
+        content_style.label: Content Style
+        content_properties.label: Content Properties
+        content_widget.label: Content Widget
+        organization.label: Organization
 
     textcontentvariant:
         entity_label: Content Variant

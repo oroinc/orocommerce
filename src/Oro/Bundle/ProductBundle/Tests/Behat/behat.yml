@@ -835,6 +835,9 @@ oro_behat_extension:
     ProductFrontendGridMassActionSearch:
       selector: '[data-role="search-container"] .input'
 
+    ProductFrontendGridMassActionSearchInDropdown:
+      selector: '[data-sticky-name="bottom-sticky-panel"] .datagrid-massaction .dropdown-menu [data-role="search-container"] .input'
+
     ProductFrontendGridMassActionSearchInDialog:
       selector: '[role="dialog"] [data-role="search-container"] .input'
 
@@ -847,6 +850,9 @@ oro_behat_extension:
     ProductFrontendMassAddPanelInBottomSticky:
       selector: '[data-sticky-name="bottom-sticky-panel"] .dropup .action'
 
+    ProductFrontendMassOpenInDropdown:
+      selector: '[data-sticky-name="bottom-sticky-panel"] .dropdown-toggle'
+
     ProductFrontendMassOpenInDialog:
       selector: '[data-sticky-name="bottom-sticky-panel"] [data-fullscreen-trigger]'
 
@@ -855,6 +861,9 @@ oro_behat_extension:
 
     ProductFrontendMassPanelInBottomSticky:
       selector: '[data-sticky-name="bottom-sticky-panel"] .datagrid-massaction'
+
+    ProductFrontendMassMenuInBottomSticky:
+      selector: '[data-sticky-name="bottom-sticky-panel"] .datagrid-massaction .dropdown-menu'
 
     ProductFrontendGridRow:
       selector: '.grid-row'
