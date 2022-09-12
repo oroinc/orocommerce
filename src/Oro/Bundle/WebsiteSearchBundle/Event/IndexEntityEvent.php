@@ -139,6 +139,13 @@ class IndexEntityEvent extends Event
         return $this->entitiesData;
     }
 
+    public function setEntitiesData(array $entitiesData): self
+    {
+        $this->entitiesData = $entitiesData;
+
+        return $this;
+    }
+
     /**
      * @param int|string $entityId
      * @return $this
