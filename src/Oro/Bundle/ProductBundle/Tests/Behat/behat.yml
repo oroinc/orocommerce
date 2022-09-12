@@ -1443,6 +1443,7 @@ oro_behat_extension:
         - OroSecurityBundle::ACLContext
         - OroSEOBundle::FeatureContext
         - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
+        - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\ConsoleContext
         - OroWebCatalogBundle::FeatureContext
         - OroConfigBundle::FeatureContext
         - OroUserBundle::FeatureContext
