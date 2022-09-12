@@ -26,8 +26,8 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
             }],
             disableDeviceManager: true
         });
-
-        htmlParser = grapesjsEditorView.builder.Parser.parseHtml;
+        const context = grapesjsEditorView.builder.Parser.parserHtml;
+        htmlParser = context.parse.bind(context);
         grapesjsEditorView.builder.on('editor:rendered', () => done());
     });
 
@@ -718,7 +718,6 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
             const result = [
                 {
                     tagName: 'div',
-                    type: 'text',
                     components: [
                         {
                             type: 'svg',
@@ -731,9 +730,9 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                                 {
                                     tagName: 'path',
                                     attributes: {
-                                        d:
-                                            'M13 12h7v1.5h-7m0-4h7V11h-7m0 3.5h7V16h-7m8-12H3c-1.1 0-2 .9-2 2v13c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2m0 15h-9V6h9'
-                                    }
+                                        d: 'M13 12h7v1.5h-7m0-4h7V11h-7m0 3.5h7V16h-7m8-12H3c-1.1 0-2 .9-2 2v13c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2m0 15h-9V6h9',
+                                    },
+                                    type: 'svg-in',
                                 }
                             ]
                         }
@@ -741,6 +740,38 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                 }
             ];
             /* eslint-disable */
+            expect(htmlParser(str).html).toEqual(result);
+        });
+
+        it('Tag section with text', () => {
+            const str = `<section><h1>Insert title here</h1><p>Lorem ipsum dolor</p></section>`;
+            const result = [{
+                tagName: 'section',
+                type: 'text',
+                components: [
+                    {
+                        tagName: 'h1',
+                        type: 'text',
+                        ...textBlockOptions,
+                        components: [{
+                            tagName: '',
+                            type: 'textnode',
+                            content: 'Insert title here'
+                        }]
+                    },
+                    {
+                        tagName: 'p',
+                        type: 'text',
+                        ...textBlockOptions,
+                        components: [{
+                            tagName: '',
+                            type: 'textnode',
+                            content: 'Lorem ipsum dolor'
+                        }]
+                    }
+                ]
+            }];
+
             expect(htmlParser(str).html).toEqual(result);
         });
     });
