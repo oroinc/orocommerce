@@ -133,6 +133,10 @@ const GrapesjsEditorView = BaseView.extend({
 
         deviceManager: {
             devices: []
+        },
+
+        Parser: {
+            returnArray: true
         }
     },
 

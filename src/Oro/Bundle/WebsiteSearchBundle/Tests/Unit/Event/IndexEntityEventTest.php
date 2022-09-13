@@ -6,6 +6,9 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderValue;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class IndexEntityEventTest extends \PHPUnit\Framework\TestCase
 {
     public function testGetEntityClass()
@@ -41,6 +44,30 @@ class IndexEntityEventTest extends \PHPUnit\Framework\TestCase
         $event = new IndexEntityEvent(\stdClass::class, [], []);
 
         $this->assertEquals([], $event->getEntitiesData());
+    }
+
+    public function testSetEntitiesData()
+    {
+        $date = new \DateTime();
+        $expectedData = [
+            1 => [
+                'name' => [['value' => 'Product name', 'all_text' => true]],
+                'description' => [['value' => 'Product description', 'all_text' => true]],
+                'price' => [['value' => 100.00, 'all_text' => false]],
+                'categoryId' => [['value' => 3, 'all_text' => false]],
+                'colors' => [['value' => ['red', 'green', 'blue'], 'all_text' => false]],
+            ],
+            2 => [
+                'name' => [['value' => 'Another product name', 'all_text' => true]],
+                'date' => [['value' => $date, 'all_text' => false]],
+                'optional_field' => [['value' => null, 'all_text' => false]],
+            ],
+        ];
+
+        $event = new IndexEntityEvent(\stdClass::class, [1, 2], []);
+        $event->setEntitiesData($expectedData);
+
+        $this->assertEquals($expectedData, $event->getEntitiesData());
     }
 
     public function testGetEntityDataWhenFieldsAreAdded()
