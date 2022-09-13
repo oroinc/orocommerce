@@ -15,18 +15,16 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ContentWidgetLayoutSelectTypeTest extends FormIntegrationTestCase
 {
-    /** @var ContentWidgetLayoutProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $widgetLayoutProvider;
+    private ContentWidgetLayoutProvider|\PHPUnit\Framework\MockObject\MockObject $widgetLayoutProvider;
 
-    /** @var ContentWidgetLayoutSelectType */
-    private $formType;
+    private ContentWidgetLayoutSelectType $formType;
 
     protected function setUp(): void
     {
         $this->widgetLayoutProvider = $this->createMock(ContentWidgetLayoutProvider::class);
 
         $translator = $this->createMock(TranslatorInterface::class);
-        $translator->expects($this->any())
+        $translator->expects(self::any())
             ->method('trans')
             ->willReturnArgument(0);
 
@@ -37,12 +35,12 @@ class ContentWidgetLayoutSelectTypeTest extends FormIntegrationTestCase
 
     public function testGetParent(): void
     {
-        $this->assertEquals(Select2ChoiceType::class, $this->formType->getParent());
+        self::assertEquals(Select2ChoiceType::class, $this->formType->getParent());
     }
 
     public function testSubmit(): void
     {
-        $this->widgetLayoutProvider->expects($this->once())
+        $this->widgetLayoutProvider->expects(self::once())
             ->method('getWidgetLayouts')
             ->with(ContentWidgetTypeStub::getName())
             ->willReturn(
@@ -59,35 +57,41 @@ class ContentWidgetLayoutSelectTypeTest extends FormIntegrationTestCase
             ['widget_type' => ContentWidgetTypeStub::getName()]
         );
 
+        self::assertEquals('first', $form->getData());
+
         $submittedData = 'second';
 
         $form->submit($submittedData);
-        $this->assertTrue($form->isValid());
-        $this->assertTrue($form->isSynchronized());
-        $this->assertEquals($submittedData, $form->getData());
+        self::assertTrue($form->isValid());
+        self::assertTrue($form->isSynchronized());
+        self::assertEquals($submittedData, $form->getData());
     }
 
     public function testFinishViewWithChoices(): void
     {
         $formView = new FormView();
         $formView->vars['choices'] = [new ChoiceView('data', 'value', 'label')];
+        $formView->vars['required'] = false;
 
         $this->formType->finishView($formView, $this->createMock(FormInterface::class), []);
 
-        $this->assertArrayHasKey('attr', $formView->vars);
-        $this->assertArrayNotHasKey('class', $formView->vars['attr']);
+        self::assertArrayHasKey('attr', $formView->vars);
+        self::assertArrayNotHasKey('class', $formView->vars['attr']);
+        self::assertTrue($formView->vars['required']);
     }
 
     public function testFinishViewWithoutChoices(): void
     {
         $formView = new FormView();
         $formView->vars['choices'] = [];
+        $formView->vars['required'] = false;
 
         $this->formType->finishView($formView, $this->createMock(FormInterface::class), []);
 
-        $this->assertArrayHasKey('attr', $formView->vars);
-        $this->assertArrayHasKey('class', $formView->vars['attr']);
-        $this->assertEquals('hide ', $formView->vars['attr']['class']);
+        self::assertArrayHasKey('attr', $formView->vars);
+        self::assertArrayHasKey('class', $formView->vars['attr']);
+        self::assertEquals('hide ', $formView->vars['attr']['class']);
+        self::assertFalse($formView->vars['required']);
     }
 
     public function testFinishViewWithClass(): void
@@ -98,14 +102,11 @@ class ContentWidgetLayoutSelectTypeTest extends FormIntegrationTestCase
 
         $this->formType->finishView($formView, $this->createMock(FormInterface::class), []);
 
-        $this->assertArrayHasKey('attr', $formView->vars);
-        $this->assertArrayHasKey('class', $formView->vars['attr']);
-        $this->assertEquals('hide test', $formView->vars['attr']['class']);
+        self::assertArrayHasKey('attr', $formView->vars);
+        self::assertArrayHasKey('class', $formView->vars['attr']);
+        self::assertEquals('hide test', $formView->vars['attr']['class']);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getExtensions(): array
     {
         return [

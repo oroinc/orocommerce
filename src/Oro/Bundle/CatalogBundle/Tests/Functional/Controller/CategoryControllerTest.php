@@ -326,8 +326,8 @@ class CategoryControllerTest extends WebTestCase
         $form['oro_catalog_category[largeImage][file]'] = $largeImage;
         $form['oro_catalog_category[inventoryThreshold][scalarValue]'] = 0;
         $form['oro_catalog_category[lowInventoryThreshold][scalarValue]'] = 0;
+        $form['input_action'] = $crawler->selectButton('Save')->attr('data-action');
 
-        $form->setValues(['input_action' => 'save_and_stay']);
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
         $result = $this->client->getResponse();
@@ -426,6 +426,7 @@ class CategoryControllerTest extends WebTestCase
         $form['oro_catalog_category[lowInventoryThreshold][scalarValue]'] = 0;
         $form['oro_catalog_category[defaultProductOptions][unitPrecision][unit]'] = $unitPrecision['code'];
         $form['oro_catalog_category[defaultProductOptions][unitPrecision][precision]'] = $unitPrecision['precision'];
+        $form['input_action'] = $crawler->selectButton('Save')->attr('data-action');
 
         if ($parentId === $this->masterCatalog->getId()) {
             $appendProducts = $this->getProductBySku(LoadProductData::PRODUCT_1)->getId() . ', '
@@ -435,7 +436,6 @@ class CategoryControllerTest extends WebTestCase
         }
 
         $form['oro_catalog_category[appendProducts]'] = $appendProducts;
-        $form->setValues(['input_action' => 'save_and_stay']);
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);

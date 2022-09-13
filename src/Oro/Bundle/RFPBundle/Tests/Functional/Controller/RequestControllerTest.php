@@ -88,6 +88,9 @@ class RequestControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_rfp_request_update', ['id' => $id]));
 
         $form = $crawler->selectButton('Save and Close')->form();
+        $action = $crawler->selectButton('Save and Close')->attr('data-action');
+        $form->setValues(['input_action' => $action]);
+
         $form->remove('oro_rfp_request[requestProducts][0]');
 
         $form['oro_rfp_request[firstName]'] = $updatedFirstName;

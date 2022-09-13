@@ -4,11 +4,7 @@
     }) %}
 
     <div {{ block('block_attributes') }}>
-        {% if styles|length -%}
-            {%- apply spaceless -%}
-                <style type="text/css">{{ styles|render_content }}</style>
-            {%- endapply -%}
-        {%- endif %}
-        {{ value|render_content }}
+        {%- import '@OroCMS/macros.html.twig' as CMS -%}
+        {{ CMS.renderWysiwygContent(value, styles|default('')) }}
     </div>
 {% endblock %}

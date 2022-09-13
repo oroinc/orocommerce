@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\ProductVariant\Form\Type;
 
-use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManagerInterface;
+use Oro\Bundle\LocaleBundle\Provider\LocalizationProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\ProductVariant\Form\Type\DataTransformer\ProductVariantFieldsToProductVariantTransformer;
 use Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantTypeHandlerRegistry;
@@ -25,44 +25,30 @@ class FrontendVariantFiledType extends AbstractType
 {
     const NAME = 'oro_product_product_variant_frontend_variant_field';
 
-    /** @var ProductVariantAvailabilityProvider */
-    protected $productVariantAvailabilityProvider;
+    protected ProductVariantAvailabilityProvider $productVariantAvailabilityProvider;
 
-    /** @var ProductVariantTypeHandlerRegistry */
-    protected $productVariantTypeHandlerRegistry;
+    protected ProductVariantTypeHandlerRegistry $productVariantTypeHandlerRegistry;
 
-    /** @var VariantFieldProvider */
-    protected $variantFieldProvider;
+    protected VariantFieldProvider $variantFieldProvider;
 
-    /** @var UserLocalizationManagerInterface */
-    protected $userLocalizationManager;
+    protected LocalizationProviderInterface $localizationProvider;
 
-    /** @var PropertyAccessor */
-    protected $propertyAccessor;
+    protected PropertyAccessor $propertyAccessor;
 
-    /** @var string */
-    protected $productClass;
+    protected string $productClass;
 
-    /**
-     * @param ProductVariantAvailabilityProvider $productVariantAvailabilityProvider
-     * @param ProductVariantTypeHandlerRegistry $productVariantTypeHandlerRegistry
-     * @param VariantFieldProvider $variantFieldProvider
-     * @param UserLocalizationManagerInterface $userLocalizationManager
-     * @param PropertyAccessor $propertyAccessor
-     * @param string $productClass
-     */
     public function __construct(
         ProductVariantAvailabilityProvider $productVariantAvailabilityProvider,
         ProductVariantTypeHandlerRegistry $productVariantTypeHandlerRegistry,
         VariantFieldProvider $variantFieldProvider,
-        UserLocalizationManagerInterface $userLocalizationManager,
+        LocalizationProviderInterface $localizationProvider,
         PropertyAccessor $propertyAccessor,
         $productClass
     ) {
         $this->productVariantAvailabilityProvider = $productVariantAvailabilityProvider;
         $this->productVariantTypeHandlerRegistry = $productVariantTypeHandlerRegistry;
         $this->variantFieldProvider = $variantFieldProvider;
-        $this->userLocalizationManager = $userLocalizationManager;
+        $this->localizationProvider = $localizationProvider;
         $this->propertyAccessor = $propertyAccessor;
         $this->productClass = (string)$productClass;
     }
@@ -196,7 +182,7 @@ class FrontendVariantFiledType extends AbstractType
     {
         $simpleProducts = $this->productVariantAvailabilityProvider->getSimpleProductsByVariantFields($product);
         $variantFields = $product->getVariantFields();
-        $localization = $this->userLocalizationManager->getCurrentLocalization();
+        $localization = $this->localizationProvider->getCurrentLocalization();
 
         $simpleProductVariants = [];
 

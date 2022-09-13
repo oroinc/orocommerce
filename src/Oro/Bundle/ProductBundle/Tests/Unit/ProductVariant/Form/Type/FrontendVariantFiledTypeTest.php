@@ -4,8 +4,8 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\ProductVariant\Form\Type;
 
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
-use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\LocaleBundle\Provider\LocalizationProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductName;
 use Oro\Bundle\ProductBundle\ProductVariant\Form\Type\FrontendVariantFiledType;
@@ -19,6 +19,7 @@ use Oro\Bundle\TranslationBundle\Entity\Language;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -32,20 +33,15 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
     const FIELD_NEW = 'testNew';
     const PRODUCT_CLASS = Product::class;
 
-    /** @var FrontendVariantFiledType */
-    protected $type;
+    protected FrontendVariantFiledType $type;
 
-    /** @var ProductVariantAvailabilityProvider|\PHPUnit\Framework\MockObject\MockObject */
-    protected $productVariantAvailabilityProvider;
+    protected ProductVariantAvailabilityProvider|MockObject $productVariantAvailabilityProvider;
 
-    /** @var ProductVariantTypeHandlerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    protected $productVariantTypeHandlerRegistry;
+    protected ProductVariantTypeHandlerRegistry|MockObject $productVariantTypeHandlerRegistry;
 
-    /** @var VariantFieldProvider|\PHPUnit\Framework\MockObject\MockObject */
-    protected $variantFieldProvider;
+    protected VariantFieldProvider|MockObject $variantFieldProvider;
 
-    /** @var UserLocalizationManager|\PHPUnit\Framework\MockObject\MockObject */
-    protected $userLocalizationManager;
+    protected LocalizationProviderInterface|MockObject $localizationProvider;
 
     /**
      * {@inheritdoc}
@@ -59,13 +55,13 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
         $this->productVariantTypeHandlerRegistry = $this->createMock(ProductVariantTypeHandlerRegistry::class);
 
         $this->variantFieldProvider = $this->createMock(VariantFieldProvider::class);
-        $this->userLocalizationManager = $this->createMock(UserLocalizationManager::class);
+        $this->localizationProvider = $this->createMock(LocalizationProviderInterface::class);
 
         $this->type = new FrontendVariantFiledType(
             $this->productVariantAvailabilityProvider,
             $this->productVariantTypeHandlerRegistry,
             $this->variantFieldProvider,
-            $this->userLocalizationManager,
+            $this->localizationProvider,
             $this->getPropertyAccessor(),
             self::PRODUCT_CLASS
         );
@@ -211,7 +207,7 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
 
     public function testConfigureOptions()
     {
-        /** @var OptionsResolver|\PHPUnit\Framework\MockObject\MockObject $resolver */
+        /** @var OptionsResolver|MockObject $resolver */
         $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())
             ->method('setRequired')
@@ -245,7 +241,7 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
      * @param array $availability
      * @param array $expectedOptions
      *
-     * @return \PHPUnit\Framework\MockObject\MockObject
+     * @return MockObject
      */
     private function createTypeHandler($fieldName, array $availability, array $expectedOptions)
     {
@@ -271,7 +267,7 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
         string $expectedSimpleProductName,
         Localization $localization = null
     ) {
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
+        /** @var FormInterface|MockObject $form */
         $form = $this->createMock(FormInterface::class);
 
         $formView = new FormView();
@@ -300,7 +296,7 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
             )
             ->willReturnOnConsecutiveCalls('value1', 'value2');
 
-        $this->userLocalizationManager->expects($this->any())
+        $this->localizationProvider->expects($this->any())
             ->method('getCurrentLocalization')
             ->willReturn($localization);
 

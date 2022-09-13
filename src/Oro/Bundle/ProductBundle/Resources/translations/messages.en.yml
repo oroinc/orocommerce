@@ -127,6 +127,9 @@ oro:
             description:        Specifies the url slugs used for product (it is a list of localized entities to hold the localized text for each localization)
             singular_label:     'Slug Prototype'
 
+        simplified_preview:
+            message: Current content view is simplified, please check the page on the Storefront to see the actual result
+
         content_variant:
             product_page.label: Product Page
             product_collection:

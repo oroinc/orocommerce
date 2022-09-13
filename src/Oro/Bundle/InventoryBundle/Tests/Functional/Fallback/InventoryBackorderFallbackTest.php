@@ -56,7 +56,7 @@ class InventoryBackorderFallbackTest extends WebTestCase
 
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
-        $form['input_action'] = 'save_and_close';
+        $form['input_action'] = $crawler->selectButton('Save and Close')->attr('data-action');
 
         $this->updateFallbackField($form, $ownValue, $fallbackValue, 'oro_product', 'backOrder');
 
@@ -80,7 +80,7 @@ class InventoryBackorderFallbackTest extends WebTestCase
         $inventoryBackOrderValue = $form->get('oro_catalog_category[backOrder][scalarValue]')->getValue();
         $this->assertEmpty($inventoryBackOrderValue);
 
-        $form['input_action'] = 'save';
+        $form['input_action'] = $crawler->selectButton('Save')->attr('data-action');
         $form['oro_catalog_category[backOrder][useFallback]'] = false;
         $form['oro_catalog_category[backOrder][scalarValue]'] = $newCategoryFallbackValue;
         $this->client->followRedirects(true);

@@ -4,7 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\Api\RestJsonApi;
 
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
-use Oro\Bundle\PricingBundle\Async\Topic\RebuildCombinedPriceListsTopic;
+use Oro\Bundle\PricingBundle\Async\Topic\MassRebuildCombinedPriceListsTopic;
 use Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListFallbackSettings;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -46,12 +46,15 @@ class PriceListCustomerGroupFallbackTest extends AbstractApiPriceListRelationTes
             ]);
 
         static::assertNotNull($relation);
-
         static::assertMessageSent(
-            RebuildCombinedPriceListsTopic::getName(),
+            MassRebuildCombinedPriceListsTopic::getName(),
             [
-                'website'       => $this->getWebsiteForCreateAction()->getId(),
-                'customerGroup' => $this->getReference('customer_group.group3')->getId()
+                'assignments' => [
+                    [
+                        'website'       => $this->getWebsiteForCreateAction()->getId(),
+                        'customerGroup' => $this->getReference('customer_group.group3')->getId()
+                    ]
+                ]
             ]
         );
     }
@@ -77,13 +80,19 @@ class PriceListCustomerGroupFallbackTest extends AbstractApiPriceListRelationTes
             $this->getEntityManager()->find(PriceListCustomerGroupFallback::class, $relationId2)
         );
 
-        $this->assertFirstRelationMessageSent();
-
         static::assertMessageSent(
-            RebuildCombinedPriceListsTopic::getName(),
+            MassRebuildCombinedPriceListsTopic::getName(),
             [
-                'website'       => $this->getReference(LoadWebsiteData::WEBSITE2)->getId(),
-                'customerGroup' => $this->getReference('customer_group.group2')->getId()
+                'assignments' => [
+                    [
+                        'website'       => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
+                        'customerGroup' => $this->getReference('customer_group.group1')->getId()
+                    ],
+                    [
+                        'website'       => $this->getReference(LoadWebsiteData::WEBSITE2)->getId(),
+                        'customerGroup' => $this->getReference('customer_group.group2')->getId()
+                    ]
+                ]
             ]
         );
     }
@@ -103,7 +112,17 @@ class PriceListCustomerGroupFallbackTest extends AbstractApiPriceListRelationTes
 
         static::assertSame(1, $updatedRelation->getFallback());
 
-        $this->assertFirstRelationMessageSent();
+        static::assertMessageSent(
+            MassRebuildCombinedPriceListsTopic::getName(),
+            [
+                'assignments' => [
+                    [
+                        'customerGroup' => $this->getReference('customer_group.group1')->getId(),
+                        'website'       => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
+                    ]
+                ]
+            ]
+        );
     }
 
     public function testGetSubResources()
@@ -159,10 +178,14 @@ class PriceListCustomerGroupFallbackTest extends AbstractApiPriceListRelationTes
     protected function assertFirstRelationMessageSent()
     {
         static::assertMessageSent(
-            RebuildCombinedPriceListsTopic::getName(),
+            MassRebuildCombinedPriceListsTopic::getName(),
             [
-                'website'       => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
-                'customerGroup' => $this->getReference('customer_group.group1')->getId()
+                'assignments' => [
+                    [
+                        'customerGroup' => $this->getReference('customer_group.group1')->getId(),
+                        'website'       => $this->getReference(LoadWebsiteData::WEBSITE1)->getId()
+                    ]
+                ]
             ]
         );
     }

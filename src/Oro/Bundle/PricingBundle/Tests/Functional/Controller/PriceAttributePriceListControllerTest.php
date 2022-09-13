@@ -107,6 +107,8 @@ class PriceAttributePriceListControllerTest extends WebTestCase
                 'oro_pricing_price_attribute_price_list[currencies]' => 'CAD',
             ]
         );
+        $action = $crawler->selectButton('Save and Close')->attr('data-action');
+        $form->setValues(['input_action' => $action]);
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
@@ -137,6 +139,8 @@ class PriceAttributePriceListControllerTest extends WebTestCase
                 'oro_pricing_price_attribute_price_list[currencies]' => 'CAD',
             ]
         );
+        $action = $crawler->selectButton('Save and Close')->attr('data-action');
+        $form->setValues(['input_action' => $action]);
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);

@@ -12,7 +12,6 @@ Feature: Country and region translations front-store
 
   Scenario: Feature Background
     Given I enable the existing localizations
-    And I login as administrator
 
   Scenario: frontend-customer-customer-address-grid
     Given I signed in as AmandaRCole@example.org on the store frontend

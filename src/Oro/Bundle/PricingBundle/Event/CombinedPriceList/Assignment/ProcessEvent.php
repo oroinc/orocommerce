@@ -15,14 +15,17 @@ class ProcessEvent extends Event
     private CombinedPriceList $combinedPriceList;
     private array $associations;
     private bool $skipUpdateNotification;
+    private ?int $version = null;
 
     public function __construct(
         CombinedPriceList $combinedPriceList,
         array $associations,
-        bool $skipUpdateNotification = false
+        ?int $version,
+        bool $skipUpdateNotification = false,
     ) {
         $this->associations = $associations;
         $this->combinedPriceList = $combinedPriceList;
+        $this->version = $version;
         $this->skipUpdateNotification = $skipUpdateNotification;
     }
 
@@ -34,6 +37,11 @@ class ProcessEvent extends Event
     public function getAssociations(): array
     {
         return $this->associations;
+    }
+
+    public function getVersion(): ?int
+    {
+        return $this->version;
     }
 
     public function isSkipUpdateNotification(): bool

@@ -49,14 +49,15 @@ class CombinedPriceListsBuilderFacade
     public function processAssignments(
         CombinedPriceList $cpl,
         array $assignTo,
-        bool $skipUpdateNotification = false
+        ?int $version,
+        bool $skipUpdateNotification = false,
     ): void {
         // Nothing to do if there are no assignments
         if (empty($assignTo)) {
             return;
         }
 
-        $event = new ProcessEvent($cpl, $assignTo, $skipUpdateNotification);
+        $event = new ProcessEvent($cpl, $assignTo, $version, $skipUpdateNotification);
         $this->dispatcher->dispatch($event, $event::NAME);
     }
 

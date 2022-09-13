@@ -7,7 +7,7 @@ use Oro\Bundle\ActionBundle\Tests\Functional\OperationAwareTestTrait;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
-use Oro\Bundle\PricingBundle\Async\Topic\RebuildCombinedPriceListsTopic;
+use Oro\Bundle\PricingBundle\Async\Topic\MassRebuildCombinedPriceListsTopic;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
@@ -69,10 +69,14 @@ class CustomerGroupChangesListenerTest extends WebTestCase
         $this->sendDeleteCustomerGroupRequest($this->getReference(LoadGroups::GROUP1));
 
         self::assertMessageSent(
-            RebuildCombinedPriceListsTopic::getName(),
+            MassRebuildCombinedPriceListsTopic::getName(),
             [
-                'website'       => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
-                'customer'      => $this->getReference('customer.level_1.3')->getId()
+                'assignments' => [
+                    [
+                        'website' => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
+                        'customer' => $this->getReference('customer.level_1.3')->getId()
+                    ]
+                ]
             ]
         );
     }
@@ -81,6 +85,6 @@ class CustomerGroupChangesListenerTest extends WebTestCase
     {
         $this->sendDeleteCustomerGroupRequest($this->getReference(LoadGroups::GROUP3));
 
-        self::assertEmptyMessages(RebuildCombinedPriceListsTopic::getName());
+        self::assertEmptyMessages(MassRebuildCombinedPriceListsTopic::getName());
     }
 }

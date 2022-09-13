@@ -213,6 +213,9 @@ oro_behat_extension:
     Shopping List Quick Search Clear:
       selector: '.dropdown-search-container .clear-search-button'
 
+    Shopping List Quick Search Clear in Mass Menu:
+      selector: '[data-sticky-name="bottom-sticky-panel"] .datagrid-massaction .dropdown-menu .dropdown-search-container .clear-search-button'
+
     Shopping List Quick Search Clear in Dialog:
       selector: '[role="dialog"] .dropdown-search-container .clear-search-button'
 

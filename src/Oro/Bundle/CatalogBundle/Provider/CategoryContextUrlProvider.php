@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CatalogBundle\Provider;
 
-use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManagerInterface;
+use Oro\Bundle\LocaleBundle\Provider\LocalizationProviderInterface;
 use Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Provider\ContextUrlProviderInterface;
@@ -18,29 +18,20 @@ class CategoryContextUrlProvider implements ContextUrlProviderInterface
     const CATEGORY_ID = 'categoryId';
     const INCLUDE_SUBCATEGORIES = 'includeSubcategories';
 
-    /**
-     * @var RequestStack
-     */
-    private $requestStack;
+    private RequestStack $requestStack;
 
-    /**
-     * @var UrlCacheInterface
-     */
-    private $cache;
+    private UrlCacheInterface $cache;
 
-    /**
-     * @var UserLocalizationManagerInterface
-     */
-    private $userLocalizationManager;
+    private LocalizationProviderInterface $localizationProvider;
 
     public function __construct(
         RequestStack $requestStack,
         UrlCacheInterface $cache,
-        UserLocalizationManagerInterface $userLocalizationManager
+        LocalizationProviderInterface $localizationProvider
     ) {
         $this->requestStack = $requestStack;
         $this->cache = $cache;
-        $this->userLocalizationManager = $userLocalizationManager;
+        $this->localizationProvider = $localizationProvider;
     }
 
     /**
@@ -60,7 +51,7 @@ class CategoryContextUrlProvider implements ContextUrlProviderInterface
         }
         if (!$contextUrl) {
             $localizationId = null;
-            if ($localization = $this->userLocalizationManager->getCurrentLocalization()) {
+            if ($localization = $this->localizationProvider->getCurrentLocalization()) {
                 $localizationId = $localization->getId();
             }
 

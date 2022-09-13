@@ -46,7 +46,7 @@ class ProcessAssociationConfigEventListenerTest extends TestCase
         /** @var CombinedPriceList $cpl */
         $cpl = $this->getEntity(CombinedPriceList::class, ['id' => 1]);
         $associations = ['website' => ['ids' => [1]]];
-        $processEvent = new ProcessEvent($cpl, $associations);
+        $processEvent = new ProcessEvent($cpl, $associations, 100);
 
         $this->activeCombinedPriceListResolver->expects($this->never())
             ->method($this->anything());
@@ -66,7 +66,7 @@ class ProcessAssociationConfigEventListenerTest extends TestCase
         /** @var CombinedPriceList $cpl */
         $cpl = $this->getEntity(CombinedPriceList::class, ['id' => 1]);
         $associations = ['config' => true];
-        $processEvent = new ProcessEvent($cpl, $associations, $isSkipNotification);
+        $processEvent = new ProcessEvent($cpl, $associations, 100, $isSkipNotification);
 
         $this->activeCombinedPriceListResolver->expects($this->once())
             ->method('getActiveCplByFullCPL')
@@ -107,7 +107,7 @@ class ProcessAssociationConfigEventListenerTest extends TestCase
         /** @var CombinedPriceList $cpl */
         $activeCpl = $this->getEntity(CombinedPriceList::class, ['id' => 2]);
         $associations = ['config' => true];
-        $processEvent = new ProcessEvent($cpl, $associations, $isSkipNotification);
+        $processEvent = new ProcessEvent($cpl, $associations, 100, $isSkipNotification);
 
         $this->activeCombinedPriceListResolver->expects($this->once())
             ->method('getActiveCplByFullCPL')
@@ -148,7 +148,7 @@ class ProcessAssociationConfigEventListenerTest extends TestCase
         /** @var CombinedPriceList $cpl */
         $cpl = $this->getEntity(CombinedPriceList::class, ['id' => 1]);
         $associations = ['config' => true];
-        $processEvent = new ProcessEvent($cpl, $associations);
+        $processEvent = new ProcessEvent($cpl, $associations, 100);
 
         $this->activeCombinedPriceListResolver->expects($this->once())
             ->method('getActiveCplByFullCPL')

@@ -52,7 +52,7 @@ class ProcessAssociationCustomerEventListenerTest extends TestCase
         /** @var CombinedPriceList $cpl */
         $cpl = $this->getEntity(CombinedPriceList::class, ['id' => 1]);
         $associations = ['config' => true];
-        $processEvent = new ProcessEvent($cpl, $associations);
+        $processEvent = new ProcessEvent($cpl, $associations, 100);
 
         $this->activeCombinedPriceListResolver->expects($this->never())
             ->method($this->anything());
@@ -77,7 +77,7 @@ class ProcessAssociationCustomerEventListenerTest extends TestCase
                 ]
             ]
         ];
-        $processEvent = new ProcessEvent($cpl, $associations, $isSkipNotifications);
+        $processEvent = new ProcessEvent($cpl, $associations, 100, $isSkipNotifications);
 
         $websiteRepo = $this->createMock(WebsiteRepository::class);
         $websiteRepo->expects($this->any())
@@ -94,7 +94,7 @@ class ProcessAssociationCustomerEventListenerTest extends TestCase
         $cplRepo = $this->createMock(CombinedPriceListRepository::class);
         $cplRepo->expects($this->once())
             ->method('updateCombinedPriceListConnection')
-            ->with($cpl, $cpl, $website, $customer)
+            ->with($cpl, $cpl, $website, $this->isType('int'), $customer)
             ->willReturn($relation);
 
         $this->registry->expects($this->any())
@@ -153,7 +153,7 @@ class ProcessAssociationCustomerEventListenerTest extends TestCase
                 ]
             ]
         ];
-        $processEvent = new ProcessEvent($cpl, $associations);
+        $processEvent = new ProcessEvent($cpl, $associations, 100);
 
         $repo = $this->createMock(EntityRepository::class);
         $repo->expects($this->any())

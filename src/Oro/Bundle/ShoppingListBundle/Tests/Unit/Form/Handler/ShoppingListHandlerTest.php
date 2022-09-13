@@ -31,29 +31,13 @@ class ShoppingListHandlerTest extends \PHPUnit\Framework\TestCase
         $this->doctrine = $this->createMock(ManagerRegistry::class);
     }
 
-    /**
-     * @param Request $request
-     *
-     * @return ShoppingListHandler
-     */
-    private function getShoppingListHandler(Request $request)
-    {
-        return new ShoppingListHandler(
-            $this->form,
-            $request,
-            $this->currentShoppingListManager,
-            $this->doctrine
-        );
-    }
-
     public function testProcessWrongMethod()
     {
         $shoppingList = $this->createMock(ShoppingList::class);
 
+        $handler = new ShoppingListHandler($this->currentShoppingListManager, $this->doctrine);
         $request = Request::create('/');
-
-        $handler = $this->getShoppingListHandler($request);
-        $this->assertFalse($handler->process($shoppingList));
+        $this->assertFalse($handler->process($shoppingList, $this->form, $request));
     }
 
     public function testProcessFormNotValid()
@@ -69,8 +53,8 @@ class ShoppingListHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('isValid')
             ->willReturn(false);
 
-        $handler = $this->getShoppingListHandler($request);
-        $this->assertFalse($handler->process($shoppingList));
+        $handler = new ShoppingListHandler($this->currentShoppingListManager, $this->doctrine);
+        $this->assertFalse($handler->process($shoppingList, $this->form, $request));
     }
 
     public function testProcessNotExistingShoppingList()
@@ -105,8 +89,8 @@ class ShoppingListHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('setCurrent')
             ->with($this->identicalTo($customerUser), $this->identicalTo($shoppingList));
 
-        $handler = $this->getShoppingListHandler($request);
-        $this->assertTrue($handler->process($shoppingList));
+        $handler = new ShoppingListHandler($this->currentShoppingListManager, $this->doctrine);
+        $this->assertTrue($handler->process($shoppingList, $this->form, $request));
     }
 
     public function testProcessExistingShoppingList()
@@ -139,7 +123,7 @@ class ShoppingListHandlerTest extends \PHPUnit\Framework\TestCase
         $this->currentShoppingListManager->expects($this->never())
             ->method('setCurrent');
 
-        $handler = $this->getShoppingListHandler($request);
-        $this->assertTrue($handler->process($shoppingList));
+        $handler = new ShoppingListHandler($this->currentShoppingListManager, $this->doctrine);
+        $this->assertTrue($handler->process($shoppingList, $this->form, $request));
     }
 }

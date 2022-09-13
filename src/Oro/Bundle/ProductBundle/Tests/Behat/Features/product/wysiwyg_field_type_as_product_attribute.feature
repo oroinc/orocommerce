@@ -67,7 +67,7 @@ Feature: WYSIWYG field type as product attribute
     Then I should see "Product has been saved" flash message
     And I should see "WYSIWYG_video Content here!"
     And I should see "WYSIWYG_embed Content here!"
-    And I should see "Current content view is simplified, please check the page on the Storefront to see the actual result"
+    And I should see "Current content view is simplified, please check the edit page to see the actual result."
     And I click logout in user menu
 
   Scenario: Open product view page on Front Store to see created attribute

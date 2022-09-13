@@ -86,6 +86,7 @@ Feature: Check configurable product with no matrix form
     And I signed in as AmandaRCole@example.org on the store frontend
     And type "1GB83" in "search"
     And click "Search Button"
+    When I click "Catalog Switcher Toggle"
     And I click "Gallery View"
     And I should see "ProductLineItemForm" element inside "ProductFrontendRow" element
     And I should not see "FrontendProductViewQuantityField" element inside "ProductLineItemForm" element

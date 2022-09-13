@@ -2,8 +2,6 @@
 
 .toggle-sidebar-btn {
     position: relative;
-
-    margin-right: $toggle-sidebar-btn-offset;
 }
 
 @include breakpoint('desktop') {

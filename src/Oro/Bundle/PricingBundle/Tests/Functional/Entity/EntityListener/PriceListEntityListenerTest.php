@@ -4,7 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
-use Oro\Bundle\PricingBundle\Async\Topic\RebuildCombinedPriceListsTopic;
+use Oro\Bundle\PricingBundle\Async\Topic\MassRebuildCombinedPriceListsTopic;
 use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceListAssignedProductsTopic;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
@@ -44,7 +44,7 @@ class PriceListEntityListenerTest extends WebTestCase
         $em->remove($priceList);
         $em->flush();
 
-        self::assertEmptyMessages(RebuildCombinedPriceListsTopic::getName());
+        self::assertEmptyMessages(MassRebuildCombinedPriceListsTopic::getName());
     }
 
     public function testPreRemove()
@@ -68,16 +68,17 @@ class PriceListEntityListenerTest extends WebTestCase
         $this->assertNull($em->find(CombinedPriceList::class, $cplId));
 
         self::assertMessageSent(
-            RebuildCombinedPriceListsTopic::getName(),
+            MassRebuildCombinedPriceListsTopic::getName(),
             [
-                'customer' => $customer->getId(),
-                'website' => $websiteCA->getId()
-            ]
-        );
-        self::assertMessageSent(
-            RebuildCombinedPriceListsTopic::getName(),
-            [
-                'website' => $websiteUS->getId()
+                'assignments' => [
+                    [
+                        'customer' => $customer->getId(),
+                        'website' => $websiteCA->getId()
+                    ],
+                    [
+                        'website' => $websiteUS->getId()
+                    ]
+                ]
             ]
         );
     }
@@ -110,7 +111,7 @@ class PriceListEntityListenerTest extends WebTestCase
         $em->persist($priceList);
         $em->flush();
 
-        self::assertEmptyMessages(RebuildCombinedPriceListsTopic::getName());
+        self::assertEmptyMessages(MassRebuildCombinedPriceListsTopic::getName());
 
         $priceList->setActive(true);
         $em->flush();

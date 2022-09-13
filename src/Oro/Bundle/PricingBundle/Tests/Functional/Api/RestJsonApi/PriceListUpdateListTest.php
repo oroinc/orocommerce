@@ -4,7 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\Api\RestJsonApi;
 
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiUpdateListTestCase;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
-use Oro\Bundle\PricingBundle\Async\Topic\RebuildCombinedPriceListsTopic;
+use Oro\Bundle\PricingBundle\Async\Topic\MassRebuildCombinedPriceListsTopic;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations;
@@ -123,14 +123,18 @@ class PriceListUpdateListTest extends RestJsonApiUpdateListTestCase
         self::assertNotNull($this->getPriceRuleLexeme($priceList4Id));
 
         self::assertMessagesSent(
-            RebuildCombinedPriceListsTopic::getName(),
+            MassRebuildCombinedPriceListsTopic::getName(),
             [
                 [
-                    'website' => $this->getReference('US')->getId()
-                ],
-                [
-                    'website'  => $this->getReference('Canada')->getId(),
-                    'customer' => $this->getReference('customer.level_1_1')->getId()
+                    'assignments' => [
+                        [
+                            'website' => $this->getReference('Canada')->getId(),
+                            'customer' => $this->getReference('customer.level_1_1')->getId()
+                        ],
+                        [
+                            'website' => $this->getReference('US')->getId()
+                        ]
+                    ]
                 ]
             ]
         );
@@ -203,16 +207,20 @@ class PriceListUpdateListTest extends RestJsonApiUpdateListTestCase
         $customerGroup2 = $this->getReference('customer_group.group2');
 
         self::assertMessagesSent(
-            RebuildCombinedPriceListsTopic::getName(),
+            MassRebuildCombinedPriceListsTopic::getName(),
             [
                 [
-                    'customer' => $customerLevel13->getId(),
-                    'customerGroup' => $customerGroup1->getId(),
-                    'website' => $this->getReference('US')->getId()
-                ],
-                [
-                    'customerGroup' => $customerGroup2->getId(),
-                    'website' => $this->getReference('US')->getId()
+                    'assignments' => [
+                        [
+                            'customer' => $customerLevel13->getId(),
+                            'customerGroup' => $customerGroup1->getId(),
+                            'website' => $this->getReference('US')->getId()
+                        ],
+                        [
+                            'customerGroup' => $customerGroup2->getId(),
+                            'website' => $this->getReference('US')->getId()
+                        ]
+                    ]
                 ]
             ]
         );

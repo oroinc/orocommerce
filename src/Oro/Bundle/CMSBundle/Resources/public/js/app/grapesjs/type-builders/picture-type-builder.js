@@ -52,9 +52,13 @@ const PictureTypeBuilder = BaseTypeBuilder.extend({
             this.constructor.__super__.initialize.apply(this, args);
 
             const components = this.get('components');
-            if (!components.length) {
+            if (!this.findType('image').length) {
                 components.add({
-                    type: 'image'
+                    type: 'image',
+                    attributes: {
+                        src: '#',
+                        alt: 'no-alt'
+                    }
                 });
             }
 

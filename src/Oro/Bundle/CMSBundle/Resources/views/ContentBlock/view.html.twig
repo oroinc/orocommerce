@@ -24,29 +24,9 @@
             :
             'oro.cms.contentblock.content_variants.default.no.label'|trans) }}
 
-            {% set infoMessage = null %}
-
-            {% if variant.content is not null %}
-                {% set infoMessage %}
-                    <div class="alert alert-info alert--compact" role="alert">
-                        <span class="fa-info alert-icon" aria-hidden="true"></span>
-                        {{ 'oro.cms.page.information_message'|trans }}
-                    </div>
-                {% endset %}
-            {% endif %}
-
-            {% import '@OroEntityConfig/macros.html.twig' as entityConfig %}
-
-            {% set toRenderValue = variant.content is defined and variant.content|length
-                ? entityConfig.renderWysiwygContentPreview(variant.content)
-                : 'oro.ui.empty'|trans
-            %}
-            {{ UI.renderAttribute(
+            {{ UI.renderHtmlProperty(
                 'oro.cms.page.content.label'|trans,
-                '<div class="control-label">' ~
-                infoMessage ~
-                toRenderValue|raw ~
-                '</div>')
+                UI.renderCollapsibleWysiwygContentPreview(variant.content, variant, 'content', 'oro.cms.page.information_message'))
             }}
 
             {% if not variant.default %}

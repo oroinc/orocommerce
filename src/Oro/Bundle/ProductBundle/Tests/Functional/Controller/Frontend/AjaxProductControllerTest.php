@@ -4,7 +4,6 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Manager\UserProductFiltersSidebarStateManager;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFrontendProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -180,7 +179,7 @@ class AjaxProductControllerTest extends WebTestCase
         self::assertJsonResponseStatusCodeEquals($result, 200);
 
         $userProductFiltersSidebarStateManager = $this->getContainer()
-            ->get(UserProductFiltersSidebarStateManager::class);
+            ->get('oro_product.manager.user_product_filters_sidebar_state_manager');
 
         self::assertEquals(
             $expectedResult,
@@ -210,7 +209,7 @@ class AjaxProductControllerTest extends WebTestCase
         $this->ensureSessionIsAvailable();
 
         $userProductFiltersSidebarStateManager = $this->getContainer()
-            ->get(UserProductFiltersSidebarStateManager::class);
+            ->get('oro_product.manager.user_product_filters_sidebar_state_manager');
 
         self::assertEquals(
             $expectedResult,

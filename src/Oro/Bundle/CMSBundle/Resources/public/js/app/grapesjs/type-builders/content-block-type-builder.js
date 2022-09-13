@@ -38,7 +38,6 @@ const ContentBlockTypeBuilder = BaseTypeBuilder.extend({
         'content-block-settings': (editor, sender, componentModel) => {
             const contentBlockAlias = editor.Config.contentBlockAlias;
             const datagridName = 'cms-content-block-grid';
-            const container = editor.Commands.isActive('fullscreen') ? editor.getEl() : 'body';
 
             const dialog = new DialogWidget({
                 title: __('oro.cms.wysiwyg.content_block.title'),
@@ -46,12 +45,10 @@ const ContentBlockTypeBuilder = BaseTypeBuilder.extend({
                     'oro_datagrid_widget',
                     _.extend(editor.Config.requestParams, {gridName: datagridName})
                 ),
-                loadingElement: container,
                 dialogOptions: {
                     modal: true,
                     resizable: true,
                     autoResize: true,
-                    appendTo: container,
                     close: function() {
                         if (componentModel.cid && !componentModel.get('contentBlock')) {
                             componentModel.remove();

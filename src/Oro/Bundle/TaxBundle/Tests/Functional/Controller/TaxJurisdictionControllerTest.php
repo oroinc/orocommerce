@@ -147,8 +147,10 @@ class TaxJurisdictionControllerTest extends WebTestCase
         ];
 
         $form = $crawler->selectButton('Save and Close')->form();
+        $redirectAction = $crawler->selectButton('Save and Close')->attr('data-action');
 
         $formData = $this->setCountryAndState($form, $formData, $country, $countryFull, $state, $stateFull);
+        $formData['input_action'] = $redirectAction;
 
         $this->client->followRedirects(true);
         $crawler = $this->client->request($form->getMethod(), $form->getUri(), $formData);

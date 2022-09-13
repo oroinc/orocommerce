@@ -92,6 +92,8 @@ class TaxControllerTest extends WebTestCase
                 'oro_tax_type[rate]' => $rate,
             ]
         );
+        $redirectAction = $crawler->selectButton('Save and Close')->attr('data-action');
+        $form->setValues(['input_action' => $redirectAction]);
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);

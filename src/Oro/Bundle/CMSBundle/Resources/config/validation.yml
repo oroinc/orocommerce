@@ -9,9 +9,6 @@ Oro\Bundle\CMSBundle\Entity\Page:
         content:
             - Oro\Bundle\CMSBundle\Validator\Constraints\TwigContent: ~
             - Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYG: ~
-        content_style:
-            - Oro\Bundle\CMSBundle\Validator\Constraints\TwigContent: ~
-            - Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYGStyle: ~
 
 Oro\Bundle\CMSBundle\Entity\ContentBlock:
     constraints:
@@ -38,6 +35,7 @@ Oro\Bundle\CMSBundle\Entity\ContentWidget:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
             fields: [organization, name]
             errorPath: name
+        - Oro\Bundle\CMSBundle\Validator\Constraints\NotEmptyContentWidgetLayout: ~
     properties:
         name:
             - NotBlank: ~
@@ -111,3 +109,25 @@ Oro\Bundle\CMSBundle\Entity\TextContentVariant:
 Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel:
     constraints:
         - Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYGFieldsName: ~
+
+Oro\Bundle\CMSBundle\Entity\TabbedContentItem:
+    properties:
+        title:
+            - NotBlank: ~
+            - Length:
+                min: 1
+                max: 255
+                allowEmptyString: false
+        content:
+            - Oro\Bundle\CMSBundle\Validator\Constraints\TwigContent: ~
+            - Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYG: ~
+        contentStyle:
+            - Oro\Bundle\CMSBundle\Validator\Constraints\TwigContent: ~
+            - Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYGStyle: ~
+        itemOrder:
+            - NotBlank: ~
+            - Type: numeric
+        contentWidget:
+            - NotBlank: ~
+        organization:
+            - NotBlank: ~

@@ -7,7 +7,7 @@ use Oro\Bundle\CatalogBundle\Form\Handler\CategoryHandler;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryType;
 use Oro\Bundle\CatalogBundle\JsTree\CategoryTreeHandler;
 use Oro\Bundle\CatalogBundle\Provider\MasterCatalogRootProvider;
-use Oro\Bundle\FormBundle\Model\UpdateHandler;
+use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
 use Oro\Bundle\RedirectBundle\Helper\ChangedSlugsHelper;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
@@ -36,11 +36,8 @@ class CategoryController extends AbstractController
      *      class="OroCatalogBundle:Category",
      *      permission="CREATE"
      * )
-     * @param Category $parentCategory
-     * @param Request $request
-     * @return array|RedirectResponse
      */
-    public function createAction(Category $parentCategory, Request $request)
+    public function createAction(Category $parentCategory, Request $request): array|RedirectResponse
     {
         $category = new Category();
         $category->setParentCategory($parentCategory);
@@ -57,11 +54,8 @@ class CategoryController extends AbstractController
      *      class="OroCatalogBundle:Category",
      *      permission="EDIT"
      * )
-     * @param Category $category
-     * @param Request $request
-     * @return array|RedirectResponse
      */
-    public function updateAction(Category $category, Request $request)
+    public function updateAction(Category $category, Request $request): array|RedirectResponse
     {
         return $this->update($category, $request);
     }
@@ -75,10 +69,8 @@ class CategoryController extends AbstractController
      *      class="OroCatalogBundle:Category",
      *      permission="VIEW"
      * )
-     *
-     * @return array
      */
-    public function indexAction()
+    public function indexAction(): array
     {
         return ['rootCategory' => $this->get(MasterCatalogRootProvider::class)->getMasterCatalogRoot()];
     }
@@ -92,12 +84,8 @@ class CategoryController extends AbstractController
      *      class="OroCatalogBundle:Category",
      *      permission="EDIT"
      * )
-     *
-     * @param Request $request
-     *
-     * @return array
      */
-    public function moveAction(Request $request)
+    public function moveAction(Request $request): array
     {
         $handler = $this->get(CategoryTreeHandler::class);
 
@@ -147,44 +135,25 @@ class CategoryController extends AbstractController
      *      class="OroCatalogBundle:Category",
      *      permission="VIEW"
      * )
-     *
-     * @return array
      */
-    public function treeWidgetAction()
+    public function treeWidgetAction(): array
     {
         return [];
     }
 
-    /**
-     * @param Category $category
-     * @param Request $request
-     * @return array|RedirectResponse
-     */
-    protected function update(Category $category, Request $request)
+    protected function update(Category $category, Request $request): array|RedirectResponse
     {
         $form = $this->createForm(CategoryType::class, $category);
         $handler = new CategoryHandler(
-            $form,
-            $request,
             $this->getDoctrine()->getManagerForClass('OroCatalogBundle:Category'),
             $this->get(EventDispatcherInterface::class)
         );
 
-        $result = $this->get(UpdateHandler::class)->handleUpdate(
+        $result = $this->get(UpdateHandlerFacade::class)->update(
             $category,
             $form,
-            function (Category $category) {
-                return [
-                    'route' => 'oro_catalog_category_update',
-                    'parameters' => ['id' => $category->getId()]
-                ];
-            },
-            function () {
-                return [
-                    'route' => 'oro_catalog_category_index',
-                ];
-            },
             $this->get(TranslatorInterface::class)->trans('oro.catalog.controller.category.saved.message'),
+            $request,
             $handler
         );
 
@@ -198,30 +167,26 @@ class CategoryController extends AbstractController
 
     /**
      * @Route("/get-changed-urls/{id}", name="oro_catalog_category_get_changed_slugs", requirements={"id"="\d+"})
-     *
      * @AclAncestor("oro_catalog_category_update")
-     *
-     * @param Category $category
-     * @return JsonResponse
      */
-    public function getChangedSlugsAction(Category $category)
+    public function getChangedSlugsAction(Category $category): JsonResponse
     {
         return new JsonResponse($this->get(ChangedSlugsHelper::class)
             ->getChangedSlugsData($category, CategoryType::class));
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public static function getSubscribedServices()
     {
         return array_merge(parent::getSubscribedServices(), [
             CategoryTreeHandler::class,
-            UpdateHandler::class,
             MasterCatalogRootProvider::class,
             ChangedSlugsHelper::class,
             EventDispatcherInterface::class,
             TranslatorInterface::class,
+            UpdateHandlerFacade::class
         ]);
     }
 }

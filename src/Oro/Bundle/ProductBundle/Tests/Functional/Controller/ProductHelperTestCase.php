@@ -59,6 +59,7 @@ class ProductHelperTestCase extends WebTestCase
         $this->assertDefaultProductUnit($form);
 
         $formValues = $form->getPhpValues();
+        $formValues['input_action'] = $crawler->selectButton('Save and Close')->attr('data-action');
         $formValues['oro_product']['sku'] = ProductTestHelper::TEST_SKU;
         $formValues['oro_product']['owner'] = $this->getBusinessUnitId();
         $formValues['oro_product']['inventory_status'] = Product::INVENTORY_STATUS_IN_STOCK;
@@ -110,7 +111,7 @@ class ProductHelperTestCase extends WebTestCase
         $localizedName = $this->getLocalizedName($product, $localization);
 
         return [
-            'input_action' => 'save_and_stay',
+            'input_action' => '{"route":"oro_product_update","params":{"id":"$id"}}',
             'oro_product' => array_merge($data, [
                 '_token' => $form['oro_product[_token]']->getValue(),
                 'sku' => ProductTestHelper::UPDATED_SKU,

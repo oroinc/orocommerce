@@ -3,6 +3,7 @@ import GrapesJS from 'grapesjs';
 import ComponentRestriction from 'orocms/js/app/grapesjs/plugins/components/component-restriction';
 import ComponentManager from 'orocms/js/app/grapesjs/plugins/components/component-manager';
 import traitManagerExtends from 'orocms/js/app/grapesjs/plugins/components/trait-manager-extends';
+import fullscreenCommand from '../../commands/fullscreen';
 
 export default GrapesJS.plugins.add('grapesjs-components', function(editor, options) {
     // Overwrite default addType method
@@ -29,6 +30,8 @@ export default GrapesJS.plugins.add('grapesjs-components', function(editor, opti
 
         func.call(editor.editor, opts);
     });
+
+    editor.Commands.add('fullscreen', fullscreenCommand);
 
     traitManagerExtends(editor);
 

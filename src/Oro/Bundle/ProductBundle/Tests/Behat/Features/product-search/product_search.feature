@@ -2,6 +2,7 @@
 @ticket-BB-16057
 @ticket-BB-16275
 @ticket-BB-17352
+@ticket-BB-21709
 @fixture-OroCustomerBundle:CustomerUserAmandaRCole.yml
 @fixture-OroProductBundle:product_search/products.yml
 
@@ -73,3 +74,35 @@ Feature: Product search
     When click "Search Button"
     Then I should see "Search Results for Z"
     And number of records in "Product Frontend Grid" should be 0
+
+  Scenario: Check sku attribute searchable
+    Given I proceed as the Admin
+    And I go to System/Entities/Entity Management
+    And filter Name as is equal to "Product"
+    And click View Product in grid
+    And click Edit sku in grid
+    And I fill form with:
+      | Searchable | Yes |
+    And I save form
+    Then I should see "Field saved" flash message
+    And I run Symfony "oro:website-search:reindex" command in "prod" environment
+
+  Scenario: I should find product by sku
+    Given I proceed as the User
+    And I type "PSKU1" in "search"
+    And I click "Search Button"
+    Then I should see "PSKU1" product
+
+  Scenario: Uncheck sku attribute searchable
+    Given I proceed as the Admin
+    And I fill form with:
+      | Searchable | No |
+    And I save form
+    Then I should see "Field saved" flash message
+    And I run Symfony "oro:website-search:reindex" command in "prod" environment
+
+  Scenario: I should not find product by sku
+    Given I proceed as the User
+    And I type "PSKU1" in "search"
+    And I click "Search Button"
+    Then I should not see "PSKU1" product

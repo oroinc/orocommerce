@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ShoppingListBundle\Form\Handler;
 
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\FormBundle\Form\Handler\FormHandlerInterface;
 use Oro\Bundle\FormBundle\Form\Handler\RequestHandlerTrait;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
@@ -12,54 +13,31 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * Handles create a shopping list request.
  */
-class ShoppingListHandler
+class ShoppingListHandler implements FormHandlerInterface
 {
     use RequestHandlerTrait;
 
-    /**
-     * @var FormInterface
-     */
-    protected $form;
-
-    /**
-     * @var Request
-     */
-    protected $request;
-
-    /**
-     * @var CurrentShoppingListManager
-     */
-    protected $currentShoppingListManager;
-
-    /**
-     * @var ManagerRegistry
-     */
-    protected $doctrine;
+    protected CurrentShoppingListManager $currentShoppingListManager;
+    protected ManagerRegistry $doctrine;
 
     public function __construct(
-        FormInterface $form,
-        Request $request,
         CurrentShoppingListManager $currentShoppingListManager,
         ManagerRegistry $doctrine
     ) {
-        $this->form = $form;
-        $this->request = $request;
         $this->currentShoppingListManager = $currentShoppingListManager;
         $this->doctrine = $doctrine;
     }
 
     /**
-     * @param ShoppingList $shoppingList
-     *
-     * @return bool
+     * {@inheritDoc}
      */
-    public function process(ShoppingList $shoppingList)
+    public function process($shoppingList, FormInterface $form, Request $request)
     {
-        $this->form->setData($shoppingList);
+        $form->setData($shoppingList);
 
-        if (in_array($this->request->getMethod(), ['POST', 'PUT'], true)) {
-            $this->submitPostPutRequest($this->form, $this->request);
-            if ($this->form->isValid()) {
+        if (in_array($request->getMethod(), ['POST', 'PUT'], true)) {
+            $this->submitPostPutRequest($form, $request);
+            if ($form->isValid()) {
                 $em = $this->doctrine->getManagerForClass(ShoppingList::class);
                 if ($shoppingList->getId() === null) {
                     $em->persist($shoppingList);

@@ -55,15 +55,14 @@ describe('orocms/js/app/grapesjs/type-builders/code-type-builder', () => {
         });
 
         it('check template', () => {
-            expect(codeTypeBuilder.template()).toEqual('<pre>oro.cms.wysiwyg.component.code.placeholder</pre>');
-        });
-
-        it('check component parent type', () => {
-            expect(codeTypeBuilder.parentType).toEqual('text');
+            expect(codeTypeBuilder.template()).toEqual(
+                '<pre><code>oro.cms.wysiwyg.component.code.placeholder</code></pre>'
+            );
         });
 
         it('check base model extend', () => {
             const mockElement = document.createElement('PRE');
+            mockElement.innerHTML = '<code>Code</code>';
 
             expect(codeTypeBuilder.Model.isComponent).toBeDefined();
             expect(codeTypeBuilder.Model.isComponent(mockElement)).toEqual({

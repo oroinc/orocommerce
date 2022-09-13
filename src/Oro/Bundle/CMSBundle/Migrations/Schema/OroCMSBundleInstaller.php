@@ -52,7 +52,7 @@ class OroCMSBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_11';
+        return 'v1_12';
     }
 
     /**
@@ -71,10 +71,7 @@ class OroCMSBundleInstaller implements
         $this->slugExtension = $extension;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function up(Schema $schema, QueryBag $queries)
+    public function up(Schema $schema, QueryBag $queries): void
     {
         /** Tables generation **/
         $this->createOroCmsPageTable($schema);
@@ -90,6 +87,7 @@ class OroCMSBundleInstaller implements
         $this->createOroCmsContentWidgetTable($schema);
         $this->createOroCmsContentWidgetUsageTable($schema);
         $this->createOroCmsImageSlideTable($schema);
+        $this->createTabbedContentItemTable($schema);
 
         /** Foreign keys generation **/
         $this->addOroCmsPageForeignKeys($schema);
@@ -102,6 +100,7 @@ class OroCMSBundleInstaller implements
         $this->addOroCmsContentWidgetForeignKeys($schema);
         $this->addOroCmsContentWidgetUsageForeignKeys($schema);
         $this->addOroCmsImageSlideForeignKeys($schema);
+        $this->addTabbedContentItemForeignKeys($schema);
 
         /** Associations */
         $this->addOroCmsLoginPageImageAssociations($schema);
@@ -641,6 +640,59 @@ class OroCMSBundleInstaller implements
                     'importexport' => ['excluded' => false],
                 ],
             ]
+        );
+    }
+
+    private function createTabbedContentItemTable(Schema $schema): void
+    {
+        $table = $schema->createTable('oro_cms_tabbed_content_item');
+
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->setPrimaryKey(['id']);
+
+        $table->addColumn('content_widget_id', 'integer');
+        $table->addColumn('organization_id', 'integer', ['notnull' => false]);
+        $table->addColumn('title', 'string', ['length' => 255]);
+        $table->addColumn('item_order', 'integer', ['default' => 0]);
+        $table->addColumn('content', 'wysiwyg', ['notnull' => false, 'comment' => '(DC2Type:wysiwyg)']);
+        $table->addColumn(
+            'content_style',
+            'wysiwyg_style',
+            [
+                'notnull' => false,
+                OroOptions::KEY => [
+                    ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_HIDDEN,
+                ],
+            ]
+        );
+        $table->addColumn(
+            'content_properties',
+            'wysiwyg_properties',
+            [
+                'notnull' => false,
+                OroOptions::KEY => [
+                    ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_HIDDEN,
+                ],
+            ]
+        );
+        $table->addColumn('created_at', 'datetime', []);
+        $table->addColumn('updated_at', 'datetime', []);
+    }
+
+    private function addTabbedContentItemForeignKeys(Schema $schema): void
+    {
+        $table = $schema->getTable('oro_cms_tabbed_content_item');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_cms_content_widget'),
+            ['content_widget_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE']
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_organization'),
+            ['organization_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL']
         );
     }
 }
