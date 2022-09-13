@@ -23,8 +23,10 @@ class SchemaOrgProductDescriptionProvider implements SchemaOrgProductDescription
      * @param ConfigManager $configManager
      * @param iterable<string, SchemaOrgProductDescriptionProviderInterface> $productDescriptionProviders
      */
-    public function __construct(ConfigManager $configManager, iterable $productDescriptionProviders)
-    {
+    public function __construct(
+        ConfigManager $configManager,
+        iterable $productDescriptionProviders
+    ) {
         $this->configManager = $configManager;
 
         if ($productDescriptionProviders instanceof \Traversable) {
@@ -34,17 +36,23 @@ class SchemaOrgProductDescriptionProvider implements SchemaOrgProductDescription
         $this->productDescriptionProviders = $productDescriptionProviders;
     }
 
-    public function getDescription(Product $product, ?Localization $localization = null): string
-    {
-        $option = $this->getSchemaOrgSettings();
+    public function getDescription(
+        Product $product,
+        ?Localization $localization = null,
+        ?object $scopeIdentifier = null
+    ): string {
+        $option = $this->getSchemaOrgSettings($scopeIdentifier);
 
-        return $this->productDescriptionProviders[$option]->getDescription($product, $localization);
+        return $this->productDescriptionProviders[$option]->getDescription($product, $localization, $scopeIdentifier);
     }
 
-    private function getSchemaOrgSettings(): string
+    private function getSchemaOrgSettings(?object $scopeIdentifier): string
     {
         return $this->configManager->get(
-            Configuration::getConfigKeyByName(Configuration::SCHEMA_ORG_DESCRIPTION_FIELD)
+            Configuration::getConfigKeyByName(Configuration::SCHEMA_ORG_DESCRIPTION_FIELD),
+            false,
+            false,
+            $scopeIdentifier
         );
     }
 }

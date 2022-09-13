@@ -1909,4 +1909,62 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
         $importFile = $this->createElement('Import Choose File');
         $importFile->setValue($fileName);
     }
+
+    /**
+     * Check schema.org brand in block or page
+     * Example: I should see schema org brand "Test Brand" for "TestSKU" in "Product Frontend Grid"
+     * Example: I should see schema org brand "Test Brand" on page
+     *
+     * @Then /^(?:|I )should see schema org brand "(?P<BRAND>[^"]*)" for "(?P<SKU>[^"]*)" in "(?P<BLOCK>[^"]*)"$/
+     * @Then /^(?:|I )should see schema org brand "(?P<BRAND>[^"]*)" on page$/
+     */
+    public function iShouldSeeSchemaOrgBrandForProductInBlock(
+        string $brand,
+        ?string $sku = null,
+        ?string $block = null
+    ): void {
+        if (!is_null($block) && !is_null($sku)) {
+            $blockElement = $this->createElement($block);
+            self::assertTrue($blockElement->isIsset(), sprintf('Block "%s" is not found.', $block));
+            $productElement = $this->findProductItem($sku, $this->createElement($block));
+        } else {
+            $productElement = $this->createElement('Product Item View');
+            self::assertTrue($productElement->isIsset(), 'Element "Product Item View" is not found.');
+        }
+
+        $schemaOrgBrandName = $this->createElement('SchemaOrg Brand Name', $productElement);
+        self::assertTrue($productElement->isIsset(), 'Element "SchemaOrg Brand Name" is not found.');
+
+        self::assertEquals($brand, $schemaOrgBrandName->getAttribute('content'));
+    }
+
+    /**
+     * Check schema.org description in block or page
+     * Example: I should see schema org description "Test Description" for "TestSKU" in "Product Frontend Grid"
+     * Example:  I should see schema org description "Test Description"
+     *
+     * @codingStandardsIgnoreStart
+     * @Then /^(?:|I )should see schema org description "(?P<DESCRIPTION>[^"]*)" for "(?P<SKU>[^"]*)" in "(?P<BLOCK>[^"]*)"$/
+     * @Then /^(?:|I )should see schema org description "(?P<DESCRIPTION>[^"]*)" on page$/
+     * @codingStandardsIgnoreEnd
+     */
+    public function iShouldSeeSchemaOrgDescriptionForProductInBlock(
+        string $description,
+        ?string $sku = null,
+        ?string $block = null
+    ): void {
+        if (!is_null($block) && !is_null($sku)) {
+            $blockElement = $this->createElement($block);
+            self::assertTrue($blockElement->isIsset(), sprintf('Block "%s" is not found.', $block));
+            $productElement = $this->findProductItem($sku, $this->createElement($block));
+        } else {
+            $productElement = $this->createElement('Product Item View');
+            self::assertTrue($productElement->isIsset(), 'Element "Product Item View" is not found.');
+        }
+
+        $schemaOrgProductDescription = $this->createElement('SchemaOrg Description', $productElement);
+        self::assertTrue($productElement->isIsset(), 'Element "SchemaOrg Description" is not found.');
+
+        self::assertEquals($description, $schemaOrgProductDescription->getAttribute('content'));
+    }
 }

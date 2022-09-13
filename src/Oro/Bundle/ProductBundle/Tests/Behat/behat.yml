@@ -1481,6 +1481,15 @@ oro_behat_extension:
     Product Type Microdata Declaration:
       selector: '[itemtype="http://schema.org/Product"]'
 
+    Product Item View:
+      selector: 'div.product-view'
+
+    SchemaOrg Brand Name:
+      selector: 'span[itemprop="brand"] meta[itemprop="name"]'
+
+    SchemaOrg Description:
+      selector: 'meta[itemprop="description"]'
+
   pages:
     Product View:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Page\ProductView

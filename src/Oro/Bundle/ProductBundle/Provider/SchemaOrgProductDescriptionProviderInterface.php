@@ -13,6 +13,16 @@ interface SchemaOrgProductDescriptionProviderInterface
     /**
      * Provides description suitable for using in the Schema.org "description" property.
      * Must not contain any HTML tags.
+     *
+     * @param Product $product
+     * @param Localization|null $localization
+     * @param object|null $scopeIdentifier Scope to pass to {@see \Oro\Bundle\ConfigBundle\Config\ConfigManager::get}.
+     *
+     * @return string
      */
-    public function getDescription(Product $product, ?Localization $localization = null): string;
+    public function getDescription(
+        Product $product,
+        ?Localization $localization = null,
+        ?object $scopeIdentifier = null
+    ): string;
 }

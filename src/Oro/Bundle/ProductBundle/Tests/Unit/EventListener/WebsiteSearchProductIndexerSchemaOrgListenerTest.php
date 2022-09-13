@@ -95,7 +95,7 @@ class WebsiteSearchProductIndexerSchemaOrgListenerTest extends \PHPUnit\Framewor
 
         $this->schemaOrgProductDescriptionProvider->expects(self::once())
             ->method('getDescription')
-            ->with($product, $localization)
+            ->with($product, $localization, $website)
             ->willReturn('test_description');
 
         $event = new IndexEntityEvent(Product::class, [$product], $context);
