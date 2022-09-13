@@ -475,6 +475,7 @@ oro:
                 product_data_export.title: 'Product Data Export'
                 product_seo.title: 'SEO'
                 schema_org.title: 'Schema.org'
+                schema_org.description: 'The change of the Product Description Field will not be applied immediately and will require manual start of the website search re-index.'
             fields:
                 original_file_names_enabled:
                     label: 'Enable Original File Names'

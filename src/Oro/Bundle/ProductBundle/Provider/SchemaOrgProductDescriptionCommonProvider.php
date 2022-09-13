@@ -35,8 +35,11 @@ class SchemaOrgProductDescriptionCommonProvider implements SchemaOrgProductDescr
         $this->field = $field;
     }
 
-    public function getDescription(Product $product, ?Localization $localization = null): string
-    {
+    public function getDescription(
+        Product $product,
+        ?Localization $localization = null,
+        ?object $scopeIdentifier = null
+    ): string {
         $fieldValue = $this->propertyAccessor->getValue($product, $this->field);
         if ($fieldValue instanceof Collection) {
             if (!$fieldValue->count()

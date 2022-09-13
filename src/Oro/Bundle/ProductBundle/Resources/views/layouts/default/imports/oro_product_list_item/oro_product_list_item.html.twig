@@ -49,16 +49,26 @@
             'itemscope': '',
             'itemtype': 'http://schema.org/Product'
         }) %}
+        {% if product.schemaOrgDescription is defined %}
+            {% set productSchemaOrgDescription %}
+                <meta itemprop="description" content="{{ product.schemaOrgDescription }}" />
+            {% endset %}
+        {% endif %}
+        {% if product.schemaOrgBrandName is defined %}
+            {% set productSchemaOrgBrand %}
+                <span itemprop="brand" itemtype="https://schema.org/Brand" itemscope>
+                    <meta itemprop="name" content="{{ product.schemaOrgBrandName }}" />
+                </span>
+            {% endset %}
+        {% endif %}
     {% endif %}
     <div {{ block('block_attributes') }}>
-        {% if product.schemaOrgDescription is defined %}
-            <meta itemprop="description" content="{{ product.schemaOrgDescription }}" />
+        {% if productSchemaOrgDescription is defined %}
+            {{ productSchemaOrgDescription }}
         {% endif %}
-        <span itemprop="brand" itemtype="https://schema.org/Brand" itemscope>
-            {% if product.schemaOrgBrandName is defined %}
-                <meta itemprop="name" content="{{ product.schemaOrgBrandName }}" />
-            {% endif %}
-        </span>
+        {% if productSchemaOrgBrand is defined %}
+            {{ productSchemaOrgBrand }}
+        {% endif %}
         {{ block_widget(block) }}
     </div>
 {% endblock %}

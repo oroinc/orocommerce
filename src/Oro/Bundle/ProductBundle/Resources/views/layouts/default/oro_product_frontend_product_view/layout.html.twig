@@ -40,10 +40,15 @@
             'itemscope': '',
             'itemtype': 'http://schema.org/Product'
         }) %}
+        {% if schemaOrgDescription is defined %}
+            {% set productSchemaOrgDescription %}
+                <meta itemprop="description" content="{{ schemaOrgDescription }}" />
+            {% endset %}
+        {% endif %}
     {% endif %}
     <div {{ block('block_attributes') }}>
-        {% if schemaOrgDescription %}
-            <meta itemprop="description" content="{{ schemaOrgDescription }}" />
+        {% if productSchemaOrgDescription is defined %}
+            {{ productSchemaOrgDescription }}
         {% endif %}
         {{ block_widget(block) }}
     </div>

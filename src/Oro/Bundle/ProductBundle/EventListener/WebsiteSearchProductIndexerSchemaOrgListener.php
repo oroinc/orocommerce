@@ -49,7 +49,7 @@ class WebsiteSearchProductIndexerSchemaOrgListener implements WebsiteSearchProdu
                 $event->addPlaceholderField(
                     $productId,
                     'schema_org_description_LOCALIZATION_ID',
-                    $this->descriptionSchemaOrgProvider->getDescription($product, $localization),
+                    $this->descriptionSchemaOrgProvider->getDescription($product, $localization, $website),
                     $localizationPlaceholder
                 )->addPlaceholderField(
                     $productId,

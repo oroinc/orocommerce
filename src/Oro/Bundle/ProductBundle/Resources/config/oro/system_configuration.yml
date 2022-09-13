@@ -99,6 +99,8 @@ system_configuration:
             icon: 'fa-columns'
         schema_org:
             title: oro.product.system_configuration.groups.schema_org.title
+            description: oro.product.system_configuration.groups.schema_org.description
+            description_style: warning
     fields:
         oro_product.related_products_enabled:
             data_type: boolean
