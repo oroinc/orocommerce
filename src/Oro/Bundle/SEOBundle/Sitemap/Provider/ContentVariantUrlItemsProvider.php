@@ -2,13 +2,17 @@
 
 namespace Oro\Bundle\SEOBundle\Sitemap\Provider;
 
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectRepository;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\SEOBundle\Model\DTO\UrlItem;
+use Oro\Bundle\SEOBundle\Modifier\ScopeQueryBuilderModifier;
+use Oro\Bundle\SEOBundle\Modifier\ScopeQueryBuilderModifierInterface;
 use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentNode;
 use Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ContentNodeTreeResolverInterface;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
@@ -49,6 +53,8 @@ class ContentVariantUrlItemsProvider implements UrlItemsProviderInterface
      */
     private $scopeCriteriaProvider;
 
+    private ?ScopeQueryBuilderModifier $scopeQueryBuilderModifier = null;
+
     public function __construct(
         ManagerRegistry $registry,
         WebCatalogProvider $webCatalogProvider,
@@ -63,6 +69,11 @@ class ContentVariantUrlItemsProvider implements UrlItemsProviderInterface
         $this->scopeCriteriaProvider = $scopeCriteriaProvider;
     }
 
+    public function setScopeQueryBuilderModifier(ScopeQueryBuilderModifierInterface $scopeQueryBuilderModifier): void
+    {
+        $this->scopeQueryBuilderModifier = $scopeQueryBuilderModifier;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -73,29 +84,28 @@ class ContentVariantUrlItemsProvider implements UrlItemsProviderInterface
             return;
         }
 
-        $webCatalog = $this->webCatalogProvider->getWebCatalog($website);
-        if (!$webCatalog) {
-            return;
-        }
-        $rootNode = $this->getContentNodeRepository()->getRootNodeByWebCatalog($webCatalog);
+        $rootNode = $this->webCatalogProvider->getNavigationRootWithCatalogRootFallback($website);
         if (!$rootNode) {
             return;
         }
 
-        $scopeCriteria = $this->scopeCriteriaProvider->getWebCatalogScopeForAnonymousCustomerGroup($website);
-        $scope = $this->getSlugRepository()->findMostSuitableUsedScope($scopeCriteria);
+        $dumpedLocations = [];
+        $scopes = $this->getScopes();
+        foreach ($scopes as $scope) {
+            $resolvedNode = $this->contentNodeTreeResolver->getResolvedContentNode($rootNode, $scope);
+            if (!$resolvedNode) {
+                continue;
+            }
 
-        if (null === $scope) {
-            return;
-        }
+            /** @var UrlItem $item */
+            foreach ($this->processResolvedNode($resolvedNode, $website) as $item) {
+                if (in_array($item->getLocation(), $dumpedLocations, true)) {
+                    continue;
+                }
+                $dumpedLocations[] = $item->getLocation();
 
-        $resolvedNode = $this->contentNodeTreeResolver->getResolvedContentNode($rootNode, $scope);
-        if (!$resolvedNode) {
-            return;
-        }
-
-        foreach ($this->processResolvedNode($resolvedNode, $website) as $item) {
-            yield $item;
+                yield $item;
+            }
         }
     }
 
@@ -124,9 +134,7 @@ class ContentVariantUrlItemsProvider implements UrlItemsProviderInterface
      */
     protected function getContentNodeRepository()
     {
-        return $this->registry
-            ->getManagerForClass(ContentNode::class)
-            ->getRepository(ContentNode::class);
+        return $this->registry->getRepository(ContentNode::class);
     }
 
     /**
@@ -134,8 +142,24 @@ class ContentVariantUrlItemsProvider implements UrlItemsProviderInterface
      */
     protected function getSlugRepository()
     {
-        return $this->registry
-            ->getManagerForClass(Slug::class)
-            ->getRepository(Slug::class);
+        return $this->registry->getRepository(Slug::class);
+    }
+
+    private function getScopes(): array
+    {
+        $qb = $this->registry->getManagerForClass(Scope::class)->createQueryBuilder();
+        $qb
+            ->from(Scope::class, 'scope')
+            ->select('scope')
+            ->innerJoin(
+                Slug::class,
+                'slug',
+                Join::WITH,
+                $qb->expr()->isMemberOf('scope', 'slug.scopes')
+            );
+
+        $this->scopeQueryBuilderModifier->applyScopeCriteria($qb, 'scope');
+
+        return $qb->getQuery()->getResult();
     }
 }

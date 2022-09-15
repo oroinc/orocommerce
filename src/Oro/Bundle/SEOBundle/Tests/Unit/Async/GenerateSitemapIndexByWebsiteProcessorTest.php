@@ -4,10 +4,12 @@ namespace Oro\Bundle\SEOBundle\Tests\Unit\Async;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\MessageQueueBundle\Entity\Job;
 use Oro\Bundle\SEOBundle\Async\GenerateSitemapIndexByWebsiteProcessor;
 use Oro\Bundle\SEOBundle\Async\Topics;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Job\JobRunner;
 use Oro\Component\MessageQueue\Transport\Message;
@@ -15,12 +17,15 @@ use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\MessageQueue\Util\JSON;
 use Oro\Component\SEO\Tools\SitemapDumperInterface;
+use Oro\Component\Testing\Unit\EntityTrait;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException;
 
 class GenerateSitemapIndexByWebsiteProcessorTest extends \PHPUnit\Framework\TestCase
 {
+    use EntityTrait;
+
     /** @var JobRunner|\PHPUnit\Framework\MockObject\MockObject */
     private $jobRunner;
 
@@ -33,6 +38,12 @@ class GenerateSitemapIndexByWebsiteProcessorTest extends \PHPUnit\Framework\Test
     /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $logger;
 
+    /** @var WebsiteManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $websiteManager;
+
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $configManager;
+
     /** @var GenerateSitemapIndexByWebsiteProcessor */
     private $processor;
 
@@ -42,6 +53,8 @@ class GenerateSitemapIndexByWebsiteProcessorTest extends \PHPUnit\Framework\Test
         $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->sitemapDumper = $this->createMock(SitemapDumperInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
+        $this->websiteManager = $this->createMock(WebsiteManager::class);
+        $this->configManager = $this->createMock(ConfigManager::class);
 
         $this->processor = new GenerateSitemapIndexByWebsiteProcessor(
             $this->jobRunner,
@@ -49,6 +62,9 @@ class GenerateSitemapIndexByWebsiteProcessorTest extends \PHPUnit\Framework\Test
             $this->sitemapDumper,
             $this->logger
         );
+
+        $this->processor->setWebsiteManager($this->websiteManager);
+        $this->processor->setConfigManager($this->configManager);
     }
 
     private function getSession(): SessionInterface
@@ -66,12 +82,7 @@ class GenerateSitemapIndexByWebsiteProcessorTest extends \PHPUnit\Framework\Test
 
     private function getWebsite(int $websiteId): Website
     {
-        $website = $this->createMock(Website::class);
-        $website->expects(self::any())
-            ->method('getId')
-            ->willReturn($websiteId);
-
-        return $website;
+        return $this->getEntity(Website::class, ['id' => $websiteId]);
     }
 
     public function testGetSubscribedTopics()
@@ -194,6 +205,15 @@ class GenerateSitemapIndexByWebsiteProcessorTest extends \PHPUnit\Framework\Test
             ->with(Website::class, $websiteId)
             ->willReturn($website);
 
+        $this->websiteManager
+            ->expects($this->once())
+            ->method('setCurrentWebsite')
+            ->with($website);
+        $this->configManager
+            ->expects($this->once())
+            ->method('setScopeId')
+            ->with($websiteId);
+
         $exception = new \Exception();
         $this->sitemapDumper->expects(self::once())
             ->method('dump')
@@ -240,6 +260,15 @@ class GenerateSitemapIndexByWebsiteProcessorTest extends \PHPUnit\Framework\Test
             ->method('find')
             ->with(Website::class, $websiteId)
             ->willReturn($website);
+
+        $this->websiteManager
+            ->expects($this->once())
+            ->method('setCurrentWebsite')
+            ->with($website);
+        $this->configManager
+            ->expects($this->once())
+            ->method('setScopeId')
+            ->with($websiteId);
 
         $this->sitemapDumper->expects(self::once())
             ->method('dump')

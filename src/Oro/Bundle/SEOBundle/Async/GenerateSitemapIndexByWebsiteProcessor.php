@@ -3,7 +3,9 @@
 namespace Oro\Bundle\SEOBundle\Async;
 
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Job\JobRunner;
@@ -35,6 +37,12 @@ class GenerateSitemapIndexByWebsiteProcessor implements MessageProcessorInterfac
     /** @var LoggerInterface */
     private $logger;
 
+    /** @var WebsiteManager */
+    private $websiteManager;
+
+    /** @var ConfigManager|null */
+    private $configManager;
+
     public function __construct(
         JobRunner $jobRunner,
         ManagerRegistry $doctrine,
@@ -45,6 +53,16 @@ class GenerateSitemapIndexByWebsiteProcessor implements MessageProcessorInterfac
         $this->doctrine = $doctrine;
         $this->sitemapDumper = $sitemapDumper;
         $this->logger = $logger;
+    }
+
+    public function setWebsiteManager(WebsiteManager $websiteManager): void
+    {
+        $this->websiteManager = $websiteManager;
+    }
+
+    public function setConfigManager(ConfigManager $configManager = null): void
+    {
+        $this->configManager = $configManager;
     }
 
     /**
@@ -70,6 +88,10 @@ class GenerateSitemapIndexByWebsiteProcessor implements MessageProcessorInterfac
                 $website = $this->getWebsite($body[self::WEBSITE_ID]);
                 if (null === $website) {
                     throw new \RuntimeException('The website does not exist.');
+                }
+                $this->websiteManager->setCurrentWebsite($website);
+                if ($this->configManager) {
+                    $this->configManager->setScopeId($website->getId());
                 }
                 $this->sitemapDumper->dump($website, $body[self::VERSION], 'index');
 
