@@ -166,6 +166,8 @@ services:
         arguments:
             - '@oro_website.website.provider'
             - '@oro_website_search.provider.search_mapping'
+        calls:
+            - [setManagerRegistry, ['@doctrine']]
 
     oro_website_search.async.indexer.message_granularizer.reindex:
         class: 'Oro\Bundle\WebsiteSearchBundle\Engine\AsyncMessaging\ReindexMessageGranularizer'
@@ -190,6 +192,12 @@ services:
             - '@oro_message_queue.job.runner'
             - '@logger'
             - '@event_dispatcher'
+        calls:
+            - [setSaveProcessor, ['@oro_website_search.async.save_processor']]
+            - [setDeleteProcessor, ['@oro_website_search.async.delete_processor']]
+            - [setResetIndexProcessor, ['@oro_website_search.async.reset_index_processor']]
+            - [setReindexProcessor, ['@oro_website_search.async.reindex_processor']]
+            - [setReindexGranulizedProcessor, ['@oro_website_search.async.reindex_processor.granulized']]
         tags:
             - { name: 'oro_message_queue.client.message_processor', topicName: 'oro.website.search.indexer.save' }
             - { name: 'oro_message_queue.client.message_processor', topicName: 'oro.website.search.indexer.delete' }
@@ -326,9 +334,9 @@ services:
     oro_website_search.async.message_filter.reindex:
         class: 'Oro\Bundle\WebsiteSearchBundle\Async\MessageFilter\ReindexMessageFilter'
         arguments:
-            - !php/const Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer::TOPIC_REINDEX
+            - !php/const Oro\Bundle\WebsiteSearchBundle\Async\Topic\WebsiteSearchReindexTopic::NAME
         tags:
-            - { name: oro_message_queue.message_filter, topic: !php/const Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer::TOPIC_REINDEX }
+            - { name: oro_message_queue.message_filter, topic: !php/const Oro\Bundle\WebsiteSearchBundle\Async\Topic\WebsiteSearchReindexTopic::NAME }
 
     oro_website_search.form.extension.remove_search_boost_attribute:
         class: 'Oro\Bundle\WebsiteSearchBundle\Form\Extension\RemoveSearchBoostAttributeExtension'

@@ -26,11 +26,7 @@ class GenerateSitemapCommandTest extends WebTestCase
     {
         self::runCommand(GenerateSitemapCommand::getDefaultName());
 
-        $traces = self::getMessageCollector()->getTopicSentMessages(GenerateSitemapTopic::getName());
-
-        self::assertCount(1, $traces);
-        $data = array_shift($traces);
-        self::assertEquals(['topic' => GenerateSitemapTopic::getName(), 'message' => []], $data);
+        self::assertMessageSent(GenerateSitemapTopic::getName(), []);
     }
 
     public function testGetDefaultDefinitions(): void

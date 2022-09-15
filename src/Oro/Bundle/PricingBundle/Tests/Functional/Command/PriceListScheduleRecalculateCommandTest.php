@@ -80,7 +80,7 @@ class PriceListScheduleRecalculateCommandTest extends WebTestCase
         }
 
         foreach ($expectedMqMessages as $topic => $count) {
-            $messages = $this->getSentMessagesByTopic($topic);
+            $messages = self::getSentMessagesByTopic($topic);
             $this->assertCount(
                 $count,
                 $messages,

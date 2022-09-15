@@ -19,7 +19,6 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadSegmentsWithRelat
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadWebCatalogsData;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Component\MessageQueue\Client\Message;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 
 /**
@@ -76,42 +75,42 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
         $expectedMessage = [
             [
                 'topic' => AccumulateReindexProductCollectionBySegmentTopic::NAME,
-                'message' => new Message([
+                'message' => [
                     'job_id' => $firstChildJobId,
                     'id' => $this->getReference(LoadSegmentsWithRelationsData::FIRST_SEGMENT)->getId(),
                     'website_ids' => [$defaultWebsite->getId()],
                     'definition' => null,
                     'is_full' => !$isPartialConfig,
                     'additional_products' => [],
-                ])
+                ]
             ],
             [
                 'topic' => AccumulateReindexProductCollectionBySegmentTopic::NAME,
-                'message' => new Message([
+                'message' => [
                     'job_id' => $firstChildJobId + 1,
                     'id' => $this->getReference(LoadSegmentsWithRelationsData::SECOND_SEGMENT)->getId(),
                     'website_ids' => [$defaultWebsite->getId()],
                     'definition' => null,
                     'is_full' => !$isPartialConfig,
                     'additional_products' => [],
-                ])
+                ]
             ],
             [
                 'topic' => AccumulateReindexProductCollectionBySegmentTopic::NAME,
-                'message' => new Message([
+                'message' => [
                     'job_id' => $firstChildJobId + 2,
                     'id' => $this->getReference(LoadSegmentsWithRelationsData::WITH_CRITERIA_SEGMENT)->getId(),
                     'website_ids' => [$defaultWebsite->getId()],
                     'definition' => null,
                     'is_full' => !$isPartialConfig,
                     'additional_products' => [],
-                ])
+                ]
             ],
         ];
 
-        $this->assertEquals(
+        self::assertEquals(
             $expectedMessage,
-            self::getMessageCollector()->getTopicSentMessages(AccumulateReindexProductCollectionBySegmentTopic::NAME)
+            self::getTopicSentMessages(AccumulateReindexProductCollectionBySegmentTopic::NAME)
         );
     }
 
@@ -123,43 +122,6 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
         return [
             'partial' => [true],
             'full' => [false]
-        ];
-    }
-
-    /**
-     * @dataProvider partialConfigDataWithCommandResponseDataProvider
-     */
-    public function testTryRunCronCommandBeforePreviousJobComplete(bool $isPartial, string $expectedResponse)
-    {
-        $this->testCommandWhenWebCatalogIsUsed($isPartial);
-
-        self::getMessageCollector()->clear();
-
-        $response = self::runCommand(ProductCollectionsIndexCronCommand::getDefaultName(), []);
-        self::assertEquals($expectedResponse, $response);
-        self::assertEmpty(
-            self::getMessageCollector()->getTopicSentMessages(
-                AccumulateReindexProductCollectionBySegmentTopic::NAME
-            )
-        );
-    }
-
-    /**
-     * @return array
-     */
-    public function partialConfigDataWithCommandResponseDataProvider()
-    {
-        return [
-            'partial' => [
-                'isPartial' => true,
-                'expectedResponse' =>
-                    "Can't start the process because the same job on partial re-indexation is in progress."
-            ],
-            'full' => [
-                'isPartial' => false,
-                'expectedResponse' =>
-                    "Can't start the process because the same job on full re-indexation is in progress."
-            ]
         ];
     }
 
@@ -186,54 +148,87 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
         $expectedMessage = [
             [
                 'topic' => AccumulateReindexProductCollectionBySegmentTopic::NAME,
-                'message' => new Message([
+                'message' => [
                     'job_id' => $firstChildJobId,
                     'id' => $this->getReference(LoadSegmentsWithRelationsData::FIRST_SEGMENT)->getId(),
                     'website_ids' => [$defaultWebsite->getId()],
                     'definition' => null,
                     'is_full' => false,
                     'additional_products' => [],
-                ])
+                ]
             ],
             [
                 'topic' => AccumulateReindexProductCollectionBySegmentTopic::NAME,
-                'message' => new Message([
+                'message' => [
                     'job_id' => $firstChildJobId + 1,
                     'id' => $this->getReference(LoadSegmentsWithRelationsData::SECOND_SEGMENT)->getId(),
                     'website_ids' => [$defaultWebsite->getId()],
                     'definition' => null,
                     'is_full' => false,
                     'additional_products' => [],
-                ])
+                ]
             ],
             [
                 'topic' => AccumulateReindexProductCollectionBySegmentTopic::NAME,
-                'message' => new Message([
+                'message' => [
                     'job_id' => $firstChildJobId + 2,
                     'id' => $this->getReference(LoadSegmentsWithRelationsData::WITH_CRITERIA_SEGMENT)->getId(),
                     'website_ids' => [$defaultWebsite->getId()],
                     'definition' => null,
                     'is_full' => false,
                     'additional_products' => [],
-                ])
+                ]
             ],
         ];
 
-        $messages = self::getMessageCollector()->getTopicSentMessages(
+        self::assertEquals($expectedMessage, self::getTopicSentMessages(
+            AccumulateReindexProductCollectionBySegmentTopic::NAME
+        ));
+    }
+
+
+    /**
+     * @dataProvider partialConfigDataWithCommandResponseDataProvider
+     */
+    public function testTryRunCronCommandBeforePreviousJobComplete(bool $isPartial, string $expectedResponse)
+    {
+        $this->testCommandWhenWebCatalogIsUsed($isPartial);
+
+        self::getMessageCollector()->clear();
+
+        $response = self::runCommand(ProductCollectionsIndexCronCommand::getDefaultName(), []);
+        self::assertEquals($expectedResponse, $response);
+        self::assertMessagesEmpty(
             AccumulateReindexProductCollectionBySegmentTopic::NAME
         );
-        $this->assertEquals($expectedMessage, $messages);
+    }
+
+    /**
+     * @return array
+     */
+    public function partialConfigDataWithCommandResponseDataProvider()
+    {
+        return [
+            'partial' => [
+                'isPartial' => true,
+                'expectedResponse' =>
+                    "Can't start the process because the same job on partial re-indexation is in progress."
+            ],
+            'full' => [
+                'isPartial' => false,
+                'expectedResponse' =>
+                    "Can't start the process because the same job on full re-indexation is in progress."
+            ]
+        ];
     }
 
     public function testCommandWhenWebCatalogIsNotUsed()
     {
         self::runCommand(ProductCollectionsIndexCronCommand::getDefaultName(), []);
 
-        $traces = self::getMessageCollector()->getTopicSentMessages(
+        self::assertMessagesEmpty(
             AccumulateReindexProductCollectionBySegmentTopic::NAME
         );
-
-        $this->assertCount(0, $traces);
     }
 
     public function testGetDefaultDefinitions()
@@ -242,8 +237,8 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
         $repo = $this->getContainer()->get('oro_entity.doctrine_helper')->getEntityRepositoryForClass(Schedule::class);
         /** @var Schedule $commandSchedule */
         $commandSchedule = $repo->findOneBy(['command' => ProductCollectionsIndexCronCommand::getDefaultName()]);
-        $this->assertNotEmpty($commandSchedule);
-        $this->assertSame(Configuration::DEFAULT_CRON_SCHEDULE, $commandSchedule->getDefinition());
+        self::assertNotEmpty($commandSchedule);
+        self::assertSame(Configuration::DEFAULT_CRON_SCHEDULE, $commandSchedule->getDefinition());
 
         $configManager = self::getConfigManager('global');
         $configManager->set(ProductCollectionsScheduleConfigurationListener::CONFIG_FIELD, '0 0 0 0 *');
@@ -251,7 +246,7 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
         self::runCommand('oro:cron:definitions:load', []);
 
         $commandSchedule = $repo->findOneBy(['command' => ProductCollectionsIndexCronCommand::getDefaultName()]);
-        $this->assertSame('0 0 0 0 *', $commandSchedule->getDefinition());
+        self::assertSame('0 0 0 0 *', $commandSchedule->getDefinition());
     }
 
     protected function getContentVariantMetadata(): ClassMetadata
