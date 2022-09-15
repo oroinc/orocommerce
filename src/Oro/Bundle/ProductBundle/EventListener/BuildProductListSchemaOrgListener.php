@@ -21,19 +21,19 @@ class BuildProductListSchemaOrgListener
 
     public function onBuildQueryProductList(BuildQueryProductListEvent $event): void
     {
-        if($this->isSchemaOrgDescriptionEnabled()) {
+        if ($this->isSchemaOrgDescriptionEnabled()) {
             $event
                 ->getQuery()
                 ->addSelect([
                     'schema_org_description_LOCALIZATION_ID as schema_org_description',
-                    'schema_org_brand_name_LOCALIZATION_ID as schema_org_brand_name'
+                    'schema_org_brand_name_LOCALIZATION_ID as schema_org_brand_name',
                 ]);
         }
     }
 
     public function onBuildResultProductList(BuildResultProductListEvent $event): void
     {
-        if($this->isSchemaOrgDescriptionEnabled()) {
+        if ($this->isSchemaOrgDescriptionEnabled()) {
             foreach ($event->getProductData() as $productData) {
                 $productView = $event->getProductView($productData['id']);
                 if (array_key_exists('schema_org_description', $productData)) {
