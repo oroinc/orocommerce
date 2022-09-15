@@ -2,17 +2,16 @@
 
 namespace Oro\Bundle\SEOBundle\Sitemap\Provider;
 
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\Persistence\ObjectRepository;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
-use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\SEOBundle\Model\DTO\UrlItem;
+use Oro\Bundle\SEOBundle\Modifier\ScopeQueryBuilderModifierInterface;
 use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentNode;
 use Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ContentNodeTreeResolverInterface;
-use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
-use Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentNodeRepository;
 use Oro\Bundle\WebCatalogBundle\Provider\WebCatalogProvider;
 use Oro\Component\SEO\Provider\UrlItemsProviderInterface;
 use Oro\Component\Website\WebsiteInterface;
@@ -24,43 +23,13 @@ class ContentVariantUrlItemsProvider implements UrlItemsProviderInterface
 {
     use FeatureCheckerHolderTrait;
 
-    /**
-     * @var ManagerRegistry
-     */
-    private $registry;
-
-    /**
-     * @var WebCatalogProvider
-     */
-    private $webCatalogProvider;
-
-    /**
-     * @var ContentNodeTreeResolverInterface
-     */
-    private $contentNodeTreeResolver;
-
-    /**
-     * @var CanonicalUrlGenerator
-     */
-    private $canonicalUrlGenerator;
-
-    /**
-     * @var WebCatalogScopeCriteriaProvider
-     */
-    private $scopeCriteriaProvider;
-
     public function __construct(
-        ManagerRegistry $registry,
-        WebCatalogProvider $webCatalogProvider,
-        ContentNodeTreeResolverInterface $contentNodeTreeResolver,
-        CanonicalUrlGenerator $canonicalUrlGenerator,
-        WebCatalogScopeCriteriaProvider $scopeCriteriaProvider
+        private ManagerRegistry $registry,
+        private WebCatalogProvider $webCatalogProvider,
+        private ContentNodeTreeResolverInterface $contentNodeTreeResolver,
+        private CanonicalUrlGenerator $canonicalUrlGenerator,
+        private ScopeQueryBuilderModifierInterface $scopeQueryBuilderModifier
     ) {
-        $this->registry = $registry;
-        $this->webCatalogProvider = $webCatalogProvider;
-        $this->contentNodeTreeResolver = $contentNodeTreeResolver;
-        $this->canonicalUrlGenerator = $canonicalUrlGenerator;
-        $this->scopeCriteriaProvider = $scopeCriteriaProvider;
     }
 
     /**
@@ -73,29 +42,28 @@ class ContentVariantUrlItemsProvider implements UrlItemsProviderInterface
             return;
         }
 
-        $webCatalog = $this->webCatalogProvider->getWebCatalog($website);
-        if (!$webCatalog) {
-            return;
-        }
-        $rootNode = $this->getContentNodeRepository()->getRootNodeByWebCatalog($webCatalog);
+        $rootNode = $this->webCatalogProvider->getNavigationRootWithCatalogRootFallback($website);
         if (!$rootNode) {
             return;
         }
 
-        $scopeCriteria = $this->scopeCriteriaProvider->getWebCatalogScopeForAnonymousCustomerGroup($website);
-        $scope = $this->getSlugRepository()->findMostSuitableUsedScope($scopeCriteria);
+        $dumpedLocations = [];
+        $scopes = $this->getScopes();
+        foreach ($scopes as $scope) {
+            $resolvedNode = $this->contentNodeTreeResolver->getResolvedContentNode($rootNode, $scope);
+            if (!$resolvedNode) {
+                continue;
+            }
 
-        if (null === $scope) {
-            return;
-        }
+            /** @var UrlItem $item */
+            foreach ($this->processResolvedNode($resolvedNode, $website) as $item) {
+                if (!empty($dumpedLocations[$item->getLocation()])) {
+                    continue;
+                }
+                $dumpedLocations[$item->getLocation()] = true;
 
-        $resolvedNode = $this->contentNodeTreeResolver->getResolvedContentNode($rootNode, $scope);
-        if (!$resolvedNode) {
-            return;
-        }
-
-        foreach ($this->processResolvedNode($resolvedNode, $website) as $item) {
-            yield $item;
+                yield $item;
+            }
         }
     }
 
@@ -119,23 +87,21 @@ class ContentVariantUrlItemsProvider implements UrlItemsProviderInterface
         }
     }
 
-    /**
-     * @return ObjectRepository|ContentNodeRepository
-     */
-    protected function getContentNodeRepository()
+    private function getScopes(): array
     {
-        return $this->registry
-            ->getManagerForClass(ContentNode::class)
-            ->getRepository(ContentNode::class);
-    }
+        $qb = $this->registry->getManagerForClass(Scope::class)->createQueryBuilder();
+        $qb
+            ->from(Scope::class, 'scope')
+            ->select('scope')
+            ->innerJoin(
+                Slug::class,
+                'slug',
+                Join::WITH,
+                $qb->expr()->isMemberOf('scope', 'slug.scopes')
+            );
 
-    /**
-     * @return ObjectRepository|SlugRepository
-     */
-    protected function getSlugRepository()
-    {
-        return $this->registry
-            ->getManagerForClass(Slug::class)
-            ->getRepository(Slug::class);
+        $this->scopeQueryBuilderModifier->applyScopeCriteria($qb, 'scope');
+
+        return $qb->getQuery()->getResult();
     }
 }

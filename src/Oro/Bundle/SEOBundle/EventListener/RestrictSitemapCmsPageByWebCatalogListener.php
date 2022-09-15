@@ -6,10 +6,9 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 use Oro\Bundle\SEOBundle\Event\RestrictSitemapEntitiesEvent;
+use Oro\Bundle\SEOBundle\Modifier\ScopeQueryBuilderModifierInterface;
 use Oro\Bundle\SEOBundle\Sitemap\Provider\CmsPageSitemapRestrictionProvider;
-use Oro\Bundle\SEOBundle\Sitemap\Provider\WebCatalogScopeCriteriaProvider;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
@@ -19,48 +18,37 @@ use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
  */
 class RestrictSitemapCmsPageByWebCatalogListener
 {
-    private ConfigManager $configManager;
-    private WebCatalogScopeCriteriaProvider $scopeCriteriaProvider;
-    private CmsPageSitemapRestrictionProvider $provider;
-
     public function __construct(
-        ConfigManager $configManager,
-        WebCatalogScopeCriteriaProvider $scopeCriteriaProvider,
-        CmsPageSitemapRestrictionProvider $provider
+        private ConfigManager $configManager,
+        private CmsPageSitemapRestrictionProvider $provider,
+        private ScopeQueryBuilderModifierInterface $scopeQueryBuilderModifier
     ) {
-        $this->configManager = $configManager;
-        $this->scopeCriteriaProvider = $scopeCriteriaProvider;
-        $this->provider = $provider;
     }
 
-    public function restrictQueryBuilder(RestrictSitemapEntitiesEvent $event)
+    public function restrictQueryBuilder(RestrictSitemapEntitiesEvent $event): void
     {
         if ($this->provider->isRestrictionActive($event->getWebsite())) {
             $this->restrict($event);
         }
     }
 
-    private function restrict(RestrictSitemapEntitiesEvent $event)
+    private function restrict(RestrictSitemapEntitiesEvent $event): void
     {
         $em = $event->getQueryBuilder()->getEntityManager();
         $website = $event->getWebsite();
+
+        $qb = $event->getQueryBuilder();
+        $rootAliases = $qb->getRootAliases();
 
         $webCatalogId = $this->configManager->get(
             'oro_web_catalog.web_catalog',
             false,
             false,
-            $website
+            $event->getWebsite()
         );
-
-        $scopeCriteria = $this->scopeCriteriaProvider->getWebCatalogScopeForAnonymousCustomerGroup($website);
-
-        $qb = $event->getQueryBuilder();
-        $rootAliases = $qb->getRootAliases();
-
         $webCatalogEntitiesQueryBuilder = $this->getWebCatalogEntityIdsQueryBuilder(
             reset($rootAliases),
             $em,
-            $scopeCriteria,
             $webCatalogId
         );
 
@@ -79,7 +67,6 @@ class RestrictSitemapCmsPageByWebCatalogListener
     private function getWebCatalogEntityIdsQueryBuilder(
         string $rootAlias,
         EntityManager $em,
-        ScopeCriteria $scopeCriteria,
         int $webCatalogId
     ): QueryBuilder {
         $subQb = $em->createQueryBuilder();
@@ -104,7 +91,7 @@ class RestrictSitemapCmsPageByWebCatalogListener
             ->setParameter('pageType', 'cms_page')
             ->setParameter('webCatalogId', $webCatalogId);
 
-        $scopeCriteria->applyWhereWithPriority($subQb, 'scopes');
+        $this->scopeQueryBuilderModifier->applyScopeCriteria($subQb, 'scopes');
 
         return $subQb;
     }

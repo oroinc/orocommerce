@@ -2,13 +2,11 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Layout\DataProvider;
 
-use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentNode;
 use Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ContentNodeTreeResolverInterface;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
-use Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentNodeRepository;
 use Oro\Bundle\WebCatalogBundle\Provider\RequestWebContentScopeProvider;
 use Oro\Bundle\WebCatalogBundle\Provider\WebCatalogProvider;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
@@ -27,7 +25,6 @@ class MenuDataProvider
     private const URL = 'url';
     private const CHILDREN = 'children';
 
-    private ManagerRegistry $doctrine;
     private LocalizationHelper $localizationHelper;
     private RequestWebContentScopeProvider $requestWebContentScopeProvider;
     private WebCatalogProvider $webCatalogProvider;
@@ -38,14 +35,12 @@ class MenuDataProvider
     private ?ContentNode $rootNode = null;
 
     public function __construct(
-        ManagerRegistry $doctrine,
         WebCatalogProvider $webCatalogProvider,
         ContentNodeTreeResolverInterface $contentNodeTreeResolver,
         LocalizationHelper $localizationHelper,
         RequestWebContentScopeProvider $requestWebContentScopeProvider,
         WebsiteManager $websiteManager
     ) {
-        $this->doctrine = $doctrine;
         $this->webCatalogProvider = $webCatalogProvider;
         $this->contentNodeTreeResolver = $contentNodeTreeResolver;
         $this->localizationHelper = $localizationHelper;
@@ -121,13 +116,6 @@ class MenuDataProvider
     {
         $rootItem = [];
         $rootNode = $this->getRootNode();
-        if (!$rootNode) {
-            $webCatalog = $this->webCatalogProvider->getWebCatalog();
-            if ($webCatalog) {
-                $rootNode = $this->getContentNodeRepository()->getRootNodeByWebCatalog($webCatalog);
-            }
-        }
-
         if ($rootNode) {
             $resolvedNode = $this->contentNodeTreeResolver->getResolvedContentNode($rootNode, $scope);
             if ($resolvedNode) {
@@ -166,20 +154,15 @@ class MenuDataProvider
     {
         if ($this->rootNode === null) {
             $website = $this->websiteManager->getCurrentWebsite();
-            $this->rootNode = $this->webCatalogProvider->getNavigationRoot($website);
+            $this->rootNode = $this->webCatalogProvider->getNavigationRootWithCatalogRootFallback($website);
         }
 
         return $this->rootNode;
     }
 
-    private function getContentNodeRepository() : ContentNodeRepository
-    {
-        return $this->doctrine->getRepository(ContentNode::class);
-    }
-
     private function getCacheKey(array $scopes, ?int $maxNodesNestedLevel): string
     {
-        $scopes = array_map(fn (Scope $scope) => $scope->getId(), $scopes);
+        $scopes = array_map(static fn (Scope $scope) => $scope->getId(), $scopes);
         sort($scopes);
         $rootNode = $this->getRootNode();
         $localization = $this->localizationHelper->getCurrentLocalization();
