@@ -10,6 +10,11 @@ use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Component\Website\WebsiteInterface;
 
+/**
+ * Provides web-catalog scope criteria for sitemap functionality
+ *
+ * @deprecated Will be removed in 5.1
+ */
 class WebCatalogScopeCriteriaProvider
 {
     /**
