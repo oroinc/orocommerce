@@ -15,6 +15,8 @@ Feature: Product short description and brand microdata schema org
     And I set configuration property "oro_product.upsell_products_min_items" to "1"
     And I disable configuration options:
       | oro_product.microdata_without_prices_disabled |
+    And I enable configuration options:
+      | oro_product.microdata_description_field_enabled |
     And I set configuration property "oro_product.schema_org_description_field" to "oro_product_short_description"
     And I proceed as the Admin
     And I login as administrator
