@@ -1,0 +1,187 @@
+<?php
+
+namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Async\Topic;
+
+use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\SearchBundle\Provider\SearchMappingProvider;
+use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
+use Oro\Bundle\WebsiteSearchBundle\Async\Topic\WebsiteSearchResetIndexTopic;
+use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
+use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
+use Oro\Bundle\WebsiteSearchBundle\Engine\IndexerInputValidator;
+use Oro\Component\MessageQueue\Test\AbstractTopicTestCase;
+use Symfony\Component\OptionsResolver\Exception\InvalidArgumentException;
+
+class WebsiteSearchResetTopicTest extends AbstractTopicTestCase
+{
+    use ContextTrait;
+
+    private const WEBSITE_IDS = [101, 102];
+
+    private IndexerInputValidator $indexerInputValidator;
+
+    protected function setUp(): void
+    {
+        $mappingProvider = $this->createMock(SearchMappingProvider::class);
+
+        $mappingProvider
+            ->expects(self::any())
+            ->method('isClassSupported')
+            ->willReturnCallback(fn ($class) => class_exists($class, true));
+        $mappingProvider
+            ->expects(self::any())
+            ->method('getEntityClasses')
+            ->willReturn([Product::class]);
+
+        $websiteProvider = $this->createMock(WebsiteProviderInterface::class);
+        $websiteProvider
+            ->expects(self::any())
+            ->method('getWebsiteIds')
+            ->willReturn(self::WEBSITE_IDS);
+
+        $this->indexerInputValidator = new IndexerInputValidator($websiteProvider, $mappingProvider);
+        $this->indexerInputValidator->setManagerRegistry($this->createMock(ManagerRegistry::class));
+
+        parent::setUp();
+    }
+
+    public function getTopic(): WebsiteSearchResetIndexTopic
+    {
+        return new WebsiteSearchResetIndexTopic($this->indexerInputValidator);
+    }
+
+    public function validBodyDataProvider(): array
+    {
+        return [
+            'empty body' => [
+                'body' => [],
+                'expectedBody' => [
+                    'class' => [Product::class],
+                    'context' => [AbstractIndexer::CONTEXT_WEBSITE_IDS => self::WEBSITE_IDS],
+                ],
+            ],
+            'class is string' => [
+                'body' => [
+                    'class' => Product::class,
+                ],
+                'expectedBody' => [
+                    'class' => [Product::class],
+                    'context' => [AbstractIndexer::CONTEXT_WEBSITE_IDS => self::WEBSITE_IDS],
+                ],
+            ],
+            'class is array' => [
+                'body' => [
+                    'class' => [Product::class],
+                ],
+                'expectedBody' => [
+                    'class' => [Product::class],
+                    'context' => [AbstractIndexer::CONTEXT_WEBSITE_IDS => self::WEBSITE_IDS],
+                ],
+            ],
+            'context contains website id' => [
+                'body' => [
+                    'class' => [Product::class],
+                    'context' => [AbstractIndexer::CONTEXT_WEBSITE_IDS => [42]],
+                ],
+                'expectedBody' => [
+                    'class' => [Product::class],
+                    'context' => [AbstractIndexer::CONTEXT_WEBSITE_IDS => [42]],
+                ],
+            ],
+            'context contains string entity ids' => [
+                'body' => [
+                    'class' => [Product::class],
+                    'context' => [
+                        AbstractIndexer::CONTEXT_WEBSITE_IDS => [42],
+                        AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => ['4242'],
+                    ],
+                ],
+                'expectedBody' => [
+                    'class' => [Product::class],
+                    'context' => [
+                        AbstractIndexer::CONTEXT_WEBSITE_IDS => [42],
+                        AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [4242],
+                    ],
+                ],
+            ],
+            'context contains all defined options' => [
+                'body' => [
+                    'class' => [Product::class],
+                    'context' => [
+                        'skip_pre_processing' => true,
+                        AbstractIndexer::CONTEXT_ENTITY_CLASS_KEY => Product::class,
+                        AbstractIndexer::CONTEXT_CURRENT_WEBSITE_ID_KEY => 42,
+                        AbstractIndexer::CONTEXT_WEBSITE_IDS => [42],
+                        AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [4242],
+                        'fieldGroups' => ['group1', 'group2'],
+                    ],
+                ],
+                'expectedBody' => [
+                    'class' => [Product::class],
+                    'context' => [
+                        'skip_pre_processing' => true,
+                        AbstractIndexer::CONTEXT_ENTITY_CLASS_KEY => Product::class,
+                        AbstractIndexer::CONTEXT_CURRENT_WEBSITE_ID_KEY => 42,
+                        AbstractIndexer::CONTEXT_WEBSITE_IDS => [42],
+                        AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [4242],
+                        'fieldGroups' => ['group1', 'group2'],
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    public function invalidBodyDataProvider(): array
+    {
+        return [
+            'invalid class' => [
+                'body' => ['class' => 123],
+                'exceptionClass' => InvalidArgumentException::class,
+                'exceptionMessage' => '/The option "class" with value 123 is invalid./',
+            ],
+            'invalid context skip_pre_processing' => [
+                'body' => ['class' => Product::class, 'context' => ['skip_pre_processing' => 123]],
+                'exceptionClass' => InvalidArgumentException::class,
+                'exceptionMessage' => '/The option "context\[skip_pre_processing\]" with value 123 '
+                    . 'is expected to be of type "bool"/',
+            ],
+            'invalid context websiteIds' => [
+                'body' => [
+                    'class' => Product::class,
+                    'context' => ['skip_pre_processing' => true, AbstractIndexer::CONTEXT_WEBSITE_IDS => false],
+                ],
+                'exceptionClass' => InvalidArgumentException::class,
+                'exceptionMessage' => '/The option "context\[websiteIds\]" with value false '
+                    . 'is expected to be of type "int\[\]" or "string\[\]"/',
+            ],
+            'invalid context entityIds' => [
+                'body' => [
+                    'class' => Product::class,
+                    'context' => [
+                        'skip_pre_processing' => true,
+                        AbstractIndexer::CONTEXT_WEBSITE_IDS => [42],
+                        AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => false,
+                    ],
+                ],
+                'exceptionClass' => InvalidArgumentException::class,
+                'exceptionMessage' => '/The option "context\[entityIds\]" with value false '
+                    . 'is expected to be of type "int\[\]" or "string\[\]"/',
+            ],
+            'invalid context currentWebsiteId' => [
+                'body' => [
+                    'class' => Product::class,
+                    'context' => [
+                        'skip_pre_processing' => true,
+                        AbstractIndexer::CONTEXT_WEBSITE_IDS => [42],
+                        AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [4242],
+                        AbstractIndexer::CONTEXT_CURRENT_WEBSITE_ID_KEY => false,
+                    ],
+                ],
+                'exceptionClass' => InvalidArgumentException::class,
+                'exceptionMessage' => '/The option "context\[currentWebsiteId\]" with value false '
+                    . 'is expected to be of type "int"/',
+            ],
+        ];
+    }
+}

@@ -21,7 +21,6 @@ use Oro\Bundle\SegmentBundle\Entity\SegmentType;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Oro\Component\MessageQueue\Client\Message;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 
 /**
@@ -49,19 +48,19 @@ class ProductCollectionVariantReindexMessageSendListenerTest extends WebTestCase
         $expectedMessages = [
             [
                 'topic' => AccumulateReindexProductCollectionBySegmentTopic::NAME,
-                'message' => new Message([
+                'message' => [
                     'job_id' => $firstChildJobId,
                     'id' => $segment->getId(),
                     'website_ids' => [$this->getDefaultWebsite()->getId()],
                     'definition' => null,
                     'is_full' => false,
                     'additional_products' => [],
-                ])
-            ]
+                ],
+            ],
         ];
         $this->assertEquals(
             $expectedMessages,
-            self::getMessageCollector()->getTopicSentMessages(AccumulateReindexProductCollectionBySegmentTopic::NAME)
+            self::getTopicSentMessages(AccumulateReindexProductCollectionBySegmentTopic::NAME)
         );
     }
 
@@ -73,8 +72,7 @@ class ProductCollectionVariantReindexMessageSendListenerTest extends WebTestCase
          * @var ContentVariantInterface $contentVariant
          */
         [$segment, $contentVariant] = $this->createNewContentVariantWithSegment();
-        $messageCollector = self::getMessageCollector();
-        $messageCollector->clear();
+        self::clearMessageCollector();
 
         $qb = self::getContainer()->get('doctrine')
             ->getRepository(Job::class)
@@ -86,10 +84,8 @@ class ProductCollectionVariantReindexMessageSendListenerTest extends WebTestCase
 
         $qb->getQuery()->execute();
 
-        $this->assertEmpty(
-            $messageCollector->getTopicSentMessages(
-                AccumulateReindexProductCollectionBySegmentTopic::NAME
-            )
+        self::assertMessagesEmpty(
+            AccumulateReindexProductCollectionBySegmentTopic::NAME
         );
         $em = $this->getEntityManager();
         $em->remove($contentVariant);
@@ -102,20 +98,20 @@ class ProductCollectionVariantReindexMessageSendListenerTest extends WebTestCase
         $expectedMessages = [
             [
                 'topic' => AccumulateReindexProductCollectionBySegmentTopic::NAME,
-                'message' => new Message([
+                'message' => [
                     'job_id' => $firstChildJobId,
                     'id' => null,
                     'website_ids' => [$this->getDefaultWebsite()->getId()],
                     'definition' => $segment->getDefinition(),
                     'is_full' => true,
                     'additional_products' => [],
-                ])
-            ]
+                ],
+            ],
         ];
 
         $this->assertEquals(
             $expectedMessages,
-            $messageCollector->getTopicSentMessages(AccumulateReindexProductCollectionBySegmentTopic::NAME)
+            self::getTopicSentMessages(AccumulateReindexProductCollectionBySegmentTopic::NAME)
         );
     }
 
@@ -123,9 +119,7 @@ class ProductCollectionVariantReindexMessageSendListenerTest extends WebTestCase
     {
         $this->createNewContentVariantWithSegment();
 
-        $this->assertEmpty(
-            self::getMessageCollector()->getTopicSentMessages(AccumulateReindexProductCollectionBySegmentTopic::NAME)
-        );
+        self::assertMessagesEmpty(AccumulateReindexProductCollectionBySegmentTopic::NAME);
     }
 
     public function testListenerWhenNewSegmentCreatedAndWebCatalogIsOff()
@@ -136,9 +130,7 @@ class ProductCollectionVariantReindexMessageSendListenerTest extends WebTestCase
         $helper = self::getContainer()->get('oro_product.helper.product_collection_segment');
         $helper->setIsWebCatalogUsageProviderEnabled(false);
 
-        $this->assertEmpty(
-            self::getMessageCollector()->getTopicSentMessages(AccumulateReindexProductCollectionBySegmentTopic::NAME)
-        );
+        self::assertMessagesEmpty(AccumulateReindexProductCollectionBySegmentTopic::NAME);
     }
 
     public function testListenerWhenSegmentUpdatedButDefinitionNotChanged()
@@ -154,9 +146,7 @@ class ProductCollectionVariantReindexMessageSendListenerTest extends WebTestCase
         $entityManager->persist($segment);
         $entityManager->flush();
 
-        $this->assertEmpty(
-            self::getMessageCollector()->getTopicSentMessages(AccumulateReindexProductCollectionBySegmentTopic::NAME)
-        );
+        self::assertMessagesEmpty(AccumulateReindexProductCollectionBySegmentTopic::NAME);
     }
 
     public function testListenerWhenSegmentUpdatedAndDefinitionChanged()
@@ -182,19 +172,19 @@ class ProductCollectionVariantReindexMessageSendListenerTest extends WebTestCase
         $expectedMessages = [
             [
                 'topic' => AccumulateReindexProductCollectionBySegmentTopic::NAME,
-                'message' => new Message([
+                'message' => [
                     'job_id' => $firstChildJobId,
                     'id' => $segment->getId(),
                     'website_ids' => [$this->getDefaultWebsite()->getId()],
                     'definition' => null,
                     'is_full' => false,
                     'additional_products' => [],
-                ])
-            ]
+                ],
+            ],
         ];
         $this->assertEquals(
             $expectedMessages,
-            self::getMessageCollector()->getTopicSentMessages(AccumulateReindexProductCollectionBySegmentTopic::NAME)
+            self::getTopicSentMessages(AccumulateReindexProductCollectionBySegmentTopic::NAME)
         );
     }
 
@@ -210,7 +200,7 @@ class ProductCollectionVariantReindexMessageSendListenerTest extends WebTestCase
         $segment->setType($this->getSegmentType());
         $segment->setName('Collection');
         $segment->setEntity(Product::class);
-        $segment->setDefinition(json_encode(['columns' => [], 'filters' =>[]]));
+        $segment->setDefinition(json_encode(['columns' => [], 'filters' => []]));
 
         $contentVariant = new TestContentVariant();
         $contentVariant->setProductCollectionSegment($segment);
@@ -314,10 +304,10 @@ class ProductCollectionVariantReindexMessageSendListenerTest extends WebTestCase
                     'topic' => 'oro_product.reindex_request_item_products_by_related_job',
                     'message' => [
                         'relatedJobId' => $rootJob->getId(),
-                        'indexationFieldsGroups' => ['main']
+                        'indexationFieldsGroups' => ['main'],
                     ],
-                    'priority' => null
-                ]
+                    'priority' => null,
+                ],
             ]
         );
     }

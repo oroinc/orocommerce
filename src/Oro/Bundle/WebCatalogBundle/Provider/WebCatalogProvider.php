@@ -5,6 +5,7 @@ namespace Oro\Bundle\WebCatalogBundle\Provider;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
+use Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentNodeRepository;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Component\Website\WebsiteInterface;
 
@@ -65,5 +66,25 @@ class WebCatalogProvider
         }
 
         return null;
+    }
+
+    public function getNavigationRootWithCatalogRootFallback(WebsiteInterface $website = null): ?ContentNode
+    {
+        $contentNode = $this->getNavigationRoot($website);
+        if ($contentNode instanceof ContentNode) {
+            return $contentNode;
+        }
+
+        $webCatalog = $this->getWebCatalog($website);
+        if ($webCatalog) {
+            return $this->getContentNodeRepository()->getRootNodeByWebCatalog($webCatalog);
+        }
+
+        return null;
+    }
+
+    private function getContentNodeRepository(): ContentNodeRepository
+    {
+        return $this->registry->getRepository(ContentNode::class);
     }
 }

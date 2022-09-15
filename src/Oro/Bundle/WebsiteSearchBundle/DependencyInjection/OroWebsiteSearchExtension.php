@@ -29,6 +29,8 @@ class OroWebsiteSearchExtension extends Extension
         $loader->load('services_api.yml');
         $loader->load('attribute_types.yml');
         $loader->load('commands.yml');
+        $loader->load('mq_topics.yml');
+        $loader->load('mq_processors.yml');
 
         $configLoader = new CumulativeConfigLoader(
             'oro_website_search',

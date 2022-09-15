@@ -63,7 +63,7 @@ class ShoppingListBeforeAddToIndexListenerTest extends FrontendWebTestCase
         $shoppingList = $this->editShoppingList($shoppingList); // anonymous shopping list can't be edited.
         $expectedMessages[] = $this->getExpectedMessage($shoppingList);
 
-        $messages = self::getSentMessagesByTopic(IndexEntitiesByIdTopic::getName(), false);
+        $messages = self::getSentMessagesByTopic(IndexEntitiesByIdTopic::getName());
 
         $this->assertNotEquals($expectedMessages, $messages);
     }
@@ -80,9 +80,7 @@ class ShoppingListBeforeAddToIndexListenerTest extends FrontendWebTestCase
         $shoppingList = $this->editShoppingList($shoppingList);
         $expectedMessages[] = $this->getExpectedMessage($shoppingList);
 
-        $messages = self::getSentMessagesByTopic(IndexEntitiesByIdTopic::getName(), false);
-
-        $this->assertEquals($expectedMessages, $messages);
+        self::assertMessagesSent(IndexEntitiesByIdTopic::getName(), $expectedMessages);
     }
 
     /**

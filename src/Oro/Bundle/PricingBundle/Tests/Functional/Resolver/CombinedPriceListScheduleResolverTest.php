@@ -21,8 +21,7 @@ use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPr
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer;
-use Oro\Component\MessageQueue\Client\Message;
+use Oro\Bundle\WebsiteSearchBundle\Async\Topic\WebsiteSearchReindexTopic;
 
 class CombinedPriceListScheduleResolverTest extends WebTestCase
 {
@@ -70,11 +69,10 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
         /** @var CombinedPriceList $currentCPL */
         $currentCPL = $this->getReference($currentCPLName);
 
-        $collector = self::getMessageCollector();
-        $collector->clear();
+        self::clearMessageCollector();
         $this->resolver->updateRelations($now);
         //if price list is empty there is no need to send messages
-        $messages = $collector->getTopicSentMessages(AsyncIndexer::TOPIC_REINDEX);
+        $messages = self::getTopicSentMessages(WebsiteSearchReindexTopic::getName());
         $this->assertNotEmpty($messages);
 
         $relations = $this->getInvalidRelations(
@@ -103,13 +101,11 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
         }
         sort($expectedProducts);
 
-        $sentMessages = $this->getSentMessages();
+        $sentMessages = self::getSentMessages();
         $this->assertCount(1, $sentMessages);
         $messageData = reset($sentMessages);
         $this->assertEquals('oro.website.search.indexer.reindex', $messageData['topic']);
-        /** @var Message $message */
-        $message = $messageData['message'];
-        $messageBody = $message->getBody();
+        $messageBody = $messageData['message'];
         $this->assertEquals(Product::class, $messageBody['class'][0]);
         $actualProducts = $messageBody['context']['entityIds'];
         sort($actualProducts);

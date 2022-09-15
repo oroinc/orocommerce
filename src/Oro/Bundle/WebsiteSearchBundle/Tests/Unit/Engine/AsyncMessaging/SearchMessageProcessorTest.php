@@ -2,9 +2,12 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Engine\AsyncMessaging;
 
+use Doctrine\Common\Proxy\Proxy;
 use Doctrine\DBAL\Exception\DeadlockException;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+use Doctrine\ORM\EntityManager;
+use Doctrine\Persistence\ManagerRegistry;
 use Monolog\Logger;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -59,23 +62,16 @@ class SearchMessageProcessorTest extends \PHPUnit\Framework\TestCase
             ->willReturn(1);
 
         $this->messageProducer = $this->createMock(MessageProducerInterface::class);
-        $websiteProvider = $this->createMock(WebsiteProviderInterface::class);
-        $mappingProvider = $this->createMock(SearchMappingProvider::class);
+
         $this->reindexMessageGranularizer = $this->createMock(ReindexMessageGranularizer::class);
         $this->jobRunner = $this->createMock(JobRunner::class);
         $this->logger = $this->createMock(LoggerInterface::class);
         $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
 
-        $mappingProvider
-            ->expects(self::any())
-            ->method('isClassSupported')
-            ->willReturnCallback(fn ($class) => class_exists($class, true));
-
-        $indexerInputValidator = new IndexerInputValidator($websiteProvider, $mappingProvider);
         $this->processor = new SearchMessageProcessor(
             $this->indexer,
             $this->messageProducer,
-            $indexerInputValidator,
+            $this->createIndexerInputValidator(),
             $this->reindexMessageGranularizer,
             $this->jobRunner,
             $this->logger,
@@ -95,6 +91,35 @@ class SearchMessageProcessorTest extends \PHPUnit\Framework\TestCase
             });
     }
 
+    private function createIndexerInputValidator(): IndexerInputValidator
+    {
+        $websiteProvider = $this->createMock(WebsiteProviderInterface::class);
+        $mappingProvider = $this->createMock(SearchMappingProvider::class);
+        $mappingProvider
+            ->expects(self::any())
+            ->method('isClassSupported')
+            ->willReturnCallback(fn ($class) => class_exists($class, true));
+
+        $indexerInputValidator = new IndexerInputValidator($websiteProvider, $mappingProvider);
+
+        $managerRegistry = $this->createMock(ManagerRegistry::class);
+        $indexerInputValidator->setManagerRegistry($managerRegistry);
+
+        $entityManager = $this->createMock(EntityManager::class);
+        $managerRegistry
+            ->expects(self::any())
+            ->method('getManagerForClass')
+            ->willReturn($entityManager);
+
+        $reference = $this->createMock(Proxy::class);
+        $entityManager
+            ->expects(self::any())
+            ->method('getReference')
+            ->willReturn($reference);
+
+        return $indexerInputValidator;
+    }
+
     public function testProcessDelayedMessage(): void
     {
         $messageBody = ['jobId' => 1];
@@ -106,7 +131,7 @@ class SearchMessageProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('getBody')
             ->willReturn(json_encode($messageBody));
 
-        $message->expects(self::once())
+        $message->expects(self::any())
             ->method('getProperty')
             ->with(MessageQueConfig::PARAMETER_TOPIC_NAME)
             ->willReturn(AsyncIndexer::TOPIC_REINDEX);
@@ -128,7 +153,7 @@ class SearchMessageProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('getBody')
             ->willReturn($messageBody);
 
-        $message->expects(self::once())
+        $message->expects(self::any())
             ->method('getProperty')
             ->with(MessageQueConfig::PARAMETER_TOPIC_NAME)
             ->willReturn(AsyncIndexer::TOPIC_REINDEX);
@@ -162,7 +187,7 @@ class SearchMessageProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('getBody')
             ->willReturn($messageBody);
 
-        $message->expects(self::once())
+        $message->expects(self::any())
             ->method('getProperty')
             ->with(MessageQueConfig::PARAMETER_TOPIC_NAME)
             ->willReturn(AsyncIndexer::TOPIC_REINDEX);
@@ -188,7 +213,7 @@ class SearchMessageProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('getBody')
             ->willReturn($messageBody);
 
-        $message->expects(self::once())
+        $message->expects(self::any())
             ->method('getProperty')
             ->with(MessageQueConfig::PARAMETER_TOPIC_NAME)
             ->willReturn(AsyncIndexer::TOPIC_REINDEX);
@@ -231,7 +256,7 @@ class SearchMessageProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('getBody')
             ->willReturn(JSON::encode($messageBody));
         $message
-            ->expects(self::once())
+            ->expects(self::any())
             ->method('getProperty')
             ->with(MessageQueConfig::PARAMETER_TOPIC_NAME)
             ->willReturn($topic);
@@ -264,7 +289,7 @@ class SearchMessageProcessorTest extends \PHPUnit\Framework\TestCase
             ->willReturn(JSON::encode($messageBody));
 
         $message
-            ->expects(self::once())
+            ->expects(self::any())
             ->method('getProperty')
             ->with(MessageQueConfig::PARAMETER_TOPIC_NAME)
             ->willReturn(AsyncIndexer::TOPIC_REINDEX);
@@ -306,7 +331,7 @@ class SearchMessageProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('getBody')
             ->willReturn(JSON::encode($messageBody));
         $message
-            ->expects(self::once())
+            ->expects(self::any())
             ->method('getProperty')
             ->with(MessageQueConfig::PARAMETER_TOPIC_NAME)
             ->willReturn(AsyncIndexer::TOPIC_REINDEX);
@@ -343,7 +368,7 @@ class SearchMessageProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('getBody')
             ->willReturn(JSON::encode($messageBody));
         $message
-            ->expects(self::once())
+            ->expects(self::any())
             ->method('getProperty')
             ->with(MessageQueConfig::PARAMETER_TOPIC_NAME)
             ->willReturn(AsyncIndexer::TOPIC_REINDEX);
@@ -364,7 +389,7 @@ class SearchMessageProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('getBody')
             ->willReturn(JSON::encode(['body']));
         $message
-            ->expects(self::once())
+            ->expects(self::any())
             ->method('getProperty')
             ->with(MessageQueConfig::PARAMETER_TOPIC_NAME)
             ->willReturn('unsupported-topic');
@@ -381,10 +406,10 @@ class SearchMessageProcessorTest extends \PHPUnit\Framework\TestCase
         return [
             'save' => [
                 'message' => [
-                    'entity' => [
+                    'entity' => [[
                         'class' => TestActivity::class,
                         'id' => 13,
-                    ],
+                    ]],
                     'context' => [
                         AbstractIndexer::CONTEXT_WEBSITE_IDS => [1, 2],
                         AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [1, 2, 3],
@@ -395,10 +420,10 @@ class SearchMessageProcessorTest extends \PHPUnit\Framework\TestCase
             ],
             'delete' => [
                 'message' => [
-                    'entity' => [
+                    'entity' => [[
                         'class' => TestActivity::class,
                         'id' => 13,
-                    ],
+                    ]],
                     'context' => [
                         AbstractIndexer::CONTEXT_WEBSITE_IDS => [1, 2],
                         AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [1, 2, 3],
@@ -704,7 +729,7 @@ class SearchMessageProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('getBody')
             ->willReturn(JSON::encode($messageBody));
         $message
-            ->expects(self::once())
+            ->expects(self::any())
             ->method('getProperty')
             ->with(MessageQueConfig::PARAMETER_TOPIC_NAME)
             ->willReturn(AsyncIndexer::TOPIC_REINDEX);
