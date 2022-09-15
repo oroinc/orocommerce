@@ -6,21 +6,14 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 trait DefaultWebsiteIdTestTrait
 {
-    /**
-     * @return int
-     */
-    protected function getDefaultWebsiteId()
+    protected static function getDefaultWebsiteId(): int
     {
-        return $this->getDefaultWebsite()->getId();
+        return static::getDefaultWebsite()->getId();
     }
 
-    /**
-     * @return Website
-     */
-    protected function getDefaultWebsite()
+    protected static function getDefaultWebsite(): Website
     {
-        return $this
-            ->getContainer()
+        return self::getContainer()
             ->get('oro_website.manager')
             ->getDefaultWebsite();
     }

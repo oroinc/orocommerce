@@ -22,8 +22,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
-use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer;
-use Oro\Component\MessageQueue\Client\Message;
+use Oro\Bundle\WebsiteSearchBundle\Async\Topic\WebsiteSearchReindexTopic;
 
 /**
  * @dbIsolationPerTest
@@ -117,13 +116,8 @@ class CombinedPriceListScheduleCommandTest extends WebTestCase
 
     private function assertMessageCollectorContainsRightMessagesOnReindex()
     {
-        $reindexMessages = $this->getMessageCollector()->getTopicSentMessages(AsyncIndexer::TOPIC_REINDEX);
-        $this->assertCount(1, $reindexMessages);
-
-        /** @var Message $reindexMessage */
-        $reindexMessage = reset($reindexMessages)['message'];
-
-        $this->assertEquals(
+        self::assertMessageSent(
+            WebsiteSearchReindexTopic::getName(),
             [
                 'class' => [Product::class],
                 'context' => [
@@ -135,8 +129,7 @@ class CombinedPriceListScheduleCommandTest extends WebTestCase
                     'websiteIds' => $this->getWebsiteIds()
                 ],
                 'granulize' => true,
-            ],
-            $reindexMessage->getBody()
+            ]
         );
     }
 

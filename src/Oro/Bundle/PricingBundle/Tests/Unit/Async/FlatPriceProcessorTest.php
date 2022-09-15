@@ -4,9 +4,8 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Async;
 
 use Oro\Bundle\PricingBundle\Async\FlatPriceProcessor;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\WebsiteSearchBundle\Async\Topic\WebsiteSearchReindexTopic;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
-use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer;
-use Oro\Component\MessageQueue\Client\Message;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Job\Job;
 use Oro\Component\MessageQueue\Job\JobRunner;
@@ -65,28 +64,25 @@ class FlatPriceProcessorTest extends \PHPUnit\Framework\TestCase
             ->expects($this->exactly(3))
             ->method('send')
             ->withConsecutive(
-                [AsyncIndexer::TOPIC_REINDEX, $this->getReindexMessage(1)],
-                [AsyncIndexer::TOPIC_REINDEX, $this->getReindexMessage(2)],
-                [AsyncIndexer::TOPIC_REINDEX, $this->getReindexMessage(3)],
+                [WebsiteSearchReindexTopic::getName(), $this->getReindexMessage(1)],
+                [WebsiteSearchReindexTopic::getName(), $this->getReindexMessage(2)],
+                [WebsiteSearchReindexTopic::getName(), $this->getReindexMessage(3)],
             );
 
         $this->processor->setProductsBatchSize(1);
         $this->processor->process($this->getMessage($body), $this->getSession());
     }
 
-    private function getReindexMessage($productId): Message
+    private function getReindexMessage(int $productId): array
     {
-        return new Message(
-            [
-                'jobId' => 'childId',
-                'class' => Product::class,
-                'context' => [
-                    AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [$productId],
-                    AbstractIndexer::CONTEXT_FIELD_GROUPS => ['pricing']
-                ]
-            ],
-            AsyncIndexer::DEFAULT_PRIORITY_REINDEX
-        );
+        return [
+            'jobId' => 'childId',
+            'class' => Product::class,
+            'context' => [
+                AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [$productId],
+                AbstractIndexer::CONTEXT_FIELD_GROUPS => ['pricing']
+            ]
+        ];
     }
 
     private function getMessage(array $body): MessageInterface
