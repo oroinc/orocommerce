@@ -39,7 +39,7 @@ class ProductListBuilder
             static function (SearchQueryInterface $query) use ($productIds) {
                 $query
                     ->addWhere(Criteria::expr()->in('integer.product_id', $productIds))
-                    ->setMaxResults(-1);
+                    ->setMaxResults(count($productIds) ?: -1);
             }
         );
 
