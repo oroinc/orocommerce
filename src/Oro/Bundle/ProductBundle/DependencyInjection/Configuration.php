@@ -208,7 +208,7 @@ class Configuration implements ConfigurationInterface
                 ],
                 static::MICRODATA_WITHOUT_PRICES_DISABLED => [
                     'type' => 'boolean',
-                    'value' => true
+                    'value' => false
                 ],
                 static::SCHEMA_ORG_DESCRIPTION_FIELD => [
                     'type' => 'string',

@@ -250,7 +250,7 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                     'scope' => 'app'
                 ],
                 'microdata_without_prices_disabled' => [
-                    'value' => true,
+                    'value' => false,
                     'scope' => 'app'
                 ],
                 Configuration::SCHEMA_ORG_DESCRIPTION_FIELD => [
