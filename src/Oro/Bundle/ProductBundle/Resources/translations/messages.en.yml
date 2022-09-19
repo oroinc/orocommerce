@@ -469,7 +469,9 @@ oro:
                 product_seo.title: 'SEO'
                 schema_org:
                     title: 'Schema.org'
-                    description: 'Please check product detail page for unexpected layout shifts and changes after enabling this option in test environment before making these changes on live website.'
+                    description: |
+                        The change of the Product Description Field will not be applied immediately and will require manual start of the website search re-index.
+                        Please check product detail page for unexpected layout shifts after changing Schema.org settings in test environment before making these changes on live website.
             fields:
                 original_file_names_enabled:
                     label: 'Enable Original File Names'
