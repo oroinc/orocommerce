@@ -35,9 +35,7 @@ class WebsiteSearchProductIndexerSchemaOrgListenerTest extends \PHPUnit\Framewor
 
     private WebsiteSearchProductIndexerSchemaOrgListener $listener;
 
-    private ConfigManager|\PHPUnit\Framework\MockObject\MockObject $configManager;
-
-    private const CONFIG_KEY = "oro_product.microdata_description_field_enabled";
+    private const CONFIG_KEY = "oro_product.schema_org_description_field_enabled";
 
     protected function setUp(): void
     {
@@ -55,9 +53,9 @@ class WebsiteSearchProductIndexerSchemaOrgListenerTest extends \PHPUnit\Framewor
             ->with(Website::class)
             ->willReturn($this->websiteRepository);
 
-        $this->configManager = $this->createMock(ConfigManager::class);
+        $configManager = $this->createMock(ConfigManager::class);
 
-        $this->configManager
+        $configManager
             ->expects(self::once())
             ->method('get')
             ->with(self::CONFIG_KEY)
@@ -70,7 +68,7 @@ class WebsiteSearchProductIndexerSchemaOrgListenerTest extends \PHPUnit\Framewor
             $this->websiteContextManager,
             $this->schemaOrgProductDescriptionProvider,
             $managerRegistry,
-            $this->configManager
+            $configManager
         );
     }
 

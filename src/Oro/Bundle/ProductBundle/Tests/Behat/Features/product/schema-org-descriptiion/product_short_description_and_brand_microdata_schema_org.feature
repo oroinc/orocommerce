@@ -15,9 +15,6 @@ Feature: Product short description and brand microdata schema org
     And I set configuration property "oro_product.upsell_products_min_items" to "1"
     And I disable configuration options:
       | oro_product.microdata_without_prices_disabled |
-    And I enable configuration options:
-      | oro_product.microdata_description_field_enabled |
-    And I set configuration property "oro_product.schema_org_description_field" to "oro_product_short_description"
     And I proceed as the Admin
     And I login as administrator
 
@@ -61,6 +58,40 @@ Feature: Product short description and brand microdata schema org
       | TestSKU456 |
     And I click "Select products"
     And I save form
+
+  Scenario: Check full schema.org product description and brand in featured products are not present on the store frontend
+    Given I proceed as the Buyer
+    When I go to the homepage
+    Then I should not see schema org brand for "TestSKU456" in "Featured Products Block"
+    And I should not see schema org description for "TestSKU456" in "Featured Products Block"
+
+  Scenario: Check full schema.org product description and brand in search product list are not present on the store frontend
+    When I type "TestSKU789" in "search"
+    And I click "Search Button"
+    Then I should not see schema org brand for "TestSKU789" in "Product Frontend Grid"
+    And I should not see schema org description for "TestSKU789" in "Product Frontend Grid"
+
+  Scenario: Check full schema.org product description and brand in product view page are not present on the store frontend
+    When I click "View Details"
+    Then I should not see schema org description on page
+    And I should not see schema org brand on page
+    And I should not see schema org brand for "TestSKU123" in "Related Products Block"
+    And I should not see schema org description for "TestSKU123" in "Upsell Products Block"
+
+  Scenario: Enable schema org product description and trigger search reindex for the affected products
+    Given I proceed as the Admin
+    And I enable configuration options:
+      | oro_product.schema_org_description_field_enabled |
+    And I set configuration property "oro_product.schema_org_description_field" to "oro_product_short_description"
+    And I go to Products/ Products
+    And I click Edit TestSKU123 in grid
+    And I save and close form
+    And I go to Products/ Products
+    And I click Edit TestSKU456 in grid
+    And I save and close form
+    And I go to Products/ Products
+    And I click Edit TestSKU789 in grid
+    And I save and close form
 
   Scenario: Check short schema.org product description and brand in featured products on the store frontend
     Given I proceed as the Buyer

@@ -9,28 +9,25 @@ use Oro\Bundle\ProductBundle\Event\BuildResultProductListEvent;
 use Oro\Bundle\ProductBundle\EventListener\BuildProductListSchemaOrgListener;
 use Oro\Bundle\ProductBundle\Model\ProductView;
 use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
-use PHPUnit\Framework\MockObject\MockObject;
 
 class BuildProductListSchemaOrgListenerTest extends \PHPUnit\Framework\TestCase
 {
-    private ConfigManager|MockObject $configManager;
-
     private BuildProductListSchemaOrgListener $listener;
 
-    private const CONFIG_KEY = "oro_product.microdata_description_field_enabled";
+    private const CONFIG_KEY = "oro_product.schema_org_description_field_enabled";
 
     protected function setUp(): void
     {
-        $this->configManager = $this->createMock(ConfigManager::class);
+        $configManager = $this->createMock(ConfigManager::class);
 
-        $this->configManager
+        $configManager
             ->expects(self::once())
             ->method('get')
             ->with(self::CONFIG_KEY)
             ->willReturn(true);
 
         $this->listener = new BuildProductListSchemaOrgListener(
-            $this->configManager
+            $configManager
         );
     }
 

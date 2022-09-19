@@ -48,7 +48,7 @@ class BuildProductListSchemaOrgListener
 
     private function isSchemaOrgDescriptionEnabled(): bool
     {
-        return $this->configManager->get(
+        return (bool) $this->configManager->get(
             Configuration::getConfigKeyByName(Configuration::SCHEMA_ORG_DESCRIPTION_FIELD_ENABLED)
         );
     }

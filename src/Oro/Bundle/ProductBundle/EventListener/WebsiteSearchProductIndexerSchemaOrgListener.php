@@ -39,7 +39,7 @@ class WebsiteSearchProductIndexerSchemaOrgListener
         $this->websiteContextManager = $websiteContextManager;
         $this->descriptionSchemaOrgProvider = $descriptionSchemaOrgProvider;
         $this->managerRegistry = $managerRegistry;
-        $this->configManager   = $configManager;
+        $this->configManager = $configManager;
     }
 
     public function onWebsiteSearchIndex(IndexEntityEvent $event): void
@@ -82,7 +82,7 @@ class WebsiteSearchProductIndexerSchemaOrgListener
 
     private function isSchemaOrgDescriptionEnabled(): bool
     {
-        return $this->configManager->get(
+        return (bool) $this->configManager->get(
             Configuration::getConfigKeyByName(Configuration::SCHEMA_ORG_DESCRIPTION_FIELD_ENABLED)
         );
     }
