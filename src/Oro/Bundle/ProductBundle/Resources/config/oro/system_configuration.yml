@@ -667,12 +667,12 @@ system_configuration:
             data_type: string
             type: Symfony\Component\Form\Extension\Core\Type\ChoiceType
             options:
-                label: oro.product.system_configuration.fields.microdata_description_field.label
-                tooltip: oro.product.system_configuration.fields.microdata_description_field.label
+                label: oro.product.system_configuration.fields.schema_org_description_field.label
+                tooltip: oro.product.system_configuration.fields.schema_org_description_field.label
                 choices:
-                    oro.product.system_configuration.fields.microdata_description_field.choice.meta.label: 'oro_product_seo_description'
-                    oro.product.system_configuration.fields.microdata_description_field.choice.long.label: 'oro_product_full_description'
-                    oro.product.system_configuration.fields.microdata_description_field.choice.short.label: 'oro_product_short_description'
+                    oro.product.system_configuration.fields.schema_org_description_field.choice.meta.label: 'oro_product_seo_description'
+                    oro.product.system_configuration.fields.schema_org_description_field.choice.long.label: 'oro_product_full_description'
+                    oro.product.system_configuration.fields.schema_org_description_field.choice.short.label: 'oro_product_short_description'
 
     tree:
         system_configuration:

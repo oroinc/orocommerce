@@ -48,7 +48,7 @@ class SchemaOrgProductDescriptionProvider implements SchemaOrgProductDescription
 
     private function getSchemaOrgSettings(?object $scopeIdentifier): string
     {
-        return $this->configManager->get(
+        return (string) $this->configManager->get(
             Configuration::getConfigKeyByName(Configuration::SCHEMA_ORG_DESCRIPTION_FIELD),
             false,
             false,
