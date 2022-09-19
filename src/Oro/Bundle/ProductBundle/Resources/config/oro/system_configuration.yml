@@ -668,7 +668,7 @@ system_configuration:
             type: Symfony\Component\Form\Extension\Core\Type\ChoiceType
             options:
                 label: oro.product.system_configuration.fields.schema_org_description_field.label
-                tooltip: oro.product.system_configuration.fields.schema_org_description_field.label
+                tooltip: oro.product.system_configuration.fields.schema_org_description_field.tooltip
                 choices:
                     oro.product.system_configuration.fields.schema_org_description_field.choice.meta.label: 'oro_product_seo_description'
                     oro.product.system_configuration.fields.schema_org_description_field.choice.long.label: 'oro_product_full_description'

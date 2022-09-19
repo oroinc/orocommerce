@@ -667,6 +667,7 @@ oro:
                     tooltip: 'Some search crawlers (e.g. Google) mark pages containing embedded Schema.org Microdata without price information as invalid pages and may exclude them from search index. Unless you have an alternative custom solution (e.g. reviews or aggregated ratings system) in place, we recommend to disable Schema.org Microdata on product pages that do not include any pricing information available to such crawlers (anonymous/guest users).'
                 schema_org_description_field:
                     label: 'Used Product Description Field'
+                    tooltip: 'Please note that any advanced text formatting or additional markup will not be included.'
                     choice:
                         meta.label: 'SEO Meta Description'
                         short.label: 'Simplified Short Description'
