@@ -4,33 +4,37 @@ namespace Oro\Bundle\SEOBundle\Tests\Unit\Async;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\SEOBundle\Async\GenerateSitemapIndexProcessor;
 use Oro\Bundle\SEOBundle\Sitemap\Filesystem\PublicSitemapFilesystemAdapter;
 use Oro\Bundle\SEOBundle\Topic\GenerateSitemapIndexTopic;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\Message;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\SEO\Tools\SitemapDumperInterface;
+use Oro\Component\Testing\Unit\EntityTrait;
 use Psr\Log\LoggerInterface;
 
 class GenerateSitemapIndexProcessorTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    private $doctrine;
+    use EntityTrait;
 
-    /** @var SitemapDumperInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $sitemapDumper;
+    private ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject $doctrine;
 
-    /** @var PublicSitemapFilesystemAdapter|\PHPUnit\Framework\MockObject\MockObject */
-    private $fileSystemAdapter;
+    private SitemapDumperInterface|\PHPUnit\Framework\MockObject\MockObject $sitemapDumper;
 
-    /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $logger;
+    private PublicSitemapFilesystemAdapter|\PHPUnit\Framework\MockObject\MockObject $fileSystemAdapter;
 
-    /** @var GenerateSitemapIndexProcessor */
-    private $processor;
+    private LoggerInterface|\PHPUnit\Framework\MockObject\MockObject $logger;
+
+    private WebsiteManager|\PHPUnit\Framework\MockObject\MockObject $websiteManager;
+
+    private ConfigManager|\PHPUnit\Framework\MockObject\MockObject $configManager;
+
+    private GenerateSitemapIndexProcessor $processor;
 
     protected function setUp(): void
     {
@@ -38,12 +42,16 @@ class GenerateSitemapIndexProcessorTest extends \PHPUnit\Framework\TestCase
         $this->sitemapDumper = $this->createMock(SitemapDumperInterface::class);
         $this->fileSystemAdapter = $this->createMock(PublicSitemapFilesystemAdapter::class);
         $this->logger = $this->createMock(LoggerInterface::class);
+        $this->websiteManager = $this->createMock(WebsiteManager::class);
+        $this->configManager = $this->createMock(ConfigManager::class);
 
         $this->processor = new GenerateSitemapIndexProcessor(
             $this->doctrine,
             $this->sitemapDumper,
             $this->fileSystemAdapter,
-            $this->logger
+            $this->logger,
+            $this->websiteManager,
+            $this->configManager
         );
     }
 
@@ -76,10 +84,10 @@ class GenerateSitemapIndexProcessorTest extends \PHPUnit\Framework\TestCase
         $messageId = '1000';
         $message = $this->getMessage($messageId, [
             'version' => $version,
-            'websiteIds' => $websiteIds
+            'websiteIds' => $websiteIds,
         ]);
 
-        $website = $this->createMock(Website::class);
+        $website = $this->getEntity(Website::class, ['id' => 123]);
         $em = $this->createMock(EntityManagerInterface::class);
         $em->expects(self::once())
             ->method('find')
@@ -89,6 +97,15 @@ class GenerateSitemapIndexProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('getManagerForClass')
             ->with(Website::class)
             ->willReturn($em);
+
+        $this->websiteManager
+            ->expects($this->once())
+            ->method('setCurrentWebsite')
+            ->with($website);
+        $this->configManager
+            ->expects($this->once())
+            ->method('setScopeId')
+            ->with(123);
 
         $this->sitemapDumper->expects(self::once())
             ->method('dump')
@@ -113,10 +130,10 @@ class GenerateSitemapIndexProcessorTest extends \PHPUnit\Framework\TestCase
         $messageId = '1000';
         $message = $this->getMessage($messageId, [
             'version' => $version,
-            'websiteIds' => $websiteIds
+            'websiteIds' => $websiteIds,
         ]);
 
-        $website = $this->createMock(Website::class);
+        $website = $this->getEntity(Website::class, ['id' => 123]);
         $em = $this->createMock(EntityManagerInterface::class);
         $em->expects(self::once())
             ->method('find')
@@ -126,6 +143,15 @@ class GenerateSitemapIndexProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('getManagerForClass')
             ->with(Website::class)
             ->willReturn($em);
+
+        $this->websiteManager
+            ->expects($this->once())
+            ->method('setCurrentWebsite')
+            ->with($website);
+        $this->configManager
+            ->expects($this->once())
+            ->method('setScopeId')
+            ->with(123);
 
         $exception = new \Exception('Test');
 
@@ -142,7 +168,7 @@ class GenerateSitemapIndexProcessorTest extends \PHPUnit\Framework\TestCase
                 'Unexpected exception occurred during generating a sitemap index for a website.',
                 [
                     'websiteId' => 123,
-                    'exception' => $exception
+                    'exception' => $exception,
                 ]
             );
 
@@ -159,10 +185,10 @@ class GenerateSitemapIndexProcessorTest extends \PHPUnit\Framework\TestCase
         $messageId = '1000';
         $message = $this->getMessage($messageId, [
             'version' => $version,
-            'websiteIds' => $websiteIds
+            'websiteIds' => $websiteIds,
         ]);
 
-        $website = $this->createMock(Website::class);
+        $website = $this->getEntity(Website::class, ['id' => 123]);
         $em = $this->createMock(EntityManagerInterface::class);
         $em->expects(self::once())
             ->method('find')
@@ -172,6 +198,15 @@ class GenerateSitemapIndexProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('getManagerForClass')
             ->with(Website::class)
             ->willReturn($em);
+
+        $this->websiteManager
+            ->expects($this->once())
+            ->method('setCurrentWebsite')
+            ->with($website);
+        $this->configManager
+            ->expects($this->once())
+            ->method('setScopeId')
+            ->with(123);
 
         $exception = new \Exception('Test');
 
@@ -188,7 +223,7 @@ class GenerateSitemapIndexProcessorTest extends \PHPUnit\Framework\TestCase
                 'Unexpected exception occurred during moving the generated sitemaps.',
                 [
                     'websiteIds' => [123],
-                    'exception' => $exception
+                    'exception' => $exception,
                 ]
             );
 
@@ -205,10 +240,10 @@ class GenerateSitemapIndexProcessorTest extends \PHPUnit\Framework\TestCase
         $messageId = '1000';
         $message = $this->getMessage($messageId, [
             'version' => $version,
-            'websiteIds' => $websiteIds
+            'websiteIds' => $websiteIds,
         ]);
 
-        $website = $this->createMock(Website::class);
+        $website = $this->getEntity(Website::class, ['id' => 2]);
         $em = $this->createMock(EntityManagerInterface::class);
         $em->expects(self::exactly(2))
             ->method('find')
@@ -224,6 +259,15 @@ class GenerateSitemapIndexProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('getManagerForClass')
             ->with(Website::class)
             ->willReturn($em);
+
+        $this->websiteManager
+            ->expects($this->once())
+            ->method('setCurrentWebsite')
+            ->with($website);
+        $this->configManager
+            ->expects($this->once())
+            ->method('setScopeId')
+            ->with(2);
 
         $this->sitemapDumper->expects(self::once())
             ->method('dump')
@@ -249,11 +293,11 @@ class GenerateSitemapIndexProcessorTest extends \PHPUnit\Framework\TestCase
         $messageId = '1000';
         $message = $this->getMessage($messageId, [
             'version' => $version,
-            'websiteIds' => $websiteIds
+            'websiteIds' => $websiteIds,
         ]);
 
-        $website1 = $this->createMock(Website::class);
-        $website2 = $this->createMock(Website::class);
+        $website1 = $this->getEntity(Website::class, ['id' => 1]);
+        $website2 = $this->getEntity(Website::class, ['id' => 2]);
         $em = $this->createMock(EntityManagerInterface::class);
         $em->expects(self::exactly(2))
             ->method('find')
@@ -269,6 +313,15 @@ class GenerateSitemapIndexProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('getManagerForClass')
             ->with(Website::class)
             ->willReturn($em);
+
+        $this->websiteManager
+            ->expects(self::exactly(2))
+            ->method('setCurrentWebsite')
+            ->withConsecutive([$website1], [$website2]);
+        $this->configManager
+            ->expects(self::exactly(2))
+            ->method('setScopeId')
+            ->withConsecutive([1], [2]);
 
         $exception = new \Exception('Test');
         $this->sitemapDumper->expects(self::exactly(2))
@@ -288,7 +341,7 @@ class GenerateSitemapIndexProcessorTest extends \PHPUnit\Framework\TestCase
                 'Unexpected exception occurred during generating a sitemap index for a website.',
                 [
                     'websiteId' => 1,
-                    'exception' => $exception
+                    'exception' => $exception,
                 ]
             );
 

@@ -1,0 +1,19 @@
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    productPrecision1:
+        unit: '@product_unit.bottle'
+        precision: '1'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    productName1:
+        string: 'Product'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+      sku: 'SKU1'
+      primaryUnitPrecision: '@productPrecision1'
+      __calls:
+          - addName: ['@productName1']
+      inventoryStatus: '@in_stock'
+      status: 'enabled'
+      attributeFamily: '@default_product_family'
+      organization: '@organization'

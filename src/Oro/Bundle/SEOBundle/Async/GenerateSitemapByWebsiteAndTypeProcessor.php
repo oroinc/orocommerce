@@ -3,8 +3,10 @@
 namespace Oro\Bundle\SEOBundle\Async;
 
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\SEOBundle\Topic\GenerateSitemapByWebsiteAndTypeTopic;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Job\JobRunner;
@@ -19,24 +21,14 @@ use Psr\Log\LoggerInterface;
  */
 class GenerateSitemapByWebsiteAndTypeProcessor implements MessageProcessorInterface, TopicSubscriberInterface
 {
-    private JobRunner $jobRunner;
-
-    private ManagerRegistry $doctrine;
-
-    private SitemapDumperInterface $sitemapDumper;
-
-    private LoggerInterface $logger;
-
     public function __construct(
-        JobRunner $jobRunner,
-        ManagerRegistry $doctrine,
-        SitemapDumperInterface $sitemapDumper,
-        LoggerInterface $logger
+        private JobRunner $jobRunner,
+        private ManagerRegistry $doctrine,
+        private SitemapDumperInterface $sitemapDumper,
+        private LoggerInterface $logger,
+        private WebsiteManager $websiteManager,
+        private ?ConfigManager $configManager
     ) {
-        $this->jobRunner = $jobRunner;
-        $this->doctrine = $doctrine;
-        $this->sitemapDumper = $sitemapDumper;
-        $this->logger = $logger;
     }
 
     /**
@@ -62,12 +54,15 @@ class GenerateSitemapByWebsiteAndTypeProcessor implements MessageProcessorInterf
                     if (null === $website) {
                         throw new \RuntimeException('The website does not exist.');
                     }
+
+                    $this->websiteManager->setCurrentWebsite($website);
+                    $this->configManager?->setScopeId($website->getId());
                     $this->sitemapDumper->dump(
                         $website,
                         $body[GenerateSitemapByWebsiteAndTypeTopic::VERSION],
                         $body[GenerateSitemapByWebsiteAndTypeTopic::TYPE]
                     );
-    
+
                     return true;
                 }
             );
@@ -79,6 +74,7 @@ class GenerateSitemapByWebsiteAndTypeProcessor implements MessageProcessorInterf
 
             return self::REJECT;
         }
+
         return $result ? self::ACK : self::REJECT;
     }
 

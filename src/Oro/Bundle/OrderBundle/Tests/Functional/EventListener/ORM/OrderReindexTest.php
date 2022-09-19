@@ -17,7 +17,7 @@ use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
-use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer;
+use Oro\Bundle\WebsiteSearchBundle\Async\Topic\WebsiteSearchReindexTopic;
 
 /**
  * @dbIsolationPerTest
@@ -54,7 +54,7 @@ class OrderReindexTest extends FrontendWebTestCase
         $order = $this->getReference(LoadOrders::ORDER_5);
         $this->changeOrderStatus($order, OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED);
 
-        $messages = self::getSentMessagesByTopic(AsyncIndexer::TOPIC_REINDEX, true);
+        $messages = self::getSentMessagesByTopic(WebsiteSearchReindexTopic::getName());
 
         $expectedMessage = $this->getExpectedMessage($order);
 
@@ -67,7 +67,7 @@ class OrderReindexTest extends FrontendWebTestCase
         $order = $this->getReference(LoadOrders::ORDER_5);
         $this->changeOrderStatus($order, OrderStatusesProviderInterface::INTERNAL_STATUS_SHIPPED);
 
-        $messages = self::getSentMessagesByTopic(AsyncIndexer::TOPIC_REINDEX, true);
+        $messages = self::getSentMessagesByTopic(WebsiteSearchReindexTopic::getName());
 
         $expectedMessage = $this->getExpectedMessage($order);
 
@@ -84,7 +84,7 @@ class OrderReindexTest extends FrontendWebTestCase
             LoadOrders::ORDER_5
         );
 
-        $messages = self::getSentMessagesByTopic(AsyncIndexer::TOPIC_REINDEX, true);
+        $messages = self::getSentMessagesByTopic(WebsiteSearchReindexTopic::getName());
 
         $expectedMessage = $this->getExpectedMessageForLineItem($lineItem->getProduct());
 
@@ -102,7 +102,7 @@ class OrderReindexTest extends FrontendWebTestCase
         $em->remove($lineItem);
         $em->flush();
 
-        $messages = self::getSentMessagesByTopic(AsyncIndexer::TOPIC_REINDEX, true);
+        $messages = self::getSentMessagesByTopic(WebsiteSearchReindexTopic::getName());
 
         $this->assertContains($expectedMessage, $messages);
     }
@@ -124,7 +124,7 @@ class OrderReindexTest extends FrontendWebTestCase
         $em->persist($lineItem);
         $em->flush();
 
-        $messages = self::getSentMessagesByTopic(AsyncIndexer::TOPIC_REINDEX, true);
+        $messages = self::getSentMessagesByTopic(WebsiteSearchReindexTopic::getName());
 
         $this->assertContains($expectedMessage, $messages);
     }
@@ -140,7 +140,7 @@ class OrderReindexTest extends FrontendWebTestCase
         $em->flush();
 
         $expectedMessage = $this->getExpectedMessageForLineItem($lineItem->getProduct());
-        $messages = self::getSentMessagesByTopic(AsyncIndexer::TOPIC_REINDEX, true);
+        $messages = self::getSentMessagesByTopic(WebsiteSearchReindexTopic::getName());
 
         $this->assertNotContains($expectedMessage, $messages);
     }

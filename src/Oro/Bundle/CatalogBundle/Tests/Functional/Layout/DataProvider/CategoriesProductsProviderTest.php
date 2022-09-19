@@ -8,13 +8,13 @@ use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadProductsToIndex;
+use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\WebsiteSearchExtensionTrait;
 use Symfony\Component\HttpFoundation\Request;
 
 class CategoriesProductsProviderTest extends FrontendWebTestCase
 {
-    /**
-     * @inheritdoc
-     */
+    use WebsiteSearchExtensionTrait;
+
     protected function setUp(): void
     {
         $this->initClient();
@@ -28,14 +28,13 @@ class CategoriesProductsProviderTest extends FrontendWebTestCase
             ]
         );
 
-        $this->getContainer()->get('oro_website_search.indexer')
-            ->reindex(Product::class);
+        self::reindex(Product::class);
 
-        $this->getContainer()->get('request_stack')->push(Request::create(''));
+        self::getContainer()->get('request_stack')->push(Request::create(''));
         $this->setCurrentWebsite('default');
     }
 
-    public function testGetCountByCategories()
+    public function testGetCountByCategories(): void
     {
         $categoryIds = [
             $this->getCategoryId(LoadCategoryData::FIRST_LEVEL),
@@ -47,8 +46,8 @@ class CategoriesProductsProviderTest extends FrontendWebTestCase
             $this->getCategoryId(LoadCategoryData::FOURTH_LEVEL2),
         ];
 
-        $this->getContainer()->get('oro_catalog.layout.data_provider.category.cache')->clear();
-        $provider = $this->getContainer()->get('oro_catalog.layout.data_provider.featured_categories_products');
+        self::getContainer()->get('oro_catalog.layout.data_provider.category.cache')->clear();
+        $provider = self::getContainer()->get('oro_catalog.layout.data_provider.featured_categories_products');
         $result = $provider->getCountByCategories($categoryIds);
 
         $expectedResult = [
@@ -61,7 +60,7 @@ class CategoriesProductsProviderTest extends FrontendWebTestCase
             $this->getCategoryId(LoadCategoryData::FOURTH_LEVEL2) => 2,
         ];
 
-        $this->assertEquals($expectedResult, $result);
+        self::assertEquals($expectedResult, $result);
     }
 
     /**
@@ -69,7 +68,7 @@ class CategoriesProductsProviderTest extends FrontendWebTestCase
      *
      * @return int
      */
-    private function getCategoryId($reference)
+    private function getCategoryId($reference): int
     {
         return $this->getReference($reference)->getId();
     }

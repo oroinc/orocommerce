@@ -3,9 +3,11 @@
 namespace Oro\Bundle\SEOBundle\Async;
 
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\SEOBundle\Sitemap\Filesystem\PublicSitemapFilesystemAdapter;
 use Oro\Bundle\SEOBundle\Topic\GenerateSitemapIndexTopic;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
@@ -19,24 +21,14 @@ use Psr\Log\LoggerInterface;
  */
 class GenerateSitemapIndexProcessor implements MessageProcessorInterface, TopicSubscriberInterface
 {
-    private ManagerRegistry $doctrine;
-
-    private SitemapDumperInterface $sitemapDumper;
-
-    private PublicSitemapFilesystemAdapter $fileSystemAdapter;
-
-    private LoggerInterface $logger;
-
     public function __construct(
-        ManagerRegistry                $doctrine,
-        SitemapDumperInterface         $sitemapDumper,
-        PublicSitemapFilesystemAdapter $fileSystemAdapter,
-        LoggerInterface                $logger
+        private ManagerRegistry $doctrine,
+        private SitemapDumperInterface $sitemapDumper,
+        private PublicSitemapFilesystemAdapter $fileSystemAdapter,
+        private LoggerInterface $logger,
+        private WebsiteManager $websiteManager,
+        private ?ConfigManager $configManager
     ) {
-        $this->doctrine = $doctrine;
-        $this->sitemapDumper = $sitemapDumper;
-        $this->fileSystemAdapter = $fileSystemAdapter;
-        $this->logger = $logger;
     }
 
     /**
@@ -84,6 +76,8 @@ class GenerateSitemapIndexProcessor implements MessageProcessorInterface, TopicS
             }
 
             try {
+                $this->websiteManager->setCurrentWebsite($website);
+                $this->configManager?->setScopeId($website->getId());
                 $this->sitemapDumper->dump($website, $version, 'index');
                 $processedWebsiteIds[] = $websiteId;
             } catch (\Exception $e) {

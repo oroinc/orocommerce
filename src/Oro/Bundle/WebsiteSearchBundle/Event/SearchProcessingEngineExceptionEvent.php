@@ -7,22 +7,15 @@ namespace Oro\Bundle\WebsiteSearchBundle\Event;
  */
 class SearchProcessingEngineExceptionEvent
 {
-    const EVENT_NAME = 'oro_website_search.processing_engine_exception';
+    public const EVENT_NAME = 'oro_website_search.processing_engine_exception';
 
-    /**
-     * @var \Exception
-     */
-    private $exception;
+    private \Exception $exception;
 
-    /**
-     * @var null|string
-     */
-    private $consumptionResult;
+    private bool $isRetryable = false;
 
-    public function __construct(\Exception $exception, ?string $consumptionResult = null)
+    public function __construct(\Exception $exception)
     {
         $this->exception = $exception;
-        $this->consumptionResult = $consumptionResult;
     }
 
     public function getException(): \Exception
@@ -30,13 +23,13 @@ class SearchProcessingEngineExceptionEvent
         return $this->exception;
     }
 
-    public function getConsumptionResult(): ?string
+    public function isRetryable(): bool
     {
-        return $this->consumptionResult;
+        return $this->isRetryable;
     }
 
-    public function setConsumptionResult(?string $consumptionResult): void
+    public function setIsRetryable(bool $isRetryable): void
     {
-        $this->consumptionResult = $consumptionResult;
+        $this->isRetryable = $isRetryable;
     }
 }
