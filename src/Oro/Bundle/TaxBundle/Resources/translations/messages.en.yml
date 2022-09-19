@@ -11,6 +11,11 @@ oro.tax:
 
     subtotals.tax: 'Tax'
 
+    feature:
+        manage:
+            label: Tax Management
+            description: Enables creating and managing product and customer tax codes, tax rates, tax rules, and tax jurisdictions.
+
     form:
         choose: 'Choose a tax'
         tooltip.zip_codes: 'If you want to type only one zip code, you can fill any field in the row'
@@ -152,9 +157,9 @@ oro.tax:
             digital_products_eu.label: 'Digital Products Tax Codes'
             origin_address.label: 'Origin Address'
             shipping_tax_code.label: 'Tax Code'
-            shipping_tax_code.tooltip: 'A tax code is a tax identifier that in combination with tax rules defines the tax rate that is applied to the shipping tax calculation.'
+            shipping_tax_code.tooltip: 'A tax code is a tax identifier that in combination with tax rules defines the tax rate that is applied for the shipping tax calculation.'
             shipping_rates_include_tax.label: 'Shipping Rates Include Tax'
-            shipping_rates_include_tax.tooltip: 'Select the box to avoid charging taxes on shipping twice if the shipping rates provided by the shipping carrier(s) or entered manually in the management console already include tax.'
+            shipping_rates_include_tax.tooltip: 'Select the option to avoid charging taxes on shipping twice if the shipping rates provided by the shipping carrier(s) or entered manually in the back-office already include tax.'
             address_resolver_granularity:
                 label: 'Address Resolver Granularity'
                 country.label: 'Only Country'
@@ -163,7 +168,7 @@ oro.tax:
                 zip.label: 'Country, Region and Zip'
             calculate_taxes_after_promotions:
                 label: 'Calculate Taxes After Promotions'
-                tooltip: 'If this option is enabled, the taxes will be calculated on the reduced price (subtotal) after discounts are applied. Otherwise the taxes are calculated on the full price (subtotal) before discounts.'
+                tooltip: 'Enable the option to calculate taxes on the reduced price (subtotal) after discounts are applied. Otherwise the taxes are calculated on the full price (subtotal) before discounts.'
 
     providers:
         built_in.label: Built-In Table Rates

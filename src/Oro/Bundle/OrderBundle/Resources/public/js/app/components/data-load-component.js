@@ -33,17 +33,9 @@ define(function(require) {
          */
         initialize: function(options) {
             this.options = _.extend(this.options, options);
-            mediator.on('page:afterChange', this.updateOrderData, this);
-        },
-
-        dispose: function() {
-            if (this.disposed) {
-                return;
-            }
-
-            mediator.off('page:afterChange', this.updateOrderData, this);
-
-            DataLoadComponent.__super__.dispose.call(this);
+            this.listenTo(mediator, {
+                'page:afterChange': this.updateOrderData
+            });
         },
 
         updateOrderData: function() {

@@ -1,0 +1,5 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+              themes:
+                    - '@OroPricing/layouts/default/imports/oro_product_grid/oro_product_price.html.twig'

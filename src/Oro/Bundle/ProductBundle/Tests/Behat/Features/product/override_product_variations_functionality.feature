@@ -159,12 +159,14 @@ Feature: Override product variations functionality
 
   Scenario: Check that changes of grid view does not affect on results
     When I filter SKU as contains "1GB"
-    And I click "NoImage View Button"
+    And I click "Catalog Switcher Toggle"
+    And I click "No Image View"
     Then I should not see "1GB81" product
     And I should not see "1GB82" product
     And I should see "1GB83" product
 
-    When I click "List View Button"
+    When I click "Catalog Switcher Toggle"
+    And I click "List View"
     Then I should not see "1GB81" product
     And I should not see "1GB82" product
     And I should see "1GB83" product

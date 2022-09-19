@@ -20,9 +20,9 @@ class ResolvedContentNodeTest extends \PHPUnit\Framework\TestCase
             ->addLocalizedUrl((new LocalizedFallbackValue())->setString('/test/content'));
         $titles2 = new ArrayCollection([(new LocalizedFallbackValue())->setString('Title 1')]);
 
-        $childNode = new ResolvedContentNode(2, 'root__second', $titles2, $variant2);
+        $childNode = new ResolvedContentNode(2, 'root__second', 2, $titles2, $variant2);
 
-        $node = new ResolvedContentNode(1, 'root', $titles1, $variant1);
+        $node = new ResolvedContentNode(1, 'root', 1, $titles1, $variant1);
         $node->addChildNode($childNode);
 
         $this->assertEquals(1, $node->getId());

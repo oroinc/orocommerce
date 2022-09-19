@@ -29,11 +29,11 @@ class ProductAutocompleteListener implements FeatureToggleableInterface
     public function onCollectAutocompleteFields(CollectAutocompleteFieldsEvent $event): void
     {
         if ($this->featureChecker->isFeatureEnabled('oro_price_lists_flat')) {
-            $event->addField('decimal.minimal_price_PRICE_LIST_ID_CURRENCY as pl_price');
+            $event->addField('decimal.minimal_price.PRICE_LIST_ID_CURRENCY as pl_price');
         }
 
         if ($this->featureChecker->isFeatureEnabled('oro_price_lists_combined')) {
-            $event->addField('decimal.minimal_price_CPL_ID_CURRENCY as cpl_price');
+            $event->addField('decimal.minimal_price.CPL_ID_CURRENCY as cpl_price');
         }
     }
 

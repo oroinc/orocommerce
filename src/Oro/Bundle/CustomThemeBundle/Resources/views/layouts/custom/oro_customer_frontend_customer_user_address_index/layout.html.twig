@@ -1,0 +1,40 @@
+{% block _customer_address_book_user_addresses_list_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' list-address-book'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _customer_address_book_addresses_list_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' list-address-book'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _user_addresses_user_addresses_head_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' list-address-book__head'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+
+{% block _company_addresses_user_addresses_head_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' list-address-book__head'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}

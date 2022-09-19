@@ -195,7 +195,7 @@
     <div class="row-oro">
         {% set prototype_name = form.vars.prototype_name %}
         <div {{ block('widget_container_attributes') }}>
-            <table class="grid table-hover table table-bordered table-condensed">
+            <table class="grid grid-main-container table-hover table table-bordered table-condensed">
                 <thead>
                 <tr>
                     <th><span>{{ 'oro.rfp.frontend.request.lineitem.product'|trans }}</span></th>
@@ -464,6 +464,7 @@
     {% if offers is defined and offers|length %}
         {% set page_component_options = {
         offersSelector: '[name="%s"]'|format(full_name),
+        priceSelector: '#%s'|format(form.parent.price.value.vars.id),
         quantitySelector: '#%s'|format(form.parent.quantity.vars.id),
         unitSelector: '#%s'|format(form.parent.productUnit.vars.id),
         productSelector: '#%s'|format(form.parent.product.vars.id),
@@ -471,7 +472,7 @@
         offersDataSelector: '#%s'|format(form.parent.offers_data.vars.id),
         } %}
 
-        <table class="grid table table-hover table-bordered order-line-item-offers"
+        <table class="grid grid-main-container table table-hover table-bordered order-line-item-offers"
                data-page-component-module="ororfp/js/app/components/order-line-item-offers"
                data-page-component-options="{{ page_component_options|json_encode }}">
             <tbody>
@@ -491,11 +492,15 @@
         {% if quantity is not empty %}
             {% set quantity = quantity|oro_format_decimal %}
         {% endif %}
+        {% set price = offer.price %}
+        {% if price is not empty %}
+            {% set price = price|oro_format_decimal %}
+        {% endif %}
         {{ form_widget(form, {
             attr: {
                 'data-quantity': quantity|default,
                 'data-unit': offer.unit|default,
-                'data-price': offer.price|default,
+                'data-price': price|default,
                 'data-currency': offer.currency|default
             }
         }) }}

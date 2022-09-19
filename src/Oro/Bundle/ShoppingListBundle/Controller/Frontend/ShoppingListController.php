@@ -4,7 +4,7 @@ namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend;
 
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\DataGridBundle\Controller\GridController;
-use Oro\Bundle\FormBundle\Model\UpdateHandler;
+use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
@@ -28,11 +28,8 @@ class ShoppingListController extends AbstractController
      * @Route("/{id}", name="oro_shopping_list_frontend_view", defaults={"id" = null}, requirements={"id"="\d+"})
      * @Layout
      * @AclAncestor("oro_shopping_list_frontend_view")
-     *
-     * @param ShoppingList|null $shoppingList
-     * @return array
      */
-    public function viewAction(ShoppingList $shoppingList = null)
+    public function viewAction(ShoppingList $shoppingList = null): array
     {
         if (!$shoppingList) {
             $shoppingList = $this->get(CurrentShoppingListManager::class)->getCurrent();
@@ -98,20 +95,13 @@ class ShoppingListController extends AbstractController
      * )
      * @Layout
      * @AclAncestor("oro_shopping_list_frontend_update")
-     *
-     * @param ShoppingList $shoppingList
-     * @param Request $request
-     * @param string $gridName
-     * @param string $actionName
-     *
-     * @return array|Response
      */
     public function moveMassActionAction(
         ShoppingList $shoppingList,
         Request $request,
         string $gridName,
         string $actionName
-    ) {
+    ): array|Response {
         if ($request->getMethod() === Request::METHOD_GET) {
             return [
                 'data' => [
@@ -153,11 +143,8 @@ class ShoppingListController extends AbstractController
      *      permission="CREATE",
      *      group_name="commerce"
      * )
-     *
-     * @param Request $request
-     * @return array|Response
      */
-    public function createAction(Request $request)
+    public function createAction(Request $request): array|Response
     {
         $shoppingList = $this->get(ShoppingListManager::class)->create();
 
@@ -174,54 +161,33 @@ class ShoppingListController extends AbstractController
 
         return ['data' => array_merge($defaultResponse, $response)];
     }
-
-    /**
-     * @param Request $request
-     * @param ShoppingList $shoppingList
-     *
-     * @return array|Response
-     */
-    protected function create(Request $request, ShoppingList $shoppingList)
+    
+    protected function create(Request $request, ShoppingList $shoppingList): array|Response
     {
-        $form = $this->createForm(ShoppingListType::class);
-
         $handler = new ShoppingListHandler(
-            $form,
-            $request,
             $this->get(CurrentShoppingListManager::class),
             $this->getDoctrine()
         );
 
-        return $this->get(UpdateHandler::class)->handleUpdate(
+        return $this->get(UpdateHandlerFacade::class)->update(
             $shoppingList,
             $this->createForm(ShoppingListType::class, $shoppingList),
-            function (ShoppingList $shoppingList) {
-                return [
-                    'route' => 'oro_shopping_list_frontend_view',
-                    'parameters' => ['id' => $shoppingList->getId()]
-                ];
-            },
-            function (ShoppingList $shoppingList) {
-                return [
-                    'route' => 'oro_shopping_list_frontend_update',
-                    'parameters' => ['id' => $shoppingList->getId()]
-                ];
-            },
             $this->get(TranslatorInterface::class)->trans('oro.shoppinglist.controller.shopping_list.saved.message'),
+            $request,
             $handler
         );
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public static function getSubscribedServices()
     {
         return array_merge(parent::getSubscribedServices(), [
             CurrentShoppingListManager::class,
             ShoppingListManager::class,
-            UpdateHandler::class,
-            TranslatorInterface::class
+            TranslatorInterface::class,
+            UpdateHandlerFacade::class
         ]);
     }
 }

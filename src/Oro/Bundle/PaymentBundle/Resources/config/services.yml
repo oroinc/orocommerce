@@ -352,7 +352,7 @@ services:
         public: false
         arguments:
             - '@oro_ui.html_tag_helper'
-            - '@oro_frontend_localization.manager.user_localization'
+            - '@oro_locale.provider.current_localization'
 
     oro_payment.provider.payment_order_shipping_address_options:
         class: 'Oro\Bundle\PaymentBundle\Provider\PaymentOrderShippingAddressOptionsProvider'

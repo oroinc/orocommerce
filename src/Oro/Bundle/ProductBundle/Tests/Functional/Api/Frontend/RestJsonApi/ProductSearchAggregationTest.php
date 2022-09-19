@@ -14,6 +14,7 @@ use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\WebsiteSearchExtensionTrait;
 class ProductSearchAggregationTest extends FrontendRestJsonApiTestCase
 {
     use WebsiteSearchExtensionTrait;
+    use ProductSearchEngineCheckTrait;
 
     protected function setUp(): void
     {
@@ -40,24 +41,6 @@ class ProductSearchAggregationTest extends FrontendRestJsonApiTestCase
         return
             class_exists('Oro\Bundle\ElasticSearchBundle\Engine\ElasticSearch')
             && \Oro\Bundle\ElasticSearchBundle\Engine\ElasticSearch::ENGINE_NAME === $this->getSearchEngine();
-    }
-
-    /**
-     * @return bool
-     */
-    private function isOrmEngine()
-    {
-        return \Oro\Bundle\SearchBundle\Engine\Orm::ENGINE_NAME === $this->getSearchEngine();
-    }
-
-    /**
-     * @return string
-     */
-    private function getSearchEngine()
-    {
-        return self::getContainer()
-            ->get('oro_website_search.engine.parameters')
-            ->getEngineName();
     }
 
     public function testSeveralAggregates()
@@ -304,7 +287,7 @@ class ProductSearchAggregationTest extends FrontendRestJsonApiTestCase
     public function testCountByEnumForOrmEngine()
     {
         if (!$this->isOrmEngine()) {
-            $this->markTestSkipped('ORM search engine is not configured.');
+            $this->markTestSkipped('This test works only with ORM search engine.');
         }
         $response = $this->cget(
             ['entity' => 'productsearch'],
@@ -328,7 +311,7 @@ class ProductSearchAggregationTest extends FrontendRestJsonApiTestCase
     public function testCountByMultiEnumForOrmEngine()
     {
         if (!$this->isOrmEngine()) {
-            $this->markTestSkipped('ORM search engine is not configured.');
+            $this->markTestSkipped('This test works only with ORM search engine.');
         }
         $response = $this->cget(
             ['entity' => 'productsearch'],
@@ -771,6 +754,10 @@ class ProductSearchAggregationTest extends FrontendRestJsonApiTestCase
 
     public function testSumByMinimalPrice()
     {
+        if (!$this->isOrmEngine()) {
+            $this->markTestSkipped('This test works only with ORM search engine.');
+        }
+
         $response = $this->cget(
             ['entity' => 'productsearch'],
             [
@@ -792,6 +779,10 @@ class ProductSearchAggregationTest extends FrontendRestJsonApiTestCase
 
     public function testSumByMinimalPriceWithUnit()
     {
+        if (!$this->isOrmEngine()) {
+            $this->markTestSkipped('This test works only with ORM search engine.');
+        }
+
         $response = $this->cget(
             ['entity' => 'productsearch'],
             [

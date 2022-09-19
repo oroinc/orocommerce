@@ -68,12 +68,14 @@ define(function(require) {
                     this.options.selectors.lineItemDataAttr,
                     $(this.options.selectors.lineItemDataAttrSelector).length
                 );
-
-            mediator.on('entry-point:order:load:before', this.initializeAttribute, this);
-            mediator.on('entry-point:order:load:before', this.showLoadingMask, this);
-            mediator.on('entry-point:order:load', this.setOrderTaxes, this);
-            mediator.on('entry-point:order:load:after', this.hideLoadingMask, this);
-
+            this.listenTo(mediator, {
+                'entry-point:order:load:before': () => {
+                    this.initializeAttribute();
+                    this.showLoadingMask();
+                },
+                'entry-point:order:load': this.setOrderTaxes,
+                'entry-point:order:load:after': this.hideLoadingMask
+            });
             this.appliedTaxesTemplate = _.template($(this.options.selectors.appliedTaxesTemplate).html());
 
             this.$tableContainer = this.options._sourceElement.find(this.options.selectors.tableContainer);
@@ -122,22 +124,6 @@ define(function(require) {
             const itemData = _.defaults(response.taxItems[itemId], this.emptyData);
 
             this.render(itemData);
-        },
-
-        /**
-         * @inheritdoc
-         */
-        dispose: function() {
-            if (this.disposed) {
-                return;
-            }
-
-            mediator.off('entry-point:order:load:before', this.showLoadingMask, this);
-            mediator.off('entry-point:order:load:before', this.initializeAttribute, this);
-            mediator.off('entry-point:order:load', this.setOrderTaxes, this);
-            mediator.off('entry-point:order:load:after', this.hideLoadingMask, this);
-
-            OrderLineItemTaxesComponent.__super__.dispose.call(this);
         }
     });
 

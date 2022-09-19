@@ -93,7 +93,8 @@
     }
 
     &__shipping-methods,
-    &__payment-methods {
+    &__payment-methods,
+    &__shipping_date {
         margin: $checkout-view-shipping-methods-margin;
     }
 
@@ -181,8 +182,8 @@
     }
 
     .datagrid-toolbar {
-        .datagrid-toolbar__side,
-        .datagrid-toolbar__rightside {
+        .datagrid-toolbar__start,
+        .datagrid-toolbar__end {
             flex-basis: auto;
         }
     }

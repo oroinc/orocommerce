@@ -1,4 +1,0 @@
-layout:
-    actions:
-        - '@setBlockTheme':
-            themes: '@OroCMS/layouts/blank/twig_in_variables.html.twig'

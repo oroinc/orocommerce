@@ -141,11 +141,10 @@ services:
             - '@oro_redirect.routing.matched_url_decision_maker'
 
     oro_web_catalog.form.autocomplete.web_catalog.search_handler:
-        public: false
         parent: oro_form.autocomplete.search_handler
         arguments:
             - 'Oro\Bundle\WebCatalogBundle\Entity\WebCatalog'
-            - ["name"]
+            - ['name']
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: Oro\Bundle\WebCatalogBundle\Form\Type\WebCatalogType, acl_resource: oro_web_catalog_view }
 
@@ -217,6 +216,7 @@ services:
             - '@oro_web_catalog.web_catalog_provider'
         tags:
             - { name: oro_scope.provider, scopeType: web_content, priority: 250 }
+            - { name: oro_scope.provider, scopeType: web_content_for_sitemap, priority: 250 }
 
     oro_web_catalog.web_catalog_provider:
         class: Oro\Bundle\WebCatalogBundle\Provider\WebCatalogProvider
@@ -319,7 +319,6 @@ services:
     oro_web_catalog.layout.data_provider.menu_data:
         class: Oro\Bundle\WebCatalogBundle\Layout\DataProvider\MenuDataProvider
         arguments:
-            - '@doctrine'
             - '@oro_web_catalog.web_catalog_provider'
             - '@oro_web_catalog.content_node_tree_resolver'
             - '@oro_locale.helper.localization'

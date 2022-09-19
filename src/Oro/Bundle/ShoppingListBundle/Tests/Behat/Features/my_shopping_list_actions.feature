@@ -31,7 +31,7 @@ Feature: My Shopping List Actions
     When I click "Shopping List Actions"
     And I click "Duplicate"
     And I click "Yes, duplicate"
-    Then I should see "The shopping list has been duplicated" flash message
+    Then I should see "The shopping list has been duplicated" flash message and I close it
     When I open shopping list widget
     Then I should see "Shopping List 3 (Copied" in the "Shopping List Widget" element
     And I reload the page
@@ -42,7 +42,7 @@ Feature: My Shopping List Actions
     And I fill "Shopping List Rename Action Form" with:
       | Label | Shopping List 4 |
     And I click "Shopping List Action Submit"
-    Then I should see "Shopping list has been successfully renamed" flash message
+    Then I should see "Shopping list has been successfully renamed" flash message and I close it
     When I open shopping list widget
     Then I should see "Shopping List 4" on shopping list widget
     And I close shopping list widget

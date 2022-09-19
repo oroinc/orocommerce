@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Controller;
 
-use Oro\Bundle\FormBundle\Model\UpdateHandler;
+use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\UIBundle\Form\Type\TreeMoveType;
@@ -27,10 +27,8 @@ class WebCatalogController extends AbstractController
      * @Route("/", name="oro_web_catalog_index")
      * @Template
      * @AclAncestor("oro_web_catalog_view")
-     *
-     * @return array
      */
-    public function indexAction()
+    public function indexAction(): array
     {
         return [
             'entity_class' => WebCatalog::class
@@ -47,11 +45,8 @@ class WebCatalogController extends AbstractController
      *      permission="VIEW"
      * )
      * @Template()
-     *
-     * @param WebCatalog $webCatalog
-     * @return array
      */
-    public function viewAction(WebCatalog $webCatalog)
+    public function viewAction(WebCatalog $webCatalog): array
     {
         return [
             'entity' => $webCatalog
@@ -67,10 +62,8 @@ class WebCatalogController extends AbstractController
      *      class="OroWebCatalogBundle:WebCatalog",
      *      permission="CREATE"
      * )
-     *
-     * @return array
      */
-    public function createAction()
+    public function createAction(): array|RedirectResponse
     {
         return $this->update(new WebCatalog());
     }
@@ -85,11 +78,8 @@ class WebCatalogController extends AbstractController
      *      permission="EDIT"
      * )
      * @Template()
-     *
-     * @param WebCatalog $webCatalog
-     * @return array
      */
-    public function updateAction(WebCatalog $webCatalog)
+    public function updateAction(WebCatalog $webCatalog): array|RedirectResponse
     {
         return $this->update($webCatalog);
     }
@@ -103,12 +93,8 @@ class WebCatalogController extends AbstractController
      *      class="OroWebCatalogBundle:WebCatalog",
      *      permission="EDIT"
      * )
-     *
-     * @param Request $request
-     * @param WebCatalog $webCatalog
-     * @return array
      */
-    public function moveAction(Request $request, WebCatalog $webCatalog)
+    public function moveAction(Request $request, WebCatalog $webCatalog): array
     {
         $handler = $this->get(ContentNodeTreeHandler::class);
         $contentNodeRepository = $this->getDoctrine()->getRepository("OroWebCatalogBundle:ContentNode");
@@ -161,43 +147,25 @@ class WebCatalogController extends AbstractController
         return array_merge($responseData, ['form' => $form->createView()]);
     }
 
-    /**
-     * @param WebCatalog $webCatalog
-     * @return array|RedirectResponse
-     */
-    protected function update(WebCatalog $webCatalog)
+    protected function update(WebCatalog $webCatalog): array|RedirectResponse
     {
-        $form = $this->createForm(WebCatalogType::class, $webCatalog);
-
-        return $this->get(UpdateHandler::class)->handleUpdate(
+        return $this->get(UpdateHandlerFacade::class)->update(
             $webCatalog,
-            $form,
-            function (WebCatalog $webCatalog) {
-                return [
-                    'route' => 'oro_web_catalog_update',
-                    'parameters' => ['id' => $webCatalog->getId()]
-                ];
-            },
-            function (WebCatalog $webCatalog) {
-                return [
-                    'route' => 'oro_web_catalog_view',
-                    'parameters' => ['id' => $webCatalog->getId()]
-                ];
-            },
+            $this->createForm(WebCatalogType::class, $webCatalog),
             $this->get(TranslatorInterface::class)->trans('oro.webcatalog.controller.webcatalog.saved.message')
         );
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public static function getSubscribedServices()
     {
         return array_merge(parent::getSubscribedServices(), [
             ContentNodeTreeHandler::class,
             SlugGenerator::class,
-            UpdateHandler::class,
             TranslatorInterface::class,
+            UpdateHandlerFacade::class
         ]);
     }
 }

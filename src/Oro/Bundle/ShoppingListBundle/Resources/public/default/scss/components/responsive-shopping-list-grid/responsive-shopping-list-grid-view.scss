@@ -1,0 +1,41 @@
+/* @theme: default; */
+
+@include breakpoint('mobile-landscape') {
+    .responsive-shopping-list-grid-view .grid-body {
+        .sub-row {
+            padding: 0 $responsive-shopping-body-cell-offset-x-mobile;
+
+            &:not(.sub-row-last) {
+                border-bottom-width: 0;
+            }
+
+            .grid-body-cell {
+                padding-left: $responsive-shopping-view-body-cell-item-offset-mobile;
+                padding-right: $responsive-shopping-view-body-cell-item-offset-mobile;
+                border-left: $responsive-shopping-view-body-cell-border-mobile;
+                border-right: $responsive-shopping-view-body-cell-border-mobile;
+
+                &:last-child {
+                    padding-bottom: $responsive-shopping-view-body-cell-last-offset-mobile;
+                }
+            }
+
+            .grid-body-cell-item {
+                padding-top: $responsive-shopping-view-body-cell-item-offset-mobile;
+                border-top: $responsive-shopping-view-body-cell-border-mobile;
+            }
+
+            &.sub-row-last {
+                padding-bottom: $responsive-shopping-view-body-cell-item-offset-mobile;
+
+                .grid-body-cell:last-child {
+                    border-bottom: $responsive-shopping-view-body-cell-border-mobile;
+                }
+            }
+        }
+
+        .group-row {
+            padding-bottom: $responsive-shopping-view-body-cell-item-offset-mobile;
+        }
+    }
+}

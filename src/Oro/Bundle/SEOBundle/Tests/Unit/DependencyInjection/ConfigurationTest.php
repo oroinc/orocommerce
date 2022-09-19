@@ -57,6 +57,10 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                     'value' => true,
                     'scope' => 'app',
                 ],
+                'sitemap_include_landing_pages_not_in_web_catalog' => [
+                    'value' => false,
+                    'scope' => 'app',
+                ]
             ],
         ];
 

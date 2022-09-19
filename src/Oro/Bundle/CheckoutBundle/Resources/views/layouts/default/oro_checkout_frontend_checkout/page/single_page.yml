@@ -5,5 +5,7 @@ layout:
     actions:
         - '@setBlockTheme':
             themes: '@OroCheckout/layouts/default/oro_checkout_frontend_checkout/templates/single_page.html.twig'
+        - '@setFormTheme':
+            themes: '@OroCheckout/layouts/default/oro_checkout_frontend_checkout/templates/single_page_form.html.twig'
 
     conditions: 'context["workflowStepName"]=="checkout" && !context["widget_container"]'

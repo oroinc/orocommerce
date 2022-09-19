@@ -196,14 +196,6 @@ services:
             - '@event_dispatcher'
             - '@doctrine'
 
-    oro_seo.sitemap.provider.web_catalog_scope_criteria_provider:
-        class: Oro\Bundle\SEOBundle\Sitemap\Provider\WebCatalogScopeCriteriaProvider
-        public: false
-        arguments:
-            - '@oro_config.manager'
-            - '@oro_scope.scope_manager'
-            - '@doctrine'
-
     oro_seo.sitemap.provider.content_variant_items_provider:
         class: Oro\Bundle\SEOBundle\Sitemap\Provider\ContentVariantUrlItemsProvider
         public: false
@@ -212,7 +204,7 @@ services:
             - '@oro_web_catalog.web_catalog_provider'
             - '@oro_web_catalog.content_node_tree_resolver'
             - '@oro_redirect.generator.canonical_url'
-            - '@oro_seo.sitemap.provider.web_catalog_scope_criteria_provider'
+            - '@oro_seo.modifier.scope_query_builder_modifier'
         tags:
             - { name: oro_seo.sitemap.url_items_provider, alias: 'web_catalog' }
             - { name: oro_featuretogle.feature, feature: frontend_master_catalog }
@@ -250,7 +242,7 @@ services:
             - ['setEntityClass', ['Oro\Bundle\CMSBundle\Entity\Page']]
             - ['setChangeFrequencySettingsKey', ['oro_seo.sitemap_changefreq_cms_page']]
             - ['setPrioritySettingsKey', ['oro_seo.sitemap_priority_cms_page']]
-            - ['setExcludeProviderKey', ['oro_seo.sitemap_exclude_landing_pages']]
+            - ['setProvider', ['@oro_seo.sitemap.provider.restrict_cms_page_by_web_catalog_provider']]
         tags:
             - { name: oro_seo.sitemap.url_items_provider, alias: 'page' }
 
@@ -290,6 +282,8 @@ services:
             - '@oro_seo.sitemap.sitemap_index_dumper'
             - '@oro_seo.sitemap.public_filesystem_adapter'
             - '@logger'
+            - '@oro_website.manager'
+            - '@?oro_config.website'
         tags:
             - { name: oro_message_queue.client.message_processor }
 
@@ -298,9 +292,10 @@ services:
         arguments:
             - '@oro_message_queue.job.runner'
             - '@doctrine'
-            - '@oro_seo.sitemap.provider.full_list_urls_provider_registry'
             - '@oro_seo.sitemap.sitemap_url_dumper'
             - '@logger'
+            - '@oro_website.manager'
+            - '@?oro_config.website'
         tags:
             - { name: oro_message_queue.client.message_processor }
 
@@ -360,9 +355,17 @@ services:
         class: 'Oro\Bundle\SEOBundle\EventListener\RestrictSitemapCmsPageByWebCatalogListener'
         arguments:
             - '@oro_config.manager'
-            - '@oro_seo.sitemap.provider.web_catalog_scope_criteria_provider'
+            - '@oro_seo.sitemap.provider.restrict_cms_page_by_web_catalog_provider'
+            - '@oro_seo.modifier.scope_query_builder_modifier'
         tags:
-            - { name: kernel.event_listener, event: oro_seo.event.restrict_sitemap_entity.cms_page , method: restrictQueryBuilder }
+            - { name: kernel.event_listener, event: oro_seo.event.restrict_sitemap_entity.cms_page, method: restrictQueryBuilder }
+
+    oro_seo.sitemap.provider.restrict_cms_page_by_web_catalog_provider:
+        class: Oro\Bundle\SEOBundle\Sitemap\Provider\CmsPageSitemapRestrictionProvider
+        public: false
+        arguments:
+            - '@oro_config.manager'
+        tags:
             - { name: oro_featuretogle.feature, feature: frontend_master_catalog }
 
     oro_seo.event_listener.restrict_sitemap_product_by_status:
@@ -453,3 +456,8 @@ services:
         parent: oro_gaufrette.file_manager
         arguments:
             - 'sitemaps_tmp_data'
+
+    oro_seo.modifier.scope_query_builder_modifier:
+        class: Oro\Bundle\SEOBundle\Modifier\ScopeQueryBuilderModifier
+        arguments:
+            - '@oro_scope.scope_manager'

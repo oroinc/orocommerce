@@ -5,9 +5,8 @@ namespace Oro\Bundle\PricingBundle\Async;
 use Oro\Bundle\PricingBundle\Async\Topic\ResolveFlatPriceTopic;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
+use Oro\Bundle\WebsiteSearchBundle\Async\Topic\WebsiteSearchReindexTopic;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
-use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer;
-use Oro\Component\MessageQueue\Client\Message;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
@@ -71,18 +70,14 @@ class FlatPriceProcessor implements MessageProcessorInterface, TopicSubscriberIn
         $jobRunner->createDelayed(
             sprintf('%s_batch_%d', $job->getName(), $batchId),
             function (JobRunner $jobRunner, Job $child) use ($productsIds) {
-                $message = new Message(
-                    [
-                        'jobId' => $child->getId(),
-                        'class' => Product::class,
-                        'context' => [
-                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => $productsIds,
-                            AbstractIndexer::CONTEXT_FIELD_GROUPS => ['pricing']
-                        ]
+                $this->producer->send(WebsiteSearchReindexTopic::getName(), [
+                    'jobId' => $child->getId(),
+                    'class' => Product::class,
+                    'context' => [
+                        AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => $productsIds,
+                        AbstractIndexer::CONTEXT_FIELD_GROUPS => ['pricing'],
                     ],
-                    AsyncIndexer::DEFAULT_PRIORITY_REINDEX
-                );
-                $this->producer->send(AsyncIndexer::TOPIC_REINDEX, $message);
+                ]);
 
                 return true;
             }

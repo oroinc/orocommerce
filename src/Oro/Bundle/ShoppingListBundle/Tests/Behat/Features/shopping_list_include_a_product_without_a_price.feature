@@ -32,7 +32,7 @@ Feature: Shopping list include a product without a price
     And I click "View Details" for "PSKU1" product
     And I should see "Add to Shopping List"
     And I click "Add to Shopping List"
-    And I should see "Product has been added to" flash message
+    And I should see "Product has been added to" flash message and I close it
     When I follow "Account"
     And I click on "Shopping Lists Navigation Link"
     And I click View "Shopping List" in grid

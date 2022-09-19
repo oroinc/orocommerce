@@ -1,0 +1,28 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: '@OroCMS/layouts/default/oro_cms_frontend_page_view/layout.html.twig'
+        - '@setOption':
+            id: title
+            optionName: params
+            optionValue:
+                '%title%': '=data["locale"].getLocalizedValue(data["page"].getTitles())'
+        - '@setOption':
+            id: page_title
+            optionName: defaultValue
+            optionValue: '=data["locale"].getLocalizedValue(data["page"].getTitles())'
+        - '@setOption':
+            id: body
+            optionName: attr
+            optionValue:
+                class: 'cms-page-body'
+        - '@addTree':
+            items:
+                cms_page_content:
+                    blockType: wysiwyg_content
+                    options:
+                        content: '=data["page"].getContent()'
+                        contentStyle: '=data["page"].getContentStyle()'
+            tree:
+                page_content:
+                    cms_page_content: ~

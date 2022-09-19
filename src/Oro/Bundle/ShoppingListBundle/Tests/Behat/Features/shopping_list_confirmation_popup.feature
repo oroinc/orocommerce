@@ -101,7 +101,7 @@ Feature: Shopping list confirmation popup
     And type "simple-product" in "search"
     And click "Search Button"
     When I click "Add to Shopping List"
-    Then I should see "Product has been added to" flash message
+    Then I should see "Product has been added to" flash message and I close it
     When I open shopping list widget
     And click "Create Order"
     Then I should not see "This shopping list contains configurable products with no variations. Proceed to checkout without these products?"

@@ -1,0 +1,34 @@
+/* @theme: default; */
+
+.product-action-area {
+    display: flex;
+    gap: $offset-x-m;
+
+    &:empty {
+        display: none;
+    }
+
+    .product-action {
+        &:empty {
+            display: none;
+        }
+    }
+
+    .icon-selector {
+        @include fa-icon($product-action-toggle-icon-mobile, after);
+    }
+
+    &.in-sticky {
+        display: block;
+
+        .product-action {
+            display: block;
+            background-color: $datagrid-massaction-sticky-mode-background-color;
+        }
+
+        .datagrid-massaction {
+            max-width: $product-action-in-sticky-max-width;
+            margin: $product-action-in-sticky-margin;
+        }
+    }
+}

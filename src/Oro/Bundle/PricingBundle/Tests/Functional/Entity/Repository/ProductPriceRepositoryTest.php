@@ -140,7 +140,7 @@ class ProductPriceRepositoryTest extends WebTestCase
         $update->getQuery()->execute();
 
         $productIdBatches = iterator_to_array(
-            $this->repository->getProductsByPriceListAndVersion($this->shardManager, $priceList, 100, 2)
+            $this->repository->getProductsByPriceListAndVersion($this->shardManager, $priceList->getId(), 100, 2)
         );
         $this->assertCount(1, $productIdBatches);
         $productIds = reset($productIdBatches);

@@ -5,7 +5,7 @@ define(function(require) {
     const _ = require('underscore');
     const template = require('tpl-loader!oroproduct/templates/datagrid/fullscreen-sorting.html');
     const BaseView = require('oroui/js/app/views/base/view');
-    const FullscreenPopupView = require('orofrontend/blank/js/app/views/fullscreen-popup-view');
+    const FullscreenPopupView = require('orofrontend/default/js/app/views/fullscreen-popup-view');
 
     const FullscreenSorting = BaseView.extend({
         keepElement: true,

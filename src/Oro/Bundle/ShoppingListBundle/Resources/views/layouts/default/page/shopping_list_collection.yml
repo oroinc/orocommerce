@@ -1,0 +1,14 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: '@OroShoppingList/layouts/default/page/shopping_list_collection.html.twig'
+        - '@addTree':
+            items:
+                shoppinglist_collection:
+                    blockType: shopping_lists_awere_container
+                    options:
+                        shoppingLists: '=data["oro_shopping_list_customer_user_shopping_lists"].getShoppingListsForWidget()'
+                        visible: '=data["feature"].isFeatureEnabled("guest_shopping_list") || context["is_logged_in"]'
+            tree:
+                wrapper:
+                    shoppinglist_collection: ~

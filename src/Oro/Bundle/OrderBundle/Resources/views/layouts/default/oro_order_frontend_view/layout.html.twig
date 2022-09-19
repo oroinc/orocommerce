@@ -6,7 +6,7 @@
 
 {% block order_body_column_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " grid__column grid__column--6 grid__column--no-gutters-l"
+        '~class': " grid-col-6 grid-col-mobile-landscape-12"
     }) %}
 
     <div {{ block('block_attributes') }}>
@@ -79,7 +79,7 @@
 {% endblock %}
 
 {% block order_body_block_container_widget %}
-    <div class="grid__row">
+    <div class="grid">
         {{ block_widget(block) }}
     </div>
 {% endblock %}

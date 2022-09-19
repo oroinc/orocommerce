@@ -57,14 +57,14 @@ oro:
                 consent:
                     feature_enabled.label: Enable user consents feature
                     enabled_consents.label: Enabled user consents
-                    enabled_consents.tooltip: Select which of the available consents to display in the storefront.
+                    enabled_consents.tooltip: Select the consents to be displayed in the storefront.
             groups:
                 consents:
                     title: Consents
 
         feature:
-            label: User Consents
-            description: User consents functionality asking users for consents (for example to store personal data or receive emails), store and manage these consents.
+            label: Consents
+            description: Enables back-office users to create and manage consents to ensure data protection and regulations compliance, and storefront users to accept or revoke the consents.
         content_source:
             none: N/A
 

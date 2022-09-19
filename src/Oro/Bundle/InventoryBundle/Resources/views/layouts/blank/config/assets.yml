@@ -1,8 +1,0 @@
-styles:
-    inputs:
-        - 'bundles/oroinventory/blank/scss/variables/inventory-statuses-config.scss'
-        - 'bundles/oroinventory/blank/scss/variables/product-low-inventory-config.scss'
-        - 'bundles/oroinventory/blank/scss/variables/product-upcoming-label-config.scss'
-
-        - 'bundles/oroinventory/blank/scss/components/inventory-statuses.scss'
-        - 'bundles/oroinventory/blank/scss/styles.scss'

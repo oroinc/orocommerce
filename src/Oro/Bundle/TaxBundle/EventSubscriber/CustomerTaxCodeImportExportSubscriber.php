@@ -4,6 +4,7 @@ namespace Oro\Bundle\TaxBundle\EventSubscriber;
 
 use Doctrine\ORM\EntityNotFoundException;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\EntityBundle\Helper\FieldHelper;
 use Oro\Bundle\ImportExportBundle\Event\AfterEntityPageLoadedEvent;
 use Oro\Bundle\ImportExportBundle\Event\Events;
 use Oro\Bundle\ImportExportBundle\Event\LoadEntityRulesAndBackendHeadersEvent;
@@ -15,39 +16,33 @@ use Oro\Bundle\TaxBundle\Helper\CustomerTaxCodeImportExportHelper;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Import/export event subscriber for customer tax codes.
+ */
 class CustomerTaxCodeImportExportSubscriber implements EventSubscriberInterface
 {
-    /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
+    protected TranslatorInterface $translator;
 
-    /**
-     * @var CustomerTaxCodeImportExportHelper
-     */
-    private $customerTaxCodeImportExportHelper;
+    private CustomerTaxCodeImportExportHelper $customerTaxCodeImportExportHelper;
 
-    /**
-     * @var string
-     */
-    private $customerClassName;
+    private string $customerClassName;
+
+    protected FieldHelper $fieldHelper;
 
     /**
      * @var CustomerTaxCode[]
      */
-    private $customerTaxCodes = [];
+    private array $customerTaxCodes = [];
 
-    /**
-     * @param CustomerTaxCodeImportExportHelper $customerTaxManager
-     * @param string $customerClassName
-     */
     public function __construct(
         TranslatorInterface $translator,
         CustomerTaxCodeImportExportHelper $customerTaxManager,
-        $customerClassName
+        FieldHelper $fieldHelper,
+        string $customerClassName
     ) {
         $this->translator = $translator;
         $this->customerTaxCodeImportExportHelper = $customerTaxManager;
+        $this->fieldHelper = $fieldHelper;
         $this->customerClassName = $customerClassName;
     }
 
@@ -72,7 +67,11 @@ class CustomerTaxCodeImportExportSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $this->customerTaxCodes = $this->customerTaxCodeImportExportHelper->loadCustomerTaxCode($event->getRows());
+        if (!$this->isEnable()) {
+            return;
+        }
+
+        $this->customerTaxCodes += $this->customerTaxCodeImportExportHelper->loadCustomerTaxCode($rows);
     }
 
     public function normalizeEntity(NormalizeEntityEvent $event)
@@ -81,9 +80,13 @@ class CustomerTaxCodeImportExportSubscriber implements EventSubscriberInterface
             return;
         }
 
+        if (!$this->isEnable()) {
+            return;
+        }
+
         /** @var Customer $customer */
         $customer = $event->getObject();
-        $event->setResultField(
+        $event->setResultFieldValue(
             'tax_code',
             $this->customerTaxCodeImportExportHelper->normalizeCustomerTaxCode(
                 $this->getCustomerTaxCode($customer)
@@ -94,6 +97,10 @@ class CustomerTaxCodeImportExportSubscriber implements EventSubscriberInterface
     public function loadEntityRulesAndBackendHeaders(LoadEntityRulesAndBackendHeadersEvent $event)
     {
         if (!$event->isFullData() || $event->getEntityName() !== $this->customerClassName) {
+            return;
+        }
+
+        if (!$this->isEnable()) {
             return;
         }
 
@@ -152,16 +159,27 @@ class CustomerTaxCodeImportExportSubscriber implements EventSubscriberInterface
         }
     }
 
+
     /**
-     * @param Customer $customer
-     * @return CustomerTaxCode
+     * There is one issue that read of EntityReader will trigger pagination before the last item be processed.
+     * So we need to keep all customer tax codes info in local cache and only reset after fetched.
      */
-    private function getCustomerTaxCode(Customer $customer)
+    private function getCustomerTaxCode(Customer $customer): ?CustomerTaxCode
     {
         if (!isset($this->customerTaxCodes[$customer->getId()])) {
             return null;
         }
 
-        return $this->customerTaxCodes[$customer->getId()];
+        $result = $this->customerTaxCodes[$customer->getId()];
+        unset($this->customerTaxCodes[$customer->getId()]);
+        return $result;
+    }
+
+    /**
+     * Do not act when customer class has entity config about this field to prevent duplicates
+     */
+    protected function isEnable(): bool
+    {
+        return $this->fieldHelper->getConfigValue($this->customerClassName, 'taxCode', 'excluded') !== false;
     }
 }

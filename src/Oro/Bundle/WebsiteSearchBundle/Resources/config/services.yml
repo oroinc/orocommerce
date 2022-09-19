@@ -44,6 +44,7 @@ services:
         public: false
         arguments:
             - '@oro_locale.provider.current_localization'
+            - '@oro_locale.manager.localization'
         tags:
             - { name: website_search.placeholder }
 
@@ -168,6 +169,7 @@ services:
         arguments:
             - '@oro_website.website.provider'
             - '@oro_website_search.provider.search_mapping'
+            - '@doctrine'
 
     oro_website_search.async.indexer.message_granularizer.reindex:
         class: 'Oro\Bundle\WebsiteSearchBundle\Engine\AsyncMessaging\ReindexMessageGranularizer'
@@ -181,23 +183,6 @@ services:
             - '@oro_website_search.indexer'
             - '@oro_message_queue.client.message_producer'
             - '@oro_website_search.indexer.input_validator'
-
-    oro_website_search.search_processor:
-        class: Oro\Bundle\WebsiteSearchBundle\Engine\AsyncMessaging\SearchMessageProcessor
-        arguments:
-            - '@oro_website_search.indexer'
-            - '@oro_message_queue.client.message_producer'
-            - '@oro_website_search.indexer.input_validator'
-            - '@oro_website_search.async.indexer.message_granularizer.reindex'
-            - '@oro_message_queue.job.runner'
-            - '@logger'
-            - '@event_dispatcher'
-        tags:
-            - { name: 'oro_message_queue.client.message_processor', topicName: 'oro.website.search.indexer.save' }
-            - { name: 'oro_message_queue.client.message_processor', topicName: 'oro.website.search.indexer.delete' }
-            - { name: 'oro_message_queue.client.message_processor', topicName: 'oro.website.search.indexer.reset_index' }
-            - { name: 'oro_message_queue.client.message_processor', topicName: 'oro.website.search.indexer.reindex' }
-            - { name: 'oro_message_queue.client.message_processor', topicName: 'oro.website.search.indexer.reindex_granulized' }
 
     oro_website_search.reindex_request.listener:
         class: 'Oro\Bundle\WebsiteSearchBundle\EventListener\ReindexRequestListener'
@@ -328,9 +313,9 @@ services:
     oro_website_search.async.message_filter.reindex:
         class: 'Oro\Bundle\WebsiteSearchBundle\Async\MessageFilter\ReindexMessageFilter'
         arguments:
-            - !php/const Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer::TOPIC_REINDEX
+            - !php/const Oro\Bundle\WebsiteSearchBundle\Async\Topic\WebsiteSearchReindexTopic::NAME
         tags:
-            - { name: oro_message_queue.message_filter, topic: !php/const Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer::TOPIC_REINDEX }
+            - { name: oro_message_queue.message_filter, topic: !php/const Oro\Bundle\WebsiteSearchBundle\Async\Topic\WebsiteSearchReindexTopic::NAME }
 
     oro_website_search.form.extension.remove_search_boost_attribute:
         class: 'Oro\Bundle\WebsiteSearchBundle\Form\Extension\RemoveSearchBoostAttributeExtension'
@@ -354,3 +339,6 @@ services:
         class: 'Oro\Bundle\WebsiteSearchBundle\EventListener\SearchProcessingEngineExceptionListener'
         tags:
             - { name: kernel.event_listener, event: oro_website_search.processing_engine_exception, method: process }
+
+    oro_website_search.formatter.decimal_flat_value_formatter:
+        class: 'Oro\Bundle\SearchBundle\Formatter\DecimalFlatValueFormatter'

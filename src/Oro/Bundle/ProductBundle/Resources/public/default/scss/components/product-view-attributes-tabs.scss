@@ -1,0 +1,86 @@
+/* @theme: default; */
+
+@include nav-tabs(
+    $nav-tabs: $product-view-attributes-tabs,
+    $nav-tabs-item: $product-view-attributes-tabs-item,
+    $nav-tabs-link: $product-view-attributes-tabs-link,
+    $nav-tabs-background: $product-view-attributes-tabs-bg,
+    $nav-tabs-border-color: $product-view-attributes-tabs-border-color,
+
+    $nav-tabs-item-flex: 1 0 auto,
+
+    $nav-tabs-link-inner-offset: $product-view-attributes-tab-link-offset-inner,
+    $nav-tabs-link-color: $product-view-attributes-tab-link-color,
+    $nav-tabs-link-border-width: 0,
+
+    $nav-tabs-link-active-background: $product-view-attributes-tab-link-active-bg,
+    $nav-tabs-link-hover-background: none,
+    $nav-tabs-link-hover-color: inherit,
+    $nav-tabs-link-hover-text-decoration: none
+) {
+    #{$product-view-attributes-tabs} {
+        border-top-left-radius: $product-view-attributes-tabs-border-radius;
+        border-top-right-radius: $product-view-attributes-tabs-border-radius;
+    }
+
+    #{$product-view-attributes-tabs-item} {
+        &:not(:first-child) {
+            border-left: 1px solid $product-view-attributes-tabs-border-color;
+        }
+
+        &:first-child {
+            #{$product-view-attributes-tabs-link} {
+                border-top-left-radius: $product-view-attributes-tabs-border-radius;
+            }
+        }
+
+        &:last-child {
+            #{$product-view-attributes-tabs-link} {
+                border-top-right-radius: $product-view-attributes-tabs-border-radius;
+            }
+        }
+    }
+
+    #{$product-view-attributes-tabs-link} {
+        text-transform: uppercase;
+    }
+}
+
+@include breakpoint('mobile-landscape') {
+    .product-attributes-tabs {
+        flex-direction: $product-view-attributes-tabs-flex-direction-mobile-l;
+
+        border-radius: $product-view-attributes-tabs-border-radius-mobile-l;
+
+        &__item {
+            border-top: 1px solid $product-view-attributes-tabs-border-color;
+
+            &:last-child {
+                border-bottom: 1px solid $product-view-attributes-tabs-border-color;
+            }
+
+            &:not(:first-child) {
+                border-left: 0;
+            }
+        }
+
+        &__link {
+            text-align: $product-view-attributes-tabs-link-text-align-mobile-l;
+
+            @include fa-icon(var(--fa-var-angle-right), after, false, true);
+
+            &::after {
+                position: $product-view-attributes-tabs-link-after-position-mobile-l;
+                right: $product-view-attributes-tabs-link-after-right-mobile-l;
+
+                margin-top: $product-view-attributes-tabs-link-after-margin-top-mobile-l;
+
+                font-size: $product-view-attributes-tabs-link-after-font-size-mobile-l;
+            }
+
+            &.active {
+                background: transparent;
+            }
+        }
+    }
+}

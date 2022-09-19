@@ -1,0 +1,10 @@
+/* @theme: default; */
+
+$product-list-gallery-view-display: flex !default;
+$product-list-gallery-view-align-content: space-between !default;
+$product-list-gallery-view-flex-wrap: wrap !default;
+$product-list-gallery-view-offset: 30px -#{$product-item-gallery-view-offset-x} 0 !default;
+$product-list-no-image-view-offset-top: 15px !default;
+
+// mobile
+$product-list-gallery-view-offset-mobile: 20px 0 0 !default;

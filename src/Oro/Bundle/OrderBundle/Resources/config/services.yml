@@ -93,15 +93,6 @@ services:
         arguments:
             - '@oro_currency.config.currency'
 
-    oro_order.handler.order_totals_handler:
-        class: 'Oro\Bundle\OrderBundle\Handler\OrderTotalsHandler'
-        public: true
-        deprecated: The "%service_id%" service is deprecated since v1.3. Use oro_order.order.total.total_helper instead
-        arguments:
-            - '@oro_pricing.subtotal_processor.total_processor_provider'
-            - '@oro_pricing.subtotal_processor.provider.subtotal_line_item'
-            - '@oro_currency.converter.rate'
-
     oro_order.delete_handler.order_line_item:
         class: Oro\Bundle\OrderBundle\Handler\OrderLineItemDeleteHandler
         parent: oro_entity.delete_handler
@@ -180,6 +171,8 @@ services:
     oro_order.event_listener.order.address:
         class: 'Oro\Bundle\OrderBundle\EventListener\Order\OrderAddressEventListener'
         parent: oro_order.event_listener.order.form.abstract
+        calls:
+            - [setAddressManager, ['@oro_order.manager.order_address']]
         tags:
             - { name: kernel.event_listener, event: oro_order.order, method: onOrderEvent }
 

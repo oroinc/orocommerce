@@ -4,10 +4,42 @@ The current file describes significant changes in the code that may affect the u
 
 ## UNRELEASED
 
+### Added
+
+#### CMSBundle
+* Added `renderWysiwygContent` TWIG macro and a layout block type `wysiwyg_content` for rendering WYSIWYG content on storefront.
+  See article [How to Display WYSIWYG Field](https://doc.oroinc.com/bundles/commerce/CMSBundle/WYSIWYG-field/how-to-display-wysiwyg-field/)
+  for more information.
+
 ### Changed
+
+#### InventoryBundle
+
+* Inventory status website search index field has been renamed from `inventory_status` to `inv_status`
+  to avoid collision with the field name for the inventory status product attribute
+* Inventory website search index fields (inventory status, low inventory threshold, is upcoming,
+  availability date) have been moved to the separate `inventory` indexation group
 
 #### ProductBundle
 * Product search index field `product_id` has been replaced with `system_entity_id`
+
+### Removed
+
+#### CMSBundle
+* Removed `text_with_placeholders`, `wysiwyg_style` layout block types. Use `wysiwyg_content` instead.
+
+## 5.1.0-alpha.2 (2022-08-01)
+[Show detailed list of changes](incompatibilities-5-1-alpha-2.md)
+
+### Changed
+
+#### PricingBundle
+
+* Price index fields have been renamed (pay attention to a dot notation):
+  `minimal_price_CPL_ID_CURRENCY_UNIT` to `minimal_price.CPL_ID_CURRENCY_UNIT`,
+  `minimal_price_CPL_ID_CURRENCY` to `minimal_price.CPL_ID_CURRENCY`,
+  `minimal_price_PRICE_LIST_ID_CURRENCY_UNIT` to `minimal_price.PRICE_LIST_ID_CURRENCY_UNIT`,
+  `minimal_price_PRICE_LIST_ID_CURRENCY` to `minimal_price.PRICE_LIST_ID_CURRENCY`
 
 ### Removed
 
@@ -41,6 +73,9 @@ The current file describes significant changes in the code that may affect the u
 * Added entity name provider for `Promotion` entity
 
 ### Changed
+
+#### CMSBundle
+* Update Grapesjs to 0.19.5 version
 
 #### ProductBundle
 * `Oro\Bundle\ProductBundle\Provider\ProductImageFileNameProvider` is applicable if `product_original_filenames` feature is enabled.

@@ -98,6 +98,7 @@ class MappingConfigurationTest extends \PHPUnit\Framework\TestCase
         $expected = [
             'Oro\Page' => [
                 'alias' => 'PageSecondAlias',
+                'synonyms_enabled' => false,
                 'fields' => [
                     'pageFirstField' => [
                         'name' => 'pageFirstField',
@@ -120,6 +121,7 @@ class MappingConfigurationTest extends \PHPUnit\Framework\TestCase
             ],
             'Oro\Product' => [
                 'alias' => 'ProductThirdAlias',
+                'synonyms_enabled' => false,
                 'fields' => [
                     'productFirstField' => [
                         'name' => 'productFirstField',

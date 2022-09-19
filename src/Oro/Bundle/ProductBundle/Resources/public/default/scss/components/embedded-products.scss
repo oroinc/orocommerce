@@ -1,9 +1,81 @@
 /* @theme: default; */
 
+@use 'sass:math';
+
+.embedded-products {
+    display: flex;
+    margin: 0 $embedded-products-btn-arrow-width;
+
+    &__item {
+        width: math.div(100%, $embedded-products-item-count-desktop);
+        height: initial;
+        display: flex;
+        flex-direction: column;
+
+        &.slick-slide {
+            height: initial;
+            display: flex;
+            flex-direction: column;
+        }
+
+        &:not(.slick-slide) {
+            min-width: math.div(100%, $embedded-products-item-count-desktop);
+        }
+    }
+
+    .slick-arrow {
+        top: $embedded-products-slider-arrow-top;
+    }
+
+    .slick-track {
+        display: flex;
+    }
+
+    .slick-list {
+        width: 100%;
+    }
+}
+
 @include breakpoint('desktop') {
     .embedded-products {
         .slick-arrow {
             top: $embedded-products-slider-arrow-top-desktop;
+        }
+    }
+}
+
+@include breakpoint('strict-tablet-small') {
+    .embedded-products {
+        &__item {
+            width: math.div(100%, $embedded-products-item-width-count-tablet-small);
+
+            &:not(.slick-slide) {
+                min-width: math.div(100%, $embedded-products-item-width-count-tablet-small);
+            }
+        }
+    }
+}
+
+@include breakpoint('strict-mobile-big') {
+    .embedded-products {
+        &__item {
+            width: math.div(100%, $embedded-products-item-count-mobile-big);
+
+            &:not(.slick-slide) {
+                min-width: math.div(100%, $embedded-products-item-count-mobile-big);
+            }
+        }
+    }
+}
+
+@include breakpoint('mobile-landscape') {
+    .embedded-products {
+        &__item {
+            width: math.div(100%, $embedded-products-item-count-mobile-landscape);
+
+            &:not(.slick-slide) {
+                min-width: math.div(100%, $embedded-products-item-count-mobile-landscape);
+            }
         }
     }
 }

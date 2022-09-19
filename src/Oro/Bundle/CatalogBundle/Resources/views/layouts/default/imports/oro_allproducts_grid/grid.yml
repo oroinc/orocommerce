@@ -1,0 +1,14 @@
+layout:
+    imports:
+        -
+            id: oro_product_grid
+
+    actions:
+        - '@setBlockTheme':
+            themes:
+                - '@OroCatalog/layouts/default/imports/oro_allproducts_grid/grid.html.twig'
+
+        - '@add':
+            id: product_datagrid_category_title
+            parentId: product_datagrid
+            blockType: block

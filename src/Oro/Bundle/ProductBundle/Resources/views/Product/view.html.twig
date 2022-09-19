@@ -89,7 +89,7 @@
         {% set additionalGeneralData = additionalGeneralData|merge({
             'additionalUnitPrecisions' : UI.renderHtmlProperty(
                 'oro.product.additional_unit_precisions.label'|trans,
-                UI.renderTable(titles,rows,"grid table unit-table"),
+                UI.renderTable(titles,rows,"grid grid-main-container table unit-table"),
                 null,
                 null,
                 {
@@ -98,41 +98,6 @@
             )
         }) %}
     {% endif %}
-
-    {% set infoMessage %}
-        <div class="alert alert-info alert--compact" role="alert">
-            <span class="fa-info alert-icon" aria-hidden="true"></span>
-            {{ 'oro.cms.page.information_message'|trans }}
-        </div>
-    {% endset %}
-
-    {% import '@OroEntityConfig/macros.html.twig' as entityConfig %}
-
-    {% set shortDescriptions %}
-        {{ infoMessage }}
-        <div class="cms-content">
-            {{ UI.renderCollapsibleHtml(
-                entityConfig.renderWysiwygContentPreview(entity.defaultShortDescription),
-                entity,
-                'defaultShortDescription',
-                'More',
-                'Less'
-            ) }}
-        </div>
-    {% endset %}
-
-    {% set descriptions %}
-        {{ infoMessage }}
-        <div class="cms-content">
-            {{ UI.renderCollapsibleHtml(
-                entityConfig.renderWysiwygContentPreview(entity.defaultDescription),
-                entity,
-                'defaultDescription',
-                'More',
-                'Less'
-            ) }}
-        </div>
-    {% endset %}
 
     {% set dataBlocks = {
         'general': {
@@ -156,7 +121,7 @@
             'subblocks': [
                 {
                     'data' : {
-                        'shortDescriptions': shortDescriptions,
+                        'shortDescriptions': UI.renderCollapsibleWysiwygContentPreview(entity.defaultShortDescription, entity, 'defaultShortDescription', 'oro.product.simplified_preview.message'),
                     }
                 }
             ]
@@ -166,7 +131,7 @@
             'subblocks': [
                 {
                     'data' : {
-                        'descriptions': descriptions,
+                        'descriptions': UI.renderCollapsibleWysiwygContentPreview(entity.defaultDescription, entity, 'defaultDescription', 'oro.product.simplified_preview.message'),
                     }
                 }
             ]

@@ -1,0 +1,21 @@
+layout:
+    actions:
+        - '@add':
+            id: product_price_subtree_update
+            parentId: product_view_specification_container
+            blockType: layout_subtree_update
+            options:
+                visible: '=data["frontend_product_prices"].isShowProductPriceContainer(data["oro_product_variant"].getProductVariantOrProduct(data))'
+                reloadEvents: ['layout-subtree:update:product']
+            prepend: true
+        - '@move':
+            id: product_price_container
+            parentId: product_price_subtree_update
+        - '@setOption':
+            id: product_price_container
+            optionName: product
+            optionValue: '=data["oro_product_variant"].getProductVariantOrProduct(data)'
+        - '@setOption':
+            id: product_price_container
+            optionName: vars.visible
+            optionValue: '=data["frontend_product_prices"].isShowProductPriceContainer(product)'

@@ -13,7 +13,7 @@ navigation:
                 route:           'oro_product_index'
                 position:        200
                 extras:
-                    routes:      ['/^oro_product/']
+                    routes:      ['/^oro_product(?!_brand\w+)\w+/']
                     description: 'oro.product.menu.product_list.description'
 
             shortcut_product_list:
@@ -76,11 +76,11 @@ navigation:
     titles:
         oro_product_index: ~
         oro_product_view:   '%sku% - %name%'
-        oro_product_update: '%sku% - %name% - Edit'
-        oro_product_create: 'Create Product'
+        oro_product_update: '%sku% - %name% - oro.ui.edit'
+        oro_product_create: 'oro.ui.create_entity'
         oro_product_frontend_product_index: '%title%'
         oro_product_frontend_product_view: '%name%'
         oro_product_frontend_quick_add: 'oro.product.frontend.quick_add.title'
         oro_product_brand_index: ~
-        oro_product_brand_view: "%subject%"
-        oro_product_brand_edit: "%subject% - edit"
+        oro_product_brand_create: 'oro.ui.create_entity'
+        oro_product_brand_update: "%name% - oro.ui.edit"

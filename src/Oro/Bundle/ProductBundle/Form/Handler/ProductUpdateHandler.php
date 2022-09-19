@@ -4,49 +4,44 @@ namespace Oro\Bundle\ProductBundle\Form\Handler;
 
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\ActionBundle\Model\ActionGroupRegistry;
-use Oro\Bundle\FormBundle\Model\UpdateHandler;
+use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
+use Oro\Bundle\FormBundle\Model\UpdateInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\UIBundle\Route\Router;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Handles the action of creating or editing a product. Allows to assign related or up-sell items to product.
  */
-class ProductUpdateHandler extends UpdateHandler
+class ProductUpdateHandler extends UpdateHandlerFacade
 {
     const ACTION_SAVE_AND_DUPLICATE = 'save_and_duplicate';
 
-    /** @var ActionGroupRegistry */
-    private $actionGroupRegistry;
+    private ActionGroupRegistry $actionGroupRegistry;
+    private TranslatorInterface $translator;
+    private UrlGeneratorInterface $urlGenerator;
+    private RelatedItemsHandler $relatedItemsHandler;
 
-    /** @var TranslatorInterface */
-    private $translator;
-
-    /** @var UrlGeneratorInterface */
-    private $urlGenerator;
-
-    /** @var RelatedItemsHandler */
-    private $relatedItemsHandler;
-
-    public function setActionGroupRegistry(ActionGroupRegistry $actionGroupRegistry)
+    public function setActionGroupRegistry(ActionGroupRegistry $actionGroupRegistry): void
     {
         $this->actionGroupRegistry = $actionGroupRegistry;
     }
 
-    public function setTranslator(TranslatorInterface $translator)
+    public function setTranslator(TranslatorInterface $translator): void
     {
         $this->translator = $translator;
     }
 
-    public function setUrlGenerator(UrlGeneratorInterface $urlGenerator)
+    public function setUrlGenerator(UrlGeneratorInterface $urlGenerator): void
     {
         $this->urlGenerator = $urlGenerator;
     }
 
-    public function setRelatedItemsHandler(RelatedItemsHandler $relatedItemsHandler)
+    public function setRelatedItemsHandler(RelatedItemsHandler $relatedItemsHandler): void
     {
         $this->relatedItemsHandler = $relatedItemsHandler;
     }
@@ -54,40 +49,23 @@ class ProductUpdateHandler extends UpdateHandler
     /**
      * {@inheritDoc}
      */
-    protected function saveForm(FormInterface $form, $data)
-    {
-        return parent::saveForm($form, $data) && $this->saveAllRelatedItems($form, $data);
-    }
+    protected function constructResponse(
+        UpdateInterface $update,
+        Request $request,
+        ?string $saveMessage
+    ): array|RedirectResponse {
+        $entity = $update->getFormData();
+        if (false === $this->saveAllRelatedItems($update->getForm(), $entity)) {
+            return $this->getResult($update, $request);
+        }
 
-    /**
-     * @param FormInterface  $form
-     * @param Product        $entity
-     * @param array|callable $saveAndStayRoute
-     * @param array|callable $saveAndCloseRoute
-     * @param string         $saveMessage
-     * @param null           $resultCallback
-     * @return array|RedirectResponse
-     */
-    protected function processSave(
-        FormInterface $form,
-        $entity,
-        $saveAndStayRoute,
-        $saveAndCloseRoute,
-        $saveMessage,
-        $resultCallback = null
-    ) {
-        $result = parent::processSave(
-            $form,
-            $entity,
-            $saveAndStayRoute,
-            $saveAndCloseRoute,
-            $saveMessage,
-            $resultCallback
-        );
-
-        if ($result instanceof RedirectResponse && $this->isSaveAndDuplicateAction()) {
+        if ($isSaveAndDuplicateAction = $this->isSaveAndDuplicateAction($request)) {
             $saveMessage = $this->translator->trans('oro.product.controller.product.saved_and_duplicated.message');
-            $this->session->getFlashBag()->set('success', $saveMessage);
+        }
+
+        $result = parent::constructResponse($update, $request, $saveMessage);
+
+        if ($result instanceof RedirectResponse && $isSaveAndDuplicateAction) {
             if ($actionGroup = $this->actionGroupRegistry->findByName('oro_product_duplicate')) {
                 $actionData = $actionGroup->execute(new ActionData(['data' => $entity]));
                 /** @var Product $productCopy */
@@ -102,31 +80,18 @@ class ProductUpdateHandler extends UpdateHandler
         return $result;
     }
 
-    /**
-     * @return bool
-     */
-    protected function isSaveAndDuplicateAction()
+    protected function isSaveAndDuplicateAction(Request $request): bool
     {
-        return $this->getCurrentRequest()->get(Router::ACTION_PARAMETER) === self::ACTION_SAVE_AND_DUPLICATE;
+        return $request->get(Router::ACTION_PARAMETER) === self::ACTION_SAVE_AND_DUPLICATE;
     }
 
-    /**
-     * @param FormInterface $form
-     * @param Product $entity
-     * @return bool
-     */
-    private function saveAllRelatedItems(FormInterface $form, Product $entity)
+    private function saveAllRelatedItems(FormInterface $form, Product $entity): bool
     {
         return $this->saveRelatedProducts($form, $entity)
             && $this->saveUpsellProducts($form, $entity);
     }
 
-    /**
-     * @param FormInterface $form
-     * @param Product $entity
-     * @return bool
-     */
-    private function saveRelatedProducts(FormInterface $form, Product $entity)
+    private function saveRelatedProducts(FormInterface $form, Product $entity): bool
     {
         return $this->saveRelatedItems(
             $form,
@@ -137,12 +102,7 @@ class ProductUpdateHandler extends UpdateHandler
         );
     }
 
-    /**
-     * @param FormInterface $form
-     * @param Product $entity
-     * @return bool
-     */
-    private function saveUpsellProducts(FormInterface $form, Product $entity)
+    private function saveUpsellProducts(FormInterface $form, Product $entity): bool
     {
         return $this->saveRelatedItems(
             $form,
@@ -153,21 +113,13 @@ class ProductUpdateHandler extends UpdateHandler
         );
     }
 
-    /**
-     * @param FormInterface $form
-     * @param Product $entity
-     * @param string $assignerName
-     * @param string $appendItemsFieldName
-     * @param string $removeItemsFieldName
-     * @return bool
-     */
     private function saveRelatedItems(
         FormInterface $form,
         Product $entity,
-        $assignerName,
-        $appendItemsFieldName,
-        $removeItemsFieldName
-    ) {
+        string $assignerName,
+        string $appendItemsFieldName,
+        string $removeItemsFieldName
+    ): bool {
         if (!$form->has($appendItemsFieldName) && !$form->has($removeItemsFieldName)) {
             return true;
         }

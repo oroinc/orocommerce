@@ -5,6 +5,7 @@ namespace Oro\Bundle\PricingBundle\Async;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\MessageQueueBundle\Client\MessageBuffer;
 use Oro\Bundle\MessageQueueBundle\Client\MessageFilterInterface;
+use Oro\Bundle\PricingBundle\Async\Topic\MassRebuildCombinedPriceListsTopic;
 use Oro\Bundle\PricingBundle\Async\Topic\RebuildCombinedPriceListsTopic;
 use Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback;
@@ -73,6 +74,8 @@ class PriceListRelationMessageFilter implements MessageFilterInterface
             } else {
                 $this->removeAllMessagesExceptFullRebuildMessage($buffer, $fullRebuildMessageId);
             }
+
+            $this->reduceMessages($buffer);
         } finally {
             $this->processedMessages = null;
             $this->changedWebsites = null;
@@ -172,6 +175,17 @@ class PriceListRelationMessageFilter implements MessageFilterInterface
                 }
             }
         }
+    }
+
+    private function reduceMessages(MessageBuffer $buffer): void
+    {
+        $messages = $buffer->getMessagesForTopic(RebuildCombinedPriceListsTopic::getName());
+        $merged = [];
+        foreach ($messages as $messageId => $message) {
+            $merged[] = $message;
+            $buffer->removeMessage($messageId);
+        }
+        $buffer->addMessage(MassRebuildCombinedPriceListsTopic::getName(), ['assignments' => $merged]);
     }
 
     private function isRedundantCustomerGroupMessage(array $message): bool

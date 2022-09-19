@@ -130,6 +130,8 @@ class PriceListControllerTest extends WebTestCase
                 'oro_pricing_price_list[schedules][0][deactivateAt]' => '2016-03-15T22:00:00Z'
             ]
         );
+        $action = $crawler->selectButton('Save and Close')->attr('data-action');
+        $form->setValues(['input_action' => $action]);
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
@@ -218,6 +220,8 @@ class PriceListControllerTest extends WebTestCase
         $category2 = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
 
         $form = $crawler->selectButton('Save and Close')->form();
+        $action = $crawler->selectButton('Save and Close')->attr('data-action');
+
         $filesData = $form->getFiles();
         $submittedData = $form->getPhpValues();
 
@@ -243,6 +247,7 @@ class PriceListControllerTest extends WebTestCase
             ]
         ];
         $submittedData['oro_pricing_price_list']['priceRules'] = $rules;
+        $submittedData['input_action'] = $action;
 
         $this->client->followRedirects(true);
         $this->client->request($form->getMethod(), $form->getUri(), $submittedData, $filesData);
@@ -299,6 +304,8 @@ class PriceListControllerTest extends WebTestCase
                 'oro_pricing_price_list[currencies]' => self::CURRENCY,
             ]
         );
+        $action = $crawler->selectButton('Save and Close')->attr('data-action');
+        $form->setValues(['input_action' => $action]);
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
@@ -330,6 +337,8 @@ class PriceListControllerTest extends WebTestCase
                 'oro_pricing_price_list[currencies]' => ['USD'],
             ]
         );
+        $action = $crawler->selectButton('Save and Close')->attr('data-action');
+        $form->setValues(['input_action' => $action]);
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);

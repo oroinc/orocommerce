@@ -111,7 +111,7 @@ export default {
         ) {
             const newParent = rte.doc.createElement(value);
             const docFragment = rte.doc.createDocumentFragment();
-            newParent.appendChild(utils.findParentTag(range.commonAncestorContainer, 'SPAN'));
+            newParent.appendChild(utils.findParentTag(range.commonAncestorContainer, 'span'));
             docFragment.appendChild(newParent);
             range.deleteContents();
             range.insertNode(docFragment);

@@ -1,0 +1,23 @@
+/* @theme: default; */
+
+.toggle-sidebar-btn {
+    position: relative;
+}
+
+@include breakpoint('desktop') {
+    // Avoid case if a button in the sticky panel
+    .page-content {
+        .toggle-sidebar-btn {
+            &.is-expanded {
+                margin-left: $toggle-sidebar-btn-desktop-offset-start;
+
+                padding-left: $toggle-sidebar-btn-desktop-offset-inner;
+                padding-right: $toggle-sidebar-btn-desktop-offset-inner;
+
+                flex-grow: 0;
+
+                border-radius: $toggle-sidebar-btn-desktop-border-radius;
+            }
+        }
+    }
+}

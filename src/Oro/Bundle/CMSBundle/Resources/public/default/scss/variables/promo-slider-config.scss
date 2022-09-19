@@ -1,0 +1,33 @@
+/* @theme: default; */
+
+$promo-slider-has-arrows-offset: $embedded-list-slider-btn-arrow-width + $offset-y-m !default;
+
+$promo-slider-min-height: 100px !default;
+
+$promo-slider-info-width: 34% !default;
+$promo-slider-info-base-position: 50% !default;
+$promo-slider-info-base-offset: 5% !default;
+$promo-slider-info-top-position: $promo-slider-info-base-offset !default;
+$promo-slider-info-right-position: $promo-slider-info-base-offset !default;
+$promo-slider-info-bottom-position: $promo-slider-info-base-offset !default;
+$promo-slider-info-left-position: $promo-slider-info-base-offset !default;
+$promo-slider-info-center-position: $promo-slider-info-base-position !default;
+
+$promo-slider-link-style: 'info' !default;
+
+$promo-slider-position-y: 50% !default;
+$promo-slider-position-x: -$promo-slider-has-arrows-offset !default;
+
+$promo-slider-use-dots: true !default;
+$promo-slider-dots-bottom-pos: $offset-y-m !default;
+$promo-slider-dots-item-offset: 0 4px !default;
+$promo-slider-dots-button-bg: transparent !default;
+$promo-slider-dots-button-border: 1px solid get-color('additional', 'ultra') !default;
+$promo-slider-dots-button-active-border: 1px solid get-color('additional', 'ultra') !default;
+$promo-slider-dots-button-active-bg: get-color('additional', 'ultra') !default;
+$promo-slider-dots-button-active-box-shadow: null !default;
+
+// Mobile
+
+$promo-slider-info-width-mobile-landscape: 90% !default;
+$promo-slider-hide-description-mobile-landscape: true !default;

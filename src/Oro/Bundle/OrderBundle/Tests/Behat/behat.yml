@@ -76,7 +76,7 @@ oro_behat_extension:
 
     Order Line Items Table:
       class: Oro\Bundle\OrderBundle\Tests\Behat\Element\ProductTable
-      selector: 'table.grid'
+      selector: 'table.grid-main-container'
 
     OrderLineItemProductSku:
       selector: 'div:contains("Item #:") > span'
@@ -179,6 +179,9 @@ oro_behat_extension:
 
     Order Form Line Item 1 Offer 1:
       selector: '[name="oro_order_type[lineItems][0][offers]"]'
+
+    Order Form Line Item 2 Offer 1:
+      selector: '[name="oro_order_type[lineItems][1][offers]"]'
 
     First Product Quantity Field In Order:
       selector:

@@ -45,7 +45,7 @@ oro:
                 enable_direct_url.label: 'Enable Direct URLs'
                 use_localized_canonical:
                     label: 'Use localized canonical URLs'
-                    tooltip: 'When this option is enabled the system will generate canonical URLs using the localized version of URLs slugs if available.'
+                    tooltip: 'Enable the option for the system to generate canonical URLs using a localized version of URL slugs, if available.'
                 canonical_url_type:
                     label: 'Canonical URL Type'
                     choice:

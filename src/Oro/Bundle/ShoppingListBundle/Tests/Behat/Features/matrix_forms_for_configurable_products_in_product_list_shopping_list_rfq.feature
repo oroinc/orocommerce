@@ -437,8 +437,10 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     Given I proceed as the User
     And type "ConfigurableProductA" in "search"
     And click "Search Button"
+    And I click "Catalog Switcher Toggle"
     And I click "List View"
     Then I should see "One Dimensional Matrix Grid Form" for "CNFA" product
+    When I click "Catalog Switcher Toggle"
     And I click "No Image View"
     Then I should see "One Dimensional Matrix Grid Form" for "CNFA" product
     And click "View Details" for "CNFA" product
@@ -465,11 +467,13 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       | 1        | 2        | N/A      |          |
     And type "CNFA" in "search"
     And click "Search Button"
+    And I click "Catalog Switcher Toggle"
     And I click "List View"
     Then I should see an "One Dimensional Matrix Grid Form" element
     And I should see next rows in "One Dimensional Matrix Grid Form" table
       | Value 11 | Value 12 | Value 13 | Value 14 |
       | 1        | 2        | N/A      |          |
+    When I click "Catalog Switcher Toggle"
     And I click "No Image View"
     Then I should see an "One Dimensional Matrix Grid Form" element
     And I should see next rows in "One Dimensional Matrix Grid Form" table
@@ -483,8 +487,10 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
   Scenario: Matrix form with two attributes
     Given type "ConfigurableProductB" in "search"
     And click "Search Button"
+    And I click "Catalog Switcher Toggle"
     And I click "List View"
     Then I should see "Matrix Grid Form" for "CNFB" product
+    When I click "Catalog Switcher Toggle"
     And I click "No Image View"
     Then I should see "Matrix Grid Form" for "CNFB" product
     And click "View Details" for "CNFB" product
@@ -515,8 +521,10 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
   Scenario: Matrix form with three attributes
     Given type "ConfigurableProductC" in "search"
     And click "Search Button"
+    And I click "Catalog Switcher Toggle"
     And I click "List View"
     Then I should not see "Matrix Grid Form" for "CNFC" product
+    When I click "Catalog Switcher Toggle"
     And I click "No Image View"
     Then I should not see "Matrix Grid Form" for "CNFC" product
     And click "View Details" for "CNFC" product
@@ -549,10 +557,12 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     Given I proceed as the User
     And type "ConfigurableProduct" in "search"
     And click "Search Button"
+    And I click "Catalog Switcher Toggle"
     And I click "List View"
     Then I should not see "Matrix Grid Form" for "CNFA" product
     And I should not see "Matrix Grid Form" for "CNFB" product
     And I should not see "Matrix Grid Form" for "CNFC" product
+    When I click "Catalog Switcher Toggle"
     And I click "No Image View"
     Then I should not see "Matrix Grid Form" for "CNFA" product
     And I should not see "Matrix Grid Form" for "CNFB" product
@@ -576,12 +586,14 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     Then I should see "There are no shopping lists"
     When type "CNFB" in "search"
     And click "Search Button"
+    When I click "Catalog Switcher Toggle"
     And I click "Gallery View"
     Then I should see "Add to Shopping List" for "CNFB" product
     And I should not see an "Matrix Grid Form" element
     And I click "Add to Shopping List" for "CNFB" product
     Then I should see an "Matrix Grid Form" element
     And I click "Close" in modal window
+    And I click "Catalog Switcher Toggle"
     And I click "List View"
     Then I should see "Add to Shopping List" for "CNFB" product
     And I should not see an "Matrix Grid Form" element

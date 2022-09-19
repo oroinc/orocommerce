@@ -1,0 +1,13 @@
+layout:
+    imports:
+        -
+            id: product_shopping_lists
+            root: __product_line_item_form
+            namespace: product
+    actions:
+        - '@setBlockTheme':
+            themes: '@OroShoppingList/layouts/default/imports/oro_product_list_item/product_shopping_lists.html.twig'
+        - '@move':
+            id: __product_shopping_lists
+            parentId: __product_line_item_form
+            prepend: true

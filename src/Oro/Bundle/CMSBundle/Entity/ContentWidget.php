@@ -211,7 +211,11 @@ class ContentWidget implements DatesAwareInterface, OrganizationAwareInterface, 
      */
     public function toString(): string
     {
-        return 'name:' . $this->getName();
+        return sprintf(
+            'name:%s, layout:%s',
+            $this->name,
+            $this->layout
+        );
     }
 
     /**

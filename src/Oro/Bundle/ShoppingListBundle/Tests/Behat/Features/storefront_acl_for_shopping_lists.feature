@@ -178,7 +178,7 @@ Feature: Storefront acl for shopping lists
     And I fill "Shopping List Rename Action Form" with:
       | Label | Shopping List User 1 |
     And I click "Shopping List Action Submit"
-    Then I should see "Shopping list has been successfully renamed" flash message
+    Then I should see "Shopping list has been successfully renamed" flash message and I close it
 
   Scenario Outline: Check that buyer cannot edit shopping list
     Given I open page with shopping list <name>
@@ -207,7 +207,7 @@ Feature: Storefront acl for shopping lists
     And I fill "Shopping List Rename Action Form" with:
       | Label | <new name> |
     And I click "Shopping List Action Submit"
-    Then I should see "Shopping list has been successfully renamed" flash message
+    Then I should see "Shopping list has been successfully renamed" flash message and I close it
 
     Examples:
       | name                 | new name                   |
@@ -235,7 +235,7 @@ Feature: Storefront acl for shopping lists
     And I fill "Shopping List Rename Action Form" with:
       | Label | <new name> |
     And I click "Shopping List Action Submit"
-    Then I should see "Shopping list has been successfully renamed" flash message
+    Then I should see "Shopping list has been successfully renamed" flash message and I close it
 
     Examples:
       | name                       | new name                  |

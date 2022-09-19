@@ -193,27 +193,20 @@ const ImportDialogView = BaseView.extend({
 
         this.content = unescapeTwigExpression(content ?? this.getImportContent());
 
-        this.codeViewer.init(this.$el.find('[data-role="code"]')[0]);
-        this.viewerEditor = this.codeViewer.editor;
-
-        this.codeViewer.setContent(stripRestrictedAttrs(this.content));
-
         this.importButton = this.$el.find('[data-role="import"]');
 
         this.dialog = new DialogWidget({
-            autoRender: true,
+            autoRender: false,
             el: this.el,
             title: this.modalImportTitle,
-            loadingElement: this.editor.getEl(),
+            incrementalPosition: false,
             dialogOptions: {
                 allowMaximize: true,
                 autoResize: false,
                 resizable: false,
                 modal: true,
-                height: 400,
-                minHeight: 435,
+                height: 495,
                 minWidth: 856,
-                appendTo: this.editor.getEl(),
                 dialogClass: 'ui-dialog--import-template',
                 close: () => {
                     this.editor.Commands.stop(this.commandId);
@@ -222,19 +215,22 @@ const ImportDialogView = BaseView.extend({
             ...dialogOptions
         });
 
-        this.viewerEditor.refresh();
-        this.dialog.widget.on('resize', () => {
-            this.adjustHeight();
-        });
-
-        this.viewerEditor.refresh();
-        this.adjustHeight();
-        this.checkContent(this.viewerEditor);
-
         this.subview('loadingMask', new LoadingMaskView({
             container: this.dialog.loadingElement
         }));
 
+        this.dialog.once('renderComplete', this.initCodeEditor.bind(this));
+        this.dialog.render();
+    },
+
+    initCodeEditor() {
+        this.codeViewer.init(this.$el.find('[data-role="code"]')[0]);
+        this.viewerEditor = this.codeViewer.editor;
+
+        this.codeViewer.setContent(stripRestrictedAttrs(this.content));
+        this.viewerEditor.refresh();
+        this.adjustHeight();
+        this.checkContent(this.viewerEditor);
         this.bindEvents();
     },
 
@@ -246,6 +242,7 @@ const ImportDialogView = BaseView.extend({
         this.viewerEditor.on('blur', this.checkContentWithDelay);
         this.importButton.on('mouseover', this.checkContent.bind(this, this.viewerEditor));
         this.importButton.on('click', this.onImportCode.bind(this));
+        this.dialog.widget.on('resize', this.adjustHeight.bind(this));
     },
 
     /**
@@ -403,6 +400,9 @@ const ImportDialogView = BaseView.extend({
             className: this.entityClass,
             fieldName: this.fieldName
         }).then(({success, errors}) => {
+            if (success) {
+                this.editor.CodeValidator.restrictFaild = false;
+            }
             return {success, errors: _.sortBy(errors, 'line')};
         });
     },

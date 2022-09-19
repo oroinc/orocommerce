@@ -63,6 +63,7 @@ class MappingConfigurationProviderTest extends \PHPUnit\Framework\TestCase
         $expectedConfig = [
             'Oro\Bundle\TestBundle2\Entity\Page' => [
                 'alias' => 'page_WEBSITE_ID',
+                'synonyms_enabled' => false,
                 'fields' => [
                     'title_LOCALIZATION_ID' => [
                         'name' => 'title_LOCALIZATION_ID',
@@ -100,6 +101,7 @@ class MappingConfigurationProviderTest extends \PHPUnit\Framework\TestCase
             ],
             'Oro\Bundle\TestBundle3\Entity\Product' => [
                 'alias' => 'product_WEBSITE_ID',
+                'synonyms_enabled' => false,
                 'fields' => [
                     'title_LOCALIZATION_ID' => [
                         'name' => 'title_LOCALIZATION_ID',

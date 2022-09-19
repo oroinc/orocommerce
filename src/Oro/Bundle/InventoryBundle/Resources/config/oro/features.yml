@@ -1,0 +1,18 @@
+features:
+    manage_inventory:
+        label: oro.inventory.inventorylevel.feature.manage.label
+        description: oro.inventory.inventorylevel.feature.manage.description
+        allow_if_all_abstain: true
+        routes:
+            - oro_inventory_level_index
+            - oro_inventory_level_update
+            - oro_api_patch_product_inline_edit_inventory_status
+        entities:
+            - Oro\Bundle\InventoryBundle\Entity\InventoryLevel
+        api_resources:
+            - Oro\Bundle\InventoryBundle\Entity\InventoryLevel
+        navigation_items:
+            - application_menu.inventory_tab.inventory_level_list
+        placeholder_items:
+            - oro_product_manage_inventory_button
+            - oro_product_manage_inventory_link

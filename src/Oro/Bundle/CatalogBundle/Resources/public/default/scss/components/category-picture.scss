@@ -1,0 +1,15 @@
+/* @theme: default; */
+
+.category-picture {
+    position: relative;
+
+    margin-bottom: $category-picture-offset-bottom;
+
+    border: $category-picture-border;
+
+    &__image {
+        display: block;
+
+        width: $category-picture-image-width;
+    }
+}

@@ -1,4 +1,6 @@
 app-modules:
+    - orocustomer/js/app/modules/validator-constraints-module
+    - oroform/default/js/app/modules/validator-constraints-module
     - orofrontend/default/js/app/modules/input-widgets
     - orofrontend/js/app/modules/component-shortcuts-module
     - oronavigation/js/app/modules/navigation-module
@@ -10,21 +12,19 @@ app-modules:
     - oroui/js/app/modules/layout-module
     - oroui/js/app/modules/messenger-module
     - oroui/js/app/modules/viewport-module
-
-    - orocustomer/js/app/modules/validator-constraints-module
-    - oroform/blank/js/app/modules/validator-constraints-module
     - orouser/js/app/modules/validator-constraints-module
-    - orovalidation/blank/js/app/modules/validator-constraints-module
+    - orovalidation/default/js/app/modules/validator-constraints-module
 dynamic-imports:
     commons:
         - controllers/page-controller
         - orocommercemenu/js/app/views/header-row-view
-        - orofrontend/blank/js/app/views/proxy-focus-view
+        - orofrontend/default/js/app/views/proxy-focus-view
         - orofrontend/default/js/app/views/scroll-top-view
         - orofrontend/default/js/app/views/sticky-panel-view
         - orofrontend/js/app/views/dom-relocation-view
         - orofrontendlocalization/js/app/components/localization-switcher-component
         - oronavigation/js/app/views/navigation-menu-view
+        - oropricing/js/app/components/currency-switcher-component
         - oroproduct/js/app/views/search-autocomplete-view
         - oroshoppinglist/js/app/components/shoppinglist-collection-component
         - oroshoppinglist/js/app/components/shoppinglist-widget-view-component
@@ -43,8 +43,6 @@ dynamic-imports:
         - oroui/js/mediator
         - orowindows/js/dialog/state/model
         - routing
-        - oropricing/js/app/components/currency-switcher-component
-
     extra:
         - oro/product-shopping-lists-widget
         - oro/select2-component
@@ -68,17 +66,26 @@ dynamic-imports:
         - oroform/js/validator/repeated
         - oroform/js/validator/time
         - oroform/js/validator/type
-        - orofrontend/blank/js/app/views/fullscreen-popup-view
+        - orofrontend/default/js/app/views/fullscreen-popup-view
         - orofrontend/js/app/components/delete-item-component
         - orofrontend/js/app/components/list-slider-component
         - orofrontend/js/app/components/popup-gallery-widget
+        - oropricing/js/app/views/base-product-matrix-view
         - oropricing/js/app/views/list-item-product-prices-view
+        - oropricing/js/app/views/product-total-price-view
         - oroproduct/js/app/components/product-unit-select-component
         - oroproduct/js/app/views/base-product-view
+        - oroproduct/js/app/views/product-quantity-editable-view
         - oroproduct/js/content-processor/product-add-to-dropdown-button
+        - oroshoppinglist/js/app/components/shopping-list-create-component
+        - oroshoppinglist/js/app/components/shoppinglist-create-order-button-component
+        - oroshoppinglist/js/app/views/matrix-grid-add-to-shopping-list-view
+        - oroshoppinglist/js/app/views/matrix-grid-popup-button-view
         - oroshoppinglist/js/app/views/product-add-to-shopping-list-view
+        - oroshoppinglist/js/app/views/product-quick-add-to-shopping-list-view
         - oroshoppinglist/js/app/views/product-shopping-lists-view
         - oroshoppinglist/js/app/views/shopping-list-quick-search
+        - oroshoppinglist/js/shopping-list-item-errors-handler
         - oroui/js/widget/collapse-widget
         - orouser/js/validator/password-complexity
         - orovalidation/js/validator/alphanumeric
@@ -90,15 +97,6 @@ dynamic-imports:
         - orovalidation/js/validator/integer
         - orovalidation/js/validator/letters
         - orovalidation/js/validator/url-safe
-        - oroproduct/js/app/views/product-quantity-editable-view
-        - oropricing/js/app/views/base-product-matrix-view
-        - oropricing/js/app/views/product-total-price-view
-        - oroshoppinglist/js/app/components/shopping-list-create-component
-        - oroshoppinglist/js/app/components/shoppinglist-create-order-button-component
-        - oroshoppinglist/js/app/views/matrix-grid-add-to-shopping-list-view
-        - oroshoppinglist/js/app/views/matrix-grid-popup-button-view
-        - oroshoppinglist/js/app/views/product-quick-add-to-shopping-list-view
-        - oroshoppinglist/js/shopping-list-item-errors-handler
 entry:
     app:
         - oroui/js/app

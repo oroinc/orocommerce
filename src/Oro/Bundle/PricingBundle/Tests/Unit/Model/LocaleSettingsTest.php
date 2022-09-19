@@ -3,41 +3,36 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Model;
 
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
-use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
 use Oro\Bundle\LayoutBundle\Layout\LayoutContextHolder;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings as BaseLocaleSettings;
+use Oro\Bundle\LocaleBundle\Provider\LocalizationProviderInterface;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Model\LocaleSettings;
 use Oro\Component\Layout\Extension\Theme\Model\ThemeManager;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class LocaleSettingsTest extends \PHPUnit\Framework\TestCase
+class LocaleSettingsTest extends TestCase
 {
-    /** @var BaseLocaleSettings|\PHPUnit\Framework\MockObject\MockObject */
-    private $inner;
+    private BaseLocaleSettings|MockObject $inner;
 
-    /** @var FrontendHelper|\PHPUnit\Framework\MockObject\MockObject */
-    private $frontendHelper;
+    private FrontendHelper|MockObject $frontendHelper;
 
-    /** @var UserLocalizationManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $localizationManager;
+    private LocalizationProviderInterface|MockObject $localizationProvider;
 
-    /** @var UserCurrencyManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $currencyManager;
+    private UserCurrencyManager|MockObject $currencyManager;
 
-    /** @var LayoutContextHolder|\PHPUnit\Framework\MockObject\MockObject */
-    private $layoutContextHolder;
+    private LayoutContextHolder|MockObject $layoutContextHolder;
 
-    /** @var ThemeManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $themeManager;
+    private ThemeManager|MockObject $themeManager;
 
-    /** @var LocaleSettings */
-    protected $localeSettings;
+    protected LocaleSettings $localeSettings;
 
     protected function setUp(): void
     {
         $this->inner = $this->createMock(BaseLocaleSettings::class);
         $this->frontendHelper = $this->createMock(FrontendHelper::class);
-        $this->localizationManager = $this->createMock(UserLocalizationManager::class);
+        $this->localizationProvider = $this->createMock(LocalizationProviderInterface::class);
         $this->currencyManager = $this->createMock(UserCurrencyManager::class);
         $this->layoutContextHolder = $this->createMock(LayoutContextHolder::class);
         $this->themeManager = $this->createMock(ThemeManager::class);
@@ -45,7 +40,7 @@ class LocaleSettingsTest extends \PHPUnit\Framework\TestCase
         $this->localeSettings = new LocaleSettings(
             $this->inner,
             $this->frontendHelper,
-            $this->localizationManager,
+            $this->localizationProvider,
             $this->currencyManager,
             $this->layoutContextHolder,
             $this->themeManager

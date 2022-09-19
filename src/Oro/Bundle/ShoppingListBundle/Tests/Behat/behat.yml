@@ -213,6 +213,9 @@ oro_behat_extension:
     Shopping List Quick Search Clear:
       selector: '.dropdown-search-container .clear-search-button'
 
+    Shopping List Quick Search Clear in Mass Menu:
+      selector: '[data-sticky-name="bottom-sticky-panel"] .datagrid-massaction .dropdown-menu .dropdown-search-container .clear-search-button'
+
     Shopping List Quick Search Clear in Dialog:
       selector: '[role="dialog"] .dropdown-search-container .clear-search-button'
 
@@ -552,6 +555,11 @@ oro_behat_extension:
         type: 'xpath'
         locator: '//*[starts-with(@id,"oro_product_product_variant_frontend_variant_field_Attribute_3")]'
 
+    Shopping List Line Item Owner Form Field:
+      selector:
+        type: 'xpath'
+        locator: '//div[contains(@id, "oro_action_operation_lineItem_owner")]'
+
   suites:
     OroShoppingListBundle:
       contexts:
@@ -579,5 +587,6 @@ oro_behat_extension:
         - Oro\Bundle\QueryDesignerBundle\Tests\Behat\Context\QueryDesignerContext
         - Oro\Bundle\EmailBundle\Tests\Behat\Context\EmailContext
         - Oro\Bundle\CustomerBundle\Tests\Behat\Context\FrontendGridContext
+        - Oro\Bundle\FilterBundle\Tests\Behat\Context\FilterContext
       paths:
         - '@OroShoppingListBundle/Tests/Behat/Features'

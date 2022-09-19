@@ -75,21 +75,19 @@ services:
             - { name: twig.extension }
 
     oro_product.form.autocomplete.product.search_handler:
-        public: false
         parent: oro_form.autocomplete.search_handler
         arguments:
             - 'Oro\Bundle\ProductBundle\Entity\Product'
-            - ["sku", "defaultName.string"]
+            - ['sku', 'defaultName.string']
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: Oro\Bundle\ProductBundle\Form\Type\ProductType, acl_resource: oro_product_view }
             - { name: oro_form.autocomplete.search_handler, alias: oro_product_frontend, acl_resource: oro_product_frontend_view }
 
     oro_product.form.autocomplete.brand.search_handler:
-        public: false
         parent: oro_form.autocomplete.search_handler
         arguments:
             - 'Oro\Bundle\ProductBundle\Entity\Brand'
-            - ["name"]
+            - ['name']
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: Oro\Bundle\ProductBundle\Form\Type\BrandType }
 
@@ -122,15 +120,12 @@ services:
 
     oro_product.service.product_update_handler:
         class: 'Oro\Bundle\ProductBundle\Form\Handler\ProductUpdateHandler'
-        parent: oro_form.model.update_handler
+        parent: oro_form.update_handler
         calls:
             - [setActionGroupRegistry, ['@oro_action.action_group_registry']]
             - [setTranslator, ['@translator']]
             - [setUrlGenerator, ['@router']]
             - [setRelatedItemsHandler, ['@oro_product.service.related_items_handler']]
-
-    Oro\Bundle\ProductBundle\Form\Handler\ProductUpdateHandler:
-        alias: oro_product.service.product_update_handler
 
     oro_product.storage.product_data_bag:
         class: Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag
@@ -258,9 +253,6 @@ services:
         calls:
             - [setComponentProcessorFilter,  ["@oro_product.component_processor.filter"]]
         abstract: true
-
-    Oro\Bundle\ProductBundle\Form\Handler\QuickAddHandler:
-        alias: oro_product.form_handler.quick_add
 
     oro_product.form_handler.quick_add:
         class: 'Oro\Bundle\ProductBundle\Form\Handler\QuickAddHandler'
@@ -512,7 +504,6 @@ services:
 
     oro_product.autocomplete.product_visibility_limited.search_handler:
         class: 'Oro\Bundle\ProductBundle\Autocomplete\ProductVisibilityLimitedSearchHandler'
-        public: false
         arguments:
             - 'Oro\Bundle\ProductBundle\Entity\Product'
             - '@request_stack'
@@ -525,14 +516,14 @@ services:
             - [setAclHelper, ['@oro_security.acl_helper']]
             - [setPropertyAccessor, ['@property_accessor']]
         tags:
-            - { name: oro_form.autocomplete.search_handler, alias: "oro_product_visibility_limited" }
+            - { name: oro_form.autocomplete.search_handler, alias: oro_product_visibility_limited }
 
     oro_product.autocomplete.configurable_product_visibility_limited.search_handler:
         parent: oro_product.autocomplete.product_visibility_limited.search_handler
         calls:
             - [enableConfigurableProducts]
         tags:
-            - { name: oro_form.autocomplete.search_handler, alias: "oro_all_product_visibility_limited" }
+            - { name: oro_form.autocomplete.search_handler, alias: oro_all_product_visibility_limited }
 
     oro_product.autocomplete.product_families.search_handler:
         class: 'Oro\Bundle\ProductBundle\Autocomplete\ProductFamilySearchHandler'
@@ -541,16 +532,15 @@ services:
             - '@property_accessor'
             - '@oro_security.acl_helper'
         tags:
-            - { name: oro_form.autocomplete.search_handler, alias: 'oro_product_families' }
+            - { name: oro_form.autocomplete.search_handler, alias: oro_product_families }
 
     oro_product.autocomplete.oro_product_visibility_limited_with_prices.search_handler:
         class: 'Oro\Bundle\ProductBundle\Autocomplete\ProductVisibilityLimitedWithPricesSearchHandler'
-        public: false
         arguments:
             - '@oro_pricing.form.autocomplete.product_with_prices.search_handler'
             - '@oro_product.autocomplete.product_visibility_limited.search_handler'
         tags:
-            - { name: oro_form.autocomplete.search_handler, alias: "oro_product_visibility_limited_with_prices" }
+            - { name: oro_form.autocomplete.search_handler, alias: oro_product_visibility_limited_with_prices }
 
     oro_product.product.manager:
         class: 'Oro\Bundle\ProductBundle\Entity\Manager\ProductManager'
@@ -1024,9 +1014,6 @@ services:
         tags:
             - { name: oro_redirect.routing_information_provider, alias: 'Oro\Bundle\ProductBundle\Entity\Brand' }
 
-    Oro\Bundle\ProductBundle\Provider\QuickAddCollectionProvider:
-        alias: oro_product.layout.data_provider.quick_add_collection
-
     oro_product.layout.data_provider.quick_add_collection:
         class: 'Oro\Bundle\ProductBundle\Provider\QuickAddCollectionProvider'
         public: true
@@ -1070,9 +1057,6 @@ services:
             - '@property_accessor'
             - '@event_dispatcher'
             - '@oro_product.product_variant_field.registry.product_variant_field_value_handler_registry'
-
-    Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider:
-        alias: 'oro_product.provider.product_variant_availability_provider'
 
     oro_product.product_variant.registry.product_variant_type_handler_factory:
         class: 'Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantTypeHandlerRegistry'
@@ -1225,9 +1209,6 @@ services:
         arguments:
             - '@oro_layout.theme_manager'
             - '@oro_entity.fallback.resolver.entity_fallback_resolver'
-
-    Oro\Bundle\ProductBundle\Provider\PageTemplateProvider:
-        alias: oro_product.provider.page_template_provider
 
     oro_product.config.event_listener.direct_url_prefix_change:
         class: Oro\Bundle\RedirectBundle\EventListener\ConfigRegenerateDirectUrlListener
@@ -1438,7 +1419,7 @@ services:
         arguments:
             - '@request_stack'
             - '@oro_redirect.url_cache'
-            - '@oro_frontend_localization.manager.user_localization'
+            - '@oro_locale.provider.current_localization'
         tags:
             - { name: oro_redirect.context_url_provider, alias: 'content_variant' }
 
@@ -1448,9 +1429,6 @@ services:
         arguments:
             - '@oro_entity_config.manager.attribute_manager'
             - '@oro_entity_config.provider.serialized_field_provider'
-
-    Oro\Bundle\ProductBundle\Provider\GridCountProvider:
-        alias: oro_product.provider.grid_count_provider
 
     oro_product.provider.grid_count_provider:
         class: Oro\Bundle\ProductBundle\Provider\GridCountProvider
@@ -1463,9 +1441,6 @@ services:
     oro_product.provider.brand_status_provider:
         class: 'Oro\Bundle\ProductBundle\Provider\BrandStatusProvider'
         public: true
-
-    Oro\Bundle\ProductBundle\Service\ProductCollectionDefinitionConverter:
-        alias: oro_product.service.product_collection_definition_converter
 
     oro_product.service.product_collection_definition_converter:
         class: Oro\Bundle\ProductBundle\Service\ProductCollectionDefinitionConverter
@@ -1540,9 +1515,6 @@ services:
             - '@oro_segment.segment_manager'
             - '@logger'
             - '@oro_security.token_accessor'
-
-    Oro\Bundle\ProductBundle\Provider\ProductImagesURLsProvider:
-        alias: oro_product.provider.product_images_urls
 
     oro_product.provider.product_images_urls:
         class: 'Oro\Bundle\ProductBundle\Provider\ProductImagesURLsProvider'
@@ -1923,9 +1895,6 @@ services:
             - '@event_dispatcher'
             - '@oro_ui.tools.url_helper'
 
-    Oro\Bundle\ProductBundle\Provider\ProductAutocompleteProvider:
-        alias: oro_product.provider.product_autocomplete
-
     oro_product.layout.data_provider.frontend_product_export_options:
         class: Oro\Bundle\ProductBundle\Layout\DataProvider\FrontendProductExportOptionsProvider
         arguments:
@@ -1962,9 +1931,6 @@ services:
             - '@oro_website.manager'
             - '@oro_config.manager'
 
-    Oro\Bundle\ProductBundle\Manager\UserProductFiltersSidebarStateManager:
-        alias: oro_product.manager.user_product_filters_sidebar_state_manager
-
     oro_product.layout.data_provider.product_filters_sidebar_state:
         class: Oro\Bundle\ProductBundle\Layout\DataProvider\UserProductFiltersSidebarStateDataProvider
         arguments:
@@ -1982,3 +1948,10 @@ services:
         tags:
             - { name: oro_featuretogle.voter }
             - { name: oro_featuretogle.feature, feature: attachment_original_filenames }
+
+    oro_product.datagrid.provider.product_variants_selected_fields_provider:
+        class: Oro\Bundle\ProductBundle\DataGrid\Provider\ProductVariantsSelectedFieldsProvider
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: oro_datagrid.selected_fields_provider }

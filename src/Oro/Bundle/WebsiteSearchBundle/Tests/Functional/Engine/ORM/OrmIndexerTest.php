@@ -89,7 +89,8 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
 
         $inputValidator = new IndexerInputValidator(
             $websiteProvider,
-            $this->mappingProviderMock
+            $this->mappingProviderMock,
+            self::getContainer()->get('doctrine')
         );
 
         $this->indexer = new OrmIndexer(

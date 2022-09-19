@@ -1,0 +1,56 @@
+{% extends '@OroUI/layouts/default/dialog/dialog.html.twig' %}
+
+{% block _widget_content_widget %}
+    {% set shoppingListLink %}
+        <a href="{{ oro_shopping_list_frontend_url(shoppingList) }}">{{ shoppingList.label }}</a>
+    {% endset %}
+
+    {% set shoppinglistCreatedMessage =  'oro.shoppinglist.flash.success'|trans({'%shoppinglist%': shoppingListLink|trim|default(null)}) %}
+    {% set pageComponentOptions = {
+        savedId: savedId|default(null),
+        shoppingListCreateEnabled: shoppingListCreateEnabled,
+        messages: [shoppinglistCreatedMessage]|merge(messages)
+    } %}
+    {% set attr = {
+        'data-page-component-module': 'oroshoppinglist/js/app/components/shopping-list-create-component',
+    }|merge(attr)|merge({
+        'data-page-component-options': pageComponentOptions|merge(attr['data-page-component-options']|default({})),
+    }) %}
+    {{ parent() }}
+{% endblock %}
+
+{% block _form_start_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " grid"
+    }) %}
+
+    {{ parent_block_widget(block) }}
+{% endblock %}
+
+{% block _form_fields_widget %}
+    {{ form_widget(form, {
+        'attr': {
+            'class': 'grid-col-12'
+        }
+    }) }}
+{% endblock %}
+
+{% block _form_comment_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " grid-col-12"
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{- 'oro.shoppinglist.create_new_form.comment'|trans -}}<br>
+        {{- 'oro.shoppinglist.create_new_form.comment_cancel'|trans -}}
+    </div>
+{% endblock %}
+
+{% block _form_actions_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " widget-actions"
+    }) %}
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}

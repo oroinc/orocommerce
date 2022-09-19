@@ -44,3 +44,24 @@ services:
         arguments:
             - '@.inner'
             - '@oro_frontend.request.frontend_helper'
+
+    oro_locale.helper.localized_slug_redirect:
+        class: 'Oro\Bundle\FrontendLocalizationBundle\Helper\LocalizedSlugRedirectHelper'
+        arguments:
+            - '@oro_redirect.provider.slug_source_entity_provider_registry'
+            - '@doctrine'
+            - '@oro_redirect.generator.canonical_url'
+            - '@oro_website.manager'
+            - '@oro_redirect.routing.router'
+
+    Oro\Bundle\FrontendLocalizationBundle\Helper\LocalizedSlugRedirectHelper:
+        alias: oro_locale.helper.localized_slug_redirect
+
+    oro_frontend_localization.extension.slug_detect_localization:
+        class: Oro\Bundle\FrontendLocalizationBundle\Extension\SlugDetectLocalizationExtension
+        arguments:
+            - '@request_stack'
+            - '@oro_frontend_localization.manager.user_localization'
+            - '@doctrine'
+        tags:
+            - { name: oro_locale.extension.current_localization, priority: -5 }

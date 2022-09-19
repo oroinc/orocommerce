@@ -18,6 +18,11 @@ interface UserLocalizationManagerInterface
 
     public function getDefaultLocalization(): ?Localization;
 
+    /**
+     * Double thinking before you using this method to get localization, that this method returns uesr's preferred
+     * localization, could not reflect accurately current localization for a site.
+     * Mostly you can call LocalizationProviderInterface::getCurrentLocalization instead.
+     */
     public function getCurrentLocalization(Website $website = null): ?Localization;
 
     public function getCurrentLocalizationByCustomerUser(

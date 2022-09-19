@@ -10,10 +10,8 @@ use Twig\Environment;
 class WYSIWYGValueRenderer
 {
     private const TWIG_TEMPLATE = '@OroCMS/Api/Field/render_content.html.twig';
-    private const CSS_STYLE_TEMPLATE = '<style type="text/css">%s</style>';
 
-    /** @var Environment */
-    private $twig;
+    private Environment $twig;
 
     public function __construct(Environment $twig)
     {
@@ -22,26 +20,11 @@ class WYSIWYGValueRenderer
 
     public function render(?string $value, ?string $style): ?string
     {
-        if ($value) {
-            $value = $this->renderTwigValue($value);
-        }
-        if ($style) {
-            $style = $this->renderTwigValue($style);
-        }
-
         $result = null;
-        if ($style) {
-            $result = sprintf(self::CSS_STYLE_TEMPLATE, $style);
-        }
-        if ($value) {
-            $result .= $value;
+        if ($value || $style) {
+            $result = $this->twig->render(self::TWIG_TEMPLATE, ['value' => (string)$value, 'style' => (string)$style]);
         }
 
         return $result;
-    }
-
-    private function renderTwigValue(string $value): string
-    {
-        return $this->twig->render(self::TWIG_TEMPLATE, ['value' => $value]);
     }
 }

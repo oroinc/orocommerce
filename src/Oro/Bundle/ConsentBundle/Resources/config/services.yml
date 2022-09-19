@@ -1,10 +1,9 @@
 services:
     oro_consent.form.autocomplete.consent.search_handler:
-        public: false
         parent: oro_form.autocomplete.search_handler
         arguments:
             - 'Oro\Bundle\ConsentBundle\Entity\Consent'
-            - ["defaultName"]
+            - ['defaultName']
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: oro_consent_list, acl_resource: oro_consent_view }
 

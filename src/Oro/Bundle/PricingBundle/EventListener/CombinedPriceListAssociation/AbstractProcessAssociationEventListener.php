@@ -58,22 +58,25 @@ abstract class AbstractProcessAssociationEventListener
     protected function processAssignments(
         CombinedPriceList $cpl,
         Website $website,
-        array $targetEntities
+        ?int $version,
+        array $targetEntities,
     ): void {
         foreach ($targetEntities as $targetEntity) {
-            $this->actualizeActiveCplRelation($cpl, $website, $targetEntity);
+            $this->actualizeActiveCplRelation($cpl, $website, $version, $targetEntity);
         }
     }
 
     protected function actualizeActiveCplRelation(
         CombinedPriceList $cpl,
         Website $website,
+        ?int $version,
         object $targetEntity = null
     ): BaseCombinedPriceListRelation {
         $activeCpl = $this->activeCombinedPriceListResolver->getActiveCplByFullCPL($cpl);
 
-        return $this->getCombinedPriceListRepository()
-            ->updateCombinedPriceListConnection($cpl, $activeCpl, $website, $targetEntity);
+        return $this
+            ->getCombinedPriceListRepository()
+            ->updateCombinedPriceListConnection($cpl, $activeCpl, $website, $version, $targetEntity);
     }
 
     protected function getCombinedPriceListRepository(): CombinedPriceListRepository

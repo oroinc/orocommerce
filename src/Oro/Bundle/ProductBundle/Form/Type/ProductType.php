@@ -152,7 +152,7 @@ class ProductType extends AbstractType
                 ProductPrimaryUnitPrecisionType::class,
                 [
                     'label'          => 'oro.product.primary_unit_precision.label',
-                    'tooltip'        => 'oro.product.form.tooltip.unit_precision',
+                    'tooltip'        => 'oro.product.primary_unit_precision.tooltip',
                     'error_bubbling' => false,
                     'required'       => true,
                     'mapped'         => false,
@@ -163,7 +163,7 @@ class ProductType extends AbstractType
                 ProductUnitPrecisionCollectionType::class,
                 [
                     'label'          => 'oro.product.additional_unit_precisions.label',
-                    'tooltip'        => 'oro.product.form.tooltip.unit_precision',
+                    'tooltip'        => 'oro.product.additional_unit_precisions.tooltip',
                     'error_bubbling' => false,
                     'required'       => false,
                     'mapped'         => false,
@@ -203,7 +203,7 @@ class ProductType extends AbstractType
             ])
             ->add('newArrival', ChoiceType::class, [
                 'label' => 'oro.product.new_arrival.label',
-                'tooltip' => 'oro.product.form.tooltip.new_arrival',
+                'tooltip' => 'oro.product.new_arrival.tooltip',
                 'choices' => ['oro.product.new_arrival.no' => 0, 'oro.product.new_arrival.yes' => 1],
                 'placeholder' => false,
             ])
@@ -231,7 +231,7 @@ class ProductType extends AbstractType
             ProductCustomVariantFieldsCollectionType::class,
             [
                 'label' => 'oro.product.variant_fields.label',
-                'tooltip' => 'oro.product.form.tooltip.variant_fields',
+                'tooltip' => 'oro.product.variant_fields.tooltip',
                 'required' => false,
                 'attributeFamily' => $product->getAttributeFamily()
             ]
@@ -244,7 +244,7 @@ class ProductType extends AbstractType
                 ProductPrimaryUnitPrecisionType::class,
                 [
                     'label'          => 'oro.product.primary_unit_precision.label',
-                    'tooltip'        => 'oro.product.form.tooltip.unit_precision',
+                    'tooltip'        => 'oro.product.primary_unit_precision.tooltip',
                     'error_bubbling' => false,
                     'required'       => true,
                     'data'           => $this->provider->getDefaultProductUnitPrecision()

@@ -13,10 +13,6 @@ Oro\Bundle\ProductBundle\Entity\Product:
             type: text
             fulltext: false
         -
-            name: inventory_status
-            type: text
-            fulltext: false
-        -
             name: is_variant
             type: integer
         -

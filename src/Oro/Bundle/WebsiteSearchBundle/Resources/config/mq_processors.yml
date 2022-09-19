@@ -1,0 +1,62 @@
+services:
+    oro_website_search.async.reindex_processor:
+        class: Oro\Bundle\WebsiteSearchBundle\Async\WebsiteSearchReindexProcessor
+        arguments:
+            - '@oro_website_search.async.reindex_processor.job_aware'
+            - '@oro_website_search.async.reindex_processor.granulized'
+            - '@oro_website_search.async.indexer.message_granularizer.reindex'
+            - '@oro_message_queue.client.message_producer'
+            - '@event_dispatcher'
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: oro_message_queue.client.message_processor }
+
+    oro_website_search.async.reindex_processor.granulized:
+        class: Oro\Bundle\WebsiteSearchBundle\Async\WebsiteSearchReindexGranulizedProcessor
+        arguments:
+            - '@oro_website_search.indexer'
+            - '@event_dispatcher'
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: oro_message_queue.client.message_processor }
+
+    oro_website_search.async.reset_index_processor:
+        class: Oro\Bundle\WebsiteSearchBundle\Async\WebsiteSearchResetIndexProcessor
+        arguments:
+            - '@oro_website_search.indexer'
+            - '@event_dispatcher'
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: oro_message_queue.client.message_processor }
+
+    oro_website_search.async.save_processor:
+        class: Oro\Bundle\WebsiteSearchBundle\Async\WebsiteSearchSaveProcessor
+        arguments:
+            - '@oro_website_search.indexer'
+            - '@event_dispatcher'
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: oro_message_queue.client.message_processor }
+
+    oro_website_search.async.delete_processor:
+        class: Oro\Bundle\WebsiteSearchBundle\Async\WebsiteSearchDeleteProcessor
+        arguments:
+            - '@oro_website_search.indexer'
+            - '@event_dispatcher'
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: oro_message_queue.client.message_processor }
+
+    oro_website_search.async.reindex_processor.job_aware:
+        class: Oro\Component\MessageQueue\Job\DelayedJobRunnerDecoratingProcessor
+        lazy: Oro\Component\MessageQueue\Consumption\MessageProcessorInterface
+        arguments:
+            - '@oro_message_queue.job.runner'
+            - '@oro_website_search.async.reindex_processor'
+        calls:
+            - [setLogger, ['@logger']]

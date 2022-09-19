@@ -102,6 +102,15 @@ oro:
         controller:
             shopping_list.saved.message: Shopping List has been saved
 
+        feature:
+            label: Shopping Lists
+            description: Enables a shopping list management feature that allows to view customers’ shopping lists, duplicate them, adjust line item quantity, and create an order from the selected shopping list.
+            guest_shopping_list:
+                label: Guest Shopping List
+                description: Enables guest customers to create a shopping list in the storefront. Only one shopping list is available for guest customers.
+            shopping_list_create:
+                label: Shopping Lists in the Storefront
+                description: Enables access to and management of the shopping lists in the storefront.
         lineitem:
             entity_label: Shopping List Line Item
             entity_plural_label: Shopping List Line Items
@@ -162,23 +171,23 @@ oro:
             fields:
                 backend_product_visibility.title: 'Can Be Added to Shopping Lists'
                 default_guest_shopping_list_owner.title: 'Default Guest Shopping List Owner'
-                default_guest_shopping_list_owner.tooltip: 'Default owner User for Guest Shopping lists'
+                default_guest_shopping_list_owner.tooltip: 'Select the default owner of all guest shopping lists.'
                 shopping_list_limit.tooltip: 'Set the number of shopping lists allowed per customer. The default value is zero, which means that no limit of shopping lists is applied.'
                 availability_for_guests:
                     label: 'Enable Guest Shopping List'
-                    tooltip: 'Allows guests to create a shopping list'
+                    tooltip: 'Select the option to enable guest customers to create a shopping list. Only one shopping list is available for guest customers.'
                 mass_adding_on_product_listing_enabled:
                     label: 'Enable Mass Adding on Product Listing'
-                    tooltip: 'Customers will be able to select multiple products on the product listing page and add them to a shopping list at once.'
+                    tooltip: 'Select the option to enable customers to select multiple products on the product listing page and add them to a shopping list in the storefront.'
                 create_shopping_list_for_new_guest:
                     label: 'Create Guest Shopping Lists Immediately'
-                    tooltip: 'Enable this option to automatically create shopping lists for all guest users once they access the storefront. By default, this option is disabled and shopping lists are created only when guest users add at least one item to their shopping list.'
+                    tooltip: 'Enable this option to automatically create shopping lists for all guest users once they access the storefront. By default, this option is disabled, and shopping lists are created only when guest users add at least one item to their shopping list.'
                 shopping_lists_max_line_items_per_page:
                     label: 'Maximum Line Items Per Page'
-                    tooltip: 'The provided value will be used as the implied maximum number of shopping list line items to display at once. If the number of shopping list line items exceeds this value, the "Show All Items" will no longer be available and this number will be shown as the maximum pager value.'
+                    tooltip: 'Set the maximum number of shopping list line items to be displayed per page. If the number of shopping list line items exceeds this value, then the “All” value, in the list of pagination dropdown values, is changed to the one specified in the option.'
                 show_all_in_shopping_list_widget:
                     label: 'Show All Lists in Shopping List Widgets'
-                    tooltip: 'If this option is enabled, in addition to the shopping lists owned by the current user, the shopping list widgets, popups and drop-down buttons will also include all other shopping lists that the current user is allowed to access.'
+                    tooltip: 'Select the option to enable customers to view all the shopping lists that they are allowed to access, besides their own, in the shopping list widgets.'
 
         privilege:
             category.shopping.label: 'Shopping'

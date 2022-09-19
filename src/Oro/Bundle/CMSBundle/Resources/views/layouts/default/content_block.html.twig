@@ -1,0 +1,15 @@
+{% block content_block_widget %}
+    {%- set content -%}
+        {%- if not hideTitle|default(false) -%}
+            <h3>{{ contentBlock.titles|localized_value }}</h3>
+        {%- endif -%}
+        {%- import '@OroCMS/macros.html.twig' as CMS -%}
+        {{ CMS.renderWysiwygContent(contentBlock.content, contentBlock.contentStyle) }}
+    {%- endset -%}
+
+    {% if block('block_attributes') is not empty -%}
+        <div{{ block('block_attributes') }}>{{ content|raw }}</div>
+    {%- else -%}
+        {{ content|raw }}
+    {%- endif %}
+{% endblock %}

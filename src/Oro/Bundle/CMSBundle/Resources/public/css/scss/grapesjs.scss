@@ -228,6 +228,7 @@
     &mdl-dialog {
         border-radius: 4px;
         box-shadow: $grapejs-shadow;
+        animation: none;
 
         .#{$app-prefix}btn-prim {
             display: inline-flex;
@@ -518,6 +519,21 @@
             // stylelint-disable-next-line declaration-no-important
             background-color: $codemirror-selected-background !important;
         }
+    }
+
+    &.fullscreen-mode {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 1000;
+        // stylelint-disable-next-line declaration-no-important
+        padding: $grapesjs-content-editor-fullscreen-offset !important;
+        // stylelint-disable-next-line declaration-no-important
+        width: auto !important;
+        // stylelint-disable-next-line declaration-no-important
+        height: auto !important;
     }
 }
 

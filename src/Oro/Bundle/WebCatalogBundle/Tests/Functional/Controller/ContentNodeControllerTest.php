@@ -97,6 +97,7 @@ class ContentNodeControllerTest extends WebTestCase
         $rootNodeId = $this->getReference(LoadContentNodesData::CATALOG_1_ROOT)->getId();
         $crawler = $this->client->request('GET', $this->getUrl('oro_content_node_create', ['id' => $rootNodeId]));
         $form = $crawler->selectButton('Save')->form();
+        $redirectAction = $crawler->selectButton('Save')->attr('data-action');
 
         $bigStringValue = str_repeat('a', 256);
         $formValues = $form->getPhpValues();
@@ -110,6 +111,7 @@ class ContentNodeControllerTest extends WebTestCase
             'cmsPage' => $this->getReference(LoadPageData::PAGE_1)->getId(),
             'type' => 'cms_page',
         ];
+        $formValues['input_action'] = $redirectAction;
 
         $this->client->followRedirects(true);
         $crawler = $this->client->request($form->getMethod(), $form->getUri(), $formValues);

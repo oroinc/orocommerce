@@ -178,3 +178,13 @@ services:
             - [setDoctrineHelper, ['@oro_entity.doctrine_helper']]
         tags:
             - { name: kernel.event_listener, event: oro_product.product.duplicate.after, method: onDuplicateAfter }
+
+    oro_inventory.acl.access_rule.inventory_level:
+        class: Oro\Bundle\InventoryBundle\Acl\AccessRule\InventoryLevelAccessRule
+        tags:
+            -
+                name: oro_security.access_rule
+                type: ORM
+                permission: VIEW
+                entityClass: Oro\Bundle\InventoryBundle\Entity\InventoryLevel
+                loggedUserClass: Oro\Bundle\UserBundle\Entity\User

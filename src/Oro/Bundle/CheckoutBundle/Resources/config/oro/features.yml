@@ -1,7 +1,7 @@
 features:
     checkout_customer_users_registration:
-        label: oro.checkout.system_configuration.fields.registration_allowed.label
-        description: oro.checkout.system_configuration.fields.registration_allowed.tooltip
+        label: oro.checkout.feature.checkout_customer_users_registration.label
+        description: oro.checkout.feature.checkout_customer_users_registration.description
         toggle: oro_checkout.registration_allowed
         dependencies:
             - oro_customer_registration_allowed
@@ -12,8 +12,8 @@ features:
             - checkout_customer_users_registration
 
     allow_checkout_without_email_confirmation_feature:
-        label: oro.checkout.system_configuration.fields.allow_checkout_without_email_confirmation.label
-        description: oro.checkout.system_configuration.fields.allow_checkout_without_email_confirmation.tooltip
+        label: oro.checkout.feature.allow_checkout_without_email_confirmation.label
+        description: oro.checkout.feature.allow_checkout_without_email_confirmation.description
         toggle: oro_checkout.allow_checkout_without_email_confirmation
         dependencies:
             - oro_customer_confirmation_required
@@ -23,8 +23,8 @@ features:
             - oro_checkout.allow_checkout_without_email_confirmation
 
     guest_checkout:
-        label: oro.checkout.system_configuration.fields.guest_checkout.label
-        description: oro.checkout.system_configuration.fields.guest_checkout.tooltip
+        label: oro.checkout.feature.guest_checkout.label
+        description: oro.checkout.feature.guest_checkout.description
         toggle: oro_checkout.guest_checkout
         routes:
             - 'oro_checkout_frontend_checkout'

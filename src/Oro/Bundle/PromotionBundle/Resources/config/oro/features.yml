@@ -1,12 +1,54 @@
 features:
-    promotion:
+    promotions:
         label: oro.promotion.feature.label
         description: oro.promotion.feature.description
         toggle: oro_promotion.feature_enabled
+        allow_if_all_abstain: true
         routes:
-            - 'oro_promotion_index'
-            - 'oro_promotion_view'
-            - 'oro_promotion_create'
-            - 'oro_promotion_update'
+            - oro_promotion_index
+            - oro_promotion_view
+            - oro_promotion_create
+            - oro_promotion_update
+            - oro_promotion_get_promotion_by_promotion
+            - oro_promotion_get_promotion_by_applied_promotion
+        configuration:
+            - oro_promotion.feature_enabled
+            - oro_promotion.discount_strategy
+        operations:
+            - oro_promotion_duplicate
+            - oro_segment_edit_inside_promotion
+        entities:
+            - Oro\Bundle\PromotionBundle\Entity\Promotion
         api_resources:
-            - 'Oro\Bundle\PromotionBundle\Entity\Promotion'
+            - Oro\Bundle\PromotionBundle\Entity\Promotion
+        navigation_items:
+            - application_menu.marketing_tab.promotions.promotion_list
+
+    coupons:
+        label: oro.promotion.coupon.feature.label
+        description: oro.promotion.coupon.feature.description
+        allow_if_all_abstain: true
+        routes:
+            - oro_promotion_coupon_index
+            - oro_promotion_coupon_create
+            - oro_promotion_coupon_update
+            - oro_promotion_coupon_view
+            - oro_promotion_coupon_mass_edit_widget
+            - oro_promotion_coupon_generation_preview
+            - oro_promotion_get_added_coupons_table
+            - oro_promotion_validate_coupon_applicability
+            - oro_promotion_get_applied_coupons_data
+        operations:
+            - oro_promotion_coupon_create
+            - oro_promotion_coupon_generation
+            - oro_promotion_add_coupon_form
+            - oro_promotion_add_coupon
+            - oro_promotion_coupon_unassign
+            - oro_promotion_assigned_coupon_delete
+        entities:
+            - Oro\Bundle\PromotionBundle\Entity\Coupon
+        api_resources:
+            - Oro\Bundle\PromotionBundle\Entity\Coupon
+        navigation_items:
+            - application_menu.marketing_tab.promotions.coupon_list
+

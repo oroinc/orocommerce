@@ -1,0 +1,36 @@
+layout:
+    imports:
+        -
+            id: oro_product_list_item
+            root: content_widget_container
+    actions:
+        - '@setBlockTheme':
+            themes:
+                - 'layout.html.twig'
+                - '@OroProduct/layouts/default/page/layout.html.twig'
+        - '@setOption':
+            id: product
+            optionName: class_prefix
+            optionValue: gallery-view
+        - '@setOption':
+              id: product
+              optionName: visible
+              optionValue: '=data["product"] ? true : false'
+        - '@appendOption':
+            id: content_widget_container
+            optionName: vars.blockContext
+            optionValue:
+                product: '=data["product"]'
+                stickers: '=data["product"] ? data["oro_product_stickers"].getStickers(data["product"]) : []'
+                matrixFormType: '=data["product"] ? data["product_list_form_availability_provider"].getAvailableMatrixFormType(data["product"]) : null'
+                isTargetBlank: '=data["current_user"].isFrontendRequest() === false'
+        - '@setOption':
+            id: product_line_item_form
+            optionName: instance_name
+            optionValue: '="product_mini_block_"~data["instanceNumber"]'
+        - '@appendOption':
+            id: product_line_item_form
+            optionName: vars
+            optionValue:
+                # additional user check to correctly render the widget on the backend
+                visible: '=data["show_add_button"] and data["current_user"].isFrontendRequest()'

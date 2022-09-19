@@ -43,11 +43,8 @@ class ProductController extends AbstractController
      *      class="OroProductBundle:Product",
      *      permission="VIEW"
      * )
-     *
-     * @param Product $product
-     * @return array
      */
-    public function viewAction(Product $product)
+    public function viewAction(Product $product): array
     {
         $pageTemplate = $this->get(PageTemplateProvider::class)
             ->getPageTemplate($product, 'oro_product_frontend_product_view');
@@ -67,11 +64,8 @@ class ProductController extends AbstractController
      * @Route("/info/{id}", name="oro_product_info", requirements={"id"="\d+"})
      * @Template
      * @AclAncestor("oro_product_view")
-     *
-     * @param Product $product
-     * @return array
      */
-    public function infoAction(Product $product)
+    public function infoAction(Product $product): array
     {
         return [
             'product' => $product,
@@ -83,10 +77,8 @@ class ProductController extends AbstractController
      * @Route("/", name="oro_product_index")
      * @Template
      * @AclAncestor("oro_product_view")
-     *
-     * @return array
      */
-    public function indexAction()
+    public function indexAction(): array
     {
         $widgetRouteParameters = [
             'gridName' => 'products-grid',
@@ -123,10 +115,8 @@ class ProductController extends AbstractController
      *      class="OroProductBundle:Product",
      *      permission="CREATE"
      * )
-     * @param Request $request
-     * @return array|RedirectResponse
      */
-    public function createAction(Request $request)
+    public function createAction(Request $request): array|Response
     {
         return $this->createStepOne($request);
     }
@@ -135,15 +125,10 @@ class ProductController extends AbstractController
      * Create product form step two
      *
      * @Route("/create/step-two", name="oro_product_create_step_two")
-     *
      * @Template("@OroProduct/Product/createStepTwo.html.twig")
-     *
      * @AclAncestor("oro_product_create")
-     *
-     * @param Request $request
-     * @return array|RedirectResponse
      */
-    public function createStepTwoAction(Request $request)
+    public function createStepTwoAction(Request $request): array|RedirectResponse
     {
         return $this->createStepTwo($request, new Product());
     }
@@ -159,10 +144,8 @@ class ProductController extends AbstractController
      *      class="OroProductBundle:Product",
      *      permission="EDIT"
      * )
-     * @param Product $product
-     * @return array|RedirectResponse
      */
-    public function updateAction(Product $product)
+    public function updateAction(Product $product): array|RedirectResponse
     {
         return $this->update($product);
     }
@@ -173,11 +156,8 @@ class ProductController extends AbstractController
      * @Route("/related-items-update/{id}", name="oro_product_related_items_update", requirements={"id"="\d+"})
      * @Template
      * @AclAncestor("oro_product_update")
-     * @param Product $product
-     *
-     * @return array|RedirectResponse
      */
-    public function updateRelatedItemsAction(Product $product)
+    public function updateRelatedItemsAction(Product $product): array|RedirectResponse
     {
         if (!$this->relatedItemsIsGranted()) {
             throw $this->createAccessDeniedException();
@@ -187,40 +167,22 @@ class ProductController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        return $this->update($product, 'oro_product_related_items_update');
+        return $this->update($product);
     }
 
-    /**
-     * @param Product $product
-     * @param string $routeName
-     * @return array|RedirectResponse
-     */
-    protected function update(Product $product, $routeName = 'oro_product_update')
+    private function update(Product $product): array|RedirectResponse
     {
-        return $this->get(ProductUpdateHandler::class)->handleUpdate(
+        /** @var ProductUpdateHandler $handler */
+        $handler = $this->get(ProductUpdateHandler::class);
+
+        return $handler->update(
             $product,
             $this->createForm(ProductType::class, $product),
-            function (Product $product) use ($routeName) {
-                return [
-                    'route' => $routeName,
-                    'parameters' => ['id' => $product->getId()]
-                ];
-            },
-            function (Product $product) {
-                return [
-                    'route' => 'oro_product_view',
-                    'parameters' => ['id' => $product->getId()]
-                ];
-            },
             $this->get(TranslatorInterface::class)->trans('oro.product.controller.product.saved.message')
         );
     }
 
-    /**
-     * @param Request $request
-     * @return array|Response
-     */
-    protected function createStepOne(Request $request)
+    private function createStepOne(Request $request): array|Response
     {
         $form = $this->createForm(ProductStepOneType::class, new Product());
         $handler = new ProductCreateStepOneHandler($form, $request);
@@ -240,12 +202,7 @@ class ProductController extends AbstractController
         ];
     }
 
-    /**
-     * @param Request $request
-     * @param Product $product
-     * @return array|RedirectResponse
-     */
-    protected function createStepTwo(Request $request, Product $product)
+    private function createStepTwo(Request $request, Product $product): array|RedirectResponse
     {
         if ($request->get('input_action') === 'oro_product_create') {
             $form = $this->createForm(ProductStepOneType::class, $product);
@@ -277,13 +234,9 @@ class ProductController extends AbstractController
 
     /**
      * @Route("/get-changed-urls/{id}", name="oro_product_get_changed_slugs", requirements={"id"="\d+"})
-     *
      * @AclAncestor("oro_product_update")
-     *
-     * @param Product $product
-     * @return JsonResponse
      */
-    public function getChangedSlugsAction(Product $product)
+    public function getChangedSlugsAction(Product $product): JsonResponse
     {
         return new JsonResponse($this->get(ChangedSlugsHelper::class)
             ->getChangedSlugsData($product, ProductType::class));
@@ -291,14 +244,9 @@ class ProductController extends AbstractController
 
     /**
      * @Route("/get-changed-default-url/{id}", name="oro_product_get_changed_default_slug", requirements={"id"="\d+"})
-     *
      * @AclAncestor("oro_product_update")
-     *
-     * @param Request $request
-     * @param Product $product
-     * @return JsonResponse
      */
-    public function getChangedDefaultSlugAction(Request $request, Product $product)
+    public function getChangedDefaultSlugAction(Request $request, Product $product): JsonResponse
     {
         $newName = $request->get('productName');
 
@@ -326,11 +274,8 @@ class ProductController extends AbstractController
      *     requirements={"id"="\d+"}
      * )
      * @Template(template="@OroProduct/Product/selectRelatedProducts.html.twig")
-     *
-     * @param Product $product
-     * @return array
      */
-    public function getPossibleProductsForRelatedProductsAction(Product $product)
+    public function getPossibleProductsForRelatedProductsAction(Product $product): array
     {
         return ['product' => $product];
     }
@@ -342,11 +287,8 @@ class ProductController extends AbstractController
      *     requirements={"id"="\d+"}
      * )
      * @Template(template="@OroProduct/Product/selectUpsellProducts.html.twig")
-     *
-     * @param Product $product
-     * @return array
      */
-    public function getPossibleProductsForUpsellProductsAction(Product $product)
+    public function getPossibleProductsForUpsellProductsAction(Product $product): array
     {
         return ['product' => $product];
     }
@@ -355,12 +297,8 @@ class ProductController extends AbstractController
      * @Route("/add-products-widget/{gridName}", name="oro_add_products_widget")
      * @AclAncestor("oro_product_view")
      * @Template
-     *
-     * @param Request $request
-     * @param string $gridName
-     * @return array
      */
-    public function addProductsWidgetAction(Request $request, $gridName)
+    public function addProductsWidgetAction(Request $request, string $gridName): array
     {
         $hiddenProducts = $request->get('hiddenProducts');
 
@@ -372,19 +310,17 @@ class ProductController extends AbstractController
 
     /**
      * Checks if at least one "Related Items" functionality is available for the user
-     *
-     * @return bool
      */
-    private function relatedItemsIsGranted()
+    private function relatedItemsIsGranted(): bool
     {
         return $this->isGranted('oro_related_products_edit')
             || $this->isGranted('oro_upsell_products_edit');
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public static function getSubscribedServices()
+    public static function getSubscribedServices(): array
     {
         return array_merge(
             parent::getSubscribedServices(),

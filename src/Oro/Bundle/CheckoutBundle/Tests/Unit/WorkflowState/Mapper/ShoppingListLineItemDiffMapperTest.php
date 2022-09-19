@@ -60,8 +60,8 @@ class ShoppingListLineItemDiffMapperTest extends AbstractCheckoutDiffMapperTest
         $price2 = $this->getPrice(10);
         $weight1 = $this->getWeight(10);
         $weight2 = $this->getWeight(1);
-        $dms1 = $this->getDimension(1, 1, 1);
-        $dms2 = $this->getDimension(1, 1, 1);
+        $dms1 = $this->getDimension(1, 2, 3);
+        $dms2 = $this->getDimension(1, 2, 3);
 
         $item1 = $this->getShippingLineItem('set', 1, 'SKU123', $price1, $weight1, $dms1, $prod1);
         $item2 = $this->getShippingLineItem('item', 1, 'SKU123', $price2, $weight2, $dms2, $prod2);
@@ -80,8 +80,50 @@ class ShoppingListLineItemDiffMapperTest extends AbstractCheckoutDiffMapperTest
 
         $this->assertEquals(
             [
-                'sSKU123-uset-q1-pUSD120-w10kg-d1x1x1cm-iin_stock',
-                'sSKU123-uitem-q1-pUSD10-w1kg-d1x1x1cm-iin_stock'
+                'sSKU123-uset-q1-pUSD120-w10kg-d1x2x3cm-iin_stock',
+                'sSKU123-uitem-q1-pUSD10-w1kg-d1x2x3cm-iin_stock'
+            ],
+            $result
+        );
+    }
+
+    public function testGetCurrentStateNoProduct(): void
+    {
+        $shoppingList = new ShoppingList();
+        $shoppingList->addLineItem(new LineItem());
+        $shoppingList->addLineItem(new LineItem());
+
+        $checkout = $this->createMock(Checkout::class);
+        $checkout->expects($this->once())
+            ->method('getSourceEntity')
+            ->willReturn($shoppingList);
+
+        $price1 = $this->getPrice(120);
+        $price2 = $this->getPrice(10);
+        $weight1 = $this->getWeight(10);
+        $weight2 = $this->getWeight(1);
+        $dms1 = $this->getDimension(1, 2, 3);
+        $dms2 = $this->getDimension(1, 2, 3);
+
+        $item1 = $this->getShippingLineItem('set', 1, 'SKU123', $price1, $weight1, $dms1);
+        $item2 = $this->getShippingLineItem('item', 1, 'SKU123', $price2, $weight2, $dms2);
+
+        $shipContext = $this->createMock(ShippingContextInterface::class);
+        $shipContext->expects($this->once())
+            ->method('getLineItems')
+            ->willReturn([$item1, $item2]);
+        $this->shipContextProvider
+            ->expects($this->once())
+            ->method('getContext')
+            ->with($checkout)
+            ->willReturn($shipContext);
+
+        $result = $this->mapper->getCurrentState($checkout);
+
+        $this->assertEquals(
+            [
+                's-uset-q1-pUSD120-w10kg-d1x2x3cm-i',
+                's-uitem-q1-pUSD10-w1kg-d1x2x3cm-i'
             ],
             $result
         );
@@ -206,7 +248,7 @@ class ShoppingListLineItemDiffMapperTest extends AbstractCheckoutDiffMapperTest
         Price $price,
         Weight $weight,
         Dimensions $dimension,
-        StubProduct $product
+        ?StubProduct $product = null
     ): ShippingLineItem {
         return new ShippingLineItem(
             [

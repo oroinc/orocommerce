@@ -33,9 +33,10 @@ Feature: Shopping Lists Widget
 
   Scenario: Check mass action with disabled Show All in Shopping Lists Widget
     When I check AA1 record in "Product Frontend Grid" grid
-    And I click "ProductFrontendMassActionButton"
-    Then I should see "Add to Shopping List 1" in the "ProductFrontendGridMassActionMenu" element
-    And I should not see "Add to Shopping List 2" in the "ProductFrontendGridMassActionMenu" element
+    And I should see "ProductFrontendMassPanelInBottomSticky" element inside "Bottom Active Sticky Panel" element
+    And I click "ProductFrontendMassOpenInDropdown"
+    Then I should see "Add to Shopping List 1" in the "ProductFrontendMassMenuInBottomSticky" element
+    And I should not see "Add to Shopping List 2" in the "ProductFrontendMassMenuInBottomSticky" element
     And I uncheck AA1 record in "Product Frontend Grid" grid
 
   Scenario: Check buttons widget with disabled Show All in Shopping Lists Widget
@@ -75,9 +76,10 @@ Feature: Shopping Lists Widget
 
   Scenario: Check mass action with enabled Show All in Shopping Lists Widget
     When I check AA1 record in "Product Frontend Grid" grid
-    And I click "ProductFrontendMassActionButton"
-    Then I should see "Add to Shopping List 1" in the "ProductFrontendGridMassActionMenu" element
-    And I should see "Add to Shopping List 2" in the "ProductFrontendGridMassActionMenu" element
+    And I should see "ProductFrontendMassPanelInBottomSticky" element inside "Bottom Active Sticky Panel" element
+    And I click "ProductFrontendMassOpenInDropdown"
+    Then I should see "Add to Shopping List 1" in the "ProductFrontendMassMenuInBottomSticky" element
+    And I should see "Add to Shopping List 2" in the "ProductFrontendMassMenuInBottomSticky" element
     And I uncheck AA1 record in "Product Frontend Grid" grid
 
   Scenario: Check buttons widget with enabled Show All in Shopping Lists Widget

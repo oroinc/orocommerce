@@ -104,7 +104,7 @@ class PricingStorageIsolator implements IsolatorInterface
                 $cplBuilderFacade->rebuild([$cpl]);
                 $assignTo = $association['assign_to'] ?? [];
                 if (!empty($assignTo)) {
-                    $cplBuilderFacade->processAssignments($cpl, $association['assign_to'], true);
+                    $cplBuilderFacade->processAssignments($cpl, $association['assign_to'], null, true);
                 }
                 $cplBuilderFacade->triggerProductIndexation($cpl, $assignTo);
             }

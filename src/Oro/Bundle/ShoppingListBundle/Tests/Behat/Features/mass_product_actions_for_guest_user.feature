@@ -20,9 +20,11 @@ Feature: Mass Product Actions for Guest user
     When I type "rtsh_m" in "search"
     And I click "Search Button"
     Then I should not see mass action checkbox in row with rtsh_m content for "Product Frontend Grid"
-    When I click "Gallery View"
+    When I click "Catalog Switcher Toggle"
+    And I click "Gallery View"
     Then I should not see mass action checkbox in row with rtsh_m content for "Product Frontend Grid"
-    When I click "No Image View"
+    When I click "Catalog Switcher Toggle"
+    And I click "No Image View"
     Then I should not see mass action checkbox in row with rtsh_m content for "Product Frontend Grid"
 
   Scenario: Mass actions are enabled for Guest when Guest Shopping List feature is enabled
@@ -40,9 +42,11 @@ Feature: Mass Product Actions for Guest user
     When I type "rtsh_m" in "search"
     And I click "Search Button"
     Then I should see mass action checkbox in row with rtsh_m content for "Product Frontend Grid"
-    When I click "Gallery View"
+    When I click "Catalog Switcher Toggle"
+    And I click "Gallery View"
     Then I should see mass action checkbox in row with rtsh_m content for "Product Frontend Grid"
-    When I click "List View"
+    When I click "Catalog Switcher Toggle"
+    And I click "List View"
     Then I should see mass action checkbox in row with rtsh_m content for "Product Frontend Grid"
 
   Scenario: Guest should be able to add products with help of mass actions
@@ -54,7 +58,7 @@ Feature: Mass Product Actions for Guest user
       | Quantity | 3    |
       | Unit     | item |
     And I scroll to top
-    And I click "Add to current Shopping List" link from mass action dropdown in "Product Frontend Grid"
+    And I click "Add to current Shopping List" in "ProductFrontendMassPanelInBottomSticky" element
     And I open shopping list widget
     And I should see "1 Item | $21.00" in the "Shopping List Widget" element
     And I click "View List"

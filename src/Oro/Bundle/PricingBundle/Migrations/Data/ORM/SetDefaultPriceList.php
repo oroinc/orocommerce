@@ -66,7 +66,7 @@ class SetDefaultPriceList extends AbstractFixture implements ContainerAwareInter
             $cplBuilderFacade->rebuild([$cpl]);
             $assignTo = $association['assign_to'] ?? [];
             if (!empty($assignTo)) {
-                $cplBuilderFacade->processAssignments($cpl, $assignTo, true);
+                $cplBuilderFacade->processAssignments($cpl, $assignTo, null, true);
             }
             $cplBuilderFacade->triggerProductIndexation($cpl, $assignTo);
         }

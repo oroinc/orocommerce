@@ -67,19 +67,19 @@ class ProductAutocompleteListenerTest extends \PHPUnit\Framework\TestCase
             [
                 'isFlatPLEnabled' => true,
                 'isCombinedPLEnabled' => false,
-                'expectedFields' => ['decimal.minimal_price_PRICE_LIST_ID_CURRENCY as pl_price'],
+                'expectedFields' => ['decimal.minimal_price.PRICE_LIST_ID_CURRENCY as pl_price'],
             ],
             [
                 'isFlatPLEnabled' => false,
                 'isCombinedPLEnabled' => true,
-                'expectedFields' => ['decimal.minimal_price_CPL_ID_CURRENCY as cpl_price'],
+                'expectedFields' => ['decimal.minimal_price.CPL_ID_CURRENCY as cpl_price'],
             ],
             [
                 'isFlatPLEnabled' => true,
                 'isCombinedPLEnabled' => true,
                 'expectedFields' => [
-                    'decimal.minimal_price_PRICE_LIST_ID_CURRENCY as pl_price',
-                    'decimal.minimal_price_CPL_ID_CURRENCY as cpl_price',
+                    'decimal.minimal_price.PRICE_LIST_ID_CURRENCY as pl_price',
+                    'decimal.minimal_price.CPL_ID_CURRENCY as cpl_price',
                 ],
             ],
         ];

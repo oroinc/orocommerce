@@ -200,20 +200,10 @@ define(function(require, exports, module) {
                 collection: this.collection,
                 column: this.columns.findWhere('massActions'),
                 selectState: this.selectState,
-                optimizedScreenSize: this.optimizedScreenSize,
-                attributes: {
-                    'data-dom-relocation-options': JSON.stringify({
-                        responsive: [{
-                            viewport: {
-                                maxScreenType: this.optimizedScreenSize
-                            },
-                            moveTo: this.massActionsStickyContainer
-                        }]
-                    })
-                }
+                optimizedScreenSize: this.optimizedScreenSize
             });
 
-            $(this.massActionsContainer).append(this.selectHeaderActionCell.$el);
+            $(this.massActionsStickyContainer).append(this.selectHeaderActionCell.$el);
         },
 
         setVisibleState: function(state) {

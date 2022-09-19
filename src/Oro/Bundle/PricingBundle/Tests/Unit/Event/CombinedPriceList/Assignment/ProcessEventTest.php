@@ -12,9 +12,10 @@ class ProcessEventTest extends TestCase
     {
         $cpl = new CombinedPriceList();
         $associations = ['config' => true];
-        $event = new ProcessEvent($cpl, $associations, true);
+        $event = new ProcessEvent($cpl, $associations, 100, true);
         $this->assertSame($cpl, $event->getCombinedPriceList());
         $this->assertSame($associations, $event->getAssociations());
+        $this->assertEquals(100, $event->getVersion());
         $this->assertTrue($event->isSkipUpdateNotification());
     }
 }

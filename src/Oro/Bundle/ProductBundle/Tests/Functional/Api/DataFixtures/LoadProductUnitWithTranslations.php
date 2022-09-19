@@ -16,16 +16,15 @@ class LoadProductUnitWithTranslations extends AbstractFixture implements Contain
     /**
      * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
+        $this->addTranslations();
+
         $productUnit = new ProductUnit();
         $productUnit->setCode('day');
         $productUnit->setDefaultPrecision(1);
-
         $manager->persist($productUnit);
         $manager->flush();
-
-        $this->addTranslations();
 
         $this->addReference('day', $productUnit);
     }

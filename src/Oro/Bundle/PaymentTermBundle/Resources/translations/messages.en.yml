@@ -43,6 +43,11 @@ oro:
         payment_terms:
             label: 'Terms: %paymentTerm%'
 
+        feature:
+            manage:
+                label: Payment Term Management
+                description: Enables creating a particular term of payment that defines a period for the buyer to complete their purchase based on certain conditions or contract agreements.
+
     payment:
         admin:
             payment_term.label: 'Payment Terms'

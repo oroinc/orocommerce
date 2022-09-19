@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Functional\Workflow;
 
+use Doctrine\Common\Util\ClassUtils;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
@@ -24,9 +25,6 @@ abstract class AbstractRfqFrontofficeDefaultWorkflowTest extends FrontendWebTest
     /** @var Workflow */
     protected $workflow;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         parent::setUp();
@@ -167,9 +165,11 @@ abstract class AbstractRfqFrontofficeDefaultWorkflowTest extends FrontendWebTest
      */
     protected function refreshEntity($entity)
     {
-        $dh = $this->getContainer()->get('oro_entity.doctrine_helper');
+        $entityClass = ClassUtils::getClass($entity);
+        $em = $this->getContainer()->get('doctrine')->getManagerForClass($entityClass);
+        $entityId = $em->getClassMetadata($entityClass)->getIdentifierValues($entity);
 
-        return $this->getEntity($dh->getEntityClass($entity), $dh->getEntityIdentifier($entity));
+        return $this->getEntity($entityClass, $entityId);
     }
 
     /**

@@ -14,6 +14,7 @@ oro_behat_extension:
         - Oro\Bundle\CustomerBundle\Tests\Behat\Context\FrontendGridContext
         - Oro\Bundle\CustomerBundle\Tests\Behat\Context\RegistrationInstructionFeatureContext
         - Oro\Bundle\CustomerBundle\Tests\Behat\Context\CustomerVisitorContext
+        - Oro\Bundle\ShoppingListBundle\Tests\Behat\Context\FeatureContext
       paths:
         - '@OroCustomThemeBundle/Tests/Behat/Features'
   elements:

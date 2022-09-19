@@ -42,14 +42,18 @@ define(function(require) {
         },
 
         initPricesListeners: function() {
-            mediator.on('pricing:load:prices', this.reloadPrices, this);
-            mediator.on('pricing:get:products-tier-prices', this.getProductsTierPrices, this);
-            mediator.on('pricing:load:products-tier-prices', this.loadProductsTierPrices, this);
+            this.listenTo(mediator, {
+                'pricing:load:prices': this.reloadPrices,
+                'pricing:get:products-tier-prices': this.getProductsTierPrices,
+                'pricing:load:products-tier-prices': this.loadProductsTierPrices
+            });
         },
 
         initFieldsListeners: function() {
-            mediator.on('update:currency', this.setCurrency, this);
-            mediator.on('customer-customer-user:change', this.setCustomer, this);
+            this.listenTo(mediator, {
+                'update:currency': this.setCurrency,
+                'customer-customer-user:change': this.setCustomer
+            });
         },
 
         /*
@@ -152,19 +156,6 @@ define(function(require) {
 
             this.options.customer = customerId;
             this.reloadPrices();
-        },
-
-        /**
-         * @inheritdoc
-         */
-        dispose: function() {
-            if (this.disposed) {
-                return;
-            }
-
-            mediator.off(null, null, this);
-
-            ProductsPricesComponent.__super__.dispose.call(this);
         }
     });
 

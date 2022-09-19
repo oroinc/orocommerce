@@ -1,0 +1,46 @@
+/* @theme: default; */
+
+.shopping-lists-units {
+    position: relative;
+
+    display: block;
+    padding: 4px 7px 4px 0;
+
+    @include clearfix();
+
+    &:first-child {
+        display: block;
+        margin-top: 0;
+    }
+
+    &__number {
+        display: inline-block;
+        min-width: $offset-x-m;
+    }
+
+    &__static {
+        padding-right: $offset-x-m;
+    }
+
+    &__separate {
+        margin: 0 3px;
+    }
+
+    &__actions {
+        float: right;
+
+        color: $shopping-lists-units-actions-color;
+    }
+
+    &:hover &__actions {
+        transition-delay: .1s;
+    }
+}
+
+@include breakpoint('mobile') {
+    .shopping-lists-units {
+        &__static {
+            padding-right: 0;
+        }
+    }
+}
