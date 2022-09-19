@@ -659,6 +659,7 @@ oro:
                     label: 'Include Product Description'
                 schema_org_description_field:
                     label: 'Used Product Description Field'
+                    tooltip: 'Please note that any advanced text formatting or additional markup will not be included.'
                     choice:
                         meta.label: 'SEO Meta Description'
                         short.label: 'Simplified Short Description'
