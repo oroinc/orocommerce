@@ -44,7 +44,7 @@ class MissingGroupByWalkerTest extends \PHPUnit\Framework\TestCase
         $AST = $this->getDefaultAST();
 
         $this->missingGroupByWalker->walkSelectStatement($AST);
-        $this->assertCount(count($this->getQueryComponents()), $AST->groupByClause->groupByItems);
+        $this->assertCount(1, $AST->groupByClause->groupByItems);
     }
 
     public function testWalkStatementCompletesExistingGroupBy()
@@ -63,6 +63,6 @@ class MissingGroupByWalkerTest extends \PHPUnit\Framework\TestCase
         $AST->groupByClause = new GroupByClause([$pathExpression1, $pathExpression2]);
 
         $this->missingGroupByWalker->walkSelectStatement($AST);
-        $this->assertCount(count($this->getQueryComponents()) + 1, $AST->groupByClause->groupByItems);
+        $this->assertCount(3, $AST->groupByClause->groupByItems);
     }
 }

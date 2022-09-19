@@ -6,13 +6,12 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Query\Result\Item;
-use Oro\Bundle\SearchBundle\Tests\Functional\SearchExtensionTrait;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Oro\Bundle\WebsiteSearchBundle\Event\RestrictIndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Traits\DefaultLocalizationIdTestTrait;
-use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Traits\DefaultWebsiteIdTestTrait;
+use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\WebsiteSearchExtensionTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -21,20 +20,18 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class RestrictIndexProductsEventListenerTest extends WebTestCase
 {
-    use DefaultWebsiteIdTestTrait;
     use DefaultLocalizationIdTestTrait;
-    use SearchExtensionTrait;
+    use WebsiteSearchExtensionTrait;
 
-    /** @var EventDispatcherInterface */
-    private $dispatcher;
+    private EventDispatcherInterface $dispatcher;
 
     protected function setUp(): void
     {
         $this->initClient();
-        $this->getContainer()->get('request_stack')->push(Request::create(''));
-        $this->dispatcher = $this->getContainer()->get('event_dispatcher');
+        self::getContainer()->get('request_stack')->push(Request::create(''));
+        $this->dispatcher = self::getContainer()->get('event_dispatcher');
 
-        $listener = $this->getContainer()->get('oro_product.event_listener.restrict_index_products');
+        $listener = self::getContainer()->get('oro_product.event_listener.restrict_index_products');
         $eventName = sprintf('%s.%s', RestrictIndexEntityEvent::NAME, 'product');
 
         $this->clearRestrictListeners($eventName);
@@ -51,35 +48,34 @@ class RestrictIndexProductsEventListenerTest extends WebTestCase
         $this->loadFixtures([LoadProductData::class]);
     }
 
-    public function testRestrictIndexProductsEventListener()
+    public function testRestrictIndexProductsEventListener(): void
     {
         $context = [
-            AbstractIndexer::CONTEXT_WEBSITE_IDS => [$this->getDefaultWebsiteId()]
+            AbstractIndexer::CONTEXT_WEBSITE_IDS => [self::getDefaultWebsiteId()]
         ];
 
         $expectedCount = 7;
 
-        $indexer = $this->getContainer()->get('oro_website_search.indexer');
+        $indexer = self::getContainer()->get('oro_website_search.indexer');
         $indexer->resetIndex(Product::class, $context);
 
-        $this->getContainer()->get('event_dispatcher')->dispatch(
-            new ReindexationRequestEvent([Product::class], [$this->getDefaultWebsiteId()], [], false),
+        self::getContainer()->get('event_dispatcher')->dispatch(
+            new ReindexationRequestEvent([Product::class], [self::getDefaultWebsiteId()], [], false),
             ReindexationRequestEvent::EVENT_NAME
         );
 
-        $alias = 'oro_product_' . $this->getDefaultWebsiteId();
-        $this->ensureItemsLoaded($alias, $expectedCount, 'oro_website_search.engine');
+        self::ensureItemsLoaded(Product::class, $expectedCount);
 
         $query = new Query();
         $query->from('oro_product_WEBSITE_ID');
         $query->select('names_LOCALIZATION_ID');
         $query->getCriteria()->orderBy(['names_' . $this->getDefaultLocalizationId() => Query::ORDER_ASC]);
 
-        $searchEngine = $this->getContainer()->get('oro_website_search.engine');
+        $searchEngine = self::getContainer()->get('oro_website_search.engine');
         $result = $searchEngine->search($query);
         $values = $result->getElements();
 
-        $this->assertEquals($expectedCount, $result->getRecordsCount());
+        self::assertEquals($expectedCount, $result->getRecordsCount());
         $this->assertSearchItems('product-1', $values[0]);
         $this->assertSearchItems('product-2', $values[1]);
         $this->assertSearchItems('product-3', $values[2]);
@@ -91,7 +87,7 @@ class RestrictIndexProductsEventListenerTest extends WebTestCase
     /**
      * @param string $eventName
      */
-    protected function clearRestrictListeners($eventName)
+    protected function clearRestrictListeners($eventName): void
     {
         foreach ($this->dispatcher->getListeners($eventName) as $listener) {
             $this->dispatcher->removeListener($eventName, $listener);
@@ -102,7 +98,7 @@ class RestrictIndexProductsEventListenerTest extends WebTestCase
      * @param mixed $expectedValue
      * @param Item $value
      */
-    protected function assertSearchItems($expectedValue, Item $value)
+    protected function assertSearchItems($expectedValue, Item $value): void
     {
         $selectedData = $value->getSelectedData();
         $field = 'names_' . $this->getDefaultLocalizationId();
@@ -113,6 +109,6 @@ class RestrictIndexProductsEventListenerTest extends WebTestCase
             );
         }
 
-        $this->assertStringStartsWith($expectedValue, $selectedData[$field]);
+        self::assertStringStartsWith($expectedValue, $selectedData[$field]);
     }
 }
