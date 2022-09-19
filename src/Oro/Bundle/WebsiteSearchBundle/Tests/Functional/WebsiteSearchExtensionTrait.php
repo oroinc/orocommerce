@@ -3,6 +3,7 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\SearchBundle\Engine\IndexerInterface;
 use Oro\Bundle\SearchBundle\Tests\Functional\SearchExtensionTrait;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteIdPlaceholder;
@@ -20,6 +21,11 @@ trait WebsiteSearchExtensionTrait
         ensureItemsLoaded as baseEnsureItemsLoaded;
     }
     use DefaultWebsiteIdTestTrait;
+
+    protected static function getSearchIndexer(): IndexerInterface
+    {
+        return self::getContainer()->get('oro_website_search.indexer');
+    }
 
     protected static function reindexProductData(): void
     {
@@ -62,6 +68,15 @@ trait WebsiteSearchExtensionTrait
      */
     protected static function resetIndex(array|string|null $class = null, array $context = []): void
     {
-        self::getContainer()->get('oro_website_search.indexer')->resetIndex($class, $context);
+        self::getSearchIndexer()->resetIndex($class, $context);
+    }
+
+    /**
+     * @param string[]|string|null $class
+     * @param array $context
+     */
+    protected static function reindex(array|string|null $class = null, array $context = []): void
+    {
+        self::getSearchIndexer()->reindex($class, $context);
     }
 }
