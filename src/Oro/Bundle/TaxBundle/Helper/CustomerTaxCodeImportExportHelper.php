@@ -37,6 +37,21 @@ class CustomerTaxCodeImportExportHelper
         return $customerTaxCodes;
     }
 
+    public function loadNormalizedCustomerTaxCodes(array $customers): array
+    {
+        $customerTaxCodes = [];
+
+        foreach ($customers as $customer) {
+            if ($customer->getTaxCode()) {
+                $customerTaxCodes[$customer->getId()] = $customer->getTaxCode()
+                    ? $this->normalizeCustomerTaxCode($customer->getTaxCode())
+                    : null;
+            }
+        }
+
+        return $customerTaxCodes;
+    }
+
     public function normalizeCustomerTaxCode(CustomerTaxCode $customerTaxCode = null): array
     {
         if (!$customerTaxCode) {
