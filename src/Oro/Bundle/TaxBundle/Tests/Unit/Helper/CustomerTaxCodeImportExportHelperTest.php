@@ -66,6 +66,15 @@ class CustomerTaxCodeImportExportHelperTest extends \PHPUnit\Framework\TestCase
         }
     }
 
+    public function testGetCustomerTaxCodeTestWithEmptyTaxCode(): void
+    {
+        $customerWithoutTaxCode = $this->getEntity(CustomerStub::class, ['id' => 1]);
+        $customerTaxCodes = $this->manager->loadCustomerTaxCode([$customerWithoutTaxCode]);
+
+        $this->assertCount(1, $customerTaxCodes);
+        $this->assertNull($customerTaxCodes[$customerWithoutTaxCode->getId()]);
+    }
+
     /**
      * @dataProvider normalizeCustomerTaxCodeDataProvider
      * @param string $expectedName
