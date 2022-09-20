@@ -146,7 +146,9 @@ class CustomerTaxCodeImportExportSubscriber implements EventSubscriberInterface
                     continue;
                 }
 
-                $this->customerTaxCodes[$customer->getId()] = (new CustomerTaxCode())->setCode('Tax_code_1');
+                $customerTaxCode = (new CustomerTaxCode())->setCode('Tax_code_1');
+                $normalizedCode = $this->customerTaxCodeImportExportHelper->normalizeCustomerTaxCode($customerTaxCode);
+                $this->customerTaxCodes[$customer->getId()] = $normalizedCode;
             }
         }
     }
@@ -156,7 +158,7 @@ class CustomerTaxCodeImportExportSubscriber implements EventSubscriberInterface
      * There is one issue that read of EntityReader will trigger pagination before the last item be processed.
      * So we need to keep all customer tax codes info in local cache and only reset after fetched.
      */
-    private function getCustomerTaxCode(Customer $customer): array
+    private function getCustomerTaxCode(Customer $customer): ?array
     {
         $result = $this->customerTaxCodes[$customer->getId()];
         unset($this->customerTaxCodes[$customer->getId()]);
