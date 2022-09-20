@@ -16,33 +16,22 @@ class CustomerTaxCodeImportExportHelper
 {
     private DoctrineHelper $doctrineHelper;
 
-    /**
-     * @var CustomerTaxCode[]
-     */
-    private array $customerTaxCodes = [];
-
     public function __construct(DoctrineHelper $doctrineHelper)
     {
         $this->doctrineHelper = $doctrineHelper;
     }
 
     /**
-     * Returns array [Customer::class => [CustomerTaxCode $object, CustomerTaxCode $object,...]]
-     *
      * @param Customer[] $customers
-     * @return CustomerTaxCode[]
+     *
+     * @return array [Customer::class => [CustomerTaxCode $object, CustomerTaxCode $object,...]].
      */
     public function loadCustomerTaxCode(array $customers)
     {
         $customerTaxCodes = [];
 
         foreach ($customers as $customer) {
-            $taxCode = $customer->getTaxCode();
-            if (!isset($this->customerTaxCodes[$taxCode->getId()])) {
-                $this->customerTaxCodes[$taxCode->getId()] = $taxCode;
-            }
-
-            $customerTaxCodes[$customer->getId()] = $this->customerTaxCodes[$taxCode->getId()];
+            $customerTaxCodes[$customer->getId()] = $customer->getTaxCode();
         }
 
         return $customerTaxCodes;
