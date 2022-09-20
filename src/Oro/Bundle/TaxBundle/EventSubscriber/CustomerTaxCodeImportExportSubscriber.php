@@ -160,6 +160,10 @@ class CustomerTaxCodeImportExportSubscriber implements EventSubscriberInterface
      */
     private function getCustomerTaxCode(Customer $customer): ?array
     {
+        if (!isset($this->customerTaxCodes[$customer->getId()])) {
+            return null;
+        }
+
         $result = $this->customerTaxCodes[$customer->getId()];
         unset($this->customerTaxCodes[$customer->getId()]);
 
