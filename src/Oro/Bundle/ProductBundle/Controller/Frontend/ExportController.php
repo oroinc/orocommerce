@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Controller\Frontend;
 
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\FrontendImportExportBundle\Async\Topics;
+use Oro\Bundle\FrontendImportExportBundle\Async\Topic\PreExportTopic;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
@@ -58,7 +58,7 @@ class ExportController extends AbstractController
             $options['filteredResultsGridParams'] = $gridRequestParams;
         }
 
-        $this->get(MessageProducerInterface::class)->send(Topics::PRE_EXPORT, [
+        $this->get(MessageProducerInterface::class)->send(PreExportTopic::getName(), [
             'jobName' => 'filtered_frontend_product_export_to_csv',
             'processorAlias' => 'oro_product_frontend_product_listing',
             'outputFilePrefix' => 'product',
