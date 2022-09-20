@@ -24,19 +24,19 @@ class CustomerTaxCodeImportExportHelper
     /**
      * @param Customer[] $customers
      *
-     * @return array [Customer::class => [CustomerTaxCode $object, CustomerTaxCode $object,...]].
+     * @return array [Customer Id => ['code' => 'tax code normalized value'], ...].
      */
-    public function loadCustomerTaxCode(array $customers): array
+    public function loadNormalizedCustomerTaxCodes(array $customers): array
     {
         $customerTaxCodes = [];
         foreach ($customers as $customer) {
-            $customerTaxCodes[$customer->getId()] = $customer->getTaxCode();
+            $customerTaxCodes[$customer->getId()] = $this->normalizeCustomerTaxCode($customer->getTaxCode());
         }
 
         return $customerTaxCodes;
     }
 
-    public function normalizeCustomerTaxCode(CustomerTaxCode $customerTaxCode = null): array
+    public function normalizeCustomerTaxCode(?CustomerTaxCode $customerTaxCode = null): array
     {
         if (!$customerTaxCode) {
             return ['code' => ''];

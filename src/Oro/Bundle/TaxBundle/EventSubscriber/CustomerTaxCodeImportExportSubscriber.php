@@ -29,9 +29,6 @@ class CustomerTaxCodeImportExportSubscriber implements EventSubscriberInterface
 
     protected FieldHelper $fieldHelper;
 
-    /**
-     * @var CustomerTaxCode[]
-     */
     private array $customerTaxCodes = [];
 
     public function __construct(
@@ -71,7 +68,7 @@ class CustomerTaxCodeImportExportSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $this->customerTaxCodes += $this->customerTaxCodeImportExportHelper->loadCustomerTaxCode($rows);
+        $this->customerTaxCodes += $this->customerTaxCodeImportExportHelper->loadNormalizedCustomerTaxCodes($rows);
     }
 
     public function normalizeEntity(NormalizeEntityEvent $event)
@@ -86,12 +83,7 @@ class CustomerTaxCodeImportExportSubscriber implements EventSubscriberInterface
 
         /** @var Customer $customer */
         $customer = $event->getObject();
-        $event->setResultFieldValue(
-            'tax_code',
-            $this->customerTaxCodeImportExportHelper->normalizeCustomerTaxCode(
-                $this->getCustomerTaxCode($customer)
-            )
-        );
+        $event->setResultFieldValue('tax_code', $this->getCustomerTaxCode($customer));
     }
 
     public function loadEntityRulesAndBackendHeaders(LoadEntityRulesAndBackendHeadersEvent $event)
@@ -164,14 +156,11 @@ class CustomerTaxCodeImportExportSubscriber implements EventSubscriberInterface
      * There is one issue that read of EntityReader will trigger pagination before the last item be processed.
      * So we need to keep all customer tax codes info in local cache and only reset after fetched.
      */
-    private function getCustomerTaxCode(Customer $customer): ?CustomerTaxCode
+    private function getCustomerTaxCode(Customer $customer): array
     {
-        if (!isset($this->customerTaxCodes[$customer->getId()])) {
-            return null;
-        }
-
         $result = $this->customerTaxCodes[$customer->getId()];
         unset($this->customerTaxCodes[$customer->getId()]);
+
         return $result;
     }
 
