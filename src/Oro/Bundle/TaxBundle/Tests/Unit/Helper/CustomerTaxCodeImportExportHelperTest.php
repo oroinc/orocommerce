@@ -75,7 +75,7 @@ class CustomerTaxCodeImportExportHelperTest extends \PHPUnit\Framework\TestCase
         $customerTaxCodes = $this->manager->loadNormalizedCustomerTaxCodes([$customerWithoutTaxCode]);
 
         $this->assertCount(1, $customerTaxCodes);
-        $this->assertEquals(['code' => ''], $customerTaxCodes[$customerWithoutTaxCode->getId()]);
+        $this->assertEquals(['code' => null], $customerTaxCodes[$customerWithoutTaxCode->getId()]);
     }
 
     /**

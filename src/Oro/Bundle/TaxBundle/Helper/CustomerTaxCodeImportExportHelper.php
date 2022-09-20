@@ -42,11 +42,9 @@ class CustomerTaxCodeImportExportHelper
         $customerTaxCodes = [];
 
         foreach ($customers as $customer) {
-            if ($customer->getTaxCode()) {
-                $customerTaxCodes[$customer->getId()] = $customer->getTaxCode()
-                    ? $this->normalizeCustomerTaxCode($customer->getTaxCode())
-                    : null;
-            }
+            $customerTaxCodes[$customer->getId()] = $customer->getTaxCode()
+                ? $this->normalizeCustomerTaxCode($customer->getTaxCode())
+                : $this->normalizeCustomerTaxCode();
         }
 
         return $customerTaxCodes;

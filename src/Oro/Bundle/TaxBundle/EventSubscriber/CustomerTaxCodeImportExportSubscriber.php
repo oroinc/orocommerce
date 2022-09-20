@@ -27,9 +27,12 @@ class CustomerTaxCodeImportExportSubscriber implements EventSubscriberInterface
 
     private string $customerClassName;
 
-    protected FieldHelper $fieldHelper;
-
+    /**
+     * @var CustomerTaxCode[]
+     */
     private array $customerTaxCodes = [];
+
+    protected FieldHelper $fieldHelper;
 
     /**
      * @param CustomerTaxCodeImportExportHelper $customerTaxManager
