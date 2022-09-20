@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\ImportExport;
 
-use Oro\Bundle\ImportExportBundle\Async\Import\PreImportMessageProcessor;
-use Oro\Bundle\ImportExportBundle\Async\Topics;
+use Oro\Bundle\ImportExportBundle\Async\Topic\ImportTopic;
+use Oro\Bundle\ImportExportBundle\Async\Topic\PreImportTopic;
 use Oro\Bundle\ImportExportBundle\File\FileManager;
 use Oro\Bundle\ImportExportBundle\Job\JobExecutor;
 use Oro\Bundle\ImportExportBundle\Processor\ProcessorRegistry;
@@ -26,13 +26,7 @@ class ProductImportWarningLogTest extends WebTestCase
 
     const IMPORT_PROCESSOR_ALIAS = 'oro_product_image.add_or_replace';
 
-    /** @var PreImportMessageProcessor */
-    private $preImportProcessor;
-
-    /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $logger;
-
-    public function testLoggedDuplicateColumnExceptionOnProductImport()
+    public function testLoggedDuplicateColumnExceptionOnProductImport(): void
     {
         $this->initClient([], static::generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
@@ -46,7 +40,7 @@ class ProductImportWarningLogTest extends WebTestCase
         );
     }
 
-    public function testLoggedWrongColumnCountExceptionOnProductImport()
+    public function testLoggedWrongColumnCountExceptionOnProductImport(): void
     {
         $this->initClient([], static::generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
@@ -60,14 +54,12 @@ class ProductImportWarningLogTest extends WebTestCase
         );
     }
 
-    private function expectToLogImportCritical(string $expectedMessagePart)
+    private function expectToLogImportCritical(string $expectedMessagePart): void
     {
-        $this->preImportProcessor = self::getContainer()->get('oro_importexport.async.pre_import');
+        $preImportProcessor = self::getContainer()->get('oro_importexport.async.pre_import');
 
-        $this->logger = $this->createMock(LoggerInterface::class);
-        $this->preImportProcessor->setLogger($this->logger);
-
-        $this->logger
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger
             ->expects($this->once())
             ->method('critical')
             ->with($this->callback(function ($loggedMessage) use ($expectedMessagePart) {
@@ -75,26 +67,28 @@ class ProductImportWarningLogTest extends WebTestCase
 
                 return true;
             }));
+
+        $preImportProcessor->setLogger($logger);
     }
 
-    private function assertImportOfInvalidFile(string $importFilePath)
+    private function assertImportOfInvalidFile(string $importFilePath): void
     {
         $this->assertPreImportActionExecuted($importFilePath);
 
-        $preImportMessageData = $this->getOneSentMessageWithTopic(Topics::PRE_IMPORT);
-        $this->clearMessageCollector();
+        $preImportMessageData = $this->getOneSentMessageWithTopic(PreImportTopic::getName());
+        self::clearMessageCollector();
 
         $this->assertMessageProcessorRejected(
             'oro_importexport.async.pre_import',
             $preImportMessageData
         );
 
-        static::assertMessagesEmpty(Topics::IMPORT);
+        static::assertMessagesEmpty(ImportTopic::getName());
 
         $this->deleteImportFile($preImportMessageData['fileName']);
     }
 
-    private function assertPreImportActionExecuted(string $importCsvFilePath)
+    private function assertPreImportActionExecuted(string $importCsvFilePath): void
     {
         $file = new UploadedFile($importCsvFilePath, basename($importCsvFilePath));
         $fileName = static::getContainer()
@@ -117,7 +111,7 @@ class ProductImportWarningLogTest extends WebTestCase
         static::assertTrue($response['success']);
 
         static::assertMessageSent(
-            Topics::PRE_IMPORT,
+            PreImportTopic::getName(),
             [
                 'fileName' => $fileName,
                 'process' => ProcessorRegistry::TYPE_IMPORT,
@@ -143,7 +137,7 @@ class ProductImportWarningLogTest extends WebTestCase
         return [];
     }
 
-    private function assertMessageProcessorRejected(string $processorServiceName, array $messageData)
+    private function assertMessageProcessorRejected(string $processorServiceName, array $messageData): void
     {
         $processorResult = static::getContainer()
             ->get($processorServiceName)
@@ -155,7 +149,7 @@ class ProductImportWarningLogTest extends WebTestCase
         static::assertEquals(MessageProcessorInterface::REJECT, $processorResult);
     }
 
-    private function deleteImportFile(string $filename)
+    private function deleteImportFile(string $filename): void
     {
         self::assertFileDoesNotExist(FileManager::generateTmpFilePath($filename));
 

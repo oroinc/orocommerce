@@ -3,7 +3,8 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\ImportExport;
 
 use Oro\Bundle\ImportExportBundle\Async\Export\ExportMessageProcessor;
-use Oro\Bundle\ImportExportBundle\Async\Topics as ImportExportTopics;
+use Oro\Bundle\ImportExportBundle\Async\Topic\ExportTopic;
+use Oro\Bundle\ImportExportBundle\Async\Topic\PreExportTopic;
 use Oro\Bundle\ImportExportBundle\Configuration\ImportExportConfiguration;
 use Oro\Bundle\ImportExportBundle\Processor\ProcessorRegistry;
 use Oro\Bundle\ImportExportBundle\Tests\Functional\AbstractImportExportTestCase;
@@ -72,13 +73,20 @@ class ImportExportTest extends AbstractImportExportTestCase
     {
         $priceListId = $this->getReference('price_list_1')->getId();
         $this->assertPreExportActionExecuted($this->getExportImportConfiguration());
-        $preExportMessageData = $this->getOneSentMessageWithTopic(ImportExportTopics::PRE_EXPORT);
+        $preExportMessageData = $this->getOneSentMessageWithTopic(PreExportTopic::getName());
 
-        $this->assertMessageProcessorExecuted('oro_importexport.async.pre_export', $preExportMessageData);
-        $this->assertMessageSent(ImportExportTopics::EXPORT);
+        $messageBodyResolver = self::getContainer()->get('oro_message_queue.client.message_body_resolver');
+        $this->assertMessageProcessorExecuted(
+            'oro_importexport.async.pre_export',
+            $messageBodyResolver->resolveBody(PreExportTopic::getName(), $preExportMessageData)
+        );
+        $this->assertMessageSent(ExportTopic::getName());
 
-        $exportMessageData = $this->getOneSentMessageWithTopic(ImportExportTopics::EXPORT);
-        $this->assertMessageProcessorExecuted('oro_importexport.async.export', $exportMessageData);
+        $exportMessageData = $this->getOneSentMessageWithTopic(ExportTopic::getName());
+        $this->assertMessageProcessorExecuted(
+            'oro_importexport.async.export',
+            $messageBodyResolver->resolveBody(ExportTopic::getName(), $exportMessageData)
+        );
 
         // We have only 8 prices that are related to the price_list_1
         $this->assertCount(8, $exportMessageData['options']['ids']);
@@ -352,11 +360,13 @@ class ImportExportTest extends AbstractImportExportTestCase
 
     private function processExportMessage(): string
     {
-        $sentMessage = $this->getSentMessage(ImportExportTopics::PRE_EXPORT);
+        $sentMessage = $this->getSentMessage(PreExportTopic::getName());
+
+        $messageBodyResolver = self::getContainer()->get('oro_message_queue.client.message_body_resolver');
 
         $message = new Message();
         $message->setMessageId('abc');
-        $message->setBody($sentMessage);
+        $message->setBody($messageBodyResolver->resolveBody(PreExportTopic::getName(), $sentMessage));
 
         /** @var ExportMessageProcessor $processor */
         $processor = $this->getContainer()->get('oro_importexport.async.pre_export');
