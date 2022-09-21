@@ -3,8 +3,10 @@
 namespace Oro\Bundle\SEOBundle\Async;
 
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\SEOBundle\Sitemap\Provider\UrlItemsProviderRegistryInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Job\JobRunner;
@@ -40,6 +42,12 @@ class GenerateSitemapByWebsiteAndTypeProcessor implements MessageProcessorInterf
     /** @var LoggerInterface */
     private $logger;
 
+    /** @var WebsiteManager */
+    private $websiteManager;
+
+    /** @var ConfigManager|null */
+    private $configManager;
+
     public function __construct(
         JobRunner $jobRunner,
         ManagerRegistry $doctrine,
@@ -52,6 +60,16 @@ class GenerateSitemapByWebsiteAndTypeProcessor implements MessageProcessorInterf
         $this->urlItemsProviderRegistry = $urlItemsProviderRegistry;
         $this->sitemapDumper = $sitemapDumper;
         $this->logger = $logger;
+    }
+
+    public function setWebsiteManager(WebsiteManager $websiteManager): void
+    {
+        $this->websiteManager = $websiteManager;
+    }
+
+    public function setConfigManager(ConfigManager $configManager = null): void
+    {
+        $this->configManager = $configManager;
     }
 
     /**
@@ -77,6 +95,10 @@ class GenerateSitemapByWebsiteAndTypeProcessor implements MessageProcessorInterf
                 $website = $this->getWebsite($body[self::WEBSITE_ID]);
                 if (null === $website) {
                     throw new \RuntimeException('The website does not exist.');
+                }
+                $this->websiteManager->setCurrentWebsite($website);
+                if ($this->configManager) {
+                    $this->configManager->setScopeId($website->getId());
                 }
                 $this->sitemapDumper->dump($website, $body[self::VERSION], $body[self::TYPE]);
 

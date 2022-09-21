@@ -215,6 +215,7 @@ services:
             - '@oro_web_catalog.web_catalog_provider'
         tags:
             - { name: oro_scope.provider, scopeType: web_content, priority: 250 }
+            - { name: oro_scope.provider, scopeType: web_content_for_sitemap, priority: 250 }
 
     oro_web_catalog.web_catalog_provider:
         class: Oro\Bundle\WebCatalogBundle\Provider\WebCatalogProvider

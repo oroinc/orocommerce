@@ -108,7 +108,7 @@ class WebsiteSearchProductIndexerListener
             }
 
             $event->addField($product->getId(), 'product_id', $product->getId());
-            $event->addField($product->getId(), 'sku_uppercase', mb_strtoupper($product->getSku()), true);
+            $event->addField($product->getId(), 'sku_uppercase', mb_strtoupper($product->getSku()));
             $event->addField($product->getId(), 'status', $product->getStatus());
             $event->addField($product->getId(), 'type', $product->getType());
             $event->addField($product->getId(), 'is_variant', (int)$product->isVariant());
