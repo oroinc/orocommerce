@@ -31,3 +31,18 @@ services:
         arguments:
             - '@.inner'
             - ['import_product_images']
+
+    oro_product.tests.related_item.related_product.config_provider:
+        parent: 'oro_product.related_item.related_product.config_provider'
+        decorates: 'oro_product.related_item.related_product.config_provider'
+        public: true
+
+    oro_product.tests.related_item.related_product.data_provider:
+        parent: 'oro_product.related_item.related_product.data_provider'
+        decorates: 'oro_product.related_item.related_product.data_provider'
+        public: true
+
+    oro_product.tests.product_list_builder:
+        parent: 'oro_product.product_list_builder'
+        decorates: 'oro_product.product_list_builder'
+        public: true

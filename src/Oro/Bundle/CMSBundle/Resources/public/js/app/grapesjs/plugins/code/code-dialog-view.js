@@ -125,7 +125,6 @@ define(function(require) {
          */
         render: function() {
             CodeDialogView.__super__.render.call(this);
-            const container = this.editor.Commands.isActive('fullscreen') ? this.editor.getEl() : 'body';
 
             this.importButton = this.$el.find('[data-role="code-edit"]');
 
@@ -134,14 +133,12 @@ define(function(require) {
                 el: this.el,
                 title: this.modalCodeTitle,
                 incrementalPosition: false,
-                loadingElement: container,
                 dialogOptions: {
                     autoResize: false,
                     resizable: false,
                     modal: true,
                     height: 495,
                     minWidth: 856,
-                    appendTo: container,
                     dialogClass: 'ui-dialog--import-template',
                     close: () => {
                         this.dispose();

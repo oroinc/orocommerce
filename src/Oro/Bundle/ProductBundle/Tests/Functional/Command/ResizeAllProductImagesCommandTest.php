@@ -27,21 +27,15 @@ class ResizeAllProductImagesCommandTest extends WebTestCase
         $this->loadFixtures([ProductImageData::class]);
         $output = self::runCommand(ResizeAllProductImagesCommand::getDefaultName(), ['--force' => true]);
 
-        $messagesQueued = self::getMessageCollector()
-            ->getTopicSentMessages(Topics::PRODUCT_IMAGE_RESIZE);
-
-        $this->assertCount(4, $messagesQueued);
-        static::assertStringContainsString('4 product image(s) queued for resize', $output);
+        self::assertCountMessages(Topics::PRODUCT_IMAGE_RESIZE, 4);
+        self::assertStringContainsString('4 product image(s) queued for resize', $output);
     }
 
     public function testRunNoImagesAvailable()
     {
         $output = self::runCommand(ResizeAllProductImagesCommand::getDefaultName(), ['--force' => true]);
 
-        $messagesQueued = self::getMessageCollector()
-            ->getTopicSentMessages(Topics::PRODUCT_IMAGE_RESIZE);
-
-        $this->assertCount(0, $messagesQueued);
-        static::assertStringContainsString('0 product image(s) queued for resize', $output);
+        self::assertMessagesEmpty(Topics::PRODUCT_IMAGE_RESIZE);
+        self::assertStringContainsString('0 product image(s) queued for resize', $output);
     }
 }

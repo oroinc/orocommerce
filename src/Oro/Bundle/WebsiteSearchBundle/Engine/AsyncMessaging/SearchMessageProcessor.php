@@ -4,6 +4,16 @@ namespace Oro\Bundle\WebsiteSearchBundle\Engine\AsyncMessaging;
 
 use Monolog\Logger;
 use Oro\Bundle\SearchBundle\Engine\IndexerInterface;
+use Oro\Bundle\WebsiteSearchBundle\Async\Topic\WebsiteSearchDeleteTopic;
+use Oro\Bundle\WebsiteSearchBundle\Async\Topic\WebsiteSearchReindexGranulizedTopic;
+use Oro\Bundle\WebsiteSearchBundle\Async\Topic\WebsiteSearchReindexTopic;
+use Oro\Bundle\WebsiteSearchBundle\Async\Topic\WebsiteSearchResetIndexTopic;
+use Oro\Bundle\WebsiteSearchBundle\Async\Topic\WebsiteSearchSaveTopic;
+use Oro\Bundle\WebsiteSearchBundle\Async\WebsiteSearchDeleteProcessor;
+use Oro\Bundle\WebsiteSearchBundle\Async\WebsiteSearchReindexGranulizedProcessor;
+use Oro\Bundle\WebsiteSearchBundle\Async\WebsiteSearchReindexProcessor;
+use Oro\Bundle\WebsiteSearchBundle\Async\WebsiteSearchResetIndexProcessor;
+use Oro\Bundle\WebsiteSearchBundle\Async\WebsiteSearchSaveProcessor;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\IndexerInputValidator;
@@ -23,6 +33,8 @@ use Symfony\Component\OptionsResolver\Exception\InvalidArgumentException;
 
 /**
  * Performs actual indexation operations requested via Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer
+ *
+ * @deprecated Will be removed in 5.1 Use the dedicated processors instead.
  */
 class SearchMessageProcessor implements MessageProcessorInterface
 {
@@ -63,6 +75,16 @@ class SearchMessageProcessor implements MessageProcessorInterface
      */
     private $eventDispatcher;
 
+    private ?WebsiteSearchSaveProcessor $saveProcessor = null;
+
+    private ?WebsiteSearchDeleteProcessor $deleteProcessor = null;
+
+    private ?WebsiteSearchResetIndexProcessor $resetIndexProcessor = null;
+
+    private ?WebsiteSearchReindexProcessor $reindexProcessor = null;
+
+    private ?WebsiteSearchReindexGranulizedProcessor $reindexGranulizedProcessor = null;
+
     public function __construct(
         IndexerInterface $indexer,
         MessageProducerInterface $messageProducer,
@@ -81,11 +103,61 @@ class SearchMessageProcessor implements MessageProcessorInterface
         $this->eventDispatcher = $eventDispatcher;
     }
 
+    public function setSaveProcessor(?WebsiteSearchSaveProcessor $saveProcessor): void
+    {
+        $this->saveProcessor = $saveProcessor;
+    }
+
+    public function setDeleteProcessor(?WebsiteSearchDeleteProcessor $deleteProcessor): void
+    {
+        $this->deleteProcessor = $deleteProcessor;
+    }
+
+    public function setResetIndexProcessor(?WebsiteSearchResetIndexProcessor $resetIndexProcessor): void
+    {
+        $this->resetIndexProcessor = $resetIndexProcessor;
+    }
+
+    public function setReindexProcessor(?WebsiteSearchReindexProcessor $reindexProcessor): void
+    {
+        $this->reindexProcessor = $reindexProcessor;
+    }
+
+    public function setReindexGranulizedProcessor(
+        ?WebsiteSearchReindexGranulizedProcessor $reindexGranulizedProcessor
+    ): void {
+        $this->reindexGranulizedProcessor = $reindexGranulizedProcessor;
+    }
+
     /**
-     * {@inheritdoc}
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public function process(MessageInterface $message, SessionInterface $session)
     {
+        // Tries to pass the execution to the dedicated message processors.
+        $topicName = $message->getProperty(MessageQueueConfig::PARAMETER_TOPIC_NAME);
+        if ($topicName === WebsiteSearchSaveTopic::getName() && $this->saveProcessor) {
+            return $this->saveProcessor->process($message, $session);
+        }
+
+        if ($topicName === WebsiteSearchDeleteTopic::getName() && $this->deleteProcessor) {
+            return $this->deleteProcessor->process($message, $session);
+        }
+
+        if ($topicName === WebsiteSearchResetIndexTopic::getName() && $this->resetIndexProcessor) {
+            return $this->resetIndexProcessor->process($message, $session);
+        }
+
+        if ($topicName === WebsiteSearchReindexTopic::getName() && $this->reindexProcessor) {
+            return $this->reindexProcessor->process($message, $session);
+        }
+
+        if ($topicName === WebsiteSearchReindexGranulizedTopic::getName() && $this->reindexGranulizedProcessor) {
+            return $this->reindexGranulizedProcessor->process($message, $session);
+        }
+
+        // Goes further with legacy implementation.
         try {
             $result = $this->doProcess($message);
         } catch (JobRuntimeException $exception) {
@@ -122,7 +194,7 @@ class SearchMessageProcessor implements MessageProcessorInterface
         try {
             $this->processMessage($topicName, $data);
             $result = true;
-        } catch (InvalidArgumentException | \UnexpectedValueException $exception) {
+        } catch (InvalidArgumentException|\UnexpectedValueException $exception) {
             $result = false;
             $this->logException(Logger::ERROR, $exception);
         }

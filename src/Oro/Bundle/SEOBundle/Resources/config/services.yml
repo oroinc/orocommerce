@@ -213,6 +213,8 @@ services:
             - '@oro_web_catalog.content_node_tree_resolver'
             - '@oro_redirect.generator.canonical_url'
             - '@oro_seo.sitemap.provider.web_catalog_scope_criteria_provider'
+        calls:
+            - ['setScopeQueryBuilderModifier', ['@oro_seo.modifier.scope_query_builder_modifier']]
         tags:
             - { name: oro_seo.sitemap.url_items_provider, alias: 'web_catalog' }
             - { name: oro_featuretogle.feature, feature: frontend_master_catalog }
@@ -290,6 +292,9 @@ services:
             - '@oro_seo.sitemap.sitemap_index_dumper'
             - '@oro_seo.sitemap.public_filesystem_adapter'
             - '@logger'
+        calls:
+            - ['setWebsiteManager', ['@oro_website.manager']]
+            - ['setConfigManager', ['@?oro_config.website']]
         tags:
             - { name: oro_message_queue.client.message_processor }
 
@@ -301,6 +306,9 @@ services:
             - '@oro_seo.sitemap.provider.full_list_urls_provider_registry'
             - '@oro_seo.sitemap.sitemap_url_dumper'
             - '@logger'
+        calls:
+            - ['setWebsiteManager', ['@oro_website.manager']]
+            - ['setConfigManager', ['@?oro_config.website']]
         tags:
             - { name: oro_message_queue.client.message_processor }
 
@@ -363,6 +371,7 @@ services:
             - '@oro_seo.sitemap.provider.web_catalog_scope_criteria_provider'
         calls:
             - ['setProvider', ['@oro_seo.sitemap.provider.restrict_cms_page_by_web_catalog_provider']]
+            - ['setScopeQueryBuilderModifier', ['@oro_seo.modifier.scope_query_builder_modifier']]
         tags:
             - { name: kernel.event_listener, event: oro_seo.event.restrict_sitemap_entity.cms_page , method: restrictQueryBuilder }
 
@@ -462,3 +471,8 @@ services:
         parent: oro_gaufrette.file_manager
         arguments:
             - 'sitemaps_tmp_data'
+
+    oro_seo.modifier.scope_query_builder_modifier:
+        class: Oro\Bundle\SEOBundle\Modifier\ScopeQueryBuilderModifier
+        arguments:
+            - '@oro_scope.scope_manager'

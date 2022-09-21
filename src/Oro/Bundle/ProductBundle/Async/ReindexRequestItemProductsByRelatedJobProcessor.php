@@ -5,9 +5,8 @@ namespace Oro\Bundle\ProductBundle\Async;
 use Oro\Bundle\ProductBundle\Async\Topic\ReindexRequestItemProductsByRelatedJobIdTopic;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Storage\ProductWebsiteReindexRequestDataStorageInterface;
+use Oro\Bundle\WebsiteSearchBundle\Async\Topic\WebsiteSearchReindexTopic;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
-use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer;
-use Oro\Component\MessageQueue\Client\Message;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
@@ -174,19 +173,15 @@ class ReindexRequestItemProductsByRelatedJobProcessor implements
         $jobRunner->createDelayed(
             sprintf('%s:reindex:%d:%d', $job->getName(), $websiteId, $batchId),
             function (JobRunner $jobRunner, Job $child) use ($websiteId, $productIds, $fieldGroups) {
-                $message = new Message(
-                    [
-                        'jobId' => $child->getId(),
-                        'class' => Product::class,
-                        'context' => [
-                            AbstractIndexer::CONTEXT_WEBSITE_IDS => [$websiteId],
-                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => $productIds,
-                            AbstractIndexer::CONTEXT_FIELD_GROUPS => $fieldGroups
-                        ]
-                    ],
-                    AsyncIndexer::DEFAULT_PRIORITY_REINDEX
-                );
-                $this->producer->send(AsyncIndexer::TOPIC_REINDEX, $message);
+                $this->producer->send(WebsiteSearchReindexTopic::getName(), [
+                    'jobId' => $child->getId(),
+                    'class' => Product::class,
+                    'context' => [
+                        AbstractIndexer::CONTEXT_WEBSITE_IDS => [$websiteId],
+                        AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => $productIds,
+                        AbstractIndexer::CONTEXT_FIELD_GROUPS => $fieldGroups
+                    ]
+                ]);
             }
         );
     }

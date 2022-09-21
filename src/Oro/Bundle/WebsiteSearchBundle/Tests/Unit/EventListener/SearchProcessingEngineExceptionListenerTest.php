@@ -7,12 +7,10 @@ use Doctrine\DBAL\Exception\RetryableException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Oro\Bundle\WebsiteSearchBundle\Event\SearchProcessingEngineExceptionEvent;
 use Oro\Bundle\WebsiteSearchBundle\EventListener\SearchProcessingEngineExceptionListener;
-use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 
 class SearchProcessingEngineExceptionListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var SearchProcessingEngineExceptionListener */
-    private $listener;
+    private SearchProcessingEngineExceptionListener $listener;
 
     protected function setUp(): void
     {
@@ -25,19 +23,19 @@ class SearchProcessingEngineExceptionListenerTest extends \PHPUnit\Framework\Tes
         $event = new SearchProcessingEngineExceptionEvent($exception);
         $this->listener->process($event);
 
-        $this->assertNull($event->getConsumptionResult());
+        $this->assertFalse($event->isRetryable());
     }
 
     /**
      * @dataProvider supportedExceptions
      */
-    public function testSupportedExceptions(string $exception, string $expected): void
+    public function testSupportedExceptions(string $exception): void
     {
         $exception = $this->createMock($exception);
         $event = new SearchProcessingEngineExceptionEvent($exception);
         $this->listener->process($event);
 
-        $this->assertEquals($expected, $event->getConsumptionResult());
+        $this->assertTrue($event->isRetryable());
     }
 
     /**
@@ -48,15 +46,12 @@ class SearchProcessingEngineExceptionListenerTest extends \PHPUnit\Framework\Tes
         return [
             'RetryableException' => [
                 'exception' => RetryableException::class,
-                'expected' => MessageProcessorInterface::REQUEUE
             ],
             'UniqueConstraintViolationException' => [
                 'exception' => UniqueConstraintViolationException::class,
-                'expected' => MessageProcessorInterface::REQUEUE
             ],
             'ForeignKeyConstraintViolationException' => [
                 'exception' => ForeignKeyConstraintViolationException::class,
-                'expected' => MessageProcessorInterface::REQUEUE
             ],
         ];
     }

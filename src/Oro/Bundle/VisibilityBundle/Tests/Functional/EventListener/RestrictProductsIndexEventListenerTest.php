@@ -7,7 +7,6 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Query\Result\Item;
-use Oro\Bundle\SearchBundle\Tests\Functional\SearchExtensionTrait;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\VisibilityBundle\EventListener\RestrictProductsIndexEventListener;
@@ -17,7 +16,7 @@ use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Oro\Bundle\WebsiteSearchBundle\Event\RestrictIndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Traits\DefaultLocalizationIdTestTrait;
-use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Traits\DefaultWebsiteIdTestTrait;
+use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\WebsiteSearchExtensionTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -26,12 +25,11 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class RestrictProductsIndexEventListenerTest extends WebTestCase
 {
-    use DefaultWebsiteIdTestTrait;
     use DefaultLocalizationIdTestTrait;
-    use SearchExtensionTrait;
+    use WebsiteSearchExtensionTrait;
 
-    const PRODUCT_VISIBILITY_CONFIGURATION_PATH = 'oro_visibility.product_visibility';
-    const CATEGORY_VISIBILITY_CONFIGURATION_PATH = 'oro_visibility.category_visibility';
+    private const PRODUCT_VISIBILITY_CONFIGURATION_PATH = 'oro_visibility.product_visibility';
+    private const CATEGORY_VISIBILITY_CONFIGURATION_PATH = 'oro_visibility.category_visibility';
 
     /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     private $configManager;
@@ -43,15 +41,15 @@ class RestrictProductsIndexEventListenerTest extends WebTestCase
     {
         $this->initClient();
 
-        $this->getContainer()->get('request_stack')->push(Request::create(''));
-        $this->dispatcher = $this->getContainer()->get('event_dispatcher');
+        self::getContainer()->get('request_stack')->push(Request::create(''));
+        $this->dispatcher = self::getContainer()->get('event_dispatcher');
 
         $this->configManager = $this->getMockBuilder(ConfigManager::class)
             ->disableOriginalConstructor()
             ->getMock();
 
         /** @var DoctrineHelper $doctrineHelper */
-        $doctrineHelper = $this->getContainer()->get('oro_entity.doctrine_helper');
+        $doctrineHelper = self::getContainer()->get('oro_entity.doctrine_helper');
         $websiteContextManager = new WebsiteContextManager($doctrineHelper);
 
         $listener = new RestrictProductsIndexEventListener(
@@ -63,7 +61,7 @@ class RestrictProductsIndexEventListenerTest extends WebTestCase
         );
 
         $listener->setVisibilityScopeProvider(
-            $this->getContainer()->get('oro_visibility.provider.visibility_scope_provider')
+            self::getContainer()->get('oro_visibility.provider.visibility_scope_provider')
         );
 
         $this->clearRestrictListeners($this->getRestrictEntityEventName());
@@ -80,47 +78,43 @@ class RestrictProductsIndexEventListenerTest extends WebTestCase
 
         $this->loadFixtures([LoadProductVisibilityData::class]);
 
-        $this->getContainer()->get('oro_visibility.visibility.cache.product.cache_builder')->buildCache();
+        self::getContainer()->get('oro_visibility.visibility.cache.product.cache_builder')->buildCache();
     }
 
     /**
      * @param int $expectedItems
      * @return Item[]
      */
-    protected function runIndexationAndSearch($expectedItems)
+    protected function runIndexationAndSearch($expectedItems): array
     {
         $context = [
-            AbstractIndexer::CONTEXT_WEBSITE_IDS => [$this->getDefaultWebsiteId()]
+            AbstractIndexer::CONTEXT_WEBSITE_IDS => [self::getDefaultWebsiteId()]
         ];
 
-        $alias = 'oro_product_' . $this->getDefaultWebsiteId();
+        self::resetIndex(Product::class, $context);
+        self::ensureItemsLoaded(Product::class, 0);
 
-        $indexer = $this->getContainer()->get('oro_website_search.indexer');
-        $indexer->resetIndex(Product::class, $context);
-        $this->ensureItemsLoaded($alias, 0, 'oro_website_search.engine');
-
-        $this->getContainer()->get('event_dispatcher')->dispatch(
-            new ReindexationRequestEvent([Product::class], [$this->getDefaultWebsiteId()], [], false),
+        self::getContainer()->get('event_dispatcher')->dispatch(
+            new ReindexationRequestEvent([Product::class], [self::getDefaultWebsiteId()], [], false),
             ReindexationRequestEvent::EVENT_NAME
         );
 
-        $this->ensureItemsLoaded($alias, $expectedItems, 'oro_website_search.engine');
+        self::ensureItemsLoaded(Product::class, $expectedItems);
 
         $query = new Query();
         $query->from('oro_product_WEBSITE_ID');
         $query->select('names_LOCALIZATION_ID');
         $query->getCriteria()->orderBy(['sku' => Query::ORDER_ASC]);
 
-        $searchEngine = $this->getContainer()->get('oro_website_search.engine');
-        $result = $searchEngine->search($query);
+        $searchEngine = self::getContainer()->get('oro_website_search.engine');
 
-        return $result->getElements();
+        return $searchEngine->search($query)->getElements();
     }
 
-    public function testRestrictIndexEntityEventListenerWhenAllFallBacksAreVisible()
+    public function testRestrictIndexEntityEventListenerWhenAllFallBacksAreVisible(): void
     {
         $this->configManager
-            ->expects($this->exactly(2))
+            ->expects(self::exactly(2))
             ->method('get')
             ->withConsecutive(
                 [self::PRODUCT_VISIBILITY_CONFIGURATION_PATH],
@@ -131,7 +125,7 @@ class RestrictProductsIndexEventListenerTest extends WebTestCase
         $expectedCount = 9;
         $values = $this->runIndexationAndSearch($expectedCount);
 
-        $this->assertCount($expectedCount, $values);
+        self::assertCount($expectedCount, $values);
         $this->assertSearchItems('product-1', $values[0]);
         $this->assertSearchItems('product-2', $values[1]);
         $this->assertSearchItems('product-3', $values[2]);
@@ -143,10 +137,10 @@ class RestrictProductsIndexEventListenerTest extends WebTestCase
         $this->assertSearchItems('продукт-9', $values[8]);
     }
 
-    public function testRestrictIndexEntityEventListenerWhenAllFallBacksAreHidden()
+    public function testRestrictIndexEntityEventListenerWhenAllFallBacksAreHidden(): void
     {
         $this->configManager
-            ->expects($this->exactly(2))
+            ->expects(self::exactly(2))
             ->method('get')
             ->withConsecutive(
                 [self::PRODUCT_VISIBILITY_CONFIGURATION_PATH],
@@ -157,7 +151,7 @@ class RestrictProductsIndexEventListenerTest extends WebTestCase
         $expectedCount = 5;
         $values = $this->runIndexationAndSearch($expectedCount);
 
-        $this->assertCount($expectedCount, $values);
+        self::assertCount($expectedCount, $values);
         $this->assertSearchItems('product-1', $values[0]);
         $this->assertSearchItems('product-2', $values[1]);
         $this->assertSearchItems('product-3', $values[2]);
@@ -165,10 +159,10 @@ class RestrictProductsIndexEventListenerTest extends WebTestCase
         $this->assertSearchItems('product-5', $values[4]);
     }
 
-    public function testRestrictIndexEntityEventListenerWhenProductFallBackIsVisibleAndCategoryFallBackIsHidden()
+    public function testRestrictIndexEntityEventListenerWhenProductFallBackIsVisibleAndCategoryFallBackIsHidden(): void
     {
         $this->configManager
-            ->expects($this->exactly(2))
+            ->expects(self::exactly(2))
             ->method('get')
             ->withConsecutive(
                 [self::PRODUCT_VISIBILITY_CONFIGURATION_PATH],
@@ -179,7 +173,7 @@ class RestrictProductsIndexEventListenerTest extends WebTestCase
         $expectedCount = 9;
         $values = $this->runIndexationAndSearch($expectedCount);
 
-        $this->assertCount($expectedCount, $values);
+        self::assertCount($expectedCount, $values);
         $this->assertSearchItems('product-1', $values[0]);
         $this->assertSearchItems('product-2', $values[1]);
         $this->assertSearchItems('product-3', $values[2]);
@@ -191,10 +185,10 @@ class RestrictProductsIndexEventListenerTest extends WebTestCase
         $this->assertSearchItems('продукт-9', $values[8]);
     }
 
-    public function testRestrictIndexEntityEventListenerWhenProductFallBackIsHiddenAndCategoryFallBackIsVisible()
+    public function testRestrictIndexEntityEventListenerWhenProductFallBackIsHiddenAndCategoryFallBackIsVisible(): void
     {
         $this->configManager
-            ->expects($this->exactly(2))
+            ->expects(self::exactly(2))
             ->method('get')
             ->withConsecutive(
                 [self::PRODUCT_VISIBILITY_CONFIGURATION_PATH],
@@ -205,7 +199,7 @@ class RestrictProductsIndexEventListenerTest extends WebTestCase
         $expectedCount = 7;
         $values = $this->runIndexationAndSearch($expectedCount);
 
-        $this->assertCount($expectedCount, $values);
+        self::assertCount($expectedCount, $values);
         $this->assertSearchItems('product-1', $values[0]);
         $this->assertSearchItems('product-2', $values[1]);
         $this->assertSearchItems('product-3', $values[2]);
@@ -219,7 +213,7 @@ class RestrictProductsIndexEventListenerTest extends WebTestCase
      * @param mixed $expectedValue
      * @param Item $value
      */
-    protected function assertSearchItems($expectedValue, Item $value)
+    protected function assertSearchItems($expectedValue, Item $value): void
     {
         $selectedData = $value->getSelectedData();
         $field = 'names_' . $this->getDefaultLocalizationId();
@@ -230,13 +224,10 @@ class RestrictProductsIndexEventListenerTest extends WebTestCase
             );
         }
 
-        $this->assertStringStartsWith($expectedValue, $selectedData[$field]);
+        self::assertStringStartsWith($expectedValue, $selectedData[$field]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function getRestrictEntityEventName()
+    protected function getRestrictEntityEventName(): string
     {
         return sprintf('%s.%s', RestrictIndexEntityEvent::NAME, 'product');
     }
@@ -244,7 +235,7 @@ class RestrictProductsIndexEventListenerTest extends WebTestCase
     /**
      * @param string $eventName
      */
-    protected function clearRestrictListeners($eventName)
+    protected function clearRestrictListeners($eventName): void
     {
         foreach ($this->dispatcher->getListeners($eventName) as $listener) {
             $this->dispatcher->removeListener($eventName, $listener);

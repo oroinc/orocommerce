@@ -1,0 +1,24 @@
+services:
+    _defaults:
+        tags:
+            - { name: oro_message_queue.topic }
+
+    Oro\Bundle\WebsiteSearchBundle\Async\Topic\WebsiteSearchReindexTopic:
+        arguments:
+            - '@oro_website_search.indexer.input_validator'
+
+    Oro\Bundle\WebsiteSearchBundle\Async\Topic\WebsiteSearchReindexGranulizedTopic:
+        arguments:
+            - '@oro_website_search.indexer.input_validator'
+
+    Oro\Bundle\WebsiteSearchBundle\Async\Topic\WebsiteSearchResetIndexTopic:
+        arguments:
+            - '@oro_website_search.indexer.input_validator'
+
+    Oro\Bundle\WebsiteSearchBundle\Async\Topic\WebsiteSearchSaveTopic:
+        arguments:
+            - '@oro_website_search.indexer.input_validator'
+
+    Oro\Bundle\WebsiteSearchBundle\Async\Topic\WebsiteSearchDeleteTopic:
+        arguments:
+            - '@oro_website_search.indexer.input_validator'

@@ -3,9 +3,11 @@
 namespace Oro\Bundle\SEOBundle\Async;
 
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\SEOBundle\Async\Topic\GenerateSitemapByWebsiteAndTypeTopic;
 use Oro\Bundle\SEOBundle\Sitemap\Provider\UrlItemsProviderRegistryInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Job\JobRunner;
@@ -20,12 +22,12 @@ use Psr\Log\LoggerInterface;
 class GenerateSitemapByWebsiteAndTypeProcessor implements MessageProcessorInterface, TopicSubscriberInterface
 {
     private JobRunner $jobRunner;
-
     private ManagerRegistry $doctrine;
-
     private SitemapDumperInterface $sitemapDumper;
-
     private LoggerInterface $logger;
+
+    private ?WebsiteManager $websiteManager = null;
+    private ?ConfigManager $configManager = null;
 
     public function __construct(
         JobRunner $jobRunner,
@@ -38,6 +40,16 @@ class GenerateSitemapByWebsiteAndTypeProcessor implements MessageProcessorInterf
         $this->doctrine = $doctrine;
         $this->sitemapDumper = $sitemapDumper;
         $this->logger = $logger;
+    }
+
+    public function setWebsiteManager(WebsiteManager $websiteManager): void
+    {
+        $this->websiteManager = $websiteManager;
+    }
+
+    public function setConfigManager(?ConfigManager $configManager): void
+    {
+        $this->configManager = $configManager;
     }
 
     /**
@@ -63,6 +75,9 @@ class GenerateSitemapByWebsiteAndTypeProcessor implements MessageProcessorInterf
                     if (null === $website) {
                         throw new \RuntimeException('The website does not exist.');
                     }
+
+                    $this->websiteManager->setCurrentWebsite($website);
+                    $this->configManager?->setScopeId($website->getId());
                     $this->sitemapDumper->dump(
                         $website,
                         $messageBody[GenerateSitemapByWebsiteAndTypeTopic::VERSION],

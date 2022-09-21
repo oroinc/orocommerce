@@ -3,6 +3,7 @@
 namespace Oro\Bundle\FrontendTestFrameworkBundle\Test;
 
 use Oro\Bundle\WebsiteBundle\Tests\Functional\Stub\WebsiteManagerStub;
+use Psr\Container\ContainerInterface;
 
 /**
  * Provides methods to change the website in functional tests.
@@ -18,6 +19,8 @@ use Oro\Bundle\WebsiteBundle\Tests\Functional\Stub\WebsiteManagerStub;
  *        $this->getWebsiteManagerStub()->disableStub();
  *    }
  * </code>
+ *
+ * @method static ContainerInterface getContainer()
  */
 trait WebsiteManagerTrait
 {
@@ -26,7 +29,7 @@ trait WebsiteManagerTrait
      */
     protected function setCurrentWebsite($websiteReference = null)
     {
-        $websiteManagerStub = $this->getWebsiteManagerStub();
+        $websiteManagerStub = self::getWebsiteManagerStub();
 
         $websiteManagerStub->disableStub();
         $defaultWebsite = $websiteManagerStub->getDefaultWebsite();
@@ -46,18 +49,12 @@ trait WebsiteManagerTrait
         $websiteManagerStub->setDefaultWebsiteStub($defaultWebsite);
     }
 
-    /**
-     * @return int
-     */
-    protected function getDefaultWebsiteId()
+    protected static function getDefaultWebsiteId(): int
     {
-        return $this->getWebsiteManagerStub()->getDefaultWebsite()->getId();
+        return self::getWebsiteManagerStub()->getDefaultWebsite()->getId();
     }
 
-    /**
-     * @return WebsiteManagerStub
-     */
-    private static function getWebsiteManagerStub()
+    private static function getWebsiteManagerStub(): WebsiteManagerStub
     {
         $manager = self::getContainer()->get('oro_website.manager');
         if (!$manager instanceof WebsiteManagerStub) {
