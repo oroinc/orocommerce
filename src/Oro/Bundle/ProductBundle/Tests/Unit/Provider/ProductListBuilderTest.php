@@ -65,7 +65,7 @@ class ProductListBuilderTest extends \PHPUnit\Framework\TestCase
             ->willReturnSelf();
         $query->expects(self::once())
             ->method('setMaxResults')
-            ->with(-1)
+            ->with(count($productIds))
             ->willReturnSelf();
         $query->expects(self::once())
             ->method('execute')

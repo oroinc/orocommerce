@@ -4,7 +4,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
-use Oro\Bundle\FrontendImportExportBundle\Async\Topics;
+use Oro\Bundle\FrontendImportExportBundle\Async\Topic\PreExportTopic;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Traits\DefaultLocalizationIdTestTrait;
@@ -52,7 +52,7 @@ class ExportControllerTest extends WebTestCase
 
         self::assertJsonResponseStatusCodeEquals($this->client->getResponse(), 200);
 
-        self::assertMessageSent(Topics::PRE_EXPORT, [
+        self::assertMessageSent(PreExportTopic::getName(), [
             'jobName' => 'filtered_frontend_product_export_to_csv',
             'processorAlias' => 'oro_product_frontend_product_listing',
             'outputFilePrefix' => 'product',
@@ -81,7 +81,7 @@ class ExportControllerTest extends WebTestCase
 
         self::assertJsonResponseStatusCodeEquals($this->client->getResponse(), 200);
 
-        self::assertMessageSent(Topics::PRE_EXPORT, [
+        self::assertMessageSent(PreExportTopic::getName(), [
             'jobName' => 'filtered_frontend_product_export_to_csv',
             'processorAlias' => 'oro_product_frontend_product_listing',
             'outputFilePrefix' => 'product',

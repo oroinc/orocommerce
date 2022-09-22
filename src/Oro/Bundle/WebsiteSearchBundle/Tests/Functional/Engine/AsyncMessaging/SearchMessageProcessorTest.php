@@ -10,8 +10,10 @@ use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncMessaging\SearchMessageProcessor;
+use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Traits\DefaultWebsiteIdTestTrait;
 use Oro\Component\MessageQueue\Client\Config as MessageQueueConfig;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\Message;
@@ -23,6 +25,7 @@ use Oro\Component\MessageQueue\Transport\SessionInterface;
 class SearchMessageProcessorTest extends WebTestCase
 {
     use JobsAwareTestTrait;
+    use DefaultWebsiteIdTestTrait;
 
     private SearchMessageProcessor $processor;
 
@@ -99,7 +102,7 @@ class SearchMessageProcessorTest extends WebTestCase
             [
                 'jobId' => $delayedJob->getId(),
                 'class' => Product::class,
-                'context' => [],
+                'context' => [AbstractIndexer::CONTEXT_WEBSITE_IDS => [self::getDefaultWebsiteId()]],
             ]
         );
 
@@ -107,7 +110,7 @@ class SearchMessageProcessorTest extends WebTestCase
             ->addListener('oro_website_search.before_reindex', [$this, 'throwBeforeReindexException'], PHP_INT_MAX);
 
         self::assertEquals(
-            MessageProcessorInterface::REQUEUE,
+            MessageProcessorInterface::REJECT,
             $this->processor->process($message, $this->createMock(SessionInterface::class))
         );
 
@@ -154,6 +157,7 @@ class SearchMessageProcessorTest extends WebTestCase
                 'jobId' => $delayedJob->getId(),
                 'class' => Product::class,
                 'granulize' => false,
+                'context' => [AbstractIndexer::CONTEXT_WEBSITE_IDS => [self::getDefaultWebsiteId()]],
             ]
         );
 
@@ -198,6 +202,7 @@ class SearchMessageProcessorTest extends WebTestCase
             [
                 'class' => Product::class,
                 'granulize' => false,
+                'context' => [AbstractIndexer::CONTEXT_WEBSITE_IDS => [self::getDefaultWebsiteId()]],
             ]
         );
 
@@ -222,6 +227,7 @@ class SearchMessageProcessorTest extends WebTestCase
             [
                 'class' => Product::class,
                 'granulize' => false,
+                'context' => [AbstractIndexer::CONTEXT_WEBSITE_IDS => [self::getDefaultWebsiteId()]],
             ]
         );
 
@@ -246,6 +252,7 @@ class SearchMessageProcessorTest extends WebTestCase
             [
                 'class' => Product::class,
                 'granulize' => false,
+                'context' => [AbstractIndexer::CONTEXT_WEBSITE_IDS => [self::getDefaultWebsiteId()]],
             ]
         );
 

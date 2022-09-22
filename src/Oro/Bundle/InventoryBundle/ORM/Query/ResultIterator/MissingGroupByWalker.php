@@ -5,10 +5,13 @@ namespace Oro\Bundle\InventoryBundle\ORM\Query\ResultIterator;
 use Doctrine\ORM\Query\AST;
 use Doctrine\ORM\Query\TreeWalkerAdapter;
 
+/**
+ * Changes the groupByClause of the AST and adds missed columns.
+ */
 class MissingGroupByWalker extends TreeWalkerAdapter
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * Complexity suppressed due to too complex AST structure
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
@@ -25,10 +28,21 @@ class MissingGroupByWalker extends TreeWalkerAdapter
             }
             $groupBys[$groupByItem->identificationVariable] = $groupByItem->field;
         }
+
+        $selectExpressions = array_map(
+            function (AST\SelectExpression $expression) {
+                return $expression->expression;
+            },
+            $AST->selectClause->selectExpressions
+        );
+
         $newGroupBys = [];
         // parse query components and make each one has a group by section
         foreach ($this->_getQueryComponents() as $componentAlias => $component) {
             if (!array_key_exists('metadata', $component)) {
+                continue;
+            }
+            if (!in_array($componentAlias, $selectExpressions)) {
                 continue;
             }
             if (!isset($groupBys[$componentAlias])) {

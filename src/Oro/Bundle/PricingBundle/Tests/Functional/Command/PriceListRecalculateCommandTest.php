@@ -132,7 +132,7 @@ class PriceListRecalculateCommandTest extends WebTestCase
         $this->assertCombinedPriceCount($expectedCount);
         $this->assertCount(array_sum($expectedMesssages), $this->getSentMessages());
         foreach ($expectedMesssages as $topic => $count) {
-            $this->assertCount($count, $this->getSentMessagesByTopic($topic));
+            self::assertMessagesCount($topic, $count);
         }
     }
 

@@ -8,6 +8,7 @@ use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\ProductBundle\Async\ReindexRequestItemProductsByRelatedJobProcessor;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductWebsiteReindexRequestItems;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\WebsiteSearchBundle\Async\Topic\WebsiteSearchReindexTopic;
 use Oro\Component\MessageQueue\Transport\ConnectionInterface;
 use Oro\Component\MessageQueue\Transport\Message;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
@@ -55,11 +56,7 @@ class ReindexRequestItemProductsByRelatedJobProcessorTest extends WebTestCase
             $result
         );
 
-        $messageBodies = self::getSentMessagesByTopic(
-            'oro.website.search.indexer.reindex',
-            true
-        );
-        self::assertEmpty($messageBodies);
+        self::assertMessagesEmpty(WebsiteSearchReindexTopic::getName());
         self::assertEmpty($logger->getLogs());
     }
 
@@ -89,10 +86,7 @@ class ReindexRequestItemProductsByRelatedJobProcessorTest extends WebTestCase
         );
         self::assertEmpty($logger->getLogs());
 
-        $messageBodies = self::getSentMessagesByTopic(
-            'oro.website.search.indexer.reindex',
-            true
-        );
+        $messageBodies = self::getSentMessagesByTopic(WebsiteSearchReindexTopic::getName());
         self::assertNotEmpty($messageBodies);
         $valuableDataFromMessageBodies = \array_map(
             [$this, 'getValuableDataFromMessageBody'],
