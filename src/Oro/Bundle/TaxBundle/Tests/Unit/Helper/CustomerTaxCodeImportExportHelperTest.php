@@ -56,14 +56,26 @@ class CustomerTaxCodeImportExportHelperTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetCustomerTaxCodeTest()
+    public function testLoadNormalizedCustomerTaxCodes(): void
     {
         $this->doctrineShouldReturnTaxCodesByCustomer();
-        $customerTaxCodes = $this->manager->loadCustomerTaxCode($this->customers);
+        $customerTaxCodes = $this->manager->loadNormalizedCustomerTaxCodes($this->customers);
 
         foreach ($this->customers as $customer) {
-            $this->assertEquals($customer->getId(), $customerTaxCodes[$customer->getId()]->getId());
+            $this->assertEquals(
+                ['code' => 'code_' . $customer->getId()],
+                $customerTaxCodes[$customer->getId()]
+            );
         }
+    }
+
+    public function testLoadNormalizedCustomerTaxCodesWithEmptyTaxCode(): void
+    {
+        $customerWithoutTaxCode = $this->getEntity(CustomerStub::class, ['id' => 1]);
+        $customerTaxCodes = $this->manager->loadNormalizedCustomerTaxCodes([$customerWithoutTaxCode]);
+
+        $this->assertCount(1, $customerTaxCodes);
+        $this->assertEquals(['code' => ''], $customerTaxCodes[$customerWithoutTaxCode->getId()]);
     }
 
     /**

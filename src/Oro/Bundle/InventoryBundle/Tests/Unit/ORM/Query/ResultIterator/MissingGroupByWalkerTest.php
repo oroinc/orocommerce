@@ -17,8 +17,7 @@ use Oro\Bundle\InventoryBundle\ORM\Query\ResultIterator\MissingGroupByWalker;
 
 class MissingGroupByWalkerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var MissingGroupByWalker */
-    private $missingGroupByWalker;
+    private MissingGroupByWalker $missingGroupByWalker;
 
     protected function setUp(): void
     {
@@ -58,7 +57,7 @@ class MissingGroupByWalkerTest extends \PHPUnit\Framework\TestCase
 
         $this->missingGroupByWalker->walkSelectStatement($ast);
 
-        $this->assertCount(count($this->getQueryComponents()), $ast->groupByClause->groupByItems);
+        $this->assertCount(1, $ast->groupByClause->groupByItems);
     }
 
     public function testWalkStatementCompletesExistingGroupBy(): void

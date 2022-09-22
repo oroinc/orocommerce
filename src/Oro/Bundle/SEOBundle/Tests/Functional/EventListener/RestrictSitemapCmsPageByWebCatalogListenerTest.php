@@ -4,17 +4,17 @@ namespace Oro\Bundle\SEOBundle\Tests\Functional\EventListener;
 
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\CMSBundle\Entity\Page;
-use Oro\Bundle\CMSBundle\Tests\Functional\DataFixtures\LoadPageData;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\SEOBundle\Event\RestrictSitemapEntitiesEvent;
 use Oro\Bundle\SEOBundle\EventListener\RestrictSitemapCmsPageByWebCatalogListener;
 use Oro\Bundle\SEOBundle\Sitemap\Provider\CmsPageSitemapRestrictionProvider;
+use Oro\Bundle\SEOBundle\Tests\Functional\DataFixtures\RestrictSitemapCmsPageByWebCatalogListener as FixtureDir;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures\LoadWebCatalogData;
-use Oro\Bundle\WebCatalogBundle\Tests\Functional\EntityTitles\DataFixtures\LoadWebCatalogPageData;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
@@ -35,12 +35,11 @@ class RestrictSitemapCmsPageByWebCatalogListenerTest extends WebTestCase
 
     private EventDispatcher $eventDispatcher;
 
-
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->loadFixtures([
-            LoadWebCatalogPageData::class
+            FixtureDir\LoadWebCatalogPageData::class
         ]);
 
         $this->configManager = $this->createMock(ConfigManager::class);
@@ -48,8 +47,8 @@ class RestrictSitemapCmsPageByWebCatalogListenerTest extends WebTestCase
 
         $listener = new RestrictSitemapCmsPageByWebCatalogListener(
             $this->configManager,
-            $this->getContainer()->get('oro_seo.sitemap.provider.web_catalog_scope_criteria_provider'),
-            $this->getRestrictionProvider()
+            $this->getRestrictionProvider(),
+            $this->getContainer()->get('oro_seo.modifier.scope_query_builder_modifier')
         );
 
         /** @var EventDispatcher eventDispatcher */
@@ -69,32 +68,39 @@ class RestrictSitemapCmsPageByWebCatalogListenerTest extends WebTestCase
     public function testRestrictDisabled()
     {
         $version = '1';
+        /** @var Website $website */
+        $website = $this->getReference(FixtureDir\LoadWebsiteData::WEBSITE_DEFAULT);
 
         $this->featureChecker->expects($this->once())
             ->method('isFeatureEnabled')
             ->willReturn(true);
 
-        $qb = $this->getContainer()->get('doctrine')->getManagerForClass(Page::class)
+        $qb = self::getContainer()
+            ->get('doctrine')
             ->getRepository(Page::class)
             ->createQueryBuilder('page');
 
-        $event = new RestrictSitemapEntitiesEvent($qb, $version);
+        $event = new RestrictSitemapEntitiesEvent($qb, $version, $website);
         $this->eventDispatcher->dispatch($event, self::EVENT_NAME);
 
-        $actual = array_map(function (Page $page) {
+        $actual = array_map(static function (Page $page) {
             return $page->getId();
         }, $qb->getQuery()->getResult());
+        sort($actual);
 
-        $this->assertCount(3, $actual);
         $expected = [
-            $this->getReference(LoadPageData::PAGE_1),
-            $this->getReference(LoadPageData::PAGE_2),
-            $this->getReference(LoadPageData::PAGE_3)
+            $this->getReference(FixtureDir\LoadPageData::PAGE1_WEB_CATALOG_SCOPE_DEFAULT)->getId(),
+            $this->getReference(FixtureDir\LoadPageData::PAGE2_WEB_CATALOG_SCOPE_DEFAULT)->getId(),
+            $this->getReference(FixtureDir\LoadPageData::PAGE3_WEB_CATALOG_SCOPE_DEFAULT)->getId(),
+            $this->getReference(FixtureDir\LoadPageData::PAGE4_WEB_CATALOG_SCOPE_DEFAULT)->getId(),
+            $this->getReference(FixtureDir\LoadPageData::PAGE5_WEB_CATALOG_SCOPE_DEFAULT)->getId(),
+            $this->getReference(FixtureDir\LoadPageData::PAGE_OUT_OF_WEB_CATALOG)->getId(),
+            $this->getReference(FixtureDir\LoadPageData::PAGE_WEB_CATALOG_SCOPE_LOCALIZATION_EN_CA)->getId(),
+            $this->getReference(FixtureDir\LoadPageData::PAGE_WEB_CATALOG_SCOPE_CUSTOMER_GROUP_ANONYMOUS)->getId(),
+            $this->getReference(FixtureDir\LoadPageData::PAGE_WEB_CATALOG_SCOPE_CUSTOMER_GROUP1)->getId(),
+            $this->getReference(FixtureDir\LoadPageData::PAGE_WEB_CATALOG_SCOPE_CUSTOMER1)->getId(),
         ];
-
-        foreach ($expected as $page) {
-            $this->assertContains($page->getId(), $actual);
-        }
+        $this->assertEquals($expected, $actual);
     }
 
     /**
@@ -108,6 +114,8 @@ class RestrictSitemapCmsPageByWebCatalogListenerTest extends WebTestCase
     ) {
         $version = '1';
         $webCatalogId = null;
+        /** @var Website $website */
+        $website = $this->getReference(FixtureDir\LoadWebsiteData::WEBSITE_DEFAULT);
 
         if ($webCatalogName) {
             /** @var WebCatalog $webCatalog */
@@ -124,22 +132,22 @@ class RestrictSitemapCmsPageByWebCatalogListenerTest extends WebTestCase
             ->with('frontend_master_catalog')
             ->willReturn(null === $webCatalogId);
 
-
         $this->configManager->method('get')->willReturnMap([
-            [self::WEB_CATALOG, false, false, null, $webCatalogId],
-            [self::EXCLUDE_WEB_CATALOG_LANDING_PAGES, true, false, null, $exclude],
-            [self::INCLUDE_NOT_IN_WEB_CATALOG_LANDING_PAGES, false, false, null, $includeNotOwn]
+            [self::WEB_CATALOG, false, false, $website, $webCatalogId],
+            [self::EXCLUDE_WEB_CATALOG_LANDING_PAGES, true, false, $website, $exclude],
+            [self::INCLUDE_NOT_IN_WEB_CATALOG_LANDING_PAGES, false, false, $website, $includeNotOwn]
         ]);
 
         /** @var QueryBuilder $qb */
-        $qb = $this->getContainer()->get('doctrine')->getManagerForClass(Page::class)
+        $qb = self::getContainer()
+            ->get('doctrine')
             ->getRepository(Page::class)
             ->createQueryBuilder('page');
 
-        $event = new RestrictSitemapEntitiesEvent($qb, $version);
+        $event = new RestrictSitemapEntitiesEvent($qb, $version, $website);
         $this->eventDispatcher->dispatch($event, self::EVENT_NAME);
 
-        $actualIds = array_map(function ($page) {
+        $actualIds = array_map(static function ($page) {
             return $page->getId();
         }, $qb->getQuery()->getResult());
         sort($actualIds);
@@ -147,55 +155,136 @@ class RestrictSitemapCmsPageByWebCatalogListenerTest extends WebTestCase
         $this->assertEquals($expectedIds, $actualIds);
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function restrictQueryBuilderDataProvider(): array
     {
         return [
             'no restriction - no web catalog, exclude=true, include not own=true' => [
                 'exclude'        => true,
                 'includeNotOwn'  => true,
-                'expected'       => [LoadPageData::PAGE_1, LoadPageData::PAGE_2, LoadPageData::PAGE_3],
+                'expected'       => [
+                    FixtureDir\LoadPageData::PAGE1_WEB_CATALOG_SCOPE_DEFAULT,
+                    FixtureDir\LoadPageData::PAGE2_WEB_CATALOG_SCOPE_DEFAULT,
+                    FixtureDir\LoadPageData::PAGE3_WEB_CATALOG_SCOPE_DEFAULT,
+                    FixtureDir\LoadPageData::PAGE4_WEB_CATALOG_SCOPE_DEFAULT,
+                    FixtureDir\LoadPageData::PAGE5_WEB_CATALOG_SCOPE_DEFAULT,
+                    FixtureDir\LoadPageData::PAGE_OUT_OF_WEB_CATALOG,
+                    FixtureDir\LoadPageData::PAGE_WEB_CATALOG_SCOPE_LOCALIZATION_EN_CA,
+                    FixtureDir\LoadPageData::PAGE_WEB_CATALOG_SCOPE_CUSTOMER_GROUP_ANONYMOUS,
+                    FixtureDir\LoadPageData::PAGE_WEB_CATALOG_SCOPE_CUSTOMER_GROUP1,
+                    FixtureDir\LoadPageData::PAGE_WEB_CATALOG_SCOPE_CUSTOMER1,
+                ],
                 'webCatalogName' => null,
             ],
             'no restriction - no web catalog, exclude=true, include not own=false' => [
                 'exclude'        => true,
                 'includeNotOwn'  => false,
-                'expected'       => [LoadPageData::PAGE_1, LoadPageData::PAGE_2, LoadPageData::PAGE_3],
+                'expected'       => [
+                    FixtureDir\LoadPageData::PAGE1_WEB_CATALOG_SCOPE_DEFAULT,
+                    FixtureDir\LoadPageData::PAGE2_WEB_CATALOG_SCOPE_DEFAULT,
+                    FixtureDir\LoadPageData::PAGE3_WEB_CATALOG_SCOPE_DEFAULT,
+                    FixtureDir\LoadPageData::PAGE4_WEB_CATALOG_SCOPE_DEFAULT,
+                    FixtureDir\LoadPageData::PAGE5_WEB_CATALOG_SCOPE_DEFAULT,
+                    FixtureDir\LoadPageData::PAGE_OUT_OF_WEB_CATALOG,
+                    FixtureDir\LoadPageData::PAGE_WEB_CATALOG_SCOPE_LOCALIZATION_EN_CA,
+                    FixtureDir\LoadPageData::PAGE_WEB_CATALOG_SCOPE_CUSTOMER_GROUP_ANONYMOUS,
+                    FixtureDir\LoadPageData::PAGE_WEB_CATALOG_SCOPE_CUSTOMER_GROUP1,
+                    FixtureDir\LoadPageData::PAGE_WEB_CATALOG_SCOPE_CUSTOMER1,
+                ],
                 'webCatalogName' => null,
             ],
             'no restriction - no web catalog, exclude=false, include not own=true' => [
                 'exclude'        => false,
                 'includeNotOwn'  => true,
-                'expected'       => [LoadPageData::PAGE_1, LoadPageData::PAGE_2, LoadPageData::PAGE_3],
+                'expected'       => [
+                    FixtureDir\LoadPageData::PAGE1_WEB_CATALOG_SCOPE_DEFAULT,
+                    FixtureDir\LoadPageData::PAGE2_WEB_CATALOG_SCOPE_DEFAULT,
+                    FixtureDir\LoadPageData::PAGE3_WEB_CATALOG_SCOPE_DEFAULT,
+                    FixtureDir\LoadPageData::PAGE4_WEB_CATALOG_SCOPE_DEFAULT,
+                    FixtureDir\LoadPageData::PAGE5_WEB_CATALOG_SCOPE_DEFAULT,
+                    FixtureDir\LoadPageData::PAGE_OUT_OF_WEB_CATALOG,
+                    FixtureDir\LoadPageData::PAGE_WEB_CATALOG_SCOPE_LOCALIZATION_EN_CA,
+                    FixtureDir\LoadPageData::PAGE_WEB_CATALOG_SCOPE_CUSTOMER_GROUP_ANONYMOUS,
+                    FixtureDir\LoadPageData::PAGE_WEB_CATALOG_SCOPE_CUSTOMER_GROUP1,
+                    FixtureDir\LoadPageData::PAGE_WEB_CATALOG_SCOPE_CUSTOMER1,
+                ],
                 'webCatalogName' => null,
             ],
             'no restriction - no web catalog, exclude=false, include not own=false' => [
                 'exclude'        => false,
                 'includeNotOwn'  => false,
-                'expected'       => [LoadPageData::PAGE_1, LoadPageData::PAGE_2, LoadPageData::PAGE_3],
+                'expected'       => [
+                    FixtureDir\LoadPageData::PAGE1_WEB_CATALOG_SCOPE_DEFAULT,
+                    FixtureDir\LoadPageData::PAGE2_WEB_CATALOG_SCOPE_DEFAULT,
+                    FixtureDir\LoadPageData::PAGE3_WEB_CATALOG_SCOPE_DEFAULT,
+                    FixtureDir\LoadPageData::PAGE4_WEB_CATALOG_SCOPE_DEFAULT,
+                    FixtureDir\LoadPageData::PAGE5_WEB_CATALOG_SCOPE_DEFAULT,
+                    FixtureDir\LoadPageData::PAGE_OUT_OF_WEB_CATALOG,
+                    FixtureDir\LoadPageData::PAGE_WEB_CATALOG_SCOPE_LOCALIZATION_EN_CA,
+                    FixtureDir\LoadPageData::PAGE_WEB_CATALOG_SCOPE_CUSTOMER_GROUP_ANONYMOUS,
+                    FixtureDir\LoadPageData::PAGE_WEB_CATALOG_SCOPE_CUSTOMER_GROUP1,
+                    FixtureDir\LoadPageData::PAGE_WEB_CATALOG_SCOPE_CUSTOMER1,
+                ],
                 'webCatalogName' => null,
             ],
             'pages not owned by CATALOG_1' => [
                 'exclude'        => true,
                 'includeNotOwn'  => true,
-                'expected'       => [LoadPageData::PAGE_2, LoadPageData::PAGE_3],
+                'expected'       => [
+                    FixtureDir\LoadPageData::PAGE2_WEB_CATALOG_SCOPE_DEFAULT,
+                    FixtureDir\LoadPageData::PAGE4_WEB_CATALOG_SCOPE_DEFAULT,
+                    FixtureDir\LoadPageData::PAGE_OUT_OF_WEB_CATALOG,
+                    FixtureDir\LoadPageData::PAGE_WEB_CATALOG_SCOPE_CUSTOMER_GROUP1,
+                    FixtureDir\LoadPageData::PAGE_WEB_CATALOG_SCOPE_CUSTOMER1,
+                ],
                 'webCatalogName' => LoadWebCatalogData::CATALOG_1,
             ],
             'no restriction - web catalog, exclude=true, include not own=false' => [
                 'exclude'        => true,
                 'includeNotOwn'  => false,
-                'expected'       => [LoadPageData::PAGE_1, LoadPageData::PAGE_2, LoadPageData::PAGE_3],
+                'expected'       => [
+                    FixtureDir\LoadPageData::PAGE1_WEB_CATALOG_SCOPE_DEFAULT,
+                    FixtureDir\LoadPageData::PAGE2_WEB_CATALOG_SCOPE_DEFAULT,
+                    FixtureDir\LoadPageData::PAGE3_WEB_CATALOG_SCOPE_DEFAULT,
+                    FixtureDir\LoadPageData::PAGE4_WEB_CATALOG_SCOPE_DEFAULT,
+                    FixtureDir\LoadPageData::PAGE5_WEB_CATALOG_SCOPE_DEFAULT,
+                    FixtureDir\LoadPageData::PAGE_OUT_OF_WEB_CATALOG,
+                    FixtureDir\LoadPageData::PAGE_WEB_CATALOG_SCOPE_LOCALIZATION_EN_CA,
+                    FixtureDir\LoadPageData::PAGE_WEB_CATALOG_SCOPE_CUSTOMER_GROUP_ANONYMOUS,
+                    FixtureDir\LoadPageData::PAGE_WEB_CATALOG_SCOPE_CUSTOMER_GROUP1,
+                    FixtureDir\LoadPageData::PAGE_WEB_CATALOG_SCOPE_CUSTOMER1,
+                ],
                 'webCatalogName' => LoadWebCatalogData::CATALOG_1,
             ],
             'no restriction - web catalog, exclude=false, include not own=true' => [
                 'exclude'        => false,
                 'includeNotOwn'  => true,
-                'expected'       => [LoadPageData::PAGE_1, LoadPageData::PAGE_2, LoadPageData::PAGE_3],
+                'expected'       => [
+                    FixtureDir\LoadPageData::PAGE1_WEB_CATALOG_SCOPE_DEFAULT,
+                    FixtureDir\LoadPageData::PAGE2_WEB_CATALOG_SCOPE_DEFAULT,
+                    FixtureDir\LoadPageData::PAGE3_WEB_CATALOG_SCOPE_DEFAULT,
+                    FixtureDir\LoadPageData::PAGE4_WEB_CATALOG_SCOPE_DEFAULT,
+                    FixtureDir\LoadPageData::PAGE5_WEB_CATALOG_SCOPE_DEFAULT,
+                    FixtureDir\LoadPageData::PAGE_OUT_OF_WEB_CATALOG,
+                    FixtureDir\LoadPageData::PAGE_WEB_CATALOG_SCOPE_LOCALIZATION_EN_CA,
+                    FixtureDir\LoadPageData::PAGE_WEB_CATALOG_SCOPE_CUSTOMER_GROUP_ANONYMOUS,
+                    FixtureDir\LoadPageData::PAGE_WEB_CATALOG_SCOPE_CUSTOMER_GROUP1,
+                    FixtureDir\LoadPageData::PAGE_WEB_CATALOG_SCOPE_CUSTOMER1,
+                ],
                 'webCatalogName' => LoadWebCatalogData::CATALOG_1,
             ],
             'pages owned by CATALOG_1' => [
                 'exclude'        => false,
                 'includeNotOwn'  => false,
-                'expected'       => [LoadPageData::PAGE_1],
+                'expected'       => [
+                    FixtureDir\LoadPageData::PAGE1_WEB_CATALOG_SCOPE_DEFAULT,
+                    FixtureDir\LoadPageData::PAGE3_WEB_CATALOG_SCOPE_DEFAULT,
+                    FixtureDir\LoadPageData::PAGE5_WEB_CATALOG_SCOPE_DEFAULT,
+                    FixtureDir\LoadPageData::PAGE_WEB_CATALOG_SCOPE_LOCALIZATION_EN_CA,
+                    FixtureDir\LoadPageData::PAGE_WEB_CATALOG_SCOPE_CUSTOMER_GROUP_ANONYMOUS,
+                ],
                 'webCatalogName' => LoadWebCatalogData::CATALOG_1,
             ],
         ];

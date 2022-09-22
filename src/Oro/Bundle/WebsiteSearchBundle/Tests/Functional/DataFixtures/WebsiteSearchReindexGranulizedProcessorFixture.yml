@@ -1,0 +1,19 @@
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    productPrecision{1..10}:
+        unit: '@product_unit.bottle'
+        precision: '1'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    productName{1..10}:
+        string: 'Product'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product{1..10}:
+      sku: 'SKU<current()>'
+      primaryUnitPrecision: '@productPrecision<current()>'
+      __calls:
+          - addName: ['@productName<current()>']
+      inventoryStatus: '@in_stock'
+      status: 'enabled'
+      attributeFamily: '@default_product_family'
+      organization: '@organization'

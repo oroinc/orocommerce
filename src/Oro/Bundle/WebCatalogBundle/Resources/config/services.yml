@@ -216,6 +216,7 @@ services:
             - '@oro_web_catalog.web_catalog_provider'
         tags:
             - { name: oro_scope.provider, scopeType: web_content, priority: 250 }
+            - { name: oro_scope.provider, scopeType: web_content_for_sitemap, priority: 250 }
 
     oro_web_catalog.web_catalog_provider:
         class: Oro\Bundle\WebCatalogBundle\Provider\WebCatalogProvider
@@ -318,7 +319,6 @@ services:
     oro_web_catalog.layout.data_provider.menu_data:
         class: Oro\Bundle\WebCatalogBundle\Layout\DataProvider\MenuDataProvider
         arguments:
-            - '@doctrine'
             - '@oro_web_catalog.web_catalog_provider'
             - '@oro_web_catalog.content_node_tree_resolver'
             - '@oro_locale.helper.localization'

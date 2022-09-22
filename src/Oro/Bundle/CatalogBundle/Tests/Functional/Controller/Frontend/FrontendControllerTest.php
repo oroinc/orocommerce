@@ -8,32 +8,35 @@ use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserD
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\WebsiteSearchExtensionTrait;
 
 class FrontendControllerTest extends WebTestCase
 {
+    use WebsiteSearchExtensionTrait;
+
     protected function setUp(): void
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
+            self::generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
         $this->loadFixtures([
             LoadCategoryData::class,
             LoadCategoryProductData::class,
-            LoadProductData::class
+            LoadProductData::class,
         ]);
-        $this->getContainer()->get('oro_website_search.indexer')
-            ->reindex(Product::class);
+
+        self::reindex(Product::class);
     }
 
-    public function testIndex()
+    public function testIndex(): void
     {
         $this->client->request('GET', $this->getUrl('oro_frontend_root'));
         $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        self::assertHtmlResponseStatusCodeEquals($result, 200);
         $content = $result->getContent();
 
-        $this->assertNotEmpty($content);
+        self::assertNotEmpty($content);
         self::assertStringContainsString('list-slider-component', $content);
         self::assertStringContainsString('Featured Products', $content);
         self::assertStringContainsString('Top Selling Items', $content);
