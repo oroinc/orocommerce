@@ -4,6 +4,7 @@ namespace Oro\Bundle\TaxBundle\Helper;
 
 use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\EntityRepository;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\TaxBundle\Entity\CustomerTaxCode;
 use Oro\Bundle\TaxBundle\Entity\Repository\CustomerTaxCodeRepository;
@@ -15,35 +16,27 @@ class CustomerTaxCodeImportExportHelper
 {
     private DoctrineHelper $doctrineHelper;
 
-    /**
-     * @var CustomerTaxCode[]
-     */
-    private array $customerTaxCodes = [];
-
     public function __construct(DoctrineHelper $doctrineHelper)
     {
         $this->doctrineHelper = $doctrineHelper;
     }
 
     /**
-     * Returns array [Customer::class => [CustomerTaxCode $object, CustomerTaxCode $object,...]]
+     * @param Customer[] $customers
+     *
+     * @return array [Customer Id => ['code' => 'tax code normalized value'], ...].
      */
-    public function loadCustomerTaxCode(array $customers): array
+    public function loadNormalizedCustomerTaxCodes(array $customers): array
     {
         $customerTaxCodes = [];
         foreach ($customers as $customer) {
-            $taxCode = $customer->getTaxCode();
-            if (!isset($this->customerTaxCodes[$taxCode->getId()])) {
-                $this->customerTaxCodes[$taxCode->getId()] = $taxCode;
-            }
-
-            $customerTaxCodes[$customer->getId()] = $this->customerTaxCodes[$taxCode->getId()];
+            $customerTaxCodes[$customer->getId()] = $this->normalizeCustomerTaxCode($customer->getTaxCode());
         }
 
         return $customerTaxCodes;
     }
 
-    public function normalizeCustomerTaxCode(CustomerTaxCode $customerTaxCode = null): array
+    public function normalizeCustomerTaxCode(?CustomerTaxCode $customerTaxCode = null): array
     {
         if (!$customerTaxCode) {
             return ['code' => ''];
