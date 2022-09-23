@@ -228,10 +228,6 @@
     {% if (class_prefix == 'list-view') %}
         <div {{ block('block_attributes') }}>
             <div class="product__description-content cms-typography">{{ product.shortDescription|oro_html_sanitize }}</div>
-            <meta itemprop="description" content="{{ product.schemaOrgDescription }}" />
-            <span itemprop="brand" itemtype="https://schema.org/Brand" itemscope>
-                <meta itemprop="name" content="{{ product.schemaOrgBrandName }}" />
-            </span>
         </div>
     {% endif %}
 {% endblock %}
