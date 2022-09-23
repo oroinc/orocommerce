@@ -26,14 +26,14 @@ Feature: Content Templates CRUD
   Scenario: Create Content template without tags
     When fill "Content Template Form" with:
       | Name    | ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt |
-      | Enabled | true     |
+      | Enabled | true                                                                                                                                                                                                                                                            |
     And I fill in WYSIWYG "Content Template Form Content" with "Test content"
     And I save and close form
     Then I should see "Content template has been saved" flash message
     And I should see Content Template with:
       | Name    | ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt |
-      | Enabled | Yes      |
-      | Tags    | N/A      |
+      | Enabled | Yes                                                                                                                                                                                                                                                             |
+      | Tags    | N/A                                                                                                                                                                                                                                                             |
     And I should see "Test content"
 
   Scenario: Clone content template with long name
@@ -44,11 +44,11 @@ Feature: Content Templates CRUD
     And I click view "Disabled" in grid
     Then  I should see Content Template with:
       | Name    | ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt… (Copy) |
-      | Enabled | No                      |
-      | Tags    | N/A                     |
+      | Enabled | No                                                                                                                                                                                                                                                              |
+      | Tags    | N/A                                                                                                                                                                                                                                                             |
     And I should see "Test content"
 
-  Scenario: Create Content template with tags
+  Scenario: Create Content Template with tags
     When I go to Marketing/Content Templates
     And I click "Create Content Template"
     And I fill "Content Template Form" with:
@@ -63,6 +63,20 @@ Feature: Content Templates CRUD
       | Enabled | Yes                     |
       | Tags    | Tag1 Tag2               |
     And I should see "Test content with tags"
+
+  Scenario: Check Content Template in search results
+    When I click "Tag1"
+    Then I should be on Tag Search Result page
+    And I should see following search entity types:
+      | Type              | N | isSelected |
+      | All               | 1 | yes        |
+      | Content Templates | 1 |            |
+    And number of records should be 1
+    And I should see following search results:
+      | Title                   | Type             |
+      | ContentTemplateWithTags | Content Template |
+    And I should see "Created At"
+    And I should see "Updated At"
 
   Scenario: Check preview image in the Content Template grid
     When I go to Marketing/Content Templates

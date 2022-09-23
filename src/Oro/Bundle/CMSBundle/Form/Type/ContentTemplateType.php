@@ -44,6 +44,7 @@ class ContentTemplateType extends AbstractType
                 [
                     'label' => 'oro.cms.contenttemplate.content.label',
                     'required' => true,
+                    'disable_isolation' => true,
                     'builder_plugins' => [
                         'template-screenshot-plugin' => [
                             'previewFieldName' => 'oro_cms_content_template[previewImage][file]',

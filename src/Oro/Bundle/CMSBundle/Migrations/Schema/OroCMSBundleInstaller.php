@@ -141,15 +141,7 @@ class OroCMSBundleInstaller implements
     {
         $table = $schema->getTable('oro_cms_content_template');
 
-        $table->addColumn(
-            'content',
-            'wysiwyg',
-            [
-                'notnull' => false,
-                'comment' => '(DC2Type:wysiwyg)'
-            ]
-        );
-
+        $table->addColumn('content', 'wysiwyg', ['notnull' => false, 'comment' => '(DC2Type:wysiwyg)']);
         $table->addColumn(
             'content_style',
             'wysiwyg_style',
@@ -157,11 +149,9 @@ class OroCMSBundleInstaller implements
                 'notnull' => false,
                 OroOptions::KEY => [
                     ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_HIDDEN,
-                    'extend' => ['is_extend' => true, 'owner' => ExtendScope::OWNER_SYSTEM],
                 ],
             ]
         );
-
         $table->addColumn(
             'content_properties',
             'wysiwyg_properties',
@@ -169,7 +159,6 @@ class OroCMSBundleInstaller implements
                 'notnull' => false,
                 OroOptions::KEY => [
                     ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_HIDDEN,
-                    'extend' => ['is_extend' => true, 'owner' => ExtendScope::OWNER_SYSTEM],
                 ],
             ]
         );

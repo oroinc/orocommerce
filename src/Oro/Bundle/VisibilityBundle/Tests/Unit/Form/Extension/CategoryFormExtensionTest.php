@@ -12,8 +12,7 @@ use Oro\Bundle\CatalogBundle\Form\Type\CategoryUnitPrecisionType;
 use Oro\Bundle\CatalogBundle\Model\CategoryUnitPrecision;
 use Oro\Bundle\CatalogBundle\Visibility\CategoryDefaultProductUnitOptionsVisibilityInterface;
 use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGType;
-use Oro\Bundle\CMSBundle\Provider\HTMLPurifierScopeProvider;
-use Oro\Bundle\CMSBundle\Tools\DigitalAssetTwigTagsConverter;
+use Oro\Bundle\CMSBundle\Tests\Unit\Form\Type\WysiwygAwareTestTrait;
 use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Extension\Stub\ImageTypeStub;
 use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Extension\Stub\OroRichTextTypeStub;
 use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\DataChangesetTypeStub;
@@ -22,7 +21,6 @@ use Oro\Bundle\FormBundle\Form\Type\DataChangesetType;
 use Oro\Bundle\FormBundle\Form\Type\EntityChangesetType;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
-use Oro\Bundle\FormBundle\Provider\HtmlTagProvider;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizationCollectionType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedPropertyType;
@@ -50,8 +48,9 @@ use Symfony\Component\Validator\Validation;
 
 class CategoryFormExtensionTest extends FormIntegrationTestCase
 {
-    /** @var CategoryFormExtension|\PHPUnit\Framework\MockObject\MockObject */
-    protected $categoryFormExtension;
+    use WysiwygAwareTestTrait;
+
+    private CategoryFormExtension|\PHPUnit\Framework\MockObject\MockObject $categoryFormExtension;
 
     protected function setUp(): void
     {
@@ -70,7 +69,7 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
         $postSetDataListener = $this->createMock(VisibilityPostSetDataListener::class);
 
         $visibilityChoicesProvider = $this->createMock(VisibilityChoicesProvider::class);
-        $visibilityChoicesProvider->expects($this->any())
+        $visibilityChoicesProvider->expects(self::any())
             ->method('getFormattedChoices')
             ->willReturn([]);
 
@@ -86,15 +85,6 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
 
         $confirmSlugChangeFormHelper = $this->createMock(ConfirmSlugChangeFormHelper::class);
         $router = $this->createMock(RouterInterface::class);
-        $purifierScopeProvider = $this->createMock(HTMLPurifierScopeProvider::class);
-        $htmlTagProvider = $this->createMock(HtmlTagProvider::class);
-        $digitalAssetTwigTagsConverter = $this->createMock(DigitalAssetTwigTagsConverter::class);
-        $digitalAssetTwigTagsConverter->expects(self::any())
-            ->method('convertToUrls')
-            ->willReturnArgument(0);
-        $digitalAssetTwigTagsConverter->expects(self::any())
-            ->method('convertToTwigTags')
-            ->willReturnArgument(0);
 
         return [
             new PreloadedExtension(
@@ -123,11 +113,7 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
                     LocalizedSlugType::class => new LocalizedSlugTypeStub(),
                     LocalizedSlugWithRedirectType::class
                         => new LocalizedSlugWithRedirectType($confirmSlugChangeFormHelper),
-                    WYSIWYGType::class => new WYSIWYGType(
-                        $htmlTagProvider,
-                        $purifierScopeProvider,
-                        $digitalAssetTwigTagsConverter
-                    )
+                    WYSIWYGType::class => $this->createWysiwygType(),
                 ],
                 [
                     CategoryType::class => [$this->categoryFormExtension],
@@ -138,18 +124,18 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
         ];
     }
 
-    public function testBuildForm()
+    public function testBuildForm(): void
     {
         $form = $this->factory->create(
             CategoryType::class,
             new CategoryStub(),
             ['data_class' => Category::class]
         );
-        $this->assertTrue($form->has('visibility'));
+        self::assertTrue($form->has('visibility'));
     }
 
-    public function testGetExtendedTypes()
+    public function testGetExtendedTypes(): void
     {
-        $this->assertEquals([CategoryType::class], CategoryFormExtension::getExtendedTypes());
+        self::assertEquals([CategoryType::class], CategoryFormExtension::getExtendedTypes());
     }
 }

@@ -511,6 +511,17 @@ oro.cms:
                 unknown_type: 'unknown'
         screenshot_plugin:
             onerror: 'Something went wrong during create template preview'
+        content_template_plugin:
+            button_title: 'Open Content Templates'
+            no_found: 'No results found'
+            no_items: 'There are no content templates'
+            collapse_all: 'Collapse All'
+            expand_all: 'Expand All'
+            quick_search_placeholder: 'Quick Search'
+            quick_search_label: 'Quick search for content templates'
+            reset_search: 'Reset search field'
+            content_template:
+                not_found: 'Content template {{ name }} could not load'
     change_type:
         confirmation:
             title: 'Change Type'

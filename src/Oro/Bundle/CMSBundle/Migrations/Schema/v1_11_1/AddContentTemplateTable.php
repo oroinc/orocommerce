@@ -8,7 +8,6 @@ use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInte
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareTrait;
 use Oro\Bundle\CMSBundle\Migrations\Schema\OroCMSBundleInstaller;
 use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
-use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManager;
 use Oro\Bundle\EntityExtendBundle\Migration\OroOptions;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
@@ -51,15 +50,7 @@ class AddContentTemplateTable implements Migration, AttachmentExtensionAwareInte
 
     private function createWysiwygEditorColumns(Table $table): void
     {
-        $table->addColumn(
-            'content',
-            'wysiwyg',
-            [
-                'notnull' => false,
-                'comment' => '(DC2Type:wysiwyg)'
-            ]
-        );
-
+        $table->addColumn('content', 'wysiwyg', ['notnull' => false, 'comment' => '(DC2Type:wysiwyg)']);
         $table->addColumn(
             'content_style',
             'wysiwyg_style',
@@ -67,11 +58,9 @@ class AddContentTemplateTable implements Migration, AttachmentExtensionAwareInte
                 'notnull' => false,
                 OroOptions::KEY => [
                     ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_HIDDEN,
-                    'extend' => ['is_extend' => true, 'owner' => ExtendScope::OWNER_SYSTEM],
                 ],
             ]
         );
-
         $table->addColumn(
             'content_properties',
             'wysiwyg_properties',
@@ -79,7 +68,6 @@ class AddContentTemplateTable implements Migration, AttachmentExtensionAwareInte
                 'notnull' => false,
                 OroOptions::KEY => [
                     ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_HIDDEN,
-                    'extend' => ['is_extend' => true, 'owner' => ExtendScope::OWNER_SYSTEM],
                 ],
             ]
         );

@@ -58,3 +58,16 @@ search:
                 name:                   template
                 target_type:            text
                 target_fields:          [template]
+
+    Oro\Bundle\CMSBundle\Entity\ContentTemplate:
+        alias:                          oro_cms_content_template
+        route:
+            name:                       oro_cms_content_template_view
+            parameters:
+                id:                     id
+        search_template:                '@OroCMS/ContentTemplate/searchResult.html.twig'
+        fields:
+            -
+                name:                   name
+                target_type:            text
+                target_fields:          [name]

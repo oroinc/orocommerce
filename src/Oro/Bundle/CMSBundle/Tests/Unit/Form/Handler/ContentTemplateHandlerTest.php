@@ -23,7 +23,7 @@ class ContentTemplateHandlerTest extends \PHPUnit\Framework\TestCase
         'tags' => null,
         'updatedAtSet' => null,
         'owner' => null,
-        'organization' => null
+        'organization' => null,
     ];
 
     private EntityManager|\PHPUnit\Framework\MockObject\MockObject $manager;
@@ -32,7 +32,7 @@ class ContentTemplateHandlerTest extends \PHPUnit\Framework\TestCase
 
     private Request $request;
 
-    private ContentTemplate $data;
+    private ContentTemplate $contentTemplate;
 
     private ContentTemplateHandler $handler;
 
@@ -51,9 +51,7 @@ class ContentTemplateHandlerTest extends \PHPUnit\Framework\TestCase
 
         $this->request = new Request([], [self::FORM_NAME => self::FORM_DATA]);
 
-        $this->data = new ContentTemplate();
-        $this
-            ->data
+        $this->contentTemplate = (new ContentTemplate())
             ->setName(self::FORM_DATA['name'])
             ->setContent(self::FORM_DATA['content'])
             ->setEnabled(self::FORM_DATA['enabled']);
@@ -76,8 +74,8 @@ class ContentTemplateHandlerTest extends \PHPUnit\Framework\TestCase
                 self::FORM_NAME => [
                     'name' => '',
                     'content' => '',
-                    'enabled' => ''
-                ]
+                    'enabled' => '',
+                ],
             ]
         );
         $this->request->setMethod($method);
@@ -88,8 +86,11 @@ class ContentTemplateHandlerTest extends \PHPUnit\Framework\TestCase
         $this->manager->expects(self::never())
             ->method('flush');
 
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Argument data should be instance of ContentTemplate entity');
+        $this->expectExceptionObject(
+            new \InvalidArgumentException(
+                sprintf('Argument $data was expected to be an instance of %s', ContentTemplate::class)
+            )
+        );
         $this->handler->process(null, $form, $this->request);
     }
 
@@ -106,12 +107,12 @@ class ContentTemplateHandlerTest extends \PHPUnit\Framework\TestCase
                 self::FORM_NAME => array_merge(
                     self::FORM_DATA,
                     ['tags' => $tags]
-                )
+                ),
             ]
         );
 
         $form = $this->getFormMock(
-            $this->data,
+            $this->contentTemplate,
             $tags
         );
 
@@ -119,24 +120,26 @@ class ContentTemplateHandlerTest extends \PHPUnit\Framework\TestCase
 
         $this->manager->expects(self::once())
             ->method('persist')
-            ->with($this->data);
+            ->with($this->contentTemplate);
 
         $this->manager->expects(self::once())
             ->method('flush');
 
         $this->tagManager->expects(self::once())
             ->method('setTags')
-            ->with($this->data, $tags);
+            ->with($this->contentTemplate, $tags);
 
         $this->tagManager->expects(self::once())
             ->method('saveTagging')
-            ->with($this->data);
+            ->with($this->contentTemplate);
 
-        self::assertTrue($this->handler->process(
-            $this->data,
-            $form,
-            $this->request
-        ));
+        self::assertTrue(
+            $this->handler->process(
+                $this->contentTemplate,
+                $form,
+                $this->request
+            )
+        );
     }
 
     /**
@@ -144,31 +147,33 @@ class ContentTemplateHandlerTest extends \PHPUnit\Framework\TestCase
      */
     public function testProcessValidFormWithoutTags(string $method): void
     {
-        $form = $this->getFormMock(
-            $this->data,
-            new ArrayCollection()
-        );
+        $tags = new ArrayCollection();
+        $form = $this->getFormMock($this->contentTemplate, $tags);
 
         $this->request->setMethod($method);
 
         $this->manager->expects(self::once())
             ->method('persist')
-            ->with($this->data);
+            ->with($this->contentTemplate);
 
         $this->manager->expects(self::once())
             ->method('flush');
 
-        $this->tagManager->expects(self::never())
-            ->method('setTags');
+        $this->tagManager->expects(self::once())
+            ->method('setTags')
+            ->with($this->contentTemplate, $tags);
 
-        $this->tagManager->expects(self::never())
-            ->method('saveTagging');
+        $this->tagManager->expects(self::once())
+            ->method('saveTagging')
+            ->with($this->contentTemplate);
 
-        self::assertTrue($this->handler->process(
-            $this->data,
-            $form,
-            $this->request
-        ));
+        self::assertTrue(
+            $this->handler->process(
+                $this->contentTemplate,
+                $form,
+                $this->request
+            )
+        );
     }
 
     /**
@@ -196,11 +201,13 @@ class ContentTemplateHandlerTest extends \PHPUnit\Framework\TestCase
         $this->tagManager->expects(self::never())
             ->method('saveTagging');
 
-        self::assertFalse($this->handler->process(
-            $this->data,
-            $form,
-            $this->request
-        ));
+        self::assertFalse(
+            $this->handler->process(
+                $this->contentTemplate,
+                $form,
+                $this->request
+            )
+        );
     }
 
     public function normalMethodsDataProvider(): array
@@ -211,7 +218,7 @@ class ContentTemplateHandlerTest extends \PHPUnit\Framework\TestCase
             ],
             [
                 'method' => Request::METHOD_PUT,
-            ]
+            ],
         ];
     }
 
@@ -226,7 +233,7 @@ class ContentTemplateHandlerTest extends \PHPUnit\Framework\TestCase
             ],
             [
                 'method' => Request::METHOD_DELETE,
-            ]
+            ],
         ];
     }
 

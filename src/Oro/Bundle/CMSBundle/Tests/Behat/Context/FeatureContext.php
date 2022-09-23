@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Behat\Context;
 
+use Behat\Gherkin\Node\TableNode;
 use Oro\Bundle\CMSBundle\Tests\Behat\Element\WysiwygCodeTypeBlockEditor;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\Element;
@@ -163,5 +164,97 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
 
         // Since the modal window is displayed outside the iframe, switch to the main DOM.
         $this->getDriver()->switchToIFrame(null);
+    }
+
+    /**
+     * @Then /^(?:|I )should see following content templates categories in GrapesJs:$/
+     */
+    public function shouldSeeTheFollowingContentTemplatesCategories(TableNode $table): void
+    {
+        $categories = $this->findAllElements('GrapesJs Content Templates Category');
+        self::assertNotEmpty(
+            $categories,
+            'Content template categories "GrapesJs Content Templates Category" not found'
+        );
+
+        $expectedCategories = $table->getColumn(0);
+        foreach ($categories as $index => $eachCategory) {
+            $categoryTitle = $this->createElement('GrapesJs Content Templates Category Title', $eachCategory);
+            self::assertTrue(
+                $categoryTitle->isIsset(),
+                'Category title element "GrapesJs Content Templates Category Title" not found on page'
+            );
+
+            self::assertEquals(trim($expectedCategories[$index]), trim($categoryTitle->getText()));
+        }
+    }
+
+    /**
+     * @Then /^(?:|I )there are (?P<count>(?:\d+)) content templates? in category "(?P<category>(?:[^"]|\\")*)"$/
+     */
+    public function thereAreCountContentTemplatesInCategory(int $count, string $category): void
+    {
+        $categories = $this->findAllElements('GrapesJs Content Templates Category');
+        self::assertNotEmpty(
+            $categories,
+            'Content template categories "GrapesJs Content Templates Category" not found'
+        );
+
+        $foundCategory = null;
+        foreach ($categories as $eachCategory) {
+            $categoryTitle = $this->createElement('GrapesJs Content Templates Category Title', $eachCategory);
+            self::assertTrue(
+                $categoryTitle->isIsset(),
+                'Category title element "GrapesJs Content Templates Category Title" not found on page'
+            );
+
+            if (trim($category) === trim($categoryTitle->getText())) {
+                $contentTemplates = $this->findAllElements('GrapesJs Content Template', $eachCategory);
+                self::assertCount(
+                    $count,
+                    $contentTemplates,
+                    sprintf(
+                        '%d content templates expected in "%s" content template category, got %d',
+                        $count,
+                        $category,
+                        count($contentTemplates)
+                    )
+                );
+
+                return;
+            }
+        }
+
+        self::assertNotNull($foundCategory, sprintf('Content template category "%s" not found', $category));
+    }
+
+    /**
+     * @When /^(?:|I )drag and drop the block "(?P<blockElement>(?:[^"]|\\")*)" to the GrapesJs Wysiwyg Root Area$/
+     */
+    public function dragAndDropTheBlockToGrapesJs(string $blockElement): void
+    {
+        $sourceContextNodePath = '/';
+        $element = $this->createElement($blockElement);
+        self::assertTrue($element->isIsset(), sprintf('GrapesJs block "%s" not found on page', $blockElement));
+
+        $destinationContextNode = $this->createElement('GrapesJs Wysiwyg');
+        self::assertTrue($destinationContextNode->isIsset(), 'GrapesJs block "GrapesJs Wysiwyg" not found on page');
+
+        $destination = $this->createElement('GrapesJs Wysiwyg Root Area');
+
+        $snippet = file_get_contents(__DIR__ . '/Snippet/drag-and-drop.js');
+
+        $this->getSession()
+            ->getDriver()
+            ->executeScript(
+                sprintf(
+                    '(%s)("%s", "%s", "%s", "%s");',
+                    trim($snippet),
+                    addslashes($element->getXPath()),
+                    addslashes($destination->getXPath()),
+                    addslashes($sourceContextNodePath),
+                    addslashes($destinationContextNode->getXPath())
+                )
+            );
     }
 }

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CMSBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\CMSBundle\Entity\Page;
+use Oro\Bundle\CMSBundle\Form\EventSubscriber\DigitalAssetTwigTagsEventSubscriber;
 use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGType;
 use Oro\Bundle\CMSBundle\Provider\HTMLPurifierScopeProvider;
 use Oro\Bundle\CMSBundle\Tools\DigitalAssetTwigTagsConverter;
@@ -12,6 +13,8 @@ use Oro\Bundle\FormBundle\Provider\HtmlTagProvider;
 use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Asset\Packages as AssetHelper;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\PreloadedExtension;
@@ -26,16 +29,28 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
 
     private DigitalAssetTwigTagsConverter|\PHPUnit\Framework\MockObject\MockObject $digitalAssetTwigTagsConverter;
 
+    private EventSubscriberInterface $eventSubscriber;
+
+    private AssetHelper|\PHPUnit\Framework\MockObject\MockObject $assetHelper;
+
     protected function setUp(): void
     {
         $this->htmlTagProvider = $this->createMock(HtmlTagProvider::class);
         $this->purifierScopeProvider = $this->createMock(HTMLPurifierScopeProvider::class);
         $this->digitalAssetTwigTagsConverter = $this->createMock(DigitalAssetTwigTagsConverter::class);
-        $this->digitalAssetTwigTagsConverter->expects(self::any())
+        $this->digitalAssetTwigTagsConverter
+            ->expects(self::any())
             ->method('convertToUrls')
             ->willReturnArgument(0);
-        $this->digitalAssetTwigTagsConverter->expects(self::any())
+        $this->digitalAssetTwigTagsConverter
+            ->expects(self::any())
             ->method('convertToTwigTags')
+            ->willReturnArgument(0);
+        $this->eventSubscriber = new DigitalAssetTwigTagsEventSubscriber($this->digitalAssetTwigTagsConverter);
+        $this->assetHelper = $this->createMock(AssetHelper::class);
+        $this->assetHelper
+            ->expects(self::any())
+            ->method('getUrl')
             ->willReturnArgument(0);
 
         parent::setUp();
@@ -61,26 +76,29 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
                     'module' => 'oroui/js/app/components/view-component',
                     'options' => [
                         'view' => 'orocms/js/app/grapesjs/grapesjs-editor-view',
-                        'allow_tags' => []
-                    ]
+                        'allow_tags' => [],
+                    ],
                 ],
                 'attr' => [
                     'class' => 'grapesjs-textarea hide',
                     'data-validation-force' => 'true',
-                    'autocomplete' => 'off'
+                    'autocomplete' => 'off',
                 ],
                 'auto_render' => true,
                 'builder_plugins' => [],
                 'error_bubbling' => true,
                 'entity_class' => null,
+                'disable_isolation' => false,
             ])
-            ->will($this->returnSelf());
+            ->will(self::returnSelf());
 
         $type = new WYSIWYGType(
             $this->htmlTagProvider,
             $this->purifierScopeProvider,
             $this->digitalAssetTwigTagsConverter
         );
+        $type->setDigitalAssetTwigTagsEventSubscriber($this->eventSubscriber);
+        $type->setAssetHelper($this->assetHelper);
         $type->configureOptions($resolver);
     }
 
@@ -100,7 +118,7 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
 
         $form = $this->factory->create(WYSIWYGType::class, null, [
             'data_class' => Page::class,
-            'constraints' => new WYSIWYG()
+            'constraints' => new WYSIWYG(),
         ]);
 
         $form->submit($htmlValue);
@@ -127,10 +145,13 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
             $this->purifierScopeProvider,
             $this->digitalAssetTwigTagsConverter
         );
+        $type->setDigitalAssetTwigTagsEventSubscriber($this->eventSubscriber);
+        $type->setAssetHelper($this->assetHelper);
+
         $type->finishView($view, $form, [
             'page-component' => [
                 'module' => 'component/module',
-                'options' => ['view' => 'app/view']
+                'options' => ['view' => 'app/view'],
             ],
             'auto_render' => true,
             'builder_plugins' => [
@@ -138,6 +159,7 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
                     'foo' => 'baz',
                 ],
             ],
+            'disable_isolation' => true,
         ]);
 
         self::assertEquals('wysiwyg', $view->vars['attr']['data-grapesjs-field']);
@@ -147,9 +169,11 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
             . ',"allowed_iframe_domains":[]'
             . ',"autoRender":true'
             . ',"builderPlugins":{"bar-plugin":{"foo":"baz"}}'
+            . ',"disableIsolation":true'
             . ',"entityClass":"Oro\\\\Bundle\\\\CMSBundle\\\\Entity\\\\Page"'
-            . ',"stylesInputSelector":"[data-grapesjs-styles=\"wysiwyg_style\"]",'
-            . '"propertiesInputSelector":"[data-grapesjs-properties=\"wysiwyg_properties\"]"}',
+            . ',"extraStyles":[{"name":"canvas","url":"build\/admin\/css\/wysiwyg_canvas.css"}]'
+            . ',"stylesInputSelector":"[data-grapesjs-styles=\"wysiwyg_style\"]"'
+            . ',"propertiesInputSelector":"[data-grapesjs-properties=\"wysiwyg_properties\"]"}',
             $view->vars['attr']['data-page-component-options']
         );
     }
@@ -173,10 +197,13 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
             $this->purifierScopeProvider,
             $this->digitalAssetTwigTagsConverter
         );
+        $type->setDigitalAssetTwigTagsEventSubscriber($this->eventSubscriber);
+        $type->setAssetHelper($this->assetHelper);
+
         $type->finishView($view, $form, [
             'page-component' => [
                 'module' => 'component/module',
-                'options' => ['view' => 'app/view']
+                'options' => ['view' => 'app/view'],
             ],
             'auto_render' => true,
             'builder_plugins' => [
@@ -184,6 +211,7 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
                     'foo' => 'baz',
                 ],
             ],
+            'disable_isolation' => true,
         ]);
 
         self::assertEquals('wysiwyg', $view->vars['attr']['data-grapesjs-field']);
@@ -193,9 +221,11 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
             . ',"allowed_iframe_domains":[]'
             . ',"autoRender":true'
             . ',"builderPlugins":{"bar-plugin":{"foo":"baz"}}'
+            . ',"disableIsolation":true'
             . ',"entityClass":"Oro\\\\Bundle\\\\CMSBundle\\\\Entity\\\\Page"'
-            . ',"stylesInputSelector":"[data-grapesjs-styles=\"wysiwyg_style\"]",'
-            . '"propertiesInputSelector":"[data-grapesjs-properties=\"wysiwyg_properties\"]"}',
+            . ',"extraStyles":[{"name":"canvas","url":"build\/admin\/css\/wysiwyg_canvas.css"}]'
+            . ',"stylesInputSelector":"[data-grapesjs-styles=\"wysiwyg_style\"]"'
+            . ',"propertiesInputSelector":"[data-grapesjs-properties=\"wysiwyg_properties\"]"}',
             $view->vars['attr']['data-page-component-options']
         );
     }
@@ -217,10 +247,13 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
             $this->purifierScopeProvider,
             $this->digitalAssetTwigTagsConverter
         );
+        $type->setDigitalAssetTwigTagsEventSubscriber($this->eventSubscriber);
+        $type->setAssetHelper($this->assetHelper);
+
         $type->finishView($view, $form, [
             'page-component' => [
                 'module' => 'component/module',
-                'options' => ['view' => 'app/view']
+                'options' => ['view' => 'app/view'],
             ],
             'auto_render' => true,
             'builder_plugins' => [
@@ -228,17 +261,20 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
                     'foo' => 'baz',
                 ],
             ],
+            'disable_isolation' => true,
         ]);
 
         self::assertEquals('component/module', $view->vars['attr']['data-page-component-module']);
         self::assertEquals(
-            '{"view":"app\/view","allow_tags":false,'
-            . '"allowed_iframe_domains":false,'
-            . '"autoRender":true,'
-            . '"builderPlugins":{"bar-plugin":{"foo":"baz"}},'
-            . '"entityClass":"Oro\\\\Bundle\\\\CMSBundle\\\\Entity\\\\Page",'
-            . '"stylesInputSelector":"[data-grapesjs-styles=\"wysiwyg_style\"]",'
-            . '"propertiesInputSelector":"[data-grapesjs-properties=\"wysiwyg_properties\"]"}',
+            '{"view":"app\/view","allow_tags":false'
+            . ',"allowed_iframe_domains":false'
+            . ',"autoRender":true'
+            . ',"builderPlugins":{"bar-plugin":{"foo":"baz"}}'
+            . ',"disableIsolation":true'
+            . ',"entityClass":"Oro\\\\Bundle\\\\CMSBundle\\\\Entity\\\\Page"'
+            . ',"extraStyles":[{"name":"canvas","url":"build\/admin\/css\/wysiwyg_canvas.css"}]'
+            . ',"stylesInputSelector":"[data-grapesjs-styles=\"wysiwyg_style\"]"'
+            . ',"propertiesInputSelector":"[data-grapesjs-properties=\"wysiwyg_properties\"]"}',
             $view->vars['attr']['data-page-component-options']
         );
     }
@@ -249,26 +285,30 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
             'valid' => [
                 'htmlValue' => '<h1>Heading text</h1><p>Body text</p>',
                 'allowedElements' => ['h1', 'p'],
-                'isValid' => true
+                'isValid' => true,
             ],
             'invalid' => [
                 'htmlValue' => '<h1>Heading text</h1><p>Body text</p>',
                 'allowedElements' => ['h1'],
-                'isValid' => false
-            ]
+                'isValid' => false,
+            ],
         ];
     }
 
     protected function getExtensions(): array
     {
+        $formType = new WYSIWYGType(
+            $this->htmlTagProvider,
+            $this->purifierScopeProvider,
+            $this->digitalAssetTwigTagsConverter
+        );
+        $formType->setDigitalAssetTwigTagsEventSubscriber($this->eventSubscriber);
+        $formType->setAssetHelper($this->assetHelper);
+
         return [
             new PreloadedExtension(
                 [
-                    WYSIWYGType::class => new WYSIWYGType(
-                        $this->htmlTagProvider,
-                        $this->purifierScopeProvider,
-                        $this->digitalAssetTwigTagsConverter
-                    )
+                    WYSIWYGType::class => $formType,
                 ],
                 []
             ),
@@ -292,7 +332,7 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
                 $this->purifierScopeProvider,
                 $translator,
                 $logger
-            )
+            ),
         ];
     }
 }

@@ -59,18 +59,19 @@
         </div>
     {% endset %}
 
+    {%- set formFields = [form_row(form.name), form_row(form.previewImage)] %}
+    {%- if is_granted('oro_tag_view') and is_granted('oro_tag_assign_unassign') %}
+        {%- set formFields = formFields|merge([form_row(form.tags)]) %}
+    {%- endif %}
+    {%- set formFields = formFields|merge([form_row(form.enabled)]) %}
+
     {% set dataBlocks = [
         {
             'title': 'oro.cms.contenttemplate.entity_label'|trans,
             'class': 'active',
             'subblocks': [{
                 'title': '',
-                'data': [
-                    form_row(form.name),
-                    form_row(form.previewImage),
-                    form_row(form.tags),
-                    form_row(form.enabled)
-                ]
+                'data': formFields
             }]
         },
         {

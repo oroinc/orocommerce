@@ -20,6 +20,7 @@ import 'orocms/js/app/grapesjs/plugins/code/code';
 import 'orocms/js/app/grapesjs/plugins/panel-scrolling-hints';
 import 'orocms/js/app/grapesjs/plugins/code-mode';
 import 'orocms/js/app/grapesjs/plugins/screenshot';
+import 'orocms/js/app/grapesjs/plugins/content-templates';
 import RteEditorPlugin from 'orocms/js/app/grapesjs/plugins/oro-rte-editor';
 import {escapeWrapper, getWrapperAttrs} from 'orocms/js/app/grapesjs/plugins/components/content-isolation';
 import i18nMessages from 'orocms/js/app/grapesjs/plugins/i18n-messages';
@@ -47,7 +48,7 @@ const GrapesjsEditorView = BaseView.extend({
     optionNames: BaseView.prototype.optionNames.concat([
         'autoRender', 'allow_tags', 'allowed_iframe_domains', 'currentTheme', 'canvasConfig',
         'contextClass', 'storageManager', 'stylesInputSelector', 'storagePrefix', 'themes',
-        'entityClass', 'disableDeviceManager'
+        'entityClass', 'disableDeviceManager', 'disableIsolation', 'extraStyles'
     ]),
 
     /**
@@ -137,6 +138,25 @@ const GrapesjsEditorView = BaseView.extend({
 
         Parser: {
             returnArray: true
+        },
+
+        blockManager: {
+            appendOnClick(block, editor) {
+                const selected = editor.getSelected();
+
+                const [model] = selected && selected.get('droppable') === true
+                    ? selected.append(block.get('content'))
+                    : editor.getWrapper().append(block.get('content'));
+
+                if (block.get('activate')) {
+                    editor.selectAdd(model);
+                    model.trigger('active');
+                }
+
+                editor.Canvas.scrollTo(model, {
+                    behavior: 'smooth'
+                });
+            }
         }
     },
 
@@ -180,7 +200,7 @@ const GrapesjsEditorView = BaseView.extend({
      * @property {Object}
      */
     styleManager: {
-        clearProperties: 1,
+        clearProperties: false,
         sectors: []
     },
 
@@ -252,6 +272,17 @@ const GrapesjsEditorView = BaseView.extend({
      * @property {boolean}
      */
     inFallbackContainer: false,
+
+    /**
+     * @property {boolean}
+     */
+    disableIsolation: false,
+
+    /**
+     * Extra styles for editor preview
+     * @property {Array}
+     */
+    extraStyles: [],
 
     /**
      * List of grapesjs plugins
@@ -677,7 +708,7 @@ const GrapesjsEditorView = BaseView.extend({
      * @returns {String}
      */
     getEditorContent() {
-        return this.builder.getIsolatedHtml();
+        return this.disableIsolation ? this.builder.getHtml() : this.builder.getIsolatedHtml();
     },
 
     /**
@@ -685,7 +716,7 @@ const GrapesjsEditorView = BaseView.extend({
      * @returns {String}
      */
     getEditorStyles() {
-        return this.builder.getIsolatedCss();
+        return this.disableIsolation ? this.builder.getCss() : this.builder.getIsolatedCss();
     },
 
     getToolbarItems() {
@@ -961,6 +992,19 @@ const GrapesjsEditorView = BaseView.extend({
         this.$propertiesInputElement.val(JSON.stringify(this.state.toJSON()));
     },
 
+    getCanvasStylesheets() {
+        if (!this.extraStyles) {
+            return [];
+        }
+
+        return this.extraStyles.reduce((styles, {name, url}) => {
+            if (name === 'canvas') {
+                styles.push(url);
+                return styles;
+            }
+        }, []);
+    },
+
     /**
      * Collect and compare builder options
      * @returns {GrapesjsEditorView.builderOptions|{fromElement}}
@@ -1021,9 +1065,10 @@ const GrapesjsEditorView = BaseView.extend({
      */
     _getCanvasConfig() {
         const theme = this.getCurrentTheme();
+        const canvasStylesheets = this.getCanvasStylesheets();
         return _.extend({}, this.canvasConfig, {
             canvas: {
-                styles: theme ? [theme.stylesheet] : ['']
+                styles: theme ? [theme.stylesheet, ...canvasStylesheets] : canvasStylesheets
             },
             protectedCss: []
         });

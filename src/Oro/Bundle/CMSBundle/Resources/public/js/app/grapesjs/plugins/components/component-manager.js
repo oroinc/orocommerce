@@ -42,7 +42,11 @@ const ComponentManager = BaseClass.extend({
      * Add components
      */
     applyTypeBuilders() {
-        for (const [id, componentType] of Object.entries(ComponentManager.componentTypes)) {
+        Object.entries(ComponentManager.componentTypes).forEach(([id, componentType]) => {
+            if (this.getTypeBuilder(id)) {
+                return;
+            }
+
             let options = {
                 componentType: id,
                 editor: this.editor
@@ -62,14 +66,14 @@ const ComponentManager = BaseClass.extend({
             if (!isAllowedContentType) {
                 this.editor.Components.removeType(id);
                 this.editor.BlockManager.remove(id);
-                continue;
+                return;
             }
 
             const instance = new ComponentType(options);
 
             instance.execute();
             this.typeBuilders.push(instance);
-        }
+        });
     },
 
     getTypeBuilder(type) {

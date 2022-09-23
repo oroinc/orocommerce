@@ -5,11 +5,13 @@ namespace Oro\Bundle\CMSBundle\Controller;
 use Oro\Bundle\CMSBundle\Entity\ContentTemplate;
 use Oro\Bundle\CMSBundle\Form\Handler\ContentTemplateHandler;
 use Oro\Bundle\CMSBundle\Form\Type\ContentTemplateType;
+use Oro\Bundle\CMSBundle\Provider\ContentTemplateContentProvider;
 use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -75,8 +77,7 @@ class ContentTemplateController extends AbstractController
      */
     public function createAction(Request $request): array|RedirectResponse
     {
-        $contentTemplate = new ContentTemplate();
-        return $this->update($contentTemplate, $request, true);
+        return $this->update(new ContentTemplate(), $request, true);
     }
 
     /**
@@ -121,11 +122,23 @@ class ContentTemplateController extends AbstractController
         );
     }
 
+    /**
+     * @Route("/content/{id}", name="oro_cms_content_template_content", requirements={"id"="\d+"})
+     * @AclAncestor("oro_cms_content_template_view")
+     */
+    public function getContentAction(ContentTemplate $contentTemplate): JsonResponse
+    {
+        return new JsonResponse(
+            $this->container->get(ContentTemplateContentProvider::class)->getContent($contentTemplate)
+        );
+    }
+
     public static function getSubscribedServices(): array
     {
         return array_merge(parent::getSubscribedServices(), [
             UpdateHandlerFacade::class,
-            TranslatorInterface::class
+            TranslatorInterface::class,
+            ContentTemplateContentProvider::class
         ]);
     }
 }

@@ -461,10 +461,6 @@ datagrids:
                 choices:
                     oro.cms.contenttemplate.disabled.label: 0
                     oro.cms.contenttemplate.enabled.label: 1
-            tags:
-                frontend_type: tags
-                inline_editing:
-                    enable: true
             createdAt:
                 frontend_type: datetime
                 label: oro.ui.created_at

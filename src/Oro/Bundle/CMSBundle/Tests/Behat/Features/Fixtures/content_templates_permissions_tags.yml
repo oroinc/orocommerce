@@ -1,0 +1,35 @@
+Oro\Bundle\TagBundle\Entity\Tag:
+    tag{1..2}:
+        name: 'tagAdmin<current()>'
+        owner: '@admin'
+        organization: '@organization'
+
+    tag{3..4}:
+        name: 'tagCharlie<current()>'
+        owner: '@charlie'
+        organization: '@organization'
+
+Oro\Bundle\TagBundle\Entity\Tagging:
+    contentTemplate1Tagging1:
+        tag: '@tag1'
+        entity: '@contentTemplate1'
+        owner: '@admin'
+    contentTemplate2Tagging1:
+        tag: '@tag1'
+        entity: '@contentTemplate2'
+        owner: '@admin'
+    contentTemplate3Tagging1:
+        tag: '@tag1'
+        entity: '@contentTemplate3'
+        owner: '@admin'
+    contentTemplate2Tagging2:
+        tag: '@tag2'
+        entity: '@contentTemplate2'
+        owner: '@charlie'
+    contentTemplate3Tagging3:
+        tag: '@tag3'
+        entity: '@contentTemplate3'
+    contentTemplate4Tagging4:
+        tag: '@tag4'
+        entity: '@contentTemplate4'
+        owner: '@charlie'
