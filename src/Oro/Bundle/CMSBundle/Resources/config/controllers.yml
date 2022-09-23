@@ -23,7 +23,7 @@ services:
 
     Oro\Bundle\CMSBundle\Controller\WysiwygContentController:
         calls:
-            - [ 'setContainer', [ '@Psr\Container\ContainerInterface' ] ]
+            - ['setContainer', ['@Psr\Container\ContainerInterface']]
         tags:
             - { name: container.service_subscriber }
 

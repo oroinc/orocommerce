@@ -11,10 +11,8 @@ use Oro\Bundle\CMSBundle\Provider\HTMLPurifierScopeProvider;
 use Oro\Bundle\CMSBundle\Tests\Unit\Entity\Stub\ContentTemplateStub;
 use Oro\Bundle\CMSBundle\Tests\Unit\Form\Type\Stub\ImageTypeStub;
 use Oro\Bundle\CMSBundle\Tests\Unit\Form\Type\Stub\TagSelectTypeStub;
-use Oro\Bundle\CMSBundle\Tools\DigitalAssetTwigTagsConverter;
 use Oro\Bundle\CMSBundle\Validator\Constraints\TwigContentValidator;
 use Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYGValidator;
-use Oro\Bundle\FormBundle\Provider\HtmlTagProvider;
 use Oro\Bundle\TagBundle\Entity\Tag;
 use Oro\Bundle\TagBundle\Form\Type\TagSelectType;
 use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
@@ -29,23 +27,10 @@ use Twig\TemplateWrapper;
 
 class ContentTemplateTypeTest extends FormIntegrationTestCase
 {
+    use WysiwygAwareTestTrait;
+
     protected function getExtensions(): array
     {
-        $htmlTagProvider = $this->createMock(HtmlTagProvider::class);
-
-        $purifierScopeProvider = $this->createMock(HTMLPurifierScopeProvider::class);
-        $purifierScopeProvider->expects(self::any())
-            ->method('getScope')
-            ->willReturn('default');
-
-        $digitalAssetTwigTagsConverter = $this->createMock(DigitalAssetTwigTagsConverter::class);
-        $digitalAssetTwigTagsConverter->expects(self::any())
-            ->method('convertToUrls')
-            ->willReturnArgument(0);
-        $digitalAssetTwigTagsConverter->expects(self::any())
-            ->method('convertToTwigTags')
-            ->willReturnArgument(0);
-
         return [
             new PreloadedExtension(
                 [
@@ -53,11 +38,7 @@ class ContentTemplateTypeTest extends FormIntegrationTestCase
                         [],
                         Tag::class
                     ),
-                    WYSIWYGType::class => new WYSIWYGType(
-                        $htmlTagProvider,
-                        $purifierScopeProvider,
-                        $digitalAssetTwigTagsConverter
-                    ),
+                    WYSIWYGType::class => $this->createWysiwygType(),
                     ImageType::class => new ImageTypeStub(
                         [
                             1001 => (new TestFile())->setId(1001),

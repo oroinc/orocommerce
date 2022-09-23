@@ -12,20 +12,22 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Form handler for ContentTemplate form with tags
+ * Form handler for ContentTemplate form.
  */
 class ContentTemplateHandler implements FormHandlerInterface
 {
     use RequestHandlerTrait;
+
     public const ALIAS = 'content_template_handler';
 
     private TagManager $tagManager;
-    private ManagerRegistry $registry;
 
-    public function __construct(TagManager $tagManager, ManagerRegistry $registry)
+    private ManagerRegistry $managerRegistry;
+
+    public function __construct(TagManager $tagManager, ManagerRegistry $managerRegistry)
     {
         $this->tagManager = $tagManager;
-        $this->registry = $registry;
+        $this->managerRegistry = $managerRegistry;
     }
 
     /**
@@ -35,17 +37,19 @@ class ContentTemplateHandler implements FormHandlerInterface
     public function process($data, FormInterface $form, Request $request): bool
     {
         if (!$data instanceof ContentTemplate) {
-            throw new \InvalidArgumentException('Argument data should be instance of ContentTemplate entity');
+            throw new \InvalidArgumentException(
+                sprintf('Argument $data was expected to be an instance of %s', ContentTemplate::class)
+            );
         }
 
         if (in_array($request->getMethod(), ['POST', 'PUT'])) {
             $this->submitPostPutRequest($form, $request);
             if ($form->isSubmitted() && $form->isValid()) {
-                $em = $this->registry->getManagerForClass(ContentTemplate::class);
+                $em = $this->managerRegistry->getManagerForClass(ContentTemplate::class);
                 $em->persist($data);
                 $em->flush();
-                $tagArray = $form->get('tags')->getData();
 
+                $tagArray = $form->get('tags')->getData();
                 if ($tagArray instanceof ArrayCollection) {
                     $this->setTagsForContentTemplate($data, $tagArray);
                 }
@@ -57,12 +61,8 @@ class ContentTemplateHandler implements FormHandlerInterface
         return false;
     }
 
-    private function setTagsForContentTemplate(ContentTemplate $contentTemplate, ArrayCollection $tags): void
+    protected function setTagsForContentTemplate(ContentTemplate $contentTemplate, ArrayCollection $tags): void
     {
-        if ($tags->isEmpty()) {
-            return;
-        }
-
         $this->tagManager->setTags($contentTemplate, $tags);
         $this->tagManager->saveTagging($contentTemplate);
     }

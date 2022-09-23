@@ -8,7 +8,6 @@ use Oro\Bundle\CMSBundle\Form\Type\TabbedContentItemCollectionType;
 use Oro\Bundle\CMSBundle\Form\Type\TabbedContentItemType;
 use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGType;
 use Oro\Bundle\CMSBundle\Tests\Unit\Entity\Stub\TabbedContentItemStub;
-use Oro\Bundle\CMSBundle\Tests\Unit\Form\Type\Stub\WYSIWYGTypeStub;
 use Oro\Bundle\FormBundle\Form\Extension\DataBlockExtension;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
@@ -16,6 +15,8 @@ use Symfony\Component\Form\Extension\Core\Type\FormType;
 
 class TabbedContentItemTypeTest extends FormIntegrationTestCase
 {
+    use WysiwygAwareTestTrait;
+
     public function testSubmitNew(): void
     {
         $defaultData = new TabbedContentItem();
@@ -78,7 +79,7 @@ class TabbedContentItemTypeTest extends FormIntegrationTestCase
                 [
                     TabbedContentItemCollectionType::class => new TabbedContentItemCollectionType(),
                     TabbedContentItemType::class => new TabbedContentItemType(),
-                    WYSIWYGType::class => new WYSIWYGTypeStub(),
+                    WYSIWYGType::class => $this->createWysiwygType(),
                 ],
                 [
                     FormType::class => [new DataBlockExtension()],

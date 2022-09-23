@@ -6,7 +6,6 @@ use Oro\Bundle\CMSBundle\Entity\ContentBlock;
 use Oro\Bundle\CMSBundle\Entity\TextContentVariant;
 use Oro\Bundle\CMSBundle\Form\Type\TextContentVariantType;
 use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGType;
-use Oro\Bundle\CMSBundle\Tests\Unit\Form\Type\Stub\WYSIWYGTypeStub;
 use Oro\Bundle\ScopeBundle\Form\Type\ScopeCollectionType;
 use Oro\Bundle\ScopeBundle\Tests\Unit\Form\Type\Stub\ScopeCollectionTypeStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
@@ -14,6 +13,8 @@ use Oro\Component\Testing\Unit\PreloadedExtension;
 
 class TextContentVariantTypeTest extends FormIntegrationTestCase
 {
+    use WysiwygAwareTestTrait;
+
     /**
      * @return array
      */
@@ -23,7 +24,7 @@ class TextContentVariantTypeTest extends FormIntegrationTestCase
             new PreloadedExtension(
                 [
                     ScopeCollectionType::class => new ScopeCollectionTypeStub(),
-                    WYSIWYGType::class => new WYSIWYGTypeStub(),
+                    WYSIWYGType::class => $this->createWysiwygType(),
                 ],
                 []
             )

@@ -1,0 +1,75 @@
+Oro\Bundle\CMSBundle\Entity\Page:
+    cmsPage1:
+        __calls:
+            - addTitle: ['@cmsPage1Title']
+        content: ''
+        organization: '@organization'
+        slugPrototypes: ['@cmsPage1SlugPrototype']
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    cmsPage1SlugPrototype:
+        string: 'cms-page-1'
+    cmsPage1Title:
+        string: 'CMSPage1'
+
+Oro\Bundle\CommerceMenuBundle\Entity\MenuUpdate:
+    cmsPage1MenuItem:
+        __calls:
+            - addTitle: ['@cmsPage1Title']
+        uri: 'cms-page-1'
+        menu: 'commerce_main_menu'
+        scope: '@default_scope'
+        custom: true
+
+Oro\Bundle\CMSBundle\Entity\ContentTemplate:
+    contentTemplate1:
+        name: 'TestContentTemplate1'
+        content: |
+            <div class="grid-row">
+                <div class="grid-cell" id="iy74">
+                    <picture id="ibt6">
+                        <source srcset="{{ wysiwyg_image(1,'b6ae46b0-8bc3-48b0-b1e2-ae9128915dac','wysiwyg_original','webp') }}" type="image/webp"/>
+                        <img src="{{ wysiwyg_image(1,'b6ae46b0-8bc3-48b0-b1e2-ae9128915dac') }}" alt="CMSPage1 Image"/>
+                    </picture>
+                </div>
+                <div class="grid-cell" id="iu5g">
+                    <div id="ihsc">TestContentTemplateContent1</div>
+                </div>
+            </div>
+        contentStyle: |
+            .grid-row{
+                display:table;
+                table-layout:fixed;
+                width:100%;
+                min-height:75px;
+            }
+            .grid-cell{
+                display:table-cell;
+                width:25%;
+                vertical-align:top;
+                padding-right:4px;
+                padding-left:4px;
+            }
+            #iy74{
+                width:30%;
+            }
+            #iu5g{
+                width:70%;
+            }
+            #ihsc{
+                min-height:18px;
+            }
+        organization: '@organization'
+        owner: '@admin'
+        enabled: true
+        createdAt: '<dateTimeBetween("today", "today")>'
+        updatedAt: '<dateTimeBetween("today", "today")>'
+
+    contentTemplate{2..4}:
+        name: 'TestContentTemplate<current()>'
+        content: 'TestContentTemplate<current()>Content'
+        organization: '@organization'
+        owner: '@admin'
+        enabled: true
+        createdAt: '<dateTimeBetween("today", "today")>'
+        updatedAt: '<dateTimeBetween("today", "today")>'

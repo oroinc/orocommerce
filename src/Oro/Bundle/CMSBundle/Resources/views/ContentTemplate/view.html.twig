@@ -43,8 +43,8 @@
 
         <div class="row-fluid form-horizontal">
             <div class="cms-content">
-                {% import '@OroEntityConfig/macros.html.twig' as entityConfig %}
-                {{ entityConfig.renderWysiwygContentPreview(entity.content)|raw }}
+                {% import '@OroUI/macros.html.twig' as UI %}
+                {{ UI.renderWysiwygContentPreview(entity.content) }}
             </div>
         </div>
     {% endset %}

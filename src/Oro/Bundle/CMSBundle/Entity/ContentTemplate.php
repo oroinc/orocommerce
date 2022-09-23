@@ -14,7 +14,7 @@ use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
 /**
  * ContentTemplate ORM Entity.
  *
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass="Oro\Bundle\CMSBundle\Entity\Repository\ContentTemplateRepository")
  * @ORM\Table(name="oro_cms_content_template")
  * @Config(
  *      routeName="oro_cms_content_template_index",
@@ -63,18 +63,20 @@ class ContentTemplate extends ExtendContentTemplate implements DatesAwareInterfa
 
     /**
      * @ORM\Column(name="content", type="wysiwyg", nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=false
-     *          },
-     *          "attachment"={
-     *              "acl_protected"=false
-     *          }
-     *      }
-     * )
      */
     protected ?string $content = null;
+
+    /**
+     * @ORM\Column(type="wysiwyg_style", name="content_style", nullable=true)
+     * @ConfigField(mode="hidden")
+     */
+    protected ?string $contentStyle = null;
+
+    /**
+     * @ORM\Column(type="wysiwyg_properties", name="content_properties", nullable=true)
+     * @ConfigField(mode="hidden")
+     */
+    protected ?array $contentProperties = null;
 
     /**
      * @ORM\Column(name="enabled", type="boolean", options={"default": true})
@@ -106,6 +108,30 @@ class ContentTemplate extends ExtendContentTemplate implements DatesAwareInterfa
     public function setContent(?string $content): self
     {
         $this->content = $content;
+
+        return $this;
+    }
+
+    public function getContentStyle(): ?string
+    {
+        return $this->contentStyle;
+    }
+
+    public function setContentStyle(?string $contentStyle): self
+    {
+        $this->contentStyle = $contentStyle;
+
+        return $this;
+    }
+
+    public function getContentProperties(): ?array
+    {
+        return $this->contentProperties;
+    }
+
+    public function setContentProperties(?array $contentProperties): self
+    {
+        $this->contentProperties = $contentProperties;
 
         return $this;
     }

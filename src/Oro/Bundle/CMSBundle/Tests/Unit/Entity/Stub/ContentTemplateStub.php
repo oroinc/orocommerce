@@ -9,6 +9,13 @@ class ContentTemplateStub extends BaseContentTemplate
 {
     private ?File $previewImage = null;
 
+    public function setId(int $id): self
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
     public function getPreviewImage(): ?File
     {
         return $this->previewImage;

@@ -13,9 +13,22 @@ class DigitalAssetTwigTagsTransformer implements DataTransformerInterface
 {
     private DigitalAssetTwigTagsConverter $digitalAssetTwigTagsConverter;
 
-    public function __construct(DigitalAssetTwigTagsConverter $digitalAssetTwigTagsConverter)
+    private array $context;
+
+    /**
+     * @param DigitalAssetTwigTagsConverter $digitalAssetTwigTagsConverter
+     * @param array{entityClass?: string, entityId?: int, fieldName?: string} $context The context in which the
+     *  $data is converted. Example:
+     *  [
+     *      'entityClass' => 'Oro\Bundle\CMSBundle\Entity\Page',
+     *      'entityId' => 42,
+     *      'fieldName' => 'content',
+     *  ]
+     */
+    public function __construct(DigitalAssetTwigTagsConverter $digitalAssetTwigTagsConverter, array $context = [])
     {
         $this->digitalAssetTwigTagsConverter = $digitalAssetTwigTagsConverter;
+        $this->context = $context;
     }
 
     /**
@@ -36,7 +49,7 @@ class DigitalAssetTwigTagsTransformer implements DataTransformerInterface
         }
 
         try {
-            return $this->digitalAssetTwigTagsConverter->convertToUrls($value);
+            return $this->digitalAssetTwigTagsConverter->convertToUrls($value, $this->context);
         } catch (\Throwable $e) {
             throw new TransformationFailedException('Failed to convert TWIG tags to URLs.', $e->getCode(), $e);
         }
@@ -56,7 +69,7 @@ class DigitalAssetTwigTagsTransformer implements DataTransformerInterface
         }
 
         try {
-            return $this->digitalAssetTwigTagsConverter->convertToTwigTags($value);
+            return $this->digitalAssetTwigTagsConverter->convertToTwigTags($value, $this->context);
         } catch (\Throwable $e) {
             throw new TransformationFailedException('Failed to convert URLs to TWIG tags.', $e->getCode(), $e);
         }

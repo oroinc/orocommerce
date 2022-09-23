@@ -4,9 +4,9 @@ import DialogWidget from 'oro/dialog-widget';
 import {
     stripRestrictedAttrs,
     escapeWrapper,
-    separateContent,
-    unescapeTwigExpression
+    separateContent
 } from 'orocms/js/app/grapesjs/plugins/components/content-isolation';
+import {unescapeTwigExpression} from '../../utils';
 import _ from 'underscore';
 import __ from 'orotranslation/js/translator';
 import $ from 'jquery';

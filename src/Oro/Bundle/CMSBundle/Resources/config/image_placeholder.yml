@@ -1,0 +1,17 @@
+services:
+    oro_cms.provider.content_template_preview_image_placeholder.default:
+        parent: oro_layout.provider.image_placeholder.default.abstract
+        arguments:
+            - 'bundles/orocms/images/no_image.png'
+
+    oro_cms.provider.content_template_preview_image_placeholder:
+        parent: oro_layout.provider.image_placeholder.chain.abstract
+        calls:
+            - [addProvider, ['@oro_cms.provider.content_template_preview_image_placeholder.default']]
+
+    oro_cms.twig.content_template_image_extension:
+        class: Oro\Bundle\CMSBundle\Twig\ContentTemplateImageExtension
+        arguments:
+            - '@oro_platform.twig.service_locator'
+        tags:
+            - { name: twig.extension }

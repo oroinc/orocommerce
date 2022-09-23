@@ -7,7 +7,6 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\CMSBundle\Form\Type\PageType;
 use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGType;
-use Oro\Bundle\CMSBundle\Tests\Unit\Form\Type\Stub\WYSIWYGTypeStub;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
@@ -37,6 +36,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class PageTypeTest extends FormIntegrationTestCase
 {
     use EntityTrait;
+    use WysiwygAwareTestTrait;
 
     const PAGE_ID = 7;
 
@@ -113,7 +113,7 @@ class PageTypeTest extends FormIntegrationTestCase
                     $this->type,
                     EntityIdentifierType::class => $entityIdentifierType,
                     'text' => new TextType(),
-                    WYSIWYGType::class => new WYSIWYGTypeStub(),
+                    WYSIWYGType::class => $this->createWysiwygType(),
                     LocalizedFallbackValueCollectionType::class => new LocalizedFallbackValueCollectionTypeStub(),
                     LocalizedSlugType::class => new LocalizedSlugTypeStub(),
                     LocalizedSlugWithRedirectType::class

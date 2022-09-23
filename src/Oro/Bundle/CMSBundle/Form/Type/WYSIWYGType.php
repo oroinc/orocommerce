@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\CMSBundle\Form\Type;
 
-use Oro\Bundle\CMSBundle\Form\DataTransformer\DigitalAssetTwigTagsTransformer;
 use Oro\Bundle\CMSBundle\Provider\HTMLPurifierScopeProvider;
-use Oro\Bundle\CMSBundle\Tools\DigitalAssetTwigTagsConverter;
 use Oro\Bundle\FormBundle\Provider\HtmlTagProvider;
+use Symfony\Component\Asset\Packages as AssetHelper;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -19,31 +19,31 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class WYSIWYGType extends AbstractType
 {
     private HtmlTagProvider $htmlTagProvider;
+
     private HTMLPurifierScopeProvider $purifierScopeProvider;
-    private DigitalAssetTwigTagsConverter $digitalAssetTwigTagsConverter;
+
+    private EventSubscriberInterface $digitalAssetTwigTagsEventSubscriber;
+
+    private AssetHelper $assetHelper;
 
     public function __construct(
         HtmlTagProvider $htmlTagProvider,
         HTMLPurifierScopeProvider $purifierScopeProvider,
-        DigitalAssetTwigTagsConverter $digitalAssetTwigTagsConverter
+        EventSubscriberInterface $digitalAssetTwigTagsEventSubscriber,
+        AssetHelper $assetHelper
     ) {
         $this->htmlTagProvider = $htmlTagProvider;
         $this->purifierScopeProvider = $purifierScopeProvider;
-        $this->digitalAssetTwigTagsConverter = $digitalAssetTwigTagsConverter;
+        $this->digitalAssetTwigTagsEventSubscriber = $digitalAssetTwigTagsEventSubscriber;
+        $this->assetHelper = $assetHelper;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder->addViewTransformer(new DigitalAssetTwigTagsTransformer($this->digitalAssetTwigTagsConverter));
+        $builder->addEventSubscriber($this->digitalAssetTwigTagsEventSubscriber);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function finishView(FormView $view, FormInterface $form, array $options)
+    public function finishView(FormView $view, FormInterface $form, array $options): void
     {
         $dataClass = $form->getConfig()->getOption('entity_class') ?: $form->getRoot()->getConfig()->getDataClass();
         $fieldName = $form->getName();
@@ -60,7 +60,11 @@ class WYSIWYGType extends AbstractType
         $options['page-component']['options']['allowed_iframe_domains'] = $allowedIframeDomains;
         $options['page-component']['options']['autoRender'] = $options['auto_render'];
         $options['page-component']['options']['builderPlugins'] = $options['builder_plugins'];
+        $options['page-component']['options']['disableIsolation'] = $options['disable_isolation'];
         $options['page-component']['options']['entityClass'] = $dataClass;
+        $options['page-component']['options']['extraStyles'] = [
+            ['name' => 'canvas', 'url' => $this->assetHelper->getUrl('build/admin/css/wysiwyg_canvas.css')],
+        ];
         $options['page-component']['options']['stylesInputSelector'] = sprintf(
             '[data-grapesjs-styles="%s"]',
             $form->getName() . WYSIWYGStylesType::TYPE_SUFFIX
@@ -71,38 +75,36 @@ class WYSIWYGType extends AbstractType
         );
         $view->vars['attr']['data-grapesjs-field'] = $fieldName;
         $view->vars['attr']['data-page-component-module'] = $options['page-component']['module'];
-        $view->vars['attr']['data-page-component-options'] = json_encode($options['page-component']['options']);
+        $view->vars['attr']['data-page-component-options'] = json_encode(
+            $options['page-component']['options'],
+            JSON_THROW_ON_ERROR
+        );
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'page-component' => [
                 'module' => 'oroui/js/app/components/view-component',
                 'options' => [
                     'view' => 'orocms/js/app/grapesjs/grapesjs-editor-view',
-                    'allow_tags' => []
-                ]
+                    'allow_tags' => [],
+                ],
             ],
             'attr' => [
                 'class' => 'grapesjs-textarea hide',
                 'data-validation-force' => 'true',
-                'autocomplete' => 'off'
+                'autocomplete' => 'off',
             ],
             'auto_render' => true,
             'builder_plugins' => [],
+            'disable_isolation' => false,
             'error_bubbling' => true,
             'entity_class' => null,
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getParent()
+    public function getParent(): string
     {
         return TextareaType::class;
     }
