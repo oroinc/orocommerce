@@ -73,7 +73,7 @@ class CustomerTaxCodeImportExportSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $this->customerTaxCodes += $this->customerTaxCodeImportExportHelper->loadCustomerTaxCode($rows);
+        $this->customerTaxCodes += $this->customerTaxCodeImportExportHelper->loadNormalizedCustomerTaxCodes($rows);
     }
 
     public function normalizeEntity(NormalizeEntityEvent $event)
@@ -88,12 +88,7 @@ class CustomerTaxCodeImportExportSubscriber implements EventSubscriberInterface
 
         /** @var Customer $customer */
         $customer = $event->getObject();
-        $event->setResultFieldValue(
-            'tax_code',
-            $this->customerTaxCodeImportExportHelper->normalizeCustomerTaxCode(
-                $this->getCustomerTaxCode($customer)
-            )
-        );
+        $event->setResultFieldValue('tax_code', $this->getCustomerTaxCode($customer));
     }
 
     public function loadEntityRulesAndBackendHeaders(LoadEntityRulesAndBackendHeadersEvent $event)
@@ -156,7 +151,9 @@ class CustomerTaxCodeImportExportSubscriber implements EventSubscriberInterface
                     continue;
                 }
 
-                $this->customerTaxCodes[$customer->getId()] = (new CustomerTaxCode())->setCode('Tax_code_1');
+                $customerTaxCode = (new CustomerTaxCode())->setCode('Tax_code_1');
+                $normalizedCode = $this->customerTaxCodeImportExportHelper->normalizeCustomerTaxCode($customerTaxCode);
+                $this->customerTaxCodes[$customer->getId()] = $normalizedCode;
             }
         }
     }
@@ -165,7 +162,7 @@ class CustomerTaxCodeImportExportSubscriber implements EventSubscriberInterface
      * There is one issue that read of EntityReader will trigger pagination before the last item be processed.
      * So we need to keep all customer tax codes info in local cache and only reset after fetched.
      */
-    private function getCustomerTaxCode(Customer $customer): ?CustomerTaxCode
+    private function getCustomerTaxCode(Customer $customer): ?array
     {
         if (!isset($this->customerTaxCodes[$customer->getId()])) {
             return null;
@@ -173,6 +170,7 @@ class CustomerTaxCodeImportExportSubscriber implements EventSubscriberInterface
 
         $result = $this->customerTaxCodes[$customer->getId()];
         unset($this->customerTaxCodes[$customer->getId()]);
+
         return $result;
     }
 
