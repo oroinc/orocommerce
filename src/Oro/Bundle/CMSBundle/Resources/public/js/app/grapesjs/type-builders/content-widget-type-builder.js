@@ -32,7 +32,8 @@ const ContentWidgetTypeBuilder = BaseTypeBuilder.extend({
         category: 'Basic',
         attributes: {
             'class': 'fa fa-object-ungroup'
-        }
+        },
+        activate: true
     },
 
     commandName: null,
@@ -132,10 +133,14 @@ const ContentWidgetTypeBuilder = BaseTypeBuilder.extend({
             }));
         },
 
-        onDoubleClick(e) {
+        onDoubleClick(event) {
             this.em.get('Commands').run(this.model.getSettingsCommandName());
 
-            e.stopPropagation();
+            event && event.stopPropagation();
+        },
+
+        onActive() {
+            this.onDoubleClick();
         }
     },
 
@@ -215,11 +220,7 @@ const ContentWidgetTypeBuilder = BaseTypeBuilder.extend({
         });
     },
 
-    onDrop(DataTransfer, model) {
-        if (model instanceof this.Model) {
-            this.editor.runCommand(model.getSettingsCommandName(), model);
-        }
-    },
+    onDrop() {},
 
     onSelect(model) {
         if (model instanceof this.Model) {

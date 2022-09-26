@@ -1,0 +1,7 @@
+.seven-columns-large-images-team .grid-team {
+    --grid-template-columns: repeat(auto-fit, minmax(160px, max-content));
+}
+
+.seven-columns-large-images-team .grid-team-item {
+    --grid-column-count: 1;
+}

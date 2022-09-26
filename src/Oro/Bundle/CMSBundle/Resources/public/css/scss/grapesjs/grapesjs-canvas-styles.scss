@@ -1,0 +1,101 @@
+/* @theme: admin.oro; */
+
+/* GrapesJS Canvas CSS */
+
+* ::-webkit-scrollbar {
+    width: 5px;
+}
+
+::-webkit-scrollbar-track {
+    background: $primary-860;
+}
+
+::-webkit-scrollbar-thumb {
+    background: $primary-800;
+}
+
+.body.cms-page.cms-typography {
+    [data-gjs-type='wrapper'] {
+        padding: 3px;
+    }
+
+    .content-placeholder {
+        background-color: $primary-900;
+        padding: 54px 15px;
+        text-align: center;
+        font-family: $font-family-sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: $primary;
+
+        .content-placeholder-title {
+            font-size: 14px;
+            color: $additional;
+            margin-bottom: 5px;
+        }
+
+        p {
+            font-size: 13px;
+            color: $primary-550;
+            line-height: 1.31;
+            margin: 0;
+        }
+    }
+
+    .content-widget-inline {
+        display: inline-block;
+        background-color: $primary-900;
+        font-size: 13px;
+        color: $primary-550;
+        line-height: 1.31;
+        white-space: nowrap;
+        padding: 1px 6px;
+        margin: 0 4px;
+
+        span {
+            font-weight: bold;
+            color: $additional;
+        }
+    }
+
+    .gjs-selected,
+    .gjs-comp-selected {
+        // stylelint-disable-next-line declaration-no-important
+        outline: 3px solid $secondary !important;
+    }
+
+    .row {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .gjs-dashed {
+        *[data-gjs-highlightable] {
+            outline-offset: -1px;
+            outline: 1px dashed rgba($primary-700, .7);
+
+            &[data-gjs-type='text-style'] {
+                outline-style: dotted;
+            }
+
+            &[data-gjs-type='custom-code'] {
+                outline-color: $success;
+                outline-width: 2px;
+            }
+        }
+    }
+
+    [data-gjs-type='video'] {
+        max-width: 100%;
+    }
+
+    .gjs-view-loading {
+        min-height: 100px;
+        position: relative;
+    }
+
+    .gjs-loader-mask {
+        @extend .loader-mask;
+    }
+}

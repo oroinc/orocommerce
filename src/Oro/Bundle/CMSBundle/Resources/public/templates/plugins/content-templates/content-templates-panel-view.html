@@ -1,0 +1,18 @@
+<div class="content-templates-container__panel" data-role="panel">
+    <% if (blockData.length) { %>
+        <div class="quick-search-container">
+            <div class="quick-search-button">
+                <button class="btn btn-icon btn-light" type="button" data-toggle="tooltip" title="<%- _.__('oro.cms.wysiwyg.content_template_plugin.collapse_all') %>" data-role="all-trigger">
+                    <span class="fa fa-caret-down" aria-hidden="true"></span>
+                </button>
+            </div>
+            <div class="quick-search-control">
+                <input type="text" name="content-template-quick-search" data-clearable data-placeholder-icon="fa-search" aria-label="<%- _.__('oro.cms.wysiwyg.content_template_plugin.quick_search_label') %>" placeholder="<%- _.__('oro.cms.wysiwyg.content_template_plugin.quick_search_placeholder') %>">
+            </div>
+        </div>
+        <div data-role="blocks" class="content-templates-container__blocks"></div>
+        <span class="no-data" role="alert"><%- _.__('oro.cms.wysiwyg.content_template_plugin.no_found') %></span>
+    <% } else { %>
+        <span class="no-data" role="alert"><%- _.__('oro.cms.wysiwyg.content_template_plugin.no_items') %></span>
+    <% } %>
+</div>
