@@ -73,8 +73,8 @@ const CodeTypeBuilder = BaseTypeBuilder.extend({
         let result = null;
 
         if (
-            (el.nodeType === 1 && el.tagName === 'PRE') &&
-            (el.firstChild.nodeType === 1 && el.firstChild.tagName === 'CODE')
+            (el.nodeType === Node.ELEMENT_NODE && el.tagName === 'PRE') &&
+            (el.firstChild.nodeType === Node.ELEMENT_NODE && el.firstChild.tagName === 'CODE')
         ) {
             result = {
                 type: this.componentType
