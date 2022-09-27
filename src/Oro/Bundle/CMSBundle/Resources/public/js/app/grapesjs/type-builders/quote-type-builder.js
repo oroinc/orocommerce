@@ -21,7 +21,7 @@ const QuiteBasicTypeBuilder = TextTypeBuilder.extend({
     },
 
     isComponent(el) {
-        if (el.nodeType === 1 && el.tagName.toLowerCase() === 'blockquote') {
+        if (el.nodeType === Node.ELEMENT_NODE && el.tagName.toLowerCase() === 'blockquote') {
             return {
                 type: this.componentType,
                 textComponent: true

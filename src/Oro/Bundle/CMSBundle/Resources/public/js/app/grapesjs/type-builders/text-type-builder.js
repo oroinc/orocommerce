@@ -133,7 +133,7 @@ const TextTypeBuilder = BaseTypeBuilder.extend({
             }
 
             if (
-                range.startContainer.nodeType === 3 &&
+                range.startContainer.nodeType === Node.TEXT_NODE &&
                 range.endOffset <= container.length &&
                 TAGS.includes(range.startContainer.parentNode.tagName.toLowerCase())
             ) {

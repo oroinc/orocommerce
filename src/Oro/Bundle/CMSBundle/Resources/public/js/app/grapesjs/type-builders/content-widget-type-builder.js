@@ -230,7 +230,7 @@ const ContentWidgetTypeBuilder = BaseTypeBuilder.extend({
     isComponent(el) {
         let result = null;
 
-        if (el.nodeType === 1 &&
+        if (el.nodeType === Node.ELEMENT_NODE &&
             (el.classList.contains('content-widget') || el.classList.contains('content-widget-inline'))
         ) {
             result = {

@@ -19,7 +19,8 @@ describe('orocms/js/app/grapesjs/plugins/components/rte/utils/list-mixins', () =
             },
             exec(name) {
                 return document.execCommand(name);
-            }
+            },
+            el: document.querySelector('.container')
         };
         ulListMixin = new ListMixin('UL', 'OL');
         olListMixin = new ListMixin('OL', 'UL');
@@ -107,6 +108,19 @@ describe('orocms/js/app/grapesjs/plugins/components/rte/utils/list-mixins', () =
         Text line 2<br>
         Text line 3<br>
     </div>`);
+    });
+
+    it('check "processList" nested formatting', () => {
+        const range = new Range();
+        const nestedFormat = document.querySelector('.with-nested-format i');
+        range.selectNodeContents(nestedFormat);
+        document.getSelection().removeAllRanges();
+        document.getSelection().addRange(range);
+
+        ulListMixin.processList(rte, editor);
+        expect(document.querySelector('.with-nested-format').outerHTML).toEqual(
+            // eslint-disable-next-line
+            `<div class="with-nested-format"><ul><li><b><u><i>Test text 1</i></u></b></li><li><b><u><i>Test text 2</i></u></b></li><li><b><u><i>Test text 3</i></u></b></li></ul></div>`);
     });
 
     it('check "processSubList" single', () => {
