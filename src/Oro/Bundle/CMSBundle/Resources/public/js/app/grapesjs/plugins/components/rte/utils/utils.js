@@ -6,10 +6,14 @@ export const tags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p'];
 export const formatting = ['b', 'i', 'u', 'strike', 'sup', 'sub'];
 export const lists = ['ul', 'ol', 'li'];
 
-export const isBlockFormatted = node => node.nodeType === 1 && tags.includes(node.tagName.toLowerCase());
-export const isFormattedText = node => node.nodeType === 1 && formatting.includes(node.tagName.toLowerCase());
-export const isContainLists = node => node.nodeType === 1 && lists.includes(node.tagName.toLowerCase());
-export const isTag = (node, tagName) => node.nodeType === 1 && node.tagName.toLowerCase() === tagName.toLowerCase();
+export const isBlockFormatted = node =>
+    node && node.nodeType === Node.ELEMENT_NODE && tags.includes(node.tagName.toLowerCase());
+export const isFormattedText = node =>
+    node && node.nodeType === Node.ELEMENT_NODE && formatting.includes(node.tagName.toLowerCase());
+export const isContainLists = node =>
+    node && node.nodeType === Node.ELEMENT_NODE && lists.includes(node.tagName.toLowerCase());
+export const isTag = (node, tagName) =>
+    node && node.nodeType === Node.ELEMENT_NODE && node.tagName.toLowerCase() === tagName.toLowerCase();
 
 /**
  * Wrap node into wrapper node
@@ -17,7 +21,7 @@ export const isTag = (node, tagName) => node.nodeType === 1 && node.tagName.toLo
  * @param {Element} wrapper
  */
 export const surroundContent = (node, wrapper) => {
-    if (node.nodeType !== 1) {
+    if (node.nodeType !== Node.ELEMENT_NODE) {
         return node;
     }
     [...node.childNodes].forEach(child => wrapper.append(child));
@@ -107,7 +111,7 @@ export function findClosestFormattingBlock(node) {
  * @returns {string|*}
  */
 export function findClosestListType(node) {
-    if (node.nodeType === 1 && ['ul', 'ol'].includes(node.tagName.toLowerCase())) {
+    if (node.nodeType === Node.ELEMENT_NODE && ['ul', 'ol'].includes(node.tagName.toLowerCase())) {
         return node.tagName === 'UL' ? 'unordered' : 'ordered';
     }
 
@@ -144,7 +148,7 @@ export function findParentTag(node, tagName = 'span', reversed = false) {
     const checkTag = tag => Array.isArray(tagName) ? tagName.includes(tag) : tag === tagName.toLowerCase();
 
     const nodes = reversed ? getParentsUntil(node) : getParentsUntil(node).reverse();
-    const found = nodes.find(item => item.nodeType === 1 && checkTag(item.tagName.toLowerCase()));
+    const found = nodes.find(item => item.nodeType === Node.ELEMENT_NODE && checkTag(item.tagName.toLowerCase()));
 
     if (found) {
         return found;
@@ -162,7 +166,7 @@ export function findParentTag(node, tagName = 'span', reversed = false) {
  */
 export function foundClosestParentByTagName(node, tagName, reversed = false) {
     const nodes = reversed ? getParentsUntil(node) : getParentsUntil(node).reverse();
-    return nodes.find(item => item.nodeType === 1 &&
+    return nodes.find(item => item.nodeType === Node.ELEMENT_NODE &&
         (Array.isArray(tagName) ? tagName.includes(item.tagName.toLowerCase()) : item.tagName.toLowerCase() === tagName)
     );
 };
@@ -179,9 +183,11 @@ export function changeTagName(node, tagName) {
     return newNode;
 };
 
-export const cloneAttrs = (targetNode, referenceNode) => {
+export const cloneAttrs = (targetNode, referenceNode, {exclude = []} = {}) => {
     for (const attr of referenceNode.attributes) {
-        targetNode.setAttribute(attr.name, attr.value);
+        if (!exclude.includes(attr.name)) {
+            targetNode.setAttribute(attr.name, attr.value);
+        }
     }
 };
 
@@ -224,13 +230,13 @@ export const saveCursor = rte => {
 export const focusCursor = (rte, node, end = false) => {
     const selection = rte.selection();
     const range = rte.doc.createRange();
-    const offset = end ? (node.nodeType === 3 ? node.nodeValue.length : node.innerText.length) : 0;
+    const offset = end ? (node.nodeType === Node.TEXT_NODE ? node.nodeValue.length : node.innerText.length) : 0;
     range.setStart(node, offset);
 
     selection.removeAllRanges();
     selection.addRange(range);
 
-    node.nodeType === 1 ? node.focus() : node.parentNode.focus();
+    node.nodeType === Node.ELEMENT_NODE ? node.focus() : node.parentNode.focus();
 };
 
 /**
@@ -244,4 +250,55 @@ export const isTagUnderSelection = (rte, tagName = 'A') => {
     const parentAnchor = anchorNode?.parentNode;
     const parentFocus = focusNode?.parentNode;
     return parentAnchor?.nodeName === tagName || parentFocus?.nodeName === tagName;
+};
+
+/**
+ * Slice formatted tag via br's
+ * @param {Node} node
+ * @returns {(node|Array)}
+ */
+export const formattingNodeSliceToNodes = node => {
+    if (node.nodeType !== Node.ELEMENT_NODE) {
+        return [];
+    }
+
+    const tagName = node.tagName;
+    const nodes = [...node.childNodes].map(child => {
+        if (isTag(child, 'br')) {
+            return child;
+        }
+
+        const element = document.createElement(tagName);
+        element.append(child);
+        cloneAttrs(element, node, {
+            exclude: ['id']
+        });
+
+        return element;
+    });
+
+    node.after(...nodes);
+    const parent = node.parentNode;
+    node.remove();
+    if (isFormattedText(parent)) {
+        return formattingNodeSliceToNodes(parent);
+    }
+
+    return [nodes, parent];
+};
+
+export const getNodeSiblings = (node, {callback = () => true, direction = 'next'} = {}) => {
+    const siblings = [];
+    let sibling = node[`${direction}Sibling`];
+
+    while (sibling) {
+        if (typeof callback === 'function' && callback(sibling)) {
+            siblings.push(sibling);
+            sibling = sibling[`${direction}Sibling`];
+        } else {
+            sibling = null;
+        }
+    }
+
+    return direction === 'previous' ? siblings.reverse() : siblings;
 };

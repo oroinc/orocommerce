@@ -75,10 +75,6 @@ describe('orocms/js/app/grapesjs/type-builders/content-block-type-builder', () =
             expect(contentBlockTypeBuilder.editor.Commands.get('content-block-settings')).toBeDefined();
         });
 
-        it('check editor events defined', () => {
-            expect(contentBlockTypeBuilder.editor.editor._events['canvas:drop']).toBeDefined();
-        });
-
         describe('test type in editor scope', () => {
             let contentBlockComponent;
             beforeEach(done => {

@@ -97,7 +97,6 @@ describe('orocms/js/app/grapesjs/type-builders/content-widget-type-builder', () 
         });
 
         it('check editor events defined', () => {
-            expect(contentWidgetTypeBuilder.editor.editor._events['canvas:drop']).toBeDefined();
             expect(contentWidgetTypeBuilder.editor.editor._events['component:deselected']).toBeDefined();
             expect(contentWidgetTypeBuilder.editor.editor._events['component:selected']).toBeDefined();
         });

@@ -30,7 +30,7 @@ const SourceTypeBuilder = BaseTypeBuilder.extend({
     },
 
     isComponent(el) {
-        if (el.nodeType === 1 && el.tagName.toLowerCase() === 'source') {
+        if (el.nodeType === Node.ELEMENT_NODE && el.tagName.toLowerCase() === 'source') {
             return {
                 type: this.componentType
             };

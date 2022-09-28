@@ -51,7 +51,10 @@ export default {
                 nodes = [...container.childNodes].filter(node => range.intersectsNode(node));
             }
 
-            if (closestFormatting && container.nodeType === 3 && closestFormatting.innerText === selection.toString()) {
+            if (closestFormatting &&
+                container.nodeType === Node.TEXT_NODE &&
+                closestFormatting.innerText === selection.toString()
+            ) {
                 nodes = [closestFormatting];
             }
 
@@ -66,7 +69,7 @@ export default {
                     return str;
                 }
 
-                str += node.nodeType === 3 ? node.nodeValue : node.outerHTML;
+                str += node.nodeType === Node.TEXT_NODE ? node.nodeValue : node.outerHTML;
 
                 if (index === 0 || index === nodes.length - 1) {
                     node.remove();
@@ -104,7 +107,7 @@ export default {
         }
 
         if (!isTagUnderSelection(rte, 'SPAN') &&
-            (selection.type !== 'Range' || range.commonAncestorContainer.nodeType !== 3)
+            (selection.type !== 'Range' || range.commonAncestorContainer.nodeType !== Node.TEXT_NODE)
         ) {
             return -1;
         }

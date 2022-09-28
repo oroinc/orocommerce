@@ -8,8 +8,13 @@ use Symfony\Component\Form\Exception\TransformationFailedException;
 
 class DigitalAssetTwigTagsTransformerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var DigitalAssetTwigTagsConverter|\PHPUnit\Framework\MockObject\MockObject */
-    private $digitalAssetTwigTagsConverter;
+    private const CONTEXT = [
+        'entityClass' => \stdClass::class,
+        'entityId' => 42,
+        'fieldName' => 'sampleField',
+    ];
+
+    private DigitalAssetTwigTagsConverter|\PHPUnit\Framework\MockObject\MockObject $digitalAssetTwigTagsConverter;
 
     private DigitalAssetTwigTagsTransformer $dataTransformer;
 
@@ -17,7 +22,10 @@ class DigitalAssetTwigTagsTransformerTest extends \PHPUnit\Framework\TestCase
     {
         $this->digitalAssetTwigTagsConverter = $this->createMock(DigitalAssetTwigTagsConverter::class);
 
-        $this->dataTransformer = new DigitalAssetTwigTagsTransformer($this->digitalAssetTwigTagsConverter);
+        $this->dataTransformer = new DigitalAssetTwigTagsTransformer(
+            $this->digitalAssetTwigTagsConverter,
+            self::CONTEXT
+        );
     }
 
     public function testTransform(): void
@@ -27,7 +35,7 @@ class DigitalAssetTwigTagsTransformerTest extends \PHPUnit\Framework\TestCase
 
         $this->digitalAssetTwigTagsConverter->expects(self::once())
             ->method('convertToUrls')
-            ->with($value)
+            ->with($value, self::CONTEXT)
             ->willReturn($convertedValue);
 
         self::assertSame($convertedValue, $this->dataTransformer->transform($value));
@@ -70,7 +78,7 @@ class DigitalAssetTwigTagsTransformerTest extends \PHPUnit\Framework\TestCase
 
         $this->digitalAssetTwigTagsConverter->expects(self::once())
             ->method('convertToTwigTags')
-            ->with($value)
+            ->with($value, self::CONTEXT)
             ->willReturn($convertedValue);
 
         self::assertSame($convertedValue, $this->dataTransformer->reverseTransform($value));

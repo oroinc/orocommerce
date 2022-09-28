@@ -27,11 +27,8 @@ const ContentBlockTypeBuilder = BaseTypeBuilder.extend({
         category: 'Basic',
         attributes: {
             'class': 'fa fa-file-text-o'
-        }
-    },
-
-    editorEvents: {
-        'canvas:drop': 'onDrop'
+        },
+        activate: true
     },
 
     commands: {
@@ -140,6 +137,10 @@ const ContentBlockTypeBuilder = BaseTypeBuilder.extend({
     },
 
     viewMixin: {
+        events: {
+            dblclick: 'onActive'
+        },
+
         onRender() {
             let title;
             const contentBlock = this.model.get('contentBlock');
@@ -151,6 +152,12 @@ const ContentBlockTypeBuilder = BaseTypeBuilder.extend({
             }
 
             this.$el.html(template({title}));
+        },
+
+        onActive(event) {
+            this.em.get('Commands').run('content-block-settings', this.model);
+
+            event && event.stopPropagation();
         }
     },
 
@@ -159,12 +166,6 @@ const ContentBlockTypeBuilder = BaseTypeBuilder.extend({
      */
     constructor: function ContentBlockTypeBuilder(options) {
         ContentBlockTypeBuilder.__super__.constructor.call(this, options);
-    },
-
-    onDrop(DataTransfer, model) {
-        if (model instanceof this.Model) {
-            this.editor.runCommand('content-block-settings', model);
-        }
     },
 
     isComponent(el) {

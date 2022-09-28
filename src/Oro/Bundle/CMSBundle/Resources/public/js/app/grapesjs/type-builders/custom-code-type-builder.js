@@ -171,7 +171,10 @@ const CustomCodeTypeBuilder = BaseTypeBuilder.extend({
     },
 
     isComponent(el) {
-        if (el.nodeType === 1 && el.tagName === 'DIV' && el.getAttribute('data-type') === 'custom-source-code') {
+        if (el.nodeType === Node.ELEMENT_NODE &&
+            el.tagName === 'DIV' &&
+            el.getAttribute('data-type') === 'custom-source-code'
+        ) {
             return {
                 type: this.componentType,
                 content: el.innerHTML

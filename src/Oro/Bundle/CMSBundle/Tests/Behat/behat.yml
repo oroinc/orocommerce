@@ -17,6 +17,28 @@ oro_behat_extension:
             route: 'oro_cms_page_index'
 
     elements:
+
+        Content Template Form:
+            selector: 'form[name="oro_cms_content_template"]'
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+
+        Content Template Form Content:
+            selector: "textarea[name='oro_cms_content_template[content]']"
+
+        Content Template Form Tags:
+            selector:
+                type: xpath
+                locator: '//div[contains(@class, "control-group") and ./div[contains(@class, "control-label") and .//label[contains(., "Tags")]]]'
+
+        Content Template Tags Field:
+            selector:
+                type: xpath
+                locator: '//div[contains(@class, "responsive-cell")]//div[contains(@class, "attribute-item") and .//label[contains(., "Tags")]]'
+
+        Content Template Grid:
+            selector: 'div[data-page-component-name="content-template-grid"]'
+            class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
         WysiwygCodeTypeBlockEditor:
             selector: '.ui-dialog'
             class: Oro\Bundle\CMSBundle\Tests\Behat\Element\WysiwygCodeTypeBlockEditor
@@ -305,6 +327,96 @@ oro_behat_extension:
 
         Tabbed Content Widget Accordion 2:
             selector: 'div.tabbed-content--accordion:nth-child(2)'
+
+        ContentTemplateWithTags Preview Small Image:
+            selector:
+                locator: '//tr[contains(@class,"grid-row")]//img[@alt="ContentTemplateWithTags" and contains(@src,"/filter/content_template_preview_small/")]'
+                type: xpath
+
+        ContentTemplateWithTags Preview Small Picture:
+            selector:
+                type: xpath
+                locator: '//tr[contains(@class,"grid-row")]//img[@alt="ContentTemplateWithTags" and contains(@src,"/filter/content_template_preview_small/")]/parent::picture'
+
+        ContentTemplateWithTags Preview Original Picture:
+            selector:
+                type: xpath
+                locator: '//img[contains(@class,"images-list__item") and contains(@src,"/filter/content_template_preview_original/")]/parent::picture'
+
+        ContentTemplateWithTags (Copy) Preview Small Image:
+            selector:
+                locator: '//tr[contains(@class,"grid-row")]//img[@alt="ContentTemplateWithTags (Copy)" and contains(@src,"/filter/content_template_preview_small/")]'
+                type: xpath
+
+        ContentTemplateWithTags (Copy) Preview Small Picture:
+            selector:
+                type: xpath
+                locator: '//tr[contains(@class,"grid-row")]//img[@alt="ContentTemplateWithTags (Copy)" and contains(@src,"/filter/content_template_preview_small/")]/parent::picture'
+
+        TestName1 Content Template Preview Small Image:
+            selector:
+                locator: '//tr[contains(@class,"grid-row")]//img[@alt="TestName1" and contains(@src,"/filter/content_template_preview_small/")]'
+                type: xpath
+
+        TestName1 Content Template Preview Small Picture:
+            selector:
+                type: xpath
+                locator: '//tr[contains(@class,"grid-row")]//img[@alt="TestName1" and contains(@src,"/filter/content_template_preview_small/")]/parent::picture'
+
+        TestContentTemplate1 Default Preview Small Image:
+            selector:
+                locator: '//tr[contains(@class,"grid-row")]//img[@alt="TestContentTemplate1" and contains(@src,"/content_template_preview_small/bundles/orocms/images/no_image.png")]'
+                type: xpath
+
+        Content Template Default Preview Original Image:
+            selector:
+                type: xpath
+                locator: '//img[contains(@class,"images-list__item") and contains(@src,"/content_template_preview_original/bundles/orocms/images/no_image.png")]'
+
+        GrapesJs Wysiwyg:
+            selector:
+                type: xpath
+                locator: '//div[contains(@class,"grapesjs ")]//div[contains(@class,"gjs-cv-canvas ")]//iframe[contains(@class,"gjs-frame")]'
+
+        GrapesJs Wysiwyg Root Area:
+            selector:
+                type: xpath
+                locator: '//div[contains(@class,"cms-wrapper")]'
+
+        GrapesJs Content Templates Tab:
+            selector:
+                type: xpath
+                locator: '//div[contains(@class,"gjs-pn-buttons")]//span[contains(@title,"Open Content Templates")]'
+
+        GrapesJs Content Templates Category:
+            selector:
+                type: xpath
+                locator: '//div[contains(@class,"content-templates-container")]//div[contains(@class,"gjs-block-categories")]//div[contains(@class,"gjs-block-category")]'
+
+        GrapesJs Content Templates Category Title:
+            selector:
+                type: xpath
+                locator: '//div[contains(@class,"gjs-title")]'
+
+        GrapesJs Content Template 1:
+            selector:
+                type: xpath
+                locator: '//div[contains(@class,"content-templates-container")]//div[contains(@class,"content-template-block") and @title="TestContentTemplate1"]'
+
+        GrapesJs Content Template 3:
+            selector:
+                type: xpath
+                locator: '//div[contains(@class,"content-templates-container")]//div[contains(@class,"content-template-block") and @title="TestContentTemplate3"]'
+
+        GrapesJs Content Template:
+            selector:
+                type: xpath
+                locator: '//div[contains(@class,"content-template-block")]'
+
+        CMSPage1 Image:
+            selector:
+                type: 'xpath'
+                locator: '//img[contains(@alt,"CMSPage1 Image")]/parent::picture'
 
     suites:
         OroCMSBundle:
