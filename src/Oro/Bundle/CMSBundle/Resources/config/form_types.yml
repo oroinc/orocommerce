@@ -70,6 +70,9 @@ services:
             - '@oro_form.provider.html_tag_provider'
             - '@oro_cms.provider.html_purifier_scope_provider'
             - '@oro_cms.tools.digital_asset_twig_tags_converter'
+        calls:
+            - [setDigitalAssetTwigTagsEventSubscriber, ['@oro_cms.form.event_subscriber.digital_asset_twig_tags']]
+            - [setAssetHelper, ['@assets.packages']]
         tags:
             - { name: form.type }
 
@@ -77,6 +80,8 @@ services:
         class: Oro\Bundle\CMSBundle\Form\Type\WYSIWYGStylesType
         arguments:
             - '@oro_cms.tools.digital_asset_twig_tags_converter'
+        calls:
+            - [setDigitalAssetTwigTagsEventSubscriber, ['@oro_cms.form.event_subscriber.digital_asset_twig_tags']]
         tags:
             - { name: form.type }
 
@@ -102,3 +107,30 @@ services:
             - '@oro_entity_config.config_manager'
             - '@oro_entity_config.config.config_helper'
             - '@oro_entity_extend.form.util.field_session_storage'
+
+    oro_cms.form.type.content_template:
+        class: Oro\Bundle\CMSBundle\Form\Type\ContentTemplateType
+        tags:
+            - { name: form.type }
+
+    oro_cms.form.handler.content_template:
+        class: 'Oro\Bundle\CMSBundle\Form\Handler\ContentTemplateHandler'
+        arguments:
+            - '@oro_tag.tag.manager'
+            - '@doctrine'
+        tags:
+            - { name: oro_form.form.handler, alias: content_template_handler }
+
+    oro_cms.form.extension.content_templates_in_wysiwyg_form:
+        class: Oro\Bundle\CMSBundle\Form\Extension\ContentTemplatesInWysiwygFormExtension
+        arguments:
+            - '@oro_cms.provider.content_templates_for_wysiwyg_preview_provider'
+            - '@oro_security.authorization_checker'
+            - '@oro_security.token_accessor'
+        tags:
+            - { name: form.type_extension }
+
+    oro_cms.form.event_subscriber.digital_asset_twig_tags:
+        class: Oro\Bundle\CMSBundle\Form\EventSubscriber\DigitalAssetTwigTagsEventSubscriber
+        arguments:
+            - '@oro_cms.tools.digital_asset_twig_tags_converter'

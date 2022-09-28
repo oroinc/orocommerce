@@ -189,19 +189,18 @@ Feature: Create product
   And I should see product with:
       | SKU | Test1234 |
   When I click "link 1 in short"
-  Then I should see product with:
+  Then I should see "This click cannot be processed in the preview mode." flash message and I close it
+  And I should see product with:
     | SKU | Test1234 |
-  And I should see "This click cannot be processed in the preview mode." flash message and I close it
   When I click "link 2 in short"
-  Then I should see product with:
+  Then I should see "This click cannot be processed in the preview mode." flash message and I close it
+  And I should see product with:
     | SKU | Test1234 |
-  And I should see "This click cannot be processed in the preview mode." flash message and I close it
   When I click "link 1 in desc"
-  Then I should see product with:
+  Then I should see "This click cannot be processed in the preview mode." flash message and I close it
+  And I should see product with:
     | SKU | Test1234 |
-  And I should see "This click cannot be processed in the preview mode." flash message and I close it
   When I click "link 2 in desc"
-  Then I should see product with:
+  Then I should see "This click cannot be processed in the preview mode." flash message and I close it
+  And I should see product with:
     | SKU | Test1234 |
-  And I should see "This click cannot be processed in the preview mode." flash message and I close it
-

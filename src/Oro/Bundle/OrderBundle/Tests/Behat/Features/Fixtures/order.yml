@@ -11,6 +11,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
         website: '@website1'
         currency: USD
         poNumber: 'ORD1'
+        shipUntil: '<(new DateTime("2022-09-26T19:27:00Z"))>'
     secondOrder:
         organization: '@organization'
         owner: '@admin'

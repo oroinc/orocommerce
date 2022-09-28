@@ -7,10 +7,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\CMSBundle\Form\Type\PageType;
 use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGType;
-use Oro\Bundle\CMSBundle\Provider\HTMLPurifierScopeProvider;
-use Oro\Bundle\CMSBundle\Tools\DigitalAssetTwigTagsConverter;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
-use Oro\Bundle\FormBundle\Provider\HtmlTagProvider;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueCollectionTypeStub;
@@ -39,6 +36,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class PageTypeTest extends FormIntegrationTestCase
 {
     use EntityTrait;
+    use WysiwygAwareTestTrait;
 
     const PAGE_ID = 7;
 
@@ -109,30 +107,13 @@ class PageTypeTest extends FormIntegrationTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $htmlTagProvider = $this->createMock(HtmlTagProvider::class);
-        $purifierScopeProvider = $this->createMock(HTMLPurifierScopeProvider::class);
-        $purifierScopeProvider->expects($this->any())
-            ->method('getScope')
-            ->willReturn('default');
-        $digitalAssetTwigTagsConverter = $this->createMock(DigitalAssetTwigTagsConverter::class);
-        $digitalAssetTwigTagsConverter->expects(self::any())
-            ->method('convertToUrls')
-            ->willReturnArgument(0);
-        $digitalAssetTwigTagsConverter->expects(self::any())
-            ->method('convertToTwigTags')
-            ->willReturnArgument(0);
-
         return [
             new PreloadedExtension(
                 [
                     $this->type,
                     EntityIdentifierType::class => $entityIdentifierType,
                     'text' => new TextType(),
-                    WYSIWYGType::class => new WYSIWYGType(
-                        $htmlTagProvider,
-                        $purifierScopeProvider,
-                        $digitalAssetTwigTagsConverter
-                    ),
+                    WYSIWYGType::class => $this->createWysiwygType(),
                     LocalizedFallbackValueCollectionType::class => new LocalizedFallbackValueCollectionTypeStub(),
                     LocalizedSlugType::class => new LocalizedSlugTypeStub(),
                     LocalizedSlugWithRedirectType::class

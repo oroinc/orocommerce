@@ -1,0 +1,17 @@
+/* stylelint-disable scale-unlimited/declaration-strict-value */
+.two-columns-text-features .grid {
+    --grid-gap: 0;
+}
+
+.two-columns-text-features .grid-col-inner-offset {
+    padding: 0 40px;
+}
+
+.two-columns-text-features .extra-block-bg {
+    padding: 24px 0;
+}
+
+.two-columns-text-features .border-right {
+    border-right: 1px solid #ebebeb;
+}
+/* stylelint-enable scale-unlimited/declaration-strict-value */

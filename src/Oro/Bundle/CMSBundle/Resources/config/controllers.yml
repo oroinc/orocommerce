@@ -23,7 +23,7 @@ services:
 
     Oro\Bundle\CMSBundle\Controller\WysiwygContentController:
         calls:
-            - [ 'setContainer', [ '@Psr\Container\ContainerInterface' ] ]
+            - ['setContainer', ['@Psr\Container\ContainerInterface']]
         tags:
             - { name: container.service_subscriber }
 
@@ -34,6 +34,12 @@ services:
             - { name: container.service_subscriber }
 
     Oro\Bundle\CMSBundle\Controller\ContentBlockController:
+        calls:
+            - ['setContainer', ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
+
+    Oro\Bundle\CMSBundle\Controller\ContentTemplateController:
         calls:
             - ['setContainer', ['@Psr\Container\ContainerInterface']]
         tags:

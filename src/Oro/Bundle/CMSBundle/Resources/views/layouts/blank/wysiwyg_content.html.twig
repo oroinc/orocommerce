@@ -5,6 +5,6 @@
 
     <div {{ block('block_attributes') }}>
         {%- import '@OroCMS/macros.html.twig' as CMS -%}
-        {{ CMS.renderWysiwygContent(content, styles|default('')) }}
+        {{ CMS.renderWysiwygContent(content, contentStyle|default('')) }}
     </div>
 {% endblock %}

@@ -48,6 +48,43 @@ operations:
                     - '@and':
                         - '@not_blank': $.routes[name]
 
+    oro_cms_content_template_clone:
+        extends: CLONE
+        for_all_entities: false
+        for_all_datagrids: false
+        entities:
+            - Oro\Bundle\CMSBundle\Entity\ContentTemplate
+        routes:
+            - oro_cms_content_template_view
+        replace:
+            - datagrids
+        datagrids:
+            - content-template-grid
+        acl_resource: oro_cms_content_template_create
+        actions:
+            - '@assign_value': [$.clone.enabled, false]
+            - '@trans':
+                attribute: $.suffix
+                id: 'oro.cms.contenttemplate.cloned_name_suffix'
+            - '@add_string_suffix':
+                  attribute: $.clone.name
+                  maxLength: 255
+                  string: $name
+                  stringSuffix: $.suffix
+            - '@copy_tagging':
+                source: $.data
+                destination: $.clone
+            - '@tree':
+                conditions:
+                    '@not_empty': [ $.data.previewImage ]
+                actions:
+                    - '@call_service_method':
+                        service: oro_attachment.file_manager
+                        method: cloneFileEntity
+                        method_parameters: [ $.data.previewImage ]
+                        attribute: $.clone.previewImage
+            - '@flush_entity': $.clone
+
     CMS_CREATE_DRAFT:
         extends: CREATE_DRAFT
         entities:

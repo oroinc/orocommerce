@@ -1736,6 +1736,32 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
         $filterItem->checkItemsInFilter($filterItems);
     }
 
+    //@codingStandardsIgnoreStart
+    /**
+     * Options search in multiple select filter
+     * Example: When I type "Task" in search field of Activity Type filter in frontend product grid
+     * Example: When I type "Task" in search field of "Activity Type filter" in frontend product grid
+     *
+     * @When /^(?:|I )type "(?P<searchTerm>.+)" in search field of (?P<filterName>[\w\s]+) filter in frontend product grid$/
+     * @When /^(?:|I )type "(?P<searchTerm>.+)" in search field of "(?P<filterName>[^"]+)" filter in frontend product grid$/
+     *
+     * @param string $searchTerm
+     * @param string $filterName
+     */
+    //@codingStandardsIgnoreEnd
+    public function iSearchForOptionsInFilter($searchTerm, $filterName)
+    {
+        /** @var MultipleChoice $filterItem */
+        $filterItem = $this->getGridFilters()->getFilterItem('Frontend Product Grid MultipleChoice', $filterName);
+
+        $filterItem->open();
+        // Wait for open widget
+        $this->getDriver()->waitForAjax();
+
+        $searchField = $filterItem->getSearchField();
+        $this->getDriver()->typeIntoInput($searchField->getXpath(), $searchTerm);
+    }
+
     /**
      * Checks if multiple choice filter contains expected options in the given order and no other options.
      *

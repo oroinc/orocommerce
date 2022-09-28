@@ -1,0 +1,12 @@
+.three-columns-testimonials .grid-testimonial {
+    --grid-column-count: 1;
+    --grid-gap: 0;
+}
+
+.three-columns-testimonials .grid-testimonial-bottom {
+    --grid-column-count: 2;
+    --grid-template-columns: 60px 1fr;
+    --grid-gap: 16px;
+
+    padding: 0 52px 28px;
+}

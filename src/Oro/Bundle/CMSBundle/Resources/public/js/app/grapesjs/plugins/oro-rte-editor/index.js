@@ -8,7 +8,7 @@ function getTextNodesIn(element) {
 
     if (element) {
         for (const node of [...element.childNodes]) {
-            if (node.nodeType === 3) {
+            if (node.nodeType === Node.TEXT_NODE) {
                 textNodes.push(node);
             } else {
                 textNodes = textNodes.concat(getTextNodesIn(node));
