@@ -19,7 +19,6 @@ layout:
                         product: '=data["oro_product_variant"].getProductVariantOrProduct(data)'
                         parentProduct: '=data["parentProduct"]'
                         productTheme: '=context["page_template"]'
-                        microdataWithoutPricesDisabled: '=data["system_config_provider"].getValue("oro_product.microdata_without_prices_disabled")'
                 product_view_primary_wrapper:
                     blockType: container
                 product_view_primary_container:

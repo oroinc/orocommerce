@@ -71,9 +71,9 @@ Feature: Product full description and brand microdata schema org
     Then I should not see schema org brand for "TestSKU789" in "Product Frontend Grid"
     And I should not see schema org description for "TestSKU789" in "Product Frontend Grid"
 
-  Scenario: Check full schema.org product description and brand in product view page are not present on the store frontend
+  Scenario: Check full schema.org product description and brand in product view page are present on the store frontend
     When I click "View Details"
-    Then I should not see schema org description on page
+    Then I should see schema org description "Test Product Full Description" on page
     And I should not see schema org brand on page
     And I should not see schema org brand for "TestSKU123" in "Related Products Block"
     And I should not see schema org description for "TestSKU123" in "Upsell Products Block"

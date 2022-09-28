@@ -25,13 +25,6 @@
         'data-role': 'product-item',
         '~class': ' product-view ' ~ productTheme|default('default') ~ '-theme'
     }) %}
-    {% if microdataWithoutPricesDisabled == false %}
-        {% set attr = layout_attr_defaults(attr, {
-            'itemscope': '',
-            'itemtype': 'http://schema.org/Product'
-        }) %}
-    {% endif %}
-
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
@@ -106,7 +99,6 @@
 {% block _product_view_description_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' product-view__description',
-        'itemprop': 'description'
     }) %}
 
     <div {{ block('block_attributes') }}>

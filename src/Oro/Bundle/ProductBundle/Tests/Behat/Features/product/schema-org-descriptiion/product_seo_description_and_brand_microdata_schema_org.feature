@@ -29,11 +29,12 @@ Feature: Product seo description and brand microdata schema org
     And click "Create Product"
     And I click "Continue"
     And I fill "ProductForm" with:
-      | SKU         | TestSKU123   |
-      | Name        | Test Product |
-      | Brand       | Test Brand   |
-      | Status      | Enable       |
-      | Is Featured | Yes          |
+      | SKU         | TestSKU123                           |
+      | Name        | Test Product                         |
+      | Brand       | Test Brand                           |
+      | Status      | Enable                               |
+      | Is Featured | Yes                                  |
+      | Description | <p>Test Product Full Description</p> |
     When I save form
     Then I should see "Product has been saved" flash message
     And I click "SEO"
@@ -63,22 +64,22 @@ Feature: Product seo description and brand microdata schema org
     And I click "Select products"
     And I save form
 
-  Scenario: Check full schema.org product description and brand in featured products are not present on the store frontend
+  Scenario: Check meta schema.org product description and brand in featured products are not present on the store frontend
     Given I proceed as the Buyer
     When I go to the homepage
     Then I should not see schema org brand for "TestSKU456" in "Featured Products Block"
     And I should not see schema org description for "TestSKU456" in "Featured Products Block"
 
-  Scenario: Check full schema.org product description and brand in search product list are not present on the store frontend
+  Scenario: Check meta schema.org product description and brand in search product list are not present on the store frontend
     Given I proceed as the Buyer
     When I type "TestSKU789" in "search"
     And I click "Search Button"
     Then I should not see schema org brand for "TestSKU789" in "Product Frontend Grid"
     And I should not see schema org description for "TestSKU789" in "Product Frontend Grid"
 
-  Scenario: Check full schema.org product description and brand in product view page are not present on the store frontend
+  Scenario: Check meta schema.org product description and brand in product view page are not present on the store frontend
     When I click "View Details"
-    Then I should not see schema org description on page
+    Then I should see schema org description "Test Product Full Description" on page
     And I should not see schema org brand on page
     And I should not see schema org brand for "TestSKU123" in "Related Products Block"
     And I should not see schema org description for "TestSKU123" in "Upsell Products Block"
