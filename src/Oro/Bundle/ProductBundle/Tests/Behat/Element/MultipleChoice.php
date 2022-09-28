@@ -53,11 +53,23 @@ class MultipleChoice extends BaseMultipleChoice
         $choices = [];
         /** @var Element $input */
         foreach ($inputs as $input) {
-            $choices[] = trim($input->getText());
+            if ($input->isVisible()) {
+                $choices[] = trim($input->getText());
+            }
         }
 
         $this->close();
 
         return $choices;
+    }
+
+    public function getSearchField()
+    {
+        $searchInput = $this->getWidget()->getParent()->find('css', 'input[type="search"]');
+        if ($searchInput && $searchInput->isVisible()) {
+            return $searchInput;
+        }
+
+        self::fail('Can\'t find search input in multiselect filter or it\'s not visible');
     }
 }
