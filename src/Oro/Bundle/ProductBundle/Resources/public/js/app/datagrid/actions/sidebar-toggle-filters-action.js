@@ -24,6 +24,30 @@ const SidebarToggleFiltersAction = FullscreenFiltersAction.extend({
                 }
             }
         });
+
+        this.listenToOnce(this.datagrid, {
+            'filterManager:connected': () => {
+                const filterManagerIsVisible = this.datagrid.filterManager.isVisible;
+                const switchSidebarView = this.subview('switch-sidebar');
+
+                if ((filterManagerIsVisible === false) && switchSidebarView) {
+                    switchSidebarView.collapse(0);
+                    switchSidebarView.render();
+                }
+
+                this.listenTo(this.filterManager, 'visibility-change', filterManageIsVisible => {
+                    // Synchronize Filter Manager visibility with a sidebar one.
+                    // The Filter Manager might be hidden programmatically after resetting its state.
+                    if (
+                        filterSettings.isFullScreen() === false &&
+                        switchSidebarView.$el.is(':visible') &&
+                        filterManageIsVisible !== switchSidebarView.sidebarExpanded
+                    ) {
+                        this.datagrid.filterManager[switchSidebarView.sidebarExpanded ? 'show' : 'hide']();
+                    }
+                });
+            }
+        });
     },
 
     updateFiltersStateView() {
