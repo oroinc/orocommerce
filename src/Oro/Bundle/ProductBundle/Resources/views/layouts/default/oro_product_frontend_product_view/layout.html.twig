@@ -127,29 +127,34 @@
 {% block _product_view_attribute_group_general_attribute_localized_fallback_descriptions_widget %}
     {% set description = translated_value.wysiwyg is defined ? translated_value.wysiwyg|trim  : null %}
     {% if description %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': ' collapse-view collapse-view--overflow',
-        '~data-page-component-viewport': {
-            viewport: {
-                maxScreenType: 'tablet',
-            },
-            widgetModule: 'oroui/js/widget/collapse-widget',
-            animationSpeed: 0,
-            checkOverflow: true,
-            open: false
-        }
-    }) %}
-
-    <div {{ block('block_attributes') }}>
-        <div class="collapse-view__container cms-typography" data-collapse-container>
-            {%- import '@OroCMS/macros.html.twig' as CMS -%}
-            {{ CMS.renderWysiwygContent(description, translated_value.wysiwygStyle) }}
-        </div>
-        {# For button bellow attr "aria-hidden" will be toggled programmatically when collapse-widget is initialized or destroyed #}
-        <button class="collapse-view__trigger" type="button" data-collapse-trigger aria-hidden="true" aria-label="{{ 'oro.ui.collapse.more'|trans }}">
-            <span class="collapse-view__trigger-icon fa-chevron-down" aria-hidden="true"></span>
-        </button>
-    </div>
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': ' cms-typography'
+        }) %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': ' cms-typography',
+            'data-page-component-viewport': {
+                viewport: {
+                    maxScreenType: 'tablet',
+                },
+                view: 'orofrontend/default/js/app/views/collapse-view',
+                triggerIsFirst: false,
+                toggleAttrs: {
+                    'class': 'btn btn--link btn--size-s btn--no-x-offset btn--full btn--default-color collapse-toggle',
+                    'aria-label': 'oro.ui.collapse.more'|trans,
+                    'data-icon': 'fa-chevron-down fa--no-offset'
+                },
+                collapseAttrs: {
+                    'class': 'collapse collapse-overflow increased-overflow',
+                    'data-check-overflow': true,
+                    'data-trigger-icon-show-class': 'fa-chevron-up',
+                    'data-trigger-icon-hide-class': 'fa-chevron-down',
+                    'data-collapsed-text': 'oro.ui.collapse.more'|trans,
+                    'data-expanded-text': 'oro.ui.collapse.less'|trans
+                }
+            }|json_encode
+        }) %}
+        {%- import '@OroCMS/macros.html.twig' as CMS -%}
+        <div {{ block('block_attributes') }}>{{ CMS.renderWysiwygContent(description, translated_value.wysiwygStyle) }}</div>
     {% endif %}
 {% endblock %}
 

@@ -25,29 +25,6 @@
 
             overflow: hidden;
         }
-
-        @at-root .expanded & {
-            max-height: $shopping-lists-notes-expanded-height;
-            overflow: auto;
-
-            &::after {
-                content: none;
-            }
-        }
-    }
-
-    &.overflows .shopping-list-notes__content::after {
-        position: absolute;
-        bottom: 0;
-
-        display: block;
-        height: round($shopping-lists-notes-font-size * $shopping-lists-notes-line-height);
-        width: 100%;
-
-        background-image: $shopping-lists-notes-overflows-bg;
-
-        content: '';
-        pointer-events: none;
     }
 
     .shopping-lists-modify {

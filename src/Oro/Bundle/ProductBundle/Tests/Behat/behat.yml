@@ -603,7 +603,7 @@ oro_behat_extension:
       selector: 'div[id*="grid-product-collection-grid-"]'
 
     AdvancedFilter:
-      selector: '.collapse-view__trigger.btn .fa-filter'
+      selector: '.btn .fa-filter'
 
     Enable Related Products:
       selector: '[name="related_items[oro_product___related_products_enabled][value]"]'
@@ -1458,7 +1458,7 @@ oro_behat_extension:
         locator: '//img[contains(@alt,"cat2_wysiwyg_image")]'
 
     More Link:
-      selector: 'a.toggle-more'
+      selector: 'a.collapse-toggle'
 
     Filters In Sidebar:
       selector: '.page-sidebar .product-filters-sidebar .filter-box'

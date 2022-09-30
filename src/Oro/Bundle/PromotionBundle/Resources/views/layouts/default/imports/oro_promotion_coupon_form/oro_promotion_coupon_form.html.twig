@@ -24,31 +24,38 @@
 {% endblock %}
 
 {% block __oro_promotion_coupon_form__widget_container_widget %}
-    <div class="collapse-view" data-page-component-collapse="{{ { open: opened }|json_encode() }}">
-        {{ block_widget(block) }}
-    </div>
+    {% do block|merge_context({
+        _collapseId: 'collapse-'|uniqid,
+        _collapseIsOpened: opened
+    }) %}
+    {{ block_widget(block) }}
 {% endblock %}
 
 {% block __oro_promotion_coupon_form__expand_link_widget %}
-    <button type="button" class="collapse-view__trigger coupon-trigger" data-collapse-trigger
+    <button type="button" class="btn btn--link btn--no-x-offset btn--no-y-offset" data-toggle="collapse"
          data-role="coupon-trigger"
-         aria-controls="oro-promotion-coupon-panel">
-        <span class="collapse-view__trigger-text">
-            {{- 'oro.frontend.coupon.expand_link.label'|trans -}}
-        </span>
+         data-target="{{ '#' ~ _collapseId }}"
+         aria-controls="{{ _collapseId }}">
+        <span class="fa-plus-square-o" aria-hidden="true" data-icon></span>
+        <span data-text>{{- 'oro.frontend.coupon.expand_link.label'|trans -}}</span>
     </button>
 {% endblock %}
 
 {% block __oro_promotion_coupon_form__expandable_container_widget %}
+    {% set classes = 'coupon-container__content collapse no-transition'%}
+    {% if _collapseIsOpened %}
+        {% set classes = 'coupon-container__content collapse no-transition' ~ ' show'%}
+    {% endif %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': 'coupon-container__content'
+        '~class': classes,
+        'id': _collapseId,
+        'role': 'region',
+        'data-toggle': _collapseIsOpened,
+        'data-trigger-icon-show-class': 'fa-minus-square-o',
+        'data-trigger-icon-hide-class': 'fa-plus-square-o'
     }) %}
-
-    <div class="collapse-view__container" data-collapse-container
-         id="oro-promotion-coupon-panel" role="region">
-        <div {{ block('block_attributes') }}>
-            {{ block_widget(block) }}
-        </div>
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
     </div>
 {% endblock %}
 

@@ -29,27 +29,24 @@
             </div>
         </div>
     <% } else if (renderMode == 'collapse-mode') { %>
-        <% var collapseId = _.uniqueId('criteria-');  %>
         <% var collapseContainerId = _.uniqueId('criteria-container-');  %>
         <div class="filter-box collapse-mode" <%= attributes %> >
-            <div class="filters-box-collapse"
-                 data-page-component-module="oroui/js/app/components/jquery-widget-component"
-                 data-page-component-options="{&quot;widgetModule&quot;:&quot;oroui/js/widget/collapse-widget&quot;,&quot;open&quot;:false}"
-            >
+            <div class="filters-box-collapse">
                 <div class="filters-box-collapse__header">
-                    <button id="<%- collapseId %>"
-                            class="filters-box-collapse__trigger btn btn--default btn--size-s btn--full"
-                            data-collapse-trigger
-                            aria-controls="<%- collapseContainerId %>"
+                    <button class="filters-box-collapse__trigger btn btn--default btn--size-s btn--full"
                             type="button"
+                            data-toggle="collapse"
+                            data-target="#<%- collapseContainerId %>"
+                            aria-controls="<%- collapseContainerId %>"
+                            aria-expanded="false"
                     ><%- _.__('oro.product.product_filters.collapse.label')  %>
-                        <span class="filters-box-collapse__icon" aria-hidden="true">
-                            <span class="fa-plus"></span>
-                            <span class="fa-minus"></span>
-                        </span>
+                        <span class="filters-box-collapse__icon fa-plus fa--no-offset" aria-hidden="true" data-icon></span>
                     </button>
                 </div>
-                <div id="<%- collapseContainerId %>" class="filters-box-collapse__container" aria-labelledby="<%- collapseId %>" data-collapse-container>
+                <div id="<%- collapseContainerId %>" data-toggle="false" class="filters-box-collapse__container collapse"
+                     data-trigger-icon-show-class="fa-minus"
+                     data-trigger-icon-hide-class="fa-plus"
+                >
                     <div class="filter-container dropdown-mode">
                         <% if (obj.enableMultiselectWidget) { %>
                         <select data-action="add-filter-select"

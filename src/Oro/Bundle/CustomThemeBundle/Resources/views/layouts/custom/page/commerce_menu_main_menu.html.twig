@@ -42,17 +42,30 @@
     }|json_encode %}
 
     <div {{ block('block_attributes') }}>
-        <div class="collapse-view expanded" data-page-component-collapse="{{ { storageKey: id }|json_encode() }}">
-            <a href="#" class="main-menu__link main-menu__link--is-trigger" data-collapse-trigger>
-                <span class="badge categories-widget__badge">
-                    <span class="fa-shopping-cart" aria-hidden="true"></span>
+        {% set collapseId = 'collapse-'|uniqid %}
+        <div class="collapse-view">
+            <a href="#" class="main-menu__link main-menu__link--is-trigger collapse-view__trigger"
+               role="button"
+               data-toggle="collapse"
+               data-target="{{ '#' ~ collapseId }}"
+               aria-controls="{{ collapseId }}"
+               aria-expanded="false"
+            >
+                <span class="badge categories-widget__badge" aria-hidden="true">
+                    <span class="fa-shopping-cart"></span>
                 </span>
-                <span class="collapse-view__trigger collapse-view__trigger--icon">
-                    <span class="collapse-view__trigger-icon fa-caret-right" aria-hidden="true"></span>
+                <span class="collapse-view__trigger-icon-wrap" aria-hidden="true">
+                    <span class="collapse-view__trigger-icon fa-caret-down" data-icon></span>
                 </span>
                 <span class="collapse-view__text">{{ 'oro.catalog.category.categories.label'|trans }}</span>
             </a>
-            <div data-collapse-container>
+            <div id="{{ collapseId }}" class="collapse show"
+                 data-toggle="false"
+                 data-state-id="{{ id }}"
+                 data-trigger-icon-show-class="fa-caret-down"
+                 data-trigger-icon-hide-class="fa-caret-right"
+                 data-trigger-show-class="expanded"
+            >
                 <div data-page-component-module="oroui/js/app/components/viewport-component"
                      data-page-component-options="{{ {
                          viewport: {
@@ -65,7 +78,7 @@
                 >
                     <button class="main-menu__back-trigger" type="button"
                             data-go-to="prev"
-                    ><i class="fa-chevron-left"></i> {{ 'oro_frontend.fullscreen_popup.back.label'|trans }}</button>
+                    ><span class="fa-chevron-left" aria-hidden="true"></span> {{ 'oro_frontend.fullscreen_popup.back.label'|trans }}</button>
                     <ul class="main-menu">
                         {{ block_widget(block) }}
                     </ul>

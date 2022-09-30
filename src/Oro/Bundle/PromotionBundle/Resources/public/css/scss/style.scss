@@ -1,25 +1,5 @@
 /* @theme: admin.oro; */
 
-.collapse-view {
-    .collapse-view__trigger_show {
-        display: block;
-    }
-
-    .collapse-view__trigger_hide {
-        display: none;
-    }
-
-    &.expanded {
-        .collapse-view__trigger_show {
-            display: none;
-        }
-
-        .collapse-view__trigger_hide {
-            display: block;
-        }
-    }
-}
-
 .oro-promotions-collection.grid-container {
     td:first-child {
         white-space: nowrap;

@@ -51,26 +51,31 @@
     {% set id = 'promotion-edit' %}
 
     {% set advancedConditions %}
-        <div class="collapse-view"
-             data-page-component-collapse="{{ { open: form.rule.expression.vars.value is not empty }|json_encode() }}"
-        >
-            <div class="control-group">
-                <div class="control-label wrap">
-                    {{ form_label(form.rule.expression) }}
-                </div>
-                <div data-collapse-trigger class="controls">
-                    <div class="control-label">
-                        <a class="collapse-view__trigger_show" href="#">{{ 'oro.promotion.rule.expression.toggle.show'|trans }}</a>
-                        <a class="collapse-view__trigger_hide" href="#">{{ 'oro.promotion.rule.expression.toggle.hide'|trans }}</a>
-                    </div>
+        {% set collapseId = 'collapse-'|uniqid %}
+        <div class="control-group">
+            <div class="control-label wrap">
+                {{ form_label(form.rule.expression) }}
+            </div>
+            <div data-collapse-trigger class="controls">
+                <div class="control-label">
+                    <a href="#"
+                       role="button"
+                       class="control-label collapse-toggle"
+                       data-toggle="collapse"
+                       data-target="{{ '#' ~ collapseId }}"
+                       aria-expanded="false"
+                       aria-controls="{{ collapseId }}"><span data-text>{{ 'oro.promotion.rule.expression.toggle.show'|trans }}</span></a>
                 </div>
             </div>
-            <div class="control-group">
-                <div class="controls">
-                    <div data-collapse-container>
-                        {{ form_widget(form.rule.expression) }}
-                    </div>
-                </div>
+        </div>
+        <div class="control-group">
+            <div class="controls">
+                <div id="{{ collapseId }}"
+                     class="collapse"
+                     data-collapsed-text="{{ 'oro.promotion.rule.expression.toggle.show'|trans }}"
+                     data-expanded-text="{{ 'oro.promotion.rule.expression.toggle.hide'|trans }}"
+                     data-toggle="{{ form.rule.expression.vars.value is not empty  }}"
+                >{{ form_widget(form.rule.expression) }}</div>
             </div>
         </div>
     {% endset %}
