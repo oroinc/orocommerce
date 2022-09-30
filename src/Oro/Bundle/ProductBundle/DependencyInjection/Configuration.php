@@ -80,6 +80,8 @@ class Configuration implements ConfigurationInterface
     const PRODUCT_PRICES_EXPORT_ENABLED = 'product_prices_export_enabled';
     const PRODUCT_PRICE_TIERS_ENABLED = 'product_price_tiers_export_enabled';
     const MICRODATA_WITHOUT_PRICES_DISABLED = 'microdata_without_prices_disabled';
+    const SCHEMA_ORG_DESCRIPTION_FIELD = 'schema_org_description_field';
+    const SCHEMA_ORG_DEFAULT_DESCRIPTION = 'oro_product_full_description';
 
     /**
      * {@inheritDoc}
@@ -206,6 +208,10 @@ class Configuration implements ConfigurationInterface
                 static::MICRODATA_WITHOUT_PRICES_DISABLED => [
                     'type' => 'boolean',
                     'value' => true
+                ],
+                static::SCHEMA_ORG_DESCRIPTION_FIELD => [
+                    'type' => 'string',
+                    'value' => static::SCHEMA_ORG_DEFAULT_DESCRIPTION
                 ]
             ]
         );
