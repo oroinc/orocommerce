@@ -42,8 +42,6 @@ class PriceListRuleCompilerTest extends WebTestCase
 
     protected function setUp(): void
     {
-        $this->markTestSkipped('BB-21644');
-
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
         $this->loadFixtures(
