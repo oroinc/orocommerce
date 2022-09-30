@@ -90,6 +90,7 @@ class ImageSliderContentWidgetTypeTest extends FormIntegrationTestCase
             ->willReturn($slides);
 
         $expectedData = [
+            'contentWidgetName' => 'test_name',
             'pageComponentName' => 'test_name',
             'pageComponentOptions' => new ArrayCollection(
                 [
@@ -162,6 +163,7 @@ class ImageSliderContentWidgetTypeTest extends FormIntegrationTestCase
                 function ($name, array $context = []) use ($slides) {
                     $this->assertEquals(
                         [
+                            'contentWidgetName' => 'test_name',
                             'pageComponentName' => 'test_name',
                             'pageComponentOptions' => new ArrayCollection(
                                 [

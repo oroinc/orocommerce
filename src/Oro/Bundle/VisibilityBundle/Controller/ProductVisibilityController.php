@@ -86,6 +86,7 @@ class ProductVisibilityController extends AbstractController
                 ScopedDataType::SCOPES_OPTION => $this->get(VisibilityRootScopesProvider::class)->getScopes($product),
                 ScopedDataType::TYPE_OPTION => EntityVisibilityType::class,
                 ScopedDataType::OPTIONS_OPTION => [
+                    'dynamic_fields_disabled' => true,
                     EntityVisibilityType::ALL_CLASS => ProductVisibility::class,
                     EntityVisibilityType::ACCOUNT_GROUP_CLASS => CustomerGroupProductVisibility::class,
                     EntityVisibilityType::ACCOUNT_CLASS => CustomerProductVisibility::class,

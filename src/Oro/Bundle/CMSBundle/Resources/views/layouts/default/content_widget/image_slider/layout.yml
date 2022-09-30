@@ -10,6 +10,7 @@ layout:
             blockType: block
             options:
                 vars:
+                    contentWidgetName: '=data["contentWidgetName"]'
                     pageComponentName: '=data["pageComponentName"]'
                     pageComponentOptions: '=data["pageComponentOptions"]'
                     imageSlides: '=data["imageSlides"]'
