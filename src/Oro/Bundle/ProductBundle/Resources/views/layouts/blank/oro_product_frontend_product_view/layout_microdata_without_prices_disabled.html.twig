@@ -1,12 +1,27 @@
 {% block _product_view_microdata_container_widget %}
-    {% if productPrices is defined and productPrices is not empty%}
+    {% if
+        microdataWithoutPricesDisabled == false or
+        (productPrices is defined and productPrices is not empty)
+    %}
         {% set attr = layout_attr_defaults(attr, {
             'itemscope': '',
             'itemtype': 'http://schema.org/Product'
         }) %}
-    {% endif %}
 
+        {% set schemaOrgDescriptionContent %}
+            {% if
+                schemaOrgDescription is defined and
+                schemaOrgDescription is not empty
+            %}
+                <meta itemprop="description" content="{{ schemaOrgDescription }}" />
+            {% endif %}
+        {% endset %}
+    {% endif %}
     <div {{ block('block_attributes') }}>
+
+        {% if schemaOrgDescriptionContent is defined %}
+            {{ schemaOrgDescriptionContent }}
+        {% endif %}
         {{ block_widget(block) }}
     </div>
 {% endblock %}
