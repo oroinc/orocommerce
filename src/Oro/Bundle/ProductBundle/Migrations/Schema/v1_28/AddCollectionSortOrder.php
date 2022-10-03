@@ -7,31 +7,14 @@ use Oro\Bundle\ProductBundle\Migrations\Schema\OroProductBundleInstaller;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class OroCatalogBundle implements Migration
+class AddCollectionSortOrder implements Migration
 {
     /**
      * {@inheritdoc}
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        $this->createSortOrderColumn($schema);
         $this->createCollectionSortOrderTable($schema);
-    }
-
-    /**
-     * Adds category_sort_order field to oro_product table
-     * @param Schema $schema
-     * @return void
-     */
-    protected function createSortOrderColumn(Schema $schema): void
-    {
-        $table = $schema->getTable(OroProductBundleInstaller::PRODUCT_TABLE_NAME);
-        if (!$table->hasColumn('category_sort_order')) {
-            $table->addColumn('category_sort_order', 'float', [
-                'notnull' => false,
-                'default' => null
-            ]);
-        }
     }
 
     /**
