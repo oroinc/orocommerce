@@ -148,7 +148,6 @@ class OroProductBundleInstaller implements
 
         $this->addPageTemplateField($schema);
 
-        $this->createSortOrderColumn($schema);
         $this->createCollectionSortOrderTable($schema);
     }
 
@@ -827,17 +826,6 @@ class OroProductBundleInstaller implements
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
-    }
-
-    /**
-     * Adds category_sort_order field to oro_product table
-     * @param Schema $schema
-     * @return void
-     */
-    protected function createSortOrderColumn(Schema $schema): void
-    {
-        $table = $schema->getTable(static::PRODUCT_TABLE_NAME);
-        $table->addColumn('category_sort_order', 'float', ['notnull' => false, 'default' => null]);
     }
 
     /**
