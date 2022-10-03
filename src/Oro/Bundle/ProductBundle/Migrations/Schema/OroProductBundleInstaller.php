@@ -49,6 +49,9 @@ class OroProductBundleInstaller implements
     const PRODUCT_IMAGE_TABLE_NAME = 'oro_product_image';
     const PRODUCT_IMAGE_TYPE_TABLE_NAME = 'oro_product_image_type';
 
+    public const PRODUCT_COLLECTION_SORT_ORDER_TABLE_NAME = 'oro_product_collection_sort_order';
+    public const SEGMENT_TABLE_NAME = 'oro_segment';
+
     public const PRODUCT_WEBSITE_REINDEX_REQUEST_ITEM = 'oro_prod_webs_reindex_req_item';
 
     /** @var ExtendExtension */
@@ -91,7 +94,7 @@ class OroProductBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_27';
+        return 'v1_28';
     }
 
     /**
@@ -144,6 +147,9 @@ class OroProductBundleInstaller implements
         $this->addAttributeFamilyField($schema);
 
         $this->addPageTemplateField($schema);
+
+        $this->createSortOrderColumn($schema);
+        $this->createCollectionSortOrderTable($schema);
     }
 
     /**
@@ -821,5 +827,39 @@ class OroProductBundleInstaller implements
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
+    }
+
+    /**
+     * Adds category_sort_order field to oro_product table
+     * @param Schema $schema
+     * @return void
+     */
+    protected function createSortOrderColumn(Schema $schema): void
+    {
+        $table = $schema->getTable(static::PRODUCT_TABLE_NAME);
+        $table->addColumn('category_sort_order', 'float', ['notnull' => false, 'default' => null]);
+    }
+
+    /**
+     * Creates oro_product_collection_sort_order table
+     * @param Schema $schema
+     * @return void
+     */
+    protected function createCollectionSortOrderTable(Schema $schema): void
+    {
+        if (!$schema->hasTable(static::PRODUCT_COLLECTION_SORT_ORDER_TABLE_NAME)) {
+            $table = $schema->createTable(static::PRODUCT_COLLECTION_SORT_ORDER_TABLE_NAME);
+            $table->addColumn('id', 'integer', ['autoincrement' => true]);
+            $table->addColumn('sort_order', 'float', [
+                'notnull' => false,
+                'default' => null
+            ]);
+            $table->addColumn('product_id', 'integer', ['notnull' => true]);
+            $table->addColumn('segment_id', 'integer', ['notnull' => true]);
+            $table->addUniqueIndex(
+                ['product_id', 'segment_id'],
+                'product_segment_sort_uniq_idx'
+            );
+        }
     }
 }
