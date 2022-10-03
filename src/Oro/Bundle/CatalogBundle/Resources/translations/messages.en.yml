@@ -189,6 +189,7 @@ oro:
         product:
             section.catalog: 'Master Catalog'
             in_category.label: 'In category'
+            sort_order.label: 'Sort order'
 
         controller:
             category:
