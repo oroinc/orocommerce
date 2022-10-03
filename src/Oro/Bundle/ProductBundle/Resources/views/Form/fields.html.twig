@@ -435,6 +435,14 @@
                                     {% endif %}
                                     {# --Apply Query button end-- #}
                                 </div>
+                                {{ form_widget(form.sortOrder, {
+                                    'id': 'categorySortOrder',
+                                    'attr': {
+                                        'data-sort-order-options': {
+                                            'sortOrderConstraints': sortOrderConstraints
+                                        }
+                                    }
+                                }) }}
                                 {{ oro_widget_render({
                                     'widgetType': 'block',
                                     'url': path('oro_datagrid_widget', widgetRouteParameters),
@@ -571,4 +579,13 @@
 
 {% block _oro_product_pageTemplate_scalarValue_widget %}
     {{ block('choice_widget') }}
+{% endblock %}
+
+{% block oro_sort_order_grid_widget %}
+    {% set attr = attr|merge({
+        'data-sort-order-options': {
+            'sortOrderConstraints': sortOrderConstraints
+        }|json_encode
+    }) %}
+    {{ form_widget(form, {'id': 'categorySortOrder', 'attr' : attr}) }}
 {% endblock %}

@@ -7,6 +7,7 @@ datagrids:
             query:
                 select:
                     - product.id
+                    - productSortOrderMock.conversionRate as sortOrder # TODO : change when real field arrives
                     - product.sku
                     - productInventoryStatus.id as inventoryStatusId
                     - productInventoryStatus.name as inventoryStatusName
@@ -30,6 +31,7 @@ datagrids:
                 join:
                     left:
                         - { join: product.inventory_status, alias: productInventoryStatus}
+                        - { join: product.primaryUnitPrecision, alias: productSortOrderMock} # TODO : remove with real field
             bind_parameters:
                 - category_id
             hints:
@@ -39,6 +41,10 @@ datagrids:
                 label:         oro.catalog.product.in_category.label
                 editable:      true
                 frontend_type: boolean
+            sortOrder:
+                label:         oro.catalog.product.sort_order.label
+                editable:      true
+                frontend_type: string # can't use decimal because of inappropriate formatter
             sku:
                 label:         oro.product.sku.label
             name:
@@ -67,6 +73,8 @@ datagrids:
             columns:
                 inCategory:
                     data_name: inCategory
+                sortOrder:
+                    data_name: sortOrder
                 sku:
                     data_name: product.sku
                 name:
@@ -111,6 +119,13 @@ datagrids:
         options:
             entityHint: oro.product.entity_plural_label
             entity_pagination: true
+            jsmodules:
+                - oroproduct/datagrid/builder/sort-order-builder
+            cellSelection:
+                dataField: id
+                columnName:
+                    - sortOrder
+                selector: '#categorySortOrder'
             rowSelection:
                 dataField: id
                 columnName: inCategory

@@ -204,7 +204,31 @@ datagrids:
 
     product-collection-grid:
         extends: product-collection-base-grid
+        source:
+            query:
+                select:
+                    - productSortOrderMock.conversionRate as sortOrder # TODO : change with real field
+                join:
+                    left:
+                        - { join: product.primaryUnitPrecision, alias: productSortOrderMock} # TODO : update with real relation to segment
+        columns:
+            sortOrder:
+                order: -1
+                label: oro.catalog.product.sort_order.label
+                editable: true
+                frontend_type: string # can't use decimal because of inappropriate formatter
+        sorters:
+            columns:
+                sortOrder:
+                    data_name: sortOrder
         options:
+            jsmodules:
+                - oroproduct/datagrid/builder/sort-order-builder
+            cellSelection:
+                dataField: id
+                columnName:
+                    - sortOrder
+                selector: '#categorySortOrder'
             toolbarOptions:
                 pageSize:
                     default_per_page: 10

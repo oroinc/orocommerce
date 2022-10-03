@@ -270,3 +270,11 @@ services:
         class: 'Oro\Bundle\ProductBundle\Form\Type\ProductSegmentContentWidgetSettingsType'
         tags:
             - { name: form.type }
+
+    oro_product.form.type.sort_order_grid:
+        class: 'Oro\Bundle\ProductBundle\Form\Type\SortOrderGridType'
+        arguments:
+            - '@form.factory'
+            - '@oro_entity.doctrine_helper'
+        tags:
+            - { name: form.type, alias: oro_sort_order_grid }

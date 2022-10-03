@@ -32,6 +32,7 @@ class ProductCollectionSegmentType extends AbstractType implements DataMapperInt
     const DEFINITION = 'definition';
     const INCLUDED_PRODUCTS = 'includedProducts';
     const EXCLUDED_PRODUCTS = 'excludedProducts';
+    const SORT_ORDER = 'sortOrder';
     const DEFAULT_SCOPE_VALUE = 'productCollectionSegment';
 
     /**
@@ -65,6 +66,7 @@ class ProductCollectionSegmentType extends AbstractType implements DataMapperInt
         $builder
             ->add(self::INCLUDED_PRODUCTS, HiddenType::class, ['mapped' => false])
             ->add(self::EXCLUDED_PRODUCTS, HiddenType::class, ['mapped' => false])
+            ->add(self::SORT_ORDER, SortOrderGridType::class, ['mapped' => false])
             ->setDataMapper($this);
 
         // Make segment name required for existing segments
@@ -156,6 +158,9 @@ class ProductCollectionSegmentType extends AbstractType implements DataMapperInt
         $view->vars['segmentDefinition'] = $segmentDefinitionView->vars['value'];
         $view->vars['hasFilters'] = $this->definitionConverter->hasFilters($view->vars['segmentDefinition']);
         $view->vars['addNameField'] = $options['add_name_field'];
+
+        $sortOrderView = $view->children[self::SORT_ORDER];
+        $view->vars['sortOrderConstraints'] = $sortOrderView->vars['sortOrderConstraints'];
     }
 
     /**
