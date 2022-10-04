@@ -6,7 +6,8 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\MessageQueueBundle\Entity\Job;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\WebCatalogBundle\Async\ContentNodeCacheProcessor;
-use Oro\Bundle\WebCatalogBundle\Async\Topics;
+use Oro\Bundle\WebCatalogBundle\Async\Topic\WebCatalogCalculateContentNodeCacheTopic;
+use Oro\Bundle\WebCatalogBundle\Async\Topic\WebCatalogCalculateContentNodeTreeCacheTopic;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentNodeRepository;
 use Oro\Bundle\WebCatalogBundle\Entity\Repository\WebCatalogRepository;
@@ -22,24 +23,16 @@ class ContentNodeCacheProcessorTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var JobRunner|\PHPUnit\Framework\MockObject\MockObject */
-    private $jobRunner;
+    private JobRunner|\PHPUnit\Framework\MockObject\MockObject $jobRunner;
 
-    /** @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $producer;
+    private MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject $producer;
 
-    /** @var ContentNodeRepository|\PHPUnit\Framework\MockObject\MockObject */
-    private $contentNodeRepository;
+    private ContentNodeRepository|\PHPUnit\Framework\MockObject\MockObject $contentNodeRepository;
 
-    /** @var WebCatalogRepository|\PHPUnit\Framework\MockObject\MockObject */
-    private $webCatalogRepository;
+    private WebCatalogRepository|\PHPUnit\Framework\MockObject\MockObject $webCatalogRepository;
 
-    /** @var ContentNodeCacheProcessor */
-    private $processor;
+    private ContentNodeCacheProcessor $processor;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->jobRunner = $this->createMock(JobRunner::class);
@@ -48,11 +41,11 @@ class ContentNodeCacheProcessorTest extends \PHPUnit\Framework\TestCase
         $this->webCatalogRepository = $this->createMock(WebCatalogRepository::class);
 
         $doctrine = $this->createMock(ManagerRegistry::class);
-        $doctrine->expects($this->any())
+        $doctrine->expects(self::any())
             ->method('getRepository')
             ->willReturnMap([
                 [ContentNode::class, null, $this->contentNodeRepository],
-                [WebCatalog::class, null, $this->webCatalogRepository]
+                [WebCatalog::class, null, $this->webCatalogRepository],
             ]);
 
         $this->processor = new ContentNodeCacheProcessor(
@@ -62,75 +55,56 @@ class ContentNodeCacheProcessorTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetSubscribedTopics()
+    public function testGetSubscribedTopics(): void
     {
-        $this->assertEquals([Topics::CALCULATE_CONTENT_NODE_CACHE], $this->processor->getSubscribedTopics());
+        self::assertEquals(
+            [WebCatalogCalculateContentNodeCacheTopic::getName()],
+            ContentNodeCacheProcessor::getSubscribedTopics()
+        );
     }
 
-    public function testProcess()
+    public function testProcess(): void
     {
-        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session */
         $session = $this->createMock(SessionInterface::class);
-        $message = $this->createMessage('mid-42', '{"contentNodeId":3}');
+        $message = $this->createMessage('mid-42', [WebCatalogCalculateContentNodeCacheTopic::CONTENT_NODE_ID => 3]);
 
         $webCatalog = $this->getEntity(WebCatalog::class, ['id' => 1]);
         $node = $this->getEntity(ContentNode::class, ['id' => 3, 'webCatalog' => $webCatalog]);
 
-        $this->contentNodeRepository->expects($this->once())
+        $this->contentNodeRepository->expects(self::once())
             ->method('findOneBy')
             ->with(['id' => 3])
             ->willReturn($node);
 
         $this->assertProcessCalled($webCatalog, $node);
-        $this->assertEquals(MessageProcessorInterface::ACK, $this->processor->process($message, $session));
+        self::assertEquals(MessageProcessorInterface::ACK, $this->processor->process($message, $session));
     }
 
-    /**
-     * @return array
-     */
-    public function webCatalogDataProvider()
-    {
-        return [
-            'scalar' => [
-                'messageBody' => '1'
-            ],
-            'array' => [
-                'messageBody' => '{"webCatalogId": 1}'
-            ]
-        ];
-    }
-
-    private function assertProcessCalled(WebCatalog $webCatalog, ContentNode $node)
+    private function assertProcessCalled(WebCatalog $webCatalog, ContentNode $node): void
     {
         /** @var Scope $scope */
         $scope = $this->getEntity(Scope::class, ['id' => 21]);
         $scopes = [$scope];
-        $this->webCatalogRepository->expects($this->once())
+        $this->webCatalogRepository->expects(self::once())
             ->method('getUsedScopes')
             ->with($webCatalog)
             ->willReturn($scopes);
 
-        $this->producer->expects($this->once())
+        $this->producer->expects(self::once())
             ->method('send')
             ->with(
-                Topics::CALCULATE_CONTENT_NODE_TREE_BY_SCOPE,
+                WebCatalogCalculateContentNodeTreeCacheTopic::getName(),
                 [
-                    'contentNode' => $node->getId(),
-                    'scope' => $scope->getId(),
-                    'jobId' => 123
+                    WebCatalogCalculateContentNodeTreeCacheTopic::CONTENT_NODE => $node->getId(),
+                    WebCatalogCalculateContentNodeTreeCacheTopic::SCOPE => $scope->getId(),
+                    WebCatalogCalculateContentNodeTreeCacheTopic::JOB_ID => 123,
                 ]
             );
         $this->assertUniqueJobExecuted();
         $this->assertChildJobCreated($scope, $node);
     }
 
-    /**
-     * @param string $messageId
-     * @param string $body
-     *
-     * @return Message
-     */
-    private function createMessage($messageId, $body)
+    private function createMessage(string $messageId, array $body): Message
     {
         $message = new Message();
         $message->setMessageId($messageId);
@@ -139,37 +113,35 @@ class ContentNodeCacheProcessorTest extends \PHPUnit\Framework\TestCase
         return $message;
     }
 
-    private function assertUniqueJobExecuted()
+    private function assertUniqueJobExecuted(): void
     {
-        /** @var Job|\PHPUnit\Framework\MockObject\MockObject $job */
         $job = $this->createMock(Job::class);
-        $this->jobRunner->expects($this->once())
+        $this->jobRunner->expects(self::once())
             ->method('runUnique')
             ->willReturnCallback(
                 function ($ownerId, $name, $closure) use ($job) {
                     $this->assertEquals('mid-42', $ownerId);
-                    $this->assertEquals(Topics::CALCULATE_CONTENT_NODE_CACHE . ':3', $name);
+                    $this->assertEquals(WebCatalogCalculateContentNodeCacheTopic::getName() . ':3', $name);
 
                     return $closure($this->jobRunner, $job);
                 }
             );
     }
 
-    private function assertChildJobCreated(Scope $scope, ContentNode $node)
+    private function assertChildJobCreated(Scope $scope, ContentNode $node): void
     {
-        /** @var Job|\PHPUnit\Framework\MockObject\MockObject $job */
         $childJob = $this->createMock(Job::class);
-        $childJob->expects($this->once())
+        $childJob->expects(self::once())
             ->method('getId')
             ->willReturn(123);
-        $this->jobRunner->expects($this->once())
+        $this->jobRunner->expects(self::once())
             ->method('createDelayed')
             ->willReturnCallback(
                 function ($name, $closure) use ($childJob, $scope, $node) {
                     $this->assertEquals(
                         sprintf(
                             '%s:%s:%s',
-                            Topics::CALCULATE_CONTENT_NODE_TREE_BY_SCOPE,
+                            WebCatalogCalculateContentNodeTreeCacheTopic::getName(),
                             $scope->getId(),
                             $node->getId()
                         ),

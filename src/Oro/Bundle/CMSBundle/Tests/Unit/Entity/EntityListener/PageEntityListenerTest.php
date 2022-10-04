@@ -10,20 +10,18 @@ use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\CMSBundle\Entity\EntityListener\PageEntityListener;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\WebCatalogBundle\Async\Topic\WebCatalogCalculateCacheTopic;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\Testing\ReflectionUtil;
 
 class PageEntityListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
-    private $doctrineHelper;
+    private DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject $doctrineHelper;
 
-    /** @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $messageProducer;
+    private MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject $messageProducer;
 
-    /** @var PageEntityListener */
-    private $entityListener;
+    private PageEntityListener $entityListener;
 
     protected function setUp(): void
     {
@@ -41,7 +39,7 @@ class PageEntityListenerTest extends \PHPUnit\Framework\TestCase
         return $page;
     }
 
-    public function testPostRemove()
+    public function testPostRemove(): void
     {
         $result = [
             ['id' => 3],
@@ -49,34 +47,34 @@ class PageEntityListenerTest extends \PHPUnit\Framework\TestCase
         ];
 
         $query = $this->createMock(AbstractQuery::class);
-        $query->expects($this->once())
+        $query->expects(self::once())
             ->method('getResult')
             ->willReturn($result);
 
         $qb = $this->createMock(QueryBuilder::class);
-        $qb->expects($this->once())
+        $qb->expects(self::once())
             ->method('expr')
             ->willReturn(new Query\Expr());
-        $qb->expects($this->once())
+        $qb->expects(self::once())
             ->method('getQuery')
             ->willReturn($query);
 
         $em = $this->createMock(EntityRepository::class);
-        $em->expects($this->once())
+        $em->expects(self::once())
             ->method('createQueryBuilder')
             ->with('content_node')
             ->willReturn($qb);
 
-        $this->doctrineHelper->expects($this->once())
+        $this->doctrineHelper->expects(self::once())
             ->method('getEntityRepository')
             ->with(ContentNode::class)
             ->willReturn($em);
 
-        $this->messageProducer->expects($this->exactly(2))
+        $this->messageProducer->expects(self::exactly(2))
             ->method('send')
             ->withConsecutive(
-                ['oro.web_catalog.calculate_cache', ['webCatalogId' => 3]],
-                ['oro.web_catalog.calculate_cache', ['webCatalogId' => 5]]
+                [WebCatalogCalculateCacheTopic::getName(), [WebCatalogCalculateCacheTopic::WEB_CATALOG_ID => 3]],
+                [WebCatalogCalculateCacheTopic::getName(), [WebCatalogCalculateCacheTopic::WEB_CATALOG_ID => 5]]
             );
 
         $entity = $this->getPageEntity(2);
@@ -86,35 +84,35 @@ class PageEntityListenerTest extends \PHPUnit\Framework\TestCase
         $this->entityListener->postRemove($entity, $lifecycleEventArgs);
     }
 
-    public function testPostRemoveWithoutWebCatalog()
+    public function testPostRemoveWithoutWebCatalog(): void
     {
         $result = [];
 
         $query = $this->createMock(AbstractQuery::class);
-        $query->expects($this->once())
+        $query->expects(self::once())
             ->method('getResult')
             ->willReturn($result);
 
         $qb = $this->createMock(QueryBuilder::class);
-        $qb->expects($this->once())
+        $qb->expects(self::once())
             ->method('expr')
             ->willReturn(new Query\Expr());
-        $qb->expects($this->once())
+        $qb->expects(self::once())
             ->method('getQuery')
             ->willReturn($query);
 
         $em = $this->createMock(EntityRepository::class);
-        $em->expects($this->once())
+        $em->expects(self::once())
             ->method('createQueryBuilder')
             ->with('content_node')
             ->willReturn($qb);
 
-        $this->doctrineHelper->expects($this->once())
+        $this->doctrineHelper->expects(self::once())
             ->method('getEntityRepository')
             ->with(ContentNode::class)
             ->willReturn($em);
 
-        $this->messageProducer->expects($this->never())
+        $this->messageProducer->expects(self::never())
             ->method('send');
 
         $entity = $this->getPageEntity(2);
