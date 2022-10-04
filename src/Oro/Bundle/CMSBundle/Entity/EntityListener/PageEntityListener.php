@@ -5,7 +5,7 @@ namespace Oro\Bundle\CMSBundle\Entity\EntityListener;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\WebCatalogBundle\Async\Topics;
+use Oro\Bundle\WebCatalogBundle\Async\Topic\WebCatalogCalculateCacheTopic;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
@@ -45,7 +45,10 @@ class PageEntityListener
     public function postRemove(Page $entity, LifecycleEventArgs $args)
     {
         foreach ($this->webCatalogIds as $webCatalogId) {
-            $this->messageProducer->send(Topics::CALCULATE_WEB_CATALOG_CACHE, ['webCatalogId' => $webCatalogId]);
+            $this->messageProducer->send(
+                WebCatalogCalculateCacheTopic::getName(),
+                [WebCatalogCalculateCacheTopic::WEB_CATALOG_ID => $webCatalogId]
+            );
         }
 
         $this->webCatalogIds = [];

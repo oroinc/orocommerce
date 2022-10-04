@@ -5,9 +5,10 @@ namespace Oro\Bundle\WebCatalogBundle\Async;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\WebCatalogBundle\Async\Topic\WebCatalogCalculateCacheTopic;
+use Oro\Bundle\WebCatalogBundle\Async\Topic\WebCatalogResolveContentNodeSlugsTopic;
 use Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeCache;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
-use Oro\Bundle\WebCatalogBundle\Exception\InvalidArgumentException;
 use Oro\Bundle\WebCatalogBundle\Generator\SlugGenerator;
 use Oro\Bundle\WebCatalogBundle\Model\ResolveNodeSlugsMessageFactory;
 use Oro\Bundle\WebCatalogBundle\Resolver\DefaultVariantScopesResolver;
@@ -16,14 +17,17 @@ use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Component\MessageQueue\Util\JSON;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 
 /**
  * Schedule content node slug generation
  */
-class ContentNodeSlugsProcessor implements MessageProcessorInterface, TopicSubscriberInterface
+class ContentNodeSlugsProcessor implements MessageProcessorInterface, TopicSubscriberInterface, LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     /**
      * @var ManagerRegistry
      */
@@ -82,17 +86,20 @@ class ContentNodeSlugsProcessor implements MessageProcessorInterface, TopicSubsc
      */
     public function process(MessageInterface $message, SessionInterface $session)
     {
-        /** @var EntityManagerInterface $em */
-        $em = $this->registry->getManagerForClass(ContentNode::class);
-        $em->beginTransaction();
-
         try {
-            $body = JSON::decode($message->getBody());
-            $contentNode = $this->messageFactory->getEntityFromMessage($body);
+            $messageBody = $message->getBody();
+            $contentNode = $this->messageFactory->getEntityFromMessage($messageBody);
             if (!$contentNode) {
-                throw new InvalidArgumentException('Content Node not found');
+                $this->logger->error('Content node #{id} is not found', $messageBody);
+
+                return self::REJECT;
             }
-            $createRedirect = $this->messageFactory->getCreateRedirectFromMessage($body);
+
+            /** @var EntityManagerInterface $em */
+            $em = $this->registry->getManagerForClass(ContentNode::class);
+            $em->beginTransaction();
+
+            $createRedirect = $this->messageFactory->getCreateRedirectFromMessage($messageBody);
 
             $this->defaultVariantScopesResolver->resolve($contentNode);
             $this->slugGenerator->generate($contentNode, $createRedirect);
@@ -118,8 +125,8 @@ class ContentNodeSlugsProcessor implements MessageProcessorInterface, TopicSubsc
              */
             $this->contentNodeTreeCache->deleteForNode($contentNode);
 
-            $this->messageProducer->send(Topics::CALCULATE_WEB_CATALOG_CACHE, [
-                'webCatalogId' => $contentNode->getWebCatalog()->getId()
+            $this->messageProducer->send(WebCatalogCalculateCacheTopic::getName(), [
+                WebCatalogCalculateCacheTopic::WEB_CATALOG_ID => $contentNode->getWebCatalog()->getId(),
             ]);
         } catch (UniqueConstraintViolationException $e) {
             $em->rollback();
@@ -130,8 +137,8 @@ class ContentNodeSlugsProcessor implements MessageProcessorInterface, TopicSubsc
             $this->logger->error(
                 'Unexpected exception occurred during content variant slugs processing',
                 [
-                    'topic' => Topics::RESOLVE_NODE_SLUGS,
-                    'exception' => $e
+                    'topic' => WebCatalogResolveContentNodeSlugsTopic::getName(),
+                    'exception' => $e,
                 ]
             );
 
@@ -146,6 +153,6 @@ class ContentNodeSlugsProcessor implements MessageProcessorInterface, TopicSubsc
      */
     public static function getSubscribedTopics()
     {
-        return [Topics::RESOLVE_NODE_SLUGS];
+        return [WebCatalogResolveContentNodeSlugsTopic::getName()];
     }
 }

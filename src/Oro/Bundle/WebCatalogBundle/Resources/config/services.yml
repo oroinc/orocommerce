@@ -361,50 +361,6 @@ services:
         tags:
             - { name: layout.context_configurator }
 
-    oro_web_catalog.async.web_catalog_cache_processor:
-        class: Oro\Bundle\WebCatalogBundle\Async\WebCatalogCacheProcessor
-        arguments:
-            - '@oro_message_queue.job.runner'
-            - '@oro_message_queue.client.message_producer'
-            - '@doctrine'
-            - '@oro_config.manager'
-            - '@logger'
-        tags:
-            - { name: 'oro_message_queue.client.message_processor' }
-
-    oro_web_catalog.async.content_node_cache_processor:
-        class: Oro\Bundle\WebCatalogBundle\Async\ContentNodeCacheProcessor
-        arguments:
-            - '@oro_message_queue.job.runner'
-            - '@oro_message_queue.client.message_producer'
-            - '@doctrine'
-        tags:
-            - { name: 'oro_message_queue.client.message_processor' }
-
-    oro_web_catalog.async.content_node_tree_cache_processor:
-        class: Oro\Bundle\WebCatalogBundle\Async\ContentNodeTreeCacheProcessor
-        arguments:
-            - '@oro_message_queue.job.runner'
-            - '@oro_web_catalog.content_node_tree_cache_dumper'
-            - '@doctrine'
-            - '@logger'
-            - '@oro_web_catalog.layout.data_provider.menu_data.cache'
-        tags:
-            - { name: 'oro_message_queue.client.message_processor' }
-
-    oro_web_catalog.async.content_node_slug_processor:
-        class: Oro\Bundle\WebCatalogBundle\Async\ContentNodeSlugsProcessor
-        arguments:
-            - '@doctrine'
-            - '@oro_web_catalog.resolver.default_variant_scope'
-            - '@oro_web_catalog.generator.slug_generator'
-            - '@oro_message_queue.client.message_producer'
-            - '@oro_web_catalog.model.resolve_node_slugs_message_factory'
-            - '@logger'
-            - '@oro_web_catalog.content_node_tree_cache'
-        tags:
-            - { name: 'oro_message_queue.client.message_processor' }
-
     oro_web_catalog.resolver.default_variant_scope:
         class: Oro\Bundle\WebCatalogBundle\Resolver\DefaultVariantScopesResolver
         arguments:

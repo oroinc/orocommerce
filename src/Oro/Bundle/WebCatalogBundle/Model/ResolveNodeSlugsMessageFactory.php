@@ -5,10 +5,14 @@ namespace Oro\Bundle\WebCatalogBundle\Model;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\RedirectBundle\DependencyInjection\Configuration;
-use Oro\Bundle\RedirectBundle\Model\Exception\InvalidArgumentException;
+use Oro\Bundle\WebCatalogBundle\Async\Topic\WebCatalogResolveContentNodeSlugsTopic;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
+use Oro\Bundle\WebCatalogBundle\Exception\InvalidArgumentException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Encapsulates common methods for working with {@see WebCatalogResolveContentNodeSlugsTopic} MQ message.
+ */
 class ResolveNodeSlugsMessageFactory
 {
     const ID = 'id';
@@ -42,8 +46,8 @@ class ResolveNodeSlugsMessageFactory
     public function createMessage(ContentNode $contentNode)
     {
         return [
-            self::ID => $contentNode->getId(),
-            self::CREATE_REDIRECT => $this->isCreateRedirect($contentNode),
+            WebCatalogResolveContentNodeSlugsTopic::ID => $contentNode->getId(),
+            WebCatalogResolveContentNodeSlugsTopic::CREATE_REDIRECT => $this->isCreateRedirect($contentNode),
         ];
     }
 
@@ -53,10 +57,9 @@ class ResolveNodeSlugsMessageFactory
      */
     public function getEntityFromMessage($data)
     {
-        $data = $this->getResolvedData($data);
         $repository = $this->doctrineHelper->getEntityRepositoryForClass(ContentNode::class);
 
-        return $repository->find($data[self::ID]);
+        return $repository->find($data[WebCatalogResolveContentNodeSlugsTopic::ID]);
     }
 
     /**
@@ -65,9 +68,7 @@ class ResolveNodeSlugsMessageFactory
      */
     public function getCreateRedirectFromMessage($data)
     {
-        $data = $this->getResolvedData($data);
-
-        return $data[self::CREATE_REDIRECT];
+        return $data[WebCatalogResolveContentNodeSlugsTopic::CREATE_REDIRECT];
     }
 
     /**
@@ -78,12 +79,12 @@ class ResolveNodeSlugsMessageFactory
         if (null === $this->resolver) {
             $resolver = new OptionsResolver();
             $resolver->setRequired([
-                self::ID,
-                self::CREATE_REDIRECT
+                WebCatalogResolveContentNodeSlugsTopic::ID,
+                WebCatalogResolveContentNodeSlugsTopic::CREATE_REDIRECT
             ]);
 
-            $resolver->setAllowedTypes(self::ID, 'int');
-            $resolver->setAllowedTypes(self::CREATE_REDIRECT, 'bool');
+            $resolver->setAllowedTypes(WebCatalogResolveContentNodeSlugsTopic::ID, 'int');
+            $resolver->setAllowedTypes(WebCatalogResolveContentNodeSlugsTopic::CREATE_REDIRECT, 'bool');
 
             $this->resolver = $resolver;
         }

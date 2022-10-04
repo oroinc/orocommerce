@@ -4,34 +4,29 @@ namespace Oro\Bundle\WebCatalogBundle\Async;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
+use Oro\Bundle\WebCatalogBundle\Async\Topic\WebCatalogCalculateContentNodeCacheTopic as Topic;
+use Oro\Bundle\WebCatalogBundle\Async\Topic\WebCatalogCalculateContentNodeTreeCacheTopic;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\Repository\WebCatalogRepository;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
-use Oro\Component\MessageQueue\Exception\InvalidArgumentException as MessageQueueInvalidArgumentException;
 use Oro\Component\MessageQueue\Job\Job;
 use Oro\Component\MessageQueue\Job\JobRunner;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Component\MessageQueue\Util\JSON;
-use Symfony\Component\OptionsResolver\Exception\InvalidArgumentException as OptionsResolverInvalidArgumentException;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Schedule cache recalculation for content node
  */
 class ContentNodeCacheProcessor implements MessageProcessorInterface, TopicSubscriberInterface
 {
-    /** @var JobRunner */
-    private $jobRunner;
+    private JobRunner $jobRunner;
 
-    /** @var MessageProducerInterface */
-    private $producer;
+    private MessageProducerInterface $producer;
 
-    /** @var ManagerRegistry */
-    private $doctrine;
+    private ManagerRegistry $doctrine;
 
     public function __construct(
         JobRunner $jobRunner,
@@ -43,19 +38,15 @@ class ContentNodeCacheProcessor implements MessageProcessorInterface, TopicSubsc
         $this->doctrine = $doctrine;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function process(MessageInterface $message, SessionInterface $session)
+    public function process(MessageInterface $message, SessionInterface $session): string
     {
-        $messageData = $this->getMessageData($message);
-        $contentNodeId = $messageData['contentNodeId'];
+        $messageBody = $message->getBody();
 
         $result = $this->jobRunner->runUnique(
             $message->getMessageId(),
-            sprintf('%s:%s', Topics::CALCULATE_CONTENT_NODE_CACHE, $contentNodeId),
-            function (JobRunner $jobRunner) use ($contentNodeId) {
-                $contentNode = $this->getContentNode($contentNodeId);
+            sprintf('%s:%s', Topic::getName(), $messageBody[Topic::CONTENT_NODE_ID]),
+            function (JobRunner $jobRunner) use ($messageBody) {
+                $contentNode = $this->getContentNode($messageBody[Topic::CONTENT_NODE_ID]);
                 if ($contentNode) {
                     $this->scheduleCacheRecalculationForContentNodeTree($jobRunner, $contentNode);
                 }
@@ -67,24 +58,24 @@ class ContentNodeCacheProcessor implements MessageProcessorInterface, TopicSubsc
         return $result ? self::ACK : self::REJECT;
     }
 
-    private function scheduleCacheRecalculationForContentNodeTree(JobRunner $jobRunner, ContentNode $contentNode)
+    private function scheduleCacheRecalculationForContentNodeTree(JobRunner $jobRunner, ContentNode $contentNode): void
     {
         $scopes = $this->getUsedScopes($contentNode->getWebCatalog());
         foreach ($scopes as $scope) {
             $jobRunner->createDelayed(
                 sprintf(
                     '%s:%s:%s',
-                    Topics::CALCULATE_CONTENT_NODE_TREE_BY_SCOPE,
+                    WebCatalogCalculateContentNodeTreeCacheTopic::getName(),
                     $scope->getId(),
                     $contentNode->getId()
                 ),
                 function (JobRunner $jobRunner, Job $child) use ($contentNode, $scope) {
                     $this->producer->send(
-                        Topics::CALCULATE_CONTENT_NODE_TREE_BY_SCOPE,
+                        WebCatalogCalculateContentNodeTreeCacheTopic::getName(),
                         [
-                            'contentNode' => $contentNode->getId(),
-                            'scope'       => $scope->getId(),
-                            'jobId'       => $child->getId(),
+                            WebCatalogCalculateContentNodeTreeCacheTopic::CONTENT_NODE => $contentNode->getId(),
+                            WebCatalogCalculateContentNodeTreeCacheTopic::SCOPE => $scope->getId(),
+                            WebCatalogCalculateContentNodeTreeCacheTopic::JOB_ID => $child->getId(),
                         ]
                     );
                 }
@@ -92,16 +83,11 @@ class ContentNodeCacheProcessor implements MessageProcessorInterface, TopicSubsc
         }
     }
 
-    /**
-     * @param int $contentNodeId
-     *
-     * @return ContentNode
-     */
-    private function getContentNode($contentNodeId)
+    private function getContentNode(int $contentNodeId): ?ContentNode
     {
-        $repository = $this->doctrine->getRepository(ContentNode::class);
-
-        return $repository->findOneBy(['id' => $contentNodeId]);
+        return $this->doctrine
+            ->getRepository(ContentNode::class)
+            ->findOneBy(['id' => $contentNodeId]);
     }
 
     /**
@@ -109,7 +95,7 @@ class ContentNodeCacheProcessor implements MessageProcessorInterface, TopicSubsc
      *
      * @return Scope[]
      */
-    private function getUsedScopes(WebCatalog $webCatalog)
+    private function getUsedScopes(WebCatalog $webCatalog): array
     {
         /** @var WebCatalogRepository $repository */
         $repository = $this->doctrine->getRepository(WebCatalog::class);
@@ -117,31 +103,8 @@ class ContentNodeCacheProcessor implements MessageProcessorInterface, TopicSubsc
         return $repository->getUsedScopes($webCatalog);
     }
 
-    private function getMessageData(MessageInterface $message): array
+    public static function getSubscribedTopics(): array
     {
-        $body = JSON::decode($message->getBody());
-
-        try {
-            return $this->getOptionsResolver()->resolve((array)$body);
-        } catch (OptionsResolverInvalidArgumentException $e) {
-            throw new MessageQueueInvalidArgumentException($e->getMessage(), $e->getCode());
-        }
-    }
-
-    private function getOptionsResolver(): OptionsResolver
-    {
-        $resolver = new OptionsResolver();
-        $resolver->setRequired(['contentNodeId']);
-        $resolver->setAllowedTypes('contentNodeId', ['int']);
-
-        return $resolver;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function getSubscribedTopics()
-    {
-        return [Topics::CALCULATE_CONTENT_NODE_CACHE];
+        return [Topic::getName()];
     }
 }
