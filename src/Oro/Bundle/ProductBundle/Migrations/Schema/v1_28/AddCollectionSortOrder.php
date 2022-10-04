@@ -15,12 +15,11 @@ class AddCollectionSortOrder implements Migration
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->createCollectionSortOrderTable($schema);
+        $this->addCollectionSortOrderForeignKeys($schema);
     }
 
     /**
      * Creates oro_product_collection_sort_order table
-     * @param Schema $schema
-     * @return void
      */
     protected function createCollectionSortOrderTable(Schema $schema): void
     {
@@ -33,10 +32,31 @@ class AddCollectionSortOrder implements Migration
             ]);
             $table->addColumn('product_id', 'integer', ['notnull' => true]);
             $table->addColumn('segment_id', 'integer', ['notnull' => true]);
+            $table->setPrimaryKey(['id']);
             $table->addUniqueIndex(
                 ['product_id', 'segment_id'],
                 'product_segment_sort_uniq_idx'
             );
         }
+    }
+
+    /**
+     * Add foreign keys to the oro_product_collection_sort_order table
+     */
+    public function addCollectionSortOrderForeignKeys(Schema $schema) : void
+    {
+        $table = $schema->getTable(OroProductBundleInstaller::PRODUCT_COLLECTION_SORT_ORDER_TABLE_NAME);
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_product'),
+            ['product_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_segment'),
+            ['segment_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
     }
 }
