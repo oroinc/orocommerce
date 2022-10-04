@@ -120,7 +120,7 @@ class OroCatalogBundleInstaller implements
 
         $this->addContentVariantTypes($schema);
 
-        $this->createSortOrderColumn($schema);
+        $this->createProductCategorySortOrder($schema);
     }
 
     /**
@@ -469,15 +469,27 @@ class OroCatalogBundleInstaller implements
     }
 
     /**
+     * Adds category_sort_order field to oro_product table & related extended field
      * @param Schema $schema
      * @return void
      */
-    protected function createSortOrderColumn(Schema $schema): void
+    protected function createProductCategorySortOrder(Schema $schema): void
     {
         $table = $schema->getTable(OroCatalogBundleInstaller::ORO_PRODUCT_TABLE_NAME);
-        $table->addColumn('category_sort_order', 'float', [
-            'notnull' => false,
-            'default' => null
-        ]);
+        if (!$table->hasColumn('category_sort_order')) {
+            $table->addColumn('category_sort_order', 'float', [
+                'notnull' => false,
+                'default' => null,
+                'oro_options' => [
+                    'extend' => ['owner' => ExtendScope::OWNER_CUSTOM],
+                    'importexport' => ['excluded' => true],
+                    'datagrid' => ['is_visible' => DatagridScope::IS_VISIBLE_HIDDEN],
+                    'form' => ['is_enabled' => false],
+                    'email' => ['available_in_template' => false],
+                    'view' => ['is_displayable' => false],
+                    'merge' => ['display' => false],
+                ],
+            ]);
+        }
     }
 }
