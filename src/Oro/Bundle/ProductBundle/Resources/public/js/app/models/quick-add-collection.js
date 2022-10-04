@@ -124,7 +124,9 @@ const QuickAddCollection = BaseCollection.extend({
      * @param {Array<{sku:string, quantity: string, unit_label?: string}>} items
      * @param {Object} options
      * @param {boolean=} options.ignoreIncorrectUnit by default product with incorrect units are added to collection
-     * @param {boolean=} options.useMinQuantityForUnit by default product with incorrect quantity used default qty
+     * @param {boolean=} options.useMinQuantityForUnit by default, a product with a non-existent quantity uses
+     * the minimum quantity
+     *
      * @return {Promise<{invalid: Object}>}
      */
     addQuickAddRows(items, options = {}) {
@@ -139,7 +141,9 @@ const QuickAddCollection = BaseCollection.extend({
      * @param {Array<{sku:string, quantity: string, unit_label?: string}>} items
      * @param {Object} options
      * @param {boolean=} options.ignoreIncorrectUnit by default product with incorrect units are added to collection
-     * @param {boolean=} options.useMinQuantityForUnit by default product with incorrect quantity used default qty
+     * @param {boolean=} options.useMinQuantityForUnit by default, a product with a non-existent quantity uses
+     * the minimum quantity
+     *
      * @return {Promise<{invalid: Object}>}
      * @protected
      */
