@@ -3,15 +3,31 @@
 namespace Oro\Bundle\ProductBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\ProductBundle\Model\ExtendCollectionSortOrder;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 
 /**
  * Represents collection sort orders table
- * @ORM\Table(name="oro_product_collection_sort_order")
+ * @ORM\Table(
+ *     name="oro_product_collection_sort_order",
+ *     uniqueConstraints={
+ *          @ORM\UniqueConstraint(
+ *              name="product_segment_sort_uniq_idx",
+ *              columns={"product_id","segment_id"}
+ *          )
+ *      }
+ * )
  * @ORM\Entity()
  * @ORM\HasLifecycleCallbacks()
+ * @Config(
+ *      defaultValues={
+ *          "dataaudit"={
+ *              "auditable"=false
+ *          }
+ *      }
+ * )
  */
 class CollectionSortOrder extends ExtendCollectionSortOrder
 {
@@ -43,9 +59,12 @@ class CollectionSortOrder extends ExtendCollectionSortOrder
      * @var Product
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\Product")
-     * @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
      * @ConfigField(
      *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=false
+     *          },
      *          "importexport"={
      *              "excluded"=true
      *          }
@@ -58,9 +77,12 @@ class CollectionSortOrder extends ExtendCollectionSortOrder
      * @var Segment
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\SegmentBundle\Entity\Segment")
-     * @ORM\JoinColumn(name="segment_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ORM\JoinColumn(name="segment_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
      * @ConfigField(
      *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=false
+     *          },
      *          "importexport"={
      *              "excluded"=true
      *          }

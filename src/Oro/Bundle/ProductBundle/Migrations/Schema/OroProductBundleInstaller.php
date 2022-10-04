@@ -38,7 +38,6 @@ class OroProductBundleInstaller implements
     const PRODUCT_UNIT_TABLE_NAME = 'oro_product_unit';
     const PRODUCT_UNIT_PRECISION_TABLE_NAME = 'oro_product_unit_precision';
     const PRODUCT_VARIANT_LINK_TABLE_NAME = 'oro_product_variant_link';
-    const PRODUCT_SHORT_DESCRIPTION_TABLE_NAME = 'oro_product_short_desc';
     const FALLBACK_LOCALE_VALUE_TABLE_NAME = 'oro_fallback_localization_val';
     const RELATED_PRODUCTS_TABLE_NAME = 'oro_product_related_products';
     const UPSELL_PRODUCTS_TABLE_NAME = 'oro_product_upsell_product';
@@ -50,7 +49,6 @@ class OroProductBundleInstaller implements
     const PRODUCT_IMAGE_TYPE_TABLE_NAME = 'oro_product_image_type';
 
     public const PRODUCT_COLLECTION_SORT_ORDER_TABLE_NAME = 'oro_product_collection_sort_order';
-    public const SEGMENT_TABLE_NAME = 'oro_segment';
 
     public const PRODUCT_WEBSITE_REINDEX_REQUEST_ITEM = 'oro_prod_webs_reindex_req_item';
 
@@ -125,6 +123,8 @@ class OroProductBundleInstaller implements
 
         $this->createOroProductWebsiteReindexRequestItem($schema);
 
+        $this->createCollectionSortOrderTable($schema);
+
         $this->addOroProductForeignKeys($schema);
         $this->addOroProductUnitPrecisionForeignKeys($schema);
         $this->addOroProductNameForeignKeys($schema);
@@ -137,6 +137,7 @@ class OroProductBundleInstaller implements
         $this->addOroBrandDescriptionForeignKeys($schema);
         $this->addOroBrandNameForeignKeys($schema);
         $this->addOroBrandShortDescForeignKeys($schema);
+        $this->addCollectionSortOrderForeignKeys($schema);
         $this->addProductToBrand($schema);
 
         $this->updateProductTable($schema);
@@ -147,8 +148,6 @@ class OroProductBundleInstaller implements
         $this->addAttributeFamilyField($schema);
 
         $this->addPageTemplateField($schema);
-
-        $this->createCollectionSortOrderTable($schema);
     }
 
     /**
@@ -830,8 +829,6 @@ class OroProductBundleInstaller implements
 
     /**
      * Creates oro_product_collection_sort_order table
-     * @param Schema $schema
-     * @return void
      */
     protected function createCollectionSortOrderTable(Schema $schema): void
     {
@@ -844,10 +841,31 @@ class OroProductBundleInstaller implements
             ]);
             $table->addColumn('product_id', 'integer', ['notnull' => true]);
             $table->addColumn('segment_id', 'integer', ['notnull' => true]);
+            $table->setPrimaryKey(['id']);
             $table->addUniqueIndex(
                 ['product_id', 'segment_id'],
                 'product_segment_sort_uniq_idx'
             );
         }
+    }
+
+    /**
+     * Add foreign keys to the oro_product_collection_sort_order table
+     */
+    public function addCollectionSortOrderForeignKeys(Schema $schema) : void
+    {
+        $table = $schema->getTable(static::PRODUCT_COLLECTION_SORT_ORDER_TABLE_NAME);
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_product'),
+            ['product_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_segment'),
+            ['segment_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
     }
 }
