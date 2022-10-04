@@ -16,6 +16,7 @@ const QuickAddModel = BaseModel.extend({
             product_units: {},
             units_loaded: false,
             quantity_changed_manually: false,
+            use_min_quantity_for_unit: true,
 
             unit_label: null,
             unit_placeholder: __('oro.product.frontend.quick_add.form.unit.default')
