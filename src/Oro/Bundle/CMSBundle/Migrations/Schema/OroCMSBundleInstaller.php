@@ -36,6 +36,7 @@ class OroCMSBundleInstaller implements
     const MAX_IMAGE_SLIDE_MAIN_IMAGE_SIZE_IN_MB = 10;
     const MAX_IMAGE_SLIDE_MEDIUM_IMAGE_SIZE_IN_MB = 10;
     const MAX_IMAGE_SLIDE_SMALL_IMAGE_SIZE_IN_MB = 10;
+    const MAX_CONTENT_TEMPLATE_PREVIEW_IMAGE_SIZE_IN_MB = 10;
 
     /**
      * @var ExtendExtension
@@ -52,7 +53,7 @@ class OroCMSBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_12';
+        return 'v1_13';
     }
 
     /**
@@ -88,6 +89,8 @@ class OroCMSBundleInstaller implements
         $this->createOroCmsContentWidgetUsageTable($schema);
         $this->createOroCmsImageSlideTable($schema);
         $this->createTabbedContentItemTable($schema);
+        $this->createOroCmsContentTemplateTable($schema);
+        $this->addWysiwygEditorToContentTemplate($schema);
 
         /** Foreign keys generation **/
         $this->addOroCmsPageForeignKeys($schema);
@@ -101,12 +104,82 @@ class OroCMSBundleInstaller implements
         $this->addOroCmsContentWidgetUsageForeignKeys($schema);
         $this->addOroCmsImageSlideForeignKeys($schema);
         $this->addTabbedContentItemForeignKeys($schema);
+        $this->addForeignKeysToContentTemplate($schema);
 
         /** Associations */
         $this->addOroCmsLoginPageImageAssociations($schema);
 
         $this->addContentVariantTypes($schema);
         $this->addLocalizedFallbackValueFields($schema);
+    }
+
+    protected function createOroCmsContentTemplateTable(Schema $schema): void
+    {
+        $table = $schema->createTable('oro_cms_content_template');
+
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('name', 'string', ['length' => 255]);
+        $table->addColumn('enabled', 'boolean', ['default' => true]);
+        $table->addColumn('created_at', 'datetime');
+        $table->addColumn('updated_at', 'datetime');
+        $table->addColumn('user_owner_id', 'integer', ['notnull' => false]);
+        $table->addColumn('organization_id', 'integer', ['notnull' => false]);
+
+        $this->attachmentExtension->addImageRelation(
+            $schema,
+            'oro_cms_content_template',
+            'previewImage',
+            ['attachment' => ['acl_protected' => true, 'use_dam' => false]],
+            self::MAX_CONTENT_TEMPLATE_PREVIEW_IMAGE_SIZE_IN_MB
+        );
+
+        $table->setPrimaryKey(['id']);
+    }
+
+    protected function addWysiwygEditorToContentTemplate(Schema $schema): void
+    {
+        $table = $schema->getTable('oro_cms_content_template');
+
+        $table->addColumn('content', 'wysiwyg', ['notnull' => false, 'comment' => '(DC2Type:wysiwyg)']);
+        $table->addColumn(
+            'content_style',
+            'wysiwyg_style',
+            [
+                'notnull' => false,
+                OroOptions::KEY => [
+                    ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_HIDDEN,
+                ],
+            ]
+        );
+        $table->addColumn(
+            'content_properties',
+            'wysiwyg_properties',
+            [
+                'notnull' => false,
+                OroOptions::KEY => [
+                    ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_HIDDEN,
+                ],
+            ]
+        );
+    }
+
+    protected function addForeignKeysToContentTemplate(Schema $schema): void
+    {
+        $table = $schema->getTable('oro_cms_content_template');
+
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_user'),
+            ['user_owner_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'SET NULL']
+        );
+
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_organization'),
+            ['organization_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'SET NULL']
+        );
     }
 
     /**

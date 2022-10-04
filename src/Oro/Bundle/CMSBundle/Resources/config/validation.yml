@@ -131,3 +131,18 @@ Oro\Bundle\CMSBundle\Entity\TabbedContentItem:
             - NotBlank: ~
         organization:
             - NotBlank: ~
+
+Oro\Bundle\CMSBundle\Entity\ContentTemplate:
+    properties:
+        name:
+            - NotBlank: ~
+            - Length:
+                min: 1
+                max: 255
+                allowEmptyString: false
+        content:
+            - Oro\Bundle\CMSBundle\Validator\Constraints\TwigContent: ~
+            - Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYG: ~
+        contentStyle:
+            - Oro\Bundle\CMSBundle\Validator\Constraints\TwigContent: ~
+            - Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYGStyle: ~

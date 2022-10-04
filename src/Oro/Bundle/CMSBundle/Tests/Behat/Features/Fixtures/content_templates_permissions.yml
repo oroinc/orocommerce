@@ -1,0 +1,46 @@
+Oro\Bundle\UserBundle\Entity\User:
+    charlie:
+        firstName: Charlie
+        lastName: Sheen
+        username: charlie
+        organization: '@organization'
+        organizations: ['@organization']
+        userRoles: ['@userRole']
+        owner: '@business_unit'
+        businessUnits: ['@business_unit']
+        email: 'Charlie1@example.com'
+        password: 'BLDLpjJ3z4KgdMqEr0+vmdobfbcX+l+paqwBiICkEP+J83w2r0Ec47fLk1ZarAWJ0IMlWd29XUwBhESv2RUZPg=='
+        salt: 'eexx2a8mtsg8o4c8k4w08wo04ccsw8'
+
+Oro\Bundle\CMSBundle\Entity\Page:
+    cmsPage1:
+        __calls:
+            - addTitle: ['@cmsPage1Title']
+        content: ''
+        organization: '@organization'
+        slugPrototypes: ['@cmsPage1SlugPrototype']
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    cmsPage1SlugPrototype:
+        string: 'cms-page-1'
+    cmsPage1Title:
+        string: 'CMSPage1'
+
+Oro\Bundle\CMSBundle\Entity\ContentTemplate:
+    contentTemplate{1..2}:
+        name: 'TestContentTemplate<current()>'
+        content: 'TestContentTemplate<current()>Content'
+        organization: '@organization'
+        owner: '@admin'
+        enabled: true
+        createdAt: '<dateTimeBetween("today", "today")>'
+        updatedAt: '<dateTimeBetween("today", "today")>'
+
+    contentTemplate{3..4}:
+        name: 'TestContentTemplate<current()>'
+        content: 'TestContentTemplate<current()>Content'
+        organization: '@organization'
+        owner: '@charlie'
+        enabled: true
+        createdAt: '<dateTimeBetween("today", "today")>'
+        updatedAt: '<dateTimeBetween("today", "today")>'

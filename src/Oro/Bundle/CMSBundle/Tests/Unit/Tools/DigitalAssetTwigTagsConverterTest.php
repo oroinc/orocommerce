@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Unit\Tools;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NoResultException;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\AttachmentBundle\Entity\File;
@@ -88,38 +87,31 @@ class DigitalAssetTwigTagsConverterTest extends \PHPUnit\Framework\TestCase
                 }
             );
 
-        $entityManager = $this->createMock(EntityManagerInterface::class);
-        $this->managerRegistry
-            ->expects(self::any())
-            ->method('getManagerForClass')
-            ->willReturn($entityManager);
-
         $fileRepository = $this->createMock(FileRepository::class);
-
         $digitalAssetRepository = $this->createMock(DigitalAssetRepository::class);
-        $entityManager
+        $this->managerRegistry
             ->expects(self::any())
             ->method('getRepository')
             ->willReturnMap(
                 [
-                    [File::class, $fileRepository],
-                    [DigitalAsset::class, $digitalAssetRepository],
+                    [File::class, null, $fileRepository],
+                    [DigitalAsset::class, null, $digitalAssetRepository],
                 ]
             );
 
         $fileRepository
             ->expects(self::any())
-            ->method('findOneBy')
+            ->method('findBy')
             ->willReturnCallback(
                 static function (array $criteria) {
                     $uuid = $criteria['uuid'];
 
                     if ($uuid === self::NEW_UUID) {
                         // File with such uuid does not exist.
-                        return null;
+                        return [];
                     }
 
-                    return (new TestFile())->setId(explode('-', $uuid)[1]);
+                    return [(new TestFile())->setId(explode('-', $uuid)[1])];
                 }
             );
 
@@ -154,9 +146,9 @@ class DigitalAssetTwigTagsConverterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @dataProvider convertToUrlsWithExceptionDataProvider
+     * @dataProvider convertToUrlsWhenNoFileDataProvider
      */
-    public function testConvertToUrlsWhenDatabaseException(string $contentWithTwigTags, string $expected): void
+    public function testConvertToUrlsWhenNoFile(string $contentWithTwigTags, string $expected): void
     {
         $this->fileUrlProvider
             ->expects(self::any())
@@ -185,29 +177,23 @@ class DigitalAssetTwigTagsConverterTest extends \PHPUnit\Framework\TestCase
                 }
             );
 
-        $entityManager = $this->createMock(EntityManagerInterface::class);
-        $this->managerRegistry
-            ->expects(self::any())
-            ->method('getManagerForClass')
-            ->willReturn($entityManager);
-
         $fileRepository = $this->createMock(FileRepository::class);
-
         $digitalAssetRepository = $this->createMock(DigitalAssetRepository::class);
-        $entityManager
+
+        $this->managerRegistry
             ->expects(self::any())
             ->method('getRepository')
             ->willReturnMap(
                 [
-                    [File::class, $fileRepository],
-                    [DigitalAsset::class, $digitalAssetRepository],
+                    [File::class, null, $fileRepository],
+                    [DigitalAsset::class, null, $digitalAssetRepository],
                 ]
             );
 
         $fileRepository
-            ->expects(self::any())
-            ->method('findOneBy')
-            ->willThrowException(new \Exception());
+            ->expects(self::atLeastOnce())
+            ->method('findBy')
+            ->willReturn([]);
 
         $digitalAssetRepository
             ->expects(self::any())
@@ -226,9 +212,9 @@ class DigitalAssetTwigTagsConverterTest extends \PHPUnit\Framework\TestCase
         self::assertEquals($expected, $this->converter->convertToUrls($contentWithTwigTags));
     }
 
-    public function convertToUrlsWithExceptionDataProvider(): array
+    public function convertToUrlsWhenNoFileDataProvider(): array
     {
-        return self::getFixturesData('convertToUrlsWithException');
+        return self::getFixturesData('convertToUrlsWhenNoFile');
     }
 
     /**
@@ -236,24 +222,24 @@ class DigitalAssetTwigTagsConverterTest extends \PHPUnit\Framework\TestCase
      */
     public function testConvertToTwigTags(string $contentWithUrls, string $expected): void
     {
-        $entityManager = $this->createMock(EntityManagerInterface::class);
-        $this->managerRegistry
-            ->expects(self::any())
-            ->method('getManagerForClass')
-            ->willReturn($entityManager);
-
         $digitalAssetRepository = $this->createMock(DigitalAssetRepository::class);
-        $entityManager
+        $this->managerRegistry
             ->expects(self::any())
             ->method('getRepository')
             ->with(DigitalAsset::class)
             ->willReturn($digitalAssetRepository);
 
+        $context = [
+            'entityClass' => \stdClass::class,
+            'entityId' => 42,
+            'fieldName' => 'content',
+        ];
+
         $digitalAssetRepository
             ->expects(self::any())
             ->method('getFileDataForTwigTag')
             ->willReturnCallback(
-                static function (int $fileId) {
+                static function (int $fileId) use ($context) {
                     if ($fileId < 500) {
                         // File does not exist.
                         return [];
@@ -265,26 +251,43 @@ class DigitalAssetTwigTagsConverterTest extends \PHPUnit\Framework\TestCase
                     }
 
                     if ($fileId < 2000) {
-                        // File is a child of a digital asset.
+                        // File is a child of a digital asset and belongs to the currently processed entity.
                         return [
-                            'parentEntityClass' => \stdClass::class,
-                            'parentEntityId' => 42,
+                            'parentEntityClass' => $context['entityClass'],
+                            'parentEntityId' => $context['entityId'],
+                            'parentEntityFieldName' => $context['fieldName'],
                             'uuid' => 'e9ff6eea-' . $fileId . '-4689-ab69-ee2567103cd1',
                             'digitalAssetId' => $fileId / 10,
                         ];
                     }
 
-                    // File is a source file of a digital asset.
-                    return [
-                        'parentEntityClass' => DigitalAsset::class,
-                        'parentEntityId' => $fileId / 10,
-                        'uuid' => 'e9ff6eea-' . $fileId . '-4689-ab69-ee2567103cd1',
-                        'digitalAssetId' => null,
-                    ];
+                    if ($fileId < 3000) {
+                        // File is a source file of a digital asset.
+                        return [
+                            'parentEntityClass' => DigitalAsset::class,
+                            'parentEntityId' => $fileId / 10,
+                            'parentEntityFieldName' => 'sourceFile',
+                            'uuid' => 'ff256712-' . $fileId . '-412c-9140-5068077b60d5',
+                            'digitalAssetId' => null,
+                        ];
+                    }
+
+                    if ($fileId < 4000) {
+                        // File is a child of a digital asset but belongs of another entity.
+                        return [
+                            'parentEntityClass' => \stdClass::class,
+                            'parentEntityId' => 4242,
+                            'parentEntityFieldName' => 'content',
+                            'uuid' => 'db50675d-' . $fileId . '-4441-acc3-6c0ab45caf69',
+                            'digitalAssetId' => $fileId / 10,
+                        ];
+                    }
+
+                    self::fail('File with id #' . $fileId . ' was not expected');
                 }
             );
 
-        self::assertEquals($expected, $this->converter->convertToTwigTags($contentWithUrls));
+        self::assertEquals($expected, $this->converter->convertToTwigTags($contentWithUrls, $context));
     }
 
     public function convertToTwigTagsDataProvider(): array

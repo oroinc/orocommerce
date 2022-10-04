@@ -497,3 +497,29 @@ services:
             - '@oro_cms.provider.content_widget_layout'
         tags:
             - { name: validator.constraint_validator }
+
+    oro_cms.provider.content_templates_for_wysiwyg_preview_provider:
+        class: Oro\Bundle\CMSBundle\Provider\ContentTemplatesForWysiwygPreviewProvider
+        arguments:
+            - '@doctrine'
+            - '@oro_attachment.provider.picture_sources'
+            - '@oro_cms.provider.content_template_preview_image_placeholder'
+
+    Oro\Bundle\CMSBundle\Provider\ContentTemplateContentProvider:
+        alias: oro_cms.provider.content_template_content_provider
+
+    oro_cms.provider.content_template_content_provider:
+        class: Oro\Bundle\CMSBundle\Provider\ContentTemplateContentProvider
+        arguments:
+            - '@oro_cms.tools.digital_asset_twig_tags_converter'
+
+    Oro\Bundle\CMSBundle\Entity\Repository\ContentTemplateRepository:
+        parent: oro_entity.abstract_repository
+        arguments:
+            - 'Oro\Bundle\CMSBundle\Entity\ContentTemplate'
+            - '@oro_security.acl_helper'
+        tags:
+            - { name: doctrine.repository_service }
+
+    oro_cms.entity.repository.content_template:
+        alias: Oro\Bundle\CMSBundle\Entity\Repository\ContentTemplateRepository

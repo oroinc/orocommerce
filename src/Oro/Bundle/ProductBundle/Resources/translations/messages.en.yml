@@ -477,7 +477,11 @@ oro:
                 customer_settings.title: 'Customer Settings'
                 product_data_export.title: 'Product Data Export'
                 product_seo.title: 'SEO'
-                schema_org.title: 'Schema.org'
+                schema_org:
+                    title: 'Schema.org'
+                    description: |
+                        The change of the Product Description Field will not be applied immediately and will require manual start of the website search re-index.
+                        Please check product detail page for unexpected layout shifts after changing Schema.org settings in test environment before making these changes on live website.
             fields:
                 original_file_names_enabled:
                     label: 'Enable Original File Names'
@@ -661,6 +665,14 @@ oro:
                 microdata_without_prices_disabled:
                     label: 'Disable Product Microdata Without Prices'
                     tooltip: 'Some search crawlers (e.g. Google) mark pages containing embedded Schema.org Microdata without price information as invalid pages and may exclude them from search index. Unless you have an alternative custom solution (e.g. reviews or aggregated ratings system) in place, we recommend to disable Schema.org Microdata on product pages that do not include any pricing information available to such crawlers (anonymous/guest users).'
+                schema_org_description_field:
+                    label: 'Used Product Description Field'
+                    tooltip: 'Please note that any advanced text formatting or additional markup will not be included.'
+                    choice:
+                        meta.label: 'SEO Meta Description'
+                        short.label: 'Simplified Short Description'
+                        long.label: 'Simplified [Long] Description'
+
             notice:
                 product_image_watermark: >
                    The updated product image watermark settings will be used for the newly uploaded images only.

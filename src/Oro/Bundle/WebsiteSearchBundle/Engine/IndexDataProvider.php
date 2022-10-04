@@ -163,7 +163,7 @@ class IndexDataProvider
             }
 
             unset($preparedIndexData[$entityId][Query::TYPE_TEXT][$allTextL10N]);
-            $preparedIndexData[$entityId] = $this->squashAllTextFields($preparedIndexData[$entityId]);
+            $preparedIndexData[$entityId] = $this->squashAllTextFields($preparedIndexData[$entityId] ?? []);
 
             // add ID field for full indexation
             if (empty($context[AbstractIndexer::CONTEXT_FIELD_GROUPS])) {

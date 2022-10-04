@@ -45,6 +45,16 @@
         }
     }
 
+    &clm-tags {
+        ##{$app-prefix}clm-up {
+            margin-top: 0;
+        }
+
+        ##{$app-prefix}clm-states {
+            height: 30px;
+        }
+    }
+
     &pn-commands {
         box-shadow: none;
         padding: 0;
@@ -144,7 +154,7 @@
     &sm-sectors,
     &sm-sector,
     &block-category {
-        margin-bottom: 8px;
+        margin-bottom: 12px;
         border-bottom: none;
 
         svg {
@@ -173,6 +183,8 @@
             width: 22px;
             height: 22px;
             min-width: 22px;
+            margin-left: -8px;
+            margin-right: -8px;
         }
 
         .#{$sm-prefix}field.#{$sm-prefix}composite {
@@ -195,6 +207,12 @@
                     top: 10px;
                 }
             }
+        }
+    }
+
+    &wide-blocks {
+        .#{$app-prefix}block {
+            width: 100%;
         }
     }
 
@@ -238,6 +256,12 @@
             border-radius: 16px;
             margin-top: 10px;
         }
+    }
+
+    &sm-header {
+        padding: 0;
+
+        @extend .no-data;
     }
 
     &mdl-header {

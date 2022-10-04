@@ -6,3 +6,4 @@ oro_cms:
                 Oro\Bundle\CMSBundle\Entity\Page: ['content']
                 Oro\Bundle\CMSBundle\Entity\TextContentVariant: ['content']
                 Oro\Bundle\CMSBundle\Entity\ContentBlock: ['content']
+                Oro\Bundle\CMSBundle\Entity\ContentTemplate: ['content']

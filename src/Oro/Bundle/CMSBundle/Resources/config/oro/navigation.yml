@@ -16,10 +16,18 @@ navigation:
                     routes:      ['/^oro_cms_page/']
                     description: 'oro.cms.menu.page_list.description'
 
+            content_template_list:
+                label:           'oro.cms.contenttemplate.entity_plural_label'
+                route:           'oro_cms_content_template_index'
+                position:        101
+                extras:
+                    routes:      ['/^oro_cms_content_template/']
+                    description: 'oro.cms.menu.content_template.description'
+
             content_block_list:
                 label:           'oro.cms.contentblock.entity_plural_label'
                 route:           'oro_cms_content_block_index'
-                position:        101
+                position:        102
                 extras:
                     routes:      ['/^oro_cms_content_block/']
                     description: 'oro.cms.menu.contentblock_list.description'
@@ -27,7 +35,7 @@ navigation:
             login_page_list:
                 label:           'oro.cms.loginpage.entity_plural_label'
                 route:           'oro_cms_loginpage_index'
-                position:        102
+                position:        103
                 extras:
                     routes:      ['/^oro_cms_loginpage/']
                     description: 'oro.cms.menu.loginpage_list.description'
@@ -35,7 +43,7 @@ navigation:
             content_widget_list:
                 label:           'oro.cms.contentwidget.entity_plural_label'
                 route:           'oro_cms_content_widget_index'
-                position:        103
+                position:        104
                 extras:
                     routes:      ['/^oro_cms_content_widget/']
 
@@ -54,6 +62,7 @@ navigation:
                             content_widget_list: ~
                             login_page_list: ~
                             digital_asset_list: ~
+                            content_template_list: ~
             shortcuts:
                 children:
                     shortcut_pages_list: ~

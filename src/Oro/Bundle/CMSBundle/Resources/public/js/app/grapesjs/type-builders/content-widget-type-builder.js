@@ -32,15 +32,15 @@ const ContentWidgetTypeBuilder = BaseTypeBuilder.extend({
         category: 'Basic',
         attributes: {
             'class': 'fa fa-object-ungroup'
-        }
+        },
+        activate: true
     },
 
     commandName: null,
 
     editorEvents: {
         'component:selected': 'onSelect',
-        'component:deselected': 'onDeselect',
-        'canvas:drop': 'onDrop'
+        'component:deselected': 'onDeselect'
     },
 
     modelMixin: {
@@ -110,7 +110,7 @@ const ContentWidgetTypeBuilder = BaseTypeBuilder.extend({
 
     viewMixin: {
         events: {
-            dblclick: 'onDoubleClick'
+            dblclick: 'onActive'
         },
 
         onRender() {
@@ -132,10 +132,10 @@ const ContentWidgetTypeBuilder = BaseTypeBuilder.extend({
             }));
         },
 
-        onDoubleClick(e) {
+        onActive(event) {
             this.em.get('Commands').run(this.model.getSettingsCommandName());
 
-            e.stopPropagation();
+            event && event.stopPropagation();
         }
     },
 
@@ -215,12 +215,6 @@ const ContentWidgetTypeBuilder = BaseTypeBuilder.extend({
         });
     },
 
-    onDrop(DataTransfer, model) {
-        if (model instanceof this.Model) {
-            this.editor.runCommand(model.getSettingsCommandName(), model);
-        }
-    },
-
     onSelect(model) {
         if (model instanceof this.Model) {
             this.editor.RichTextEditor.actionbar.hidden = true;
@@ -236,7 +230,7 @@ const ContentWidgetTypeBuilder = BaseTypeBuilder.extend({
     isComponent(el) {
         let result = null;
 
-        if (el.nodeType === 1 &&
+        if (el.nodeType === Node.ELEMENT_NODE &&
             (el.classList.contains('content-widget') || el.classList.contains('content-widget-inline'))
         ) {
             result = {

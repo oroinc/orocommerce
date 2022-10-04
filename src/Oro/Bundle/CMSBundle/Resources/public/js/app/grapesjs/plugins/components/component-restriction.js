@@ -15,7 +15,7 @@ define(function(require) {
     function getTags(element, mirror = false) {
         let _res = [];
 
-        if (element.nodeType === 3) {
+        if (element.nodeType === Node.TEXT_NODE) {
             return _res;
         }
 
@@ -24,7 +24,7 @@ define(function(require) {
         for (let i = 0; i < element.childNodes.length; i++) {
             const child = element.childNodes[i];
 
-            if (child.nodeType === 1) {
+            if (child.nodeType === Node.ELEMENT_NODE) {
                 if (child.childNodes) {
                     _res = _res.concat(getTags(child, mirror));
                 }

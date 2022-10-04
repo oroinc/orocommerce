@@ -13,7 +13,7 @@ use Oro\Bundle\CMSBundle\Entity\TabbedContentItem;
 use Oro\Bundle\CMSBundle\Form\Type\TabbedContentItemCollectionType;
 use Oro\Bundle\CMSBundle\Form\Type\TabbedContentItemType;
 use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGType;
-use Oro\Bundle\CMSBundle\Tests\Unit\Form\Type\Stub\WYSIWYGTypeStub;
+use Oro\Bundle\CMSBundle\Tests\Unit\Form\Type\WysiwygAwareTestTrait;
 use Oro\Bundle\FormBundle\Form\Extension\DataBlockExtension;
 use Oro\Component\Testing\Unit\Form\Extension\Stub\FormTypeValidatorExtensionStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
@@ -23,6 +23,8 @@ use Twig\Environment;
 
 class TabbedContentWidgetTypeTest extends FormIntegrationTestCase
 {
+    use WysiwygAwareTestTrait;
+
     private EntityRepository|\PHPUnit\Framework\MockObject\MockObject $entityRepository;
 
     private TabbedContentWidgetType $contentWidgetType;
@@ -156,7 +158,7 @@ class TabbedContentWidgetTypeTest extends FormIntegrationTestCase
                 [
                     TabbedContentItemCollectionType::class => new TabbedContentItemCollectionType(),
                     TabbedContentItemType::class => new TabbedContentItemType(),
-                    WYSIWYGType::class => new WYSIWYGTypeStub(),
+                    WYSIWYGType::class => $this->createWysiwygType(),
                 ],
                 [
                     SymfonyFormType::class => [new DataBlockExtension(), new FormTypeValidatorExtensionStub()],

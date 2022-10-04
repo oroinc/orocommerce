@@ -68,3 +68,18 @@ features:
             - Oro\Bundle\CMSBundle\Entity\LoginPage
         navigation_items:
             - application_menu.marketing_tab.login_page_list
+
+    content_templates:
+        label: oro.cms.contenttemplate.feature.label
+        description: oro.cms.contenttemplate.feature.description
+        allow_if_all_abstain: true
+        routes:
+            - oro_cms_content_template_index
+            - oro_cms_content_template_view
+            - oro_cms_content_template_widget
+            - oro_cms_content_template_create
+            - oro_cms_content_template_update
+        entities:
+            - Oro\Bundle\CMSBundle\Entity\ContentTemplate
+        navigation_items:
+            - application_menu.marketing_tab.content_template_list

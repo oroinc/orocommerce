@@ -1,5 +1,6 @@
-import {uniqueId, each, unescape} from 'underscore';
+import {uniqueId, each} from 'underscore';
 import CONSTANTS from 'orocms/js/app/grapesjs/constants';
+import {unescapeTwigExpression} from '../../utils';
 
 const ISOLATION_SCOPE = `${CONSTANTS.ISOLATION_PREFIX}-`;
 
@@ -12,7 +13,6 @@ const FORBIDDEN_ATTR = ['draggable', 'data-gjs[-\\w]+'];
 const ROOT_ATTR_REGEXP = /\[id\*\=\"isolation\"\]/gm;
 const SCOPE_ATTR_REGEXP = /\[id\*\=\"scope\"\]/gm;
 const WRAPPER_REGEXP = /#isolation-scope-[\\w]*\\s?\.cms\-wrapper/gm;
-const REGEXP_TWIG_TAGS_ESC = /([\{|\%|\#]{2})([\w\W]+)([\%|\}|\#]{2})/gi;
 
 /**
  * Test regexp
@@ -83,10 +83,6 @@ export const stripRestrictedAttrs = html => {
     });
 
     return html;
-};
-
-export const unescapeTwigExpression = html => {
-    return html.replace(REGEXP_TWIG_TAGS_ESC, match => unescape(match).replace(/&#039;/gi, `'`));
 };
 
 function randomId(length = 20) {

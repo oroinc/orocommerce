@@ -17,14 +17,14 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
     public function testGetConfigTreeBuilder()
     {
         $configuration = new Configuration();
-        $this->assertInstanceOf(TreeBuilder::class, $configuration->getConfigTreeBuilder());
+        self::assertInstanceOf(TreeBuilder::class, $configuration->getConfigTreeBuilder());
     }
 
     public function testGetConfigKeyByName()
     {
         $key = 'options';
         $configKey = Configuration::getConfigKeyByName($key);
-        static::assertEquals('oro_product.'.$key, $configKey);
+        self::assertEquals('oro_product.'.$key, $configKey);
     }
 
     /**
@@ -252,10 +252,14 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                 'microdata_without_prices_disabled' => [
                     'value' => true,
                     'scope' => 'app'
-                ]
+                ],
+                Configuration::SCHEMA_ORG_DESCRIPTION_FIELD => [
+                    'value' => Configuration::SCHEMA_ORG_DEFAULT_DESCRIPTION,
+                    'scope' => 'app'
+                ],
             ]
         ];
 
-        $this->assertEquals($expected, $processor->processConfiguration($configuration, []));
+        self::assertEquals($expected, $processor->processConfiguration($configuration, []));
     }
 }
