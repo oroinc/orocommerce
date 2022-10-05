@@ -7,47 +7,33 @@ use Doctrine\DBAL\Exception\RetryableException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\RedirectBundle\Async\Topic\GenerateDirectUrlForEntitiesTopic;
 use Oro\Bundle\RedirectBundle\Cache\Dumper\SluggableUrlDumper;
 use Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface;
 use Oro\Bundle\RedirectBundle\Generator\SlugEntityGenerator;
-use Oro\Bundle\RedirectBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\RedirectBundle\Model\MessageFactoryInterface;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Component\MessageQueue\Util\JSON;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 
 /**
  * Generate Slug URLs for given entities
  */
-class DirectUrlProcessor implements MessageProcessorInterface, TopicSubscriberInterface
+class DirectUrlProcessor implements MessageProcessorInterface, TopicSubscriberInterface, LoggerAwareInterface
 {
-    /**
-     * @var ManagerRegistry
-     */
-    private $registry;
+    use LoggerAwareTrait;
 
-    /**
-     * @var SlugEntityGenerator
-     */
-    private $generator;
+    private ManagerRegistry $registry;
 
-    /**
-     * @var MessageFactoryInterface
-     */
-    private $messageFactory;
+    private SlugEntityGenerator $generator;
 
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private MessageFactoryInterface $messageFactory;
 
-    /**
-     * @var UrlCacheInterface
-     */
-    private $urlCache;
+    private UrlCacheInterface $urlCache;
 
     private ?SluggableUrlDumper $urlCacheDumper = null;
 
@@ -74,11 +60,11 @@ class DirectUrlProcessor implements MessageProcessorInterface, TopicSubscriberIn
      * {@inheritdoc}
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
-    public function process(MessageInterface $message, SessionInterface $session)
+    public function process(MessageInterface $message, SessionInterface $session): string
     {
         $em = null;
         try {
-            $messageData = JSON::decode($message->getBody());
+            $messageData = $message->getBody();
             $className = $this->messageFactory->getEntityClassFromMessage($messageData);
             $entities = $this->messageFactory->getEntitiesFromMessage($messageData);
             $createRedirect = $this->messageFactory->getCreateRedirectFromMessage($messageData);
@@ -93,13 +79,6 @@ class DirectUrlProcessor implements MessageProcessorInterface, TopicSubscriberIn
             $em->flush();
             $em->commit();
             $this->actualizeUrlCache($entities);
-        } catch (InvalidArgumentException $e) {
-            $this->logger->error(
-                'Queue Message is invalid',
-                ['exception' => $e]
-            );
-
-            return self::REJECT;
         } catch (UniqueConstraintViolationException $e) {
             if ($em && $em->getConnection()->getTransactionNestingLevel() > 0) {
                 $em->rollback();
@@ -126,17 +105,12 @@ class DirectUrlProcessor implements MessageProcessorInterface, TopicSubscriberIn
         return self::ACK;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public static function getSubscribedTopics()
+    public static function getSubscribedTopics(): array
     {
-        return [
-            Topics::GENERATE_DIRECT_URL_FOR_ENTITIES
-        ];
+        return [GenerateDirectUrlForEntitiesTopic::getName()];
     }
 
-    private function actualizeUrlCache(array $entities)
+    private function actualizeUrlCache(array $entities): void
     {
         foreach ($entities as $entity) {
             $this->urlCacheDumper->dump($entity);

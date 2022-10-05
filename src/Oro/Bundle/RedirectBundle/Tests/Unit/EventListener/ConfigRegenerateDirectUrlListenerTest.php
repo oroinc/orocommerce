@@ -4,7 +4,7 @@ namespace Oro\Bundle\RedirectBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
-use Oro\Bundle\RedirectBundle\Async\Topics;
+use Oro\Bundle\RedirectBundle\Async\Topic\RegenerateDirectUrlForEntityTypeTopic;
 use Oro\Bundle\RedirectBundle\DependencyInjection\Configuration;
 use Oro\Bundle\RedirectBundle\EventListener\ConfigRegenerateDirectUrlListener;
 use Oro\Bundle\RedirectBundle\Form\Storage\RedirectStorage;
@@ -15,40 +15,17 @@ use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
 class ConfigRegenerateDirectUrlListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $configManager;
+    private ConfigManager|\PHPUnit\Framework\MockObject\MockObject $configManager;
 
-    /**
-     * @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $messageProducer;
+    private MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject $messageProducer;
 
-    /**
-     * @var RedirectStorage|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $redirectStorage;
+    private RedirectStorage|\PHPUnit\Framework\MockObject\MockObject $redirectStorage;
 
-    /**
-     * @var MessageFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $messageFactory;
+    private MessageFactoryInterface|\PHPUnit\Framework\MockObject\MockObject $messageFactory;
 
-    /**
-     * @var string
-     */
-    private $configParameter;
+    private string $configParameter;
 
-    /**
-     * @var string
-     */
-    private $entityClass;
-
-    /**
-     * @var ConfigRegenerateDirectUrlListener
-     */
-    private $listener;
+    private ConfigRegenerateDirectUrlListener $listener;
 
     protected function setUp(): void
     {
@@ -57,7 +34,7 @@ class ConfigRegenerateDirectUrlListenerTest extends \PHPUnit\Framework\TestCase
         $this->redirectStorage = $this->createMock(RedirectStorage::class);
         $this->messageFactory = $this->createMock(MessageFactoryInterface::class);
         $this->configParameter = 'some_parameter';
-        $this->entityClass = \stdClass::class;
+        $entityClass = \stdClass::class;
 
         $this->listener = new ConfigRegenerateDirectUrlListener(
             $this->configManager,
@@ -65,37 +42,37 @@ class ConfigRegenerateDirectUrlListenerTest extends \PHPUnit\Framework\TestCase
             $this->redirectStorage,
             $this->messageFactory,
             $this->configParameter,
-            $this->entityClass
+            $entityClass
         );
     }
 
-    public function testOnUpdateNotChanged()
+    public function testOnUpdateNotChanged(): void
     {
         /** @var ConfigUpdateEvent|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->getMockBuilder(ConfigUpdateEvent::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $event->expects($this->once())
+        $event->expects(self::once())
             ->method('isChanged')
             ->with($this->configParameter)
             ->willReturn(false);
 
-        $this->messageProducer->expects($this->never())
-            ->method($this->anything());
+        $this->messageProducer->expects(self::never())
+            ->method(self::anything());
 
-        $this->redirectStorage->expects($this->never())
-            ->method($this->anything());
+        $this->redirectStorage->expects(self::never())
+            ->method(self::anything());
 
         $this->listener->onUpdateAfter($event);
     }
 
-    public function testOnUpdatePrefixChange()
+    public function testOnUpdatePrefixChange(): void
     {
         /** @var ConfigUpdateEvent|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->getMockBuilder(ConfigUpdateEvent::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $event->expects($this->once())
+        $event->expects(self::once())
             ->method('isChanged')
             ->with($this->configParameter)
             ->willReturn(true);
@@ -104,13 +81,13 @@ class ConfigRegenerateDirectUrlListenerTest extends \PHPUnit\Framework\TestCase
         $prefixWithRedirect->setPrefix('prefix');
         $prefixWithRedirect->setCreateRedirect(true);
 
-        $this->redirectStorage->expects($this->once())
+        $this->redirectStorage->expects(self::once())
             ->method('getPrefixByKey')
             ->with($this->configParameter)
             ->willReturn($prefixWithRedirect);
 
-        $this->configManager->expects($this->never())
-            ->method($this->anything());
+        $this->configManager->expects(self::never())
+            ->method(self::anything());
 
         $createRedirect = true;
         $entityClass = 'stdClass';
@@ -120,14 +97,14 @@ class ConfigRegenerateDirectUrlListenerTest extends \PHPUnit\Framework\TestCase
             DirectUrlMessageFactory::CREATE_REDIRECT => $createRedirect
         ];
 
-        $this->messageFactory->expects($this->once())
+        $this->messageFactory->expects(self::once())
             ->method('createMassMessage')
             ->with('stdClass', [], $createRedirect)
             ->willReturn($expectedMessage);
 
-        $this->messageProducer->expects($this->once())
+        $this->messageProducer->expects(self::once())
             ->method('send')
-            ->with(Topics::REGENERATE_DIRECT_URL_FOR_ENTITY_TYPE, $expectedMessage);
+            ->with(RegenerateDirectUrlForEntityTypeTopic::getName(), $expectedMessage);
 
         $this->listener->onUpdateAfter($event);
     }
@@ -138,13 +115,13 @@ class ConfigRegenerateDirectUrlListenerTest extends \PHPUnit\Framework\TestCase
      * @param string $strategy
      * @param bool $createRedirect
      */
-    public function testOnUpdateUseDefault($strategy, $createRedirect)
+    public function testOnUpdateUseDefault($strategy, $createRedirect): void
     {
         /** @var ConfigUpdateEvent|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->getMockBuilder(ConfigUpdateEvent::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $event->expects($this->once())
+        $event->expects(self::once())
             ->method('isChanged')
             ->with($this->configParameter)
             ->willReturn(true);
@@ -153,12 +130,12 @@ class ConfigRegenerateDirectUrlListenerTest extends \PHPUnit\Framework\TestCase
         $prefixWithRedirect->setPrefix('prefix');
         $prefixWithRedirect->setCreateRedirect(true);
 
-        $this->redirectStorage->expects($this->once())
+        $this->redirectStorage->expects(self::once())
             ->method('getPrefixByKey')
             ->with($this->configParameter)
             ->willReturn(null);
 
-        $this->configManager->expects($this->once())
+        $this->configManager->expects(self::once())
             ->method('get')
             ->with('oro_redirect.redirect_generation_strategy')
             ->willReturn($strategy);
@@ -170,14 +147,14 @@ class ConfigRegenerateDirectUrlListenerTest extends \PHPUnit\Framework\TestCase
             DirectUrlMessageFactory::CREATE_REDIRECT => $createRedirect
         ];
 
-        $this->messageFactory->expects($this->once())
+        $this->messageFactory->expects(self::once())
             ->method('createMassMessage')
             ->with('stdClass', [], $createRedirect)
             ->willReturn($expectedMessage);
 
-        $this->messageProducer->expects($this->once())
+        $this->messageProducer->expects(self::once())
             ->method('send')
-            ->with(Topics::REGENERATE_DIRECT_URL_FOR_ENTITY_TYPE, $expectedMessage);
+            ->with(RegenerateDirectUrlForEntityTypeTopic::getName(), $expectedMessage);
 
         $this->listener->onUpdateAfter($event);
     }
@@ -185,7 +162,7 @@ class ConfigRegenerateDirectUrlListenerTest extends \PHPUnit\Framework\TestCase
     /**
      * @return array
      */
-    public function onUpdateUseDefaultDataProvider()
+    public function onUpdateUseDefaultDataProvider(): array
     {
         return [
             'Ask strategy' => [

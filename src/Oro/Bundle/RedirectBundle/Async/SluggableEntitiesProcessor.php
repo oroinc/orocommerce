@@ -5,7 +5,6 @@ namespace Oro\Bundle\RedirectBundle\Async;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use Oro\Bundle\RedirectBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\RedirectBundle\Model\MessageFactoryInterface;
 use Oro\Component\MessageQueue\Client\Config as MessageQueueConfig;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
@@ -14,7 +13,8 @@ use Oro\Component\MessageQueue\Job\Job;
 use Oro\Component\MessageQueue\Job\JobRunner;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Component\MessageQueue\Util\JSON;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -22,17 +22,22 @@ use Psr\Log\LoggerInterface;
  * Splits all entities on batches and schedules $itemProcessingTopicName MQ topic for each batch.
  * Used as root job/batch splitter for Direct URLs processing and Url Caches processing
  */
-class SluggableEntitiesProcessor implements MessageProcessorInterface
+class SluggableEntitiesProcessor implements MessageProcessorInterface, LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     private const BATCH_SIZE = 1000;
 
     private ManagerRegistry $doctrine;
+
     private JobRunner $jobRunner;
+
     private MessageProducerInterface $producer;
-    private LoggerInterface $logger;
+
     private MessageFactoryInterface $messageFactory;
 
     private int $batchSize = self::BATCH_SIZE;
+
     private string $itemProcessingTopicName;
 
     public function __construct(
@@ -62,35 +67,16 @@ class SluggableEntitiesProcessor implements MessageProcessorInterface
     public function process(MessageInterface $message, SessionInterface $session)
     {
         $topicName = $message->getProperty(MessageQueueConfig::PARAMETER_TOPIC_NAME);
-        try {
-            $messageData = JSON::decode($message->getBody());
-            $entityClass = $this->messageFactory->getEntityClassFromMessage($messageData);
-            $createRedirect = $this->messageFactory->getCreateRedirectFromMessage($messageData);
-        } catch (InvalidArgumentException $e) {
-            $this->logger->error(
-                'Queue Message is invalid',
-                [
-                    'topic' => $topicName,
-                    'exception' => $e
-                ]
-            );
-
-            return self::REJECT;
-        }
-
-        /** @var EntityManager $em */
-        if (!$em = $this->doctrine->getManagerForClass($entityClass)) {
-            $this->logger->error(
-                sprintf('Entity manager is not defined for class: "%s"', $entityClass)
-            );
-
-            return self::REJECT;
-        }
+        $messageData = $message->getBody();
+        $entityClass = $this->messageFactory->getEntityClassFromMessage($messageData);
+        $createRedirect = $this->messageFactory->getCreateRedirectFromMessage($messageData);
 
         $result = $this->jobRunner->runUnique(
             $message->getMessageId(),
             sprintf('%s:%s', $topicName, $entityClass),
-            function (JobRunner $jobRunner) use ($em, $entityClass, $createRedirect, $topicName) {
+            function (JobRunner $jobRunner) use ($entityClass, $createRedirect, $topicName) {
+                /** @var EntityManager $em */
+                $em = $this->doctrine->getManagerForClass($entityClass);
                 $identifierFieldName = $em->getClassMetadata($entityClass)->getSingleIdentifierFieldName();
                 $repository = $em->getRepository($entityClass);
                 $batches = $this->getNumberOfBatches($repository);

@@ -25,6 +25,8 @@ class OroRedirectExtension extends Extension
         $loader->load('duplicator.yml');
         $loader->load('services_api.yml');
         $loader->load('form_types.yml');
+        $loader->load('mq_topics.yml');
+        $loader->load('mq_processors.yml');
 
         $container->prependExtensionConfig($this->getAlias(), array_intersect_key($config, array_flip(['settings'])));
     }
