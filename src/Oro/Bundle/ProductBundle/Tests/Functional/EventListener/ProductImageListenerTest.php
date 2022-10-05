@@ -10,7 +10,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
-use Oro\Bundle\RedirectBundle\Async\Topics as RedirectTopics;
+use Oro\Bundle\RedirectBundle\Async\Topic\GenerateDirectUrlForEntitiesTopic;
 use Oro\Bundle\SearchBundle\Async\Topic\IndexEntitiesByIdTopic;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Async\Topic\WebsiteSearchReindexTopic;
@@ -306,7 +306,7 @@ class ProductImageListenerTest extends WebTestCase
         self::assertMessagesCount(ProductTopics::PRODUCT_IMAGE_RESIZE, 2);
         self::assertMessagesCount(WebsiteSearchReindexTopic::getName(), 2);
         self::assertMessagesCount(IndexEntitiesByIdTopic::getName(), 2);
-        self::assertMessagesCount(RedirectTopics::GENERATE_DIRECT_URL_FOR_ENTITIES, 2);
+        self::assertMessagesCount(GenerateDirectUrlForEntitiesTopic::getName(), 2);
         self::assertMessagesCount(AuditChangedEntitiesTopic::getName(), 4);
 
         self::assertMessageSent(

@@ -8,7 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\DistributionBundle\Handler\ApplicationState;
-use Oro\Bundle\RedirectBundle\Async\Topics;
+use Oro\Bundle\RedirectBundle\Async\Topic\GenerateDirectUrlForEntitiesTopic;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 use Oro\Component\DoctrineUtils\ORM\ResultSetMappingUtil;
@@ -86,7 +86,7 @@ class RegenerateRemovedSlugs extends AbstractFixture implements ContainerAwareIn
                     $chunk,
                     false
                 );
-                $messageProducer->send(Topics::GENERATE_DIRECT_URL_FOR_ENTITIES, $message);
+                $messageProducer->send(GenerateDirectUrlForEntitiesTopic::getName(), $message);
             }
         }
     }

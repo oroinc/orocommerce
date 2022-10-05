@@ -3,7 +3,8 @@
 namespace Oro\Bundle\RedirectBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
-use Oro\Bundle\RedirectBundle\Async\Topics;
+use Oro\Bundle\RedirectBundle\Async\Topic\RegenerateDirectUrlForEntityTypeTopic;
+use Oro\Bundle\RedirectBundle\Async\Topic\RemoveDirectUrlForEntityTypeTopic;
 use Oro\Bundle\RedirectBundle\EventListener\ConfigEnableDirectUrlListener;
 use Oro\Bundle\RedirectBundle\Model\DirectUrlMessageFactory;
 use Oro\Bundle\RedirectBundle\Model\MessageFactoryInterface;
@@ -45,67 +46,67 @@ class ConfigEnableDirectUrlListenerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testOnUpdateAfterIsNotChanged()
+    public function testOnUpdateAfterIsNotChanged(): void
     {
         /** @var ConfigUpdateEvent|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->getMockBuilder(ConfigUpdateEvent::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $event->expects($this->once())
+        $event->expects(self::once())
             ->method('isChanged')
             ->with('oro_redirect.enable_direct_url')
             ->willReturn(false);
 
-        $this->provider->expects($this->never())
-            ->method($this->anything());
-        $this->messageProducer->expects($this->never())
-            ->method($this->anything());
+        $this->provider->expects(self::never())
+            ->method(self::anything());
+        $this->messageProducer->expects(self::never())
+            ->method(self::anything());
 
         $this->listener->onUpdateAfter($event);
     }
 
-    public function testOnUpdateAfterTurnedOff()
+    public function testOnUpdateAfterTurnedOff(): void
     {
         /** @var ConfigUpdateEvent|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->getMockBuilder(ConfigUpdateEvent::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $event->expects($this->once())
+        $event->expects(self::once())
             ->method('isChanged')
             ->with('oro_redirect.enable_direct_url')
             ->willReturn(true);
-        $event->expects($this->once())
+        $event->expects(self::once())
             ->method('getNewValue')
             ->with('oro_redirect.enable_direct_url')
             ->willReturn(false);
 
-        $this->provider->expects($this->once())
+        $this->provider->expects(self::once())
             ->method('getEntityClasses')
             ->willReturn(['stdClass']);
 
-        $this->messageProducer->expects($this->once())
+        $this->messageProducer->expects(self::once())
             ->method('send')
-            ->with(Topics::REMOVE_DIRECT_URL_FOR_ENTITY_TYPE, json_encode('stdClass'));
+            ->with(RemoveDirectUrlForEntityTypeTopic::getName(), \stdClass::class);
 
         $this->listener->onUpdateAfter($event);
     }
 
-    public function testOnUpdateAfterTurnedOn()
+    public function testOnUpdateAfterTurnedOn(): void
     {
         /** @var ConfigUpdateEvent|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->getMockBuilder(ConfigUpdateEvent::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $event->expects($this->once())
+        $event->expects(self::once())
             ->method('isChanged')
             ->with('oro_redirect.enable_direct_url')
             ->willReturn(true);
-        $event->expects($this->once())
+        $event->expects(self::once())
             ->method('getNewValue')
             ->with('oro_redirect.enable_direct_url')
             ->willReturn(true);
 
-        $this->provider->expects($this->once())
+        $this->provider->expects(self::once())
             ->method('getEntityClasses')
             ->willReturn(['stdClass']);
 
@@ -116,14 +117,14 @@ class ConfigEnableDirectUrlListenerTest extends \PHPUnit\Framework\TestCase
             DirectUrlMessageFactory::CREATE_REDIRECT => false
         ];
 
-        $this->messageFactory->expects($this->once())
+        $this->messageFactory->expects(self::once())
             ->method('createMassMessage')
             ->with($entityClass, [], false)
             ->willReturn($expectedMessage);
 
-        $this->messageProducer->expects($this->once())
+        $this->messageProducer->expects(self::once())
             ->method('send')
-            ->with(Topics::REGENERATE_DIRECT_URL_FOR_ENTITY_TYPE, $expectedMessage);
+            ->with(RegenerateDirectUrlForEntityTypeTopic::getName(), $expectedMessage);
 
         $this->listener->onUpdateAfter($event);
     }

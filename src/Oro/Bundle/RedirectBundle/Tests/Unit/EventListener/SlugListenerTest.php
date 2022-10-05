@@ -5,10 +5,9 @@ namespace Oro\Bundle\RedirectBundle\Tests\Unit\EventListener;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\UnitOfWork;
-use Oro\Bundle\RedirectBundle\Async\Topics;
+use Oro\Bundle\RedirectBundle\Async\Topic\SyncSlugRedirectsTopic;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\EventListener\SlugListener;
-use Oro\Component\MessageQueue\Client\Message;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\Testing\ReflectionUtil;
 
@@ -27,26 +26,26 @@ class SlugListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener = new SlugListener($this->messageProducer);
     }
 
-    public function testOnFlushNoChangedSlugs()
+    public function testOnFlushNoChangedSlugs(): void
     {
         $uow = $this->createMock(UnitOfWork::class);
 
         $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects($this->once())
+        $em->expects(self::once())
             ->method('getUnitOfWork')
             ->willReturn($uow);
 
-        $uow->expects($this->once())
+        $uow->expects(self::once())
             ->method('getScheduledEntityUpdates')
             ->willReturn([]);
 
-        $this->messageProducer->expects($this->never())
-            ->method($this->anything());
+        $this->messageProducer->expects(self::never())
+            ->method(self::anything());
 
         $this->listener->onFlush(new OnFlushEventArgs($em));
     }
 
-    public function testOnFlushChangedSlugs()
+    public function testOnFlushChangedSlugs(): void
     {
         $updatedSlug = new Slug();
         ReflectionUtil::setId($updatedSlug, 123);
@@ -54,31 +53,28 @@ class SlugListenerTest extends \PHPUnit\Framework\TestCase
         $uow = $this->createMock(UnitOfWork::class);
 
         $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects($this->once())
+        $em->expects(self::once())
             ->method('getUnitOfWork')
             ->willReturn($uow);
 
-        $uow->expects($this->once())
+        $uow->expects(self::once())
             ->method('getScheduledEntityUpdates')
             ->willReturn([$updatedSlug]);
 
-        $this->messageProducer->expects($this->once())
+        $this->messageProducer->expects(self::once())
             ->method('send')
-            ->with(
-                Topics::SYNC_SLUG_REDIRECTS,
-                new Message(['slugId' => $updatedSlug->getId()])
-            );
+            ->with(SyncSlugRedirectsTopic::getName(), ['slugId' => $updatedSlug->getId()]);
 
         $this->listener->onFlush(new OnFlushEventArgs($em));
     }
 
-    public function testOnFlushChangedSlugsWithDisabledListener()
+    public function testOnFlushChangedSlugsWithDisabledListener(): void
     {
         $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects($this->never())
+        $em->expects(self::never())
             ->method('getUnitOfWork');
 
-        $this->messageProducer->expects($this->never())
+        $this->messageProducer->expects(self::never())
             ->method('send');
 
         $this->listener->setEnabled(false);
