@@ -94,8 +94,7 @@ const QuickAddCopyPasteFormView = BaseView.extend({
 
         let result;
         try {
-            const options = {ignoreIncorrectUnit: false, useMinQuantityForUnit: false};
-            result = await this.productsCollection.addQuickAddRows(items, options);
+            result = await this.productsCollection.addQuickAddRows(items, {ignoreIncorrectUnit: false});
         } catch (e) {
             mediator.execute('showFlashMessage', 'error', __('oro.ui.unexpected_error'));
         }
