@@ -237,7 +237,7 @@ class TaxValueManager
      */
     protected function getTaxValueEntityManager()
     {
-        $em = $this->doctrineHelper->getEntityManager($this->taxValueClass);
+        $em = $this->doctrineHelper->getEntityManagerForClass($this->taxValueClass);
 
         return $em instanceof VirtualProxyInterface ? $em->getWrappedValueHolderValue() : $em;
     }
