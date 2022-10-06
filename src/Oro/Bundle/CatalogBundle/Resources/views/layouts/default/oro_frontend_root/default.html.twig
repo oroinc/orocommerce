@@ -16,10 +16,20 @@
                 '~data-page-component-options': slider_options,
                 '~class': ' embedded-list__slider'
             }) %}
+
+            {% set item_attr = layout_attr_defaults(item_attr|default({}), {
+                '~class': ' embedded-list__item ' ~ item_extra_class,
+                'data-name': 'embedded-list-item'
+            }) %}
         {% else %}
             {% set attr = layout_attr_defaults(attr, {
                 'data-page-component-module': 'orofrontend/js/app/components/embedded-list-component',
-                '~class': ' embedded-list__tiles '
+                '~class': ' tiles embedded-list__tiles '
+            }) %}
+
+            {% set item_attr = layout_attr_defaults(item_attr|default({}), {
+                '~class': ' tiles-item ' ~ item_extra_class,
+                'data-name': 'embedded-list-item'
             }) %}
         {% endif %}
 
@@ -30,8 +40,9 @@
         {% endif %}
 
         <div {{ block('block_attributes') }}>
+            {% set attr = item_attr %}
             {% for item in items|slice(0, 8) %}
-                <div class="embedded-list__item {{ item_extra_class }}">
+                <div {{ block('block_attributes') }}>
                     {% set context = {
                         (item_key): item
                     } %}
