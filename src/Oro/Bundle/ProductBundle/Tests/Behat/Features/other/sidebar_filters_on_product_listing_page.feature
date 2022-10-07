@@ -219,3 +219,13 @@ Feature: Sidebar filters on product listing page
     When I click "FrontendGridFilterManagerButtonAll"
     Then I click "FrontendGridFilterManagerButtonNone"
     And I should see an "FrontendGridFilterManagerButton" element
+
+  Scenario: Ensure that a toggle sidebar button is hidden on the tablet view
+    Given I set window size to 992x1024
+    When I reload the page
+    Then I should see an "Frontend Grid Action Filter Button" element
+    And I should not see an "Toggle Sidebar Button" element
+
+    When I set window size to 1440x900
+    Then I should not see an "Frontend Grid Action Filter Button" element
+    And I should see an "Toggle Sidebar Button" element

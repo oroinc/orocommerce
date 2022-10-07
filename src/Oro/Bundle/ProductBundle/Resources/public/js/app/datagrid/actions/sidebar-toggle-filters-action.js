@@ -32,16 +32,16 @@ const SidebarToggleFiltersAction = FullscreenFiltersAction.extend({
 
                 if ((filterManagerIsVisible === false) && switchSidebarView) {
                     switchSidebarView.collapse(0);
-                    switchSidebarView.render();
+                    this.toggleLaunchers();
                 }
 
-                this.listenTo(this.filterManager, 'visibility-change', filterManageIsVisible => {
+                this.listenTo(this.filterManager, 'visibility-change', filterManagerIsVisible => {
                     // Synchronize Filter Manager visibility with a sidebar one.
                     // The Filter Manager might be hidden programmatically after resetting its state.
                     if (
                         filterSettings.isFullScreen() === false &&
                         switchSidebarView.$el.is(':visible') &&
-                        filterManageIsVisible !== switchSidebarView.sidebarExpanded
+                        filterManagerIsVisible !== switchSidebarView.sidebarExpanded
                     ) {
                         this.datagrid.filterManager[switchSidebarView.sidebarExpanded ? 'show' : 'hide']();
                     }
