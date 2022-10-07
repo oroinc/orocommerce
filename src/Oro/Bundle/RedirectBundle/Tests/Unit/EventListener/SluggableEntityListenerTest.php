@@ -13,7 +13,7 @@ use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
-use Oro\Bundle\RedirectBundle\Async\Topics;
+use Oro\Bundle\RedirectBundle\Async\Topic\GenerateDirectUrlForEntitiesTopic;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\EventListener\SluggableEntityListener;
 use Oro\Bundle\RedirectBundle\Model\MessageFactoryInterface;
@@ -55,7 +55,7 @@ class SluggableEntityListenerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testPostPersistDisabledDirectUrl()
+    public function testPostPersistDisabledDirectUrl(): void
     {
         /** @var LifecycleEventArgs|MockObject $args **/
         $args = $this->getMockBuilder(LifecycleEventArgs::class)->disableOriginalConstructor()->getMock();
@@ -79,7 +79,7 @@ class SluggableEntityListenerTest extends \PHPUnit\Framework\TestCase
         $this->sluggableEntityListener->postFlush();
     }
 
-    public function testPostPersistNotSluggableEntity()
+    public function testPostPersistNotSluggableEntity(): void
     {
         /** @var LifecycleEventArgs|MockObject $args **/
         $args = $this->getMockBuilder(LifecycleEventArgs::class)
@@ -104,7 +104,7 @@ class SluggableEntityListenerTest extends \PHPUnit\Framework\TestCase
         $this->sluggableEntityListener->postFlush();
     }
 
-    public function testPostPersistWithDisabledListener()
+    public function testPostPersistWithDisabledListener(): void
     {
         $args = $this->createMock(LifecycleEventArgs::class);
         $args->expects(static::never())->method('getEntity');
@@ -121,7 +121,7 @@ class SluggableEntityListenerTest extends \PHPUnit\Framework\TestCase
         $this->sluggableEntityListener->postFlush();
     }
 
-    public function testPostPersist()
+    public function testPostPersist(): void
     {
         /** @var LifecycleEventArgs|MockObject $args **/
         $args = $this->getMockBuilder(LifecycleEventArgs::class)->disableOriginalConstructor()->getMock();
@@ -148,13 +148,13 @@ class SluggableEntityListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->messageProducer->expects(static::once())
             ->method('send')
-            ->with(Topics::GENERATE_DIRECT_URL_FOR_ENTITIES, $message);
+            ->with(GenerateDirectUrlForEntitiesTopic::getName(), $message);
 
         $this->sluggableEntityListener->postPersist($args);
         $this->sluggableEntityListener->postFlush();
     }
 
-    public function testPostPersistWithDraft()
+    public function testPostPersistWithDraft(): void
     {
         /** @var LifecycleEventArgs|MockObject $args **/
         $args = $this->createMock(LifecycleEventArgs::class);
@@ -171,7 +171,7 @@ class SluggableEntityListenerTest extends \PHPUnit\Framework\TestCase
         $this->sluggableEntityListener->postFlush();
     }
 
-    public function testOnFlushDisabledDirectUrl()
+    public function testOnFlushDisabledDirectUrl(): void
     {
         /** @var OnFlushEventArgs|MockObject $event **/
         $event = $this->getMockBuilder(OnFlushEventArgs::class)->disableOriginalConstructor()->getMock();
@@ -191,7 +191,7 @@ class SluggableEntityListenerTest extends \PHPUnit\Framework\TestCase
         $this->sluggableEntityListener->postFlush();
     }
 
-    public function testOnFlushNoChangedSlugs()
+    public function testOnFlushNoChangedSlugs(): void
     {
         /** @var OnFlushEventArgs|MockObject $event **/
         $event = $this->getMockBuilder(OnFlushEventArgs::class)
@@ -227,7 +227,7 @@ class SluggableEntityListenerTest extends \PHPUnit\Framework\TestCase
         $this->sluggableEntityListener->postFlush();
     }
 
-    public function testOnFlushChangedSlugWithoutChangedPrototypesUp()
+    public function testOnFlushChangedSlugWithoutChangedPrototypesUp(): void
     {
         /** @var OnFlushEventArgs|MockObject $event **/
         $event = $this->getMockBuilder(OnFlushEventArgs::class)->disableOriginalConstructor()->getMock();
@@ -267,7 +267,7 @@ class SluggableEntityListenerTest extends \PHPUnit\Framework\TestCase
         $this->sluggableEntityListener->postFlush();
     }
 
-    public function testOnFlushChangedSlugWithChangedPrototypesIns()
+    public function testOnFlushChangedSlugWithChangedPrototypesIns(): void
     {
         /** @var OnFlushEventArgs|MockObject $event **/
         $event = $this->getMockBuilder(OnFlushEventArgs::class)->disableOriginalConstructor()->getMock();
@@ -292,13 +292,13 @@ class SluggableEntityListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->messageProducer->expects(static::once())
             ->method('send')
-            ->with(Topics::GENERATE_DIRECT_URL_FOR_ENTITIES, $message);
+            ->with(GenerateDirectUrlForEntitiesTopic::getName(), $message);
 
         $this->sluggableEntityListener->onFlush($event);
         $this->sluggableEntityListener->postFlush();
     }
 
-    public function testOnFlushChangedSlugWithChangedPrototypesDel()
+    public function testOnFlushChangedSlugWithChangedPrototypesDel(): void
     {
         /** @var SluggableInterface|MockObject $entity */
         $entity = $this->createMock(SluggableInterface::class);
@@ -340,13 +340,13 @@ class SluggableEntityListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->messageProducer->expects(static::once())
             ->method('send')
-            ->with(Topics::GENERATE_DIRECT_URL_FOR_ENTITIES, $message);
+            ->with(GenerateDirectUrlForEntitiesTopic::getName(), $message);
 
         $this->sluggableEntityListener->onFlush($event);
         $this->sluggableEntityListener->postFlush();
     }
 
-    public function testOnFlushWithDisabledListener()
+    public function testOnFlushWithDisabledListener(): void
     {
         $event = $this->createMock(OnFlushEventArgs::class);
         $event->expects(static::never())->method('getEntityManager');
@@ -366,7 +366,7 @@ class SluggableEntityListenerTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider slugPrototypeWithRedirectDataProvider
      */
-    public function testPostFlushWithSlugPrototypeWithRedirect(bool $createRedirect, bool $expectedCreateRedirect)
+    public function testPostFlushWithSlugPrototypeWithRedirect(bool $createRedirect, bool $expectedCreateRedirect): void
     {
         $entityId = 1;
         $entity = new SluggableEntityStub();
@@ -395,7 +395,7 @@ class SluggableEntityListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->messageProducer->expects(static::once())
             ->method('send')
-            ->with(Topics::GENERATE_DIRECT_URL_FOR_ENTITIES, $message);
+            ->with(GenerateDirectUrlForEntitiesTopic::getName(), $message);
 
         $this->sluggableEntityListener->postPersist(
             new LifecycleEventArgs($entity, $this->createMock(ObjectManager::class))
@@ -417,7 +417,7 @@ class SluggableEntityListenerTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testPostFlushWithSlugPrototypeWithRedirectWithMultiple()
+    public function testPostFlushWithSlugPrototypeWithRedirectWithMultiple(): void
     {
         $entityWithoutRedirectId = 1;
         $entityWithoutRedirect = new SluggableEntityStub();
@@ -469,8 +469,8 @@ class SluggableEntityListenerTest extends \PHPUnit\Framework\TestCase
         $this->messageProducer->expects(static::exactly(2))
             ->method('send')
             ->withConsecutive(
-                [Topics::GENERATE_DIRECT_URL_FOR_ENTITIES, $messageWithoutRedirect],
-                [Topics::GENERATE_DIRECT_URL_FOR_ENTITIES, $messageWithRedirect]
+                [GenerateDirectUrlForEntitiesTopic::getName(), $messageWithoutRedirect],
+                [GenerateDirectUrlForEntitiesTopic::getName(), $messageWithRedirect]
             );
 
         $this->sluggableEntityListener->postFlush();
@@ -536,7 +536,7 @@ class SluggableEntityListenerTest extends \PHPUnit\Framework\TestCase
         return $uow;
     }
 
-    protected function assertAndDisableListener()
+    protected function assertAndDisableListener(): void
     {
         static::assertInstanceOf(OptionalListenerInterface::class, $this->sluggableEntityListener);
         $this->sluggableEntityListener->setEnabled(false);

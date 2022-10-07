@@ -4,7 +4,7 @@ namespace Oro\Bundle\WebCatalogBundle\Cache;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\WebCatalogBundle\Async\Topics;
+use Oro\Bundle\WebCatalogBundle\Async\Topic\WebCatalogCalculateCacheTopic;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
@@ -58,7 +58,10 @@ class ContentNodeTreeCacheWarmer implements CacheWarmerInterface
 
         foreach (array_unique($webCatalogValues) as $value) {
             if ($value) {
-                $this->messageProducer->send(Topics::CALCULATE_WEB_CATALOG_CACHE, ['webCatalogId' => $value]);
+                $this->messageProducer->send(
+                    WebCatalogCalculateCacheTopic::getName(),
+                    [WebCatalogCalculateCacheTopic::WEB_CATALOG_ID => $value]
+                );
             }
         }
     }

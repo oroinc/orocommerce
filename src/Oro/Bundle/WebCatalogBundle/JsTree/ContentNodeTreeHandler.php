@@ -4,7 +4,7 @@ namespace Oro\Bundle\WebCatalogBundle\JsTree;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
-use Oro\Bundle\WebCatalogBundle\Async\Topics;
+use Oro\Bundle\WebCatalogBundle\Async\Topic\WebCatalogResolveContentNodeSlugsTopic;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentNodeRepository;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
@@ -70,12 +70,12 @@ class ContentNodeTreeHandler extends AbstractTreeHandler
     {
         $titleValue = $this->localizationHelper->getFirstNonEmptyLocalizedValue($entity->getTitles());
         return [
-            'id'     => $entity->getId(),
+            'id' => $entity->getId(),
             'parent' => $entity->getParentNode() ? $entity->getParentNode()->getId() : null,
-            'text'   => $titleValue ? $titleValue->getString() : '',
-            'state'  => [
-                'opened' => $entity->getParentNode() === null
-            ]
+            'text' => $titleValue ? $titleValue->getString() : '',
+            'state' => [
+                'opened' => $entity->getParentNode() === null,
+            ],
         ];
     }
 
@@ -113,7 +113,10 @@ class ContentNodeTreeHandler extends AbstractTreeHandler
         $node->getSlugPrototypesWithRedirect()->setCreateRedirect($this->createRedirect);
         $this->uniqueSlugPrototypesResolver
             ->resolveSlugPrototypeUniqueness($node->getParentNode(), $node);
-        $this->messageProducer->send(Topics::RESOLVE_NODE_SLUGS, $this->messageFactory->createMessage($node));
+        $this->messageProducer->send(
+            WebCatalogResolveContentNodeSlugsTopic::getName(),
+            $this->messageFactory->createMessage($node)
+        );
 
         return $node;
     }

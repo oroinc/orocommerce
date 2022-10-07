@@ -108,7 +108,7 @@ oro_behat_extension:
       selector: '.include-not-categorized-product-choice input[type="checkbox"]'
 
     CategoryItem:
-      selector: 'div.featured-categories div.embedded-list__item'
+      selector: 'div.featured-categories [data-name="embedded-list-item"]'
 
     Category Long Description:
       selector: '.category-long-description'

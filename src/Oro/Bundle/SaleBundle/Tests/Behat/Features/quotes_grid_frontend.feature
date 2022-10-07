@@ -40,6 +40,18 @@ Feature: Quotes Grid Frontend
     And number of records in "AllQuotes" should be 1
     And I reset "AllQuotes" grid
 
+  Scenario: Check Quote grid filter on tablet view
+    Given I set window size to 992x1024
+    And I click "GridFiltersButton"
+    Then I should see an "Fullscreen Popup" element
+    And I set filter Quote as is empty
+    And I should see "Fullscreen Popup Apply Filters" button enabled
+    And I set filter Quote as is not empty
+    And I should see "Fullscreen Popup Apply Filters" button enabled
+    When I click "Fullscreen Popup Apply Filters"
+    Then I should not see an "Fullscreen Popup" element
+    And I reset "AllQuotes" grid
+
   Scenario: Check PO Number filter
     Given number of records in "AllQuotes" should be 13
     When I filter PO Number as contains "PO10"

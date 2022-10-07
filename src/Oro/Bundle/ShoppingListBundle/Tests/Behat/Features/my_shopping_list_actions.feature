@@ -1,5 +1,6 @@
 @regression
 @ticket-BB-19469
+@ticket-BB-21750
 @fixture-OroShoppingListBundle:MyShoppingListsFixture.yml
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroCheckoutBundle:Shipping.yml
@@ -167,3 +168,12 @@ Feature: My Shopping List Actions
     And I click on "Shopping Lists Navigation Link"
     And I click View "Shopping List 1" in grid
     Then I should not see a "Shopping List Actions" element
+
+  Scenario: Filter by owner should be visible after clearing all filters
+    Given I follow "Account"
+    And I click on "Shopping Lists Navigation Link"
+    And Page title equals to "Shopping Lists - My Account"
+    When I click "Frontend Grid Action Filter Button"
+    And I filter Owner as contains "Amanda"
+    And I click "Clear All Filters"
+    Then I should see "Owner" filter in frontend grid

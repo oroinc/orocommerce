@@ -2,82 +2,49 @@
 
 namespace Oro\Bundle\RedirectBundle\Async;
 
+use Oro\Bundle\RedirectBundle\Async\Topic\CalculateSlugCacheTopic;
 use Oro\Bundle\RedirectBundle\Cache\Dumper\SluggableUrlDumper;
 use Oro\Bundle\RedirectBundle\Model\MessageFactoryInterface;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
-use Oro\Component\MessageQueue\Job\JobRunner;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Component\MessageQueue\Util\JSON;
-use Psr\Log\LoggerInterface;
-use Symfony\Component\OptionsResolver\Exception\InvalidArgumentException;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\NullLogger;
 
 /**
  * Fill Slug URL caches with data received for a given set of entities.
  */
-class UrlCacheProcessor implements MessageProcessorInterface, TopicSubscriberInterface
+class UrlCacheProcessor implements MessageProcessorInterface, TopicSubscriberInterface, LoggerAwareInterface
 {
-    private JobRunner $jobRunner;
-    private MessageFactoryInterface $messageFactory;
-    private SluggableUrlDumper $dumper;
-    private LoggerInterface $logger;
+    use LoggerAwareTrait;
 
-    public function __construct(
-        JobRunner $jobRunner,
-        MessageFactoryInterface $messageFactory,
-        SluggableUrlDumper $dumper,
-        LoggerInterface $logger
-    ) {
-        $this->jobRunner = $jobRunner;
+    private MessageFactoryInterface $messageFactory;
+
+    private SluggableUrlDumper $dumper;
+
+    public function __construct(MessageFactoryInterface $messageFactory, SluggableUrlDumper $dumper)
+    {
         $this->messageFactory = $messageFactory;
         $this->dumper = $dumper;
-        $this->logger = $logger;
+
+        $this->logger = new NullLogger();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function process(MessageInterface $message, SessionInterface $session)
+    public function process(MessageInterface $message, SessionInterface $session): string
     {
-        try {
-            $messageData = JSON::decode($message->getBody());
-            $entities = $this->messageFactory->getEntitiesFromMessage($messageData);
-
-            $result = $this->jobRunner->runDelayed($messageData['jobId'], function () use ($entities) {
-                foreach ($entities as $entity) {
-                    $this->dumper->dump($entity);
-                }
-
-                return true;
-            });
-
-            return $result ? self::ACK : self::REJECT;
-        } catch (InvalidArgumentException $e) {
-            $this->logger->error(
-                'Queue Message is invalid',
-                [
-                    'message' => $message,
-                    'exception' => $e
-                ]
-            );
-
-            return self::REJECT;
-        } catch (\Exception $e) {
-            $this->logger->error(
-                'Unexpected exception occurred during queue message processing',
-                [
-                    'topic' => Topics::PROCESS_CALCULATE_URL_CACHE,
-                    'exception' => $e
-                ]
-            );
-
-            return self::REJECT;
+        $messageData = $message->getBody();
+        $entities = $this->messageFactory->getEntitiesFromMessage($messageData);
+        foreach ($entities as $entity) {
+            $this->dumper->dump($entity);
         }
+
+        return self::ACK;
     }
 
-    public static function getSubscribedTopics()
+    public static function getSubscribedTopics(): array
     {
-        return [Topics::PROCESS_CALCULATE_URL_CACHE];
+        return [CalculateSlugCacheTopic::getName()];
     }
 }

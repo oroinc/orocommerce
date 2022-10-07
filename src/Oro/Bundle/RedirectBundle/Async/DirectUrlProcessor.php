@@ -6,56 +6,62 @@ use Doctrine\DBAL\Exception\RetryableException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\RedirectBundle\Async\Topic\GenerateDirectUrlForEntitiesTopic;
 use Oro\Bundle\RedirectBundle\Cache\Dumper\SluggableUrlDumper;
 use Oro\Bundle\RedirectBundle\Cache\FlushableCacheInterface;
 use Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface;
 use Oro\Bundle\RedirectBundle\Generator\SlugEntityGenerator;
-use Oro\Bundle\RedirectBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\RedirectBundle\Model\MessageFactoryInterface;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Component\MessageQueue\Util\JSON;
-use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\NullLogger;
 
 /**
  * Generate Slug URLs for given entities
  */
-class DirectUrlProcessor implements MessageProcessorInterface, TopicSubscriberInterface
+class DirectUrlProcessor implements MessageProcessorInterface, TopicSubscriberInterface, LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     private ManagerRegistry $registry;
+
     private SlugEntityGenerator $generator;
+
     private MessageFactoryInterface $messageFactory;
-    private LoggerInterface $logger;
+
     private UrlCacheInterface $urlCache;
+
     private SluggableUrlDumper $urlCacheDumper;
 
     public function __construct(
         ManagerRegistry $registry,
         SlugEntityGenerator $generator,
         MessageFactoryInterface $messageFactory,
-        LoggerInterface $logger,
         UrlCacheInterface $urlCache,
         SluggableUrlDumper $urlCacheDumper
     ) {
         $this->registry = $registry;
         $this->generator = $generator;
         $this->messageFactory = $messageFactory;
-        $this->logger = $logger;
         $this->urlCache = $urlCache;
         $this->urlCacheDumper = $urlCacheDumper;
+
+        $this->logger = new NullLogger();
     }
 
     /**
      * {@inheritdoc}
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
-    public function process(MessageInterface $message, SessionInterface $session)
+    public function process(MessageInterface $message, SessionInterface $session): string
     {
         $em = null;
         try {
-            $messageData = JSON::decode($message->getBody());
+            $messageData = $message->getBody();
             $className = $this->messageFactory->getEntityClassFromMessage($messageData);
             $entities = $this->messageFactory->getEntitiesFromMessage($messageData);
             $createRedirect = $this->messageFactory->getCreateRedirectFromMessage($messageData);
@@ -70,13 +76,6 @@ class DirectUrlProcessor implements MessageProcessorInterface, TopicSubscriberIn
             $em->flush();
             $em->commit();
             $this->actualizeUrlCache($entities);
-        } catch (InvalidArgumentException $e) {
-            $this->logger->error(
-                'Queue Message is invalid',
-                ['exception' => $e]
-            );
-
-            return self::REJECT;
         } catch (UniqueConstraintViolationException $e) {
             if ($em && $em->getConnection()->getTransactionNestingLevel() > 0) {
                 $em->rollback();
@@ -103,17 +102,12 @@ class DirectUrlProcessor implements MessageProcessorInterface, TopicSubscriberIn
         return self::ACK;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public static function getSubscribedTopics()
+    public static function getSubscribedTopics(): array
     {
-        return [
-            Topics::GENERATE_DIRECT_URL_FOR_ENTITIES
-        ];
+        return [GenerateDirectUrlForEntitiesTopic::getName()];
     }
 
-    private function actualizeUrlCache(array $entities)
+    private function actualizeUrlCache(array $entities): void
     {
         foreach ($entities as $entity) {
             $this->urlCacheDumper->dump($entity);
