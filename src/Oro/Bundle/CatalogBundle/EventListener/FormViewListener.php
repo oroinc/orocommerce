@@ -8,6 +8,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Component\Exception\UnexpectedTypeException;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -28,6 +29,8 @@ class FormViewListener
      */
     protected $doctrineHelper;
 
+    private ?AuthorizationCheckerInterface $authorizationChecker = null;
+
     public function __construct(
         TranslatorInterface $translator,
         DoctrineHelper $doctrineHelper
@@ -36,8 +39,17 @@ class FormViewListener
         $this->doctrineHelper = $doctrineHelper;
     }
 
+    public function setAuthorizationChecker(AuthorizationCheckerInterface $authorizationChecker): void
+    {
+        $this->authorizationChecker = $authorizationChecker;
+    }
+
     public function onProductView(BeforeListRenderEvent $event)
     {
+        if (!$this->authorizationChecker->isGranted('oro_catalog_category_view')) {
+            return;
+        }
+
         $product = $event->getEntity();
 
         if (!$product instanceof Product) {
@@ -62,6 +74,10 @@ class FormViewListener
 
     public function onProductEdit(BeforeListRenderEvent $event)
     {
+        if (!$this->authorizationChecker->isGranted('oro_catalog_category_view')) {
+            return;
+        }
+
         $template = $event->getEnvironment()->render(
             'OroCatalogBundle:Product:category_update.html.twig',
             ['form' => $event->getFormView()]

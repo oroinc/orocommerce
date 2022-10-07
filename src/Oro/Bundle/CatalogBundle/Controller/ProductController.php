@@ -4,6 +4,7 @@ namespace Oro\Bundle\CatalogBundle\Controller;
 
 use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
 use Oro\Bundle\CatalogBundle\Provider\MasterCatalogRootProvider;
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -16,6 +17,7 @@ class ProductController extends AbstractController
 {
     /**
      * @Route("/sidebar", name="oro_catalog_category_product_sidebar")
+     * @AclAncestor("oro_catalog_category_view")
      * @Template
      *
      * @return array

@@ -37,6 +37,8 @@ services:
         arguments:
             - "@translator"
             - "@oro_entity.doctrine_helper"
+        calls:
+            - ['setAuthorizationChecker', ['@security.authorization_checker']]
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onProductView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }

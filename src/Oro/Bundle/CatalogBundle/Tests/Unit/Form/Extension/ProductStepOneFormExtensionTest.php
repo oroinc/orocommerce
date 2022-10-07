@@ -7,12 +7,14 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Form\Extension\ProductFormExtension;
 use Oro\Bundle\CatalogBundle\Form\Extension\ProductStepOneFormExtension;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryTreeType;
+use Oro\Bundle\CatalogBundle\Provider\CategoryDefaultProductUnitProvider;
 use Oro\Bundle\ProductBundle\Form\Type\ProductStepOneType;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class ProductStepOneFormExtensionTest extends \PHPUnit\Framework\TestCase
 {
@@ -30,12 +32,11 @@ class ProductStepOneFormExtensionTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->defaultProductUnitProvider = $this
-            ->getMockBuilder('Oro\Bundle\CatalogBundle\Provider\CategoryDefaultProductUnitProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->defaultProductUnitProvider = $this->createMock(CategoryDefaultProductUnitProvider::class);
+        $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
 
         $this->extension = new ProductStepOneFormExtension($this->defaultProductUnitProvider);
+        $this->extension->setAuthorizationChecker($this->authorizationChecker);
     }
 
     public function testGetExtendedTypes()
@@ -45,6 +46,12 @@ class ProductStepOneFormExtensionTest extends \PHPUnit\Framework\TestCase
 
     public function testBuildForm()
     {
+        $this->authorizationChecker
+            ->expects($this->once())
+            ->method('isGranted')
+            ->with('oro_catalog_category_view')
+            ->willReturn(true);
+
         /** @var FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject $builder */
         $builder = $this->createMock('Symfony\Component\Form\FormBuilderInterface');
         $builder->expects($this->once())
@@ -63,6 +70,25 @@ class ProductStepOneFormExtensionTest extends \PHPUnit\Framework\TestCase
         $builder->expects($this->at(1))
             ->method('addEventListener')
             ->with(FormEvents::POST_SUBMIT, [$this->extension, 'onPostSubmit'], 10);
+
+        $this->extension->buildForm($builder, []);
+    }
+
+    public function testBuildFormWhenCatalogViewDisabledByAcl()
+    {
+        $this->authorizationChecker
+            ->expects($this->once())
+            ->method('isGranted')
+            ->with('oro_catalog_category_view')
+            ->willReturn(false);
+
+        $builder = $this->createMock(FormBuilderInterface::class);
+        $builder
+            ->expects($this->never())
+            ->method('add');
+        $builder
+            ->expects($this->never())
+            ->method('addEventListener');
 
         $this->extension->buildForm($builder, []);
     }
