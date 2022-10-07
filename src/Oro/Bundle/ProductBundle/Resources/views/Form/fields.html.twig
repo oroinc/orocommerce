@@ -270,6 +270,7 @@
     {% set includedProductsGridName = oro_datagrid_build_fullname(includedProductsGrid, scope) %}
     {% set widgetRouteParameters = {
         'gridName': gridName,
+        ('si_' ~ gridName): segmentId,
         ('sd_' ~ gridName): form.vars.segmentDefinition,
         ('sd_' ~ gridName ~ ':incl'): form.includedProducts.vars.value,
         ('sd_' ~ gridName ~ ':excl'): form.excludedProducts.vars.value
@@ -301,6 +302,7 @@
             'excluded': excludedProductsElementId
         },
         'segmentDefinitionFieldName': form.vars.segmentDefinitionFieldName,
+        'segmentId': segmentId,
         'controlsBlockAlias': controlsBlockAlias,
         'gridName': gridName,
         'scope': scope,
@@ -436,7 +438,7 @@
                                     {# --Apply Query button end-- #}
                                 </div>
                                 {{ form_widget(form.sortOrder, {
-                                    'id': 'categorySortOrder',
+                                    'id': ('categorySortOrder--' ~ gridName)|replace({':': '__'}),
                                     'attr': {
                                         'data-sort-order-options': {
                                             'sortOrderConstraints': sortOrderConstraints
@@ -588,4 +590,13 @@
         }|json_encode
     }) %}
     {{ form_widget(form, {'id': 'categorySortOrder', 'attr' : attr}) }}
+{% endblock %}
+
+{% block oro_collection_sort_order_grid_widget %}
+    {% set attr = attr|merge({
+        'data-sort-order-options': {
+            'sortOrderConstraints': sortOrderConstraints
+        }|json_encode
+    }) %}
+    {{ form_widget(form, {'attr' : attr}) }}
 {% endblock %}

@@ -271,6 +271,14 @@ services:
         tags:
             - { name: form.type }
 
+    oro_product.form.type.collection_sort_order_grid:
+        class: 'Oro\Bundle\ProductBundle\Form\Type\CollectionSortOrderGridType'
+        arguments:
+            - '@form.factory'
+            - '@oro_entity.doctrine_helper'
+        tags:
+            - { name: form.type, alias: oro_collection_sort_order_grid }
+
     oro_product.form.type.sort_order_grid:
         class: 'Oro\Bundle\ProductBundle\Form\Type\SortOrderGridType'
         arguments:

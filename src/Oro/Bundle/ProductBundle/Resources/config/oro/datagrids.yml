@@ -191,7 +191,7 @@ datagrids:
             disable_default_sorting: true
 
     product-collection-base-grid:
-        extends: products-select-grid-base
+        extends: products-select-grid-base-without-default-sorting
         columns:
             type:
                 renderable: true
@@ -204,31 +204,26 @@ datagrids:
 
     product-collection-grid:
         extends: product-collection-base-grid
-        source:
-            query:
-                select:
-                    - productSortOrderMock.conversionRate as sortOrder # TODO : change with real field
-                join:
-                    left:
-                        - { join: product.primaryUnitPrecision, alias: productSortOrderMock} # TODO : update with real relation to segment
         columns:
-            sortOrder:
+            categorySortOrder:
                 order: -1
-                label: oro.catalog.product.sort_order.label
+                label: oro.catalog.product.category_sort_order.label
                 editable: true
                 frontend_type: string # can't use decimal because of inappropriate formatter
         sorters:
             columns:
-                sortOrder:
-                    data_name: sortOrder
+                categorySortOrder:
+                    data_name: categorySortOrder
+            default:
+                categorySortOrder: ASC
+                createdAt: DESC
         options:
             jsmodules:
                 - oroproduct/datagrid/builder/sort-order-builder
             cellSelection:
                 dataField: id
                 columnName:
-                    - sortOrder
-                selector: '#categorySortOrder'
+                    - categorySortOrder
             toolbarOptions:
                 pageSize:
                     default_per_page: 10
@@ -260,6 +255,9 @@ datagrids:
             bind_parameters:
                 selectedProducts:
                     default: 0
+        sorters:
+            default:
+                createdAt: DESC
 
     product-collection-add-products-base-grid:
         extends: product-collection-base-grid
@@ -276,6 +274,9 @@ datagrids:
             bind_parameters:
                 hiddenProducts:
                     default: 0
+        sorters:
+            default:
+                createdAt: DESC
         mass_actions:
             add:
                 type: trigger-event-for-selected-product-ids

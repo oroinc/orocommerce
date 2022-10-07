@@ -4,8 +4,8 @@ namespace Oro\Bundle\ProductBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\ProductBundle\Model\ExtendCollectionSortOrder;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\ProductBundle\Model\ExtendCollectionSortOrder;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 
 /**
@@ -111,7 +111,7 @@ class CollectionSortOrder extends ExtendCollectionSortOrder
      * @param Product $product
      * @return CollectionSortOrder
      */
-    public function setProduct(Product $product): CollectionSortOrder
+    public function setProduct(Product $product): self
     {
         $this->product = $product;
         return $this;
@@ -129,9 +129,27 @@ class CollectionSortOrder extends ExtendCollectionSortOrder
      * @param Segment $segment
      * @return CollectionSortOrder
      */
-    public function setSegment(Segment $segment): CollectionSortOrder
+    public function setSegment(Segment $segment): self
     {
         $this->segment = $segment;
+        return $this;
+    }
+
+    /**
+     * @return float|null
+     */
+    public function getSortOrder(): ?float
+    {
+        return $this->sortOrder;
+    }
+
+    /**
+     * @param float|null $sortOrder
+     * @return CollectionSortOrder
+     */
+    public function setSortOrder(?float $sortOrder): self
+    {
+        $this->sortOrder = $sortOrder;
         return $this;
     }
 }
