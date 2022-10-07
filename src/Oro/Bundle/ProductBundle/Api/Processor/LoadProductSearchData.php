@@ -121,7 +121,7 @@ class LoadProductSearchData implements ProcessorInterface
 
             $selectedData = $record->getSelectedData();
             $dataItem = new ProductSearch(
-                $selectedData[$config->findFieldNameByPropertyPath('integer_product_id')]
+                $selectedData[$config->findFieldNameByPropertyPath('integer_system_entity_id')]
             );
             // unserialize product units here to avoid doing it several times
             // in different "customize_loaded_data" processors

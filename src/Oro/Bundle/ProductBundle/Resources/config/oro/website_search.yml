@@ -2,9 +2,6 @@ Oro\Bundle\ProductBundle\Entity\Product:
     alias: oro_product_WEBSITE_ID
     fields:
         -
-            name: product_id
-            type: integer
-        -
             name: sku_uppercase
             type: text
         -

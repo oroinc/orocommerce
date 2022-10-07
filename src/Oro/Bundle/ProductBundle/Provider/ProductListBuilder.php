@@ -8,6 +8,7 @@ use Oro\Bundle\ProductBundle\Event\ProductListEventDispatcher;
 use Oro\Bundle\ProductBundle\Model\ProductView;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Factory\QueryFactoryInterface;
+use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
 
 /**
@@ -38,8 +39,8 @@ class ProductListBuilder
             $productListType,
             static function (SearchQueryInterface $query) use ($productIds) {
                 $query
-                    ->addWhere(Criteria::expr()->in('integer.product_id', $productIds))
-                    ->setMaxResults(count($productIds) ?: -1);
+                    ->addWhere(Criteria::expr()->in('integer.system_entity_id', $productIds))
+                    ->setMaxResults(Query::INFINITY);
             }
         );
 
@@ -75,7 +76,7 @@ class ProductListBuilder
     {
         $query = $this->queryFactory->create(['search_index' => 'website'])
             ->setFrom('oro_product_WEBSITE_ID')
-            ->addSelect('integer.product_id as id');
+            ->addSelect('integer.system_entity_id as id');
         if (null !== $initializeQueryCallback) {
             $initializeQueryCallback($query);
         }
