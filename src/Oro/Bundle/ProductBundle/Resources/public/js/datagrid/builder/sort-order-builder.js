@@ -17,14 +17,14 @@ define(['jquery', 'underscore', 'oroui/js/mediator', 'orolocale/js/formatter/num
          */
         constraintNames: {
             decimal: 'Oro\\Bundle\\ValidationBundle\\Validator\\Constraints\\Decimal',
-            greaterThan0: 'Oro\\Bundle\\ValidationBundle\\Validator\\Constraints\\GreaterThanZero'
+            range: 'Range'
         },
 
         /**
          * @property {Object}
          */
         options: {
-            sortOrderColumnName: 'sortOrder',
+            sortOrderColumnName: 'categorySortOrder',
             inCategoryColumnName: 'inCategory',
             sortOrderConstraints: {}
         },
@@ -75,9 +75,11 @@ define(['jquery', 'underscore', 'oroui/js/mediator', 'orolocale/js/formatter/num
             const sortOrderColumn = this.options.sortOrderColumnName;
             // apply rounding & validation
             _.each(this.grid.collection.models, function(model) {
-                model.set(sortOrderColumn, NumberFormatter.formatDecimal(model.get(sortOrderColumn), {
-                    grouping_used: false
-                }));
+                if (model.get(sortOrderColumn) !== null) {
+                    model.set(sortOrderColumn, NumberFormatter.formatDecimal(model.get(sortOrderColumn), {
+                        grouping_used: false
+                    }));
+                }
             }, this);
         },
 
@@ -90,8 +92,8 @@ define(['jquery', 'underscore', 'oroui/js/mediator', 'orolocale/js/formatter/num
             if (sortOrderConstraints[constraintNames.decimal]) {
                 constraints[constraintNames.decimal] = sortOrderConstraints[constraintNames.decimal];
             }
-            if (sortOrderConstraints[constraintNames.greaterThan0]) {
-                constraints[constraintNames.greaterThan0] = sortOrderConstraints[constraintNames.greaterThan0];
+            if (sortOrderConstraints[constraintNames.range]) {
+                constraints[constraintNames.range] = sortOrderConstraints[constraintNames.range];
             }
 
             editorInput.data('validation', constraints);
@@ -133,16 +135,16 @@ define(['jquery', 'underscore', 'oroui/js/mediator', 'orolocale/js/formatter/num
             if (!cell.model.has(this.options.inCategoryColumnName)
                 || cell.model.get(this.options.inCategoryColumnName)) {
                 editorInput.show();
+                editorInput.siblings().show();
                 editorInput.prop( "disabled", false );
                 editorInput.parent().addClass('controls').removeClass('editable');
                 editorInput.attr('name', 'sortOrder_' + cell.model.cid);
                 this._validateInput(cell);
             } else {
                 editorInput.hide();
+                editorInput.siblings().hide();
                 editorInput.prop( "disabled", true );
                 editorInput.parent().addClass('controls').removeClass('editable');
-                // editorInput.val(false);
-                // cell.model.set(this.options.sortOrderColumnName, false);
                 editorInput.attr('name', 'disabledSortOrder_' + cell.model.cid);
             }
         }

@@ -3,9 +3,9 @@
 namespace Oro\Bundle\ProductBundle\Migrations\Schema\v1_28;
 
 use Doctrine\DBAL\Schema\Schema;
-use Oro\Bundle\ProductBundle\Migrations\Schema\OroProductBundleInstaller;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
+use Oro\Bundle\ProductBundle\Migrations\Schema\OroProductBundleInstaller;
 
 class AddCollectionSortOrder implements Migration
 {

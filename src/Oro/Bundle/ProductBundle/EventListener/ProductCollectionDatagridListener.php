@@ -3,12 +3,15 @@
 namespace Oro\Bundle\ProductBundle\EventListener;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Datagrid\NameStrategyInterface;
 use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
 use Oro\Bundle\DataGridBundle\Event\BuildAfter;
+use Oro\Bundle\DataGridBundle\Event\BuildBefore;
+use Oro\Bundle\ProductBundle\Entity\CollectionSortOrder;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Service\ProductCollectionDefinitionConverter;
 use Oro\Bundle\SegmentBundle\Entity\Manager\SegmentManager;
@@ -22,7 +25,9 @@ use Symfony\Component\HttpFoundation\RequestStack;
 class ProductCollectionDatagridListener
 {
     const SEGMENT_DEFINITION_PARAMETER_KEY = 'sd_';
+    const SEGMENT_ID_PARAMETER_KEY = 'si_';
     const DEFINITION_KEY = 'definition';
+    const ID_KEY = 'id';
     const INCLUDED_KEY = 'included';
     const EXCLUDED_KEY = 'excluded';
 
@@ -65,6 +70,11 @@ class ProductCollectionDatagridListener
         $this->definitionConverter = $definitionConverter;
     }
 
+    public function onBuildBefore(BuildBefore $event)
+    {
+        $this->buildCellSelectionSelector($event->getDatagrid());
+    }
+
     public function onBuildAfter(BuildAfter $event)
     {
         $dataGrid = $event->getDatagrid();
@@ -81,6 +91,12 @@ class ProductCollectionDatagridListener
 
         $dataGridQueryBuilder = $dataSource->getQueryBuilder();
 
+        if (!is_null($segmentData[self::ID_KEY]) && !empty($segmentData[self::ID_KEY])) {
+            $this->joinProductCollectionSortOrder($dataGridQueryBuilder, (int)$segmentData[self::ID_KEY]);
+        } else {
+            $this->joinProductCollectionSortOrder($dataGridQueryBuilder, 0);
+        }
+
         $definition = json_decode($segmentData[self::DEFINITION_KEY], true);
         if (!$this->definitionConverter->hasFilters($definition) && !$segmentData[self::INCLUDED_KEY]) {
             $dataGridQueryBuilder->andWhere('1 = 0');
@@ -91,6 +107,52 @@ class ProductCollectionDatagridListener
         if ($segmentDefinition) {
             $this->addFilterBySegment($dataGridQueryBuilder, $segmentDefinition);
         }
+    }
+
+    /**
+     * @param QueryBuilder$queryBuilder
+     * @param int|null $segmentId
+     * @return void
+     */
+    private function joinProductCollectionSortOrder(QueryBuilder $queryBuilder, ?int $segmentId): void
+    {
+        $expr = $queryBuilder->expr();
+        $queryBuilder
+            ->addSelect('collectionSortOrder.sortOrder as categorySortOrder');
+
+        $joinContactsExpr = $expr->andX()
+            ->add(
+                $expr->eq(
+                    'collectionSortOrder.product',
+                    'product.id'
+                )
+            );
+
+        $joinContactsExpr->add('IDENTITY(collectionSortOrder.segment) =:segmentId');
+
+        $queryBuilder->leftJoin(
+            CollectionSortOrder::class,
+            'collectionSortOrder',
+            Join::WITH,
+            $joinContactsExpr
+        );
+        $queryBuilder->setParameter('segmentId', $segmentId);
+    }
+
+    public function buildCellSelectionSelector(DatagridInterface $datagrid)
+    {
+        $datagrid->getConfig()->offsetSetByPath(
+            '[options][cellSelection][selector]',
+            sprintf(
+                '#%s--%s',
+                'categorySortOrder',
+                str_replace(
+                    ':',
+                    '__',
+                    $this->nameStrategy->buildGridFullName($datagrid->getName(), $datagrid->getScope())
+                )
+            )
+        );
     }
 
     /**
@@ -144,8 +206,9 @@ class ProductCollectionDatagridListener
         $parameters = $dataGrid->getParameters();
 
         $params = $parameters->get('params', []);
-        if (isset($params['segmentDefinition'])) {
+        if (isset($params['segmentId']) && isset($params['segmentDefinition'])) {
             return [
+                self::ID_KEY => $params['segmentId'],
                 self::DEFINITION_KEY => $params['segmentDefinition'],
                 self::INCLUDED_KEY => $params['includedProducts'] ?? null,
                 self::EXCLUDED_KEY => $params['excludedProducts'] ?? null
@@ -167,6 +230,7 @@ class ProductCollectionDatagridListener
         $dataParameterName = self::SEGMENT_DEFINITION_PARAMETER_KEY . $gridFullName;
 
         return [
+            self::ID_KEY => $request->get(self::SEGMENT_ID_PARAMETER_KEY . $gridFullName),
             self::DEFINITION_KEY => $request->get($dataParameterName),
             self::INCLUDED_KEY => $request->get($dataParameterName . ':incl'),
             self::EXCLUDED_KEY => $request->get($dataParameterName . ':excl'),

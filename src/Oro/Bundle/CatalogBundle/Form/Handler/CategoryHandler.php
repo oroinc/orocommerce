@@ -57,7 +57,8 @@ class CategoryHandler
             if ($this->form->isValid()) {
                 $appendProducts = $this->form->get('appendProducts')->getData();
                 $removeProducts = $this->form->get('removeProducts')->getData();
-                $this->onSuccess($category, $appendProducts, $removeProducts);
+                $sortOrder = $this->form->get('sortOrder')->getData()->toArray();
+                $this->onSuccess($category, $appendProducts, $removeProducts, $sortOrder);
 
                 $this->eventDispatcher->dispatch(
                     new AfterFormProcessEvent($this->form, $category),
@@ -75,11 +76,13 @@ class CategoryHandler
      * @param Category $category
      * @param Product[] $appendProducts
      * @param Product[] $removeProducts
+     * @param Product[] $sortOrder
      */
-    protected function onSuccess(Category $category, array $appendProducts, array $removeProducts)
+    protected function onSuccess(Category $category, array $appendProducts, array $removeProducts, array $sortOrder): void
     {
         $this->appendProducts($category, $appendProducts);
         $this->removeProducts($category, $removeProducts);
+        $this->sortProducts($category, $appendProducts, $removeProducts, $sortOrder);
 
         if ($category->getDefaultProductOptions()) {
             $category->getDefaultProductOptions()->updateUnitPrecision();
@@ -131,6 +134,46 @@ class CategoryHandler
         /** @var $product Product */
         foreach ($products as $product) {
             $category->removeProduct($product);
+        }
+    }
+
+    /**
+     * @param Category $category
+     * @param array $appendProducts
+     * @param array $removeProducts
+     * @param array $sortOrder
+     * @return void
+     */
+    protected function sortProducts(Category $category, array $appendProducts, array $removeProducts, array $sortOrder): void
+    {
+        $productRepository = $this->manager->getRepository(Product::class);
+        $products = $productRepository->findBy(['id' => array_keys($sortOrder)]);
+        foreach ($products as $product) {
+            $sortDataInputValue = (float)$sortOrder[$product->getId()]['data']['categorySortOrder'];
+            /**
+             * We need to :
+             *   - Check that the field is in the newly selected fields or already in collection
+             *   - Check that the field is not in the removed products
+             *   - Compare the old value and the new value
+            */
+            if (
+                ($category->getProducts()->contains($product) || in_array($product, $appendProducts))
+                && !in_array($product, $removeProducts)
+                && $sortDataInputValue !== $product->getCategorySortOrder()
+            ) {
+                $product->setCategorySortOrder($sortDataInputValue);
+                $this->manager->persist($product);
+                $this->manager->flush($product);
+            }
+        }
+
+        /**
+         * We need to reset the sorting value of all removed products.
+         * Their sort value must go back to default in case they are added to another categorie after
+         */
+        foreach ($removeProducts as $product) {
+            $product->getCategorySortOrder(null);
+            $this->manager->persist($product);
         }
     }
 }
