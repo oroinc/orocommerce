@@ -163,8 +163,8 @@
     {% set attr = layout_attr_defaults(attr, {
         'id': collapseId,
         '~class': ' shopping-list-notes__content shopping-list-notes__content--limited collapse collapse-overflow no-transition',
-        'data-trigger-icon-show-class': 'fa-angle-down',
-        'data-trigger-icon-hide-class': 'fa-angle-up',
+        'data-trigger-icon-show-class': 'fa-angle-up',
+        'data-trigger-icon-hide-class': 'fa-angle-down',
         'data-collapsed-text': 'oro.ui.collapse.more'|trans,
         'data-expanded-text': 'oro.ui.collapse.less'|trans,
         'data-check-overflow': 'true',
@@ -173,7 +173,7 @@
     {% if notes is not null %}
 
         <div {{ block('block_attributes') }}>{{- notes -}}</div>
-        <button class="btn btn--link btn--size-s btn--no-x-offset collapse-toggle"
+        <button class="btn btn--link btn--no-x-offset btn--no-y-offset collapse-toggle"
                 data-toggle="collapse"
                 data-target="{{ '#' ~ collapseId }}"
                 aria-controls="{{ collapseId }}"

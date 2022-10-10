@@ -15,13 +15,13 @@
         <p class="shopping-list-notes__title">{{ 'oro.shoppinglist.notes.label'|trans }}:</p>
         <div id="{{ collapseId }}" class="shopping-list-notes__content shopping-list-notes__content--limited collapse collapse-overflow no-transition"
              data-toggle="false"
-             data-trigger-icon-show-class="fa-angle-down"
-             data-trigger-icon-hide-class="fa-angle-up"
+             data-trigger-icon-show-class="fa-angle-up"
+             data-trigger-icon-hide-class="fa-angle-down"
              data-collapsed-text="{{ 'oro.ui.collapse.more'|trans }}"
              data-expanded-text="{{ 'oro.ui.collapse.less'|trans }}"
              data-check-overflow="true"
         >{{ block_widget(block) }}</div>
-        <button class="btn btn--link btn--size-s btn--no-x-offset collapse-toggle"
+        <button class="btn btn--link btn--no-x-offset btn--no-y-offset collapse-toggle"
                 data-toggle="collapse"
                 data-target="{{ '#' ~ collapseId }}"
                 aria-expanded="false"
