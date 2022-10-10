@@ -245,16 +245,16 @@ services:
     oro_visibility.async.message_filter.visibility.change_category_visibility:
         class: 'Oro\Bundle\VisibilityBundle\Async\Visibility\VisibilityMessageFilter'
         arguments:
-            - !php/const Oro\Bundle\VisibilityBundle\Async\Topics::CHANGE_CATEGORY_VISIBILITY
+            - !php/const Oro\Bundle\VisibilityBundle\Async\Topic\ResolveCategoryVisibilityTopic::NAME
         tags:
-            - { name: oro_message_queue.message_filter, topic: !php/const Oro\Bundle\VisibilityBundle\Async\Topics::CHANGE_CATEGORY_VISIBILITY }
+            - { name: oro_message_queue.message_filter, topic: !php/const Oro\Bundle\VisibilityBundle\Async\Topic\ResolveCategoryVisibilityTopic::NAME }
 
     oro_visibility.async.message_filter.visibility.resolve_product_visibility:
         class: 'Oro\Bundle\VisibilityBundle\Async\Visibility\VisibilityMessageFilter'
         arguments:
-            - !php/const Oro\Bundle\VisibilityBundle\Async\Topics::RESOLVE_PRODUCT_VISIBILITY
+            - !php/const Oro\Bundle\VisibilityBundle\Async\Topic\ResolveProductVisibilityTopic::NAME
         tags:
-            - { name: oro_message_queue.message_filter, topic: !php/const Oro\Bundle\VisibilityBundle\Async\Topics::RESOLVE_PRODUCT_VISIBILITY }
+            - { name: oro_message_queue.message_filter, topic: !php/const Oro\Bundle\VisibilityBundle\Async\Topic\ResolveProductVisibilityTopic::NAME }
 
     oro_visibility.entity_listener.product_visibility_change:
         class: 'Oro\Bundle\VisibilityBundle\Entity\EntityListener\ProductVisibilityListener'
@@ -295,44 +295,6 @@ services:
             - '@oro_message_queue.client.message_producer'
         tags:
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\ProductBundle\Entity\Product', event: postPersist }
-
-    oro_visibility.async.visibility.product_visibility_processor:
-        class: Oro\Bundle\VisibilityBundle\Async\Visibility\ProductVisibilityProcessor
-        arguments:
-            - '@doctrine'
-            - '@logger'
-            - '@oro_visibility.visibility.cache.product.cache_builder'
-        tags:
-            - { name: oro_message_queue.client.message_processor }
-
-    oro_visibility.async.visibility.category_visibility_processor:
-        class: Oro\Bundle\VisibilityBundle\Async\Visibility\CategoryVisibilityProcessor
-        arguments:
-            - '@doctrine'
-            - '@logger'
-            - '@oro_visibility.visibility.cache.product.category.cache_builder'
-        tags:
-            - { name: oro_message_queue.client.message_processor }
-
-    oro_visibility.async.visibility.product_processor:
-        class: Oro\Bundle\VisibilityBundle\Async\Visibility\ProductProcessor
-        arguments:
-            - '@doctrine'
-            - '@logger'
-            - '@oro_visibility.visibility.cache.product.cache_builder'
-        tags:
-            - { name: oro_message_queue.client.message_processor }
-
-    oro_visibility.async.category_processor:
-        class: Oro\Bundle\VisibilityBundle\Async\Visibility\CategoryProcessor
-        arguments:
-            - '@doctrine'
-            - '@oro_entity.orm.insert_from_select_query_executor'
-            - '@logger'
-            - '@oro_visibility.visibility.cache.product.category.cache_builder'
-            - '@oro_scope.scope_manager'
-        tags:
-            - { name: oro_message_queue.client.message_processor }
 
     oro_visibility.event_listener.form_view:
         class: 'Oro\Bundle\VisibilityBundle\Form\EventListener\FormViewListener'
@@ -459,15 +421,6 @@ services:
         tags:
             - { name: doctrine.repository_service }
 
-    oro_visibility.async.visibility.customer_processor:
-        class: Oro\Bundle\VisibilityBundle\Async\Visibility\CustomerProcessor
-        arguments:
-            - '@doctrine'
-            - '@logger'
-            - '@oro_website_search.driver.customer_partial_update_driver'
-        tags:
-            - { name: oro_message_queue.client.message_processor }
-
     oro_visibility.migration.demo_data_fixtures_listener.change_visibility:
         parent: oro_platform.event_listener.demo_data_fixtures_listener.abstract
         class: Oro\Bundle\VisibilityBundle\EventListener\ChangeVisibilityDemoDataFixturesListener
@@ -571,23 +524,23 @@ services:
     oro_visibility.async.message_filter.visibility.change_product_category:
         class: 'Oro\Bundle\VisibilityBundle\Async\Visibility\ProductMessageFilter'
         arguments:
-            - !php/const Oro\Bundle\VisibilityBundle\Async\Topics::CHANGE_PRODUCT_CATEGORY
+            - !php/const Oro\Bundle\VisibilityBundle\Async\Topic\VisibilityOnChangeProductCategoryTopic::NAME
         tags:
-            - { name: oro_message_queue.message_filter, topic: !php/const Oro\Bundle\VisibilityBundle\Async\Topics::CHANGE_PRODUCT_CATEGORY }
+            - { name: oro_message_queue.message_filter, topic: !php/const Oro\Bundle\VisibilityBundle\Async\Topic\VisibilityOnChangeProductCategoryTopic::NAME }
 
     oro_visibility.async.message_filter.visibility.category_position_change:
         class: 'Oro\Bundle\VisibilityBundle\Async\Visibility\CategoryMessageFilter'
         arguments:
-            - !php/const Oro\Bundle\VisibilityBundle\Async\Topics::CATEGORY_POSITION_CHANGE
+            - !php/const Oro\Bundle\VisibilityBundle\Async\Topic\VisibilityOnChangeCategoryPositionTopic::NAME
         tags:
-            - { name: oro_message_queue.message_filter, topic: !php/const Oro\Bundle\VisibilityBundle\Async\Topics::CATEGORY_POSITION_CHANGE }
+            - { name: oro_message_queue.message_filter, topic: !php/const Oro\Bundle\VisibilityBundle\Async\Topic\VisibilityOnChangeCategoryPositionTopic::NAME }
 
     oro_visibility.category_message_filter.category_remove:
         class: 'Oro\Bundle\VisibilityBundle\Async\Visibility\CategoryMessageFilter'
         arguments:
-            - !php/const Oro\Bundle\VisibilityBundle\Async\Topics::CATEGORY_REMOVE
+            - !php/const Oro\Bundle\VisibilityBundle\Async\Topic\VisibilityOnRemoveCategoryTopic::NAME
         tags:
-            - { name: oro_message_queue.message_filter, topic: !php/const Oro\Bundle\VisibilityBundle\Async\Topics::CATEGORY_REMOVE }
+            - { name: oro_message_queue.message_filter, topic: !php/const Oro\Bundle\VisibilityBundle\Async\Topic\VisibilityOnRemoveCategoryTopic::NAME }
 
     oro_visibility.model.category_visibility_query_builder_modifier:
         class: 'Oro\Bundle\VisibilityBundle\Model\CategoryVisibilityQueryBuilderModifier'

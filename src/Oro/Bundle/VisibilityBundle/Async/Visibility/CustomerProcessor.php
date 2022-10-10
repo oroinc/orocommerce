@@ -7,59 +7,45 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
-use Oro\Bundle\VisibilityBundle\Async\Topics;
+use Oro\Bundle\VisibilityBundle\Async\Topic\VisibilityOnChangeCustomerTopic;
 use Oro\Bundle\VisibilityBundle\Driver\CustomerPartialUpdateDriverInterface;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Component\MessageQueue\Util\JSON;
-use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\NullLogger;
 
 /**
  * Updated visibility for a customer.
  */
-class CustomerProcessor implements MessageProcessorInterface, TopicSubscriberInterface
+class CustomerProcessor implements MessageProcessorInterface, TopicSubscriberInterface, LoggerAwareInterface
 {
-    /** @var ManagerRegistry */
-    private $doctrine;
+    use LoggerAwareTrait;
 
-    /** @var LoggerInterface */
-    private $logger;
+    private ManagerRegistry $doctrine;
 
-    /** @var CustomerPartialUpdateDriverInterface */
-    private $partialUpdateDriver;
+    private CustomerPartialUpdateDriverInterface $partialUpdateDriver;
 
     public function __construct(
         ManagerRegistry $doctrine,
-        LoggerInterface $logger,
         CustomerPartialUpdateDriverInterface $partialUpdateDriver
     ) {
         $this->doctrine = $doctrine;
-        $this->logger = $logger;
         $this->partialUpdateDriver = $partialUpdateDriver;
+        $this->logger = new NullLogger();
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public static function getSubscribedTopics()
+    public static function getSubscribedTopics(): array
     {
-        return [Topics::CHANGE_CUSTOMER];
+        return [VisibilityOnChangeCustomerTopic::getName()];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function process(MessageInterface $message, SessionInterface $session)
+    public function process(MessageInterface $message, SessionInterface $session): string
     {
-        $body = JSON::decode($message->getBody());
-        if (!isset($body['id'])) {
-            $this->logger->critical('Got invalid message.');
-
-            return self::REJECT;
-        }
+        $body = $message->getBody();
 
         /** @var EntityManagerInterface $em */
         $em = $this->doctrine->getManagerForClass(BaseVisibilityResolved::class);
