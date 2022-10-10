@@ -4,7 +4,7 @@ namespace Oro\Bundle\VisibilityBundle\Entity\EntityListener;
 
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\VisibilityBundle\Async\Topics;
+use Oro\Bundle\VisibilityBundle\Async\Topic\VisibilityOnChangeProductCategoryTopic;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
 /**
@@ -37,6 +37,6 @@ class ProductListener implements OptionalListenerInterface
             return;
         }
 
-        $this->messageProducer->send(Topics::CHANGE_PRODUCT_CATEGORY, ['id' => $product->getId()]);
+        $this->messageProducer->send(VisibilityOnChangeProductCategoryTopic::getName(), ['id' => $product->getId()]);
     }
 }

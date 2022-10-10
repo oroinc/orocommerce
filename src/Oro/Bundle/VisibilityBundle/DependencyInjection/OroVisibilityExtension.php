@@ -31,6 +31,8 @@ class OroVisibilityExtension extends Extension implements PrependExtensionInterf
         $loader->load('form_types.yml');
         $loader->load('commands.yml');
         $loader->load('controllers.yml');
+        $loader->load('mq_topics.yml');
+        $loader->load('mq_processors.yml');
 
         $container->prependExtensionConfig($this->getAlias(), array_intersect_key($config, array_flip(['settings'])));
     }
