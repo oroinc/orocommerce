@@ -70,21 +70,7 @@ const QuickAddRowPricesView = BaseView.extend({
         const unit = this.model.get('unit');
         const price = PricesHelper.findPrice(this.prices, unit, quantity);
         this.model.set('price', price);
-        this.checkMinQtyForUnit();
         this.model.set('subtotal', this.calcSubtotal());
-    },
-
-    checkMinQtyForUnit() {
-        const unit = this.model.get('unit');
-        const changedManually = this.model.get('quantity_changed_manually');
-        if (!changedManually && unit && this.prices && this.prices[unit]) {
-            const quantity = this.model.get('quantity');
-            const unitPrices = this.prices[unit];
-            const index = _.findLastIndex(unitPrices, price => price.quantity);
-            if (index !== -1 && quantity < unitPrices[index].quantity) {
-                this.model.set('quantity', unitPrices[index].quantity);
-            }
-        }
     },
 
     calcSubtotal() {

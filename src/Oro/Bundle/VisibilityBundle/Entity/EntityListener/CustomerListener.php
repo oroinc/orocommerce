@@ -6,7 +6,7 @@ use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerTrait;
-use Oro\Bundle\VisibilityBundle\Async\Topics;
+use Oro\Bundle\VisibilityBundle\Async\Topic\VisibilityOnChangeCustomerTopic;
 use Oro\Bundle\VisibilityBundle\Driver\CustomerPartialUpdateDriverInterface;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
@@ -58,6 +58,6 @@ class CustomerListener implements OptionalListenerInterface
             return;
         }
 
-        $this->messageProducer->send(Topics::CHANGE_CUSTOMER, ['id' => $customer->getId()]);
+        $this->messageProducer->send(VisibilityOnChangeCustomerTopic::getName(), ['id' => $customer->getId()]);
     }
 }

@@ -5,7 +5,7 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Api\RestJsonApi;
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\VisibilityBundle\Async\Topics;
+use Oro\Bundle\VisibilityBundle\Async\Topic\ResolveProductVisibilityTopic;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -41,7 +41,7 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
         );
     }
 
-    public function testGetList()
+    public function testGetList(): void
     {
         $response = $this->cget(
             ['entity' => 'customergroupproductvisibilities']
@@ -50,7 +50,7 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
         $this->assertResponseContains('cget_customer_group_product_visibility.yml', $response);
     }
 
-    public function testTryToGetListSortById()
+    public function testTryToGetListSortById(): void
     {
         $response = $this->cget(
             ['entity' => 'customergroupproductvisibilities'],
@@ -69,7 +69,7 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
         );
     }
 
-    public function testGetListSortByProduct()
+    public function testGetListSortByProduct(): void
     {
         $response = $this->cget(
             ['entity' => 'customergroupproductvisibilities'],
@@ -97,7 +97,7 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
         );
     }
 
-    public function testGetListSortByDescProduct()
+    public function testGetListSortByDescProduct(): void
     {
         $response = $this->cget(
             ['entity' => 'customergroupproductvisibilities'],
@@ -125,7 +125,7 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
         );
     }
 
-    public function testGetListSortByCustomerGroup()
+    public function testGetListSortByCustomerGroup(): void
     {
         $response = $this->cget(
             ['entity' => 'customergroupproductvisibilities'],
@@ -154,7 +154,7 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
         );
     }
 
-    public function testGetListSortByDescCustomerGroup()
+    public function testGetListSortByDescCustomerGroup(): void
     {
         $response = $this->cget(
             ['entity' => 'customergroupproductvisibilities'],
@@ -182,7 +182,7 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
         );
     }
 
-    public function testGetListFilteredById()
+    public function testGetListFilteredById(): void
     {
         $visibilityId = $this->getId('product-1', 'customer_group.group1');
 
@@ -204,7 +204,7 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
         );
     }
 
-    public function testGetListFilteredByProduct()
+    public function testGetListFilteredByProduct(): void
     {
         $response = $this->cget(
             ['entity' => 'customergroupproductvisibilities'],
@@ -224,7 +224,7 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
         );
     }
 
-    public function testGetListFilteredByCustomerGroup()
+    public function testGetListFilteredByCustomerGroup(): void
     {
         $response = $this->cget(
             ['entity' => 'customergroupproductvisibilities'],
@@ -244,7 +244,7 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
         );
     }
 
-    public function testCreate()
+    public function testCreate(): void
     {
         $requestData = [
             'data' => [
@@ -285,7 +285,7 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
             ]
         );
         self::assertMessagesSent(
-            Topics::RESOLVE_PRODUCT_VISIBILITY,
+            ResolveProductVisibilityTopic::getName(),
             [
                 [
                     'entity_class_name' => CustomerGroupProductVisibility::class,
@@ -295,7 +295,7 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
         );
     }
 
-    public function testTryToCreateVisibilityForSameProductAndCustomerGroup()
+    public function testTryToCreateVisibilityForSameProductAndCustomerGroup(): void
     {
         $requestData = [
             'data' => [
@@ -337,7 +337,7 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
         );
     }
 
-    public function testTryToCreateWithIncludes()
+    public function testTryToCreateWithIncludes(): void
     {
         $requestData = [
             'data' => [
@@ -382,7 +382,7 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
         );
     }
 
-    public function testUpdate()
+    public function testUpdate(): void
     {
         $visibilityId = $this->getId('product-1', 'customer_group.group1');
         $requestData = [
@@ -404,7 +404,7 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
         $this->assertResponseContains($responseContent, $response);
 
         self::assertMessagesSent(
-            Topics::RESOLVE_PRODUCT_VISIBILITY,
+            ResolveProductVisibilityTopic::getName(),
             [
                 [
                     'entity_class_name' => CustomerGroupProductVisibility::class,
@@ -414,7 +414,7 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
         );
     }
 
-    public function testTryToCreateWithWrongType()
+    public function testTryToCreateWithWrongType(): void
     {
         $requestData = [
             'data' => [
@@ -456,7 +456,7 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
         );
     }
 
-    public function testTryToCreateWithoutProduct()
+    public function testTryToCreateWithoutProduct(): void
     {
         $requestData = [
             'data' => [
@@ -492,7 +492,7 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
         );
     }
 
-    public function testTryToCreateWithoutCustomerGroup()
+    public function testTryToCreateWithoutCustomerGroup(): void
     {
         $requestData = [
             'data' => [
@@ -528,7 +528,7 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
         );
     }
 
-    public function testTryToCreateWithoutVisibilityType()
+    public function testTryToCreateWithoutVisibilityType(): void
     {
         $requestData = [
             'data' => [
@@ -567,7 +567,7 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
         );
     }
 
-    public function testTryToUpdateProduct()
+    public function testTryToUpdateProduct(): void
     {
         $visibilityId = $this->getId('product-1', 'customer_group.group1');
         $requestData = [
@@ -609,7 +609,7 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
         );
     }
 
-    public function testTryToUpdateCustomerGroup()
+    public function testTryToUpdateCustomerGroup(): void
     {
         $visibilityId = $this->getId('product-1', 'customer_group.group1');
         $requestData = [
@@ -651,7 +651,7 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
         );
     }
 
-    public function testDelete()
+    public function testDelete(): void
     {
         $visibility = $this->getReference('visibility_1');
         $productId = $visibility->getProduct()->getId();
@@ -665,12 +665,12 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
             'id'     => $visibilityApiId,
         ]);
 
-        $this->assertNull(
+        self::assertNull(
             $this->getEntityManager()->find(CustomerGroupProductVisibility::class, $visibilityId)
         );
 
         self::assertMessagesSent(
-            Topics::RESOLVE_PRODUCT_VISIBILITY,
+            ResolveProductVisibilityTopic::getName(),
             [
                 [
                     'entity_class_name' => CustomerGroupProductVisibility::class,
@@ -682,7 +682,7 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
         );
     }
 
-    public function testDeleteList()
+    public function testDeleteList(): void
     {
         $visibilityId = $this->getReference('visibility_2')->getId();
         $this->cdelete(
@@ -693,7 +693,7 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
         self::assertNull($this->getEntityManager()->find(CustomerGroupProductVisibility::class, $visibilityId));
     }
 
-    public function testTryToGetSubresourceForProduct()
+    public function testTryToGetSubresourceForProduct(): void
     {
         $visibilityId = $this->getId('product-1', 'customer_group.group1');
         $response = $this->getSubresource(
@@ -705,7 +705,7 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
         $this->assertUnsupportedSubresourceResponse($response);
     }
 
-    public function testTryToGetRelationshipForProduct()
+    public function testTryToGetRelationshipForProduct(): void
     {
         $visibilityId = $this->getId('product-1', 'customer_group.group1');
         $response = $this->getRelationship(
@@ -717,7 +717,7 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
         $this->assertUnsupportedSubresourceResponse($response);
     }
 
-    public function testTryToUpdateRelationshipForProduct()
+    public function testTryToUpdateRelationshipForProduct(): void
     {
         $visibilityId = $this->getId('product-1', 'customer_group.group1');
         $response = $this->patchRelationship(
@@ -729,7 +729,7 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
         $this->assertUnsupportedSubresourceResponse($response);
     }
 
-    public function testTryToGetSubresourceForCustomerGroup()
+    public function testTryToGetSubresourceForCustomerGroup(): void
     {
         $visibilityId = $this->getId('product-1', 'customer_group.group1');
         $response = $this->getSubresource(
@@ -741,7 +741,7 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
         $this->assertUnsupportedSubresourceResponse($response);
     }
 
-    public function testTryToGetRelationshipForCustomerGroup()
+    public function testTryToGetRelationshipForCustomerGroup(): void
     {
         $visibilityId = $this->getId('product-1', 'customer_group.group1');
         $response = $this->getRelationship(
@@ -753,7 +753,7 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
         $this->assertUnsupportedSubresourceResponse($response);
     }
 
-    public function testTryToUpdateRelationshipForCustomerGroup()
+    public function testTryToUpdateRelationshipForCustomerGroup(): void
     {
         $visibilityId = $this->getId('product-1', 'customer_group.group1');
         $response = $this->patchRelationship(

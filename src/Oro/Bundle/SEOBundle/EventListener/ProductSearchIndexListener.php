@@ -97,7 +97,7 @@ class ProductSearchIndexListener
      */
     private function cleanUpString(string $string): string
     {
-        return preg_replace('/[[:cntrl:]]/', '', $string);
+        return preg_replace('/[[:cntrl:]]/', '', (string)$string);
     }
 
     private function getRepository(): CategoryRepository

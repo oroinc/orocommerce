@@ -49,8 +49,26 @@
             'itemscope': '',
             'itemtype': 'http://schema.org/Product'
         }) %}
+        {% if product.schemaOrgDescription is defined %}
+            {% set productSchemaOrgDescription %}
+                <meta itemprop="description" content="{{ product.schemaOrgDescription }}" />
+            {% endset %}
+        {% endif %}
+        {% if product.schemaOrgBrandName is defined %}
+            {% set productSchemaOrgBrand %}
+                <span itemprop="brand" itemtype="https://schema.org/Brand" itemscope>
+                    <meta itemprop="name" content="{{ product.schemaOrgBrandName }}" />
+                </span>
+            {% endset %}
+        {% endif %}
     {% endif %}
     <div {{ block('block_attributes') }}>
+        {% if productSchemaOrgDescription is defined %}
+            {{ productSchemaOrgDescription }}
+        {% endif %}
+        {% if productSchemaOrgBrand is defined %}
+            {{ productSchemaOrgBrand }}
+        {% endif %}
         {{ block_widget(block) }}
     </div>
 {% endblock %}
@@ -208,8 +226,8 @@
     }) %}
 
     {% if (class_prefix == 'list-view') %}
-        <div {{ block('block_attributes') }} >
-            <div class="product__description-content cms-typography" itemprop="description">{{ product.shortDescription|oro_html_sanitize }}</div>
+        <div {{ block('block_attributes') }}>
+            <div class="product__description-content cms-typography">{{ product.shortDescription|oro_html_sanitize }}</div>
         </div>
     {% endif %}
 {% endblock %}

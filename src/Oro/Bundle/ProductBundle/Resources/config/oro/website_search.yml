@@ -2,9 +2,6 @@ Oro\Bundle\ProductBundle\Entity\Product:
     alias: oro_product_WEBSITE_ID
     fields:
         -
-            name: product_id
-            type: integer
-        -
             name: sku_uppercase
             type: text
         -
@@ -74,6 +71,14 @@ Oro\Bundle\ProductBundle\Entity\Product:
             type: text
             fulltext: false
             group: image
+        -
+            name: schema_org_description_LOCALIZATION_ID
+            type: text
+            fulltext: false
+        -
+            name: schema_org_brand_name_LOCALIZATION_ID
+            type: text
+            fulltext: false
 
 Oro\Bundle\ProductBundle\Entity\Brand:
     alias: oro_brand_WEBSITE_ID

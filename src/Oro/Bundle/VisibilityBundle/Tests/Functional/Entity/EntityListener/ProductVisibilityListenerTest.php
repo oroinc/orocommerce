@@ -12,7 +12,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\VisibilityBundle\Async\Topics;
+use Oro\Bundle\VisibilityBundle\Async\Topic\ResolveProductVisibilityTopic;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
@@ -25,14 +25,11 @@ class ProductVisibilityListenerTest extends WebTestCase
 {
     use MessageQueueExtension;
 
-    /** @var Product */
-    private $product;
+    private Product $product;
 
-    /** @var CustomerGroup */
-    private $customerGroup;
+    private CustomerGroup $customerGroup;
 
-    /** @var Customer */
-    private $customer;
+    private Customer $customer;
 
     protected function setUp(): void
     {
@@ -72,7 +69,7 @@ class ProductVisibilityListenerTest extends WebTestCase
         return self::getContainer()->get('doctrine');
     }
 
-    public function testChangeProductVisibilityToHidden()
+    public function testChangeProductVisibilityToHidden(): void
     {
         $scope = $this->getScopeManager()->findOrCreate(ProductVisibility::VISIBILITY_TYPE);
         $entityManager = $this->getManagerForProductVisibility();
@@ -95,7 +92,7 @@ class ProductVisibilityListenerTest extends WebTestCase
         $entityManager->flush();
 
         self::assertMessageSent(
-            Topics::RESOLVE_PRODUCT_VISIBILITY,
+            ResolveProductVisibilityTopic::getName(),
             [
                 'entity_class_name' => ProductVisibility::class,
                 'id'                => $visibility->getId()
@@ -103,7 +100,7 @@ class ProductVisibilityListenerTest extends WebTestCase
         );
     }
 
-    public function testChangeProductVisibilityToVisible()
+    public function testChangeProductVisibilityToVisible(): void
     {
         // Already exists product visibility with `HIDDEN` value
         $visibility = $this->getReference('product-4.visibility.all');
@@ -114,7 +111,7 @@ class ProductVisibilityListenerTest extends WebTestCase
         $entityManager->flush();
 
         self::assertMessageSent(
-            Topics::RESOLVE_PRODUCT_VISIBILITY,
+            ResolveProductVisibilityTopic::getName(),
             [
                 'entity_class_name' => ProductVisibility::class,
                 'id'                => $visibility->getId()
@@ -122,7 +119,7 @@ class ProductVisibilityListenerTest extends WebTestCase
         );
     }
 
-    public function testChangeProductVisibilityToConfig()
+    public function testChangeProductVisibilityToConfig(): void
     {
         // Already exists product visibility with `VISIBLE` value
         $visibility = $this->getReference('product-2.visibility.all');
@@ -133,7 +130,7 @@ class ProductVisibilityListenerTest extends WebTestCase
         $entityManager->flush();
 
         self::assertMessageSent(
-            Topics::RESOLVE_PRODUCT_VISIBILITY,
+            ResolveProductVisibilityTopic::getName(),
             [
                 'entity_class_name' => ProductVisibility::class,
                 'id'                => $visibility->getId()
@@ -141,7 +138,7 @@ class ProductVisibilityListenerTest extends WebTestCase
         );
     }
 
-    public function testChangeProductVisibilityToCategory()
+    public function testChangeProductVisibilityToCategory(): void
     {
         $scope = $this->getScopeManager()->findOrCreate('product_visiblity');
         $entityManager = $this->getManagerForProductVisibility();
@@ -153,7 +150,7 @@ class ProductVisibilityListenerTest extends WebTestCase
         $entityManager->flush();
 
         self::assertMessageSent(
-            Topics::RESOLVE_PRODUCT_VISIBILITY,
+            ResolveProductVisibilityTopic::getName(),
             [
                 // no "id" because default value will be deleted
                 'entity_class_name' => ProductVisibility::class,
@@ -164,7 +161,7 @@ class ProductVisibilityListenerTest extends WebTestCase
         );
     }
 
-    public function testChangeCustomerGroupProductVisibilityToHidden()
+    public function testChangeCustomerGroupProductVisibilityToHidden(): void
     {
         $scope = $this->getScopeManager()->findOrCreate(
             CustomerGroupProductVisibility::VISIBILITY_TYPE,
@@ -181,7 +178,7 @@ class ProductVisibilityListenerTest extends WebTestCase
         $entityManager->flush();
 
         self::assertMessageSent(
-            Topics::RESOLVE_PRODUCT_VISIBILITY,
+            ResolveProductVisibilityTopic::getName(),
             [
                 'entity_class_name' => CustomerGroupProductVisibility::class,
                 'id'                => $visibility->getId()
@@ -189,7 +186,7 @@ class ProductVisibilityListenerTest extends WebTestCase
         );
     }
 
-    public function testChangeCustomerGroupProductVisibilityToVisible()
+    public function testChangeCustomerGroupProductVisibilityToVisible(): void
     {
         // Already exists customer group product visibility with `HIDDEN` value
         $visibility = $this->getReference('product-1.visibility.customer_group.group1');
@@ -199,7 +196,7 @@ class ProductVisibilityListenerTest extends WebTestCase
         $entityManager->flush();
 
         self::assertMessageSent(
-            Topics::RESOLVE_PRODUCT_VISIBILITY,
+            ResolveProductVisibilityTopic::getName(),
             [
                 'entity_class_name' => CustomerGroupProductVisibility::class,
                 'id'                => $visibility->getId()
@@ -207,7 +204,7 @@ class ProductVisibilityListenerTest extends WebTestCase
         );
     }
 
-    public function testChangeCustomerGroupProductVisibilityToCategory()
+    public function testChangeCustomerGroupProductVisibilityToCategory(): void
     {
         // Already exists customer group product visibility with `VISIBLE` value
         $visibility = $this->getReference('product-2.visibility.customer_group.group1');
@@ -217,7 +214,7 @@ class ProductVisibilityListenerTest extends WebTestCase
         $entityManager->flush();
 
         self::assertMessageSent(
-            Topics::RESOLVE_PRODUCT_VISIBILITY,
+            ResolveProductVisibilityTopic::getName(),
             [
                 'entity_class_name' => CustomerGroupProductVisibility::class,
                 'id'                => $visibility->getId()
@@ -225,7 +222,7 @@ class ProductVisibilityListenerTest extends WebTestCase
         );
     }
 
-    public function testChangeCustomerGroupProductVisibilityToCurrentProduct()
+    public function testChangeCustomerGroupProductVisibilityToCurrentProduct(): void
     {
         // Already exists customer group product visibility with `CATEGORY` value
         $visibility = $this->getReference('продукт-7.visibility.customer_group.group1');
@@ -243,12 +240,12 @@ class ProductVisibilityListenerTest extends WebTestCase
         $entityManager->flush();
 
         self::assertMessageSent(
-            Topics::RESOLVE_PRODUCT_VISIBILITY,
+            ResolveProductVisibilityTopic::getName(),
             $expectedMessage
         );
     }
 
-    public function testChangeCustomerProductVisibilityToHidden()
+    public function testChangeCustomerProductVisibilityToHidden(): void
     {
         $scope = $this->getScopeManager()->findOrCreate('customer_product_visibility', ['customer' => $this->customer]);
         $entityManager = $this->getManagerForCustomerProductVisibility();
@@ -269,7 +266,7 @@ class ProductVisibilityListenerTest extends WebTestCase
         $entityManager->flush();
 
         self::assertMessageSent(
-            Topics::RESOLVE_PRODUCT_VISIBILITY,
+            ResolveProductVisibilityTopic::getName(),
             [
                 'entity_class_name' => CustomerProductVisibility::class,
                 'id'                => $visibility->getId()
@@ -277,7 +274,7 @@ class ProductVisibilityListenerTest extends WebTestCase
         );
     }
 
-    public function testChangeCustomerProductVisibilityToVisible()
+    public function testChangeCustomerProductVisibilityToVisible(): void
     {
         // Already exists customer group product visibility with `HIDDEN` value
         $visibility = $this->getReference('product-2.visibility.customer.level_1');
@@ -287,7 +284,7 @@ class ProductVisibilityListenerTest extends WebTestCase
         $entityManager->flush();
 
         self::assertMessageSent(
-            Topics::RESOLVE_PRODUCT_VISIBILITY,
+            ResolveProductVisibilityTopic::getName(),
             [
                 'entity_class_name' => CustomerProductVisibility::class,
                 'id'                => $visibility->getId()
@@ -295,7 +292,7 @@ class ProductVisibilityListenerTest extends WebTestCase
         );
     }
 
-    public function testChangeCustomerProductVisibilityToCategory()
+    public function testChangeCustomerProductVisibilityToCategory(): void
     {
         // Already exists customer group product visibility with `VISIBLE` value
         $visibility = $this->getReference('product-5.visibility.customer.level_1');
@@ -305,7 +302,7 @@ class ProductVisibilityListenerTest extends WebTestCase
         $entityManager->flush();
 
         self::assertMessageSent(
-            Topics::RESOLVE_PRODUCT_VISIBILITY,
+            ResolveProductVisibilityTopic::getName(),
             [
                 'entity_class_name' => CustomerProductVisibility::class,
                 'id'                => $visibility->getId()
@@ -313,7 +310,7 @@ class ProductVisibilityListenerTest extends WebTestCase
         );
     }
 
-    public function testChangeCustomerProductVisibilityToCustomerGroup()
+    public function testChangeCustomerProductVisibilityToCustomerGroup(): void
     {
         // Already exists customer group product visibility with `CATEGORY` value
         $visibility = $this->getReference('product-2.visibility.customer.level_1');
@@ -332,7 +329,7 @@ class ProductVisibilityListenerTest extends WebTestCase
         $entityManager->flush();
 
         self::assertMessageSent(
-            Topics::RESOLVE_PRODUCT_VISIBILITY,
+            ResolveProductVisibilityTopic::getName(),
             $expectedMessage
         );
     }

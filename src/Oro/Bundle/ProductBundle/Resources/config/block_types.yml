@@ -41,7 +41,7 @@ services:
     oro_product.layout.type.product_view_microdata_container:
         parent: oro_layout.block_type.abstract_configurable_container
         calls:
-            - [setOptionsConfig, [{microdataWithoutPricesDisabled: {required: true}, productPrices: {required: true}}]]
+            - [setOptionsConfig, [{microdataWithoutPricesDisabled: {required: true}, schemaOrgDescription: {required: true}, productPrices: {required: true}}]]
             - [setName, ['product_view_microdata_container']]
         tags:
              - { name: layout.block_type, alias: product_view_microdata_container }

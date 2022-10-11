@@ -9,6 +9,7 @@ use Oro\Bundle\ProductBundle\Model\ProductView;
 use Oro\Bundle\ProductBundle\Provider\ProductListBuilder;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Factory\QueryFactoryInterface;
+use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Query\Result\Item as SearchResultItem;
 use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
 
@@ -57,15 +58,15 @@ class ProductListBuilderTest extends \PHPUnit\Framework\TestCase
             ->willReturnSelf();
         $query->expects(self::once())
             ->method('addSelect')
-            ->with('integer.product_id as id')
+            ->with('integer.system_entity_id as id')
             ->willReturnSelf();
         $query->expects(self::once())
             ->method('addWhere')
-            ->with(Criteria::expr()->in('integer.product_id', $productIds))
+            ->with(Criteria::expr()->in('integer.system_entity_id', $productIds))
             ->willReturnSelf();
         $query->expects(self::once())
             ->method('setMaxResults')
-            ->with(count($productIds))
+            ->with(Query::INFINITY)
             ->willReturnSelf();
         $query->expects(self::once())
             ->method('execute')
@@ -117,7 +118,7 @@ class ProductListBuilderTest extends \PHPUnit\Framework\TestCase
             ->willReturnSelf();
         $query->expects(self::once())
             ->method('addSelect')
-            ->with('integer.product_id as id')
+            ->with('integer.system_entity_id as id')
             ->willReturnSelf();
         $query->expects(self::once())
             ->method('execute')
@@ -169,7 +170,7 @@ class ProductListBuilderTest extends \PHPUnit\Framework\TestCase
             ->willReturnSelf();
         $query->expects(self::exactly(2))
             ->method('addSelect')
-            ->withConsecutive(['integer.product_id as id'], ['text.sku'])
+            ->withConsecutive(['integer.system_entity_id as id'], ['text.sku'])
             ->willReturnSelf();
         $query->expects(self::once())
             ->method('execute')

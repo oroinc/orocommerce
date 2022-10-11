@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\RedirectBundle\Cache;
 
-use Oro\Bundle\RedirectBundle\Async\Topics;
+use Oro\Bundle\RedirectBundle\Async\Topic\CalculateSlugCacheMassTopic;
 use Oro\Bundle\RedirectBundle\Model\MessageFactoryInterface;
 use Oro\Bundle\RedirectBundle\Provider\RoutingInformationProvider;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
@@ -36,7 +36,7 @@ class SlugUrlCacheWarmer implements CacheWarmerInterface
     {
         foreach ($this->routingInformationProvider->getEntityClasses() as $entityClass) {
             $this->messageProducer->send(
-                Topics::CALCULATE_URL_CACHE_MASS,
+                CalculateSlugCacheMassTopic::getName(),
                 $this->messageFactory->createMassMessage($entityClass, [], false)
             );
         }

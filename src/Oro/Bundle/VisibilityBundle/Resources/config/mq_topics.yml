@@ -1,0 +1,19 @@
+services:
+    _instanceof:
+        Oro\Component\MessageQueue\Topic\TopicInterface:
+            tags:
+                - { name: oro_message_queue.topic }
+
+    Oro\Bundle\VisibilityBundle\Async\Topic\ResolveCategoryVisibilityTopic:
+        arguments:
+            - '@doctrine'
+
+    Oro\Bundle\VisibilityBundle\Async\Topic\ResolveProductVisibilityTopic:
+        arguments:
+            - '@doctrine'
+
+    Oro\Bundle\VisibilityBundle\Async\Topic\VisibilityOnChangeProductCategoryTopic: ~
+    Oro\Bundle\VisibilityBundle\Async\Topic\VisibilityOnChangeCategoryPositionTopic: ~
+    Oro\Bundle\VisibilityBundle\Async\Topic\VisibilityOnChangeCustomerTopic: ~
+    Oro\Bundle\VisibilityBundle\Async\Topic\VisibilityOnRemoveCategoryTopic: ~
+

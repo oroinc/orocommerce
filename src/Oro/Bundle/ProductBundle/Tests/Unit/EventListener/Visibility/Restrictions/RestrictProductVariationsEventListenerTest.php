@@ -111,7 +111,7 @@ class RestrictProductVariationsEventListenerTest extends \PHPUnit\Framework\Test
         $criteria->andWhere($expression);
 
         $query = new Query();
-        $query->addSelect('integer.product_id');
+        $query->addSelect('integer.system_entity_id as product_id');
         $query->setCriteria($criteria);
 
         $event = new ProductSearchQueryRestrictionEvent($query);
@@ -165,49 +165,49 @@ class RestrictProductVariationsEventListenerTest extends \PHPUnit\Framework\Test
                 'configValue' => Configuration::DISPLAY_SIMPLE_VARIATIONS_HIDE_COMPLETELY,
                 'isFrontendRequest' => true,
                 'isRestrictionApplicable' => true,
-                'query' => (new Query())->addSelect('integer.product_id')
+                'query' => (new Query())->addSelect('integer.system_entity_id as product_id')
             ],
             'Restriction applicable autocomplete' => [
                 'configValue' => Configuration::DISPLAY_SIMPLE_VARIATIONS_HIDE_COMPLETELY,
                 'isFrontendRequest' => true,
                 'isRestrictionApplicable' => true,
-                'query' => (new Query())->addSelect('integer.product_id as autocomplete_record_id')
+                'query' => (new Query())->addSelect('integer.system_entity_id as autocomplete_record_id')
             ],
             'Restriction applicable not autocomplete hide catalog' => [
                 'configValue' => Configuration::DISPLAY_SIMPLE_VARIATIONS_HIDE_CATALOG,
                 'isFrontendRequest' => true,
                 'isRestrictionApplicable' => true,
-                'query' => (new Query())->addSelect('integer.product_id')
+                'query' => (new Query())->addSelect('integer.system_entity_id as product_id')
             ],
             'Restriction applicable autocomplete hide catalog' => [
                 'configValue' => Configuration::DISPLAY_SIMPLE_VARIATIONS_HIDE_CATALOG,
                 'isFrontendRequest' => true,
                 'isRestrictionApplicable' => false,
-                'query' => (new Query())->addSelect('integer.product_id as autocomplete_record_id')
+                'query' => (new Query())->addSelect('integer.system_entity_id as autocomplete_record_id')
             ],
             'Restriction applicable autocomplete hide catalog not frontend' => [
                 'configValue' => Configuration::DISPLAY_SIMPLE_VARIATIONS_HIDE_CATALOG,
                 'isFrontendRequest' => false,
                 'isRestrictionApplicable' => false,
-                'query' => (new Query())->addSelect('integer.product_id as autocomplete_record_id')
+                'query' => (new Query())->addSelect('integer.system_entity_id as autocomplete_record_id')
             ],
             'Is not frontend request' => [
                 'configValue' => Configuration::DISPLAY_SIMPLE_VARIATIONS_HIDE_COMPLETELY,
                 'isFrontendRequest' => false,
                 'isRestrictionApplicable' => false,
-                'query' => (new Query())->addSelect('integer.product_id')
+                'query' => (new Query())->addSelect('integer.system_entity_id as product_id')
             ],
             'Config value is display everywhere' => [
                 'configValue' => Configuration::DISPLAY_SIMPLE_VARIATIONS_EVERYWHERE,
                 'isFrontendRequest' => true,
                 'isRestrictionApplicable' => false,
-                'query' => (new Query())->addSelect('integer.product_id')
+                'query' => (new Query())->addSelect('integer.system_entity_id as product_id')
             ],
             'Config value is display everywhere and is not frontend' => [
                 'configValue' => Configuration::DISPLAY_SIMPLE_VARIATIONS_EVERYWHERE,
                 'isFrontendRequest' => false,
                 'isRestrictionApplicable' => false,
-                'query' => (new Query())->addSelect('integer.product_id')
+                'query' => (new Query())->addSelect('integer.system_entity_id as product_id')
             ],
         ];
     }

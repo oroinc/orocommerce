@@ -3,7 +3,6 @@
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\Form\Extension;
 
 use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Form\Extension\ProductFormExtension;
@@ -12,45 +11,38 @@ use Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Category as CategoryStub;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductType;
 use Oro\Component\Testing\ReflectionUtil;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
-class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
+class ProductFormExtensionTest extends TestCase
 {
-    /** @var CategoryRepository|\PHPUnit\Framework\MockObject\MockObject */
-    private $categoryRepository;
-
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    private $registry;
-
-    /** @var ProductFormExtension */
-    private $extension;
+    private CategoryRepository|MockObject $categoryRepository;
+    private ManagerRegistry|MockObject $registry;
+    private AuthorizationCheckerInterface|MockObject $authorizationChecker;
+    private ProductFormExtension $extension;
 
     protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
-        $this->extension = new ProductFormExtension($this->registry);
+        $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
+        $this->categoryRepository = $this->createMock(CategoryRepository::class);
+        $this->extension = new ProductFormExtension($this->registry, $this->authorizationChecker);
     }
 
     private function prepareRegistry(bool $expects = false): void
     {
-        $this->categoryRepository = $this->createMock(CategoryRepository::class);
-
-        $entityManager = $this->createMock(ObjectManager::class);
-        $entityManager->expects($expects ? $this->once() : $this->never())
-            ->method('getRepository')
-            ->with('OroCatalogBundle:Category')
-            ->willReturn($this->categoryRepository);
-
         $this->registry->expects($expects ? $this->once() : $this->never())
-            ->method('getManagerForClass')
-            ->with('OroCatalogBundle:Category')
-            ->willReturn($entityManager);
+            ->method('getRepository')
+            ->with(Category::class)
+            ->willReturn($this->categoryRepository);
     }
 
     public function testGetExtendedTypes()
@@ -60,6 +52,12 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
 
     public function testBuildForm()
     {
+        $this->authorizationChecker
+            ->expects($this->once())
+            ->method('isGranted')
+            ->with('oro_catalog_category_view')
+            ->willReturn(true);
+
         $builder = $this->createMock(FormBuilderInterface::class);
         $builder->expects($this->once())
             ->method('add')
@@ -78,6 +76,23 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
                 [FormEvents::POST_SET_DATA, [$this->extension, 'onPostSetData']],
                 [FormEvents::POST_SUBMIT, [$this->extension, 'onPostSubmit'], 10]
             );
+
+        $this->extension->buildForm($builder, []);
+    }
+
+    public function testBuildFormWhenCatalogViewDisabledByAcl()
+    {
+        $this->authorizationChecker
+            ->expects($this->once())
+            ->method('isGranted')
+            ->with('oro_catalog_category_view')
+            ->willReturn(false);
+
+        $builder = $this->createMock(FormBuilderInterface::class);
+        $builder->expects($this->never())
+            ->method('add');
+        $builder->expects($this->never())
+            ->method('addEventListener');
 
         $this->extension->buildForm($builder, []);
     }

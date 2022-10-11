@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\VisibilityBundle\Entity\EntityListener;
 
-use Oro\Bundle\VisibilityBundle\Async\Topics;
+use Oro\Bundle\VisibilityBundle\Async\Topic\ResolveCategoryVisibilityTopic;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
 /**
@@ -13,6 +13,6 @@ class CategoryVisibilityListener extends AbstractVisibilityListener
 {
     public function __construct(MessageProducerInterface $messageProducer)
     {
-        parent::__construct($messageProducer, Topics::CHANGE_CATEGORY_VISIBILITY);
+        parent::__construct($messageProducer, ResolveCategoryVisibilityTopic::getName());
     }
 }

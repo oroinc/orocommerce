@@ -9,7 +9,8 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
-use Oro\Bundle\VisibilityBundle\Async\Topics;
+use Oro\Bundle\VisibilityBundle\Async\Topic\VisibilityOnChangeCategoryPositionTopic;
+use Oro\Bundle\VisibilityBundle\Async\Topic\VisibilityOnRemoveCategoryTopic;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
@@ -21,62 +22,46 @@ use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Component\MessageQueue\Util\JSON;
-use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\NullLogger;
 
 /**
  * Updates visibility of a category.
  */
-class CategoryProcessor implements MessageProcessorInterface, TopicSubscriberInterface
+class CategoryProcessor implements MessageProcessorInterface, TopicSubscriberInterface, LoggerAwareInterface
 {
-    /** @var ManagerRegistry */
-    private $doctrine;
+    use LoggerAwareTrait;
 
-    /** @var InsertFromSelectQueryExecutor */
-    private $insertFromSelectQueryExecutor;
+    private ManagerRegistry $doctrine;
 
-    /** @var LoggerInterface */
-    private $logger;
+    private InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor;
 
-    /** @var CacheBuilder */
-    private $cacheBuilder;
+    private CacheBuilder $cacheBuilder;
 
-    /** @var ScopeManager */
-    private $scopeManager;
+    private ScopeManager $scopeManager;
 
     public function __construct(
         ManagerRegistry $doctrine,
         InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor,
-        LoggerInterface $logger,
         CacheBuilder $cacheBuilder,
         ScopeManager $scopeManager
     ) {
         $this->doctrine = $doctrine;
-        $this->logger = $logger;
         $this->insertFromSelectQueryExecutor = $insertFromSelectQueryExecutor;
         $this->cacheBuilder = $cacheBuilder;
         $this->scopeManager = $scopeManager;
+        $this->logger = new NullLogger();
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public static function getSubscribedTopics()
+    public static function getSubscribedTopics(): array
     {
-        return [Topics::CATEGORY_POSITION_CHANGE, Topics::CATEGORY_REMOVE];
+        return [VisibilityOnChangeCategoryPositionTopic::getName(), VisibilityOnRemoveCategoryTopic::getName()];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function process(MessageInterface $message, SessionInterface $session)
+    public function process(MessageInterface $message, SessionInterface $session): string
     {
-        $body = JSON::decode($message->getBody());
-        if (!\is_array($body)) {
-            $this->logger->critical('Got invalid message.');
-
-            return self::REJECT;
-        }
+        $body = $message->getBody();
 
         /** @var EntityManagerInterface $em */
         $em = $this->doctrine->getManagerForClass(CategoryVisibilityResolved::class);
@@ -130,8 +115,7 @@ class CategoryProcessor implements MessageProcessorInterface, TopicSubscriberInt
     private function setToDefaultProductVisibilityWithoutCategory(): void
     {
         /** @var ProductVisibilityRepository $repository */
-        $repository = $this->doctrine->getManagerForClass(ProductVisibility::class)
-            ->getRepository(ProductVisibility::class);
+        $repository = $this->doctrine->getRepository(ProductVisibility::class);
         $scopes = $this->scopeManager->findRelatedScopes(ProductVisibility::VISIBILITY_TYPE);
         foreach ($scopes as $scope) {
             $repository->setToDefaultWithoutCategory($this->insertFromSelectQueryExecutor, $scope);
@@ -141,16 +125,14 @@ class CategoryProcessor implements MessageProcessorInterface, TopicSubscriberInt
     private function setToDefaultCustomerGroupProductVisibilityWithoutCategory(): void
     {
         /** @var CustomerProductVisibilityRepository $repository */
-        $repository = $this->doctrine->getManagerForClass(CustomerGroupProductVisibility::class)
-            ->getRepository(CustomerGroupProductVisibility::class);
+        $repository = $this->doctrine->getRepository(CustomerGroupProductVisibility::class);
         $repository->setToDefaultWithoutCategory();
     }
 
     private function setToDefaultCustomerProductVisibilityWithoutCategory(): void
     {
         /** @var CustomerProductVisibilityRepository $repository */
-        $repository = $this->doctrine->getManagerForClass(CustomerProductVisibility::class)
-            ->getRepository(CustomerProductVisibility::class);
+        $repository = $this->doctrine->getRepository(CustomerProductVisibility::class);
         $repository->setToDefaultWithoutCategory();
     }
 }

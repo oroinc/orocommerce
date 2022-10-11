@@ -35,7 +35,7 @@ class LoadWebCatalogScopes extends AbstractFixture implements DependentFixtureIn
         /** @var WebCatalog $webCatalog */
         $webCatalog = $this->getReference(LoadWebCatalogData::CATALOG_1);
         /** @var ContentVariant $contentVariant */
-        $contentVariant = $this->getReference(LoadContentVariantsData::ROOT_VARIANT);
+        $contentVariant = $this->getReference(LoadContentVariantsData::CUSTOMER_VARIANT);
         /** @var Customer $customer */
         $customer = $this->getReference(LoadCustomers::DEFAULT_ACCOUNT_NAME);
 

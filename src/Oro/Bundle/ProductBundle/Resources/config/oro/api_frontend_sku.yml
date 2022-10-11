@@ -12,7 +12,7 @@ api:
             fields:
                 productId:
                     data_type: integer
-                    property_path: integer.product_id
+                    property_path: integer.system_entity_id
                 product:
                     data_type: string
                     property_path: text.sku

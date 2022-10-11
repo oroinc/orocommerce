@@ -145,7 +145,7 @@ datagrids:
             skip_acl_apply: true
             query:
                 select:
-                    - integer.product_id as autocomplete_record_id
+                    - integer.system_entity_id as autocomplete_record_id
                     - text.sku as sku
                     - text.names_LOCALIZATION_ID as productName
                     - text.status as status
@@ -847,6 +847,8 @@ datagrids:
                     - text.product_units as product_units
                     - text.primary_unit as unit
                     - integer.variant_fields_count as variant_fields_count
+                    - text.schema_org_brand_name_LOCALIZATION_ID as schemaOrgBrandName
+                    - text.schema_org_description_LOCALIZATION_ID as schemaOrgDescription
                 from:
                     - oro_product_WEBSITE_ID
         columns:
@@ -869,6 +871,8 @@ datagrids:
         properties:
             id: ~
             type: ~
+            schemaOrgBrandName: ~
+            schemaOrgDescription: ~
             view_link:
                 type:  url
                 route: oro_product_frontend_product_view

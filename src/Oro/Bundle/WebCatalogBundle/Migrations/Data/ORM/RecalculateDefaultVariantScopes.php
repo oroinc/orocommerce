@@ -4,7 +4,7 @@ namespace Oro\Bundle\WebCatalogBundle\Migrations\Data\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Persistence\ObjectManager;
-use Oro\Bundle\WebCatalogBundle\Async\Topics;
+use Oro\Bundle\WebCatalogBundle\Async\Topic\WebCatalogCalculateCacheTopic;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentNodeRepository;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
@@ -39,7 +39,10 @@ class RecalculateDefaultVariantScopes extends AbstractFixture implements Contain
 
                 $manager->flush();
 
-                $messageProducer->send(Topics::CALCULATE_WEB_CATALOG_CACHE, ['webCatalogId' => $webCatalog->getId()]);
+                $messageProducer->send(
+                    WebCatalogCalculateCacheTopic::getName(),
+                    [WebCatalogCalculateCacheTopic::WEB_CATALOG_ID => $webCatalog->getId()]
+                );
             }
         }
     }

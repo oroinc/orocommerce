@@ -20,6 +20,9 @@ The current file describes significant changes in the code that may affect the u
 * Inventory website search index fields (inventory status, low inventory threshold, is upcoming,
   availability date) have been moved to the separate `inventory` indexation group
 
+#### ProductBundle
+* Product search index field `product_id` has been replaced with `system_entity_id`
+
 ### Removed
 
 #### CMSBundle

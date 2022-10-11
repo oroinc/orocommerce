@@ -10,18 +10,16 @@ use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\VisibilityBundle\Async\Topics;
+use Oro\Bundle\VisibilityBundle\Async\Topic\VisibilityOnChangeProductCategoryTopic;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
 
 class CategoryListenerTest extends WebTestCase
 {
     use MessageQueueExtension;
 
-    /** @var EntityManagerInterface */
-    private $categoryManager;
+    private EntityManagerInterface $categoryManager;
 
-    /** @var CategoryRepository */
-    private $categoryRepository;
+    private CategoryRepository $categoryRepository;
 
     protected function setUp(): void
     {
@@ -39,7 +37,7 @@ class CategoryListenerTest extends WebTestCase
             ->getRepository(Category::class);
     }
 
-    public function testChangeProductCategory()
+    public function testChangeProductCategory(): void
     {
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_1);
@@ -54,12 +52,12 @@ class CategoryListenerTest extends WebTestCase
         $this->categoryManager->flush();
 
         self::assertMessageSent(
-            Topics::CHANGE_PRODUCT_CATEGORY,
+            VisibilityOnChangeProductCategoryTopic::getName(),
             ['id' => $product->getId()]
         );
     }
 
-    public function testRemoveProductFromCategoryAndAddProductToCategory()
+    public function testRemoveProductFromCategoryAndAddProductToCategory(): void
     {
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_2);
@@ -69,7 +67,7 @@ class CategoryListenerTest extends WebTestCase
         $this->categoryManager->flush();
 
         self::assertMessageSent(
-            Topics::CHANGE_PRODUCT_CATEGORY,
+            VisibilityOnChangeProductCategoryTopic::getName(),
             ['id' => $product->getId()]
         );
 
@@ -77,7 +75,7 @@ class CategoryListenerTest extends WebTestCase
         $this->categoryManager->flush();
 
         self::assertMessageSent(
-            Topics::CHANGE_PRODUCT_CATEGORY,
+            VisibilityOnChangeProductCategoryTopic::getName(),
             ['id' => $product->getId()]
         );
     }

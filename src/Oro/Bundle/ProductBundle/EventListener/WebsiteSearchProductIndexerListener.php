@@ -94,7 +94,6 @@ class WebsiteSearchProductIndexerListener implements WebsiteSearchProductIndexer
                 $this->processIndexData($event, $productId, $data);
             }
 
-            $event->addField($product->getId(), 'product_id', $product->getId());
             $event->addField($product->getId(), 'sku_uppercase', mb_strtoupper($product->getSku()));
             $event->addField($product->getId(), 'status', $product->getStatus());
             $event->addField($product->getId(), 'type', $product->getType());

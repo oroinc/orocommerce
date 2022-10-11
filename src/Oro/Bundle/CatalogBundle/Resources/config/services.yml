@@ -35,8 +35,9 @@ services:
     oro_catalog.event_listener.form_view:
         class: 'Oro\Bundle\CatalogBundle\EventListener\FormViewListener'
         arguments:
-            - "@translator"
-            - "@oro_entity.doctrine_helper"
+            - '@translator'
+            - '@oro_entity.doctrine_helper'
+            - '@security.authorization_checker'
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onProductView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }

@@ -5,72 +5,60 @@ namespace Oro\Bundle\RedirectBundle\Async;
 use Doctrine\DBAL\Exception\RetryableException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\RedirectBundle\Async\Topic\SyncSlugRedirectsTopic;
 use Oro\Bundle\RedirectBundle\Entity\Redirect;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Component\MessageQueue\Util\JSON;
-use Psr\Log\LoggerInterface;
-use Symfony\Component\OptionsResolver\Exception\InvalidArgumentException;
-use Symfony\Component\OptionsResolver\OptionsResolver;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\NullLogger;
 
 /**
  * Updates scopes of Redirects by Slug id
  */
-class SyncSlugRedirectsProcessor implements MessageProcessorInterface, TopicSubscriberInterface
+class SyncSlugRedirectsProcessor implements MessageProcessorInterface, TopicSubscriberInterface, LoggerAwareInterface
 {
-    /**
-     * @var ManagerRegistry
-     */
-    protected $registry;
+    use LoggerAwareTrait;
 
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
+    private ManagerRegistry $managerRegistry;
 
-    public function __construct(
-        ManagerRegistry $registry,
-        LoggerInterface $logger
-    ) {
-        $this->registry = $registry;
-        $this->logger = $logger;
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+
+        $this->logger = new NullLogger();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function process(MessageInterface $message, SessionInterface $session)
+    public function process(MessageInterface $message, SessionInterface $session): string
     {
-        try {
-            $messageData = $this->getResolvedMessageData(JSON::decode($message->getBody()));
-        } catch (InvalidArgumentException $e) {
-            $this->logger->error(
-                'Queue Message is invalid',
-                ['exception' => $e]
-            );
-
-            return self::REJECT;
-        }
+        $messageData = $message->getBody();
 
         /** @var Slug $slug */
-        $slug = $this->registry->getManagerForClass(Slug::class)
+        $slug = $this->managerRegistry
             ->getRepository(Slug::class)
-            ->find($messageData['slugId']);
+            ->find($messageData[SyncSlugRedirectsTopic::SLUG_ID]);
 
         // Slug not found, do nothing
         if (!$slug) {
+            $this->logger->info('Slug #{slugId} is not found.', $messageData);
+
             return self::REJECT;
         }
 
-        /** @var EntityManager $manager */
-        $manager = $this->registry->getManagerForClass(Redirect::class);
+        /** @var EntityManager $entityManager */
+        $entityManager = $this->managerRegistry->getManagerForClass(Redirect::class);
         /** @var Redirect[] $redirects */
-        $redirects = $manager->getRepository(Redirect::class)->findBy(['slug' => $slug]);
+        $redirects = $entityManager->getRepository(Redirect::class)->findBy(['slug' => $slug]);
         // No redirects found, nothing to do.
         if (!$redirects) {
+            $this->logger->info(
+                'Nothing to synchronize for slug #{slugId}: redirects are not found.',
+                $messageData + ['slug' => $slug]
+            );
+
             return self::REJECT;
         }
 
@@ -79,7 +67,7 @@ class SyncSlugRedirectsProcessor implements MessageProcessorInterface, TopicSubs
         }
 
         try {
-            $manager->flush();
+            $entityManager->flush();
         } catch (\Exception $e) {
             $this->logger->error(
                 'Unexpected exception occurred during scopes update of Redirects by Slug',
@@ -96,20 +84,8 @@ class SyncSlugRedirectsProcessor implements MessageProcessorInterface, TopicSubs
         return self::ACK;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public static function getSubscribedTopics()
+    public static function getSubscribedTopics(): array
     {
-        return [Topics::SYNC_SLUG_REDIRECTS];
-    }
-
-    private function getResolvedMessageData(array $message): array
-    {
-        $optionsResolver = new OptionsResolver();
-        $optionsResolver->setRequired(['slugId']);
-        $optionsResolver->setAllowedTypes('slugId', ['integer', 'string']);
-
-        return $optionsResolver->resolve($message);
+        return [SyncSlugRedirectsTopic::getName()];
     }
 }
