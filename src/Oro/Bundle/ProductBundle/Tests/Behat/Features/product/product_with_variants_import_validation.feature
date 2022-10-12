@@ -1,5 +1,6 @@
 @ticket-BB-16680
 @ticket-BB-19380
+@ticket-BB-21746
 @fixture-OroProductBundle:ConfigurableProductFixtures.yml
 @fixture-OroProductBundle:DuplicatesForConfigurableProductFixtures.yml
 
@@ -188,3 +189,52 @@ Feature: Product with variants import validation
     Then Email should contains the following "Errors: 1 processed: 1, read: 2, added: 1, updated: 0, replaced: 0" text
     And I follow "Error log" link from the email
     Then I should see "Error in row #2. Can't save product variants. Configurable attribute combinations should be unique."
+
+  Scenario: Import configurable product with non-existing product variant
+    Given I login as administrator
+    And I go to Products/Products
+    And I download "Products" Data Template file with processor "oro_product_product_export_template"
+    And fill template with data:
+      | sku   | attributeFamily.code | status  | inventory_status.id | primaryUnitPrecision.unit.code | primaryUnitPrecision.precision | primaryUnitPrecision.conversionRate | primaryUnitPrecision.sell | names.default.fallback | names.default.value | variantFields | variantLinks.1.product.sku | featured | newArrival | slugPrototypes.default.value |
+      | 1GB83 | default_family       | enabled | in_stock            | kg                             | 3                              | 1                                   | 1                         |                        | Slip-On Clog        | Color, Size   | Non-ex                     | 0        | 0          | slip-on-clog                 |
+
+  @skipWait
+  Scenario: Check import error page from the email after importing file
+    Given I import file
+    Then Email should contains the following "Errors: 2 processed: 0, read: 1, added: 0, updated: 0, replaced: 0" text
+    And I follow "Error log" link from the email
+    Then I should see "Error in row #1. Not found entity \"Product\". Item data: {\"sku\":\"Non-ex\"}."
+    Then I should see "Error in row #1. variantLinks[0].product: This value should not be blank."
+
+  Scenario: Import configurable product with non-existing product variant and existing product variant
+    Given I login as administrator
+    And I go to Products/Products
+    And I download "Products" Data Template file with processor "oro_product_product_export_template"
+    And fill template with data:
+      | sku   | attributeFamily.code | status  | inventory_status.id | primaryUnitPrecision.unit.code | primaryUnitPrecision.precision | primaryUnitPrecision.conversionRate | primaryUnitPrecision.sell | names.default.fallback | names.default.value | variantFields | variantLinks.1.product.sku | variantLinks.2.product.sku | featured | newArrival | slugPrototypes.default.value |
+      | 1GB83 | default_family       | enabled | in_stock            | kg                             | 3                              | 1                                   | 1                         |                        | Slip-On Clog        | Color, Size   | Non-ex                     | 1GB82                      | 0        | 0          | slip-on-clog                 |
+
+  @skipWait
+  Scenario: Check import error page from the email after importing file
+    Given I import file
+    Then Email should contains the following "Errors: 2 processed: 0, read: 1, added: 0, updated: 0, replaced: 0" text
+    And I follow "Error log" link from the email
+    Then I should see "Error in row #1. Not found entity \"Product\". Item data: {\"sku\":\"Non-ex\"}."
+    Then I should see "Error in row #1. variantLinks[0].product: This value should not be blank."
+
+  Scenario: Import configurable products with non-existing product variant and existing product variant
+    Given I login as administrator
+    And I go to Products/Products
+    And I download "Products" Data Template file with processor "oro_product_product_export_template"
+    And fill template with data:
+      | sku    | attributeFamily.code | status  | inventory_status.id | primaryUnitPrecision.unit.code | primaryUnitPrecision.precision | primaryUnitPrecision.conversionRate | primaryUnitPrecision.sell | names.default.fallback | names.default.value | variantFields | variantLinks.1.product.sku | variantLinks.2.product.sku | featured | newArrival | slugPrototypes.default.value |
+      | 1GB83  | default_family       | enabled | in_stock            | kg                             | 3                              | 1                                   | 1                         |                        | Slip-On Clog        | Color, Size   | Non-ex                     | 1GB82                      | 0        | 0          | slip-on-clog                 |
+      | CFG001 | default_family       | enabled | in_stock            | kg                             | 3                              | 1                                   | 1                         |                        | Slip-On Clog        | Color, Size   |                            | 1GB82                      | 0        | 0          | slip-on-clog                 |
+
+  @skipWait
+  Scenario: Check import error page from the email after importing file
+    Given I import file
+    Then Email should contains the following "Errors: 2 processed: 1, read: 2, added: 0, updated: 0, replaced: 1" text
+    And I follow "Error log" link from the email
+    Then I should see "Error in row #1. Not found entity \"Product\". Item data: {\"sku\":\"Non-ex\"}."
+    Then I should see "Error in row #1. variantLinks[0].product: This value should not be blank."
