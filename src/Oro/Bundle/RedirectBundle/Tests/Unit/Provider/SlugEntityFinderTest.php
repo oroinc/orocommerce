@@ -2,25 +2,36 @@
 
 namespace Oro\Bundle\RedirectBundle\Tests\Unit\Provider;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Provider\SlugEntityFinder;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
-use PHPUnit\Framework\MockObject\MockObject;
 
 class SlugEntityFinderTest extends \PHPUnit\Framework\TestCase
 {
-    private SlugRepository|MockObject $repository;
-    private ScopeManager|MockObject $scopeManager;
-    private SlugEntityFinder $slugEntityFinder;
+    /** @var SlugRepository|\PHPUnit\Framework\MockObject\MockObject */
+    private $repository;
+
+    /** @var ScopeManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $scopeManager;
+
+    /** @var SlugEntityFinder */
+    private $slugEntityFinder;
 
     protected function setUp(): void
     {
         $this->repository = $this->createMock(SlugRepository::class);
         $this->scopeManager = $this->createMock(ScopeManager::class);
 
-        $this->slugEntityFinder = new SlugEntityFinder($this->repository, $this->scopeManager);
+        $doctrine = $this->createMock(ManagerRegistry::class);
+        $doctrine->expects(self::any())
+            ->method('getRepository')
+            ->with(Slug::class)
+            ->willReturn($this->repository);
+
+        $this->slugEntityFinder = new SlugEntityFinder($doctrine, $this->scopeManager);
     }
 
     private function expectsGetScopeCriteria(): ScopeCriteria

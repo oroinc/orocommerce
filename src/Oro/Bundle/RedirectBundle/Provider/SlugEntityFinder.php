@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\RedirectBundle\Provider;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
@@ -12,13 +13,13 @@ use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
  */
 class SlugEntityFinder
 {
-    private SlugRepository $slugRepository;
+    private ManagerRegistry $doctrine;
     private ScopeManager $scopeManager;
     private ?ScopeCriteria $scopeCriteria = null;
 
-    public function __construct(SlugRepository $slugRepository, ScopeManager $scopeManager)
+    public function __construct(ManagerRegistry $doctrine, ScopeManager $scopeManager)
     {
-        $this->slugRepository = $slugRepository;
+        $this->doctrine = $doctrine;
         $this->scopeManager = $scopeManager;
     }
 
@@ -27,7 +28,7 @@ class SlugEntityFinder
      */
     public function findSlugEntityByUrl(string $url): ?Slug
     {
-        return $this->slugRepository->getSlugByUrlAndScopeCriteria($url, $this->getScopeCriteria());
+        return $this->getSlugRepository()->getSlugByUrlAndScopeCriteria($url, $this->getScopeCriteria());
     }
 
     /**
@@ -35,7 +36,7 @@ class SlugEntityFinder
      */
     public function findSlugEntityBySlugPrototype(string $slugPrototype): ?Slug
     {
-        return $this->slugRepository->getSlugBySlugPrototypeAndScopeCriteria(
+        return $this->getSlugRepository()->getSlugBySlugPrototypeAndScopeCriteria(
             $slugPrototype,
             $this->getScopeCriteria()
         );
@@ -48,5 +49,10 @@ class SlugEntityFinder
         }
 
         return $this->scopeCriteria;
+    }
+
+    private function getSlugRepository(): SlugRepository
+    {
+        return $this->doctrine->getRepository(Slug::class);
     }
 }

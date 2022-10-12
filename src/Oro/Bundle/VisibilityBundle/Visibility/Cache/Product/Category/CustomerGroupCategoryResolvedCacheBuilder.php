@@ -2,39 +2,44 @@
 
 namespace Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category;
 
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;
+use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerGroupCategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CategoryRepository;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CustomerGroupCategoryRepository;
-use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\AbstractResolvedCacheBuilder;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\Subtree\VisibilityChangeGroupSubtreeCacheBuilder;
 
-class CustomerGroupCategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder
+/**
+ * The customer group category visibility cache builder.
+ */
+class CustomerGroupCategoryResolvedCacheBuilder extends AbstractCategoryResolvedCacheBuilder
 {
-    /** @var VisibilityChangeGroupSubtreeCacheBuilder */
-    protected $visibilityChangeCustomerGroupSubtreeCacheBuilder;
+    private InsertFromSelectQueryExecutor $insertExecutor;
+    private VisibilityChangeGroupSubtreeCacheBuilder $visibilityChangeCustomerGroupSubtreeCacheBuilder;
 
-    /**
-     * @var EntityRepository
-     */
-    protected $customerGroupCategoryVisibilityRepository;
-
-    public function setVisibilityChangeCustomerSubtreeCacheBuilder(
+    public function __construct(
+        ManagerRegistry $doctrine,
+        ProductIndexScheduler $indexScheduler,
+        InsertFromSelectQueryExecutor $insertExecutor,
         VisibilityChangeGroupSubtreeCacheBuilder $visibilityChangeCustomerGroupSubtreeCacheBuilder
     ) {
+        parent::__construct($doctrine, $indexScheduler);
+        $this->insertExecutor = $insertExecutor;
         $this->visibilityChangeCustomerGroupSubtreeCacheBuilder = $visibilityChangeCustomerGroupSubtreeCacheBuilder;
     }
 
     /**
-     * @param VisibilityInterface|CustomerGroupCategoryVisibility $visibilitySettings
+     * {@inheritdoc}
      */
     public function resolveVisibilitySettings(VisibilityInterface $visibilitySettings)
     {
+        /** @var CustomerGroupCategoryVisibility $visibilitySettings */
         $category = $visibilitySettings->getCategory();
         $scope = $visibilitySettings->getScope();
 
@@ -46,7 +51,7 @@ class CustomerGroupCategoryResolvedCacheBuilder extends AbstractResolvedCacheBui
         $update = [];
         $where = ['scope' => $scope, 'category' => $category];
 
-        $repository = $this->getCustomerGroupCategoryVisibilityRepository();
+        $repository = $this->getCustomerGroupCategoryRepository();
 
         $hasCustomerGroupCategoryVisibilityResolved = $repository->hasEntity($where);
 
@@ -56,12 +61,10 @@ class CustomerGroupCategoryResolvedCacheBuilder extends AbstractResolvedCacheBui
             $insert = true;
         }
 
-        if (in_array(
+        if (\in_array(
             $selectedVisibility,
-            [
-                CustomerGroupCategoryVisibility::HIDDEN,
-                CustomerGroupCategoryVisibility::VISIBLE
-            ]
+            [CustomerGroupCategoryVisibility::HIDDEN, CustomerGroupCategoryVisibility::VISIBLE],
+            true
         )) {
             $visibility = $this->convertStaticVisibility($selectedVisibility);
             $update = [
@@ -75,9 +78,9 @@ class CustomerGroupCategoryResolvedCacheBuilder extends AbstractResolvedCacheBui
                 $delete = true;
             }
 
-            $visibility = $this->getRepository()->getFallbackToAllVisibility($category);
+            $visibility = $this->getCategoryRepository()->getFallbackToAllVisibility($category);
         } elseif ($selectedVisibility === CustomerGroupCategoryVisibility::PARENT_CATEGORY) {
-            list($visibility, $source) = $this->getParentCategoryVisibilityAndSource($category, $scope);
+            [$visibility, $source] = $this->getParentCategoryVisibilityAndSource($category, $scope);
             $update = [
                 'visibility' => $visibility,
                 'sourceCategoryVisibility' => $visibilitySettings,
@@ -94,28 +97,6 @@ class CustomerGroupCategoryResolvedCacheBuilder extends AbstractResolvedCacheBui
     }
 
     /**
-     * @param Category $category
-     * @param Scope $scope
-     * @return array
-     */
-    protected function getParentCategoryVisibilityAndSource(Category $category, Scope $scope)
-    {
-        $parentCategory = $category->getParentCategory();
-        if ($parentCategory) {
-            return [
-                $this->getCustomerGroupCategoryVisibilityRepository()
-                    ->getFallbackToGroupVisibility($parentCategory, $scope),
-                CustomerGroupCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY
-            ];
-        } else {
-            return [
-                CustomerGroupCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
-                CustomerGroupCategoryVisibilityResolved::SOURCE_STATIC
-            ];
-        }
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function isVisibilitySettingsSupported(VisibilityInterface $visibilitySettings)
@@ -128,7 +109,7 @@ class CustomerGroupCategoryResolvedCacheBuilder extends AbstractResolvedCacheBui
      */
     public function buildCache(Scope $scope = null)
     {
-        $resolvedRepository = $this->getCustomerGroupCategoryVisibilityRepository();
+        $resolvedRepository = $this->getCustomerGroupCategoryRepository();
 
         // clear table
         $resolvedRepository->clearTable();
@@ -155,15 +136,26 @@ class CustomerGroupCategoryResolvedCacheBuilder extends AbstractResolvedCacheBui
         }
     }
 
-    /**
-     * @param array $groupVisibilities
-     * @param array $currentGroup
-     * @return int
-     */
-    protected function resolveVisibility(array &$groupVisibilities, array $currentGroup)
+    private function getParentCategoryVisibilityAndSource(Category $category, Scope $scope): array
+    {
+        $parentCategory = $category->getParentCategory();
+        if ($parentCategory) {
+            return [
+                $this->getCustomerGroupCategoryRepository()->getFallbackToGroupVisibility($parentCategory, $scope),
+                CustomerGroupCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY
+            ];
+        }
+
+        return [
+            CustomerGroupCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
+            CustomerGroupCategoryVisibilityResolved::SOURCE_STATIC
+        ];
+    }
+
+    private function resolveVisibility(array &$groupVisibilities, array $currentGroup): int
     {
         // visibility already resolved
-        if (array_key_exists('resolved_visibility', $currentGroup)) {
+        if (\array_key_exists('resolved_visibility', $currentGroup)) {
             return $currentGroup['resolved_visibility'];
         }
 
@@ -197,33 +189,13 @@ class CustomerGroupCategoryResolvedCacheBuilder extends AbstractResolvedCacheBui
         return $resolvedVisibility;
     }
 
-    public function setCustomerGroupCategoryVisibilityRepository(EntityRepository $repository)
+    public function getCustomerGroupCategoryRepository(): CustomerGroupCategoryRepository
     {
-        $this->customerGroupCategoryVisibilityRepository = $repository;
+        return $this->doctrine->getRepository(CustomerGroupCategoryVisibilityResolved::class);
     }
 
-    /**
-     * @return CustomerGroupCategoryRepository
-     */
-    public function getCustomerGroupCategoryVisibilityRepository()
+    private function getCategoryRepository(): CategoryRepository
     {
-        return $this->customerGroupCategoryVisibilityRepository;
-    }
-
-    /**
-     * @return EntityManager
-     */
-    protected function getEntityManager()
-    {
-        return $this->registry
-            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\CustomerGroupCategoryVisibilityResolved');
-    }
-
-    /**
-     * @return CategoryRepository
-     */
-    protected function getRepository()
-    {
-        return $this->repository;
+        return $this->doctrine->getRepository(CategoryVisibilityResolved::class);
     }
 }

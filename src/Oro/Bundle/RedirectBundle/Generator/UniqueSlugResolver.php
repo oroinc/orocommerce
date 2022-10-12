@@ -3,50 +3,34 @@
 namespace Oro\Bundle\RedirectBundle\Generator;
 
 use Doctrine\Common\Util\ClassUtils;
-use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
-use Oro\Bundle\RedirectBundle\Event\RestrictSlugIncrementEvent;
 use Oro\Bundle\RedirectBundle\Generator\DTO\SlugUrl;
-use Oro\Bundle\RedirectBundle\Helper\SlugQueryRestrictionHelperInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Keep slug URLs unique per entity by adding suffix on duplicates.
  */
-class UniqueSlugResolver
+class UniqueSlugResolver implements UniqueSlugResolverInterface
 {
-    const INCREMENTED_SLUG_PATTERN = '/^(.*)-\d+$/';
-    const SLUG_INCREMENT_PATTERN = '/^%s-(\d+)$/';
-    const SLUG_INCREMENT_DATABASE_PATTERN = '%s-%%';
+    public const INCREMENTED_SLUG_PATTERN = '/^(.*)-\d+$/';
+    public const SLUG_INCREMENT_PATTERN = '/^%s-(\d+)$/';
+    public const SLUG_INCREMENT_DATABASE_PATTERN = '%s-%%';
 
-    protected ManagerRegistry $registry;
-    private SlugQueryRestrictionHelperInterface $slugQueryRestrictionHelper;
-    private EventDispatcherInterface $eventDispatcher;
+    private ManagerRegistry $doctrine;
 
     /**
      * Store URLs processed in the current batch to increment suffixes for entities withing same transaction.
      */
     private array $processedUrls = [];
 
-    public function __construct(
-        ManagerRegistry $registry,
-        SlugQueryRestrictionHelperInterface $slugQueryRestrictionHelper,
-        EventDispatcherInterface $eventDispatcher
-    ) {
-        $this->registry = $registry;
-        $this->slugQueryRestrictionHelper = $slugQueryRestrictionHelper;
-        $this->eventDispatcher = $eventDispatcher;
+    public function __construct(ManagerRegistry $doctrine)
+    {
+        $this->doctrine = $doctrine;
     }
 
-    /**
-     * @param SlugUrl $slugUrl
-     * @param SluggableInterface $entity
-     * @return string
-     */
-    public function resolve(SlugUrl $slugUrl, SluggableInterface $entity)
+    public function resolve(SlugUrl $slugUrl, SluggableInterface $entity): string
     {
         $slug = $slugUrl->getUrl();
 
@@ -62,44 +46,30 @@ class UniqueSlugResolver
         return $resolvedSlug;
     }
 
-    public function onFlush()
+    public function onFlush(): void
     {
         $this->processedUrls = [];
     }
 
-    /**
-     * @param string $baseSlug
-     * @param SluggableInterface $entity
-     * @return string
-     */
-    protected function getIncrementedSlug($baseSlug, SluggableInterface $entity)
+    private function getIncrementedSlug(string $baseSlug, SluggableInterface $entity): string
     {
         $index = 0;
         $possibleMatches = $this->getPreMatchedIncrementSlug($baseSlug, $entity);
-
         foreach ($possibleMatches as $incrementedSlug) {
             if (preg_match($this->buildSlugIncrementPattern($baseSlug), $incrementedSlug, $matches)) {
                 $index = max($index, $matches[1]);
             }
         }
 
-        $incrementedSlug = sprintf('%s-%d', $baseSlug, ++$index);
-
-        return $incrementedSlug;
+        return sprintf('%s-%d', $baseSlug, ++$index);
     }
 
-    /**
-     * @param string $slug
-     * @param SluggableInterface $entity
-     * @return string
-     */
-    protected function getBaseSlug(string $slug, SluggableInterface $entity)
+    private function getBaseSlug(string $slug, SluggableInterface $entity): string
     {
         if (preg_match(self::INCREMENTED_SLUG_PATTERN, $slug, $matches)) {
             $baseSlug = $matches[1];
 
             $qb = $this->getSlugRepository()->getOneDirectUrlBySlugQueryBuilder($baseSlug, $entity);
-            $qb = $this->slugQueryRestrictionHelper->restrictQueryBuilder($qb);
             if ($qb->getQuery()->getOneOrNullResult()) {
                 return $baseSlug;
             }
@@ -108,12 +78,7 @@ class UniqueSlugResolver
         return $slug;
     }
 
-    /**
-     * @param string $slug
-     * @param SluggableInterface $entity
-     * @return array
-     */
-    protected function getPreMatchedIncrementSlug($slug, SluggableInterface $entity)
+    private function getPreMatchedIncrementSlug(string $slug, SluggableInterface $entity): array
     {
         return array_merge(
             $this->findProcessedUrls($slug, $entity),
@@ -121,11 +86,7 @@ class UniqueSlugResolver
         );
     }
 
-    /**
-     * @param string $slug
-     * @return string
-     */
-    protected function buildSlugIncrementPattern($slug)
+    private function buildSlugIncrementPattern(string $slug): string
     {
         return sprintf(self::SLUG_INCREMENT_PATTERN, preg_quote($slug, '/'));
     }
@@ -137,17 +98,10 @@ class UniqueSlugResolver
         }
 
         $qb = $this->getSlugRepository()->getOneDirectUrlBySlugQueryBuilder($slug, $entity);
-        $qb = $this->getRestrictedOneDirectUrlBySlugQueryBuilder($qb, $entity);
-        $qb = $this->slugQueryRestrictionHelper->restrictQueryBuilder($qb);
 
         return (bool) $qb->getQuery()->getOneOrNullResult();
     }
 
-    /**
-     * @param string $slug
-     * @param SluggableInterface $entity
-     * @return array|string[]
-     */
     private function findStoredUrls(string $slug, SluggableInterface $entity): array
     {
         return $this->getSlugRepository()->findAllDirectUrlsByPattern(
@@ -180,18 +134,8 @@ class UniqueSlugResolver
             && $this->processedUrls[$slug] !== $this->getEntityIdentifier($entity);
     }
 
-    private function getRestrictedOneDirectUrlBySlugQueryBuilder(
-        QueryBuilder $qb,
-        SluggableInterface $entity
-    ): QueryBuilder {
-        $restrictSlugIncrementEvent = new RestrictSlugIncrementEvent($qb, $entity);
-        $this->eventDispatcher->dispatch($restrictSlugIncrementEvent, RestrictSlugIncrementEvent::NAME);
-
-        return $restrictSlugIncrementEvent->getQueryBuilder();
-    }
-
     private function getSlugRepository(): SlugRepository
     {
-        return $this->registry->getRepository(Slug::class);
+        return $this->doctrine->getRepository(Slug::class);
     }
 }

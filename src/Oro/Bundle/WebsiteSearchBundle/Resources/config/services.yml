@@ -250,17 +250,21 @@ services:
             - { name: kernel.event_listener, event: oro_migration.data_fixtures.pre_load, method: onPreLoad }
             - { name: kernel.event_listener, event: oro_migration.data_fixtures.post_load, method: onPostLoad }
 
+    oro_website_search.reindexation_website_provider:
+        class: Oro\Bundle\WebsiteSearchBundle\Provider\ReindexationWebsiteProvider
+        arguments:
+            - '@doctrine'
+
     oro_website_search.provider.placeholder_provider:
-        class: 'Oro\Bundle\WebsiteSearchBundle\Provider\PlaceholderProvider'
+        class: Oro\Bundle\WebsiteSearchBundle\Provider\PlaceholderProvider
         arguments:
             - '@oro_website_search.placeholder_decorator'
             - '@oro_website_search.provider.search_mapping'
 
     oro_website_search.manager.website_context_manager:
-        class: 'Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager'
-        public: false
+        class: Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager
         arguments:
-            - '@oro_entity.doctrine_helper'
+            - '@doctrine'
 
     oro_website_search.placeholder.assign_id_placeholder:
         class:  Oro\Bundle\WebsiteSearchBundle\Placeholder\AssignIdPlaceholder

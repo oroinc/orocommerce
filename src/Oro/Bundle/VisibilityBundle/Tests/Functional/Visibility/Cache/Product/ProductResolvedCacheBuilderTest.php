@@ -2,12 +2,9 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Visibility\Cache\Product;
 
-use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;
-use Oro\Bundle\ProductBundle\Search\Reindex\ProductReindexManager;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\ProductRepository;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\CacheBuilderInterface;
-use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\ProductResolvedCacheBuilder;
 
 /**
  * @group CommunityEdition
@@ -32,9 +29,7 @@ class ProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
      */
     protected function getRepository(): ProductRepository
     {
-        return $this->getContainer()->get('doctrine')->getRepository(
-            'OroVisibilityBundle:VisibilityResolved\ProductVisibilityResolved'
-        );
+        return self::getContainer()->get('doctrine')->getRepository(ProductVisibilityResolved::class);
     }
 
     /**
@@ -42,27 +37,8 @@ class ProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
      */
     protected function getCacheBuilder(): CacheBuilderInterface
     {
-        $container = $this->client->getContainer();
-
-        $productReindexManager = new ProductReindexManager(
-            $container->get('event_dispatcher')
+        return self::getContainer()->get(
+            'oro_visibility.visibility.cache.product.product_resolved_cache_builder'
         );
-
-        $indexScheduler = new ProductIndexScheduler(
-            $container->get('oro_entity.doctrine_helper'),
-            $productReindexManager
-        );
-
-        $builder = new ProductResolvedCacheBuilder(
-            $container->get('doctrine'),
-            $container->get('oro_scope.scope_manager'),
-            $indexScheduler,
-            $container->get('oro_entity.orm.insert_from_select_query_executor'),
-            $productReindexManager
-        );
-        $builder->setRepository($this->getContainer()->get('oro_visibility.product_repository'));
-        $builder->setCacheClass(ProductVisibilityResolved::class);
-
-        return $builder;
     }
 }

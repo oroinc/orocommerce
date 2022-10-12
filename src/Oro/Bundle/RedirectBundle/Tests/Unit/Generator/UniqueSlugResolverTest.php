@@ -9,40 +9,37 @@ use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
-use Oro\Bundle\RedirectBundle\Event\RestrictSlugIncrementEvent;
 use Oro\Bundle\RedirectBundle\Generator\DTO\SlugUrl;
 use Oro\Bundle\RedirectBundle\Generator\UniqueSlugResolver;
-use Oro\Bundle\RedirectBundle\Helper\SlugQueryRestrictionHelperInterface;
-use Oro\Component\Testing\Unit\EntityTrait;
-use PHPUnit\Framework\MockObject\MockObject;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Oro\Component\Testing\ReflectionUtil;
 
 class UniqueSlugResolverTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
+    /** @var SlugRepository|\PHPUnit\Framework\MockObject\MockObject */
+    private $repository;
 
-    protected SlugRepository|MockObject $repository;
-    protected SlugQueryRestrictionHelperInterface|MockObject $slugQueryRestrictionHelper;
-    private EventDispatcherInterface|MockObject $eventDispatcher;
-    protected UniqueSlugResolver $uniqueSlugResolver;
+    /** @var UniqueSlugResolver */
+    private $uniqueSlugResolver;
 
     protected function setUp(): void
     {
         $this->repository = $this->createMock(SlugRepository::class);
-        $this->slugQueryRestrictionHelper = $this->createMock(SlugQueryRestrictionHelperInterface::class);
-        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
 
-        $registry = $this->createMock(ManagerRegistry::class);
-        $registry->expects($this->any())
+        $doctrine = $this->createMock(ManagerRegistry::class);
+        $doctrine->expects($this->any())
             ->method('getRepository')
             ->with(Slug::class)
             ->willReturn($this->repository);
 
-        $this->uniqueSlugResolver = new UniqueSlugResolver(
-            $registry,
-            $this->slugQueryRestrictionHelper,
-            $this->eventDispatcher
-        );
+        $this->uniqueSlugResolver = new UniqueSlugResolver($doctrine);
+    }
+
+    private function getSlug(int $id): Slug
+    {
+        $slug = new Slug();
+        ReflectionUtil::setId($slug, $id);
+
+        return $slug;
     }
 
     public function testResolveNewSlug()
@@ -50,7 +47,6 @@ class UniqueSlugResolverTest extends \PHPUnit\Framework\TestCase
         $slug = '/test';
         $slugUrl = new SlugUrl($slug);
 
-        /** @var SluggableInterface|\PHPUnit\Framework\MockObject\MockObject $entity **/
         $entity = $this->createMock(SluggableInterface::class);
 
         $query = $this->createMock(AbstractQuery::class);
@@ -58,24 +54,13 @@ class UniqueSlugResolverTest extends \PHPUnit\Framework\TestCase
             ->method('getOneOrNullResult')
             ->willReturn(null);
         $queryBuilder = $this->createMock(QueryBuilder::class);
-        $queryBuilder
-            ->expects($this->once())
+        $queryBuilder->expects($this->once())
             ->method('getQuery')
             ->willReturn($query);
 
         $this->repository->expects($this->once())
             ->method('getOneDirectUrlBySlugQueryBuilder')
             ->with($slug, $entity)
-            ->willReturn($queryBuilder);
-
-        $this->eventDispatcher->expects($this->once())
-            ->method('dispatch')
-            ->with($this->isInstanceOf(RestrictSlugIncrementEvent::class), RestrictSlugIncrementEvent::NAME);
-
-        $this->slugQueryRestrictionHelper
-            ->expects($this->once())
-            ->method('restrictQueryBuilder')
-            ->with($queryBuilder)
             ->willReturn($queryBuilder);
 
         $this->assertEquals($slug, $this->uniqueSlugResolver->resolve($slugUrl, $entity));
@@ -89,7 +74,6 @@ class UniqueSlugResolverTest extends \PHPUnit\Framework\TestCase
 
         $slugUrl = new SlugUrl($slug);
 
-        /** @var SluggableInterface|\PHPUnit\Framework\MockObject\MockObject $entity **/
         $entity = $this->createMock(SluggableInterface::class);
 
         $query = $this->createMock(AbstractQuery::class);
@@ -97,25 +81,13 @@ class UniqueSlugResolverTest extends \PHPUnit\Framework\TestCase
             ->method('getOneOrNullResult')
             ->willReturn(new Slug());
         $queryBuilder = $this->createMock(QueryBuilder::class);
-        $queryBuilder
-            ->expects($this->once())
+        $queryBuilder->expects($this->once())
             ->method('getQuery')
             ->willReturn($query);
 
         $this->repository->expects($this->once())
             ->method('getOneDirectUrlBySlugQueryBuilder')
             ->with($slug, $entity)
-            ->willReturn($queryBuilder);
-
-        $restrictSlugIncrementEvent = new RestrictSlugIncrementEvent($queryBuilder, $entity);
-        $this->eventDispatcher->expects($this->once())
-            ->method('dispatch')
-            ->with($restrictSlugIncrementEvent, RestrictSlugIncrementEvent::NAME);
-
-        $this->slugQueryRestrictionHelper
-            ->expects($this->once())
-            ->method('restrictQueryBuilder')
-            ->with($queryBuilder)
             ->willReturn($queryBuilder);
 
         $this->repository->expects($this->once())
@@ -135,12 +107,10 @@ class UniqueSlugResolverTest extends \PHPUnit\Framework\TestCase
         $slugUrl = new SlugUrl($slug);
         $slugUrlFr = new SlugUrl($slug, $frLocalization);
 
-        /** @var SluggableInterface|\PHPUnit\Framework\MockObject\MockObject $entity1 **/
         $entity1 = $this->createMock(SluggableInterface::class);
         $entity1->expects($this->any())
             ->method('getId')
             ->willReturn(1);
-        /** @var SluggableInterface|\PHPUnit\Framework\MockObject\MockObject $entity2 **/
         $entity2 = $this->createMock(SluggableInterface::class);
         $entity2->expects($this->any())
             ->method('getId')
@@ -151,23 +121,12 @@ class UniqueSlugResolverTest extends \PHPUnit\Framework\TestCase
             ->method('getOneOrNullResult')
             ->willReturn(null);
         $queryBuilder = $this->createMock(QueryBuilder::class);
-        $queryBuilder
-            ->expects($this->exactly(2))
+        $queryBuilder->expects($this->exactly(2))
             ->method('getQuery')
             ->willReturn($query);
 
         $this->repository->expects($this->any())
             ->method('getOneDirectUrlBySlugQueryBuilder')
-            ->willReturn($queryBuilder);
-
-        $this->eventDispatcher->expects($this->exactly(2))
-            ->method('dispatch')
-            ->with($this->isInstanceOf(RestrictSlugIncrementEvent::class), RestrictSlugIncrementEvent::NAME);
-
-        $this->slugQueryRestrictionHelper
-            ->expects($this->exactly(2))
-            ->method('restrictQueryBuilder')
-            ->with($queryBuilder)
             ->willReturn($queryBuilder);
 
         $this->repository->expects($this->any())
@@ -188,19 +147,14 @@ class UniqueSlugResolverTest extends \PHPUnit\Framework\TestCase
 
         $slugUrl = new SlugUrl($slug);
 
-        /** @var SluggableInterface|\PHPUnit\Framework\MockObject\MockObject $entity **/
         $entity = $this->createMock(SluggableInterface::class);
 
         $query = $this->createMock(AbstractQuery::class);
         $query->expects($this->exactly(2))
             ->method('getOneOrNullResult')
-            ->willReturnOnConsecutiveCalls(
-                [$this->getEntity(Slug::class, ['id' => 123])],
-                [$this->getEntity(Slug::class, ['id' => 42])]
-            );
+            ->willReturnOnConsecutiveCalls([$this->getSlug(123)], [$this->getSlug(42)]);
         $queryBuilder = $this->createMock(QueryBuilder::class);
-        $queryBuilder
-            ->expects($this->exactly(2))
+        $queryBuilder->expects($this->exactly(2))
             ->method('getQuery')
             ->willReturn($query);
 
@@ -210,16 +164,6 @@ class UniqueSlugResolverTest extends \PHPUnit\Framework\TestCase
                 [$slug, $entity],
                 ['/test', $entity]
             )
-            ->willReturn($queryBuilder);
-
-        $this->eventDispatcher->expects($this->once())
-            ->method('dispatch')
-            ->with($this->isInstanceOf(RestrictSlugIncrementEvent::class), RestrictSlugIncrementEvent::NAME);
-
-        $this->slugQueryRestrictionHelper
-            ->expects($this->exactly(2))
-            ->method('restrictQueryBuilder')
-            ->with($queryBuilder)
             ->willReturn($queryBuilder);
 
         $this->repository->expects($this->once())

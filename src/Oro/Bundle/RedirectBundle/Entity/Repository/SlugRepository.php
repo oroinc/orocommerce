@@ -12,38 +12,21 @@ use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\RedirectBundle\Entity\Hydrator\MatchingSlugHydrator;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Entity\SlugAwareInterface;
-use Oro\Bundle\RedirectBundle\Helper\SlugQueryRestrictionHelperInterface;
 use Oro\Bundle\RedirectBundle\Helper\UrlParameterHelper;
+use Oro\Bundle\RedirectBundle\Model\SlugQueryBuilderModifierInterface;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
-use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
 /**
  * Repository for Slug entity
  */
 class SlugRepository extends ServiceEntityRepository
 {
-    private ?SlugQueryRestrictionHelperInterface $queryRestrictionHelper = null;
+    private SlugQueryBuilderModifierInterface $slugQueryBuilderModifier;
 
-    public function setSlugQueryRestrictionHelper(SlugQueryRestrictionHelperInterface $queryRestrictionHelper): void
+    public function setSlugQueryBuilderModifier(SlugQueryBuilderModifierInterface $slugQueryBuilderModifier): void
     {
-        $this->queryRestrictionHelper = $queryRestrictionHelper;
-    }
-
-    /**
-     * @param string $url
-     * @return QueryBuilder
-     */
-    public function getSlugByUrlQueryBuilder($url)
-    {
-        $qb = $this->createQueryBuilder('slug');
-
-        $qb->where($qb->expr()->eq('slug.urlHash', ':urlHash'))
-            ->andWhere($qb->expr()->eq('slug.url', ':url'))
-            ->setParameter('url', $url)
-            ->setParameter('urlHash', md5($url));
-
-        return $qb;
+        $this->slugQueryBuilderModifier = $slugQueryBuilderModifier;
     }
 
     public function getOneDirectUrlBySlugQueryBuilder(
@@ -74,7 +57,7 @@ class SlugRepository extends ServiceEntityRepository
 
         $this->applyDirectUrlScopeCriteria($qb, $scopeCriteria);
         $this->restrictByEntitySlugs($qb, $restrictedEntity);
-        $this->queryRestrictionHelper->restrictQueryBuilder($qb);
+        $this->slugQueryBuilderModifier->modify($qb);
 
         $rawResult = $qb->getQuery()->getArrayResult();
 
@@ -84,11 +67,8 @@ class SlugRepository extends ServiceEntityRepository
     public function getSlugByUrlAndScopeCriteria(string $url, ScopeCriteria $scopeCriteria): ?Slug
     {
         $qb = $this->getSlugByUrlQueryBuilder($url);
-
         $qb->leftJoin('slug.scopes', 'scopes', Join::WITH)
             ->addSelect('scopes.id as matchedScopeId');
-
-        $qb = $this->queryRestrictionHelper->restrictQueryBuilder($qb);
 
         return $this->getMatchingSlugForCriteria($qb, $scopeCriteria);
     }
@@ -101,7 +81,7 @@ class SlugRepository extends ServiceEntityRepository
             ->andWhere($qb->expr()->eq('slug.slugPrototype', ':slugPrototype'))
             ->setParameter('slugPrototype', $slugPrototype);
 
-        $qb = $this->queryRestrictionHelper->restrictQueryBuilder($qb);
+        $this->slugQueryBuilderModifier->modify($qb);
 
         return $this->getMatchingSlugForCriteria($qb, $scopeCriteria);
     }
@@ -229,25 +209,6 @@ class SlugRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return QueryBuilder
-     */
-    private function getUsedScopesQueryBuilder()
-    {
-        $qb = $this->getEntityManager()->createQueryBuilder();
-
-        $qb->from(Scope::class, 'scope')
-            ->select('scope')
-            ->innerJoin(
-                $this->getEntityName(),
-                'slug',
-                Join::WITH,
-                $qb->expr()->isMemberOf('scope', 'slug.scopes')
-            );
-
-        return $qb;
-    }
-
-    /**
      * @return Scope[]|\Iterator
      */
     public function getUsedScopes()
@@ -348,16 +309,41 @@ class SlugRepository extends ServiceEntityRepository
         return array_map('current', $qb->getQuery()->getArrayResult());
     }
 
-    private function getMatchingSlugForCriteria(
-        QueryBuilder $qb,
-        ScopeCriteria $scopeCriteria,
-        AclHelper $aclHelper = null
-    ): ?Slug {
+    private function getSlugByUrlQueryBuilder(string $url): QueryBuilder
+    {
+        $qb = $this->createQueryBuilder('slug');
+        $qb
+            ->where($qb->expr()->eq('slug.urlHash', ':urlHash'))
+            ->andWhere($qb->expr()->eq('slug.url', ':url'))
+            ->setParameter('url', $url)
+            ->setParameter('urlHash', md5($url));
+
+        $this->slugQueryBuilderModifier->modify($qb);
+
+        return $qb;
+    }
+
+    private function getUsedScopesQueryBuilder(): QueryBuilder
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->from(Scope::class, 'scope')
+            ->select('scope')
+            ->innerJoin(
+                $this->getEntityName(),
+                'slug',
+                Join::WITH,
+                $qb->expr()->isMemberOf('scope', 'slug.scopes')
+            );
+
+        return $qb;
+    }
+
+    private function getMatchingSlugForCriteria(QueryBuilder $qb, ScopeCriteria $scopeCriteria): ?Slug
+    {
         $scopeCriteria->applyToJoinWithPriority($qb, 'scopes');
         $qb->addOrderBy('slug.id');
-        $query = $aclHelper ? $aclHelper->apply($qb) : $qb->getQuery();
 
-        $result = $query->getResult(MatchingSlugHydrator::NAME);
+        $result = $qb->getQuery()->getResult(MatchingSlugHydrator::NAME);
         if (!$result) {
             return null;
         }

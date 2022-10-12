@@ -125,41 +125,29 @@ services:
             - [setCategoryVisibilitySystemConfigurationPath, ['oro_visibility.category_visibility']]
             - [setVisibilityScopeProvider, ['@oro_visibility.provider.visibility_scope_provider']]
 
-    oro_visibility.visibility.cache.product.cache_builder.abstract:
-        class: 'Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\AbstractResolvedCacheBuilder'
-        public: false
-        abstract: true
-        arguments:
-            - "@doctrine"
-            - "@oro_scope.scope_manager"
-            - "@oro_catalog.manager.product_index_scheduler"
-            - "@oro_entity.orm.insert_from_select_query_executor"
-            - "@oro_product.search.product_reindex_manager"
-
     oro_visibility.visibility.cache.product.customer_group_product_resolved_cache_builder:
         class: 'Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\CustomerGroupProductResolvedCacheBuilder'
-        public: false
-        parent: oro_visibility.visibility.cache.product.cache_builder.abstract
-        calls:
-            - [setCacheClass, ['Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerGroupProductVisibilityResolved']]
-            - [setRepository, ['@oro_visibility.customer_group_product_repository']]
+        arguments:
+            - '@doctrine'
+            - '@oro_product.search.product_reindex_manager'
+            - '@oro_scope.scope_manager'
+            - '@oro_entity.orm.insert_from_select_query_executor'
 
     oro_visibility.visibility.cache.product.customer_product_resolved_cache_builder:
         class: 'Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\CustomerProductResolvedCacheBuilder'
-        public: false
-        parent: oro_visibility.visibility.cache.product.cache_builder.abstract
-        calls:
-            - [setCacheClass, ['Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerProductVisibilityResolved']]
-            - [setRepository, ['@oro_visibility.customer_product_repository']]
+        arguments:
+            - '@doctrine'
+            - '@oro_product.search.product_reindex_manager'
+            - '@oro_scope.scope_manager'
+            - '@oro_entity.orm.insert_from_select_query_executor'
 
     oro_visibility.visibility.cache.product.product_resolved_cache_builder:
         class: 'Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\ProductResolvedCacheBuilder'
-        public: false
-        parent: oro_visibility.visibility.cache.product.cache_builder.abstract
-        calls:
-            - [setCacheClass, ['Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\ProductVisibilityResolved']]
-            - [setScopeManager, ['@oro_scope.scope_manager']]
-            - [setRepository, ['@oro_visibility.product_repository']]
+        arguments:
+            - '@doctrine'
+            - '@oro_product.search.product_reindex_manager'
+            - '@oro_scope.scope_manager'
+            - '@oro_entity.orm.insert_from_select_query_executor'
 
     oro_visibility.visibility.cache.product.cache_builder:
         class: 'Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\CacheBuilder'
@@ -170,32 +158,30 @@ services:
 
     oro_visibility.visibility.cache.product.category.customer_group_category_resolved_cache_builder:
         class: 'Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\CustomerGroupCategoryResolvedCacheBuilder'
-        public: false
-        parent: oro_visibility.visibility.cache.product.cache_builder.abstract
-        calls:
-            - [setCacheClass, ['Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerGroupCategoryVisibilityResolved']]
-            - [setVisibilityChangeCustomerSubtreeCacheBuilder, ["@oro_visibility.visibility.cache.product.category.subtree.visibility_change_group_subtree_cache_builder"]]
-            - [setRepository, ['@oro_visibility.category_repository']]
-            - [setCustomerGroupCategoryVisibilityRepository, ['@oro_visibility.customer_group_category_repository']]
+        arguments:
+            - '@doctrine'
+            - '@oro_catalog.manager.product_index_scheduler'
+            - '@oro_entity.orm.insert_from_select_query_executor'
+            - '@oro_visibility.visibility.cache.product.category.subtree.visibility_change_group_subtree_cache_builder'
 
     oro_visibility.visibility.cache.product.category.customer_category_resolved_cache_builder:
         class: 'Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\CustomerCategoryResolvedCacheBuilder'
-        public: false
-        parent: oro_visibility.visibility.cache.product.cache_builder.abstract
-        calls:
-            - [setCacheClass, ['Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerCategoryVisibilityResolved']]
-            - [setVisibilityChangeCustomerSubtreeCacheBuilder, ["@oro_visibility.visibility.cache.product.category.subtree.visibility_change_customer_subtree_cache_builder"]]
-            - [setRepository, ['@oro_visibility.customer_category_repository']]
+        arguments:
+            - '@doctrine'
+            - '@oro_catalog.manager.product_index_scheduler'
+            - '@oro_scope.scope_manager'
+            - '@oro_entity.orm.insert_from_select_query_executor'
+            - '@oro_visibility.visibility.cache.product.category.subtree.visibility_change_customer_subtree_cache_builder'
 
     oro_visibility.visibility.cache.product.category.category_resolved_cache_builder:
         class: 'Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\CategoryResolvedCacheBuilder'
-        public: false
-        parent: oro_visibility.visibility.cache.product.cache_builder.abstract
-        calls:
-            - [setCacheClass, ['Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CategoryVisibilityResolved']]
-            - [setVisibilityChangeCategorySubtreeCacheBuilder, ["@oro_visibility.visibility.cache.product.category.subtree.visibility_change_category_subtree_cache_builder"]]
-            - [setPositionChangeCategorySubtreeCacheBuilder, ["@oro_visibility.visibility.cache.product.category.subtree.position_change_category_subtree_cache_builder"]]
-            - [setRepository, ['@oro_visibility.category_repository']]
+        arguments:
+            - '@doctrine'
+            - '@oro_catalog.manager.product_index_scheduler'
+            - '@oro_scope.scope_manager'
+            - '@oro_entity.orm.insert_from_select_query_executor'
+            - '@oro_visibility.visibility.cache.product.category.subtree.visibility_change_category_subtree_cache_builder'
+            - '@oro_visibility.visibility.cache.product.category.subtree.position_change_category_subtree_cache_builder'
 
     oro_visibility.visibility.cache.product.category.cache_builder:
         class: 'Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\CacheBuilder'

@@ -11,7 +11,7 @@ use Oro\Bundle\ProductBundle\Layout\DataProvider\NewArrivalsProvider;
 use Oro\Bundle\ProductBundle\Layout\SegmentProducts\SegmentProductsQueryProvider;
 use Oro\Bundle\ProductBundle\Model\ProductView;
 use Oro\Bundle\ProductBundle\Provider\ProductListBuilder;
-use Oro\Bundle\ProductBundle\Provider\Segment\ProductSegmentProviderInterface;
+use Oro\Bundle\ProductBundle\Provider\ProductSegmentProvider;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Component\Testing\ReflectionUtil;
@@ -31,7 +31,7 @@ class NewArrivalsProviderTest extends OrmTestCase
     /** @var SegmentProductsQueryProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $segmentProductsQueryProvider;
 
-    /** @var ProductSegmentProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var ProductSegmentProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $productSegmentProvider;
 
     /** @var ProductListBuilder|\PHPUnit\Framework\MockObject\MockObject */
@@ -55,7 +55,7 @@ class NewArrivalsProviderTest extends OrmTestCase
         ));
 
         $this->segmentProductsQueryProvider = $this->createMock(SegmentProductsQueryProvider::class);
-        $this->productSegmentProvider = $this->createMock(ProductSegmentProviderInterface::class);
+        $this->productSegmentProvider = $this->createMock(ProductSegmentProvider::class);
         $this->productListBuilder = $this->createMock(ProductListBuilder::class);
         $this->aclHelper = $this->createMock(AclHelper::class);
         $this->configManager = $this->createMock(ConfigManager::class);
