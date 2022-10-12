@@ -86,7 +86,6 @@ dynamic-imports:
         - oroshoppinglist/js/app/views/product-shopping-lists-view
         - oroshoppinglist/js/app/views/shopping-list-quick-search
         - oroshoppinglist/js/shopping-list-item-errors-handler
-        - oroui/js/widget/collapse-widget
         - orouser/js/validator/password-complexity
         - orovalidation/js/validator/alphanumeric
         - orovalidation/js/validator/alphanumeric-dash

@@ -19,35 +19,5 @@
         top: $filters-box-collapse-icon-top;
         right: $filters-box-collapse-icon-right;
         transform: translateY(-$filters-box-collapse-icon-top);
-
-        .fa-plus {
-            display: block;
-        }
-
-        .fa-minus {
-            display: none;
-        }
-    }
-
-    &__container {
-        display: none;
-    }
-
-    .init {
-        .filters-box-collapse__container {
-            display: block;
-        }
-    }
-
-    &.expanded {
-        .filters-box-collapse__icon {
-            .fa-plus {
-                display: none;
-            }
-
-            .fa-minus {
-                display: block;
-            }
-        }
     }
 }

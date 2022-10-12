@@ -447,24 +447,6 @@
             border-top: $matrix-order-widget-item-not-first-child-border-top;
         }
 
-        &.expanded & {
-            &-icon {
-                &:first-child {
-                    display: $matrix-order-widget-item-expanded-icon-first-child-display;
-                }
-
-                &:last-child {
-                    display: $matrix-order-widget-item-expanded-icon-last-child-display;
-                }
-            }
-        }
-
-        &-icon {
-            &:last-child {
-                display: $matrix-order-widget-item-icon-last-child-display;
-            }
-        }
-
         &-icon-wrapper {
             position: $matrix-order-widget-item-icon-wrapper-position;
             display: $matrix-order-widget-item-icon-wrapper-display;
