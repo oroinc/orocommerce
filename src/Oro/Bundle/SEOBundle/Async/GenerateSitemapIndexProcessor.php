@@ -4,15 +4,14 @@ namespace Oro\Bundle\SEOBundle\Async;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\SEOBundle\Async\Topic\GenerateSitemapIndexTopic;
 use Oro\Bundle\SEOBundle\Sitemap\Filesystem\PublicSitemapFilesystemAdapter;
-use Oro\Bundle\SEOBundle\Topic\GenerateSitemapIndexTopic;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Component\MessageQueue\Util\JSON;
 use Oro\Component\SEO\Tools\SitemapDumperInterface;
 use Psr\Log\LoggerInterface;
 
@@ -44,10 +43,10 @@ class GenerateSitemapIndexProcessor implements MessageProcessorInterface, TopicS
      */
     public function process(MessageInterface $message, SessionInterface $session)
     {
-        $body = JSON::decode($message->getBody());
+        $messageBody = $message->getBody();
 
-        $version = $body[GenerateSitemapIndexTopic::VERSION];
-        $websiteIds = $body[GenerateSitemapIndexTopic::WEBSITE_IDS];
+        $version = $messageBody[GenerateSitemapIndexTopic::VERSION];
+        $websiteIds = $messageBody[GenerateSitemapIndexTopic::WEBSITE_IDS];
 
         $processedWebsiteIds = $this->generateSitemapIndexFiles($websiteIds, $version);
         if (!$processedWebsiteIds || !$this->moveSitemaps($processedWebsiteIds)) {

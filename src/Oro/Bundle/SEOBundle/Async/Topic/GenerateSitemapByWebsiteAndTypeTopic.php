@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\SEOBundle\Topic;
+namespace Oro\Bundle\SEOBundle\Async\Topic;
 
 use Oro\Bundle\SEOBundle\Sitemap\Provider\UrlItemsProviderRegistryInterface;
 use Oro\Component\MessageQueue\Topic\AbstractTopic;

@@ -6,8 +6,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\SEOBundle\Async\GenerateSitemapIndexProcessor;
+use Oro\Bundle\SEOBundle\Async\Topic\GenerateSitemapIndexTopic;
 use Oro\Bundle\SEOBundle\Sitemap\Filesystem\PublicSitemapFilesystemAdapter;
-use Oro\Bundle\SEOBundle\Topic\GenerateSitemapIndexTopic;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
@@ -188,7 +188,7 @@ class GenerateSitemapIndexProcessorTest extends \PHPUnit\Framework\TestCase
             'websiteIds' => $websiteIds,
         ]);
 
-        $website = $this->getEntity(Website::class, ['id' => 123]);
+        $website = $this->createMock(Website::class);
         $em = $this->createMock(EntityManagerInterface::class);
         $em->expects(self::once())
             ->method('find')
@@ -198,15 +198,6 @@ class GenerateSitemapIndexProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('getManagerForClass')
             ->with(Website::class)
             ->willReturn($em);
-
-        $this->websiteManager
-            ->expects($this->once())
-            ->method('setCurrentWebsite')
-            ->with($website);
-        $this->configManager
-            ->expects($this->once())
-            ->method('setScopeId')
-            ->with(123);
 
         $exception = new \Exception('Test');
 

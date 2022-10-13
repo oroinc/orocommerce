@@ -1,5 +1,6 @@
 @regression
 @postgresql
+@ticket-BB-11878
 @ticket-BB-20426
 
 Feature: Price list rules validation
@@ -12,15 +13,15 @@ Feature: Price list rules validation
     And I go to Sales/ Price Lists
     When I click "Create Price List"
     And I fill form with:
-      | Name       | Base Price List          |
-      | Currencies | US Dollar ($)            |
-      | Active     | true                     |
+      | Name       | Base Price List       |
+      | Currencies | US Dollar ($)         |
+      | Active     | true                  |
       | Rule       | product.featured == 1 |
     When I save and close form
     Then I should see validation errors:
       | Rule | Invalid expression |
     And I fill form with:
-      | Rule       | product.featured == true |
+      | Rule | product.featured == true |
 
   Scenario: Check price list rule quantity expressions validation
     When I click "Add Price Calculation Rules"
@@ -31,17 +32,18 @@ Feature: Price list rules validation
       | Price Unit         | pricelist[1].prices.unit     |
       | Price Currency     | pricelist[1].prices.currency |
       | Calculate As       | pricelist[1].prices.value    |
-      | Priority           | 1                            |
+      | Priority           | 21474836479                  |
     And I save and close form
     Then I should see validation errors:
-      | Price Calculation Quantity | Field "test" is not allowed to be used as "Quantity" |
-    And I should not see validation errors:
-      | Rule | Invalid expression |
+      | Price Calculation Quantity | Field "test" is not allowed to be used as "Quantity"           |
+      | Rule                       | Invalid expression                                             |
+      | Priority                   | This value should be between -2,147,483,648 and 2,147,483,647. |
 
   Scenario: Check price list rule calculate as expressions validation
     When I fill "Price Calculation Rules Form" with:
       | Price for quantity expression | 1                               |
       | Calculate As                  | pricelist[1].prices.value * "a" |
+      | Priority                      | 1                               |
     And I save and close form
     Then I should see validation errors:
       | Calculate As | Invalid expression |

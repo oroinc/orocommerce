@@ -4,7 +4,7 @@ namespace Oro\Bundle\SEOBundle\Async;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\SEOBundle\Topic\GenerateSitemapByWebsiteAndTypeTopic;
+use Oro\Bundle\SEOBundle\Async\Topic\GenerateSitemapByWebsiteAndTypeTopic;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
@@ -12,7 +12,6 @@ use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Job\JobRunner;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Component\MessageQueue\Util\JSON;
 use Oro\Component\SEO\Tools\SitemapDumperInterface;
 use Psr\Log\LoggerInterface;
 
@@ -44,23 +43,24 @@ class GenerateSitemapByWebsiteAndTypeProcessor implements MessageProcessorInterf
      */
     public function process(MessageInterface $message, SessionInterface $session)
     {
-        $body = JSON::decode($message->getBody());
+        $messageBody = $message->getBody();
 
         try {
             $result = $this->jobRunner->runDelayed(
-                $body[GenerateSitemapByWebsiteAndTypeTopic::JOB_ID],
-                function () use ($body) {
-                    $website = $this->getWebsite($body[GenerateSitemapByWebsiteAndTypeTopic::WEBSITE_ID]);
+                $messageBody[GenerateSitemapByWebsiteAndTypeTopic::JOB_ID],
+                function () use ($messageBody) {
+                    $website = $this->getWebsite($messageBody[GenerateSitemapByWebsiteAndTypeTopic::WEBSITE_ID]);
                     if (null === $website) {
                         throw new \RuntimeException('The website does not exist.');
                     }
 
                     $this->websiteManager->setCurrentWebsite($website);
                     $this->configManager?->setScopeId($website->getId());
+
                     $this->sitemapDumper->dump(
                         $website,
-                        $body[GenerateSitemapByWebsiteAndTypeTopic::VERSION],
-                        $body[GenerateSitemapByWebsiteAndTypeTopic::TYPE]
+                        $messageBody[GenerateSitemapByWebsiteAndTypeTopic::VERSION],
+                        $messageBody[GenerateSitemapByWebsiteAndTypeTopic::TYPE]
                     );
 
                     return true;
@@ -80,6 +80,6 @@ class GenerateSitemapByWebsiteAndTypeProcessor implements MessageProcessorInterf
 
     private function getWebsite(int $websiteId): ?Website
     {
-        return $this->doctrine->getManagerForClass(Website::class)->find(Website::class, $websiteId);
+        return $this->doctrine->getManagerForClass(Website::class)?->find(Website::class, $websiteId);
     }
 }

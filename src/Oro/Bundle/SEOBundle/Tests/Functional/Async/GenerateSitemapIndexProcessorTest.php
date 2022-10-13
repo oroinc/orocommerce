@@ -6,19 +6,18 @@ use Oro\Bundle\GaufretteBundle\FileManager;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\JobsAwareTestTrait;
 use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
 use Oro\Bundle\SEOBundle\Async\GenerateSitemapIndexProcessor;
+use Oro\Bundle\SEOBundle\Async\Topic\GenerateSitemapIndexTopic;
 use Oro\Bundle\SEOBundle\Sitemap\Dumper\SitemapDumper;
-use Oro\Bundle\SEOBundle\Topic\GenerateSitemapIndexTopic;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Traits\DefaultWebsiteIdTestTrait;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\Message;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Component\MessageQueue\Util\JSON;
 
 class GenerateSitemapIndexProcessorTest extends WebTestCase
 {
-    use JobsAwareTestTrait,
-        DefaultWebsiteIdTestTrait;
+    use JobsAwareTestTrait;
+    use DefaultWebsiteIdTestTrait;
 
     private const PROVIDER = 'page';
 
@@ -57,11 +56,13 @@ class GenerateSitemapIndexProcessorTest extends WebTestCase
     {
         $message = new Message();
         $message->setMessageId(UUIDGenerator::v4());
-        $message->setBody(JSON::encode([
-            GenerateSitemapIndexTopic::JOB_ID => $this->createDelayedJob()->getId(),
-            GenerateSitemapIndexTopic::VERSION => time(),
-            GenerateSitemapIndexTopic::WEBSITE_IDS => [$this->getDefaultWebsiteId()],
-        ]));
+        $message->setBody(
+            [
+                GenerateSitemapIndexTopic::JOB_ID => $this->createDelayedJob()->getId(),
+                GenerateSitemapIndexTopic::VERSION => time(),
+                GenerateSitemapIndexTopic::WEBSITE_IDS => [$this->getDefaultWebsiteId()],
+            ]
+        );
 
         $result = $this->processor->process($message, $this->createMock(SessionInterface::class));
 
@@ -75,11 +76,13 @@ class GenerateSitemapIndexProcessorTest extends WebTestCase
 
         $message = new Message();
         $message->setMessageId(UUIDGenerator::v4());
-        $message->setBody(JSON::encode([
-            GenerateSitemapIndexTopic::JOB_ID => $this->createDelayedJob()->getId(),
-            GenerateSitemapIndexTopic::VERSION => time(),
-            GenerateSitemapIndexTopic::WEBSITE_IDS => [$websiteId],
-        ]));
+        $message->setBody(
+            [
+                GenerateSitemapIndexTopic::JOB_ID => $this->createDelayedJob()->getId(),
+                GenerateSitemapIndexTopic::VERSION => time(),
+                GenerateSitemapIndexTopic::WEBSITE_IDS => [$websiteId],
+            ]
+        );
 
         $result = $this->processor->process($message, $this->createMock(SessionInterface::class));
 
@@ -102,14 +105,13 @@ class GenerateSitemapIndexProcessorTest extends WebTestCase
         $this->tmpFileManager->deleteAllFiles();
     }
 
-    private function getFileName(?int $websiteId = null, string $fileNumber = '1'): string
+    private function getFileName(): string
     {
-        $websiteId = $websiteId ?? $this->getDefaultWebsiteId();
         return sprintf(
-            '%s/'.SitemapDumper::SITEMAP_FILENAME_TEMPLATE,
-            $websiteId,
+            '%s/' . SitemapDumper::SITEMAP_FILENAME_TEMPLATE,
+            $this->getDefaultWebsiteId(),
             self::PROVIDER,
-            $fileNumber
+            1
         );
     }
 }

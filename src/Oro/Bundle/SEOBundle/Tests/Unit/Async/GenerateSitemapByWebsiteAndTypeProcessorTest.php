@@ -7,7 +7,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\MessageQueueBundle\Entity\Job;
 use Oro\Bundle\SEOBundle\Async\GenerateSitemapByWebsiteAndTypeProcessor;
-use Oro\Bundle\SEOBundle\Topic\GenerateSitemapByWebsiteAndTypeTopic;
+use Oro\Bundle\SEOBundle\Async\Topic\GenerateSitemapByWebsiteAndTypeTopic;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
@@ -69,7 +69,7 @@ class GenerateSitemapByWebsiteAndTypeProcessorTest extends \PHPUnit\Framework\Te
         return $message;
     }
 
-    public function testGetSubscribedTopics()
+    public function testGetSubscribedTopics(): void
     {
         self::assertEquals(
             [GenerateSitemapByWebsiteAndTypeTopic::getName()],
@@ -77,7 +77,7 @@ class GenerateSitemapByWebsiteAndTypeProcessorTest extends \PHPUnit\Framework\Te
         );
     }
 
-    public function testProcessWhenWebsiteNotFound()
+    public function testProcessWhenWebsiteNotFound(): void
     {
         $jobId = 100;
         $websiteId = 123;
@@ -106,10 +106,10 @@ class GenerateSitemapByWebsiteAndTypeProcessorTest extends \PHPUnit\Framework\Te
             ->willReturn(null);
 
         $this->websiteManager
-            ->expects($this->never())
+            ->expects(self::never())
             ->method('setCurrentWebsite');
         $this->configManager
-            ->expects($this->never())
+            ->expects(self::never())
             ->method('setScopeId');
 
         $this->logger->expects(self::once())
@@ -157,11 +157,11 @@ class GenerateSitemapByWebsiteAndTypeProcessorTest extends \PHPUnit\Framework\Te
             ->willReturn($website);
 
         $this->websiteManager
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('setCurrentWebsite')
             ->with($website);
         $this->configManager
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('setScopeId')
             ->with($websiteId);
 
@@ -216,11 +216,11 @@ class GenerateSitemapByWebsiteAndTypeProcessorTest extends \PHPUnit\Framework\Te
             ->willReturn($website);
 
         $this->websiteManager
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('setCurrentWebsite')
             ->with($website);
         $this->configManager
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('setScopeId')
             ->with($websiteId);
 
