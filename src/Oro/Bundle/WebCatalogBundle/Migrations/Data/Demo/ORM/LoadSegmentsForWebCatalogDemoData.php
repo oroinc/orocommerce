@@ -6,8 +6,8 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Entity\CategoryTitle;
 use Oro\Bundle\CatalogBundle\Migrations\Data\Demo\ORM\LoadCategoryDemoData;
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\OrganizationBundle\Migrations\Data\ORM\LoadOrganizationAndBusinessUnitData;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -141,7 +141,7 @@ class LoadSegmentsForWebCatalogDemoData extends AbstractFixture implements Depen
      */
     private function getSegmentDefinitionForCategoryName($categoryName)
     {
-        $columnName = sprintf('category+%s::titles+%s::string', Category::class, LocalizedFallbackValue::class);
+        $columnName = sprintf('category+%s::titles+%s::string', Category::class, CategoryTitle::class);
 
         $definition = $this->getDefaultSegmentDefinition();
         $definition['filters'] = [
