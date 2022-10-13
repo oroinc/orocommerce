@@ -15,10 +15,7 @@ class MessageFactory
     protected const PRODUCTS_KEY = 'products';
     protected const ID_KEY = 'id';
 
-    /**
-     * @var DoctrineHelper
-     */
-    private $doctrineHelper;
+    private DoctrineHelper $doctrineHelper;
 
     public function __construct(DoctrineHelper $doctrineHelper)
     {
@@ -67,7 +64,7 @@ class MessageFactory
      * @param int|string $id
      * @return array
      */
-    public function createShoppingListTotalsInvalidateMessageForConfigScope($scope, $id): array
+    public function createShoppingListTotalsInvalidateMessageForConfigScope($scope, $id)
     {
         if ($scope === 'website') {
             return [self::CONTEXT_KEY => [self::CLASS_KEY => Website::class, self::ID_KEY => $id]];

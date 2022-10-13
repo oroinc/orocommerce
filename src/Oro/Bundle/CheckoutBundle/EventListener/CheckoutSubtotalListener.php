@@ -4,7 +4,7 @@ namespace Oro\Bundle\CheckoutBundle\EventListener;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectRepository;
-use Oro\Bundle\CheckoutBundle\Async\Topics;
+use Oro\Bundle\CheckoutBundle\Async\Topic\RecalculateCheckoutSubtotalsTopic;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSubtotal;
 use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutSubtotalRepository;
 use Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback;
@@ -110,13 +110,13 @@ class CheckoutSubtotalListener
     {
         return $this->registry
             ->getManagerForClass($className)
-            ->getRepository($className);
+            ?->getRepository($className);
     }
 
     protected function recalculateSubtotals()
     {
         $message = new Message();
-        $this->messageProducer->send(Topics::RECALCULATE_CHECKOUT_SUBTOTALS, $message);
+        $this->messageProducer->send(RecalculateCheckoutSubtotalsTopic::getName(), $message);
     }
 
     /**

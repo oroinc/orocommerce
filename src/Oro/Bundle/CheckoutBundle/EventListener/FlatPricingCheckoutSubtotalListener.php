@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CheckoutBundle\EventListener;
 
 use Doctrine\Persistence\ManagerRegistry;
-use Oro\Bundle\CheckoutBundle\Async\Topics;
+use Oro\Bundle\CheckoutBundle\Async\Topic\RecalculateCheckoutSubtotalsTopic;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSubtotal;
 use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutSubtotalRepository;
 use Oro\Bundle\PricingBundle\Event\PricingStorage\CustomerGroupRelationUpdateEvent;
@@ -18,15 +18,9 @@ use Oro\Component\MessageQueue\Client\MessageProducerInterface;
  */
 class FlatPricingCheckoutSubtotalListener
 {
-    /**
-     * @var ManagerRegistry
-     */
-    private $registry;
+    private ManagerRegistry $registry;
 
-    /**
-     * @var MessageProducerInterface
-     */
-    private $messageProducer;
+    private MessageProducerInterface $messageProducer;
 
     public function __construct(
         ManagerRegistry $registry,
@@ -85,9 +79,9 @@ class FlatPricingCheckoutSubtotalListener
             ->getRepository(CheckoutSubtotal::class);
     }
 
-    private function recalculateSubtotals()
+    private function recalculateSubtotals(): void
     {
         $message = new Message();
-        $this->messageProducer->send(Topics::RECALCULATE_CHECKOUT_SUBTOTALS, $message);
+        $this->messageProducer->send(RecalculateCheckoutSubtotalsTopic::getName(), $message);
     }
 }

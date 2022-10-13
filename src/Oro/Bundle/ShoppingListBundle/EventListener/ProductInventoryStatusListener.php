@@ -6,7 +6,7 @@ use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ShoppingListBundle\Async\MessageFactory;
-use Oro\Bundle\ShoppingListBundle\Async\Topics;
+use Oro\Bundle\ShoppingListBundle\Async\Topic\InvalidateTotalsByInventoryStatusPerProductTopic;
 use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
@@ -16,25 +16,13 @@ use Oro\Component\MessageQueue\Client\MessageProducerInterface;
  */
 class ProductInventoryStatusListener
 {
-    /**
-     * @var ConfigManager
-     */
-    private $configManager;
+    private ConfigManager $configManager;
 
-    /**
-     * @var MessageFactory
-     */
-    private $messageFactory;
+    private MessageFactory $messageFactory;
 
-    /**
-     * @var MessageProducerInterface
-     */
-    private $producer;
+    private MessageProducerInterface $producer;
 
-    /**
-     * @var WebsiteProviderInterface
-     */
-    private $websiteProvider;
+    private WebsiteProviderInterface $websiteProvider;
 
     public function __construct(
         ConfigManager $configManager,
@@ -61,7 +49,7 @@ class ProductInventoryStatusListener
                 if (!\in_array($product->getInventoryStatus()->getId(), $allowedStatuses, true)) {
                     $context = $websites[$websiteId] ?? null;
                     $this->producer->send(
-                        Topics::INVALIDATE_TOTALS_BY_INVENTORY_STATUS_PER_PRODUCT,
+                        InvalidateTotalsByInventoryStatusPerProductTopic::getName(),
                         $this->messageFactory->createShoppingTotalsInvalidateMessage($context, [$product->getId()])
                     );
                 }
