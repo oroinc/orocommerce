@@ -544,9 +544,11 @@ services:
         arguments:
             - '@doctrine'
             - '@oro_shopping_list.async.message_factory'
-            - '@logger'
+        calls:
+            - ['setLogger', ['@logger']]
         tags:
             - { name: 'oro_message_queue.client.message_processor' }
+            - { name: monolog.logger, channel: oro_shopping_list }
 
     oro_shopping_list.async.invalidate_totals_by_inventory_status_per_website_processor:
         class: Oro\Bundle\ShoppingListBundle\Async\InvalidateTotalsByInventoryStatusPerWebsiteProcessor
@@ -555,9 +557,11 @@ services:
             - '@oro_website.website.provider'
             - '@doctrine'
             - '@oro_shopping_list.async.message_factory'
-            - '@logger'
+        calls:
+            - ['setLogger', ['@logger']]
         tags:
             - { name: 'oro_message_queue.client.message_processor' }
+            - { name: monolog.logger, channel: oro_shopping_list }
 
     oro_shopping_list.async.message_factory:
         class: Oro\Bundle\ShoppingListBundle\Async\MessageFactory

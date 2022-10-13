@@ -15,21 +15,14 @@ class MessageFactory
     protected const PRODUCTS_KEY = 'products';
     protected const ID_KEY = 'id';
 
-    /**
-     * @var DoctrineHelper
-     */
-    private $doctrineHelper;
+    private DoctrineHelper $doctrineHelper;
 
     public function __construct(DoctrineHelper $doctrineHelper)
     {
         $this->doctrineHelper = $doctrineHelper;
     }
 
-    /**
-     * @param array $data
-     * @return null|object
-     */
-    public function getContext(array $data)
+    public function getContext(array $data): ?object
     {
         if (isset($data[self::CONTEXT_KEY])) {
             $context = $data[self::CONTEXT_KEY];
@@ -44,12 +37,7 @@ class MessageFactory
         return $data[self::PRODUCTS_KEY] ?? [];
     }
 
-    /**
-     * @param object|null $context
-     * @param array|int[] $productIds
-     * @return array
-     */
-    public function createShoppingTotalsInvalidateMessage($context, array $productIds = [])
+    public function createShoppingTotalsInvalidateMessage(?object $context, array $productIds = []): array
     {
         $data = [self::PRODUCTS_KEY => $productIds];
         if ($context) {
@@ -62,12 +50,7 @@ class MessageFactory
         return $data;
     }
 
-    /**
-     * @param string $scope
-     * @param int|string $id
-     * @return array
-     */
-    public function createShoppingListTotalsInvalidateMessageForConfigScope($scope, $id): array
+    public function createShoppingListTotalsInvalidateMessageForConfigScope(string $scope, int|string $id): array
     {
         if ($scope === 'website') {
             return [self::CONTEXT_KEY => [self::CLASS_KEY => Website::class, self::ID_KEY => $id]];

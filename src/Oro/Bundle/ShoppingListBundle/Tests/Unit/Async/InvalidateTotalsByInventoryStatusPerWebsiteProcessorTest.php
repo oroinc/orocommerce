@@ -11,47 +11,27 @@ use Oro\Bundle\ShoppingListBundle\Async\InvalidateTotalsByInventoryStatusPerWebs
 use Oro\Bundle\ShoppingListBundle\Async\MessageFactory;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListTotalRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal;
+use Oro\Bundle\TestFrameworkBundle\Test\Logger\LoggerAwareTraitTestTrait;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Component\MessageQueue\Util\JSON;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Psr\Log\LoggerInterface;
 
 class InvalidateTotalsByInventoryStatusPerWebsiteProcessorTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
+    use LoggerAwareTraitTestTrait;
 
-    /**
-     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $configManager;
+    private ConfigManager|\PHPUnit\Framework\MockObject\MockObject $configManager;
 
-    /**
-     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $registry;
+    private ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject $registry;
 
-    /**
-     * @var MessageFactory|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $messageFactory;
+    private MessageFactory|\PHPUnit\Framework\MockObject\MockObject $messageFactory;
 
-    /**
-     * @var WebsiteProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $websiteProvider;
+    private WebsiteProviderInterface|\PHPUnit\Framework\MockObject\MockObject $websiteProvider;
 
-    /**
-     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $logger;
-
-    /**
-     * @var InvalidateTotalsByInventoryStatusPerWebsiteProcessor
-     */
-    private $processor;
+    private InvalidateTotalsByInventoryStatusPerWebsiteProcessor $processor;
 
     protected function setUp(): void
     {
@@ -59,39 +39,40 @@ class InvalidateTotalsByInventoryStatusPerWebsiteProcessorTest extends \PHPUnit\
         $this->registry = $this->createMock(ManagerRegistry::class);
         $this->messageFactory = $this->createMock(MessageFactory::class);
         $this->websiteProvider = $this->createMock(WebsiteProviderInterface::class);
-        $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->processor = new InvalidateTotalsByInventoryStatusPerWebsiteProcessor(
             $this->configManager,
             $this->websiteProvider,
             $this->registry,
-            $this->messageFactory,
-            $this->logger
+            $this->messageFactory
         );
+
+        $this->setUpLoggerMock($this->processor);
+        $this->testSetLogger();
     }
 
-    public function testProcessGlobalNoWebsitesToProcess()
+    public function testProcessGlobalNoWebsitesToProcess(): void
     {
         /** @var SessionInterface $session */
         $session = $this->createMock(SessionInterface::class);
         $data = [];
-        $this->messageFactory->expects($this->once())
+        $this->messageFactory->expects(self::once())
             ->method('getContext')
             ->with($data)
             ->willReturn(null);
         /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
         $message = $this->createMock(MessageInterface::class);
-        $message->expects($this->any())
+        $message->expects(self::any())
             ->method('getBody')
-            ->willReturn(JSON::encode($data));
+            ->willReturn($data);
 
         $website1 = $this->getEntity(Website::class, ['id' => 1]);
         $websites = [1 => $website1];
-        $this->websiteProvider->expects($this->once())
+        $this->websiteProvider->expects(self::once())
             ->method('getWebsites')
             ->willReturn($websites);
 
-        $this->configManager->expects($this->once())
+        $this->configManager->expects(self::once())
             ->method('getValues')
             ->with(
                 'oro_product.general_frontend_product_visibility',
@@ -102,38 +83,38 @@ class InvalidateTotalsByInventoryStatusPerWebsiteProcessorTest extends \PHPUnit\
             ->willReturn([
                 1 => [
                     ConfigManager::USE_PARENT_SCOPE_VALUE_KEY => false,
-                    ConfigManager::VALUE_KEY => ['in_stock']
-                ]
+                    ConfigManager::VALUE_KEY => ['in_stock'],
+                ],
             ]);
 
-        $this->assertEquals(
+        self::assertEquals(
             InvalidateTotalsByInventoryStatusPerWebsiteProcessor::ACK,
             $this->processor->process($message, $session)
         );
     }
 
-    public function testProcessGlobal()
+    public function testProcessGlobal(): void
     {
         /** @var SessionInterface $session */
         $session = $this->createMock(SessionInterface::class);
         $data = [];
         /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
         $message = $this->createMock(MessageInterface::class);
-        $message->expects($this->any())
+        $message->expects(self::any())
             ->method('getBody')
-            ->willReturn(JSON::encode($data));
+            ->willReturn($data);
 
         /** @var Website $website1 */
         $website1 = $this->getEntity(Website::class, ['id' => 1]);
         $websites = [1 => $website1];
-        $this->websiteProvider->expects($this->once())
+        $this->websiteProvider->expects(self::once())
             ->method('getWebsites')
             ->willReturn($websites);
 
         $allowedStatuses = ['in_stock'];
         $this->assertRepositoryCall($website1);
 
-        $this->configManager->expects($this->once())
+        $this->configManager->expects(self::once())
             ->method('getValues')
             ->with(
                 'oro_product.general_frontend_product_visibility',
@@ -144,104 +125,99 @@ class InvalidateTotalsByInventoryStatusPerWebsiteProcessorTest extends \PHPUnit\
             ->willReturn([
                 1 => [
                     ConfigManager::USE_PARENT_SCOPE_VALUE_KEY => true,
-                    ConfigManager::VALUE_KEY => $allowedStatuses
-                ]
+                    ConfigManager::VALUE_KEY => $allowedStatuses,
+                ],
             ]);
 
-        $this->messageFactory->expects($this->once())
+        $this->messageFactory->expects(self::once())
             ->method('getContext')
             ->with($data)
             ->willReturn(null);
 
-        $this->assertEquals(
+        self::assertEquals(
             InvalidateTotalsByInventoryStatusPerWebsiteProcessor::ACK,
             $this->processor->process($message, $session)
         );
     }
 
-    public function testProcessWebsite()
+    public function testProcessWebsite(): void
     {
         /** @var SessionInterface $session */
         $session = $this->createMock(SessionInterface::class);
         $data = [
             'context' => [
                 'class' => Website::class,
-                'id' => 1
-            ]
+                'id' => 1,
+            ],
         ];
         /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
         $message = $this->createMock(MessageInterface::class);
-        $message->expects($this->any())
+        $message->expects(self::any())
             ->method('getBody')
-            ->willReturn(JSON::encode($data));
+            ->willReturn($data);
 
         /** @var Website $website1 */
         $website1 = $this->getEntity(Website::class, ['id' => 1]);
-        $this->messageFactory->expects($this->once())
+        $this->messageFactory->expects(self::once())
             ->method('getContext')
             ->with($data)
             ->willReturn($website1);
-        $this->websiteProvider->expects($this->never())
+        $this->websiteProvider->expects(self::never())
             ->method('getWebsites');
 
         $this->assertRepositoryCall($website1);
 
-        $this->assertEquals(
+        self::assertEquals(
             InvalidateTotalsByInventoryStatusPerWebsiteProcessor::ACK,
             $this->processor->process($message, $session)
         );
     }
 
-    public function testProcessRetryableException()
+    public function testProcessRetryableException(): void
     {
         /** @var SessionInterface $session */
         $session = $this->createMock(SessionInterface::class);
         $data = [
             'context' => [
                 'class' => Website::class,
-                'id' => 1
-            ]
+                'id' => 1,
+            ],
         ];
         /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
         $message = $this->createMock(MessageInterface::class);
-        $message->expects($this->any())
+        $message->expects(self::any())
             ->method('getBody')
-            ->willReturn(JSON::encode($data));
+            ->willReturn($data);
 
         /** @var Website $website1 */
         $website1 = $this->getEntity(Website::class, ['id' => 1]);
-        $this->messageFactory->expects($this->once())
+        $this->messageFactory->expects(self::once())
             ->method('getContext')
             ->with($data)
             ->willReturn($website1);
-        $this->websiteProvider->expects($this->never())
+        $this->websiteProvider->expects(self::never())
             ->method('getWebsites');
 
         /** @var DriverException $driverException */
         $driverException = $this->createMock(DriverException::class);
         $e = new DeadlockException('deadlock detected', $driverException);
         $repo = $this->createMock(ShoppingListTotalRepository::class);
-        $repo->expects($this->once())
+        $repo->expects(self::once())
             ->method('invalidateByWebsite')
             ->willThrowException($e);
         $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects($this->once())
+        $em->expects(self::once())
             ->method('getRepository')
             ->with(ShoppingListTotal::class)
             ->willReturn($repo);
-        $this->registry->expects($this->once())
+        $this->registry->expects(self::once())
             ->method('getManagerForClass')
             ->with(ShoppingListTotal::class)
             ->willReturn($em);
 
-        $this->logger->expects($this->once())
-            ->method('error')
-            ->with(
-                'Retryable database exception occurred during shopping list totals invalidation',
-                ['exception' => $e]
-            );
+        $this->assertLoggerErrorMethodCalled();
 
-        $this->assertEquals(
+        self::assertEquals(
             InvalidateTotalsByInventoryStatusPerWebsiteProcessor::REQUEUE,
             $this->processor->process($message, $session)
         );
@@ -250,15 +226,15 @@ class InvalidateTotalsByInventoryStatusPerWebsiteProcessorTest extends \PHPUnit\
     private function assertRepositoryCall(Website $website): void
     {
         $repo = $this->createMock(ShoppingListTotalRepository::class);
-        $repo->expects($this->once())
+        $repo->expects(self::once())
             ->method('invalidateByWebsite')
             ->with($website);
         $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects($this->once())
+        $em->expects(self::once())
             ->method('getRepository')
             ->with(ShoppingListTotal::class)
             ->willReturn($repo);
-        $this->registry->expects($this->once())
+        $this->registry->expects(self::once())
             ->method('getManagerForClass')
             ->with(ShoppingListTotal::class)
             ->willReturn($em);

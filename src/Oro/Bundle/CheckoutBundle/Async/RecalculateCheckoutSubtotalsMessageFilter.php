@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CheckoutBundle\Async;
 
+use Oro\Bundle\CheckoutBundle\Async\Topic\RecalculateCheckoutSubtotalsTopic;
 use Oro\Bundle\MessageQueueBundle\Client\MessageBuffer;
 use Oro\Bundle\MessageQueueBundle\Client\MessageFilterInterface;
 
@@ -15,12 +16,12 @@ class RecalculateCheckoutSubtotalsMessageFilter implements MessageFilterInterfac
      */
     public function apply(MessageBuffer $buffer): void
     {
-        if (!$buffer->hasMessagesForTopic(Topics::RECALCULATE_CHECKOUT_SUBTOTALS)) {
+        if (!$buffer->hasMessagesForTopic(RecalculateCheckoutSubtotalsTopic::getName())) {
             return;
         }
 
         $isFirst = true;
-        foreach ($buffer->getMessagesForTopic(Topics::RECALCULATE_CHECKOUT_SUBTOTALS) as $messageId => $message) {
+        foreach ($buffer->getMessagesForTopic(RecalculateCheckoutSubtotalsTopic::getName()) as $messageId => $message) {
             if ($isFirst) {
                 $isFirst = false;
                 continue;

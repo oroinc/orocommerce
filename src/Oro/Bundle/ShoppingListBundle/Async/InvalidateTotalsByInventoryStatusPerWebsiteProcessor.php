@@ -5,6 +5,7 @@ namespace Oro\Bundle\ShoppingListBundle\Async;
 use Doctrine\DBAL\Exception\RetryableException;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\ShoppingListBundle\Async\Topic\InvalidateTotalsByInventoryStatusPerWebsiteTopic;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListTotalRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal;
 use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
@@ -12,70 +13,50 @@ use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Component\MessageQueue\Util\JSON;
-use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\NullLogger;
 
 /**
  * Schedule shopping list line items totals invalidation containing products with invisible inventory statuses.
  * Process only shopping for websites with changed settings.
  */
 class InvalidateTotalsByInventoryStatusPerWebsiteProcessor implements
+    LoggerAwareInterface,
     MessageProcessorInterface,
     TopicSubscriberInterface
 {
-    /**
-     * @var ConfigManager
-     */
-    private $configManager;
+    use LoggerAwareTrait;
 
-    /**
-     * @var ManagerRegistry
-     */
-    private $registry;
+    private ConfigManager $configManager;
 
-    /**
-     * @var MessageFactory
-     */
-    private $messageFactory;
+    private ManagerRegistry $registry;
 
-    /**
-     * @var WebsiteProviderInterface
-     */
-    private $websiteProvider;
+    private MessageFactory $messageFactory;
 
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private WebsiteProviderInterface $websiteProvider;
 
     public function __construct(
         ConfigManager $configManager,
         WebsiteProviderInterface $websiteProvider,
         ManagerRegistry $registry,
-        MessageFactory $messageFactory,
-        LoggerInterface $logger
+        MessageFactory $messageFactory
     ) {
         $this->configManager = $configManager;
         $this->websiteProvider = $websiteProvider;
         $this->registry = $registry;
         $this->messageFactory = $messageFactory;
-        $this->logger = $logger;
+        $this->logger = new NullLogger();
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public static function getSubscribedTopics()
+    public static function getSubscribedTopics(): array
     {
-        return [Topics::INVALIDATE_TOTALS_BY_INVENTORY_STATUS_PER_WEBSITE];
+        return [InvalidateTotalsByInventoryStatusPerWebsiteTopic::getName()];
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function process(MessageInterface $message, SessionInterface $session)
+    public function process(MessageInterface $message, SessionInterface $session): string
     {
-        $data = JSON::decode($message->getBody());
+        $data = $message->getBody();
         $context = $this->messageFactory->getContext($data);
         $websitesToProcess = $this->getWebsitesToProcess($context);
         if (!$websitesToProcess) {
@@ -87,7 +68,7 @@ class InvalidateTotalsByInventoryStatusPerWebsiteProcessor implements
             /** @var ShoppingListTotalRepository $repo */
             $repo = $this->registry
                 ->getManagerForClass(ShoppingListTotal::class)
-                ->getRepository(ShoppingListTotal::class);
+                ?->getRepository(ShoppingListTotal::class);
 
             foreach ($websitesToProcess as $website) {
                 $repo->invalidateByWebsite($website);
@@ -104,11 +85,7 @@ class InvalidateTotalsByInventoryStatusPerWebsiteProcessor implements
         return self::ACK;
     }
 
-    /**
-     * @param object|null $context
-     * @return array
-     */
-    private function getWebsitesToProcess($context): array
+    private function getWebsitesToProcess(?object $context): array
     {
         if ($context) {
             return [$context];
