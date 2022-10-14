@@ -14,9 +14,9 @@ use Symfony\Component\Validator\Validation;
 class CreditCardTypeTest extends FormIntegrationTestCase
 {
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         return [
             new PreloadedExtension(
@@ -66,8 +66,7 @@ class CreditCardTypeTest extends FormIntegrationTestCase
 
     public function testFinishView()
     {
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
-        $form = $this->createMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock(FormInterface::class);
 
         $formView = new FormView();
         $formChildrenView = new FormView();

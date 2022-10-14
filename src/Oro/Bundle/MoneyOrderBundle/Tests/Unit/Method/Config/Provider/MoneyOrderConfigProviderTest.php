@@ -14,152 +14,102 @@ use Psr\Log\LoggerInterface;
 
 class MoneyOrderConfigProviderTest extends \PHPUnit\Framework\TestCase
 {
-    const IDENTIFIER1 = 'payment_method_1';
-    const IDENTIFIER2 = 'payment_method_2';
-    const WRONG_IDENTIFIER = 'wrongpayment_method';
+    private const IDENTIFIER1 = 'payment_method_1';
+    private const IDENTIFIER2 = 'payment_method_2';
+    private const WRONG_IDENTIFIER = 'wrongpayment_method';
 
-    /**
-     * @var MoneyOrderConfigFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $configFactory;
+    /** @var MoneyOrderSettingsRepository|\PHPUnit\Framework\MockObject\MockObject */
+    private $settingsRepository;
 
-    /**
-     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $doctrine;
-
-    /**
-     * @var MoneyOrderSettingsRepository|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $settingsRepository;
-
-    /**
-     * @var array
-     */
+    /** @var array */
     private $configs;
 
-    /**
-     * @var MoneyOrderConfigProviderInterface
-     */
+    /** @var MoneyOrderConfigProviderInterface */
     private $testedProvider;
 
     protected function setUp(): void
     {
-        $this->configFactory = $this->createMock(MoneyOrderConfigFactoryInterface::class);
         $this->settingsRepository = $this->createMock(MoneyOrderSettingsRepository::class);
 
-        $settingsOneMock = $this->createMoneyOrderSettingsMock();
-        $settingsTwoMock = $this->createMoneyOrderSettingsMock();
+        $settingsOne = $this->createMock(MoneyOrderSettings::class);
+        $settingsTwo = $this->createMock(MoneyOrderSettings::class);
 
-        $configOneMock = $this->createConfigMock();
-        $configTwoMock = $this->createConfigMock();
-
-        $settingsMocks = [$settingsOneMock, $settingsTwoMock];
-
-        $configOneMock
-            ->expects(static::once())
+        $configOne = $this->createMock(MoneyOrderConfigInterface::class);
+        $configOne->expects(self::once())
             ->method('getPaymentMethodIdentifier')
             ->willReturn(self::IDENTIFIER1);
 
-        $configTwoMock
-            ->expects(static::once())
+        $configTwo = $this->createMock(MoneyOrderConfigInterface::class);
+        $configTwo->expects(self::once())
             ->method('getPaymentMethodIdentifier')
             ->willReturn(self::IDENTIFIER2);
 
-        $this->doctrine = $this->createMock(ManagerRegistry::class);
-
         $this->settingsRepository = $this->createMock(MoneyOrderSettingsRepository::class);
-        $this->settingsRepository
-            ->expects(static::once())
+        $this->settingsRepository->expects(self::once())
             ->method('findWithEnabledChannel')
-            ->willReturn($settingsMocks);
+            ->willReturn([$settingsOne, $settingsTwo]);
 
         $objectManager = $this->createMock(ObjectManager::class);
-        $objectManager->expects(static::once())->method('getRepository')->willReturn($this->settingsRepository);
+        $objectManager->expects(self::once())
+            ->method('getRepository')
+            ->willReturn($this->settingsRepository);
 
-        $this->doctrine->expects(static::once())->method('getManagerForClass')->willReturn($objectManager);
+        $doctrine = $this->createMock(ManagerRegistry::class);
+        $doctrine->expects(self::once())
+            ->method('getManagerForClass')
+            ->willReturn($objectManager);
 
-        /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject $logger */
         $logger = $this->createMock(LoggerInterface::class);
 
-        $this->configFactory
+        $configFactory = $this->createMock(MoneyOrderConfigFactoryInterface::class);
+        $configFactory->expects(self::any())
             ->method('create')
-            ->will(
-                static::returnValueMap(
-                    [
-                        [$settingsOneMock, $configOneMock],
-                        [$settingsTwoMock, $configTwoMock]
-                    ]
-                )
-            );
+            ->willReturnMap([
+                [$settingsOne, $configOne],
+                [$settingsTwo, $configTwo]
+            ]);
+
         $this->configs = [
-            self::IDENTIFIER1 => $configOneMock,
-            self::IDENTIFIER2 => $configTwoMock
+            self::IDENTIFIER1 => $configOne,
+            self::IDENTIFIER2 => $configTwo
         ];
 
-        $this->testedProvider = new MoneyOrderConfigProvider($this->doctrine, $logger, $this->configFactory);
-    }
-
-    /**
-     * @return MoneyOrderSettings|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function createMoneyOrderSettingsMock()
-    {
-        return $this->createMock(MoneyOrderSettings::class);
-    }
-
-    /**
-     * @return MoneyOrderConfigInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function createConfigMock()
-    {
-        return $this->createMock(MoneyOrderConfigInterface::class);
+        $this->testedProvider = new MoneyOrderConfigProvider($doctrine, $logger, $configFactory);
     }
 
     public function testGetPaymentConfigs()
     {
-        $actualResult = $this->testedProvider->getPaymentConfigs();
-
-        static::assertEquals($this->configs, $actualResult);
+        self::assertEquals($this->configs, $this->testedProvider->getPaymentConfigs());
     }
 
     public function testGetPaymentConfig()
     {
-        $expectedResult = $this->configs[self::IDENTIFIER1];
-        $actualResult = $this->testedProvider->getPaymentConfig(self::IDENTIFIER1);
-
-        static::assertEquals($expectedResult, $actualResult);
+        self::assertEquals(
+            $this->configs[self::IDENTIFIER1],
+            $this->testedProvider->getPaymentConfig(self::IDENTIFIER1)
+        );
     }
 
     public function testGetPaymentConfigWhenNoSettings()
     {
-        $this->settingsRepository
-            ->expects(static::once())
+        $this->settingsRepository->expects(self::once())
             ->method('findWithEnabledChannel')
             ->willReturn([]);
 
-        $actualResult = $this->testedProvider->getPaymentConfig(self::WRONG_IDENTIFIER);
-
-        static::assertEquals(null, $actualResult);
+        self::assertNull($this->testedProvider->getPaymentConfig(self::WRONG_IDENTIFIER));
     }
 
     public function testHasPaymentConfig()
     {
-        $expectedResult = true;
-        $actualResult = $this->testedProvider->hasPaymentConfig(self::IDENTIFIER1);
-
-        static::assertEquals($expectedResult, $actualResult);
+        self::assertTrue($this->testedProvider->hasPaymentConfig(self::IDENTIFIER1));
     }
 
     public function testHasPaymentConfigWhenNoSettings()
     {
-        $this->settingsRepository
-            ->expects(static::once())
+        $this->settingsRepository->expects(self::once())
             ->method('findWithEnabledChannel')
             ->willReturn([]);
 
-        $actualResult = $this->testedProvider->hasPaymentConfig('somePaymentMethodId');
-
-        static::assertEquals(null, $actualResult);
+        self::assertNull(null, $this->testedProvider->hasPaymentConfig('somePaymentMethodId'));
     }
 }

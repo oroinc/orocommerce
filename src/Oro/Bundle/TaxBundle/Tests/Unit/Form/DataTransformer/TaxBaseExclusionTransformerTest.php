@@ -10,37 +10,28 @@ use Oro\Bundle\TaxBundle\Model\TaxBaseExclusion;
 
 class TaxBaseExclusionTransformerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var TaxBaseExclusionTransformer */
-    protected $transformer;
-
     /** @var \PHPUnit\Framework\MockObject\MockObject|TaxBaseExclusionFactory */
-    protected $taxBaseExclusionFactory;
+    private $taxBaseExclusionFactory;
+
+    /** @var TaxBaseExclusionTransformer */
+    private $transformer;
 
     protected function setUp(): void
     {
-        $this->taxBaseExclusionFactory = $this
-            ->getMockBuilder('Oro\Bundle\TaxBundle\Factory\TaxBaseExclusionFactory')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->taxBaseExclusionFactory = $this->createMock(TaxBaseExclusionFactory::class);
 
         $this->transformer = new TaxBaseExclusionTransformer($this->taxBaseExclusionFactory);
     }
 
     /**
-     * @param TaxBaseExclusion[] $value
-     * @param array $expected
-     *
      * @dataProvider reverseTransformDataProvider
      */
-    public function testReverseTransform($value, $expected)
+    public function testReverseTransform(array|string|null $value, array $expected)
     {
         $this->assertEquals($expected, $this->transformer->reverseTransform($value));
     }
 
-    /**
-     * @return array
-     */
-    public function reverseTransformDataProvider()
+    public function reverseTransformDataProvider(): array
     {
         $country = new Country('ISO_CODE');
         $region = new Region('REG_ISO_CODE');
@@ -104,42 +95,31 @@ class TaxBaseExclusionTransformerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param array $value
-     * @param TaxBaseExclusion[] $expected
-     *
      * @dataProvider transformDataProvider
      */
-    public function testTransform($value, $expected)
+    public function testTransform(array|string|null $value, array $expected)
     {
-        $this->taxBaseExclusionFactory
-            ->expects($this->any())
+        $this->taxBaseExclusionFactory->expects($this->any())
             ->method('create')
-            ->willReturnCallback(
-                function ($value) {
-                    $exclusion = new TaxBaseExclusion();
-                    if (!empty($value[TaxBaseExclusion::COUNTRY])) {
-                        $exclusion->setCountry(new Country($value[TaxBaseExclusion::COUNTRY]));
-                    }
-
-                    if (!empty($value[TaxBaseExclusion::REGION])) {
-                        $exclusion->setRegion(new Region($value[TaxBaseExclusion::REGION]));
-                    }
-
-                    if (!empty($value[TaxBaseExclusion::OPTION])) {
-                        $exclusion->setOption($value[TaxBaseExclusion::OPTION]);
-                    }
-
-                    return $exclusion;
+            ->willReturnCallback(function ($value) {
+                $exclusion = new TaxBaseExclusion();
+                if (!empty($value[TaxBaseExclusion::COUNTRY])) {
+                    $exclusion->setCountry(new Country($value[TaxBaseExclusion::COUNTRY]));
                 }
-            );
+                if (!empty($value[TaxBaseExclusion::REGION])) {
+                    $exclusion->setRegion(new Region($value[TaxBaseExclusion::REGION]));
+                }
+                if (!empty($value[TaxBaseExclusion::OPTION])) {
+                    $exclusion->setOption($value[TaxBaseExclusion::OPTION]);
+                }
+
+                return $exclusion;
+            });
 
         $this->assertEquals($expected, $this->transformer->transform($value));
     }
 
-    /**
-     * @return array
-     */
-    public function transformDataProvider()
+    public function transformDataProvider(): array
     {
         $country = new Country('ISO_CODE');
         $region = new Region('REG_ISO_CODE');

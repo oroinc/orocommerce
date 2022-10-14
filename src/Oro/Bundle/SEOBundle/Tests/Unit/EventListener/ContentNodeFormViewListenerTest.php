@@ -7,14 +7,11 @@ use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Symfony\Component\Form\FormView;
-use Twig\Environment;
 
 class ContentNodeFormViewListenerTest extends BaseFormViewListenerTestCase
 {
-    /**
-     * @var ContentNodeFormViewListener
-     */
-    protected $listener;
+    /** @var ContentNodeFormViewListener */
+    private $listener;
 
     protected function setUp(): void
     {
@@ -23,19 +20,13 @@ class ContentNodeFormViewListenerTest extends BaseFormViewListenerTestCase
         $this->listener = new ContentNodeFormViewListener($this->translator);
     }
 
-    protected function tearDown(): void
-    {
-        unset($this->listener);
-    }
-
     public function testOnContentNodeViewWithEmptyScrollData()
     {
         $page = new ContentNode();
-
-        /** @var \PHPUnit\Framework\MockObject\MockObject|Environment $env */
         $env = $this->getEnvironmentForView($page, $this->listener->getMetaFieldLabelPrefix());
 
         $event = new BeforeListRenderEvent($env, new ScrollData(), $page);
+
         $this->listener->onContentNodeView($event);
     }
 
@@ -43,6 +34,7 @@ class ContentNodeFormViewListenerTest extends BaseFormViewListenerTestCase
     {
         $env = $this->getEnvironmentForEdit();
         $page = new ContentNode();
+
         $event = new BeforeListRenderEvent($env, new ScrollData(), $page, new FormView());
 
         $this->listener->onContentNodeEdit($event);

@@ -18,39 +18,24 @@ class PriceListListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var PriceList
-     */
-    protected $priceList;
+    /** @var CombinedPriceListActivationPlanBuilder|\PHPUnit\Framework\MockObject\MockObject */
+    private $builder;
 
-    /**
-     * @var PriceListListener
-     */
-    protected $listener;
+    /** @var PriceListRelationTriggerHandler|\PHPUnit\Framework\MockObject\MockObject */
+    private $triggerHandler;
 
-    /**
-     * @var CombinedPriceListActivationPlanBuilder|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $builder;
+    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
+    private $featureChecker;
 
-    /**
-     * @var PriceListRelationTriggerHandler|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $triggerHandler;
+    /** @var PriceRuleLexemeHandler|\PHPUnit\Framework\MockObject\MockObject */
+    private $priceRuleLexemeHandler;
 
-    /**
-     * @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $featureChecker;
+    /** @var PriceList */
+    private $priceList;
 
-    /**
-     * @var PriceRuleLexemeHandler|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $priceRuleLexemeHandler;
+    /** @var PriceListListener */
+    private $listener;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->builder = $this->createMock(CombinedPriceListActivationPlanBuilder::class);
@@ -77,7 +62,6 @@ class PriceListListenerTest extends \PHPUnit\Framework\TestCase
             ->willReturn(true);
         $this->listener->beforeSubmit($this->createFormProcessEvent($this->priceList));
 
-        /** @var FormInterface $form */
         $form = $this->createMock(FormInterface::class);
 
         $event = new AfterFormProcessEvent($form, $this->priceList);
@@ -175,12 +159,8 @@ class PriceListListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->afterFlush($this->createAfterFormProcessEvent($this->priceList));
     }
 
-    /**
-     * @return PriceList
-     */
-    protected function createPriceList()
+    private function createPriceList(): PriceList
     {
-        /** @var PriceList $priceList */
         $priceList = $this->getEntity(PriceList::class, ['id' => 1]);
         $schedule1 = new PriceListSchedule(
             new \DateTime('2016-03-01T22:00:00Z'),
@@ -199,27 +179,19 @@ class PriceListListenerTest extends \PHPUnit\Framework\TestCase
         return $priceList;
     }
 
-    /**
-     * @param PriceList $priceList
-     * @return FormProcessEvent
-     */
-    protected function createFormProcessEvent(PriceList $priceList)
+    private function createFormProcessEvent(PriceList $priceList): FormProcessEvent
     {
-        /** @var FormInterface $form */
-        $form = $this->createMock('Symfony\Component\Form\FormInterface');
-
-        return new FormProcessEvent($form, $priceList);
+        return new FormProcessEvent(
+            $this->createMock(\Symfony\Component\Form\FormInterface::class),
+            $priceList
+        );
     }
 
-    /**
-     * @param PriceList $priceList
-     * @return AfterFormProcessEvent
-     */
-    protected function createAfterFormProcessEvent(PriceList $priceList)
+    private function createAfterFormProcessEvent(PriceList $priceList): AfterFormProcessEvent
     {
-        /** @var FormInterface $form */
-        $form = $this->createMock('Symfony\Component\Form\FormInterface');
-
-        return new AfterFormProcessEvent($form, $priceList);
+        return new AfterFormProcessEvent(
+            $this->createMock(\Symfony\Component\Form\FormInterface::class),
+            $priceList
+        );
     }
 }

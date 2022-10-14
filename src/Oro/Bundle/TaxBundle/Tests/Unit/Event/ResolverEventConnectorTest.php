@@ -10,28 +10,22 @@ use Oro\Bundle\TaxBundle\Resolver\StopPropagationException;
 
 class ResolverEventConnectorTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ResolverInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $resolver;
+    /** @var ResolverInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $resolver;
 
-    /**
-     * @var ResolverEventConnector
-     */
-    protected $connector;
+    /** @var ResolverEventConnector */
+    private $connector;
 
     protected function setUp(): void
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|ResolverInterface $resolver */
-        $this->resolver = $this->createMock('Oro\Bundle\TaxBundle\Resolver\ResolverInterface');
+        $this->resolver = $this->createMock(ResolverInterface::class);
         $this->connector = new ResolverEventConnector($this->resolver);
     }
 
     public function testOnResolve()
     {
         $taxable = new Taxable();
-        $this->resolver
-            ->expects($this->once())
+        $this->resolver->expects($this->once())
             ->method('resolve')
             ->with($taxable);
 
@@ -43,11 +37,10 @@ class ResolverEventConnectorTest extends \PHPUnit\Framework\TestCase
     public function testOnResolveStopPropagation()
     {
         $taxable = new Taxable();
-        $this->resolver
-            ->expects($this->once())
+        $this->resolver->expects($this->once())
             ->method('resolve')
             ->with($taxable)
-            ->will($this->throwException(new StopPropagationException));
+            ->willThrowException(new StopPropagationException());
 
         $event = new ResolveTaxEvent($taxable);
         $this->connector->onResolve($event);

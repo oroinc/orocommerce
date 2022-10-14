@@ -21,7 +21,6 @@ use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\PriceListCollectionTypeExtensi
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\PriceListSelectTypeStub;
 use Oro\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
 use Oro\Component\Testing\ReflectionUtil;
-use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -29,7 +28,13 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class CustomerFormExtensionTest extends FormIntegrationTestCase
 {
-    use EntityTrait;
+    private function getPriceList(int $id): PriceList
+    {
+        $priceList = new PriceList();
+        ReflectionUtil::setId($priceList, $id);
+
+        return $priceList;
+    }
 
     public function testGetExtendedTypes()
     {
@@ -38,7 +43,6 @@ class CustomerFormExtensionTest extends FormIntegrationTestCase
 
     public function testSetRelationClass()
     {
-        /** @var CustomerListener|\PHPUnit\Framework\MockObject\MockObject $listener */
         $listener = $this->createMock(CustomerListener::class);
 
         $customerFormExtension = new CustomerFormExtension($listener);
@@ -52,18 +56,16 @@ class CustomerFormExtensionTest extends FormIntegrationTestCase
 
     public function testBuildFormFeatureDisabled()
     {
-        /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject $featureChecker */
         $featureChecker = $this->createMock(FeatureChecker::class);
         $featureChecker->expects($this->once())
             ->method('isFeatureEnabled')
             ->with('feature1', null)
             ->willReturn(false);
 
-        /** @var CustomerListener|\PHPUnit\Framework\MockObject\MockObject $listener */
         $listener = $this->createMock(CustomerListener::class);
-        /** @var FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject $builder */
         $builder = $this->createMock(FormBuilderInterface::class);
-        $builder->expects($this->never())->method('add');
+        $builder->expects($this->never())
+            ->method('add');
 
         $customerFormExtension = new CustomerFormExtension($listener);
         $customerFormExtension->setFeatureChecker($featureChecker);
@@ -72,21 +74,17 @@ class CustomerFormExtensionTest extends FormIntegrationTestCase
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
-        /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject $featureChecker */
         $featureChecker = $this->createMock(FeatureChecker::class);
         $featureChecker->expects($this->any())
             ->method('isFeatureEnabled')
             ->with('feature1', null)
             ->willReturn(true);
 
-        /** @var CustomerListener $listener */
-        $listener = $this->getMockBuilder('Oro\Bundle\PricingBundle\EventListener\CustomerListener')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $listener = $this->createMock(CustomerListener::class);
 
         $customerFormExtension = new CustomerFormExtension($listener);
         $customerFormExtension->setFeatureChecker($featureChecker);
@@ -95,9 +93,7 @@ class CustomerFormExtensionTest extends FormIntegrationTestCase
         $provider = new PriceListCollectionTypeExtensionsProvider();
         $websiteScopedDataType = (new WebsiteScopedTypeMockProvider())->getWebsiteScopedDataType();
 
-        $configManager = $this->getMockBuilder(ConfigManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $configManager = $this->createMock(ConfigManager::class);
         $configManager->expects($this->any())
             ->method('get')
             ->with('oro_pricing.price_strategy')
@@ -135,10 +131,7 @@ class CustomerFormExtensionTest extends FormIntegrationTestCase
         $this->assertEquals($expected, $data);
     }
 
-    /**
-     * @return array
-     */
-    public function submitDataProvider()
+    public function submitDataProvider(): array
     {
         return [
             [
@@ -180,16 +173,5 @@ class CustomerFormExtensionTest extends FormIntegrationTestCase
                 ]
             ]
         ];
-    }
-
-    /**
-     * @param int $id
-     * @return PriceList
-     */
-    protected function getPriceList($id)
-    {
-        return $this->getEntity(PriceList::class, [
-            'id' => $id
-        ]);
     }
 }

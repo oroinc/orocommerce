@@ -13,42 +13,29 @@ use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
 class TaxationAddressProviderTest extends \PHPUnit\Framework\TestCase
 {
-    const EU = 'UK';
-    const US = 'US';
+    private const EU = 'UK';
+    private const US = 'US';
 
-    const DIGITAL_TAX_CODE = 'DIGITAL_TAX_CODE';
+    private const DIGITAL_TAX_CODE = 'DIGITAL_TAX_CODE';
 
-    /**
-     * @var TaxationSettingsProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $settingsProvider;
+    /** @var TaxationSettingsProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $settingsProvider;
 
-    /**
-     * @var TaxationAddressProvider
-     */
-    protected $addressProvider;
+    /** @var TaxationAddressProvider */
+    private $addressProvider;
 
     protected function setUp(): void
     {
-        $this->settingsProvider = $this
-            ->getMockBuilder('\Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->settingsProvider = $this->createMock(TaxationSettingsProvider::class);
 
         $this->addressProvider = new TaxationAddressProvider($this->settingsProvider);
-    }
-
-    protected function tearDown(): void
-    {
-        unset($this->settingsProvider, $this->addressProvider);
     }
 
     public function testGetOriginAddress()
     {
         $address = new Address();
 
-        $this->settingsProvider
-            ->expects($this->once())
+        $this->settingsProvider->expects($this->once())
             ->method('getOrigin')
             ->willReturn($address);
 
@@ -57,38 +44,30 @@ class TaxationAddressProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getTaxationAddressProvider
-     *
-     * @param AbstractAddress|null $expectedResult
-     * @param string $destination
-     * @param Address $origin
-     * @param bool $originByDefault
-     * @param OrderAddress $billingAddress
-     * @param OrderAddress $shippingAddress
-     * @param array $exclusions
      */
     public function testGetTaxationAddress(
-        $expectedResult,
-        $destination,
-        $origin,
-        $originByDefault,
-        $billingAddress,
-        $shippingAddress,
-        $exclusions
+        ?AbstractAddress $expectedResult,
+        ?string $destination,
+        Address $origin,
+        bool $originByDefault,
+        ?OrderAddress $billingAddress,
+        ?OrderAddress $shippingAddress,
+        array $exclusions
     ) {
-        $this->settingsProvider->expects($this->any())->method('getOrigin')->willReturn($origin);
+        $this->settingsProvider->expects($this->any())
+            ->method('getOrigin')
+            ->willReturn($origin);
 
         $this->settingsProvider
             ->expects($destination && ($shippingAddress || $billingAddress) ? $this->once() : $this->never())
             ->method('getBaseAddressExclusions')
             ->willReturn($exclusions);
 
-        $this->settingsProvider
-            ->expects($this->once())
+        $this->settingsProvider->expects($this->once())
             ->method('getDestination')
             ->willReturn($destination);
 
-        $this->settingsProvider
-            ->expects($this->once())
+        $this->settingsProvider->expects($this->once())
             ->method('isOriginBaseByDefaultAddressType')
             ->willReturn($originByDefault);
 
@@ -99,11 +78,9 @@ class TaxationAddressProviderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return array
-     *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function getTaxationAddressProvider()
+    public function getTaxationAddressProvider(): array
     {
         $countryUS = new Country('US');
         $countryCA = new Country('CA');
@@ -256,29 +233,21 @@ class TaxationAddressProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider isDigitalProductTaxCodeProvider
-     * @param string $country
-     * @param string $taxCode
-     * @param bool $expected
      */
-    public function testIsDigitalProductTaxCode($country, $taxCode, $expected)
+    public function testIsDigitalProductTaxCode(string $country, string $taxCode, bool $expected)
     {
-        $this->settingsProvider
-            ->expects($country === self::EU ? $this->once() : $this->never())
+        $this->settingsProvider->expects($country === self::EU ? $this->once() : $this->never())
             ->method('getDigitalProductsTaxCodesEU')
             ->willReturn([self::DIGITAL_TAX_CODE]);
 
-        $this->settingsProvider
-            ->expects($country === self::US ? $this->once() : $this->never())
+        $this->settingsProvider->expects($country === self::US ? $this->once() : $this->never())
             ->method('getDigitalProductsTaxCodesUS')
             ->willReturn([self::DIGITAL_TAX_CODE]);
 
         $this->assertEquals($expected, $this->addressProvider->isDigitalProductTaxCode($country, $taxCode));
     }
 
-    /**
-     * @return array
-     */
-    public function isDigitalProductTaxCodeProvider()
+    public function isDigitalProductTaxCodeProvider(): array
     {
         return [
             'EU not digital' => [

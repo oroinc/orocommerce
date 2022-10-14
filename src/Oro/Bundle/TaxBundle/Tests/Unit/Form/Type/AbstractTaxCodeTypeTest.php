@@ -8,10 +8,8 @@ use Oro\Component\Testing\Unit\PreloadedExtension;
 
 abstract class AbstractTaxCodeTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * @var AbstractTaxCodeType
-     */
-    protected $formType;
+    /** @var AbstractTaxCodeType */
+    private $formType;
 
     protected function setUp(): void
     {
@@ -23,7 +21,7 @@ abstract class AbstractTaxCodeTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritdoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         return [
             new PreloadedExtension(
@@ -35,25 +33,14 @@ abstract class AbstractTaxCodeTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    protected function tearDown(): void
-    {
-        unset($this->formType);
-
-        parent::tearDown();
-    }
-
     /**
      * @dataProvider submitDataProvider
-     * @param mixed $defaultData
-     * @param mixed $viewData
-     * @param array $submittedData
-     * @param array $expectedData
      */
     public function testSubmit(
-        $defaultData,
-        $viewData,
+        mixed $defaultData,
+        mixed $viewData,
         array $submittedData,
-        $expectedData
+        array $expectedData
     ) {
         $form = $this->factory->create(get_class($this->formType), $defaultData);
 
@@ -77,10 +64,7 @@ abstract class AbstractTaxCodeTypeTest extends FormIntegrationTestCase
         }
     }
 
-    /**
-     * @return array
-     */
-    public function submitDataProvider()
+    public function submitDataProvider(): array
     {
         return [
             'empty description' => [
@@ -110,17 +94,7 @@ abstract class AbstractTaxCodeTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * Return data class string
-     *
-     * @return string
-     */
-    abstract protected function getDataClass();
+    abstract protected function getDataClass(): string;
 
-    /**
-     * Return object of test form type
-     *
-     * @return AbstractTaxCodeType
-     */
-    abstract protected function createTaxCodeType();
+    abstract protected function createTaxCodeType(): AbstractTaxCodeType;
 }

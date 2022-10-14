@@ -11,20 +11,13 @@ use Symfony\Component\Form\FormView;
 class PageFormViewListenerTest extends BaseFormViewListenerTestCase
 {
     /** @var PageFormViewListener */
-    protected $listener;
+    private $listener;
 
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->listener = new PageFormViewListener($this->translator);
-    }
-
-    protected function tearDown(): void
-    {
-        unset($this->listener);
-
-        parent::tearDown();
     }
 
     public function testOnLandingPageView()

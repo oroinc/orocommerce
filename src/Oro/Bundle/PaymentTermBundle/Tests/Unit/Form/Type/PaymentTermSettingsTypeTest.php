@@ -15,9 +15,9 @@ use Symfony\Component\Validator\Validation;
 class PaymentTermSettingsTypeTest extends FormIntegrationTestCase
 {
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         return [
             new PreloadedExtension(
@@ -50,18 +50,15 @@ class PaymentTermSettingsTypeTest extends FormIntegrationTestCase
     public function testGetBlockPrefixReturnsCorrectString()
     {
         $formType = new PaymentTermSettingsType();
-        static::assertSame('oro_payment_term_settings', $formType->getBlockPrefix());
+        self::assertSame('oro_payment_term_settings', $formType->getBlockPrefix());
     }
 
     public function testConfigureOptions()
     {
-        /** @var OptionsResolver|\PHPUnit\Framework\MockObject\MockObject $resolver */
-        $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
-        $resolver->expects(static::once())
+        $resolver = $this->createMock(OptionsResolver::class);
+        $resolver->expects(self::once())
             ->method('setDefaults')
-            ->with([
-                'data_class' => PaymentTermSettings::class
-            ]);
+            ->with(['data_class' => PaymentTermSettings::class]);
 
         $formType = new PaymentTermSettingsType();
         $formType->configureOptions($resolver);

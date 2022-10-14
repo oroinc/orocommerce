@@ -20,41 +20,37 @@ class RequestRepresentativesNotifierTest extends \PHPUnit\Framework\TestCase
     use EntityTrait;
 
     /** @var Processor|\PHPUnit\Framework\MockObject\MockObject */
-    protected $processor;
+    private $processor;
 
     /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
-    protected $configManager;
+    private $configManager;
 
     /** @var RequestRepresentativesNotifier */
-    protected $requestToQuoteRepresentativesNotifier;
+    private $requestToQuoteRepresentativesNotifier;
 
     /** @var Request|\PHPUnit\Framework\MockObject\MockObject */
-    protected $request;
+    private $request;
 
     /** @var CustomerUser|\PHPUnit\Framework\MockObject\MockObject */
-    protected $customerUser;
+    private $customerUser;
 
     /** @var Customer|\PHPUnit\Framework\MockObject\MockObject */
-    protected $customer;
+    private $customer;
 
     /** @var User $owner */
-    protected $customerUserOwner;
+    private $customerUserOwner;
 
     /** @var User $owner */
-    protected $customerOwner;
+    private $customerOwner;
 
     /** @var ArrayCollection */
-    protected $salesReps;
+    private $salesReps;
 
     protected function setUp(): void
     {
-        $this->processor = $this->getMockBuilder('Oro\Bundle\RFPBundle\Mailer\Processor')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->request = $this->createMock('Oro\Bundle\RFPBundle\Entity\Request');
+        $this->processor = $this->createMock(Processor::class);
+        $this->configManager = $this->createMock(ConfigManager::class);
+        $this->request = $this->createMock(Request::class);
 
         $this->requestToQuoteRepresentativesNotifier = new RequestRepresentativesNotifier(
             $this->processor,
@@ -71,7 +67,7 @@ class RequestRepresentativesNotifierTest extends \PHPUnit\Framework\TestCase
 
     public function testNotifyRepresentativesForCustomerUser()
     {
-        $this->configureRequestMock();
+        $this->configureRequest();
         $salesReps = new ArrayCollection();
         $salesReps->add($this->getEntity(User::class, ['id' => 1]));
         $salesReps->add($this->getEntity(User::class, ['id' => 2]));
@@ -194,8 +190,7 @@ class RequestRepresentativesNotifierTest extends \PHPUnit\Framework\TestCase
         $customerUser = (new CustomerUser())->setIsGuest(true);
         $request = $this->getEntity(Request::class, ['id' => 1, 'customerUser' => $customerUser]);
 
-        $this->processor
-            ->expects($this->once())
+        $this->processor->expects($this->once())
             ->method('sendConfirmation')
             ->with($request, $customerUser);
 
@@ -209,17 +204,13 @@ class RequestRepresentativesNotifierTest extends \PHPUnit\Framework\TestCase
     {
         $request = $this->getEntity(Request::class, $requestData);
 
-        $this->processor
-            ->expects($this->never())
+        $this->processor->expects($this->never())
             ->method('sendConfirmation');
 
         $this->requestToQuoteRepresentativesNotifier->sendConfirmationEmail($request);
     }
 
-    /**
-     * @return array
-     */
-    public function confirmationEmailIncorrectRequestDataProvider()
+    public function confirmationEmailIncorrectRequestDataProvider(): array
     {
         return [
             'without customer user' => [
@@ -273,22 +264,22 @@ class RequestRepresentativesNotifierTest extends \PHPUnit\Framework\TestCase
             ->method('getCustomerUser')
             ->willReturn($this->customerUser);
 
-        $this->processor->expects($this->exactly(1))
+        $this->processor->expects($this->once())
             ->method('sendRFPNotification');
 
         $this->requestToQuoteRepresentativesNotifier->notifyRepresentatives($this->request);
     }
 
-    protected function configureRequestMock()
+    private function configureRequest()
     {
         $this->customerUserOwner = $this->getEntity(User::class, ['id' => 42, 'username' => 'customerUserOwner']);
         $this->customerOwner = $this->getEntity(User::class, ['id' => 77, 'username' => 'customerOwner']);
 
-        $this->customerUser = $this->createMock('Oro\Bundle\CustomerBundle\Entity\CustomerUser');
+        $this->customerUser = $this->createMock(CustomerUser::class);
         $this->customerUser->expects($this->any())
             ->method('getOwner')
             ->willReturn($this->customerUserOwner);
-        $this->customer = $this->createMock('Oro\Bundle\CustomerBundle\Entity\CustomerUser');
+        $this->customer = $this->createMock(CustomerUser::class);
         $this->customer->expects($this->any())
             ->method('getOwner')
             ->willReturn($this->customerOwner);
@@ -304,9 +295,9 @@ class RequestRepresentativesNotifierTest extends \PHPUnit\Framework\TestCase
             ->willReturn($this->customerUser);
     }
 
-    protected function configureNotifySalesRepsOfCustomerTest()
+    private function configureNotifySalesRepsOfCustomerTest()
     {
-        $this->configureRequestMock();
+        $this->configureRequest();
         $this->salesReps = new ArrayCollection();
         $this->salesReps->add(new User());
         $this->salesReps->add(new User());

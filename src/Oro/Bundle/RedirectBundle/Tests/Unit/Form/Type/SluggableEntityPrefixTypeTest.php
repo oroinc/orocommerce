@@ -18,31 +18,20 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class SluggableEntityPrefixTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * @var RedirectStorage|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $storage;
+    /** @var RedirectStorage|\PHPUnit\Framework\MockObject\MockObject */
+    private $storage;
 
-    /**
-     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $configManager;
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $configManager;
 
-    /**
-     * @var SluggableEntityPrefixType
-     */
-    protected $formType;
+    /** @var SluggableEntityPrefixType */
+    private $formType;
 
     protected function setUp(): void
     {
         $this->storage = $this->createMock(RedirectStorage::class);
-        $this->configManager = $this->getMockBuilder(ConfigManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->configManager = $this->createMock(ConfigManager::class);
 
-        /**
-         * @var ValidatorInterface|\PHPUnit\Framework\MockObject\MockObject $validator
-         */
         $validator = $this->createMock(ValidatorInterface::class);
         $validator->expects($this->any())
             ->method('validate')
@@ -57,9 +46,9 @@ class SluggableEntityPrefixTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         return [
             new PreloadedExtension(
@@ -80,7 +69,7 @@ class SluggableEntityPrefixTypeTest extends FormIntegrationTestCase
      * @dataProvider submitDataProvider
      */
     public function testSubmit(
-        PrefixWithRedirect $defaultData = null,
+        ?PrefixWithRedirect $defaultData,
         array $submittedData,
         PrefixWithRedirect $expectedData
     ) {
@@ -112,10 +101,7 @@ class SluggableEntityPrefixTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expectedData, $data);
     }
 
-    /**
-     * @return array
-     */
-    public function submitDataProvider()
+    public function submitDataProvider(): array
     {
         return [
             'create new' => [
@@ -147,14 +133,10 @@ class SluggableEntityPrefixTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider finishViewDataProvider
-     *
-     * @param string $strategy
-     * @param bool $isAskStrategy
      */
-    public function testFinishView($strategy, $isAskStrategy)
+    public function testFinishView(string $strategy, bool $isAskStrategy)
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|FormInterface $form */
-        $form = $this->createMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock(FormInterface::class);
 
         $this->configManager->expects($this->once())
             ->method('get')
@@ -171,10 +153,7 @@ class SluggableEntityPrefixTypeTest extends FormIntegrationTestCase
         $this->assertEquals(Configuration::STRATEGY_ASK, $formView->vars['askStrategyName']);
     }
 
-    /**
-     * @return array
-     */
-    public function finishViewDataProvider()
+    public function finishViewDataProvider(): array
     {
         return [
             'ask strategy' => [

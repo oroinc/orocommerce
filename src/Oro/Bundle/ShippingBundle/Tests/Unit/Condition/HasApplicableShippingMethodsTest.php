@@ -4,43 +4,37 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Condition;
 
 use Oro\Bundle\ShippingBundle\Condition\HasApplicableShippingMethods;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
+use Oro\Component\ConfigExpression\Condition\AbstractCondition;
+use Oro\Component\ConfigExpression\Exception\InvalidArgumentException;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class HasApplicableShippingMethodsTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    const METHOD = 'Method';
-
-    /** @var HasApplicableShippingMethods */
-    protected $condition;
+    private const METHOD = 'Method';
 
     /** @var ShippingMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $shippingMethodProvider;
+    private $shippingMethodProvider;
 
     /** @var ShippingPriceProvider|\PHPUnit\Framework\MockObject\MockObject */
-    protected $shippingPriceProvider;
+    private $shippingPriceProvider;
+
+    /** @var HasApplicableShippingMethods */
+    private $condition;
 
     protected function setUp(): void
     {
         $this->shippingMethodProvider = $this->createMock(ShippingMethodProviderInterface::class);
-
-        $this->shippingPriceProvider = $this
-            ->getMockBuilder('Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->shippingPriceProvider = $this->createMock(ShippingPriceProvider::class);
 
         $this->condition = new HasApplicableShippingMethods(
             $this->shippingMethodProvider,
             $this->shippingPriceProvider
         );
-    }
-
-    protected function tearDown(): void
-    {
-        unset($this->condition, $this->shippingMethodProvider);
     }
 
     public function testGetName()
@@ -50,11 +44,11 @@ class HasApplicableShippingMethodsTest extends \PHPUnit\Framework\TestCase
 
     public function testInitializeInvalid()
     {
-        $this->expectException(\Oro\Component\ConfigExpression\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Missing "shippingContext" option');
 
         $this->assertInstanceOf(
-            'Oro\Component\ConfigExpression\Condition\AbstractCondition',
+            AbstractCondition::class,
             $this->condition->initialize([])
         );
     }
@@ -62,20 +56,20 @@ class HasApplicableShippingMethodsTest extends \PHPUnit\Framework\TestCase
     public function testInitialize()
     {
         $this->assertInstanceOf(
-            'Oro\Component\ConfigExpression\Condition\AbstractCondition',
+            AbstractCondition::class,
             $this->condition->initialize([self::METHOD, new \stdClass()])
         );
     }
 
     /**
      * @dataProvider evaluateProvider
-     * @param array $methods
-     * @param bool $expected
      */
-    public function testEvaluate($methods, $expected)
+    public function testEvaluate(array $methods, bool $expected)
     {
-        $method = $this->createMock('Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface');
-        $this->shippingMethodProvider->expects($this->any())->method('getShippingMethod')->willReturn($method);
+        $method = $this->createMock(ShippingMethodInterface::class);
+        $this->shippingMethodProvider->expects($this->any())
+            ->method('getShippingMethod')
+            ->willReturn($method);
 
         $this->shippingPriceProvider->expects($this->once())
             ->method('getApplicableMethodsViews')
@@ -85,10 +79,7 @@ class HasApplicableShippingMethodsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $this->condition->evaluate([]));
     }
 
-    /**
-     * @return array
-     */
-    public function evaluateProvider()
+    public function evaluateProvider(): array
     {
         return [
             'no_rules_no_methods' => [

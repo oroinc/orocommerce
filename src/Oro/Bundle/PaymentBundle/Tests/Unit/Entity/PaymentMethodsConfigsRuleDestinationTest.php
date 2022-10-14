@@ -16,30 +16,16 @@ class PaymentMethodsConfigsRuleDestinationTest extends \PHPUnit\Framework\TestCa
     use EntityTestCaseTrait;
     use EntityTrait;
 
-    /**
-     * @var Region|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $region;
-
-    /**
-     * @var Country|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $country;
-
-    /**
-     * @var PaymentMethodsConfigsRuleDestination
-     */
-    protected $paymentMethodsConfigsRuleDestination;
+    /** @var PaymentMethodsConfigsRuleDestination */
+    private $paymentMethodsConfigsRuleDestination;
 
     protected function setUp(): void
     {
-        $this->country = $this->createMockCountry();
-        $this->region = $this->createMockRegion();
         $this->paymentMethodsConfigsRuleDestination = $this->getEntity(
             PaymentMethodsConfigsRuleDestination::class,
             [
-                'region' => $this->region,
-                'country' => $this->country,
+                'region' => $this->getRegion(),
+                'country' => $this->getCountry(),
                 'postalCodes' => [new PaymentMethodsConfigsRuleDestinationPostalCode()],
             ]
         );
@@ -98,11 +84,8 @@ class PaymentMethodsConfigsRuleDestinationTest extends \PHPUnit\Framework\TestCa
 
     /**
      * @dataProvider toStringDataProvider
-     *
-     * @param array $data
-     * @param string $expectedString
      */
-    public function testToString(array $data, $expectedString)
+    public function testToString(array $data, string $expectedString)
     {
         $entity = (string)$this->getEntity(
             PaymentMethodsConfigsRuleDestination::class,
@@ -111,38 +94,35 @@ class PaymentMethodsConfigsRuleDestinationTest extends \PHPUnit\Framework\TestCa
         $this->assertEquals($expectedString, $entity);
     }
 
-    /**
-     * @return array
-     */
-    public function toStringDataProvider()
+    public function toStringDataProvider(): array
     {
         return [
             'all' => [
                 'data' => [
-                    'country' => $this->createMockCountry(),
-                    'region' => $this->createMockRegion(),
-                    'postalCodes' => $this->createMockPostalCodes(['12345']),
+                    'country' => $this->getCountry(),
+                    'region' => $this->getRegion(),
+                    'postalCodes' => $this->getPostalCodes(['12345']),
                 ],
                 'expectedString' => 'RegionName, CountryName 12345'
             ],
             'country and postal code' => [
                 'data' => [
-                    'country' => $this->createMockCountry(),
+                    'country' => $this->getCountry(),
                     'region' => null,
-                    'postalCodes' => $this->createMockPostalCodes(['12345', '54321']),
+                    'postalCodes' => $this->getPostalCodes(['12345', '54321']),
                 ],
                 'expectedString' => 'CountryName 12345, 54321'
             ],
             'country and region' => [
                 'data' => [
-                    'country' => $this->createMockCountry('SecondCountryName'),
-                    'region' => $this->createMockRegion('SecondRegionName'),
+                    'country' => $this->getCountry('SecondCountryName'),
+                    'region' => $this->getRegion('SecondRegionName'),
                 ],
                 'expectedString' => 'SecondRegionName, SecondCountryName'
             ],
             'only country' => [
                 'data' => [
-                    'country' => $this->createMockCountry(),
+                    'country' => $this->getCountry(),
                     'region' => null,
                 ],
                 'expectedString' => 'CountryName'
@@ -150,59 +130,47 @@ class PaymentMethodsConfigsRuleDestinationTest extends \PHPUnit\Framework\TestCa
         ];
     }
 
-    /**
-     * @param string $name
-     * @param string $iso2
-     * @param string $iso3
-     * @return \PHPUnit\Framework\MockObject\MockObject
-     */
-    protected function createMockCountry($name = 'CountryName', $iso2 = 'CountryIso2', $iso3 = 'CountryIso3')
+    private function getCountry(
+        string $name = 'CountryName',
+        string $iso2 = 'CountryIso2',
+        string $iso3 = 'CountryIso3'
+    ): Country {
+        $result = $this->createMock(Country::class);
+        $result->expects($this->any())
+            ->method('__toString')
+            ->willReturn($name);
+        $result->expects($this->any())
+            ->method('getName')
+            ->willReturn($name);
+        $result->expects($this->any())
+            ->method('getIso2Code')
+            ->willReturn($iso2);
+        $result->expects($this->any())
+            ->method('getIso3Code')
+            ->willReturn($iso3);
+
+        return $result;
+    }
+
+    private function getRegion(string $name = 'RegionName', string $code = 'RegionCode'): Region
     {
-        $result = $this->getMockBuilder(Country::class)
-            ->disableOriginalConstructor()
+        $result = $this->getMockBuilder(Region::class)
+            ->setConstructorArgs(['combinedCode'])
             ->getMock();
         $result->expects($this->any())
             ->method('__toString')
-            ->will($this->returnValue($name));
+            ->willReturn($name);
         $result->expects($this->any())
             ->method('getName')
-            ->will($this->returnValue($name));
-        $result->expects($this->any())
-            ->method('getIso2Code')
-            ->will($this->returnValue($iso2));
-        $result->expects($this->any())
-            ->method('getIso3Code')
-            ->will($this->returnValue($iso3));
-
-        return $result;
-    }
-
-    /**
-     * @param string $name
-     * @param string $code
-     * @return \PHPUnit\Framework\MockObject\MockObject
-     */
-    protected function createMockRegion($name = 'RegionName', $code = 'RegionCode')
-    {
-        $result = $this->getMockBuilder(Region::class)->setConstructorArgs(['combinedCode'])->getMock();
-        $result->expects($this->any())
-            ->method('__toString')
-            ->will($this->returnValue($name));
-        $result->expects($this->any())
-            ->method('getName')
-            ->will($this->returnValue($name));
+            ->willReturn($name);
         $result->expects($this->any())
             ->method('getCode')
-            ->will($this->returnValue($code));
+            ->willReturn($code);
 
         return $result;
     }
 
-    /**
-     * @param array $names
-     * @return ArrayCollection|\PHPUnit\Framework\MockObject\MockObject[]
-     */
-    protected function createMockPostalCodes($names)
+    private function getPostalCodes(array $names): ArrayCollection
     {
         $results = new ArrayCollection();
         foreach ($names as $name) {

@@ -11,17 +11,17 @@ class TaxEventDispatcherTest extends \PHPUnit\Framework\TestCase
 {
     public function testDispatch()
     {
-        /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject $eventDispatcher */
-        $eventDispatcher = $this->createMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+        $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
 
         $taxDispatcher = new TaxEventDispatcher($eventDispatcher);
         $taxable = new Taxable();
 
-        $eventDispatcher->expects($this->exactly(3))->method('dispatch')
+        $eventDispatcher->expects($this->exactly(3))
+            ->method('dispatch')
             ->withConsecutive(
-                [$this->isInstanceOf('Oro\Bundle\TaxBundle\Event\ResolveTaxEvent'), ResolveTaxEvent::RESOLVE_BEFORE],
-                [$this->isInstanceOf('Oro\Bundle\TaxBundle\Event\ResolveTaxEvent'), ResolveTaxEvent::RESOLVE],
-                [$this->isInstanceOf('Oro\Bundle\TaxBundle\Event\ResolveTaxEvent'), ResolveTaxEvent::RESOLVE_AFTER]
+                [$this->isInstanceOf(ResolveTaxEvent::class), ResolveTaxEvent::RESOLVE_BEFORE],
+                [$this->isInstanceOf(ResolveTaxEvent::class), ResolveTaxEvent::RESOLVE],
+                [$this->isInstanceOf(ResolveTaxEvent::class), ResolveTaxEvent::RESOLVE_AFTER]
             );
 
         $taxDispatcher->dispatch($taxable);

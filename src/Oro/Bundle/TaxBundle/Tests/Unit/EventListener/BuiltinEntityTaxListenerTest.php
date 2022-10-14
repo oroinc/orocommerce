@@ -22,9 +22,6 @@ class BuiltinEntityTaxListenerTest extends \PHPUnit\Framework\TestCase
     /** @var BuiltInTaxProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $taxProvider;
 
-    /** @var BuiltinEntityTaxListener */
-    private $listener;
-
     /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject */
     private $entityManager;
 
@@ -34,21 +31,22 @@ class BuiltinEntityTaxListenerTest extends \PHPUnit\Framework\TestCase
     /** @var ClassMetadata|\PHPUnit\Framework\MockObject\MockObject */
     private $taxValueMetadata;
 
+    /** @var BuiltinEntityTaxListener */
+    private $listener;
+
     protected function setUp(): void
     {
         $this->taxProvider = $this->createMock(BuiltInTaxProvider::class);
-        $taxProviderRegistry = $this->createMock(TaxProviderRegistry::class);
-        $taxProviderRegistry
-            ->expects($this->any())
-            ->method('getEnabledProvider')
-            ->willReturn($this->taxProvider);
-
         $this->entityManager = $this->createMock(EntityManager::class);
         $this->orderMetadata = $this->createMock(ClassMetadata::class);
         $this->taxValueMetadata = $this->createMock(ClassMetadata::class);
 
-        $this->entityManager
-            ->expects($this->any())
+        $taxProviderRegistry = $this->createMock(TaxProviderRegistry::class);
+        $taxProviderRegistry->expects($this->any())
+            ->method('getEnabledProvider')
+            ->willReturn($this->taxProvider);
+
+        $this->entityManager->expects($this->any())
             ->method('getClassMetadata')
             ->willReturnCallback(function (string $class) {
                 switch ($class) {
@@ -64,30 +62,22 @@ class BuiltinEntityTaxListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener = new BuiltinEntityTaxListener($taxProviderRegistry);
     }
 
-    protected function tearDown(): void
-    {
-        unset($this->listener, $this->taxManager, $this->entityManager, $this->orderMetadata, $this->taxValueMetadata);
-    }
-
     public function testPrePersist()
     {
         $order = new Order();
         $taxValue = new TaxValue();
         $event = new LifecycleEventArgs($order, $this->entityManager);
 
-        $this->orderMetadata
-            ->expects($this->once())
+        $this->orderMetadata->expects($this->once())
             ->method('getIdentifierValues')
             ->willReturn([]);
 
-        $this->taxProvider
-            ->expects($this->once())
+        $this->taxProvider->expects($this->once())
             ->method('createTaxValue')
             ->with($order)
             ->willReturn($taxValue);
 
-        $this->entityManager
-            ->expects($this->once())
+        $this->entityManager->expects($this->once())
             ->method('persist')
             ->with($taxValue);
 
@@ -99,13 +89,11 @@ class BuiltinEntityTaxListenerTest extends \PHPUnit\Framework\TestCase
         $order = new Order();
         $event = new LifecycleEventArgs($order, $this->entityManager);
 
-        $this->orderMetadata
-            ->expects($this->once())
+        $this->orderMetadata->expects($this->once())
             ->method('getIdentifierValues')
             ->willReturn([]);
 
-        $this->taxProvider
-            ->expects($this->once())
+        $this->taxProvider->expects($this->once())
             ->method('createTaxValue')
             ->with($order)
             ->willThrowException(new TaxationDisabledException());
@@ -118,13 +106,11 @@ class BuiltinEntityTaxListenerTest extends \PHPUnit\Framework\TestCase
         $order = new Order();
         $event = new LifecycleEventArgs($order, $this->entityManager);
 
-        $this->orderMetadata
-            ->expects($this->once())
+        $this->orderMetadata->expects($this->once())
             ->method('getIdentifierValues')
             ->willReturn([1]);
 
-        $this->taxProvider
-            ->expects($this->never())
+        $this->taxProvider->expects($this->never())
             ->method('createTaxValue');
 
         $this->listener->prePersist($order, $event);
@@ -135,14 +121,12 @@ class BuiltinEntityTaxListenerTest extends \PHPUnit\Framework\TestCase
         $taxProvider = $this->createMock(TaxProviderInterface::class);
 
         $taxProviderRegistry = $this->createMock(TaxProviderRegistry::class);
-        $taxProviderRegistry
-            ->expects($this->any())
+        $taxProviderRegistry->expects($this->any())
             ->method('getEnabledProvider')
             ->willReturn($taxProvider);
 
         $entityManager = $this->createMock(EntityManager::class);
-        $entityManager
-            ->expects($this->never())
+        $entityManager->expects($this->never())
             ->method('getClassMetadata');
 
         $order = new Order();
@@ -157,7 +141,8 @@ class BuiltinEntityTaxListenerTest extends \PHPUnit\Framework\TestCase
         $order = new Order();
         $event = new LifecycleEventArgs($order, $this->entityManager);
 
-        $this->entityManager->expects($this->never())->method('getUnitOfWork');
+        $this->entityManager->expects($this->never())
+            ->method('getUnitOfWork');
 
         $this->listener->postPersist($order, $event);
     }
@@ -168,13 +153,11 @@ class BuiltinEntityTaxListenerTest extends \PHPUnit\Framework\TestCase
         $taxValue = new TaxValue();
         $event = new LifecycleEventArgs($order, $this->entityManager);
 
-        $this->entityManager
-            ->expects($this->once())
+        $this->entityManager->expects($this->once())
             ->method('persist')
             ->with($taxValue);
 
-        $this->taxProvider
-            ->expects($this->once())
+        $this->taxProvider->expects($this->once())
             ->method('createTaxValue')
             ->with($order)
             ->willReturn($taxValue);
@@ -202,8 +185,7 @@ class BuiltinEntityTaxListenerTest extends \PHPUnit\Framework\TestCase
             ->method('getUnitOfWork')
             ->willReturn($uow);
 
-        $this->orderMetadata
-            ->expects($this->any())
+        $this->orderMetadata->expects($this->any())
             ->method('getIdentifierValues')
             ->willReturn([$orderId]);
 

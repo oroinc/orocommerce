@@ -13,21 +13,15 @@ class ProductUnitsWithoutPricesProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var ProductUnitsWithoutPricesProvider
-     */
-    protected $provider;
+    /** @var FrontendProductPricesProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $frontendProductPricesProvider;
 
-    /**
-     * @var FrontendProductPricesProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $frontendProductPricesProvider;
+    /** @var ProductUnitsWithoutPricesProvider */
+    private $provider;
 
     protected function setUp(): void
     {
-        $this->frontendProductPricesProvider = $this->getMockBuilder(
-            'Oro\Bundle\PricingBundle\Layout\DataProvider\FrontendProductPricesProvider'
-        )->disableOriginalConstructor()->getMock();
+        $this->frontendProductPricesProvider = $this->createMock(FrontendProductPricesProvider::class);
 
         $this->provider = new ProductUnitsWithoutPricesProvider($this->frontendProductPricesProvider);
     }
@@ -48,10 +42,7 @@ class ProductUnitsWithoutPricesProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertUnitEquals($expectedData, $actual);
     }
 
-    /**
-     * @return array
-     */
-    public function getDataDataProvider()
+    public function getDataDataProvider(): array
     {
         return [
             [
@@ -87,40 +78,29 @@ class ProductUnitsWithoutPricesProviderTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @param array $product
-     * @return Product
-     */
-    protected function getProduct(array $product)
+    private function getProduct(array $product): Product
     {
         $product['unitPrecisions'] = array_map([$this, 'getUnitPrecision'], $product['unitPrecisions']);
-        return $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', $product);
+
+        return $this->getEntity(Product::class, $product);
     }
 
-    /**
-     * @param array $unit
-     * @return ProductUnit
-     */
-    protected function getUnit(array $unit)
+    private function getUnit(array $unit): ProductUnit
     {
-        return $this->getEntity('Oro\Bundle\ProductBundle\Entity\ProductUnit', $unit);
+        return $this->getEntity(ProductUnit::class, $unit);
     }
 
-    /**
-     * @param array $unitPrecision
-     * @return ProductUnitPrecision
-     */
-    protected function getUnitPrecision(array $unitPrecision)
+    private function getUnitPrecision(array $unitPrecision): ProductUnitPrecision
     {
         $unitPrecision['unit'] = $this->getUnit($unitPrecision['unit']);
-        return $this->getEntity('Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision', $unitPrecision);
+
+        return $this->getEntity(ProductUnitPrecision::class, $unitPrecision);
     }
 
     /**
-     * @param array $unitPrecision
      * @return ProductUnit[]
      */
-    protected function getProductUnit(array $unitPrecision)
+    private function getProductUnit(array $unitPrecision): array
     {
         $productUnit['unit'] = $this->getUnit($unitPrecision['unit']);
 
@@ -128,10 +108,10 @@ class ProductUnitsWithoutPricesProviderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param array|ProductUnitPrecision[] $expectedData
-     * @param array|ProductUnitPrecision[] $actualData
+     * @param ProductUnitPrecision[] $expectedData
+     * @param ProductUnit[]          $actualData
      */
-    protected function assertUnitEquals(array $expectedData, array $actualData)
+    private function assertUnitEquals(array $expectedData, array $actualData): void
     {
         $this->assertSameSize($expectedData, $actualData);
         foreach ($expectedData as $unitPrecision) {

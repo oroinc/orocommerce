@@ -12,25 +12,20 @@ class BasicShippingMethodChoicesProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var ShippingMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject phpdoc
-     */
-    protected $shippingMethodProvider;
+    /** @var ShippingMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $shippingMethodProvider;
 
-    /**
-     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject phpdoc
-     */
-    protected $translator;
+    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $translator;
 
-    /**
-     * @var BasicShippingMethodChoicesProvider
-     */
-    protected $choicesProvider;
+    /** @var BasicShippingMethodChoicesProvider */
+    private $choicesProvider;
 
     protected function setUp(): void
     {
         $this->shippingMethodProvider = $this->createMock(ShippingMethodProviderInterface::class);
         $this->translator = $this->createMock(TranslatorInterface::class);
+
         $this->choicesProvider = new BasicShippingMethodChoicesProvider(
             $this->shippingMethodProvider,
             $this->translator
@@ -38,13 +33,9 @@ class BasicShippingMethodChoicesProviderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param array $methods
-     * @param array $result
-     * @param bool  $translate
-     *
      * @dataProvider methodsProvider
      */
-    public function testGetMethods($methods, $result, $translate = false)
+    public function testGetMethods(array $methods, array $result, bool $translate = false)
     {
         $translation = [
             ['flat rate', [], null, null, 'flat rate translated'],
@@ -57,79 +48,71 @@ class BasicShippingMethodChoicesProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->translator->expects($this->any())
             ->method('trans')
-            ->will($this->returnValueMap($translation));
+            ->willReturnMap($translation);
 
         $this->assertEquals($result, $this->choicesProvider->getMethods($translate));
     }
 
-    /**
-     * @return array
-     */
-    public function methodsProvider()
+    public function methodsProvider(): array
     {
         return
             [
-                'some_methods' =>
-                    [
-                        'methods' =>
+                'some_methods' => [
+                    'methods' => [
+                        'flat_rate' => $this->getEntity(
+                            ShippingMethodStub::class,
                             [
-                                'flat_rate' => $this->getEntity(
-                                    ShippingMethodStub::class,
-                                    [
-                                        'identifier' => 'flat_rate',
-                                        'sortOrder' => 1,
-                                        'label' => 'flat rate',
-                                        'isEnabled' => true,
-                                        'types' => [],
-                                    ]
-                                ),
-                                'ups' => $this->getEntity(
-                                    ShippingMethodStub::class,
-                                    [
-                                        'identifier' => 'ups',
-                                        'sortOrder' => 1,
-                                        'label' => 'ups',
-                                        'isEnabled' => false,
-                                        'types' => [],
-                                    ]
-                                ),
-                            ],
-                        'result' => ['flat rate' => 'flat_rate', 'ups' => 'ups'],
-                        'translate' => false,
-                    ],
-                'some_methods_with_translation' =>
-                    [
-                        'methods' =>
+                                'identifier' => 'flat_rate',
+                                'sortOrder' => 1,
+                                'label' => 'flat rate',
+                                'isEnabled' => true,
+                                'types' => [],
+                            ]
+                        ),
+                        'ups' => $this->getEntity(
+                            ShippingMethodStub::class,
                             [
-                                'flat_rate' => $this->getEntity(
-                                    ShippingMethodStub::class,
-                                    [
-                                        'identifier' => 'flat_rate',
-                                        'sortOrder' => 1,
-                                        'label' => 'flat rate',
-                                        'isEnabled' => true,
-                                        'types' => [],
-                                    ]
-                                ),
-                                'ups' => $this->getEntity(
-                                    ShippingMethodStub::class,
-                                    [
-                                        'identifier' => 'ups',
-                                        'sortOrder' => 1,
-                                        'label' => 'ups',
-                                        'isEnabled' => false,
-                                        'types' => [],
-                                    ]
-                                ),
-                            ],
-                        'result' => ['flat rate translated' => 'flat_rate', 'ups translated' => 'ups'],
-                        'translate' => true,
+                                'identifier' => 'ups',
+                                'sortOrder' => 1,
+                                'label' => 'ups',
+                                'isEnabled' => false,
+                                'types' => [],
+                            ]
+                        ),
                     ],
-                'no_methods' =>
-                    [
-                        'methods' => [],
-                        'result' => [],
+                    'result' => ['flat rate' => 'flat_rate', 'ups' => 'ups'],
+                    'translate' => false,
+                ],
+                'some_methods_with_translation' => [
+                    'methods' => [
+                        'flat_rate' => $this->getEntity(
+                            ShippingMethodStub::class,
+                            [
+                                'identifier' => 'flat_rate',
+                                'sortOrder' => 1,
+                                'label' => 'flat rate',
+                                'isEnabled' => true,
+                                'types' => [],
+                            ]
+                        ),
+                        'ups' => $this->getEntity(
+                            ShippingMethodStub::class,
+                            [
+                                'identifier' => 'ups',
+                                'sortOrder' => 1,
+                                'label' => 'ups',
+                                'isEnabled' => false,
+                                'types' => [],
+                            ]
+                        ),
                     ],
+                    'result' => ['flat rate translated' => 'flat_rate', 'ups translated' => 'ups'],
+                    'translate' => true,
+                ],
+                'no_methods' => [
+                    'methods' => [],
+                    'result' => [],
+                ],
             ];
     }
 }

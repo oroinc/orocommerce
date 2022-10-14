@@ -9,38 +9,27 @@ use Oro\Bundle\ShippingBundle\Form\DataTransformer\MeasureTransformer;
 class MeasureTransformerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var \PHPUnit\Framework\MockObject\MockObject|ObjectRepository */
-    protected $repository;
+    private $repository;
 
     /** @var MeasureTransformer */
-    protected $transformer;
+    private $transformer;
 
     protected function setUp(): void
     {
-        $this->repository = $this->createMock('Doctrine\Persistence\ObjectRepository');
+        $this->repository = $this->createMock(ObjectRepository::class);
 
         $this->transformer = new MeasureTransformer($this->repository);
     }
 
-    protected function tearDown(): void
-    {
-        unset($this->transformer, $this->repository);
-    }
-
     /**
      * @dataProvider reverseTransformDataProvider
-     *
-     * @param MeasureUnitInterface[] $value
-     * @param array $expected
      */
-    public function testReverseTransform($value, $expected)
+    public function testReverseTransform(array|string|null $value, array $expected)
     {
         $this->assertEquals($expected, $this->transformer->reverseTransform($value));
     }
 
-    /**
-     * @return array
-     */
-    public function reverseTransformDataProvider()
+    public function reverseTransformDataProvider(): array
     {
         return [
             [null, []],
@@ -54,27 +43,19 @@ class MeasureTransformerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider transformDataProvider
-     *
-     * @param array $value
-     * @param MeasureUnitInterface[] $expected
      */
-    public function testTransform($value, $expected)
+    public function testTransform(array|string|null $value, array $expected)
     {
         $this->repository->expects(is_array($value) && count($value) ? $this->once() : $this->never())
             ->method('find')
-            ->willReturnCallback(
-                function ($value) {
-                    return $this->createUnit($value);
-                }
-            );
+            ->willReturnCallback(function ($value) {
+                return $this->createUnit($value);
+            });
 
         $this->assertEquals($expected, $this->transformer->transform($value));
     }
 
-    /**
-     * @return array
-     */
-    public function transformDataProvider()
+    public function transformDataProvider(): array
     {
         return [
             [null, []],
@@ -86,14 +67,9 @@ class MeasureTransformerTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @param string $code
-     * @return MeasureUnitInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected function createUnit($code = null)
+    private function createUnit(?string $code = null): MeasureUnitInterface
     {
-        /** @var MeasureUnitInterface|\PHPUnit\Framework\MockObject\MockObject $unit */
-        $unit = $this->createMock('Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface');
+        $unit = $this->createMock(MeasureUnitInterface::class);
         $unit->expects($this->any())
             ->method('getCode')
             ->willReturn($code);

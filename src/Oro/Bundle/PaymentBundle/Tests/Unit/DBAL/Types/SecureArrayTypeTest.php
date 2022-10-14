@@ -10,16 +10,16 @@ use Oro\Component\TestUtils\ORM\Mocks\DatabasePlatformMock;
 class SecureArrayTypeTest extends \PHPUnit\Framework\TestCase
 {
     /** @var SecureArrayType */
-    protected $type;
+    private $type;
 
     /** @var SymmetricCrypterInterface */
-    protected $crypter;
+    private $crypter;
 
     public static function setUpBeforeClass(): void
     {
         SecureArrayType::addType(
             SecureArrayType::TYPE,
-            'Oro\Bundle\PaymentBundle\DBAL\Types\SecureArrayType'
+            SecureArrayType::class
         );
     }
 
@@ -49,7 +49,7 @@ class SecureArrayTypeTest extends \PHPUnit\Framework\TestCase
         $value = ['value' => 'value'];
         $platform = new DatabasePlatformMock();
 
-        $encrypted = $this->crypter->encryptData(json_encode($value));
+        $encrypted = $this->crypter->encryptData(json_encode($value, JSON_THROW_ON_ERROR));
 
         $this->assertEquals(
             $value,
@@ -97,7 +97,7 @@ class SecureArrayTypeTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->assertNotEquals(
-            json_encode($value),
+            json_encode($value, JSON_THROW_ON_ERROR),
             $this->type->convertToDatabaseValue($value, $platform)
         );
     }
@@ -115,18 +115,17 @@ class SecureArrayTypeTest extends \PHPUnit\Framework\TestCase
 
     public function testTextIsUsedToStoreData()
     {
-        /** @var DatabasePlatformMock|\PHPUnit\Framework\MockObject\MockObject $platform */
-        $platform = $this->createMock('Oro\Component\TestUtils\ORM\Mocks\DatabasePlatformMock');
+        $platform = $this->createMock(DatabasePlatformMock::class);
 
-        $platform->expects($this->once())->method('getClobTypeDeclarationSQL');
+        $platform->expects($this->once())
+            ->method('getClobTypeDeclarationSQL');
 
         $this->type->getSQLDeclaration([], $platform);
     }
 
     public function testRequiresSQLCommentHint()
     {
-        /** @var DatabasePlatformMock|\PHPUnit\Framework\MockObject\MockObject $platform */
-        $platform = $this->createMock('Oro\Component\TestUtils\ORM\Mocks\DatabasePlatformMock');
+        $platform = $this->createMock(DatabasePlatformMock::class);
         $this->assertTrue($this->type->requiresSQLCommentHint($platform));
     }
 }

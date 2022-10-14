@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
-use Oro\Bundle\EntityBundle\Helper\FieldHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\EventListener\ProductNormalizerEventListener;
 use Oro\Bundle\ProductBundle\ImportExport\Event\ProductNormalizerEvent;
@@ -10,18 +9,11 @@ use Oro\Bundle\ProductBundle\ImportExport\Event\ProductNormalizerEvent;
 class ProductNormalizerEventListenerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var ProductNormalizerEventListener */
-    protected $listener;
-
-    /** @var FieldHelper|\PHPUnit\Framework\MockObject\MockObject */
-    protected $fieldHelper;
+    private $listener;
 
     protected function setUp(): void
     {
-        $this->fieldHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\Helper\FieldHelper')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->listener = new ProductNormalizerEventListener($this->fieldHelper);
+        $this->listener = new ProductNormalizerEventListener();
     }
 
     /**
@@ -36,10 +28,7 @@ class ProductNormalizerEventListenerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedPlainData, $event->getPlainData());
     }
 
-    /**
-     * @return array
-     */
-    public function normalizerDataProvider()
+    public function normalizerDataProvider(): array
     {
         return [
             'context not empty' => [['data' => 'val'], ['fieldName' => 'variantFields'], ['data' => 'val']],
@@ -74,10 +63,7 @@ class ProductNormalizerEventListenerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedVariantFields, $product->getVariantFields());
     }
 
-    /**
-     * @return array
-     */
-    public function denormalizerDataProvider()
+    public function denormalizerDataProvider(): array
     {
         return [
             'context not empty' => [['data' => 'val'], ['fieldName' => 'variantFields'], []],

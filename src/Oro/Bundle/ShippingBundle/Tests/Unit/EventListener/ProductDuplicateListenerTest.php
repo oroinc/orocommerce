@@ -12,50 +12,42 @@ use Oro\Bundle\ShippingBundle\EventListener\ProductDuplicateListener;
 
 class ProductDuplicateListenerTest extends \PHPUnit\Framework\TestCase
 {
-    const CLASS_NAME = 'stdClass';
-
-    /** @var \PHPUnit\Framework\MockObject\MockObject|DoctrineHelper */
-    protected $doctrineHelper;
-
-    /** @var ProductDuplicateListener */
-    protected $listener;
+    private const CLASS_NAME = 'stdClass';
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|ObjectManager */
-    protected $objectManager;
+    private $objectManager;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|ObjectRepository */
-    protected $repository;
+    private $repository;
 
     /** @var Product */
-    protected $product;
+    private $product;
 
     /** @var Product */
-    protected $sourceProduct;
+    private $sourceProduct;
+
+    /** @var ProductDuplicateListener */
+    private $listener;
 
     protected function setUp(): void
     {
-        $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->repository = $this->createMock(ObjectRepository::class);
+        $this->objectManager = $this->createMock(ObjectManager::class);
+        $this->product = new Product();
+        $this->sourceProduct = new Product();
 
-        $this->listener = new ProductDuplicateListener($this->doctrineHelper);
-        $this->listener->setProductShippingOptionsClass(self::CLASS_NAME);
-
-        $this->repository = $this->createMock('Doctrine\Persistence\ObjectRepository');
-        $this->objectManager = $this->createMock('Doctrine\Persistence\ObjectManager');
-
-        $this->doctrineHelper->expects($this->once())
+        $doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $doctrineHelper->expects($this->once())
             ->method('getEntityRepository')
             ->with(self::CLASS_NAME)
             ->willReturn($this->repository);
-
-        $this->doctrineHelper->expects($this->once())
+        $doctrineHelper->expects($this->once())
             ->method('getEntityManager')
             ->with(self::CLASS_NAME)
             ->willReturn($this->objectManager);
 
-        $this->product = new Product();
-        $this->sourceProduct = new Product();
+        $this->listener = new ProductDuplicateListener($doctrineHelper);
+        $this->listener->setProductShippingOptionsClass(self::CLASS_NAME);
     }
 
     public function testOnDuplicateAfter()
@@ -71,8 +63,10 @@ class ProductDuplicateListenerTest extends \PHPUnit\Framework\TestCase
                 ]
             );
 
-        $this->objectManager->expects($this->exactly(3))->method('persist');
-        $this->objectManager->expects($this->once())->method('flush');
+        $this->objectManager->expects($this->exactly(3))
+            ->method('persist');
+        $this->objectManager->expects($this->once())
+            ->method('flush');
 
         $this->listener->onDuplicateAfter(new ProductDuplicateAfterEvent($this->product, $this->sourceProduct));
     }
@@ -84,8 +78,10 @@ class ProductDuplicateListenerTest extends \PHPUnit\Framework\TestCase
             ->with(['product' => $this->sourceProduct])
             ->willReturn([]);
 
-        $this->objectManager->expects($this->never())->method('persist');
-        $this->objectManager->expects($this->never())->method('flush');
+        $this->objectManager->expects($this->never())
+            ->method('persist');
+        $this->objectManager->expects($this->never())
+            ->method('flush');
 
         $this->listener->onDuplicateAfter(new ProductDuplicateAfterEvent($this->product, $this->sourceProduct));
     }

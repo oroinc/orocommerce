@@ -11,21 +11,17 @@ use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 class ProductUnitsTypeTest extends FormIntegrationTestCase
 {
-    /** @var ProductUnitsType $productUnitsType */
-    protected $productUnitsType;
-
     /** @var \PHPUnit\Framework\MockObject\MockObject|ProductUnitsProvider */
-    protected $productUnitsProvider;
+    private $productUnitsProvider;
+
+    /** @var ProductUnitsType */
+    private $productUnitsType;
 
     protected function setUp(): void
     {
-        $this->productUnitsProvider =
-            $this->getMockBuilder('Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider')
-                ->disableOriginalConstructor()
-                ->getMock();
+        $this->productUnitsProvider = $this->createMock(ProductUnitsProvider::class);
 
-        $this->productUnitsProvider
-            ->expects($this->any())
+        $this->productUnitsProvider->expects(self::any())
             ->method('getAvailableProductUnits')
             ->willReturn([
                 'each' => 'each',
@@ -37,9 +33,9 @@ class ProductUnitsTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         return [
             new PreloadedExtension([$this->productUnitsType], [])
@@ -55,8 +51,8 @@ class ProductUnitsTypeTest extends FormIntegrationTestCase
     {
         $form = $this->factory->create(ProductUnitsType::class);
         $availableUnits = $this->productUnitsProvider->getAvailableProductUnits();
-        $choices = [];
 
+        $choices = [];
         foreach ($availableUnits as $label => $value) {
             $choices[] = new ChoiceView($value, $value, $label);
         }
@@ -69,14 +65,11 @@ class ProductUnitsTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider submitDataProvider
-     * @param mixed $defaultData
-     * @param array $submittedData
-     * @param array $expectedData
      */
     public function testSubmit(
-        $defaultData,
-        $submittedData,
-        $expectedData
+        mixed $defaultData,
+        string $submittedData,
+        string $expectedData
     ) {
         $form = $this->factory->create(ProductUnitsType::class);
         $this->assertEquals($defaultData, $form->getViewData());
@@ -88,10 +81,7 @@ class ProductUnitsTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expectedData, $form->getViewData());
     }
 
-    /**
-     * @return array
-     */
-    public function submitDataProvider()
+    public function submitDataProvider(): array
     {
         return [
             'valid' => [

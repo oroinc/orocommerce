@@ -4,11 +4,13 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Processor;
 
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\QueryBuilder;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Processor\QuickAddProcessor;
 use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
@@ -24,23 +26,18 @@ class QuickAddProcessorTest extends AbstractQuickAddProcessorTest
             $this->messageGenerator,
             $this->aclHelper
         );
-        $this->processor->setProductClass('Oro\Bundle\ProductBundle\Entity\Product');
+        $this->processor->setProductClass(Product::class);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getProcessorName()
+    public function getProcessorName(): string
     {
         return QuickAddProcessor::NAME;
     }
 
     /**
-     * @param array $data
-     * @param Request $request
-     * @param array $productIds
-     * @param array $productQuantities
-     * @param bool $failed
      * @dataProvider processDataProvider
      */
     public function testProcess(
@@ -48,7 +45,7 @@ class QuickAddProcessorTest extends AbstractQuickAddProcessorTest
         Request $request,
         array $productIds = [],
         array $productQuantities = [],
-        $failed = false
+        bool $failed = false
     ) {
         $entitiesCount = count($data);
 
@@ -78,8 +75,7 @@ class QuickAddProcessorTest extends AbstractQuickAddProcessorTest
             ->with(array_column($data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY], 'productSku'))
             ->willReturn($queryBuilder);
 
-        $this->aclHelper
-            ->expects($this->once())
+        $this->aclHelper->expects($this->once())
             ->method('apply')
             ->with($queryBuilder)
             ->willReturn($query);
@@ -92,7 +88,7 @@ class QuickAddProcessorTest extends AbstractQuickAddProcessorTest
             $this->handler->expects($data ? $this->once() : $this->never())
                 ->method('createForShoppingList')
                 ->with(
-                    $this->isInstanceOf('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList'),
+                    $this->isInstanceOf(ShoppingList::class),
                     array_values($productIds),
                     $productQuantities
                 )
@@ -113,30 +109,23 @@ class QuickAddProcessorTest extends AbstractQuickAddProcessorTest
         $data = [];
         $request = new Request();
 
-        $this->handler
-            ->expects($this->never())
+        $this->handler->expects($this->never())
             ->method('getShoppingList');
 
         $this->productRepository->expects($this->never())
             ->method('getProductsIdsBySkuQueryBuilder')
             ->with([]);
 
-        $this->aclHelper
-            ->expects($this->never())
+        $this->aclHelper->expects($this->never())
             ->method('apply');
 
-        $this->handler
-            ->expects($this->never())
+        $this->handler->expects($this->never())
             ->method('createForShoppingList');
 
         $this->processor->process($data, $request);
     }
 
-    /**
-     * @param Request $request
-     * @param bool $isFailedMessage
-     */
-    protected function assertFlashMessage(Request $request, $isFailedMessage = false)
+    private function assertFlashMessage(Request $request, bool $isFailedMessage = false): void
     {
         $message = 'test message';
 
@@ -144,16 +133,13 @@ class QuickAddProcessorTest extends AbstractQuickAddProcessorTest
             ->method($isFailedMessage ? 'getFailedMessage' : 'getSuccessMessage')
             ->willReturn($message);
 
-        $flashBag = $this->createMock('Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface');
+        $flashBag = $this->createMock(FlashBagInterface::class);
         $flashBag->expects($this->once())
             ->method('add')
             ->with($isFailedMessage ? 'error' : 'success', $message)
             ->willReturn($flashBag);
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|Session $session */
-        $session = $this->getMockBuilder('Symfony\Component\HttpFoundation\Session\Session')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $session = $this->createMock(Session::class);
         $session->expects($this->once())
             ->method('getFlashBag')
             ->willReturn($flashBag);
@@ -161,8 +147,7 @@ class QuickAddProcessorTest extends AbstractQuickAddProcessorTest
         $request->setSession($session);
     }
 
-    /** @return array */
-    public function processDataProvider()
+    public function processDataProvider(): array
     {
         return [
             'new shopping list' => [

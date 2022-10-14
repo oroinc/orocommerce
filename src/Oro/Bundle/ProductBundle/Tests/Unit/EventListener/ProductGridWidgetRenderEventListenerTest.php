@@ -9,25 +9,17 @@ use Oro\Bundle\ProductBundle\EventListener\ProductGridWidgetRenderEventListener;
 
 class ProductGridWidgetRenderEventListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var ProductGridWidgetRenderEventListener */
-    protected $listener;
-
     /** @var \PHPUnit\Framework\MockObject\MockObject|RequestParameterBagFactory */
-    protected $requestParameterBagFactory;
+    private $requestParameterBagFactory;
+
+    /** @var ProductGridWidgetRenderEventListener */
+    private $listener;
 
     protected function setUp(): void
     {
-        $this->requestParameterBagFactory = $this
-            ->getMockBuilder('Oro\Bundle\DataGridBundle\Datagrid\RequestParameterBagFactory')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->requestParameterBagFactory = $this->createMock(RequestParameterBagFactory::class);
 
         $this->listener = new ProductGridWidgetRenderEventListener($this->requestParameterBagFactory);
-    }
-
-    protected function tearDown(): void
-    {
-        unset($this->listener, $this->requestParameterBagFactory);
     }
 
     public function testOnWidgetRender()
@@ -35,7 +27,8 @@ class ProductGridWidgetRenderEventListenerTest extends \PHPUnit\Framework\TestCa
         $gridParams = ['i' => 1, 'p' => 25, 's' => []];
         $event = new ProductGridWidgetRenderEvent(['grid' => ['removed' => 'params']]);
 
-        $this->requestParameterBagFactory->expects($this->once())->method('createParameters')
+        $this->requestParameterBagFactory->expects($this->once())
+            ->method('createParameters')
             ->willReturn(new ParameterBag($gridParams));
         $this->listener->onWidgetRender($event);
 

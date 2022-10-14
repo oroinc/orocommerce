@@ -49,7 +49,7 @@ class AttributeFamilyUsageInVariantFieldValidatorTest extends ConstraintValidato
         $config->expects($this->any())
             ->method('get')
             ->withAnyParameters()
-            ->will($this->returnArgument(2));
+            ->willReturnArgument(2);
 
         $attributeProvider = $this->createMock(ConfigProvider::class);
         $attributeProvider->expects($this->any())
@@ -75,6 +75,9 @@ class AttributeFamilyUsageInVariantFieldValidatorTest extends ConstraintValidato
         parent::setUp();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     protected function createValidator(): AttributeFamilyUsageInVariantFieldValidator
     {
         return new AttributeFamilyUsageInVariantFieldValidator(

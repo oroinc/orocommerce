@@ -7,32 +7,24 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class QuoteProductOfferFormatterTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var QuoteProductOfferFormatter
-     */
-    protected $formatter;
+    /** @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface */
+    private $translator;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface
-     */
-    protected $translator;
+    /** @var QuoteProductOfferFormatter */
+    private $formatter;
 
-    /**
-     * {@inheritDoc}
-     */
     protected function setUp(): void
     {
-        $this->translator   = $this->createMock('Symfony\Contracts\Translation\TranslatorInterface');
+        $this->translator = $this->createMock(TranslatorInterface::class);
 
-        $this->formatter    = new QuoteProductOfferFormatter($this->translator);
+        $this->formatter = new QuoteProductOfferFormatter($this->translator);
     }
 
     public function testFormatPriceTypeLabel()
     {
         $this->translator->expects($this->once())
             ->method('trans')
-            ->with('oro.sale.quoteproductoffer.price_type.test_type')
-        ;
+            ->with('oro.sale.quoteproductoffer.price_type.test_type');
 
         $this->formatter->formatPriceTypeLabel('test_type');
     }
@@ -44,18 +36,14 @@ class QuoteProductOfferFormatterTest extends \PHPUnit\Framework\TestCase
     {
         $this->translator->expects($this->any())
             ->method('trans')
-            ->will($this->returnCallback(function ($type) {
+            ->willReturnCallback(function ($type) {
                 return $type;
-            }))
-        ;
+            });
 
         $this->assertSame($expectedData, $this->formatter->formatPriceTypeLabels($inputData));
     }
 
-    /**
-     * @return array
-     */
-    public function formatPriceTypeLabelsProvider()
+    public function formatPriceTypeLabelsProvider(): array
     {
         return [
             [

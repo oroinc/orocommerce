@@ -15,32 +15,19 @@ class PriceListSystemConfigSubscriberTest extends \PHPUnit\Framework\TestCase
 {
     use ConfigsGeneratorTrait;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|PriceListConfigConverter
-     */
-    protected $converterMock;
+    /** @var \PHPUnit\Framework\MockObject\MockObject|PriceListConfigConverter */
+    private $converterMock;
 
-    /**
-     * @var PriceListRelationTriggerHandler|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $changeTriggerHandler;
+    /** @var PriceListRelationTriggerHandler|\PHPUnit\Framework\MockObject\MockObject */
+    private $changeTriggerHandler;
 
-    /**
-     * @var PriceListSystemConfigSubscriber
-     */
-    protected $subscriber;
+    /** @var PriceListSystemConfigSubscriber */
+    private $subscriber;
 
     protected function setUp(): void
     {
-        $this->converterMock = $this
-            ->getMockBuilder(PriceListConfigConverter::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->changeTriggerHandler = $this
-            ->getMockBuilder(PriceListRelationTriggerHandler::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->converterMock = $this->createMock(PriceListConfigConverter::class);
+        $this->changeTriggerHandler = $this->createMock(PriceListRelationTriggerHandler::class);
 
         $this->subscriber = new PriceListSystemConfigSubscriber(
             $this->converterMock,
@@ -50,8 +37,7 @@ class PriceListSystemConfigSubscriberTest extends \PHPUnit\Framework\TestCase
 
     public function testFormPreSet()
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|ConfigManager $configManager */
-        $configManager = $this->getConfigManager();
+        $configManager = $this->createMock(ConfigManager::class);
         $settings = [
             'oro_pricing___default_price_lists' => [
                 'value' => [[1, 100], [2, 200]],
@@ -90,7 +76,7 @@ class PriceListSystemConfigSubscriberTest extends \PHPUnit\Framework\TestCase
             'value' => $converted,
         ];
 
-        $configManager = $this->getConfigManager();
+        $configManager = $this->createMock(ConfigManager::class);
 
         $event = new ConfigSettingsUpdateEvent($configManager, $settings);
 
@@ -106,17 +92,15 @@ class PriceListSystemConfigSubscriberTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider updateAfterDataProvider
-     * @param array   $changeSet
-     * @param boolean $dispatch
      */
-    public function testUpdateAfter($changeSet, $dispatch)
+    public function testUpdateAfter(array $changeSet, bool $dispatch)
     {
         $converted = [
             ['priceList' => 1, 'sort_order' => 100],
             ['priceList' => 2, 'sort_order' => 200],
         ];
         $values = $this->createConfigs(2);
-        $configManager = $this->getConfigManager();
+        $configManager = $this->createMock(ConfigManager::class);
 
         $settings = [
             'value' => $values,
@@ -130,21 +114,16 @@ class PriceListSystemConfigSubscriberTest extends \PHPUnit\Framework\TestCase
 
         $this->subscriber->beforeSave($event);
         if ($dispatch) {
-            $this->changeTriggerHandler
-                ->expects($this->once())
+            $this->changeTriggerHandler->expects($this->once())
                 ->method('handleConfigChange');
         } else {
-            $this->changeTriggerHandler
-                ->expects($this->never())
+            $this->changeTriggerHandler->expects($this->never())
                 ->method('handleConfigChange');
         }
         $this->subscriber->updateAfter(new ConfigUpdateEvent($changeSet));
     }
 
-    /**
-     * @return array
-     */
-    public function updateAfterDataProvider()
+    public function updateAfterDataProvider(): array
     {
         return [
             'changedAndApplicable' => [
@@ -192,23 +171,9 @@ class PriceListSystemConfigSubscriberTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdateAfterWithNotApplicable()
     {
-        $this->changeTriggerHandler
-            ->expects($this->never())
+        $this->changeTriggerHandler->expects($this->never())
             ->method('handleConfigChange');
 
         $this->subscriber->updateAfter(new ConfigUpdateEvent([]));
-    }
-
-    /**
-     * @return ConfigManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected function getConfigManager()
-    {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|ConfigManager $configManager */
-        $configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        return $configManager;
     }
 }

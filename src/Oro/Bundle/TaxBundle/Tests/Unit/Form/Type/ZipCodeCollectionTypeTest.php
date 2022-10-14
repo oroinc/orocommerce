@@ -10,29 +10,14 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ZipCodeCollectionTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * @var ZipCodeCollectionType
-     */
-    protected $formType;
+    /** @var ZipCodeCollectionType */
+    private $formType;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->formType = new ZipCodeCollectionType();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown(): void
-    {
-        unset($this->formType);
-
-        parent::tearDown();
     }
 
     public function testGetName()
@@ -52,12 +37,7 @@ class ZipCodeCollectionTypeTest extends FormIntegrationTestCase
         $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())
             ->method('setDefaults')
-            ->with(
-                [
-                    'entry_type' => ZipCodeType::class,
-                    'required' => false,
-                ]
-            );
+            ->with(['entry_type' => ZipCodeType::class, 'required' => false]);
 
         $this->formType->configureOptions($resolver);
     }

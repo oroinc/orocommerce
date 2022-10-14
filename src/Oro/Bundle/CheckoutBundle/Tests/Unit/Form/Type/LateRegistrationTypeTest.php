@@ -13,31 +13,17 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class LateRegistrationTypeTest extends FormIntegrationTestCase
 {
     /**
-     * @var LateRegistrationType
-     */
-    private $formType;
-
-    /**
      * {@inheritdoc}
      */
-    protected function setUp(): void
-    {
-        $this->formType = new LateRegistrationType();
-        parent::setUp();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         $validator = $this->createMock(ValidatorInterface::class);
-        $validator
+        $validator->expects($this->any())
             ->method('validate')
-            ->will($this->returnValue(new ConstraintViolationList()));
-        $validator
+            ->willReturn(new ConstraintViolationList());
+        $validator->expects($this->any())
             ->method('getMetadataFor')
-            ->will($this->returnValue(new ClassMetadata(Form::class)));
+            ->willReturn(new ClassMetadata(Form::class));
 
         return [
             new ValidatorExtension($validator),

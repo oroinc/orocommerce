@@ -52,17 +52,10 @@ class ResolvableMatcherTest extends AbstractMatcherTest
             ->setRegion($region)
             ->setRegionText($regionText);
 
-        $productTaxCode = 'PRODUCT_TAX_CODE';
-        $accountTaxCode = 'ACCOUNT_TAX_CODE';
-        $taxCodes = [];
-        if ($productTaxCode) {
-            $taxCodes[] = TaxCode::create($productTaxCode, TaxCodeInterface::TYPE_PRODUCT);
-        }
-        if ($accountTaxCode) {
-            $taxCodes[] = TaxCode::create($accountTaxCode, TaxCodeInterface::TYPE_ACCOUNT);
-        }
-
-        $taxCodes = TaxCodes::create($taxCodes);
+        $taxCodes = TaxCodes::create([
+            TaxCode::create('PRODUCT_TAX_CODE', TaxCodeInterface::TYPE_PRODUCT),
+            TaxCode::create('ACCOUNT_TAX_CODE', TaxCodeInterface::TYPE_ACCOUNT)
+        ]);
 
         $this->resolvableMatcher->match($address, $taxCodes);
     }

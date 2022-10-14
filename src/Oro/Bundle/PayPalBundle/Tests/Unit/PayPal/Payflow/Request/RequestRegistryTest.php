@@ -8,7 +8,7 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Request\RequestRegistry;
 class RequestRegistryTest extends \PHPUnit\Framework\TestCase
 {
     /** @var RequestRegistry */
-    protected $registry;
+    private $registry;
 
     protected function setUp(): void
     {
@@ -17,9 +17,10 @@ class RequestRegistryTest extends \PHPUnit\Framework\TestCase
 
     public function testAddRequest()
     {
-        /** @var RequestInterface|\PHPUnit\Framework\MockObject\MockObject $request */
-        $request = $this->createMock('Oro\Bundle\PayPalBundle\PayPal\Payflow\Request\RequestInterface');
-        $request->expects($this->once())->method('getTransactionType')->willReturn('X');
+        $request = $this->createMock(RequestInterface::class);
+        $request->expects($this->once())
+            ->method('getTransactionType')
+            ->willReturn('X');
 
         $this->registry->addRequest($request);
 
@@ -36,9 +37,10 @@ class RequestRegistryTest extends \PHPUnit\Framework\TestCase
 
     public function testGetRequest()
     {
-        /** @var RequestInterface|\PHPUnit\Framework\MockObject\MockObject $expectedRequest */
-        $expectedRequest = $this->createMock('Oro\Bundle\PayPalBundle\PayPal\Payflow\Request\RequestInterface');
-        $expectedRequest->expects($this->once())->method('getTransactionType')->willReturn('A');
+        $expectedRequest = $this->createMock(RequestInterface::class);
+        $expectedRequest->expects($this->once())
+            ->method('getTransactionType')
+            ->willReturn('A');
         $this->registry->addRequest($expectedRequest);
 
         $actualRequest = $this->registry->getRequest('A');

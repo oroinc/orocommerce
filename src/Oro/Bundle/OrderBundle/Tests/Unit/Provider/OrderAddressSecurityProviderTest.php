@@ -14,9 +14,6 @@ use Symfony\Component\Yaml\Parser;
 
 class OrderAddressSecurityProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var OrderAddressSecurityProvider */
-    private $provider;
-
     /** @var \PHPUnit\Framework\MockObject\MockObject|AuthorizationCheckerInterface */
     private $authorizationChecker;
 
@@ -25,6 +22,9 @@ class OrderAddressSecurityProviderTest extends \PHPUnit\Framework\TestCase
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|OrderAddressProvider */
     private $orderAddressProvider;
+
+    /** @var OrderAddressSecurityProvider */
+    private $provider;
 
     protected function setUp(): void
     {
@@ -43,11 +43,8 @@ class OrderAddressSecurityProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider manualEditDataProvider
-     * @param string $type
-     * @param string $permissionName
-     * @param bool $permission
      */
-    public function testIsManualEditGranted($type, $permissionName, $permission)
+    public function testIsManualEditGranted(string $type, string $permissionName, bool $permission)
     {
         $this->authorizationChecker->expects($this->atLeastOnce())
             ->method('isGranted')
@@ -57,10 +54,7 @@ class OrderAddressSecurityProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($permission, $this->provider->isManualEditGranted($type));
     }
 
-    /**
-     * @return array
-     */
-    public function manualEditDataProvider()
+    public function manualEditDataProvider(): array
     {
         return [
             ['billing', 'oro_order_address_billing_allow_manual_backend', true],
@@ -73,31 +67,23 @@ class OrderAddressSecurityProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider permissionsDataProvider
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
-     *
-     * @param string $userClass
-     * @param string $addressType
-     * @param array|null $isGranted
-     * @param bool $hasCustomerAddresses
-     * @param bool $hasCustomerUserAddresses
-     * @param bool $hasEntity
-     * @param bool $isAddressGranted
-     * @param bool $isCustomerAddressGranted
-     * @param bool $isCustomerUserAddressGranted
      */
     public function testIsAddressGranted(
-        $userClass,
-        $addressType,
-        $isGranted,
-        $hasCustomerAddresses,
-        $hasCustomerUserAddresses,
-        $hasEntity,
-        $isAddressGranted,
-        $isCustomerAddressGranted,
-        $isCustomerUserAddressGranted
+        string $userClass,
+        string $addressType,
+        ?array $isGranted,
+        ?bool $hasCustomerAddresses,
+        ?bool $hasCustomerUserAddresses,
+        ?bool $hasEntity,
+        ?bool $isAddressGranted,
+        ?bool $isCustomerAddressGranted,
+        ?bool $isCustomerUserAddressGranted
     ) {
-        $this->orderAddressProvider->expects($this->any())->method('getCustomerAddresses')
+        $this->orderAddressProvider->expects($this->any())
+            ->method('getCustomerAddresses')
             ->willReturn($hasCustomerAddresses);
-        $this->orderAddressProvider->expects($this->any())->method('getCustomerUserAddresses')
+        $this->orderAddressProvider->expects($this->any())
+            ->method('getCustomerUserAddresses')
             ->willReturn($hasCustomerUserAddresses);
 
         $this->frontendHelper->expects($this->any())
@@ -106,9 +92,8 @@ class OrderAddressSecurityProviderTest extends \PHPUnit\Framework\TestCase
         $this->authorizationChecker->expects($this->any())
             ->method('isGranted')
             ->with($this->isType('string'))
-            ->will($this->returnValueMap((array)$isGranted));
+            ->willReturnMap((array)$isGranted);
 
-        $order = null;
         $customer = null;
         $customerUser = null;
         if ($hasEntity) {
@@ -131,12 +116,7 @@ class OrderAddressSecurityProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @return array
-     *
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     */
-    public function permissionsDataProvider()
+    public function permissionsDataProvider(): array
     {
         $finder = new Finder();
         $yaml = new Parser();
@@ -144,7 +124,7 @@ class OrderAddressSecurityProviderTest extends \PHPUnit\Framework\TestCase
 
         $finder->files()->in(__DIR__ . DIRECTORY_SEPARATOR . 'fixtures');
         foreach ($finder as $file) {
-            $data = $data + $yaml->parse(file_get_contents($file));
+            $data += $yaml->parse(file_get_contents($file));
         }
 
         return $data;

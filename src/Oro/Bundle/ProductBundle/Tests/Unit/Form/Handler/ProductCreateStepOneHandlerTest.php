@@ -8,46 +8,38 @@ use Symfony\Component\HttpFoundation\Request;
 
 class ProductCreateStepOneHandlerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ProductCreateStepOneHandler
-     */
-    protected $handler;
+    /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $form;
 
-    /**
-     * @var FormInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $form;
+    /** @var Request|\PHPUnit\Framework\MockObject\MockObject */
+    private $request;
 
-    /**
-     * @var Request|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $request;
+    /** @var ProductCreateStepOneHandler */
+    private $handler;
 
     protected function setUp(): void
     {
-        $this->form = $this->createMock('Symfony\Component\Form\FormInterface');
-        $this->request = $this->getMockBuilder('Symfony\Component\HttpFoundation\Request')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->form = $this->createMock(FormInterface::class);
+        $this->request = $this->createMock(Request::class);
 
         $this->handler = new ProductCreateStepOneHandler($this->form, $this->request);
     }
 
-    protected function assertValidForm($isValid = true)
+    private function assertValidForm(bool $isValid): void
     {
         $this->request->expects($this->once())
             ->method('isMethod')
             ->with('POST')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
         $this->form->expects($this->once())
             ->method('handleRequest')
             ->with($this->request);
         $this->form->expects($this->once())
             ->method('isSubmitted')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
         $this->form->expects($this->once())
             ->method('isValid')
-            ->will($this->returnValue($isValid));
+            ->willReturn($isValid);
     }
 
     public function testFalseProcess()

@@ -8,64 +8,52 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Host\HostAddressProvider;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Host\HostAddressProviderInterface;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsResolver;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\Partner;
+use Oro\Bundle\PayPalBundle\PayPal\Payflow\Processor\ProcessorInterface;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Processor\ProcessorRegistry;
+use Oro\Bundle\PayPalBundle\PayPal\Payflow\Request\RequestInterface;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Request\RequestRegistry;
+use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\ResponseInterface;
 
 class GatewayTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var Gateway */
-    protected $gateway;
-
     /** @var ProcessorRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    protected $processorRegistry;
+    private $processorRegistry;
 
     /** @var RequestRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    protected $requestRegistry;
+    private $requestRegistry;
 
     /** @var ClientInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $client;
+    private $client;
 
-    /** @var HostAddressProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $hostAddressProvider;
+    /** @var Gateway */
+    private $gateway;
 
     protected function setUp(): void
     {
-        $this->processorRegistry = $this->createMock(
-            'Oro\Bundle\PayPalBundle\PayPal\Payflow\Processor\ProcessorRegistry'
-        );
+        $this->processorRegistry = $this->createMock(ProcessorRegistry::class);
+        $this->requestRegistry = $this->createMock(RequestRegistry::class);
+        $this->client = $this->createMock(ClientInterface::class);
 
-        $this->requestRegistry = $this
-            ->getMockBuilder('Oro\Bundle\PayPalBundle\PayPal\Payflow\Request\RequestRegistry')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->client = $this->createMock('Oro\Bundle\PayPalBundle\PayPal\Payflow\Client\ClientInterface');
-
-        $this->hostAddressProvider = $this->createMock(HostAddressProviderInterface::class);
-        $this->hostAddressProvider->expects($this->any())
+        $hostAddressProvider = $this->createMock(HostAddressProviderInterface::class);
+        $hostAddressProvider->expects($this->any())
             ->method('getHostAddress')
-            ->will($this->returnValueMap([
+            ->willReturnMap([
                 [true, HostAddressProvider::PILOT_HOST_ADDRESS],
                 [false, HostAddressProvider::PRODUCTION_HOST_ADDRESS]
-            ]));
-        $this->hostAddressProvider->expects($this->any())
+            ]);
+        $hostAddressProvider->expects($this->any())
             ->method('getFormAction')
-            ->will($this->returnValueMap([
+            ->willReturnMap([
                 [true, HostAddressProvider::PILOT_FORM_ACTION],
                 [false, HostAddressProvider::PRODUCTION_FORM_ACTION]
-            ]));
+            ]);
 
         $this->gateway = new Gateway(
-            $this->hostAddressProvider,
+            $hostAddressProvider,
             $this->client,
             $this->requestRegistry,
             $this->processorRegistry
         );
-    }
-
-    protected function tearDown(): void
-    {
-        unset($this->gateway, $this->client, $this->requestRegistry, $this->processorRegistry);
     }
 
     public function testRequest()
@@ -75,40 +63,31 @@ class GatewayTest extends \PHPUnit\Framework\TestCase
             Partner::PARTNER => 'PARTNER',
         ];
 
-        $request = $this->createMock('Oro\Bundle\PayPalBundle\PayPal\Payflow\Request\RequestInterface');
-        $request
-            ->expects($this->once())
+        $request = $this->createMock(RequestInterface::class);
+        $request->expects($this->once())
             ->method('configureOptions')
-            ->with(
-                $this->isInstanceOf('Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsResolver')
-            )
+            ->with($this->isInstanceOf(OptionsResolver::class))
             ->willReturnCallback(function (OptionsResolver $resolver) {
                 $resolver->setDefined(Partner::PARTNER);
             });
 
-        $this->requestRegistry
-            ->expects($this->once())
+        $this->requestRegistry->expects($this->once())
             ->method('getRequest')
             ->with($action)
             ->willReturn($request);
 
-        $processor = $this->createMock('Oro\Bundle\PayPalBundle\PayPal\Payflow\Processor\ProcessorInterface');
-        $processor
-            ->expects($this->once())
+        $processor = $this->createMock(ProcessorInterface::class);
+        $processor->expects($this->once())
             ->method('configureOptions')
-            ->with(
-                $this->isInstanceOf('Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsResolver')
-            );
+            ->with($this->isInstanceOf(OptionsResolver::class));
 
-        $this->processorRegistry
-            ->expects($this->once())
+        $this->processorRegistry->expects($this->once())
             ->method('getProcessor')
             ->with($options[Partner::PARTNER])
             ->willReturn($processor);
 
         $responseData = ['response' => 'data'];
-        $this->client
-            ->expects($this->once())
+        $this->client->expects($this->once())
             ->method('send')
             ->with(HostAddressProvider::PILOT_HOST_ADDRESS)
             ->willReturn($responseData);
@@ -116,7 +95,7 @@ class GatewayTest extends \PHPUnit\Framework\TestCase
         $this->gateway->setTestMode(true);
         $response = $this->gateway->request($action, $options);
 
-        $this->assertInstanceOf('Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\ResponseInterface', $response);
+        $this->assertInstanceOf(ResponseInterface::class, $response);
         $this->assertEquals($responseData, $response->getData());
     }
 
@@ -129,10 +108,7 @@ class GatewayTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(HostAddressProvider::PRODUCTION_FORM_ACTION, $this->gateway->getFormAction());
     }
 
-    /**
-     * @return array
-     */
-    public function sslVerificationEnabledProvider()
+    public function sslVerificationEnabledProvider(): array
     {
         return [
             [true],
@@ -142,20 +118,14 @@ class GatewayTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider sslVerificationEnabledProvider
-     * @param bool $enabled
      */
-    public function testSslVerificationEnabledIsPassedToClientInRequest($enabled)
+    public function testSslVerificationEnabledIsPassedToClientInRequest(bool $enabled)
     {
         $this->prepareRequest();
 
-        $this->client
-            ->expects($this->once())
+        $this->client->expects($this->once())
             ->method('send')
-            ->with(
-                $this->isType('string'),
-                $this->isType('array'),
-                ['SSL_VERIFY' => $enabled]
-            )
+            ->with($this->isType('string'), $this->isType('array'), ['SSL_VERIFY' => $enabled])
             ->willReturn([]);
 
         $this->gateway->setSslVerificationEnabled($enabled);
@@ -168,14 +138,9 @@ class GatewayTest extends \PHPUnit\Framework\TestCase
     {
         $this->prepareRequest();
 
-        $this->client
-            ->expects($this->once())
+        $this->client->expects($this->once())
             ->method('send')
-            ->with(
-                $this->isType('string'),
-                $this->isType('array'),
-                ['SSL_VERIFY' => true]
-            )
+            ->with($this->isType('string'), $this->isType('array'), ['SSL_VERIFY' => true])
             ->willReturn([]);
 
         $this->gateway->request('ACTION', [
@@ -190,14 +155,13 @@ class GatewayTest extends \PHPUnit\Framework\TestCase
         $proxyHost = '12.23.34.45';
         $proxyPort = 5555;
 
-        $this->client
-            ->expects($this->once())
+        $this->client->expects($this->once())
             ->method('send')
             ->with(
                 $this->isType('string'),
                 $this->isType('array'),
                 [
-                    'SSL_VERIFY'    => true,
+                    'SSL_VERIFY' => true,
                     'PROXY_HOST' => $proxyHost,
                     'PROXY_PORT' => $proxyPort,
                 ]
@@ -211,27 +175,22 @@ class GatewayTest extends \PHPUnit\Framework\TestCase
         ]);
     }
 
-    protected function prepareRequest()
+    private function prepareRequest()
     {
-        $request = $this->createMock('Oro\Bundle\PayPalBundle\PayPal\Payflow\Request\RequestInterface');
-        $request
-            ->expects($this->once())
+        $request = $this->createMock(RequestInterface::class);
+        $request->expects($this->once())
             ->method('configureOptions')
-            ->with(
-                $this->isInstanceOf('Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsResolver')
-            )
+            ->with($this->isInstanceOf(OptionsResolver::class))
             ->willReturnCallback(function (OptionsResolver $resolver) {
                 $resolver->setDefined(Partner::PARTNER);
             });
 
-        $this->requestRegistry
-            ->expects($this->once())
+        $this->requestRegistry->expects($this->once())
             ->method('getRequest')
             ->willReturn($request);
 
-        $processor = $this->createMock('Oro\Bundle\PayPalBundle\PayPal\Payflow\Processor\ProcessorInterface');
-        $this->processorRegistry
-            ->expects($this->once())
+        $processor = $this->createMock(ProcessorInterface::class);
+        $this->processorRegistry->expects($this->once())
             ->method('getProcessor')
             ->willReturn($processor);
     }

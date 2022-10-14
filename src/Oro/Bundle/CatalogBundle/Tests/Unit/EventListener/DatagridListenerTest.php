@@ -11,21 +11,19 @@ use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
+use Oro\Bundle\DataGridBundle\Event\PreBuild;
 
 class DatagridListenerTest extends \PHPUnit\Framework\TestCase
 {
-    const DATA_CLASS = 'Oro\Bundle\CatalogBundle\Entity\Category';
-    const QUERY_AND_PATH = '[source][query][where][and]';
-    const QUERY_OR_PATH = '[source][query][where][or]';
-    const OPTIONS_CATEGORY = '[options][urlParams][categoryId]';
-    const OPTIONS_SUBCATEGORY = '[options][urlParams][includeSubcategories]';
-    const OPTIONS_NOT_CATEGORIZED = '[options][urlParams][includeNotCategorizedProducts]';
-    const CATEGORY_ID_ALIAS = 'productCategoryIds';
+    private const DATA_CLASS = Category::class;
+    private const QUERY_AND_PATH = '[source][query][where][and]';
+    private const QUERY_OR_PATH = '[source][query][where][or]';
+    private const OPTIONS_CATEGORY = '[options][urlParams][categoryId]';
+    private const OPTIONS_SUBCATEGORY = '[options][urlParams][includeSubcategories]';
+    private const OPTIONS_NOT_CATEGORIZED = '[options][urlParams][includeNotCategorizedProducts]';
+    private const CATEGORY_ID_ALIAS = 'productCategoryIds';
 
-    /**
-     * @var array
-     */
-    protected static $expectedTemplate = [
+    private static array $expectedTemplate = [
         'source' => [
             'query' => [
                 'select' => [
@@ -61,31 +59,26 @@ class DatagridListenerTest extends \PHPUnit\Framework\TestCase
     ];
 
     /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    protected $doctrine;
+    private $doctrine;
 
     /** @var RequestProductHandler|\PHPUnit\Framework\MockObject\MockObject */
-    protected $requestProductHandler;
+    private $requestProductHandler;
 
     /** @var DatagridListener */
-    protected $listener;
+    private $listener;
 
     protected function setUp(): void
     {
-        $this->doctrine = $this->getMockBuilder('Doctrine\Persistence\ManagerRegistry')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->requestProductHandler = $this
-            ->getMockBuilder('Oro\Bundle\CatalogBundle\Handler\RequestProductHandler')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
+        $this->requestProductHandler = $this->createMock(RequestProductHandler::class);
+
         $this->listener = new DatagridListener($this->doctrine, $this->requestProductHandler);
         $this->listener->setDataClass(self::DATA_CLASS);
     }
 
     public function testOnBuildBeforeProductsSelect()
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|DatagridInterface $datagrid */
-        $datagrid = $this->createMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
+        $datagrid = $this->createMock(DatagridInterface::class);
         $config = DatagridConfiguration::create([]);
 
         $event = new BuildBefore($datagrid, $config);
@@ -97,17 +90,11 @@ class DatagridListenerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider childrenIdsDataProvider
-     *
-     * @param boolean $useRequest
-     * @param int $catId
-     * @param boolean $includeSubcategoriesChoice
-     * @param array $childrenIds
-     * @param array $expectedParameters
      */
     public function testOnPreBuild(
-        $useRequest,
-        $catId,
-        $includeSubcategoriesChoice,
+        bool $useRequest,
+        int $catId,
+        bool $includeSubcategoriesChoice,
         array $childrenIds,
         array $expectedParameters = []
     ) {
@@ -115,9 +102,10 @@ class DatagridListenerTest extends \PHPUnit\Framework\TestCase
         $event = $this->createPreBuildEvent();
 
         if ($useRequest) {
-            $this->requestProductHandler->expects($this->atLeastOnce())->method('getCategoryId')->willReturn($catId);
-            $this->requestProductHandler
-                ->expects($this->atLeastOnce())
+            $this->requestProductHandler->expects($this->atLeastOnce())
+                ->method('getCategoryId')
+                ->willReturn($catId);
+            $this->requestProductHandler->expects($this->atLeastOnce())
                 ->method('getIncludeSubcategoriesChoice')
                 ->willReturn($includeSubcategoriesChoice);
         } else {
@@ -125,14 +113,18 @@ class DatagridListenerTest extends \PHPUnit\Framework\TestCase
             $event->getParameters()->set('includeSubcategories', $includeSubcategoriesChoice);
         }
 
-        /** @var CategoryRepository|\PHPUnit\Framework\MockObject\MockObject $repo */
-        $repo = $this->getMockBuilder('Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $repo->expects($this->atLeastOnce())->method('find')->with($catId)->willReturn($category);
+        $repo = $this->createMock(CategoryRepository::class);
+        $repo->expects($this->atLeastOnce())
+            ->method('find')
+            ->with($catId)
+            ->willReturn($category);
         $repo->expects($includeSubcategoriesChoice ? $this->atLeastOnce() : $this->never())
-            ->method('getChildrenIds')->with($category)->willReturn($childrenIds);
-        $this->doctrine->expects($this->atLeastOnce())->method('getRepository')->with(self::DATA_CLASS)
+            ->method('getChildrenIds')
+            ->with($category)
+            ->willReturn($childrenIds);
+        $this->doctrine->expects($this->atLeastOnce())
+            ->method('getRepository')
+            ->with(self::DATA_CLASS)
             ->willReturn($repo);
 
         $this->listener->onPreBuildProducts($event);
@@ -207,10 +199,11 @@ class DatagridListenerTest extends \PHPUnit\Framework\TestCase
         $this->requestProductHandler->expects($this->never())
             ->method('getIncludeSubcategoriesChoice');
 
-        $repo = $this->getMockBuilder('Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $repo->expects($this->atLeastOnce())->method('find')->with(1)->willReturn($category);
+        $repo = $this->createMock(CategoryRepository::class);
+        $repo->expects($this->atLeastOnce())
+            ->method('find')
+            ->with(1)
+            ->willReturn($category);
         $repo->expects($this->atLeastOnce())
             ->method('getChildrenIds')
             ->with($category)
@@ -253,10 +246,7 @@ class DatagridListenerTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($event->getConfig()->offsetGetByPath(self::OPTIONS_NOT_CATEGORIZED));
     }
 
-    /**
-     * @return array
-     */
-    public function childrenIdsDataProvider()
+    public function childrenIdsDataProvider(): array
     {
         return [
             [
@@ -297,14 +287,20 @@ class DatagridListenerTest extends \PHPUnit\Framework\TestCase
     public function testOnPreBuildWithoutExistingCategory()
     {
         $catId = 1;
-        $this->requestProductHandler->expects($this->once())->method('getCategoryId')->willReturn($catId);
-        /** @var CategoryRepository|\PHPUnit\Framework\MockObject\MockObject $repo */
-        $repo = $this->getMockBuilder('Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $repo->expects($this->once())->method('find')->with($catId)->willReturn(null);
-        $this->doctrine->expects($this->once())->method('getRepository')->with(self::DATA_CLASS)->willReturn($repo);
-        $repo->expects($this->never())->method('getChildrenIds');
+        $this->requestProductHandler->expects($this->once())
+            ->method('getCategoryId')
+            ->willReturn($catId);
+        $repo = $this->createMock(CategoryRepository::class);
+        $repo->expects($this->once())
+            ->method('find')
+            ->with($catId)
+            ->willReturn(null);
+        $this->doctrine->expects($this->once())
+            ->method('getRepository')
+            ->with(self::DATA_CLASS)
+            ->willReturn($repo);
+        $repo->expects($this->never())
+            ->method('getChildrenIds');
         $event = $this->createPreBuildEvent();
 
         $this->listener->onPreBuildProducts($event);
@@ -314,24 +310,26 @@ class DatagridListenerTest extends \PHPUnit\Framework\TestCase
     {
         $event = $this->createPreBuildEvent();
 
-        $this->requestProductHandler->expects($this->once())->method('getCategoryId')->willReturn(0);
-        $this->doctrine->expects($this->never())->method('getRepository');
+        $this->requestProductHandler->expects($this->once())
+            ->method('getCategoryId')
+            ->willReturn(0);
+        $this->doctrine->expects($this->never())
+            ->method('getRepository');
         $this->listener->onPreBuildProducts($event);
     }
 
-    /**
-     * @return \PHPUnit\Framework\MockObject\MockObject|\Oro\Bundle\DataGridBundle\Event\PreBuild
-     */
-    protected function createPreBuildEvent()
+    private function createPreBuildEvent(): PreBuild
     {
-        $event = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Event\PreBuild')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $event = $this->createMock(PreBuild::class);
         $config = DatagridConfiguration::create([]);
-        $event->expects($this->any())->method('getConfig')->willReturn($config);
+        $event->expects($this->any())
+            ->method('getConfig')
+            ->willReturn($config);
 
         $params = new ParameterBag();
-        $event->expects($this->any())->method('getParameters')->willReturn($params);
+        $event->expects($this->any())
+            ->method('getParameters')
+            ->willReturn($params);
 
         return $event;
     }

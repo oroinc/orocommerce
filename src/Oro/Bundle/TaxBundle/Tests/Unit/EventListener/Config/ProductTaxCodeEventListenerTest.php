@@ -16,22 +16,20 @@ class ProductTaxCodeEventListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var ProductTaxCodeEventListener */
-    protected $listener;
-
     /** @var \PHPUnit\Framework\MockObject\MockObject|DoctrineHelper */
-    protected $doctrineHelper;
+    private $doctrineHelper;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|TokenAccessorInterface */
-    protected $tokenAccessor;
+    private $tokenAccessor;
 
     /** @var ConfigManager */
-    protected $configManager;
+    private $configManager;
 
-    /**
-     * @var array
-     */
-    protected $data = [];
+    /** @var array */
+    private $data = [];
+
+    /** @var ProductTaxCodeEventListener */
+    private $listener;
 
     protected function setUp(): void
     {
@@ -53,7 +51,8 @@ class ProductTaxCodeEventListenerTest extends \PHPUnit\Framework\TestCase
     {
         $event = new ConfigSettingsUpdateEvent($this->configManager, []);
 
-        $this->doctrineHelper->expects($this->never())->method($this->anything());
+        $this->doctrineHelper->expects($this->never())
+            ->method($this->anything());
 
         $this->listener->formPreSet($event);
         $this->assertEquals([], $event->getSettings());
@@ -64,10 +63,7 @@ class ProductTaxCodeEventListenerTest extends \PHPUnit\Framework\TestCase
         $settings = ['oro_tax___digital_products_eu' => ['value' => $this->data]];
         $event = new ConfigSettingsUpdateEvent($this->configManager, $settings);
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|AbstractTaxCodeRepository $repository */
-        $repository = $this->getMockBuilder(AbstractTaxCodeRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $repository = $this->createMock(AbstractTaxCodeRepository::class);
 
         $organization = $this->getEntity(Organization::class);
         $this->tokenAccessor->expects($this->once())
@@ -79,11 +75,12 @@ class ProductTaxCodeEventListenerTest extends \PHPUnit\Framework\TestCase
             $this->getEntity(ProductTaxCode::class, ['code' => 'CODE2']),
             $this->getEntity(ProductTaxCode::class, ['code' => '2']),
         ];
-        $repository->expects($this->once())->method('findByCodes')->with(['CODE1', 'CODE2', '2'], $organization)
+        $repository->expects($this->once())
+            ->method('findByCodes')
+            ->with(['CODE1', 'CODE2', '2'], $organization)
             ->willReturn($taxCodes);
 
-        $this->doctrineHelper
-            ->expects($this->once())
+        $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepository')
             ->willReturn($repository);
 
@@ -110,20 +107,19 @@ class ProductTaxCodeEventListenerTest extends \PHPUnit\Framework\TestCase
 
         $event = new ConfigSettingsUpdateEvent($this->configManager, $settings);
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|AbstractTaxCodeRepository $repository */
-        $repository = $this->getMockBuilder(AbstractTaxCodeRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $repository = $this->createMock(AbstractTaxCodeRepository::class);
 
         $taxCodes = [
             $this->getEntity(ProductTaxCode::class, ['id' => 1, 'code' => 'CODE1']),
             $this->getEntity(ProductTaxCode::class, ['id' => 2, 'code' => 'CODE2']),
         ];
 
-        $repository->expects($this->once())->method('findBy')->with(['id' => [1, 2]])->willReturn($taxCodes);
+        $repository->expects($this->once())
+            ->method('findBy')
+            ->with(['id' => [1, 2]])
+            ->willReturn($taxCodes);
 
-        $this->doctrineHelper
-            ->expects($this->once())
+        $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepository')
             ->willReturn($repository);
 
