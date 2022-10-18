@@ -266,6 +266,8 @@ services:
             - "@validator"
             - "@oro_product.helper.product_grouper.factory"
             - "@event_dispatcher"
+        calls:
+            - [setPreloadingManager, ['@oro_entity.manager.preloading_manager']]
 
     oro_product.event_listener.related_items_product_edit_listener:
         class: Oro\Bundle\ProductBundle\EventListener\RelatedItemsProductEditListener
