@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Form\Handler;
 
 use Box\Spout\Common\Exception\UnsupportedTypeException;
+use Oro\Bundle\EntityBundle\Manager\PreloadingManager;
 use Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorInterface;
 use Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry;
 use Oro\Bundle\ProductBundle\Event\QuickAddRowsCollectionReadyEvent;
@@ -65,6 +66,16 @@ class QuickAddHandler
      */
     protected $productGrouperFactory;
 
+    protected ?PreloadingManager $preloadingManager = null;
+
+    protected array $preloadingConfig = [
+        'names' => [],
+        'unitPrecisions' => [],
+        'minimumQuantityToOrder' => [],
+        'maximumQuantityToOrder' => [],
+        'category' => ['minimumQuantityToOrder' => [], 'maximumQuantityToOrder' => []],
+    ];
+
     public function __construct(
         ProductFormProvider $productFormProvider,
         QuickAddRowCollectionBuilder $quickAddRowCollectionBuilder,
@@ -83,6 +94,16 @@ class QuickAddHandler
         $this->validator = $validator;
         $this->productGrouperFactory = $productGrouperFactory;
         $this->eventDispatcher = $eventDispatcher;
+    }
+
+    public function setPreloadingManager(PreloadingManager $preloadingManager = null): void
+    {
+        $this->preloadingManager = $preloadingManager;
+    }
+
+    public function setPreloadingConfig(array $preloadingConfig): void
+    {
+        $this->preloadingConfig = $preloadingConfig;
     }
 
     /**
@@ -117,7 +138,7 @@ class QuickAddHandler
                     return [
                         ProductDataStorage::PRODUCT_SKU_KEY => $productRow->productSku,
                         ProductDataStorage::PRODUCT_QUANTITY_KEY => $productRow->productQuantity,
-                        ProductDataStorage::PRODUCT_UNIT_KEY => $productRow->productUnit
+                        ProductDataStorage::PRODUCT_UNIT_KEY => $productRow->productUnit,
                     ];
                 },
                 $products
@@ -170,13 +191,15 @@ class QuickAddHandler
                 $data = $collection->getFormData();
                 $this->productFormProvider->getQuickAddForm($data);
             } catch (UnsupportedTypeException $e) {
-                $form->get(QuickAddImportFromFileType::FILE_FIELD_NAME)->addError(new FormError(
-                    $this->translator->trans(
-                        'oro.product.frontend.quick_add.invalid_file_type',
-                        [],
-                        'validators'
+                $form->get(QuickAddImportFromFileType::FILE_FIELD_NAME)->addError(
+                    new FormError(
+                        $this->translator->trans(
+                            'oro.product.frontend.quick_add.invalid_file_type',
+                            [],
+                            'validators'
+                        )
                     )
-                ));
+                );
             }
         }
 
@@ -255,11 +278,13 @@ class QuickAddHandler
         return $options;
     }
 
-    /**
-     * @internal param bool $allowEmpty
-     */
     protected function validateCollection(QuickAddRowCollection $collection)
     {
+        if ($this->preloadingManager) {
+            $this->preloadingManager
+                ->preloadInEntities(array_values($collection->getProducts()), $this->preloadingConfig);
+        }
+
         $this->validator->validate($collection);
         $collection->validateEventDispatcher();
     }

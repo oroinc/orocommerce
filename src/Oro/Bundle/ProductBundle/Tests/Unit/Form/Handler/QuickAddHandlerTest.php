@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Handler;
 
+use Oro\Bundle\EntityBundle\Manager\PreloadingManager;
 use Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorInterface;
 use Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -16,6 +17,8 @@ use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Component\Testing\TempDirExtension;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -25,6 +28,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class QuickAddHandlerTest extends \PHPUnit\Framework\TestCase
 {
@@ -447,6 +451,124 @@ class QuickAddHandlerTest extends \PHPUnit\Framework\TestCase
             ->with($file)
             ->willReturn($collection);
 
+        $actual = $this->handler->processImport($request);
+        $this->assertEquals($collection, $actual);
+    }
+
+    public function testProcessImportWithPreloadingManager(): void
+    {
+        $request = Request::create('/post/valid-without-response', 'POST');
+        $form = $this->getMockForAbstractClass(FormInterface::class);
+
+        $this->productFormProvider->expects($this->once())
+            ->method('getQuickAddImportForm')
+            ->willReturn($form);
+
+        $this->productFormProvider->expects($this->once())
+            ->method('getQuickAddForm')
+            ->willReturn($form);
+
+        $form->expects($this->once())
+            ->method('handleRequest')
+            ->with($request)
+            ->willReturn($form);
+        $form->expects($this->once())
+            ->method('isSubmitted')
+            ->willReturn(true);
+        $form->expects($this->once())
+            ->method('isValid')
+            ->willReturn(true);
+
+        $fileForm = $this->createMock(FormInterface::class);
+        $file = $this->createMock(UploadedFile::class);
+        $form->expects($this->once())
+            ->method('get')
+            ->with('file')
+            ->willReturn($fileForm);
+        $fileForm->expects($this->once())
+            ->method('getData')
+            ->willReturn($file);
+
+        $collection = new QuickAddRowCollection();
+        $collection->add(new QuickAddRow('idx', 'psku1', 1));
+        $product1 = (new Product())->setSku('psku1');
+        $collection->mapProducts(['PSKU1' => $product1]);
+
+        $this->quickAddRowCollectionBuilder->expects($this->once())
+            ->method('buildFromFile')
+            ->with($file)
+            ->willReturn($collection);
+
+        $preloadingManager = $this->createMock(PreloadingManager::class);
+        $preloadingManager
+            ->expects(self::once())
+            ->method('preloadInEntities')
+            ->with([$product1], [
+                'names' => [],
+                'unitPrecisions' => [],
+                'minimumQuantityToOrder' => [],
+                'maximumQuantityToOrder' => [],
+                'category' => ['minimumQuantityToOrder' => [], 'maximumQuantityToOrder' => []],
+            ]);
+
+        $this->handler->setPreloadingManager($preloadingManager);
+        $actual = $this->handler->processImport($request);
+        $this->assertEquals($collection, $actual);
+    }
+
+    public function testProcessImportWithPreloadingManagerAndCustomConfig(): void
+    {
+        $request = Request::create('/post/valid-without-response', 'POST');
+        $form = $this->getMockForAbstractClass(FormInterface::class);
+
+        $this->productFormProvider->expects($this->once())
+            ->method('getQuickAddImportForm')
+            ->willReturn($form);
+
+        $this->productFormProvider->expects($this->once())
+            ->method('getQuickAddForm')
+            ->willReturn($form);
+
+        $form->expects($this->once())
+            ->method('handleRequest')
+            ->with($request)
+            ->willReturn($form);
+        $form->expects($this->once())
+            ->method('isSubmitted')
+            ->willReturn(true);
+        $form->expects($this->once())
+            ->method('isValid')
+            ->willReturn(true);
+
+        $fileForm = $this->createMock(FormInterface::class);
+        $file = $this->createMock(UploadedFile::class);
+        $form->expects($this->once())
+            ->method('get')
+            ->with('file')
+            ->willReturn($fileForm);
+        $fileForm->expects($this->once())
+            ->method('getData')
+            ->willReturn($file);
+
+        $collection = new QuickAddRowCollection();
+        $collection->add(new QuickAddRow('idx', 'psku1', 1));
+        $product1 = (new Product())->setSku('psku1');
+        $collection->mapProducts(['PSKU1' => $product1]);
+
+        $this->quickAddRowCollectionBuilder->expects($this->once())
+            ->method('buildFromFile')
+            ->with($file)
+            ->willReturn($collection);
+
+        $preloadingManager = $this->createMock(PreloadingManager::class);
+        $preloadingConfig = ['names' => []];
+        $preloadingManager
+            ->expects(self::once())
+            ->method('preloadInEntities')
+            ->with([$product1], $preloadingConfig);
+
+        $this->handler->setPreloadingManager($preloadingManager);
+        $this->handler->setPreloadingConfig($preloadingConfig);
         $actual = $this->handler->processImport($request);
         $this->assertEquals($collection, $actual);
     }
