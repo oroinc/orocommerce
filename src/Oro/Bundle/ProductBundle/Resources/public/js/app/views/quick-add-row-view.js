@@ -1,4 +1,5 @@
 import _ from 'underscore';
+import $ from 'jquery';
 import BaseView from 'oroui/js/app/views/base/view';
 import UnitsUtil from 'oroproduct/js/app/units-util';
 import QuantityHelper from 'oroproduct/js/app/quantity-helper';
@@ -37,6 +38,8 @@ const QuickAddRowView = BaseView.extend({
 
     events() {
         return {
+            keyup: 'updateRemoveRowButton',
+            change: 'updateRemoveRowButton',
             [`keyup ${this.attrElem.quantity}`]: 'onQuantityChange',
             [`change ${this.attrElem.unit}`]: 'onUnitChange',
             [`change ${this.attrElem.display_name}`]: 'onDisplayNameChange',
@@ -228,7 +231,13 @@ const QuickAddRowView = BaseView.extend({
         if (!this.model.isValidUnit()) {
             this.$el.closest('form').validate().element(this.$(this.attrElem.unit)[0]);
         }
-        this.$(this.elem.remove).toggle(Boolean(this.model.get('sku')));
+        this.updateRemoveRowButton();
+    },
+
+    updateRemoveRowButton() {
+        const $inputs = this.$(Object.values(this.attrElem).join(','));
+        const enabled = $.makeArray($inputs).some(input => $(input).val());
+        this.$(this.elem.remove).toggle(enabled);
     },
 
     onModelRemoved() {
