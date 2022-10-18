@@ -21,6 +21,11 @@ Oro\Bundle\CatalogBundle\Entity\Category:
             - setParentCategory: ['@root_category']
             - addProduct: ['@product1']
 
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    unitPrecision{1..3}:
+        unit: '@each'
+        precision: '0'
+
 Oro\Bundle\ProductBundle\Entity\Product:
     product{1..3}:
         sku: 'PSKU<current()>'
@@ -32,3 +37,4 @@ Oro\Bundle\ProductBundle\Entity\Product:
             - addName: ['@locvalue<current()>']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
+        primaryUnitPrecision: '@unitPrecision<current()>'

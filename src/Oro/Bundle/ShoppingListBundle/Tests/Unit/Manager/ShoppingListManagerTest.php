@@ -354,16 +354,9 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
 
     public function testAddLineItemDuplicate()
     {
-        $persistedLineItems = [];
-        $this->em->expects($this->any())
-            ->method('persist')
-            ->willReturnCallback(function ($obj) use (&$persistedLineItems) {
-                if ($obj instanceof LineItem) {
-                    $persistedLineItems[] = $obj;
-                }
-            });
-
         $shoppingList = $this->getShoppingList(1);
+        $this->em->expects(self::exactly(2))
+            ->method('flush');
 
         $lineItem = (new LineItem())
             ->setUnit($this->getProductUnit('test', 1))
@@ -371,28 +364,20 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
 
         $this->manager->addLineItem($lineItem, $shoppingList);
         $this->assertCount(1, $shoppingList->getLineItems());
-        $this->assertCount(1, $persistedLineItems);
         $lineItemDuplicate = clone $lineItem;
         $lineItemDuplicate->setQuantity(5);
         $this->manager->addLineItem($lineItemDuplicate, $shoppingList);
         $this->assertCount(1, $shoppingList->getLineItems());
         /** @var LineItem $resultingItem */
-        $resultingItem = array_shift($persistedLineItems);
+        $resultingItem = $shoppingList->getLineItems()->first();
         $this->assertEquals(15, $resultingItem->getQuantity());
     }
 
     public function testAddLineItemDuplicateAndConcatNotes()
     {
-        $persistedLineItems = [];
-        $this->em->expects($this->any())
-            ->method('persist')
-            ->willReturnCallback(function ($obj) use (&$persistedLineItems) {
-                if ($obj instanceof LineItem) {
-                    $persistedLineItems[] = $obj;
-                }
-            });
-
         $shoppingList = $this->getShoppingList(1);
+        $this->em->expects(self::exactly(2))
+            ->method('flush');
 
         $lineItem = (new LineItem())
             ->setUnit($this->getProductUnit('test', 1))
@@ -408,7 +393,7 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(1, $shoppingList->getLineItems());
 
         /** @var LineItem $resultingItem */
-        $resultingItem = array_shift($persistedLineItems);
+        $resultingItem = $shoppingList->getLineItems()->first();
         $this->assertSame('Notes Duplicated Notes', $resultingItem->getNotes());
     }
 
@@ -555,7 +540,16 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
             $lineItems[] = new LineItem();
         }
 
-        $this->manager->bulkAddLineItems($lineItems, $shoppingList, 10);
+        $this->em
+            ->expects(self::exactly(2))
+            ->method('flush');
+
+        $this->totalManager
+            ->expects(self::once())
+            ->method('recalculateTotals')
+            ->with($shoppingList, false);
+
+        $this->manager->bulkAddLineItems($lineItems, $shoppingList, 5);
         $this->assertCount(10, $shoppingList->getLineItems());
     }
 

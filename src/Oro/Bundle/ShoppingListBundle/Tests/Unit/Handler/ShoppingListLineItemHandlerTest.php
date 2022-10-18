@@ -7,6 +7,7 @@ use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\UnitOfWork;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
@@ -31,31 +32,34 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit\Framework\TestCase
     use EntityTrait;
 
     /** @var ShoppingListLineItemHandler */
-    protected $handler;
+    private $handler;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|AuthorizationCheckerInterface */
-    protected $authorizationChecker;
+    private $authorizationChecker;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|TokenAccessorInterface */
-    protected $tokenAccessor;
+    private $tokenAccessor;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|ShoppingListManager */
-    protected $shoppingListManager;
+    private $shoppingListManager;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|CurrentShoppingListManager */
-    protected $currentShoppingListManager;
+    private $currentShoppingListManager;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry */
-    protected $managerRegistry;
+    private $managerRegistry;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|FeatureChecker */
-    protected $featureChecker;
+    private $featureChecker;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|ProductManager */
-    protected $productManager;
+    private $productManager;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|AclHelper */
     private $aclHelper;
+
+    /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $entityManager;
 
     protected function setUp(): void
     {
@@ -232,6 +236,16 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit\Framework\TestCase
             ->with($this->isInstanceOf(QueryBuilder::class), [])
             ->willReturnArgument(0);
 
+        $unitOfWork = $this->createMock(UnitOfWork::class);
+        $unitOfWork
+            ->expects(self::exactly(2))
+            ->method('markReadOnly');
+
+        $this->entityManager
+            ->expects(self::any())
+            ->method('getUnitOfWork')
+            ->willReturn($unitOfWork);
+
         $this->shoppingListManager->expects($this->once())->method('bulkAddLineItems')->with(
             $this->callback(
                 function (array $lineItems) use ($expectedLineItems, $customerUser, $organization) {
@@ -302,12 +316,12 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit\Framework\TestCase
      */
     protected function getManagerRegistry()
     {
-        $em = $this->createMock(EntityManager::class);
+        $this->entityManager = $this->createMock(EntityManager::class);
 
         /** @var AbstractQuery|\PHPUnit\Framework\MockObject\MockObject $query */
         $query = $this->getMockBuilder(AbstractQuery::class)
             ->disableOriginalConstructor()
-            ->setMethods(['iterate'])
+            ->setMethods(['toIterable'])
             ->getMockForAbstractClass();
 
         $product1 = $this->getEntity(Product::class, [
@@ -324,9 +338,9 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit\Framework\TestCase
             'primaryUnitPrecision' => (new ProductUnitPrecision())->setUnit(new ProductUnit())
         ]);
 
-        $iterableResult = [[$product1], [$product2]];
+        $iterableResult = [$product1, $product2];
         $query->expects($this->any())
-            ->method('iterate')
+            ->method('toIterable')
             ->willReturn($iterableResult);
 
         $queryBuilder = $this->createMock(QueryBuilder::class);
@@ -346,39 +360,25 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit\Framework\TestCase
             ->with($queryBuilder)
             ->willReturn($query);
 
-        $shoppingListRepository = $this->createMock(EntityRepository::class);
-        $productUnitRepository = $this->createMock(EntityRepository::class);
-
-        $productUnitRepository->expects($this->any())
-            ->method('findOneBy')
-            ->willReturnCallback(function ($unit) {
+        $this->entityManager->expects($this->any())
+            ->method('getReference')
+            ->willReturnCallback(function (string $unit) {
                 return $this->getEntity(ProductUnit::class, ['code' => $unit]);
             });
 
-        $em->expects($this->any())
-            ->method('getRepository')
-            ->will(
-                $this->returnValueMap(
-                    [
-                        [ShoppingList::class, $shoppingListRepository],
-                        [Product::class, $productRepository],
-                        [ProductUnit::class, $productUnitRepository],
-                    ]
-                )
-            );
+        $shoppingListRepository = $this->createMock(EntityRepository::class);
 
-        $em->expects($this->any())->method('getReference')->will(
-            $this->returnCallback(
-                function ($className, $id) {
-                    return $this->getEntity($className, ['id' => $id]);
-                }
-            )
-        );
+        $this->entityManager->expects($this->any())
+            ->method('getRepository')
+            ->willReturnMap([
+                [ShoppingList::class, $shoppingListRepository],
+                [Product::class, $productRepository],
+            ]);
 
         $managerRegistry = $this->createMock(Registry::class);
         $managerRegistry->expects($this->any())
             ->method('getManagerForClass')
-            ->willReturn($em);
+            ->willReturn($this->entityManager);
 
         return $managerRegistry;
     }

@@ -5,8 +5,11 @@ namespace Oro\Bundle\ShoppingListBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerVisitorOwnerAwareInterface;
+use Oro\Bundle\CustomerBundle\Entity\Ownership\AuditableFrontendCustomerAwareTrait;
 use Oro\Bundle\CustomerBundle\Entity\Ownership\AuditableFrontendCustomerUserAwareTrait;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
@@ -31,11 +34,6 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  *      }
  * )
  * @ORM\Entity(repositoryClass="Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository")
- * @ORM\AssociationOverrides({
- *      @ORM\AssociationOverride(name="customerUser",
- *          joinColumns=@ORM\JoinColumn(name="customer_user_id", referencedColumnName="id", onDelete="CASCADE")
- *      )
- * })
  * @Config(
  *      routeName="oro_shopping_list_index",
  *      routeView="oro_shopping_list_view",
@@ -167,6 +165,43 @@ class ShoppingList extends ExtendShoppingList implements
      * )
      **/
     protected $totals;
+
+    /**
+     * @var CustomerUser
+     *
+     * Overrides $customerUser property defined in {@see AuditableFrontendCustomerUserAwareTrait} to disable cascade
+     * persist.
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerUser")
+     * @ORM\JoinColumn(name="customer_user_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $customerUser;
+
+    /**
+     * @var Customer
+     *
+     * Overrides $customer property defined in {@see AuditableFrontendCustomerAwareTrait} to disable cascade persist.
+     *
+     * @ORM\ManyToOne(
+     *      targetEntity="Oro\Bundle\CustomerBundle\Entity\Customer"
+     * )
+     * @ORM\JoinColumn(name="customer_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $customer;
 
     /**
      * @var Subtotal
