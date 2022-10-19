@@ -1,0 +1,139 @@
+{
+  "success": true,
+  "data": {
+    "products": [
+      {
+        "sku": "product-1",
+        "product_name": "product-1.names.default",
+        "unit": "milliliter",
+        "quantity": 1,
+        "errors": [],
+        "additional": [],
+        "units": {
+          "milliliter": 0,
+          "liter": 3,
+          "bottle": 2
+        }
+      },
+      {
+        "sku": "product-1",
+        "product_name": "product-1.names.default",
+        "unit": "liter",
+        "quantity": 1.4,
+        "errors": [],
+        "additional": [],
+        "units": {
+          "milliliter": 0,
+          "liter": 3,
+          "bottle": 2
+        }
+      },
+      {
+        "sku": "product-1",
+        "product_name": "product-1.names.default",
+        "unit": "box",
+        "quantity": 5,
+        "errors": [
+          {
+            "message": "Unit 'box' doesn't exist for product product-1.",
+            "propertyPath": ""
+          }
+        ],
+        "additional": [],
+        "units": {
+          "milliliter": 0,
+          "liter": 3,
+          "bottle": 2
+        }
+      },
+      {
+        "sku": "product-2",
+        "product_name": "product-2.names.default",
+        "unit": "milliliter",
+        "quantity": 2.55,
+        "errors": [
+          {
+            "message": "Invalid precision for unit 'milliliter'.",
+            "propertyPath": ""
+          }
+        ],
+        "additional": [],
+        "units": {
+          "milliliter": 0,
+          "liter": 3,
+          "bottle": 1,
+          "box": 1
+        }
+      },
+      {
+        "sku": "product-3",
+        "product_name": "product-3.names.default",
+        "unit": "milliliter",
+        "quantity": 3,
+        "errors": [],
+        "additional": [],
+        "units": {
+          "milliliter": 0,
+          "liter": 3
+        }
+      },
+      {
+        "sku": "product-3",
+        "product_name": "product-3.names.default",
+        "unit": "liter5",
+        "quantity": 3,
+        "errors": [
+          {
+            "message": "Unit 'liter5' doesn't exist for product product-3.",
+            "propertyPath": ""
+          }
+        ],
+        "additional": [],
+        "units": {
+          "milliliter": 0,
+          "liter": 3
+        }
+      },
+      {
+        "sku": "SKU1",
+        "product_name": "",
+        "unit": "",
+        "quantity": 10.0112,
+        "errors": [
+          {
+            "message": "Item number SKU1 not found.",
+            "propertyPath": "product"
+          }
+        ],
+        "additional": []
+      },
+      {
+        "sku": "SKU2",
+        "product_name": "",
+        "unit": "",
+        "quantity": 0,
+        "errors": [
+          {
+            "message": "Item number SKU2 not found.",
+            "propertyPath": "product"
+          }
+        ],
+        "additional": []
+      },
+      {
+        "sku": "SKU3",
+        "product_name": "",
+        "unit": "",
+        "quantity": 0,
+        "errors": [
+          {
+            "message": "Item number SKU3 not found.",
+            "propertyPath": "product"
+          }
+        ],
+        "additional": []
+      }
+    ]
+
+  }
+}

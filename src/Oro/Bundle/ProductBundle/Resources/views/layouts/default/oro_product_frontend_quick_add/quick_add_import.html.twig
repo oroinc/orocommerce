@@ -10,6 +10,9 @@
 {% block _quick_add_import_form_start_widget %}
     {% set attr = {
         'data-page-component-view': 'oroproduct/js/app/views/quick-add-import-form-view',
+        'data-page-component-options': {
+            'quickAddImportWidget': is_optimized ? 'oro/quick-add-import-optimized-widget' : 'oro/quick-add-import-widget'
+        },
     }|merge(attr) %}
     {{ block('form_start_widget') }}
 {% endblock %}

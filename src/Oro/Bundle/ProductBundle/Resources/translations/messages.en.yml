@@ -517,6 +517,8 @@ oro:
                   Allows guests to use the quick order form. By default, this option is disabled.
                   For the quick order form to be displayed, at least one of the following options should be enabled:
                   guest RFQ, guest shopping list or guest checkout.
+                enable_quick_order_form_optimized:
+                    title: Enable Optimized Quick Order Form
                 unit_rounding_type.label: 'Unit Rounding Type'
                 single_unit_mode.label: 'Single Unit'
                 single_unit_mode_show_code.label: 'Show Unit Code'

@@ -68,14 +68,12 @@ class QuickAddRowCollectionValidatorTest extends ConstraintValidatorTestCase
         $this->assertEquals(1, $collection->getValidRows()->count());
     }
 
-    public function testNotValidItemsOfCollection()
+    public function testNotValidItemsOfCollection(): void
     {
         $collection = new QuickAddRowCollection();
         $quickAddRow = new QuickAddRow(1, 'SKU1', 3, 'item');
 
-        $product = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $product = $this->createMock(Product::class);
         $quickAddRow->setProduct($product);
         $collection->add($quickAddRow);
 
@@ -84,14 +82,26 @@ class QuickAddRowCollectionValidatorTest extends ConstraintValidatorTestCase
         $violation = $this->createMock(ConstraintViolation::class);
 
         $violationMessage = 'some.message';
-        $violation->method('getMessage')
+        $violation
+            ->expects(self::once())
+            ->method('getMessageTemplate')
             ->willReturn($violationMessage);
 
         $violationParameters = ['{{ sku }}' => 'SKU1', '{{ unit }}' => 'item'];
-        $violation->method('getParameters')
+        $violation
+            ->expects(self::once())
+            ->method('getParameters')
             ->willReturn($violationParameters);
 
-        $iterator->method('current')
+        $propertyPath = 'samplePath';
+        $violation
+            ->expects(self::once())
+            ->method('getPropertyPath')
+            ->willReturn($propertyPath);
+
+        $iterator
+            ->expects(self::once())
+            ->method('current')
             ->willReturn($violation);
 
         $violations = $this->createMock(ConstraintViolationList::class);
@@ -102,12 +112,25 @@ class QuickAddRowCollectionValidatorTest extends ConstraintValidatorTestCase
             ->willReturn(1);
 
         $this->validatorInterface->method('validate')
-            ->with($quickAddRow, null, $this->anything())
+            ->with($quickAddRow, null, self::anything())
             ->willReturn($violations);
 
         $this->validator->validate($collection, $this->constraint);
 
-        $this->assertEquals(1, $collection->getInvalidRows()->count());
+        self::assertEquals(1, $collection->getInvalidRows()->count());
+        self::assertEquals(
+            [
+                [
+                    'message' => $violationMessage,
+                    'parameters' => array_merge($violationParameters, [
+                        '{{ index }}' => $quickAddRow->getIndex(),
+                        '{{ sku }}' => $quickAddRow->getSku(),
+                    ]),
+                    'propertyPath' => $propertyPath,
+                ],
+            ],
+            $collection->getInvalidRows()[0]->getErrors()
+        );
     }
 
     /**

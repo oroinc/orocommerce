@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Layout\DataProvider;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddCopyPasteType;
@@ -37,6 +39,9 @@ class ProductFormProviderTest extends \PHPUnit\Framework\TestCase
     /** @var ProductVariantAvailabilityProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $productVariantAvailabilityProvider;
 
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $configManager;
+
     protected function setUp(): void
     {
         $this->formFactory = $this->createMock(FormFactoryInterface::class);
@@ -44,12 +49,15 @@ class ProductFormProviderTest extends \PHPUnit\Framework\TestCase
         $this->productVariantAvailabilityProvider = $this->getMockBuilder(ProductVariantAvailabilityProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $this->configManager = $this->createMock(ConfigManager::class);
 
         $this->provider = new ProductFormProvider(
             $this->formFactory,
             $this->router,
             $this->productVariantAvailabilityProvider
         );
+
+        $this->provider->setConfigManager($this->configManager);
     }
 
     public function testGetQuickAddFormView()
@@ -134,45 +142,134 @@ class ProductFormProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertInstanceOf(FormInterface::class, $data);
     }
 
-    public function testGetQuickAddImportFormView()
+    public function testGetQuickAddImportFormView(): void
     {
+        $this->configManager
+            ->expects(self::exactly(2))
+            ->method('get')
+            ->with(Configuration::getConfigKeyByName(Configuration::ENABLE_QUICK_ORDER_FORM_OPTIMIZED))
+            ->willReturn(false);
+        $action = '/import';
+        $this->router
+            ->expects(self::exactly(2))
+            ->method('generate')
+            ->with(ProductFormProvider::PRODUCT_QUICK_ADD_IMPORT_ROUTE_NAME)
+            ->willReturn($action);
+
         $formView = $this->createMock(FormView::class);
 
         $expectedForm = $this->createMock(FormInterface::class);
-        $expectedForm->expects($this->once())
+        $expectedForm->expects(self::once())
             ->method('createView')
             ->willReturn($formView);
 
-        $this->formFactory->expects($this->once())
+        $this->formFactory->expects(self::once())
             ->method('create')
-            ->with(QuickAddImportFromFileType::class)
+            ->with(QuickAddImportFromFileType::class, null, ['action' => $action])
             ->willReturn($expectedForm);
 
         // Get form without existing data in locale cache
         $data = $this->provider->getQuickAddImportFormView();
-        $this->assertInstanceOf(FormView::class, $data);
+        self::assertInstanceOf(FormView::class, $data);
 
         // Get form with existing data in locale cache
         $data = $this->provider->getQuickAddImportFormView();
-        $this->assertInstanceOf(FormView::class, $data);
+        self::assertInstanceOf(FormView::class, $data);
     }
 
-    public function testGetQuickAddImportForm()
+    public function testGetQuickAddImportFormViewWhenIsOptimized(): void
     {
+        $this->configManager
+            ->expects(self::exactly(2))
+            ->method('get')
+            ->with(Configuration::getConfigKeyByName(Configuration::ENABLE_QUICK_ORDER_FORM_OPTIMIZED))
+            ->willReturn(true);
+        $action = '/import-optimized';
+        $this->router
+            ->expects(self::exactly(2))
+            ->method('generate')
+            ->with(ProductFormProvider::PRODUCT_QUICK_ADD_IMPORT_ROUTE_NAME_OPTIMIZED)
+            ->willReturn($action);
+
+        $formView = $this->createMock(FormView::class);
+
+        $expectedForm = $this->createMock(FormInterface::class);
+        $expectedForm->expects(self::once())
+            ->method('createView')
+            ->willReturn($formView);
+
+        $this->formFactory->expects(self::once())
+            ->method('create')
+            ->with(QuickAddImportFromFileType::class, null, ['action' => $action])
+            ->willReturn($expectedForm);
+
+        // Get form without existing data in locale cache
+        $data = $this->provider->getQuickAddImportFormView();
+        self::assertInstanceOf(FormView::class, $data);
+
+        // Get form with existing data in locale cache
+        $data = $this->provider->getQuickAddImportFormView();
+        self::assertInstanceOf(FormView::class, $data);
+    }
+
+    public function testGetQuickAddImportForm(): void
+    {
+        $this->configManager
+            ->expects(self::exactly(2))
+            ->method('get')
+            ->with(Configuration::getConfigKeyByName(Configuration::ENABLE_QUICK_ORDER_FORM_OPTIMIZED))
+            ->willReturn(false);
+        $action = '/import';
+        $this->router
+            ->expects(self::exactly(2))
+            ->method('generate')
+            ->with(ProductFormProvider::PRODUCT_QUICK_ADD_IMPORT_ROUTE_NAME)
+            ->willReturn($action);
+
         $expectedForm = $this->createMock(FormInterface::class);
 
-        $this->formFactory->expects($this->once())
+        $this->formFactory->expects(self::once())
             ->method('create')
-            ->with(QuickAddImportFromFileType::class)
+            ->with(QuickAddImportFromFileType::class, null, ['action' => $action])
             ->willReturn($expectedForm);
 
         // Get form without existing data in locale cache
         $data = $this->provider->getQuickAddImportForm();
-        $this->assertInstanceOf(FormInterface::class, $data);
+        self::assertInstanceOf(FormInterface::class, $data);
 
         // Get form with existing data in locale cache
         $data = $this->provider->getQuickAddImportForm();
-        $this->assertInstanceOf(FormInterface::class, $data);
+        self::assertInstanceOf(FormInterface::class, $data);
+    }
+
+    public function testGetQuickAddImportFormWhenIsOptimized(): void
+    {
+        $this->configManager
+            ->expects(self::exactly(2))
+            ->method('get')
+            ->with(Configuration::getConfigKeyByName(Configuration::ENABLE_QUICK_ORDER_FORM_OPTIMIZED))
+            ->willReturn(true);
+        $action = '/import-optimized';
+        $this->router
+            ->expects(self::exactly(2))
+            ->method('generate')
+            ->with(ProductFormProvider::PRODUCT_QUICK_ADD_IMPORT_ROUTE_NAME_OPTIMIZED)
+            ->willReturn($action);
+
+        $expectedForm = $this->createMock(FormInterface::class);
+
+        $this->formFactory->expects(self::once())
+            ->method('create')
+            ->with(QuickAddImportFromFileType::class, null, ['action' => $action])
+            ->willReturn($expectedForm);
+
+        // Get form without existing data in locale cache
+        $data = $this->provider->getQuickAddImportForm();
+        self::assertInstanceOf(FormInterface::class, $data);
+
+        // Get form with existing data in locale cache
+        $data = $this->provider->getQuickAddImportForm();
+        self::assertInstanceOf(FormInterface::class, $data);
     }
 
     public function testGetLineItemFormView()

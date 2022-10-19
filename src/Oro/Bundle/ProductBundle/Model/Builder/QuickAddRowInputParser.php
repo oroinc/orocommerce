@@ -103,7 +103,7 @@ class QuickAddRowInputParser
             return $unit;
         }
 
-        return null;
+        return $unitName;
     }
 
     private function getAvailableProductUnitCodes(): array

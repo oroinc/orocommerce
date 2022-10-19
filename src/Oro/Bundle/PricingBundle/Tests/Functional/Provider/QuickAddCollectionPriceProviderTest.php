@@ -2,10 +2,12 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Provider;
 
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserAddressACLData;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaRequestHandler;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
+use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Event\QuickAddRowsCollectionReadyEvent;
 use Oro\Bundle\ProductBundle\Model\QuickAddField;
@@ -16,10 +18,9 @@ use Symfony\Component\HttpFoundation\Request;
 
 class QuickAddCollectionPriceProviderTest extends WebTestCase
 {
-    /**
-     * @var ProductRepository
-     */
-    private $productRepository;
+    use ConfigManagerAwareTestTrait;
+
+    private ProductRepository $productRepository;
 
     protected function setUp(): void
     {
@@ -41,8 +42,21 @@ class QuickAddCollectionPriceProviderTest extends WebTestCase
         $this->productRepository = $this->getClientInstance()->getContainer()->get('oro_product.repository.product');
     }
 
+    protected function tearDown(): void
+    {
+        self::getConfigManager()->set(
+            Configuration::getConfigKeyByName(Configuration::ENABLE_QUICK_ORDER_FORM_OPTIMIZED),
+            false
+        );
+    }
+
     public function testIfCorrectPricesAreBeingAddedToRowItems()
     {
+        self::getConfigManager()->set(
+            Configuration::getConfigKeyByName(Configuration::ENABLE_QUICK_ORDER_FORM_OPTIMIZED),
+            false
+        );
+
         $collection = $this->getValidCollection();
         $event = new QuickAddRowsCollectionReadyEvent($collection);
 
@@ -52,17 +66,61 @@ class QuickAddCollectionPriceProviderTest extends WebTestCase
         );
 
         $expectedResults = [
-          new QuickAddField('price', ['value' => 13.1, 'currency' => 'USD']),
-          new QuickAddField('price', ['value' => 20, 'currency' => 'USD']),
-          null
+            new QuickAddField('price', ['value' => 13.1, 'currency' => 'USD']),
+            new QuickAddField('price', ['value' => 20, 'currency' => 'USD']),
+            null,
         ];
         foreach ($collection as $i => $quickAddRow) {
             $this->assertEquals($expectedResults[$i], $quickAddRow->getAdditionalField('price'));
         }
     }
 
+    public function testIfCorrectPricesAreBeingAddedToRowItemsWhenIsOptimized(): void
+    {
+        self::getConfigManager()->set(
+            Configuration::getConfigKeyByName(Configuration::ENABLE_QUICK_ORDER_FORM_OPTIMIZED),
+            true
+        );
+
+        $collection = $this->getValidCollection();
+        $event = new QuickAddRowsCollectionReadyEvent($collection);
+
+        self::getContainer()->get('event_dispatcher')->dispatch($event, QuickAddRowsCollectionReadyEvent::NAME);
+
+        $expectedResults = [
+            new QuickAddField('prices', [
+                'bottle' => [['price' => 13.1, 'currency' => 'USD', 'quantity' => 1.0, 'unit' => 'bottle']],
+                'liter' => [
+                    ['price' => 10.0, 'currency' => 'USD', 'quantity' => 1.0, 'unit' => 'liter'],
+                    ['price' => 12.2, 'currency' => 'USD', 'quantity' => 10.0, 'unit' => 'liter'],
+                ],
+                'milliliter' => [['price' => 0, 'currency' => 'USD', 'quantity' => 1.0, 'unit' => 'milliliter']],
+            ]),
+            new QuickAddField('prices', [
+                'liter' => [
+                    ['price' => 20.0, 'currency' => 'USD', 'quantity' => 1.0, 'unit' => 'liter'],
+                    ['price' => 12.2, 'currency' => 'USD', 'quantity' => 12.0, 'unit' => 'liter'],
+                ],
+                'milliliter' => [['price' => 0, 'currency' => 'USD', 'quantity' => 1.0, 'unit' => 'milliliter']],
+            ]),
+            new QuickAddField('prices', [
+                'bottle' => [['price' => 200.5, 'currency' => 'USD', 'quantity' => 10.0, 'unit' => 'bottle']],
+                'milliliter' => [['price' => 0, 'currency' => 'USD', 'quantity' => 1.0, 'unit' => 'milliliter']],
+            ]),
+        ];
+
+        foreach ($collection as $i => $quickAddRow) {
+            self::assertEquals($expectedResults[$i], $quickAddRow->getAdditionalField('prices'));
+        }
+    }
+
     public function testIfCollectionSubtotalIsBeingCalculated()
     {
+        self::getConfigManager()->set(
+            Configuration::getConfigKeyByName(Configuration::ENABLE_QUICK_ORDER_FORM_OPTIMIZED),
+            false
+        );
+
         $collection = $this->getValidCollection();
         $event = new QuickAddRowsCollectionReadyEvent($collection);
 
@@ -77,6 +135,11 @@ class QuickAddCollectionPriceProviderTest extends WebTestCase
 
     public function testIfPriceIsCalculatedForFloatQuantityValues()
     {
+        self::getConfigManager()->set(
+            Configuration::getConfigKeyByName(Configuration::ENABLE_QUICK_ORDER_FORM_OPTIMIZED),
+            false
+        );
+
         $collection = $this->getValidCollection();
 
         $quickAddRow4 = new QuickAddRow(4, 'product-1', 12.5, 'liter');
@@ -98,6 +161,11 @@ class QuickAddCollectionPriceProviderTest extends WebTestCase
 
     public function testIfOnlyValidRowsAreBeingCalculated()
     {
+        self::getConfigManager()->set(
+            Configuration::getConfigKeyByName(Configuration::ENABLE_QUICK_ORDER_FORM_OPTIMIZED),
+            false
+        );
+
         $collection = $this->getValidCollection();
         $collection->get(1)->setValid(0);
         $event = new QuickAddRowsCollectionReadyEvent($collection);
@@ -110,7 +178,7 @@ class QuickAddCollectionPriceProviderTest extends WebTestCase
         $expectedResults = [
             new QuickAddField('price', ['value' => 13.1, 'currency' => 'USD']),
             null,
-            null
+            null,
         ];
         foreach ($collection as $i => $quickAddRow) {
             $this->assertEquals($expectedResults[$i], $quickAddRow->getAdditionalField('price'));
@@ -122,6 +190,11 @@ class QuickAddCollectionPriceProviderTest extends WebTestCase
 
     public function testIfSubtotalIsNullIfCollectionHasNoValidRows()
     {
+        self::getConfigManager()->set(
+            Configuration::getConfigKeyByName(Configuration::ENABLE_QUICK_ORDER_FORM_OPTIMIZED),
+            false
+        );
+
         $collection = new QuickAddRowCollection();
         $lineNumber = 0;
 
@@ -151,6 +224,11 @@ class QuickAddCollectionPriceProviderTest extends WebTestCase
 
     public function testIfPriceIsNullIfCollectionHasNoRows()
     {
+        self::getConfigManager()->set(
+            Configuration::getConfigKeyByName(Configuration::ENABLE_QUICK_ORDER_FORM_OPTIMIZED),
+            false
+        );
+
         $collection = new QuickAddRowCollection();
 
         $event = new QuickAddRowsCollectionReadyEvent($collection);
@@ -161,6 +239,22 @@ class QuickAddCollectionPriceProviderTest extends WebTestCase
         );
 
         $this->assertEquals(null, $collection->getAdditionalField('price'));
+    }
+
+    public function testIfPriceIsNullIfCollectionHasNoRowsWhenIsOptimized(): void
+    {
+        self::getConfigManager()->set(
+            Configuration::getConfigKeyByName(Configuration::ENABLE_QUICK_ORDER_FORM_OPTIMIZED),
+            true
+        );
+
+        $collection = new QuickAddRowCollection();
+
+        $event = new QuickAddRowsCollectionReadyEvent($collection);
+
+        self::getContainer()->get('event_dispatcher')->dispatch($event, QuickAddRowsCollectionReadyEvent::NAME);
+
+        self::assertEquals(null, $collection->getAdditionalField('prices'));
     }
 
     /**

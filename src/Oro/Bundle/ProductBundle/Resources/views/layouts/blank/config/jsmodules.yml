@@ -1,6 +1,7 @@
 aliases:
     jquery-elevatezoom$: '@oroinc/elevatezoom/jquery.elevatezoom'
     oro/quick-add-import-widget$: oroproduct/js/app/widget/quick-add-import-widget
+    oro/quick-add-import-optimized-widget$: oroproduct/js/app/widget/quick-add-import-optimized-widget
 app-modules:
     - oroproduct/js/app/modules/frontend-validator-constraints-module
 configs:
@@ -9,6 +10,7 @@ configs:
 dynamic-imports:
     commons:
         - oro/quick-add-import-widget
+        - oro/quick-add-import-optimized-widget
     orodatagrid:
         - oroproduct/js/app/datagrid/grid-sidebar-filters-builder
         - oroproduct/js/app/datagrid/backend-datagrid-component

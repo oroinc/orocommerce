@@ -16,6 +16,7 @@ class QuickAddRowInputParserTest extends \PHPUnit\Framework\TestCase
 {
     /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $registry;
+
     /** @var ProductUnitsProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $productUnitsProvider;
 
@@ -123,7 +124,7 @@ class QuickAddRowInputParserTest extends \PHPUnit\Framework\TestCase
                 'expected' => [
                     'ss2',
                     6,
-                    null
+                    'liter'
                 ]
             ],
             [
@@ -238,7 +239,7 @@ class QuickAddRowInputParserTest extends \PHPUnit\Framework\TestCase
                 'expected' => [
                     'ss2',
                     6,
-                    null
+                    'liter'
                 ]
             ],
             [

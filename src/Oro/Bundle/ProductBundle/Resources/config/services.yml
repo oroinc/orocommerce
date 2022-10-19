@@ -275,7 +275,6 @@ services:
 
     oro_product.form_handler.quick_add:
         class: 'Oro\Bundle\ProductBundle\Form\Handler\QuickAddHandler'
-        public: true
         arguments:
             - "@oro_product.layout.data_provider.product_form"
             - "@oro_product.model.builder.quick_add_row_collection"
@@ -287,6 +286,9 @@ services:
             - "@event_dispatcher"
         calls:
             - [setPreloadingManager, ['@oro_entity.manager.preloading_manager']]
+
+    Oro\Bundle\ProductBundle\Form\Handler\QuickAddHandler:
+        alias: oro_product.form_handler.quick_add
 
     oro_product.event_listener.related_items_product_edit_listener:
         class: Oro\Bundle\ProductBundle\EventListener\RelatedItemsProductEditListener
@@ -704,8 +706,13 @@ services:
             - '@form.factory'
             - '@router'
             - '@oro_product.provider.product_variant_availability_provider'
+        calls:
+            - [setConfigManager, ['@oro_config.manager']]
         tags:
             - { name: layout.data_provider, alias: oro_product_form }
+
+    Oro\Bundle\ProductBundle\Layout\DataProvider\ProductFormProvider:
+        alias: oro_product.layout.data_provider.product_form
 
     oro_product.provider.product_matrix_availability_provider:
         class: 'Oro\Bundle\ProductBundle\Provider\ProductMatrixAvailabilityProvider'
@@ -959,10 +966,12 @@ services:
 
     oro_product.layout.data_provider.quick_add_collection:
         class: 'Oro\Bundle\ProductBundle\Provider\QuickAddCollectionProvider'
-        public: true
         arguments:
             - '@oro_product.form_handler.quick_add'
             - '@request_stack'
+
+    Oro\Bundle\ProductBundle\Provider\QuickAddCollectionProvider:
+        alias: oro_product.layout.data_provider.quick_add_collection
 
     oro_product.provider.product_content_variant_provider:
         class: Oro\Bundle\ProductBundle\Provider\ProductContentVariantProvider
@@ -1947,3 +1956,19 @@ services:
             - '@doctrine'
         tags:
             - { name: oro_datagrid.selected_fields_provider }
+
+    oro_product.provider.quick_add.import_results:
+        class: Oro\Bundle\ProductBundle\Provider\QuickAdd\QuickAddImportResultsProvider
+        arguments:
+            - !tagged_iterator { tag: oro_product.provider.quick_add.import_results }
+
+    Oro\Bundle\ProductBundle\Provider\QuickAdd\QuickAddImportResultsProviderInterface:
+        alias: oro_product.provider.quick_add.import_results
+
+    oro_product.provider.quick_add.import_results.basic:
+        class: Oro\Bundle\ProductBundle\Provider\QuickAdd\BasicQuickAddImportResultsProvider
+        arguments:
+            - '@oro_locale.helper.localization'
+            - '@translator'
+        tags:
+            - { name: oro_product.provider.quick_add.import_results }
