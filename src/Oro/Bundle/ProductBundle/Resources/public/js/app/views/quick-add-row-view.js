@@ -3,12 +3,15 @@ import BaseView from 'oroui/js/app/views/base/view';
 import UnitsUtil from 'oroproduct/js/app/units-util';
 import QuantityHelper from 'oroproduct/js/app/quantity-helper';
 import InputWidgetManager from 'oroui/js/input-widget-manager';
+import errorTemplate from 'tpl-loader!oroproduct/templates/quick-add-row-error.html';
 import __ from 'orotranslation/js/translator';
 
 const QuickAddRowView = BaseView.extend({
     optionNames: BaseView.prototype.optionNames.concat([
         'defaultQuantity', 'unitErrorText'
     ]),
+
+    errorTemplate: errorTemplate,
 
     defaultQuantity: 1,
     unitErrorText: 'oro.product.validation.unit.invalid',
@@ -229,6 +232,11 @@ const QuickAddRowView = BaseView.extend({
             this.$el.closest('form').validate().element(this.$(this.attrElem.unit)[0]);
         }
         this.$(this.elem.remove).toggle(Boolean(this.model.get('sku')));
+        const errors = this.model.get('errors') || [];
+        const $errorsContainer = this.$el.closest('[data-role="row"]').find('.fields-row-error');
+        _.each(errors, error => {
+            $errorsContainer.append(this.errorTemplate(error));
+        });
     },
 
     onModelRemoved() {

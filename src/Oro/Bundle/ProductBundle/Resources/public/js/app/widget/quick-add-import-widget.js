@@ -3,12 +3,12 @@ define(function(require) {
 
     const $ = require('jquery');
     const _ = require('underscore');
-    const __ = require('orotranslation/js/translator');
     const mediator = require('oroui/js/mediator');
     const formToAjaxOptions = require('oroui/js/tools/form-to-ajax-options');
-    const DialogWidget = require('oro/dialog-widget');
+    const AbstractWidget = require('oroui/js/widget/abstract-widget');
+    const messenger = require('oroui/js/messenger');
 
-    const QuickAddImportWidget = DialogWidget.extend({
+    const QuickAddImportWidget = AbstractWidget.extend({
         /**
          * @inheritdoc
          */
@@ -24,15 +24,6 @@ define(function(require) {
                 incrementalPosition: false
             });
 
-            options.dialogOptions = _.defaults(options.dialogOptions || {}, {
-                title: __('oro.product.frontend.quick_add.import_validation.title'),
-                modal: true,
-                resizable: false,
-                width: 820,
-                autoResize: true,
-                dialogClass: 'ui-dialog-no-scroll quick-add-validation'
-            });
-
             this.firstRun = false;
 
             QuickAddImportWidget.__super__.initialize.call(this, options);
@@ -45,6 +36,25 @@ define(function(require) {
             }
 
             QuickAddImportWidget.__super__._onContentLoad.call(this, content);
+        },
+
+        setContent: function() {
+        },
+
+        _onJsonContentResponse: function(content) {
+            if (content.success && content.data.products) {
+                mediator.trigger('quick-add-import-form:submit', content.data.products);
+            }
+
+            if (content.messages) {
+                _.each(content.messages, function(messages, type) {
+                    _.each(messages, function(message) {
+                        messenger.notificationMessage(type, message);
+                    });
+                });
+            }
+
+            QuickAddImportWidget.__super__._onJsonContentResponse.call(this, content);
         },
 
         /**

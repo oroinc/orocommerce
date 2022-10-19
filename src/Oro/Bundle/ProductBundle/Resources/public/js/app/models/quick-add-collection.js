@@ -163,17 +163,34 @@ const QuickAddCollection = BaseCollection.extend({
                 // update existing model
                 model.set('quantity', model.get('quantity') + item.quantity);
             } else {
+                const productUnits = item.units || {};
                 model = this.getEmptyModel();
                 model.set({
                     sku: item.sku.toUpperCase(),
+                    product_name: item.product_name || '',
                     quantity: item.quantity,
-                    unit_label: item.unit_label
+                    errors: item.errors || []
                 });
-            }
 
-            if (!model.get('product_name')) {
-                // the product info not loaded yet, then add to load list
-                itemsToLoad[model.cid] = item;
+                if (item.unit_label !== undefined) {
+                    model.set({unit_label: item.unit_label});
+                } else if (item.unit) {
+                    model.set(productUnits.hasOwnProperty(item.unit) ? {unit: item.unit} : {unit_label: item.unit});
+                }
+
+                model.set({
+                    product_units: productUnits,
+                    units_loaded: item.units !== undefined,
+                });
+
+                if (item.additional !== undefined) {
+                    model.set({...item.additional});
+                }
+
+                if (item.product_name === undefined) {
+                    // the product info not loaded yet, then add to load list
+                    itemsToLoad[model.cid] = item;
+                }
             }
         });
 

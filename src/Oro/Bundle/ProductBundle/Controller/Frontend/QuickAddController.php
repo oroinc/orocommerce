@@ -4,15 +4,17 @@ namespace Oro\Bundle\ProductBundle\Controller\Frontend;
 
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\ProductBundle\Form\Handler\QuickAddHandler;
+use Oro\Bundle\ProductBundle\Layout\DataProvider\ProductFormProvider;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
+use Oro\Bundle\ProductBundle\Provider\QuickAdd\QuickAddImportResultsProviderInterface;
 use Oro\Bundle\ProductBundle\Provider\QuickAddCollectionProvider;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Serves Quick Add actions.
@@ -39,23 +41,33 @@ class QuickAddController extends AbstractController
 
     /**
      * @Route("/import/", name="oro_product_frontend_quick_add_import")
-     * @Layout(vars={"import_step", "method"})
-     *
-     * @param Request $request
-     * @return array|Response
      */
-    public function importAction(Request $request)
+    public function importAction(): Response
     {
+        /** @var QuickAddRowCollection|null $collection */
         $collection = $this->get(QuickAddCollectionProvider::class)->processImport();
+        $form = $this->get(ProductFormProvider::class)->getQuickAddImportForm();
+        $isValid = $form->isSubmitted() && $form->isValid();
 
-        return [
-            'import_step' => $this->getImportStep($collection),
-            'method' => $request->getMethod(),
+        $response = [
+            'success' => $isValid,
             'data' => [
-                'collection' => $collection,
-                'backToUrl' => $request->getUri(),
-            ]
+                'products' => $isValid
+                    ? $this->get(QuickAddImportResultsProviderInterface::class)->getResults($collection)
+                    : [],
+            ],
         ];
+
+        if (!$isValid) {
+            foreach ($form->getErrors(true) as $formError) {
+                $response['messages']['error'][] = $formError->getMessage();
+            }
+        } elseif (!$collection->hasValidRows()) {
+            $response['messages']['error'][] = $this->get(TranslatorInterface::class)
+                ->trans('oro.product.frontend.quick_add.import_validation.empty_file.error.message');
+        }
+
+        return new JsonResponse($response);
     }
 
     /**
@@ -72,57 +84,29 @@ class QuickAddController extends AbstractController
             'import_step' => $collection === null ? 'form' : 'result',
             'data' => [
                 'collection' => $collection,
-            ]
+            ],
         ];
     }
 
     /**
-     * @Route("/validation/result/", name="oro_product_frontend_quick_add_validation_result")
-     *
-     * @param Request $request
-     * @return JsonResponse
+     * @Route("/import/help", name="oro_product_frontend_quick_add_import_help")
+     * @Layout
      */
-    public function validationResultAction(Request $request)
+    public function getImportHelpAction(): array
     {
-        $response = $this->get(QuickAddHandler::class)->process(
-            $request,
-            'oro_product_frontend_quick_add'
-        );
-
-        if (!$response instanceof RedirectResponse) {
-            return new JsonResponse([
-                'redirectUrl' => $this->generateUrl('oro_product_frontend_quick_add')
-            ]);
-        }
-
-        return new JsonResponse([
-            'redirectUrl' => $response->getTargetUrl()
-        ]);
+        return [];
     }
 
-    /**
-     * @param QuickAddRowCollection|null $collection
-     * @return string
-     */
-    private function getImportStep(QuickAddRowCollection $collection = null)
-    {
-        if ($collection !== null && !$collection->isEmpty() && $collection->hasValidRows()) {
-            return 'result';
-        }
-
-        return 'form';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function getSubscribedServices()
+    public static function getSubscribedServices(): array
     {
         return array_merge(
             parent::getSubscribedServices(),
             [
+                TranslatorInterface::class,
                 QuickAddHandler::class,
                 QuickAddCollectionProvider::class,
+                QuickAddImportResultsProviderInterface::class,
+                ProductFormProvider::class,
             ]
         );
     }

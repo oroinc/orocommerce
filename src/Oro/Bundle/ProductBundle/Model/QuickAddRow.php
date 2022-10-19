@@ -4,6 +4,9 @@ namespace Oro\Bundle\ProductBundle\Model;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 
+/**
+ * A model that represents a row in {@see QuickAddRowCollection}.
+ */
 class QuickAddRow
 {
     use QuickAddFieldTrait;
@@ -126,17 +129,21 @@ class QuickAddRow
         $this->unit = $unit;
     }
 
-    /**
-     * @param string $errorMessage
-     * @param array $additionalParameters
-     */
-    public function addError($errorMessage, $additionalParameters = [])
+    public function addError(string $errorMessage, array $additionalParameters = [], string $propertyPath = ''): void
     {
+        if (count(func_get_args()) > 2) {
+            $propertyPath = (string) func_get_arg(2);
+        }
+
         $additionalParameters = array_merge($additionalParameters, [
             '{{ index }}' => $this->index,
             '{{ sku }}' => $this->sku
         ]);
-        $this->errors[] = ['message' => $errorMessage, 'parameters' => $additionalParameters];
+        $this->errors[] = [
+            'message' => $errorMessage,
+            'parameters' => $additionalParameters,
+            'propertyPath' => $propertyPath ?? '',
+        ];
         $this->valid = false;
     }
 

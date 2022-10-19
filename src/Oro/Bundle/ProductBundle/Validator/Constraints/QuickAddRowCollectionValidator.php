@@ -10,6 +10,9 @@ use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
+/**
+ * Validates {@see \Oro\Bundle\ProductBundle\Model\QuickAddRowCollection}.
+ */
 class QuickAddRowCollectionValidator extends ConstraintValidator
 {
     const ALIAS = 'oro_product_quick_add_row_collection_validator';
@@ -41,7 +44,11 @@ class QuickAddRowCollectionValidator extends ConstraintValidator
             if ($violations->count()) {
                 /** @var ConstraintViolation $violation */
                 $violation = $violations->getIterator()->current();
-                $quickAddRow->addError($violation->getMessageTemplate(), $violation->getParameters());
+                $quickAddRow->addError(
+                    $violation->getMessageTemplate(),
+                    $violation->getParameters(),
+                    $violation->getPropertyPath()
+                );
             } else {
                 $quickAddRow->setValid(true);
             }

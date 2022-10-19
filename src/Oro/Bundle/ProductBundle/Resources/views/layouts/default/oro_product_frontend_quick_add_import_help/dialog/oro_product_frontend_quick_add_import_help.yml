@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: '@OroProduct/layouts/default/oro_product_frontend_quick_add_import/dialog/quick_add_import_directions.html.twig'
+            themes: '@OroProduct/layouts/default/oro_product_frontend_quick_add_import_help/dialog/oro_product_frontend_quick_add_import_help.twig'
         - '@setOption':
             id: widget_content
             optionName: 'attr.data-page-component-module'
@@ -9,12 +9,7 @@ layout:
         - '@addTree':
             items:
                 quick_add_import_help:
-                    blockType: quick_add_form_directions
-                    options:
-                        method: '=context["method"]'
+                    blockType: block
             tree:
                 widget_content:
                     quick_add_import_help: ~
-
-    conditions: 'context["import_step"]=="form"'
-

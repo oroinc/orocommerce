@@ -30,6 +30,7 @@ class ProductFormProvider extends AbstractFormProvider
     private const PRODUCT_VARIANTS_GET_AVAILABLE_VARIANTS = 'oro_product_frontend_ajax_product_variant_get_available';
 
     private ProductVariantAvailabilityProvider $productVariantAvailabilityProvider;
+
     private ManagerRegistry $doctrine;
 
     public function __construct(

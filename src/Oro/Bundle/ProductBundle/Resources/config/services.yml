@@ -256,7 +256,6 @@ services:
 
     oro_product.form_handler.quick_add:
         class: 'Oro\Bundle\ProductBundle\Form\Handler\QuickAddHandler'
-        public: true
         arguments:
             - "@oro_product.layout.data_provider.product_form"
             - "@oro_product.model.builder.quick_add_row_collection"
@@ -732,6 +731,9 @@ services:
         arguments:
             - '@doctrine'
 
+    Oro\Bundle\ProductBundle\Layout\DataProvider\ProductFormProvider:
+        alias: oro_product.layout.data_provider.product_form
+
     oro_product.provider.product_matrix_availability_provider:
         class: 'Oro\Bundle\ProductBundle\Provider\ProductMatrixAvailabilityProvider'
         arguments:
@@ -1018,7 +1020,6 @@ services:
 
     oro_product.layout.data_provider.quick_add_collection:
         class: 'Oro\Bundle\ProductBundle\Provider\QuickAddCollectionProvider'
-        public: true
         arguments:
             - '@oro_product.form_handler.quick_add'
             - '@request_stack'
@@ -2008,3 +2009,19 @@ services:
       tags:
         - { name: kernel.event_listener, event: oro_product.product_list.build_query, method: onBuildQueryProductList, priority: -255 }
         - { name: kernel.event_listener, event: oro_product.product_list.build_result, method: onBuildResultProductList, priority: -255 }
+
+    oro_product.provider.quick_add.import_results:
+        class: Oro\Bundle\ProductBundle\Provider\QuickAdd\QuickAddImportResultsProvider
+        arguments:
+            - !tagged_iterator { tag: oro_product.provider.quick_add.import_results }
+
+    Oro\Bundle\ProductBundle\Provider\QuickAdd\QuickAddImportResultsProviderInterface:
+        alias: oro_product.provider.quick_add.import_results
+
+    oro_product.provider.quick_add.import_results.basic:
+        class: Oro\Bundle\ProductBundle\Provider\QuickAdd\BasicQuickAddImportResultsProvider
+        arguments:
+            - '@oro_locale.helper.localization'
+            - '@translator'
+        tags:
+            - { name: oro_product.provider.quick_add.import_results }
