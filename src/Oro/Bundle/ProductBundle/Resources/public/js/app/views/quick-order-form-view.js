@@ -10,6 +10,7 @@ import messenger from 'oroui/js/messenger';
 const QuickOrderFromView = BaseView.extend({
     elem: {
         form: '[data-role="quick-order-add-container"] form',
+        grid: '[data-role="quick-order-add-container"] form > .grid',
         rowsCollection: '.js-item-collection',
         rows: '[data-name="field__name"]',
         buttons: '[data-role="quick-order-add-buttons"]',
@@ -143,7 +144,7 @@ const QuickOrderFromView = BaseView.extend({
             contentShouldUpdate = true;
         }
 
-        this.$(this.elem.form).prepend(this.topButtons);
+        this.$(this.elem.grid).prepend(this.topButtons);
         this.$(this.elem.clear).removeClass('hidden');
 
         if (contentShouldUpdate) {

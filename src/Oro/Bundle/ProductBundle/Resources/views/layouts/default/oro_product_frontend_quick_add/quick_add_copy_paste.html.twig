@@ -1,13 +1,13 @@
 {% block _quick_add_copy_paste_form_start_widget %}
-    {% set attr = {
-        'data-page-component-view': 'oroproduct/js/app/views/quick-add-copy-paste-form-view',
-    }|merge(attr) %}
+    {% set attr = layout_attr_defaults(attr, {
+        'data-page-component-view': 'oroproduct/js/app/views/quick-add-copy-paste-form-view'
+    }) %}
     {{ block('form_start_widget') }}
 {% endblock %}
 
 {% block _quick_add_copy_paste_form_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ ' quick-order-copy-paste'
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' quick-order-copy-paste'
     }) %}
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
@@ -15,8 +15,8 @@
 {% endblock %}
 
 {% block _quick_add_copy_paste_title_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ ' quick-order-copy-paste__title'
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' quick-order-copy-paste__title'
     }) %}
     <h2 {{ block('block_attributes') }}>
         <span class="fa-paste" aria-hidden="true"></span>
@@ -24,17 +24,35 @@
     </h2>
 {% endblock %}
 
+{% block _quick_add_copy_paste_form_grid_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' grid'
+    }) %}
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _quick_add_copy_paste_form_grid_col_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' grid-col-12'
+    }) %}
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
 {% block _quick_add_copy_paste_description_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ ' quick-order-copy-paste__description label label--full',
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' label label--full',
         for: 'oro_product_quick_add_copy_paste_copyPaste'
     }) %}
     <label {{ block('block_attributes') }}>{{ block_widget(block) }}</label>
 {% endblock %}
 
 {% block _quick_add_copy_paste_form_buttons_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ ' quick-order-copy-paste__buttons'
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' grid-col-12 grid-place-self-start-end'
     }) %}
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}

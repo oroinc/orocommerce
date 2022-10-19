@@ -10,13 +10,16 @@
     }
 
     &__subtotal {
-        width: $quick-order-add-subtotal-width;
+        grid-area: subtotal;
+        position: relative;
+    }
+
+    &__subtotal-input {
+        text-align: center;
     }
 
     &__subtotal,
     &__subtotal-input {
-        text-align: center;
-
         &.input {
             opacity: 1;
             padding-right: $quick-order-add-input-offset;
@@ -29,6 +32,14 @@
         position: absolute;
         left: auto;
         bottom: 0;
-        right: 7px;
+        right: 0;
+    }
+}
+
+@include breakpoint('mobile-big') {
+    .quick-order-add {
+        &__subtotal-input {
+            text-align: left;
+        }
     }
 }

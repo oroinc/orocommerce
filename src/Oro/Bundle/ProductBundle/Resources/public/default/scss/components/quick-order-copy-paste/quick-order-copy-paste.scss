@@ -1,37 +1,16 @@
 /* @theme: default; */
 
 .quick-order-copy-paste {
-    float: $quick-order-copy-paste-float;
-    clear: $quick-order-copy-paste-clear;
-
-    width: $quick-order-copy-paste-width;
+    grid-area: $quick-order-copy-paste-grid-area;
 
     &__title {
         margin: $quick-order-copy-paste-title-margin;
-
-        font-size: $base-font-size;
-        font-weight: font-weight('bold');
-        text-transform: uppercase;
-    }
-
-    &__description {
-        margin: $quick-order-copy-paste-description-margin;
+        font-size: $quick-order-copy-paste-textarea-font-size;
+        font-weight: $quick-order-copy-paste-textarea-font-weight;
+        text-transform: $quick-order-copy-paste-textarea-text-transform;
     }
 
     &__textarea {
         height: $quick-order-copy-paste-textarea-height;
-    }
-
-    &__buttons {
-        float: right;
-        margin: $quick-order-copy-paste-buttons-margin;
-    }
-
-    .mobile-version & {
-        @include breakpoint('mobile-big') {
-            width: 100%;
-            float: none;
-            clear: none;
-        }
     }
 }
