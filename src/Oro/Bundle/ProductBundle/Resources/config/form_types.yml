@@ -279,10 +279,10 @@ services:
         tags:
             - { name: form.type, alias: oro_collection_sort_order_grid }
 
-    oro_product.form.type.sort_order_grid:
-        class: 'Oro\Bundle\ProductBundle\Form\Type\SortOrderGridType'
+    oro_product.form.type.category_sort_order_grid:
+        class: 'Oro\Bundle\ProductBundle\Form\Type\CategorySortOrderGridType'
         arguments:
             - '@form.factory'
             - '@oro_entity.doctrine_helper'
         tags:
-            - { name: form.type, alias: oro_sort_order_grid }
+            - { name: form.type, alias: oro_category_sort_order_grid }

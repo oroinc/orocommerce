@@ -1397,11 +1397,6 @@ services:
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\SegmentBundle\Entity\Segment', event: preUpdate }
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\SegmentBundle\Entity\Segment', event: preRemove }
 
-    oro_product.handler.collection_sort_order:
-        class: Oro\Bundle\ProductBundle\Handler\CollectionSortOrderHandler
-        arguments:
-            - '@oro_entity.doctrine_helper'
-
     oro_product.handler.request_content_variant:
         class: Oro\Bundle\ProductBundle\Handler\RequestContentVariantHandler
         arguments:
@@ -1410,6 +1405,22 @@ services:
     oro_product.handler.search_product_handler:
         class: Oro\Bundle\ProductBundle\Handler\SearchProductHandler
         arguments: ['@request_stack']
+
+    oro_product.event_listener.product_collection_sort_order_listener:
+        public: false
+        class: Oro\Bundle\ProductBundle\EventListener\ProductCollectionSortOrderListener
+        arguments:
+            - '@request_stack'
+            - '@event_dispatcher'
+        tags:
+            - { name: doctrine.event_listener, event: onFlush }
+            - { name: doctrine.event_listener, event: postFlush }
+            - { name: doctrine.event_listener, event: onClear }
+
+    oro_product.handler.collection_sort_order:
+        class: Oro\Bundle\ProductBundle\Handler\CollectionSortOrderHandler
+        arguments:
+            - '@oro_entity.doctrine_helper'
 
     oro_product.handler.async_reindex_product_collection_handler:
         class: Oro\Bundle\ProductBundle\Handler\AsyncReindexProductCollectionHandler

@@ -107,7 +107,7 @@ HELP
                     $partialMessageIterator,
                     $rootJobName,
                     true,
-                    ['main']
+                    ['main', 'collection_sort_order']
                 );
             } else {
                 $this->collectionIndexationHandler->handle(

@@ -4,7 +4,6 @@ namespace Oro\Bundle\ProductBundle\Form\Type;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\EventSubscriber\ProductCollectionSegmentTypeSubscriber;
-use Oro\Bundle\ProductBundle\Handler\CollectionSortOrderHandler;
 use Oro\Bundle\ProductBundle\Service\ProductCollectionDefinitionConverter;
 use Oro\Bundle\QueryDesignerBundle\Validator\Constraints\NotEmptyFilters;
 use Oro\Bundle\SegmentBundle\Entity\Segment;

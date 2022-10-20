@@ -149,7 +149,7 @@ class CategoryHandler
         $productRepository = $this->manager->getRepository(Product::class);
         $products = $productRepository->findBy(['id' => array_keys($sortOrder)]);
         foreach ($products as $product) {
-            $sortDataInputValue = (float)$sortOrder[$product->getId()]['data']['categorySortOrder'];
+            $sortDataInputValue = $sortOrder[$product->getId()]['data']['categorySortOrder'];
             /**
              * We need to :
              *   - Check that the field is in the newly selected fields or already in collection
@@ -161,7 +161,7 @@ class CategoryHandler
                 && !in_array($product, $removeProducts)
                 && $sortDataInputValue !== $product->getCategorySortOrder()
             ) {
-                $product->setCategorySortOrder($sortDataInputValue);
+                $product->setCategorySortOrder(is_null($sortDataInputValue) ? null : (float)$sortDataInputValue);
                 $this->manager->persist($product);
                 $this->manager->flush($product);
             }
