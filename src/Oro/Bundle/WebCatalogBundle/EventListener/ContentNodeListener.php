@@ -119,8 +119,10 @@ class ContentNodeListener
                 $sortOrdersToUpdate[$segment->getId()]['segment'] = $segment;
                 if ($productCollectionSegmentForm->has('sortOrder')) {
                     $collectionSortOrderForm = $productCollectionSegmentForm->get('sortOrder');
-                    foreach ($collectionSortOrderForm->getData() as $collectionSortOrderToProcess) {
-                        $sortOrdersToUpdate[$segment->getId()]['sortOrders'][] = $collectionSortOrderToProcess['data'];
+                    if (!is_null($collectionSortOrderForm->getData())) {
+                        foreach ($collectionSortOrderForm->getData() as $collectionSortOrderToProcess) {
+                            $sortOrdersToUpdate[$segment->getId()]['sortOrders'][] = $collectionSortOrderToProcess['data'];
+                        }
                     }
                 }
             }

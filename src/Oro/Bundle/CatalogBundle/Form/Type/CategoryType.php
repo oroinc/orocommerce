@@ -11,7 +11,7 @@ use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGValueType;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
-use Oro\Bundle\ProductBundle\Form\Type\SortOrderGridType;
+use Oro\Bundle\ProductBundle\Form\Type\CategorySortOrderGridType;
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugWithRedirectType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -142,10 +142,9 @@ class CategoryType extends AbstractType
             )
             ->add(
                 'sortOrder',
-                SortOrderGridType::class,
+                CategorySortOrderGridType::class,
                 [
                     'required' => false,
-                    // TODO : change once we have the right field ?
                     'mapped' => false
                 ]
             )

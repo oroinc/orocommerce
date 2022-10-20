@@ -38,4 +38,10 @@ interface ContentVariantProviderInterface
      * @return mixed
      */
     public function getRecordId(array $item);
+
+    /**
+     * @param array $item
+     * @return mixed
+     */
+    public function getRecordSortOrder(array $item);
 }

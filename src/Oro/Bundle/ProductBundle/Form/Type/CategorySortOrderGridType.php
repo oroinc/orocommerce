@@ -15,9 +15,9 @@ use Symfony\Component\Validator\Constraints\Range;
 /**
  * Form type for editing product sort order in MasterCatalog Category edition
  */
-class SortOrderGridType extends AbstractType
+class CategorySortOrderGridType extends AbstractType
 {
-    const NAME = 'oro_sort_order_grid';
+    const NAME = 'oro_category_sort_order_grid';
 
     public function __construct(
         protected FormFactoryInterface $formFactory,

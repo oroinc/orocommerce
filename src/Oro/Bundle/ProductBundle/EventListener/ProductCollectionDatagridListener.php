@@ -120,7 +120,7 @@ class ProductCollectionDatagridListener
         $queryBuilder
             ->addSelect('collectionSortOrder.sortOrder as categorySortOrder');
 
-        $joinContactsExpr = $expr->andX()
+        $joinCollectionSortOrdersExpr = $expr->andX()
             ->add(
                 $expr->eq(
                     'collectionSortOrder.product',
@@ -128,13 +128,13 @@ class ProductCollectionDatagridListener
                 )
             );
 
-        $joinContactsExpr->add('IDENTITY(collectionSortOrder.segment) =:segmentId');
+        $joinCollectionSortOrdersExpr->add('IDENTITY(collectionSortOrder.segment) =:segmentId');
 
         $queryBuilder->leftJoin(
             CollectionSortOrder::class,
             'collectionSortOrder',
             Join::WITH,
-            $joinContactsExpr
+            $joinCollectionSortOrdersExpr
         );
         $queryBuilder->setParameter('segmentId', $segmentId);
     }

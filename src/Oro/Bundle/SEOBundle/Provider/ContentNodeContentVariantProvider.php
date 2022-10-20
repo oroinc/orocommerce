@@ -51,4 +51,12 @@ class ContentNodeContentVariantProvider implements ContentVariantProviderInterfa
     {
         return null;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getRecordSortOrder(array $item)
+    {
+        return null;
+    }
 }
