@@ -1443,6 +1443,7 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.frontend-product-search-grid, method: onBuildAfter }
+            - { name: kernel.event_listener, event: oro_datagrid.search_datasource.result.before.frontend-product-search-grid, method: onSearchResultBefore }
 
     oro_product.datagrid.event_listener.search_event_listener:
         class: Oro\Bundle\ProductBundle\DataGrid\EventListener\SearchEventListener
