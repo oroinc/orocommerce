@@ -51,6 +51,7 @@ class CategoryTypeTest extends WebTestCase
         $appendedProducts = $productRepository->findBy([], ['id' => 'ASC'], 2, 0);
         /** @var Product[] $removedProducts */
         $removedProducts = $productRepository->findBy([], ['id' => 'ASC'], 2, 2);
+        $sortOrders = [2 => ['categorySortOrder' => 0.2]];
 
         $defaultTitle = 'Default Title';
         $defaultShortDescription = 'Default Short Description';
@@ -84,6 +85,7 @@ class CategoryTypeTest extends WebTestCase
             'largeImage' => ['file' => $largeImage],
             'appendProducts' => implode(',', $this->getProductIds($appendedProducts)),
             'removeProducts' => implode(',', $this->getProductIds($removedProducts)),
+            'sortOrder' => json_encode($sortOrders),
             'defaultProductOptions' => ['unitPrecision' => ['unit' => 'kg', 'precision' => 3]],
             'inventoryThreshold' => ['scalarValue' => 0],
             LowInventoryProvider::LOW_INVENTORY_THRESHOLD_OPTION => ['scalarValue' => 0],
@@ -135,6 +137,16 @@ class CategoryTypeTest extends WebTestCase
         $this->assertCount(count($removedProducts), $removeProductsData);
         foreach ($removedProducts as $removedProduct) {
             $this->assertContains($removedProduct, $removeProductsData);
+        }
+
+        $sortOrdersData = array_map(function($row) {
+                return $row['data'];
+            },
+            $form->get('sortOrder')->getData()->toArray()
+        );
+        $this->assertCount(count($sortOrders), $sortOrdersData);
+        foreach ($sortOrders as $sortOrder) {
+            $this->assertContains($sortOrder, $sortOrdersData);
         }
     }
 

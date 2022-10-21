@@ -7,21 +7,32 @@ use Oro\Bundle\ProductBundle\Entity\Product as BaseProduct;
 
 class Product extends BaseProduct
 {
-    /**
-     * @var Category
-     */
-    protected $category;
+    protected ?Category $category = null;
 
-    /**
-     * @return Category
-     */
-    public function getCategory()
+    protected ?float $categorySortOrder = null;
+
+    public function getCategory(): ?Category
     {
         return $this->category;
     }
 
-    public function setCategory(Category $category)
+    public function setCategory(?Category $category = null)
     {
         $this->category = $category;
+    }
+
+    public function getCategorySortOrder(): ?float
+    {
+        return $this->categorySortOrder;
+    }
+
+    public function setCategorySortOrder(?float $categorySortOrder = null)
+    {
+        $this->categorySortOrder = $categorySortOrder;
+    }
+
+    public function setId(int $id)
+    {
+        $this->id = $id;
     }
 }

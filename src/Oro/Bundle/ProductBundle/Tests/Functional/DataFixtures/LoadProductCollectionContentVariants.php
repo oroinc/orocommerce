@@ -7,6 +7,7 @@ use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\FrontendTestFrameworkBundle\Entity\TestContentNode;
 use Oro\Bundle\FrontendTestFrameworkBundle\Entity\TestContentVariant;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\ProductBundle\Entity\CollectionSortOrder;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\SegmentBundle\Entity\SegmentSnapshot;
@@ -64,6 +65,7 @@ class LoadProductCollectionContentVariants extends AbstractFixture implements De
     {
         $this->createProductSegment($manager);
         $this->createProductSegmentSnapshot($manager);
+        $this->createCollectionSortOrder($manager);
 
         $testContentVariant = new TestContentVariant();
         $testContentVariant->setProductCollectionSegment(
@@ -78,6 +80,21 @@ class LoadProductCollectionContentVariants extends AbstractFixture implements De
         $testContentVariant = new TestContentVariant();
         $this->setReference(self::TEST_VARIANT_WITHOUT_SEGMENT, $testContentVariant);
         $manager->persist($testContentVariant);
+    }
+
+    private function createCollectionSortOrder(ObjectManager $manager)
+    {
+        $collectionSortOrder1 = new CollectionSortOrder();
+        $collectionSortOrder1->setSegment($this->getReference(LoadProductCollectionContentVariants::PRODUCT_STATIC_SEGMENT));
+        $collectionSortOrder1->setProduct($this->getReference(LoadProductData::PRODUCT_1));
+        $collectionSortOrder1->setSortOrder(0.1);
+        $manager->persist($collectionSortOrder1);
+
+        $collectionSortOrder2 = new CollectionSortOrder();
+        $collectionSortOrder2->setSegment($this->getReference(LoadProductCollectionContentVariants::PRODUCT_STATIC_SEGMENT));
+        $collectionSortOrder2->setProduct($this->getReference(LoadProductData::PRODUCT_2));
+        $collectionSortOrder2->setSortOrder(0.2);
+        $manager->persist($collectionSortOrder2);
     }
 
     private function createProductSegment(ObjectManager $manager)

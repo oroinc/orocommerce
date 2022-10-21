@@ -3,15 +3,19 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\EntityChangesetTypeStub;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityBundle\Provider\EntityProvider;
+use Oro\Bundle\FormBundle\Form\Type\EntityChangesetType;
 use Oro\Bundle\FormBundle\Tests\Unit\Stub\TooltipFormExtensionStub;
 use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Form\Type\CollectionSortOrderGridType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductCollectionSegmentType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductCollectionVariantType;
 use Oro\Bundle\ProductBundle\Service\ProductCollectionDefinitionConverter;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\CollectionSortOrderGridTypeStub;
 use Oro\Bundle\QueryDesignerBundle\QueryDesigner\Manager;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\SegmentBundle\Entity\SegmentType;
@@ -75,7 +79,9 @@ class ProductCollectionSegmentTypeTest extends FormIntegrationTestCase
             new PreloadedExtension(
                 [
                     $this->type,
-                    new SegmentFilterBuilderType($this->doctrineHelper, $this->tokenStorage)
+                    new SegmentFilterBuilderType($this->doctrineHelper, $this->tokenStorage),
+                    CollectionSortOrderGridType::class => new CollectionSortOrderGridTypeStub(),
+                    EntityChangesetType::class => new EntityChangesetTypeStub(),
                 ],
                 [
                     FormType::class => [new TooltipFormExtensionStub($this)]
@@ -91,6 +97,7 @@ class ProductCollectionSegmentTypeTest extends FormIntegrationTestCase
 
         $this->assertTrue($form->has('includedProducts'));
         $this->assertTrue($form->has('excludedProducts'));
+        $this->assertTrue($form->has('sortOrder'));
         $this->assertEquals('product-collection-grid', $form->getConfig()->getOption('results_grid'));
     }
 
