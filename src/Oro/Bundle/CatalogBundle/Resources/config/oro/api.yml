@@ -39,6 +39,7 @@ api:
             documentation_resource: '@OroCatalogBundle/Resources/doc/api/product.md'
             fields:
                 category: ~
+                category_sort_order: ~
 
         Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue:
             documentation_resource: '@OroCatalogBundle/Resources/doc/api/entity_field_fallback_value.md'
