@@ -168,11 +168,24 @@ class CategoryHandler
         }
 
         /**
+         * We need to reset the sorting value of all appended products that have no sorting specified.
+         * Their sort value must go back to default in case they were previously associated to another category
+         * This behaviour is coherent to the datagrid field loading data only if the right category is selected
+         * => see categorySortOrder selection in Oro/Bundle/CatalogBundle/Resources/config/oro/datagrids.yml
+         */
+        foreach ($appendProducts as $product) {
+            if (!array_key_exists($product->getId(), $sortOrder) && !is_null($product->getCategorySortOrder())) {
+                $product->setCategorySortOrder(null);
+                $this->manager->persist($product);
+            }
+        }
+
+        /**
          * We need to reset the sorting value of all removed products.
-         * Their sort value must go back to default in case they are added to another categorie after
+         * Their sort value must go back to default in case they are added to another category after
          */
         foreach ($removeProducts as $product) {
-            $product->getCategorySortOrder(null);
+            $product->setCategorySortOrder(null);
             $this->manager->persist($product);
         }
     }
