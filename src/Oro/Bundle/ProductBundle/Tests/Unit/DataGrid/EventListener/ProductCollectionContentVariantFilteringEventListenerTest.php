@@ -19,6 +19,7 @@ use Oro\Bundle\ProductBundle\Handler\RequestContentVariantHandler;
 use Oro\Bundle\ProductBundle\Tests\Unit\ContentVariant\Stub\ContentVariantStub;
 use Oro\Bundle\RedirectBundle\Routing\SluggableUrlGenerator;
 use Oro\Bundle\SearchBundle\Datagrid\Datasource\SearchDatasource;
+use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultBefore;
 use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 
@@ -353,5 +354,61 @@ class ProductCollectionContentVariantFilteringEventListenerTest extends \PHPUnit
                 ProductCollectionContentVariantFilteringEventListener::VIEW_LINK_PARAMS_CONFIG_PATH
             )
         );
+    }
+
+    /**
+     * @dataProvider onSearchResultBeforeDataProvider
+     */
+    public function testOnSearchResultBefore(array $parameters): void
+    {
+        /** @var DatagridConfiguration|\PHPUnit\Framework\MockObject\MockObject $configuration */
+        $configurationMock = $this->createMock(DatagridConfiguration::class);
+        $configurationMock->expects($this->once())
+            ->method('offsetGetByPath')
+            ->with(ProductCollectionContentVariantFilteringEventListener::CONTENT_VARIANT_ID_CONFIG_PATH)
+            ->willReturn($parameters['contentVariantId']);
+
+        /** @var SearchQueryInterface|\PHPUnit\Framework\MockObject\MockObject $searchQuery */
+        $searchQuery = $this->createMock(SearchQueryInterface::class);
+        if ($parameters['contentVariantId']) {
+            $searchQuery->expects($this->once())
+                ->method('getSortOrder')
+                ->willReturn(empty($parameters['sortBy'])? null : 'ASC');
+
+            if (empty($parameters['sortBy'])) {
+                $searchQuery->expects($this->once())
+                    ->method('setOrderBy')
+                    ->with('decimal.assigned_to_sort_order.variant_' . $parameters['contentVariantId']);
+            }
+        }
+
+        $grid = new Datagrid('name', $configurationMock, new ParameterBag([]));
+        $event = new SearchResultBefore($grid, $searchQuery);
+
+        $this->listener->onSearchResultBefore($event);
+    }
+
+    public function onSearchResultBeforeDataProvider()
+    {
+        return [
+            'without variant' => [
+                'parameters' => [
+                    'contentVariantId' => null,
+                    'sortBy' => []
+                ]
+            ],
+            'with sort already defined' => [
+                'parameters' => [
+                    'contentVariantId' => 100,
+                    'sortBy' => ['text.sku', 'ASC']
+                ]
+            ],
+            'without sort predefined' => [
+                'parameters' => [
+                    'contentVariantId' => 100,
+                    'sortBy' => []
+                ]
+            ]
+        ];
     }
 }

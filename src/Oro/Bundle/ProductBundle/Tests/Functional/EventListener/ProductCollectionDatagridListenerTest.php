@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\EventListener;
 
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductCollectionData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
@@ -11,7 +12,8 @@ class ProductCollectionDatagridListenerTest extends WebTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->loadFixtures([
-            LoadProductData::class
+            LoadProductData::class,
+            LoadProductCollectionData::class
         ]);
     }
 
@@ -21,7 +23,7 @@ class ProductCollectionDatagridListenerTest extends WebTestCase
      * @param array $request
      * @param array $expectedFilteredProducts
      */
-    public function testOnBuildAfter($request, $expectedFilteredProducts)
+    public function testOnBuildAfterFromDatagridRequest($request, $expectedFilteredProducts)
     {
         // convert reference names array into string with Ids, in order to support exclude&include args
         $request = array_map(
@@ -128,6 +130,75 @@ class ProductCollectionDatagridListenerTest extends WebTestCase
                 ],
                 'expectedFilteredProducts' => []
             ],
+        ];
+    }
+
+    /**
+     * @dataProvider requestAndResultDataProviderWithSegment
+     *
+     * @param array $request
+     * @param array $expectedFilteredProducts
+     */
+    public function testOnBuildAfterFromDatagridRequestWithSegment($request, $expectedFilteredProducts)
+    {
+        // convert reference names into ids & definitions
+        $request = array_combine(
+            array_keys($request),
+            array_map(
+                function ($key, $content) {
+                    if ($content === LoadProductCollectionData::SEGMENT) {
+                        if (str_starts_with($key, 'si_')) {
+                            $content = $this->getReference(LoadProductCollectionData::SEGMENT)->getId();
+                        }
+                        if (str_starts_with($key, 'sd_')) {
+                            $content = $this->getReference(LoadProductCollectionData::SEGMENT)->getDefinition();
+                        }
+                    }
+                    return $content;
+                },
+                array_keys($request),
+                $request
+            )
+        );
+
+        $this->client->request('GET', $this->getUrl('oro_datagrid_index', $request));
+        $result = $this->client->getResponse();
+
+        $data = json_decode($result->getContent(), true);
+        $filteredProductsSku = array_map(
+            function (array $item) {
+                return $item['sku'];
+            },
+            $data['data']
+        );
+
+        $expectedFilteredProductsSku = array_map(
+            function ($productName) {
+                return $this->getReference($productName)->getSku();
+            },
+            $expectedFilteredProducts
+        );
+
+        $this->assertCount(count($expectedFilteredProductsSku), $filteredProductsSku);
+        $this->assertEquals($expectedFilteredProductsSku, $filteredProductsSku);
+    }
+
+    public function requestAndResultDataProviderWithSegment()
+    {
+        $gridName = 'product-collection-grid:scope_0';
+
+        return [
+            'validate sort order' => [
+                'request' => [
+                    'gridName' => $gridName,
+                    'si_' . $gridName => LoadProductCollectionData::SEGMENT,
+                    'sd_' . $gridName => LoadProductCollectionData::SEGMENT
+                ],
+                'expectedFilteredProducts' => [
+                    LoadProductData::PRODUCT_3,
+                    LoadProductData::PRODUCT_1
+                ]
+            ]
         ];
     }
 }

@@ -19,7 +19,7 @@ class WebCatalogEntityIndexerListenerTest extends FrontendWebTestCase
 {
     use ConfigManagerAwareTestTrait;
 
-    const QUERY = 'web_catalog_entit_indexer_listener_test_query_string';
+    const QUERY = 'web_catalog_entity_indexer_listener_test_query_string';
 
     protected function setUp(): void
     {

@@ -296,7 +296,7 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
                     'topic' => 'oro_product.reindex_request_item_products_by_related_job',
                     'message' => [
                         'relatedJobId' => $rootJob->getId(),
-                        'indexationFieldsGroups' => ['main']
+                        'indexationFieldsGroups' => ['main', 'collection_sort_order']
                     ],
                     'priority' => null
                 ]
