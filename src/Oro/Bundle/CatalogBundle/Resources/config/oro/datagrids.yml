@@ -7,7 +7,6 @@ datagrids:
             query:
                 select:
                     - product.id
-                    - product.category_sort_order as categorySortOrder
                     - product.sku
                     - productInventoryStatus.id as inventoryStatusId
                     - productInventoryStatus.name as inventoryStatusName
@@ -26,6 +25,18 @@ datagrids:
                                 THEN true ELSE false END
                             END
                         ) as inCategory
+                    - >
+                        (
+                            CASE WHEN (:category_id IS NOT NULL) THEN
+                                CASE WHEN
+                                    product.category = :category_id
+                                    OR product.id IN (:data_in) AND product.id NOT IN (:data_not_in)
+                                THEN product.category_sort_order ELSE NULLIF(1,1) END
+                            ELSE
+                                CASE WHEN product.id IN (:data_in) AND product.id NOT IN (:data_not_in)
+                                THEN product.category_sort_order ELSE NULLIF(1,1) END
+                            END
+                        ) as categorySortOrder
                 from:
                     - { table: 'Oro\Bundle\ProductBundle\Entity\Product', alias: product }
                 join:
@@ -134,26 +145,26 @@ datagrids:
                     excluded: '#categoryRemoveProducts'
 
     frontend-catalog-allproducts-grid:
-            extends: frontend-product-search-grid
-            source:
-                query:
-                    select:
-                        - integer.category_id as categoryId
-                        - text.category_title_LOCALIZATION_ID as categoryTitle
+        extends: frontend-product-search-grid
+        source:
+            query:
+                select:
+                    - integer.category_id as categoryId
+                    - text.category_title_LOCALIZATION_ID as categoryTitle
+        columns:
+            categoryId: ~
+            categoryTitle: ~
+        sorters:
+            toolbar_sorting: false
+            disable_default_sorting: false
+            multiple_sorting: true
             columns:
-                categoryId: ~
-                categoryTitle: ~
-            sorters:
-                toolbar_sorting: false
-                disable_default_sorting: false
-                multiple_sorting: true
-                columns:
-                    categoryTitle:
-                        data_name: text.category_title_LOCALIZATION_ID
-                        type: string
-                default:
-                    categoryTitle: ASC
-            options:
-                toolbarOptions:
-                    pagination:
-                        onePage: true
+                categoryTitle:
+                    data_name: text.category_title_LOCALIZATION_ID
+                    type: string
+            default:
+                categoryTitle: ASC
+        options:
+            toolbarOptions:
+                pagination:
+                    onePage: true
