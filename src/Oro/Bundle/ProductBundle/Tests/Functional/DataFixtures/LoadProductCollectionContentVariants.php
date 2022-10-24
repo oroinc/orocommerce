@@ -85,13 +85,15 @@ class LoadProductCollectionContentVariants extends AbstractFixture implements De
     private function createCollectionSortOrder(ObjectManager $manager)
     {
         $collectionSortOrder1 = new CollectionSortOrder();
-        $collectionSortOrder1->setSegment($this->getReference(LoadProductCollectionContentVariants::PRODUCT_STATIC_SEGMENT));
+        $collectionSortOrder1
+            ->setSegment($this->getReference(LoadProductCollectionContentVariants::PRODUCT_STATIC_SEGMENT));
         $collectionSortOrder1->setProduct($this->getReference(LoadProductData::PRODUCT_1));
         $collectionSortOrder1->setSortOrder(0.1);
         $manager->persist($collectionSortOrder1);
 
         $collectionSortOrder2 = new CollectionSortOrder();
-        $collectionSortOrder2->setSegment($this->getReference(LoadProductCollectionContentVariants::PRODUCT_STATIC_SEGMENT));
+        $collectionSortOrder2
+            ->setSegment($this->getReference(LoadProductCollectionContentVariants::PRODUCT_STATIC_SEGMENT));
         $collectionSortOrder2->setProduct($this->getReference(LoadProductData::PRODUCT_2));
         $collectionSortOrder2->setSortOrder(0.2);
         $manager->persist($collectionSortOrder2);

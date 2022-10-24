@@ -4,10 +4,10 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\DataTransformer;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityRepository;
-use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\CollectionSortOrder;
 use Oro\Bundle\ProductBundle\Form\DataTransformer\CollectionSortOrderTransformer;
+use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
 

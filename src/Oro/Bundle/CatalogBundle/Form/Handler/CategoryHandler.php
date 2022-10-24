@@ -61,8 +61,12 @@ class CategoryHandler implements FormHandlerInterface
      * @param Product[] $removeProducts
      * @param Product[] $sortOrder
      */
-    protected function onSuccess(Category $category, array $appendProducts, array $removeProducts, array $sortOrder): void
-    {
+    protected function onSuccess(
+        Category $category,
+        array $appendProducts,
+        array $removeProducts,
+        array $sortOrder
+    ): void {
         $this->appendProducts($category, $appendProducts);
         $this->removeProducts($category, $removeProducts);
         $this->sortProducts($category, $appendProducts, $removeProducts, $sortOrder);
@@ -123,8 +127,12 @@ class CategoryHandler implements FormHandlerInterface
      * @param array $sortOrder
      * @return void
      */
-    protected function sortProducts(Category $category, array $appendProducts, array $removeProducts, array $sortOrder): void
-    {
+    protected function sortProducts(
+        Category $category,
+        array $appendProducts,
+        array $removeProducts,
+        array $sortOrder
+    ): void {
         $productRepository = $this->manager->getRepository(Product::class);
         $products = $productRepository->findBy(['id' => array_keys($sortOrder)]);
         foreach ($products as $product) {
@@ -135,8 +143,7 @@ class CategoryHandler implements FormHandlerInterface
              *   - Check that the field is not in the removed products
              *   - Compare the old value and the new value
             */
-            if (
-                ($category->getProducts()->contains($product) || in_array($product, $appendProducts))
+            if (($category->getProducts()->contains($product) || in_array($product, $appendProducts))
                 && !in_array($product, $removeProducts)
                 && $sortDataInputValue !== $product->getCategorySortOrder()
             ) {

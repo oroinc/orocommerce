@@ -139,7 +139,8 @@ class CategoryTypeTest extends WebTestCase
             $this->assertContains($removedProduct, $removeProductsData);
         }
 
-        $sortOrdersData = array_map(function($row) {
+        $sortOrdersData = array_map(
+            function ($row) {
                 return $row['data'];
             },
             $form->get('sortOrder')->getData()->toArray()
