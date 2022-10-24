@@ -36,6 +36,12 @@
         '~data-page-component-options': pageComponentOptions
     }) %}
     {{ block('form_start_widget') }}
+    {% set errors = form_errors(form) %}
+    {% if errors|trim|length %}
+        <div class="grid-col-12">
+            {{ errors|raw }}
+        </div>
+    {% endif %}
 {% endblock %}
 
 {% block _quick_add_form_grid_widget %}
@@ -57,13 +63,6 @@
     {{ form_row(form.component) }}
     {{ form_row(form.additional) }}
     {{ form_row(form.transition) }}
-
-    {% set errors = form_errors(form) %}
-    {% if errors|trim|length %}
-        <div class="grid-col-12">
-            {{ errors|raw }}
-        </div>
-    {% endif %}
 {% endblock %}
 
 {% block _quick_add_form_buttons_wrapper_widget %}
