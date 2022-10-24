@@ -44,9 +44,11 @@ class LoadCategoryProductData extends AbstractFixture implements DependentFixtur
         foreach (self::$relations as $categoryReference => $productsReference) {
             foreach ($productsReference as $productReference) {
                 if (array_key_exists($productReference, self::$categorySortOrder)) {
-                    $this->getReference($productReference)->setCategorySortOrder(self::$categorySortOrder[$productReference]);
+                    $this->getReference($productReference)
+                        ->setCategorySortOrder(self::$categorySortOrder[$productReference]);
                 }
-                $this->getReference($categoryReference)->addProduct($this->getReference($productReference));
+                $this->getReference($categoryReference)
+                    ->addProduct($this->getReference($productReference));
             }
         }
 
