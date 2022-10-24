@@ -28,13 +28,13 @@ Feature: Quick order form
     And I should see that "Qty Line Item Input Field" contains "Qty #" placeholder
     And I should see that "Paste Your Order Input Field" contains "Copy and paste your order." placeholder
     When I click "Get Quote"
-    Then I should see "Please add at least one item" flash message
+    Then I should see that "Quick Add Form Validation" contains "Please add at least one item"
     And I reload the page
     When I click "Create Order"
-    Then I should see "Please add at least one item" flash message
+    Then I should see that "Quick Add Form Validation" contains "Please add at least one item"
     And I reload the page
     When I click "Add to List 2"
-    Then I should see "Please add at least one item" flash message
+    Then I should see that "Quick Add Form Validation" contains "Please add at least one item"
 
   Scenario: Check if the price depends on quantity
     When I click "Quick Order Form"
