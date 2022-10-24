@@ -142,7 +142,6 @@ class CategoryHandler implements FormHandlerInterface
             ) {
                 $product->setCategorySortOrder(is_null($sortDataInputValue) ? null : (float)$sortDataInputValue);
                 $this->manager->persist($product);
-                $this->manager->flush($product);
             }
         }
 
