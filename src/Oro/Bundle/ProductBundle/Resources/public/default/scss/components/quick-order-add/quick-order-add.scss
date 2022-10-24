@@ -235,4 +235,9 @@
             }
         }
     }
+
+    form > .validation-failed,
+    .collection-validation-input + .validation-failed {
+        margin-bottom: $offset-y-m;
+    }
 }

@@ -567,7 +567,7 @@ oro_behat_extension:
     Quick Add Form Validation:
       selector:
         type: 'xpath'
-        locator: "//form[@name='oro_product_quick_add']/span[@class='validation-failed']/span[2]"
+        locator: "//form[@name='oro_product_quick_add']//span[@class='validation-failed']//span[2]"
 
     Quick Add Copy Paste Form:
       selector: "form[name='oro_product_quick_add_copy_paste']"

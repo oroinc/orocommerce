@@ -37,7 +37,13 @@ define(function(require) {
             this.listenTo(mediator, {
                 'quick-add-import-form:submit': this.onImportFormSubmit
             });
+
             QuickAddImportFormView.__super__.initialize.call(this, options);
+
+            if (this.$('input:file').val() !== '') {
+                // import file is already chosen
+                this.onFileChange();
+            }
         },
 
         /**
