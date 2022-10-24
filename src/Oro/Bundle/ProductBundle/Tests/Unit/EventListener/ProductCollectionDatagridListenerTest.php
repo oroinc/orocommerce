@@ -3,6 +3,9 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Query\Expr;
+use Doctrine\ORM\Query\Expr\Andx;
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\DataGridBundle\Datagrid\Datagrid;
@@ -11,6 +14,7 @@ use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Datasource\DatasourceInterface;
 use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
 use Oro\Bundle\DataGridBundle\Event\BuildAfter;
+use Oro\Bundle\ProductBundle\Entity\CollectionSortOrder;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\EventListener\ProductCollectionDatagridListener;
 use Oro\Bundle\ProductBundle\Service\ProductCollectionDefinitionConverter;
@@ -71,7 +75,40 @@ class ProductCollectionDatagridListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnBuildWhenSegmentGridParamsSet()
     {
+        $qb = $this->createMock(QueryBuilder::class);
+        $expr = $this->createMock(Expr::class);
+        $andX = new Andx();
+        $expr->expects($this->once())
+            ->method('eq')
+            ->with('collectionSortOrder.product', 'product.id')
+            ->willReturn('collectionSortOrder.product = product.id');
+        $expr->expects($this->once())
+            ->method('andX')
+            ->willReturn($andX);
+        $qb->expects($this->once())
+            ->method('expr')
+            ->willReturn($expr);
+        $qb->expects($this->once())
+            ->method('addSelect')
+            ->with('collectionSortOrder.sortOrder as categorySortOrder')
+            ->willReturnSelf();
+        $qb->expects($this->once())
+            ->method('leftJoin')
+            ->with(
+                CollectionSortOrder::class,
+                'collectionSortOrder',
+                Join::WITH,
+                $andX
+            )
+            ->willReturnSelf();
+        $qb->expects($this->once())
+            ->method('setParameter')
+            ->willReturnSelf();
+
         $dataSource = $this->createMock(OrmDatasource::class);
+        $dataSource->expects($this->once())
+            ->method('getQueryBuilder')
+            ->willReturn($qb);
 
         /** @var Datagrid|\PHPUnit\Framework\MockObject\MockObject $dataGrid */
         $dataGrid = $this->createMock(Datagrid::class);
@@ -82,9 +119,10 @@ class ProductCollectionDatagridListenerTest extends \PHPUnit\Framework\TestCase
 
         $parameters = new ParameterBag([
             'params' => [
+                'segmentId' => '1',
                 'segmentDefinition' => '{}',
                 'includedProducts' => '1,2',
-                'excludedProducts' => '5'
+                'excludedProducts' => '5',
             ]
         ]);
 
@@ -159,6 +197,35 @@ class ProductCollectionDatagridListenerTest extends \PHPUnit\Framework\TestCase
     public function testOnBuildAfterWithEmptyRequestData()
     {
         $qb = $this->createMock(QueryBuilder::class);
+        $expr = $this->createMock(Expr::class);
+        $andX = new Andx();
+        $expr->expects($this->once())
+            ->method('eq')
+            ->with('collectionSortOrder.product', 'product.id')
+            ->willReturn('collectionSortOrder.product = product.id');
+        $expr->expects($this->once())
+            ->method('andX')
+            ->willReturn($andX);
+        $qb->expects($this->once())
+            ->method('expr')
+            ->willReturn($expr);
+        $qb->expects($this->once())
+            ->method('addSelect')
+            ->with('collectionSortOrder.sortOrder as categorySortOrder')
+            ->willReturnSelf();
+        $qb->expects($this->once())
+            ->method('leftJoin')
+            ->with(
+                CollectionSortOrder::class,
+                'collectionSortOrder',
+                Join::WITH,
+                $andX
+            )
+            ->willReturnSelf();
+        $qb->expects($this->once())
+            ->method('setParameter')
+            ->willReturnSelf();
+
         $dataSource = $this->createMock(OrmDatasource::class);
         $dataSource->expects($this->once())
             ->method('getQueryBuilder')
@@ -215,6 +282,34 @@ class ProductCollectionDatagridListenerTest extends \PHPUnit\Framework\TestCase
         $included = '1,2';
         $excluded = '3,4';
         $qb = $this->createMock(QueryBuilder::class);
+        $expr = $this->createMock(Expr::class);
+        $andX = new Andx();
+        $expr->expects($this->once())
+            ->method('eq')
+            ->with('collectionSortOrder.product', 'product.id')
+            ->willReturn('collectionSortOrder.product = product.id');
+        $expr->expects($this->once())
+            ->method('andX')
+            ->willReturn($andX);
+        $qb->expects($this->once())
+            ->method('expr')
+            ->willReturn($expr);
+        $qb->expects($this->once())
+            ->method('addSelect')
+            ->with('collectionSortOrder.sortOrder as categorySortOrder')
+            ->willReturnSelf();
+        $qb->expects($this->once())
+            ->method('leftJoin')
+            ->with(
+                CollectionSortOrder::class,
+                'collectionSortOrder',
+                Join::WITH,
+                $andX
+            )
+            ->willReturnSelf();
+        $qb->expects($this->once())
+            ->method('setParameter')
+            ->willReturnSelf();
 
         $dataSource = $this->createMock(OrmDatasource::class);
         $dataSource->expects($this->once())
@@ -279,6 +374,35 @@ class ProductCollectionDatagridListenerTest extends \PHPUnit\Framework\TestCase
             ->willReturn(new Request($requestData));
 
         $qb = $this->createMock(QueryBuilder::class);
+        $expr = $this->createMock(Expr::class);
+        $andX = new Andx();
+        $expr->expects($this->once())
+            ->method('eq')
+            ->with('collectionSortOrder.product', 'product.id')
+            ->willReturn('collectionSortOrder.product = product.id');
+        $expr->expects($this->once())
+            ->method('andX')
+            ->willReturn($andX);
+        $qb->expects($this->once())
+            ->method('expr')
+            ->willReturn($expr);
+        $qb->expects($this->once())
+            ->method('addSelect')
+            ->with('collectionSortOrder.sortOrder as categorySortOrder')
+            ->willReturnSelf();
+        $qb->expects($this->once())
+            ->method('leftJoin')
+            ->with(
+                CollectionSortOrder::class,
+                'collectionSortOrder',
+                Join::WITH,
+                $andX
+            )
+            ->willReturnSelf();
+        $qb->expects($this->once())
+            ->method('setParameter')
+            ->willReturnSelf();
+
         $dataSource = $this->createMock(OrmDatasource::class);
         $dataSource->expects($this->once())
             ->method('getQueryBuilder')
