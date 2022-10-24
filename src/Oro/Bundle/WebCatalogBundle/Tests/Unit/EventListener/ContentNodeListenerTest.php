@@ -8,6 +8,7 @@ use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\UnitOfWork;
 use Oro\Bundle\CommerceEntityBundle\Storage\ExtraActionEntityStorageInterface;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
+use Oro\Bundle\ProductBundle\Handler\CollectionSortOrderHandler;
 use Oro\Bundle\WebCatalogBundle\Async\Topic\WebCatalogCalculateCacheTopic;
 use Oro\Bundle\WebCatalogBundle\Async\Topic\WebCatalogResolveContentNodeSlugsTopic;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
@@ -17,6 +18,7 @@ use Oro\Bundle\WebCatalogBundle\Model\ContentNodeMaterializedPathModifier;
 use Oro\Bundle\WebCatalogBundle\Model\ResolveNodeSlugsMessageFactory;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\Form\Test\FormInterface;
 
 class ContentNodeListenerTest extends \PHPUnit\Framework\TestCase
 {
@@ -38,12 +40,14 @@ class ContentNodeListenerTest extends \PHPUnit\Framework\TestCase
         $this->storage = $this->createMock(ExtraActionEntityStorageInterface::class);
         $this->messageProducer = $this->createMock(MessageProducerInterface::class);
         $this->messageFactory = $this->createMock(ResolveNodeSlugsMessageFactory::class);
+        $this->collectionSortOrderHandler = $this->createMock(CollectionSortOrderHandler::class);
 
         $this->contentNodeListener = new ContentNodeListener(
             $this->modifier,
             $this->storage,
             $this->messageProducer,
-            $this->messageFactory
+            $this->messageFactory,
+            $this->collectionSortOrderHandler
         );
     }
 
@@ -83,7 +87,7 @@ class ContentNodeListenerTest extends \PHPUnit\Framework\TestCase
         $this->contentNodeListener->preUpdate($contentNode, $args);
     }
 
-    public function testOnFormAfterFlush(): void
+    public function testOnFormAfterFlushWithoutSortOrder(): void
     {
         $contentNode = $this->getEntity(ContentNode::class, ['id' => 1]);
 
@@ -95,7 +99,23 @@ class ContentNodeListenerTest extends \PHPUnit\Framework\TestCase
             ->method('send')
             ->with(WebCatalogResolveContentNodeSlugsTopic::getName(), []);
 
+        // TODO : much more complex logic ot integrate there because of the saveCollectionVariantsSortOrders method
+        // We need to change the willReturn([]) on contentVariants to the form type & data and go deeper in the function
+        // for now I couldn't find a way to make it but I'm trying (mocking form, using real form)
+        // Cannot really be mocked as a functional test either
+        // because the structure of the ContentNodeType form & data is awfully complex too (which blocks even here too)
+        $form = $this->createMock(FormInterface::class);
+        $form->expects($this->once())
+            ->method('get')
+            ->with('contentVariants')
+            ->willReturn([]);
         $event = $this->createMock(AfterFormProcessEvent::class);
+        $event->expects($this->once())
+            ->method('getForm')
+            ->willReturn($form);
+        $this->collectionSortOrderHandler->expects(self::once())
+            ->method('updateCollections')
+            ->with([]);
         $event->expects(self::once())
             ->method('getData')
             ->willReturn($contentNode);
