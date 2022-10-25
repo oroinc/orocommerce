@@ -125,9 +125,9 @@ class MeasureUnitConversionTest extends \PHPUnit\Framework\TestCase
         $convertedUnit = $this->measureUnitConversion->convertDimensions($this->dimensionsUnit, 'inch');
 
         $this->assertInstanceOf(Dimensions::class, $convertedUnit);
-        $this->assertEquals(12.6378021, $convertedUnit->getValue()->getLength());
-        $this->assertEquals(25.7480454, $convertedUnit->getValue()->getWidth());
-        $this->assertEquals(38.8582887, $convertedUnit->getValue()->getHeight());
+        $this->assertSame(12.6378021, $convertedUnit->getValue()->getLength());
+        $this->assertSame(25.7480454, $convertedUnit->getValue()->getWidth());
+        $this->assertSame(38.8582887, $convertedUnit->getValue()->getHeight());
         $this->assertEquals('inch', $convertedUnit->getUnit()->getCode());
     }
 
@@ -137,7 +137,7 @@ class MeasureUnitConversionTest extends \PHPUnit\Framework\TestCase
         $convertedUnit = $this->measureUnitConversion->convertWeight($this->weightUnit, 'lbs');
 
         $this->assertInstanceOf(Weight::class, $convertedUnit);
-        $this->assertEquals(114.90493095439999, $convertedUnit->getValue());
+        $this->assertSame(114.90493095439999, $convertedUnit->getValue());
         $this->assertEquals('lbs', $convertedUnit->getUnit()->getCode());
     }
 
