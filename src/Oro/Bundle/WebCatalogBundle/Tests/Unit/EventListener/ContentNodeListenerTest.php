@@ -8,7 +8,9 @@ use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\UnitOfWork;
 use Oro\Bundle\CommerceEntityBundle\Storage\ExtraActionEntityStorageInterface;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
+use Oro\Bundle\ProductBundle\Entity\CollectionSortOrder;
 use Oro\Bundle\ProductBundle\Handler\CollectionSortOrderHandler;
+use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\WebCatalogBundle\Async\Topic\WebCatalogCalculateCacheTopic;
 use Oro\Bundle\WebCatalogBundle\Async\Topic\WebCatalogResolveContentNodeSlugsTopic;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
@@ -99,11 +101,6 @@ class ContentNodeListenerTest extends \PHPUnit\Framework\TestCase
             ->method('send')
             ->with(WebCatalogResolveContentNodeSlugsTopic::getName(), []);
 
-        // TODO : much more complex logic ot integrate there because of the saveCollectionVariantsSortOrders method
-        // We need to change the willReturn([]) on contentVariants to the form type & data and go deeper in the function
-        // for now I couldn't find a way to make it but I'm trying (mocking form, using real form)
-        // Cannot really be mocked as a functional test either
-        // because the structure of the ContentNodeType form & data is awfully complex too (which blocks even here too)
         $form = $this->createMock(FormInterface::class);
         $form->expects($this->once())
             ->method('get')
@@ -116,6 +113,69 @@ class ContentNodeListenerTest extends \PHPUnit\Framework\TestCase
         $this->collectionSortOrderHandler->expects(self::once())
             ->method('updateCollections')
             ->with([]);
+        $event->expects(self::once())
+            ->method('getData')
+            ->willReturn($contentNode);
+
+        $this->contentNodeListener->onFormAfterFlush($event);
+    }
+
+    public function testOnFormAfterFlushWithSortOrder(): void
+    {
+        $contentNode = $this->getEntity(ContentNode::class, ['id' => 1]);
+
+        $this->messageFactory->expects(self::once())
+            ->method('createMessage')
+            ->with($contentNode)
+            ->willReturn([]);
+        $this->messageProducer->expects(self::once())
+            ->method('send')
+            ->with(WebCatalogResolveContentNodeSlugsTopic::getName(), []);
+
+        $segment = $this->createMock(Segment::class);
+        $segment->expects($this->exactly(2))
+            ->method('getId')
+            ->willReturn(1);
+        $collectionSortOrderForm = $this->createMock(FormInterface::class);
+        $collectionSortOrder = $this->createMock(CollectionSortOrder::class);
+        $collectionSortOrderForm->expects($this->exactly(2))
+            ->method('getData')
+            ->willReturn([['data' => $collectionSortOrder]]);
+        $productCollectionSegmentForm = $this->createMock(FormInterface::class);
+        $productCollectionSegmentForm->expects($this->once())
+            ->method('get')
+            ->with('sortOrder')
+            ->willReturn($collectionSortOrderForm);
+        $productCollectionSegmentForm->expects($this->once())
+            ->method('has')
+            ->with('sortOrder')
+            ->willReturn(true);
+        $productCollectionSegmentForm->expects($this->once())
+            ->method('getData')
+            ->willReturn($segment);
+        $contentVariantForm = $this->createMock(FormInterface::class);
+        $contentVariantForm->expects($this->exactly(2))
+            ->method('get')
+            ->with('productCollectionSegment')
+            ->willReturn($productCollectionSegmentForm);
+        $contentVariantForm->expects($this->once())
+            ->method('has')
+            ->with('productCollectionSegment')
+            ->willReturn(true);
+        $contentNodeForm = $this->createMock(FormInterface::class);
+        $contentNodeForm->expects($this->once())
+            ->method('get')
+            ->with('contentVariants')
+            ->willReturn([$contentVariantForm]);
+        $event = $this->createMock(AfterFormProcessEvent::class);
+        $event->expects($this->once())
+            ->method('getForm')
+            ->willReturn($contentNodeForm);
+
+        $this->collectionSortOrderHandler->expects(self::once())
+            ->method('updateCollections')
+            ->with([1 => ['segment' => $segment, 'sortOrders' => [0 => $collectionSortOrder]]]);
+
         $event->expects(self::once())
             ->method('getData')
             ->willReturn($contentNode);
