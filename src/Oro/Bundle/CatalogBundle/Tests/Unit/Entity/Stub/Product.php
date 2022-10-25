@@ -30,9 +30,4 @@ class Product extends BaseProduct
     {
         $this->categorySortOrder = $categorySortOrder;
     }
-
-    public function setId(int $id)
-    {
-        $this->id = $id;
-    }
 }

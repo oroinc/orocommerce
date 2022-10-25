@@ -47,7 +47,7 @@ class CategoryHandlerTest extends \PHPUnit\Framework\TestCase
         $this->handler = new CategoryHandler($this->manager, $this->eventDispatcher);
     }
 
-    private function expectsAppendRemoveProducts(): void
+    private function expectsAppendRemoveSortProducts(): void
     {
         $this->eventDispatcher->expects(self::once())
             ->method('dispatch')
@@ -117,7 +117,7 @@ class CategoryHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('isValid')
             ->willReturn(true);
 
-        $this->expectsAppendRemoveProducts();
+        $this->expectsAppendRemoveSortProducts();
         $this->expectsCategoryUnitPrecisionUpdate();
 
         $this->form->expects(self::once())
@@ -126,6 +126,9 @@ class CategoryHandlerTest extends \PHPUnit\Framework\TestCase
 
         $categoryRepository = $this->createMock(CategoryRepository::class);
         $productRepository = $this->createMock(ProductRepository::class);
+        $this->entity->expects(self::once())
+            ->method('getProducts')
+            ->willReturn($this->createMock(ArrayCollection::class));
         $categoryRepository->expects(self::once())
             ->method('findOneByProduct')
             ->willReturn(new CategoryStub());
@@ -133,12 +136,14 @@ class CategoryHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('getRepository')
             ->withConsecutive([Category::class], [Product::class])
             ->willReturnOnConsecutiveCalls($categoryRepository, $productRepository);
-        $product = new ProductStub();
-        $product->setId(1);
+        $product = $this->createMock(ProductStub::class);
+        $product->expects(self::once())
+            ->method('getId')
+            ->willReturn(1);
         $productRepository->expects(self::once())
             ->method('findBy')
             ->with(['id' => [1]])
-            ->willReturn($product);
+            ->willReturn([$product]);
 
         self::assertTrue($this->handler->process($this->entity, $this->form, $request));
     }
@@ -191,11 +196,14 @@ class CategoryHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('isValid')
             ->willReturn(true);
 
-        $this->expectsAppendRemoveProducts();
+        $this->expectsAppendRemoveSortProducts();
         $this->expectsCategoryUnitPrecisionUpdate();
 
         $categoryRepository = $this->createMock(CategoryRepository::class);
         $productRepository = $this->createMock(ProductRepository::class);
+        $this->entity->expects(self::once())
+            ->method('getProducts')
+            ->willReturn($this->createMock(ArrayCollection::class));
         $categoryRepository->expects(self::once())
             ->method('findOneByProduct')
             ->willReturn(new CategoryStub());
@@ -203,12 +211,14 @@ class CategoryHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('getRepository')
             ->withConsecutive([Category::class], [Product::class])
             ->willReturnOnConsecutiveCalls($categoryRepository, $productRepository);
-        $product = new ProductStub();
-        $product->setId(1);
+        $product = $this->createMock(ProductStub::class);
+        $product->expects(self::once())
+            ->method('getId')
+            ->willReturn(1);
         $productRepository->expects(self::once())
             ->method('findBy')
             ->with(['id' => [1]])
-            ->willReturn($product);
+            ->willReturn([$product]);
         $this->manager->expects(self::exactly(2))
             ->method('persist');
         $this->manager->expects(self::once())
