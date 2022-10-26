@@ -158,6 +158,7 @@ class ProductVisibilityLimitedWithPricesSearchHandlerTest extends TestCase
                 [
                     'more' => false,
                     'results' => [
+                        ['sku' => 'Sku1', 'name' => 'Sku1', 'prices' => [['value' => 1, 'unit' => 'item']]],
                         ['sku' => 'SkuАбв', 'name' => 'test name', 'prices' => [['value' => 10, 'unit' => 'item']]]
                     ]
                 ],
