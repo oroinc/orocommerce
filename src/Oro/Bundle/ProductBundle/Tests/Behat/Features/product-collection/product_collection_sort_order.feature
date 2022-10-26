@@ -35,6 +35,7 @@ Feature: Product collection sort order
     And I type "Some Custom Segment Name" in "Segment Name"
     And I fill "Product Collection Grid Form" with:
       | PSKU2 | 2 |
+      | PSKU4 | 0.4 |
 
   Scenario: Product Collection sort order has been saved
     When I save form
@@ -44,19 +45,19 @@ Feature: Product collection sort order
     Then I should see 1 element "Product Collection Variant Label"
     And I should see following grid:
       | SKU   | NAME      |
+      | PSKU4 | Product 4 |
       | PSKU2 | Product 2 |
       | PSKU5 | Product 5 |
-      | PSKU4 | Product 4 |
       | PSKU3 | Product 3 |
       | PSKU1 | Product 1 |
 
   Scenario: Product Collection correctly sorted in frontend
     Given I operate as the Buyer
     When I am on homepage
-    Then I should see "PSKU2"
+    Then I should see "PSKU4"
+    And I should see "PSKU2"
     And I should see "PSKU1"
     And I should see "PSKU3"
-    And I should see "PSKU4"
     And I should see "PSKU5"
 
   Scenario: Product Collection sort order can be edited
@@ -64,7 +65,7 @@ Feature: Product collection sort order
     And I fill "Product Collection Grid Form" with:
       | PSKU2 |  |
       | PSKU3 | 0 |
-      | PSKU4 | 0.1 |
+      | PSKU1 | 0.1 |
 
   Scenario: Product Collection sort order has been saved
     When I save form
@@ -75,16 +76,16 @@ Feature: Product collection sort order
     And I should see following grid:
       | SKU   | NAME      |
       | PSKU3 | Product 3 |
+      | PSKU1 | Product 1 |
       | PSKU4 | Product 4 |
       | PSKU5 | Product 5 |
       | PSKU2 | Product 2 |
-      | PSKU1 | Product 1 |
 
   Scenario: Product Collection sort order updated in frontend
     Given I operate as the Buyer
     When I am on homepage
     Then I should see "PSKU3"
+    And I should see "PSKU1"
     And I should see "PSKU4"
     And I should see "PSKU5"
     And I should see "PSKU2"
-    And I should see "PSKU1"
