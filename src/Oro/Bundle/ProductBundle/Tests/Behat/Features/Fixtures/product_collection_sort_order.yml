@@ -1,35 +1,4 @@
 include:
     - '@OroProductBundle:product_collections_web_catalog.yml'
+    - '@OroProductBundle:product_sort_order.yml'
 
-Oro\Bundle\ProductBundle\Entity\ProductName:
-    localProductName{1..5}:
-        string: 'Product <current()>'
-
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
-    localProductAttributeFamily:
-        string: 'Product Attribute Family'
-
-Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
-    productUnitPrecision{1..5}:
-        unit: '@item'
-        precision: '1'
-
-Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
-    productAttributeFamily:
-        entityClass: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
-        code: 'product_attribute_family_code'
-        __calls:
-            - addLabel: ['@localProductAttributeFamily']
-        owner: '@organization'
-
-Oro\Bundle\ProductBundle\Entity\Product:
-    product{1..5}:
-        type: 'simple'
-        sku: 'PSKU<current()>'
-        primaryUnitPrecision: '@productUnitPrecision<current()>'
-        __calls:
-            - addName: ['@localProductName<current()>']
-        inventoryStatus: '@enumInventoryStatuses'
-        status: 'enabled'
-        organization: '@organization'
-        attributeFamily: '@productAttributeFamily'
