@@ -85,10 +85,6 @@ define(function(require) {
                 }
             });
 
-            // if (!quickAddRows.length) {
-            //     return;
-            // }
-
             const newFormData = new FormData();
             const formName = this.$form.attr('name');
             for (const row of this.$form.serializeArray()) {
@@ -111,15 +107,15 @@ define(function(require) {
                     }
 
                     if (response.messages) {
-                        _.each(response.messages, function(messages, type) {
-                            _.each(messages, function(message) {
+                        _.each(response.messages, (messages, type) => {
+                            _.each(messages, message => {
                                 messenger.notificationMessage(type, message);
                             });
                         });
                     }
 
                     if (response.collection) {
-                        _.each(response.collection.errors, function(error) {
+                        _.each(response.collection.errors, error => {
                             messenger.notificationMessage('error', error.message);
                         });
 

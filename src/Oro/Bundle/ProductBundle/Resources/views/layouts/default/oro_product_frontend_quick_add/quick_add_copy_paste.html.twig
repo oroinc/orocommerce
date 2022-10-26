@@ -1,6 +1,9 @@
 {% block _quick_add_copy_paste_form_start_widget %}
     {% set attr = {
         'data-page-component-view': 'oroproduct/js/app/views/quick-add-copy-paste-form-view',
+        'data-page-component-options': {
+            'isOptimized': form.vars.is_optimized
+        },
     }|merge(attr) %}
     {{ block('form_start_widget') }}
 {% endblock %}

@@ -85,6 +85,7 @@ class ProductFormProvider extends AbstractFormProvider
     public function getQuickAddCopyPasteFormView()
     {
         $options['action'] = $this->generateUrl(self::PRODUCT_QUICK_ADD_COPY_PASTE_ROUTE_NAME);
+        $options['is_optimized'] = $this->isOptimizedFormEnabled();
 
         return $this->getFormView(QuickAddCopyPasteType::class, null, $options);
     }
@@ -95,6 +96,7 @@ class ProductFormProvider extends AbstractFormProvider
     public function getQuickAddCopyPasteForm()
     {
         $options['action'] = $this->generateUrl(self::PRODUCT_QUICK_ADD_COPY_PASTE_ROUTE_NAME);
+        $options['is_optimized'] = $this->isOptimizedFormEnabled();
 
         return $this->getForm(QuickAddCopyPasteType::class, null, $options);
     }

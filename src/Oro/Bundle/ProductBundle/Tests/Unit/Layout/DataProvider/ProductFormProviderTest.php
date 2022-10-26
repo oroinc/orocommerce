@@ -142,6 +142,71 @@ class ProductFormProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertInstanceOf(FormInterface::class, $data);
     }
 
+    public function testGetQuickAddCopyPasteFormViewWhenIsOptimized()
+    {
+        $this->configManager
+            ->expects(self::exactly(2))
+            ->method('get')
+            ->with(Configuration::getConfigKeyByName(Configuration::ENABLE_QUICK_ORDER_FORM_OPTIMIZED))
+            ->willReturn(true);
+        $action = '/import/copy-paste';
+        $this->router
+            ->expects(self::exactly(2))
+            ->method('generate')
+            ->with(ProductFormProvider::PRODUCT_QUICK_ADD_COPY_PASTE_ROUTE_NAME)
+            ->willReturn($action);
+
+        $formView = $this->createMock(FormView::class);
+
+        $expectedForm = $this->createMock(FormInterface::class);
+        $expectedForm->expects(self::once())
+            ->method('createView')
+            ->willReturn($formView);
+
+        $this->formFactory->expects(self::once())
+            ->method('create')
+            ->with(QuickAddCopyPasteType::class, null, ['action' => $action, 'is_optimized' => true])
+            ->willReturn($expectedForm);
+
+        // Get form without existing data in locale cache
+        $data = $this->provider->getQuickAddCopyPasteFormView();
+        self::assertInstanceOf(FormView::class, $data);
+
+        // Get form with existing data in locale cache
+        $data = $this->provider->getQuickAddCopyPasteFormView();
+        self::assertInstanceOf(FormView::class, $data);
+    }
+
+    public function testGetQuickAddCopyPasteFormWhenIsOptimized(): void
+    {
+        $this->configManager
+            ->expects(self::exactly(2))
+            ->method('get')
+            ->with(Configuration::getConfigKeyByName(Configuration::ENABLE_QUICK_ORDER_FORM_OPTIMIZED))
+            ->willReturn(true);
+        $action = '/import/copy-paste';
+        $this->router
+            ->expects(self::exactly(2))
+            ->method('generate')
+            ->with(ProductFormProvider::PRODUCT_QUICK_ADD_COPY_PASTE_ROUTE_NAME)
+            ->willReturn($action);
+
+        $expectedForm = $this->createMock(FormInterface::class);
+
+        $this->formFactory->expects(self::once())
+            ->method('create')
+            ->with(QuickAddCopyPasteType::class, null, ['action' => $action, 'is_optimized' => true])
+            ->willReturn($expectedForm);
+
+        // Get form without existing data in locale cache
+        $data = $this->provider->getQuickAddCopyPasteForm();
+        self::assertInstanceOf(FormInterface::class, $data);
+
+        // Get form with existing data in locale cache
+        $data = $this->provider->getQuickAddCopyPasteForm();
+        self::assertInstanceOf(FormInterface::class, $data);
+    }
+
     public function testGetQuickAddImportFormView(): void
     {
         $this->configManager

@@ -7,6 +7,7 @@ use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Form\Handler\QuickAddHandler;
 use Oro\Bundle\ProductBundle\Form\Handler\QuickAddImportFromFileHandler;
+use Oro\Bundle\ProductBundle\Form\Handler\QuickAddImportFromPlainTextHandler;
 use Oro\Bundle\ProductBundle\Form\Handler\QuickAddProcessHandler;
 use Oro\Bundle\ProductBundle\Layout\DataProvider\ProductFormProvider;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
@@ -17,6 +18,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -81,6 +83,15 @@ class QuickAddController extends AbstractController
      */
     public function copyPasteAction()
     {
+        if ($this->isOptimizedFormEnabled()) {
+            $form = $this->get(ProductFormProvider::class)->getQuickAddCopyPasteForm();
+
+            return $this->get(QuickAddImportFromPlainTextHandler::class)->process(
+                $form,
+                $this->get(RequestStack::class)->getMasterRequest()
+            );
+        }
+
         $collection = $this->get(QuickAddCollectionProvider::class)->processCopyPaste();
 
         return [
@@ -146,10 +157,12 @@ class QuickAddController extends AbstractController
                 QuickAddHandler::class,
                 QuickAddProcessHandler::class,
                 QuickAddImportFromFileHandler::class,
+                QuickAddImportFromPlainTextHandler::class,
                 QuickAddCollectionProvider::class,
                 QuickAddCollectionNormalizerInterface::class,
                 ProductFormProvider::class,
                 ConfigManager::class,
+                RequestStack::class,
             ]
         );
     }

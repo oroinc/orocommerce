@@ -143,6 +143,12 @@ class QuickAddRowCollectionBuilder
             }
         }
 
+        if ($this->productsGrouperFactory) {
+            $collection = $this->productsGrouperFactory
+                ->createProductsGrouper(ProductsGrouperFactory::QUICK_ADD_ROW)
+                ->process($collection);
+        }
+
         $this->mapProducts($collection);
 
         return $collection;
@@ -165,6 +171,12 @@ class QuickAddRowCollectionBuilder
                 $collection->add(
                     $this->quickAddRowInputParser->createFromCopyPasteTextLine($data, $lineNumber++)
                 );
+            }
+
+            if ($this->productsGrouperFactory) {
+                $collection = $this->productsGrouperFactory
+                    ->createProductsGrouper(ProductsGrouperFactory::QUICK_ADD_ROW)
+                    ->process($collection);
             }
         }
 

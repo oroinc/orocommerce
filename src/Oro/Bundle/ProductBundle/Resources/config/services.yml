@@ -1997,6 +1997,20 @@ services:
     Oro\Bundle\ProductBundle\Form\Handler\QuickAddImportFromFileHandler:
         alias: oro_product.form_handler.quick_add_import_from_file
 
+    oro_product.form_handler.quick_add_import_from_plain_text:
+        class: Oro\Bundle\ProductBundle\Form\Handler\QuickAddImportFromPlainTextHandler
+        arguments:
+            - '@oro_product.model.builder.quick_add_row_collection'
+            - '@event_dispatcher'
+            - '@validator'
+            - '@oro_product.quick_add.violations_mapper'
+            - '@oro_product.quick_add.normalizer'
+        calls:
+            - [setPreloadingManager, ['@oro_entity.manager.preloading_manager']]
+
+    Oro\Bundle\ProductBundle\Form\Handler\QuickAddImportFromPlainTextHandler:
+        alias: oro_product.form_handler.quick_add_import_from_plain_text
+
     oro_product.form_handler.quick_add_process:
         class: Oro\Bundle\ProductBundle\Form\Handler\QuickAddProcessHandler
         arguments:
