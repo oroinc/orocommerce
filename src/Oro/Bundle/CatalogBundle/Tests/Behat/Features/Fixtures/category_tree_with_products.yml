@@ -131,6 +131,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
 
 Oro\Bundle\CatalogBundle\Entity\Category:
     categoryLightingProducts:
+        organization: '@organization'
         __calls:
             - addTitle: ['@localValueLightingProducts']
             - setParentCategory: ['@root_category']
@@ -138,6 +139,7 @@ Oro\Bundle\CatalogBundle\Entity\Category:
             - setInventoryThreshold: ['@treshhold100']
 
     categoryRetailSupplies:
+        organization: '@organization'
         __calls:
             - addTitle: ['@localValueRetailSupplies']
             - setParentCategory: ['@root_category']
@@ -145,6 +147,7 @@ Oro\Bundle\CatalogBundle\Entity\Category:
             - setInventoryThreshold: ['@treshhold200']
 
     categoryPrinters:
+        organization: '@organization'
         __calls:
             - addTitle: ['@localValuePrinters']
             - setParentCategory: ['@categoryRetailSupplies']
