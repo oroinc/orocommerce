@@ -40,15 +40,6 @@ services:
             - '@translator'
             - '@oro_locale.formatter.date_time'
 
-    oro_inventory.validator.product_row_quantity_validator:
-        class: 'Oro\Bundle\InventoryBundle\Validator\Constraints\ProductRowQuantityValidator'
-        arguments:
-            - "@oro_inventory.validator.quantity_to_order_validator"
-            - "@oro_entity.doctrine_helper"
-            - "@oro_security.acl_helper"
-        tags:
-            - { name: validator.constraint_validator, alias: oro_warehouse_product_row_validator }
-
     oro_inventory.validator.product_quantity_to_order_limit_validator:
         class: 'Oro\Bundle\InventoryBundle\Validator\Constraints\ProductQuantityToOrderLimitValidator'
         arguments:
@@ -188,3 +179,9 @@ services:
                 permission: VIEW
                 entityClass: Oro\Bundle\InventoryBundle\Entity\InventoryLevel
                 loggedUserClass: Oro\Bundle\UserBundle\Entity\User
+
+    Oro\Bundle\InventoryBundle\Validator\Constraints\QuantityToOrderValidator:
+        arguments:
+            - '@oro_inventory.validator.quantity_to_order_validator'
+        tags:
+            - { name: validator.constraint_validator }

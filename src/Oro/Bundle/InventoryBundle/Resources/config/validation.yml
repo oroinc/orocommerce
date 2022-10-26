@@ -52,6 +52,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
                     min: -100000000
                     max: 100000000
 
-Oro\Bundle\ProductBundle\Model\ProductRow:
+Oro\Bundle\ProductBundle\Model\QuickAddRow:
     constraints:
-        - Oro\Bundle\InventoryBundle\Validator\Constraints\ProductRowQuantity: { groups: [not_request_for_quote] }
+        - Oro\Bundle\InventoryBundle\Validator\Constraints\QuantityToOrder:
+              groups: [ not_request_for_quote ]

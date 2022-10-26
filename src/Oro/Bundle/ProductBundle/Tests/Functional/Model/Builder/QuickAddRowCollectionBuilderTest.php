@@ -25,7 +25,8 @@ class QuickAddRowCollectionBuilderTest extends WebTestCase
             $this->getContainer()->get('oro_product.product.manager'),
             $this->getContainer()->get('event_dispatcher'),
             $this->getContainer()->get('oro_product.model.builder.quick_add_row_input_parser'),
-            $this->getContainer()->get('oro_security.acl_helper')
+            $this->getContainer()->get('oro_security.acl_helper'),
+            $this->getContainer()->get('oro_product.helper.product_grouper.factory'),
         );
     }
 

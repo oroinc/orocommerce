@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: '@OroProduct/layouts/default/oro_product_frontend_quick_add_import_help/dialog/oro_product_frontend_quick_add_import_help.twig'
+            themes: '@OroProduct/layouts/default/oro_product_frontend_quick_add_import_help/dialog/oro_product_frontend_quick_add_import_help.html.twig'
         - '@setOption':
             id: widget_content
             optionName: 'attr.data-page-component-module'

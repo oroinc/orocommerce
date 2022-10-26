@@ -7,12 +7,12 @@ use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class QuickAddControllerTest extends WebTestCase
@@ -77,7 +77,6 @@ class QuickAddControllerTest extends WebTestCase
 
         $form = $crawler->filter('form[name="oro_product_quick_add"]')->form();
         $processor = $this->getContainer()->get('oro_shopping_list.processor.quick_add');
-        $this->client->followRedirects(true);
 
         $this->client->request(
             $form->getMethod(),
@@ -85,12 +84,12 @@ class QuickAddControllerTest extends WebTestCase
             [
                 'oro_product_quick_add' => [
                     '_token' => $form['oro_product_quick_add[_token]']->getValue(),
-                    'products' => [
+                    'products' => json_encode([
                         [
-                            'productSku' => $product->getSku(),
-                            'productQuantity' => $quantity,
+                            ProductDataStorage::PRODUCT_SKU_KEY => $product->getSku(),
+                            ProductDataStorage::PRODUCT_QUANTITY_KEY => $quantity,
                         ],
-                    ],
+                    ]),
                     'component' => $processor->getName(),
                     'additional' => null,
                 ],
@@ -101,7 +100,12 @@ class QuickAddControllerTest extends WebTestCase
             $errorMessage,
             ['%limit%' => $errorLimit, '%sku%' => $product->getSku(), '%product_name%' => $product->getName()]
         );
-        static::assertStringContainsString($errorMessage, $this->client->getResponse()->getContent());
+        $response = $this->client->getResponse();
+        $responseData = self::getJsonResponseContent($response, 200);
+        self::assertStringContainsString(
+            $errorMessage,
+            $responseData['collection']['items'][0]['errors'][0]['message']
+        );
     }
 
     /**
@@ -127,7 +131,6 @@ class QuickAddControllerTest extends WebTestCase
 
         $form = $crawler->filter('form[name="oro_product_quick_add"]')->form();
         $processor = $this->getContainer()->get('oro_rfp.processor.quick_add');
-        $this->client->followRedirects(false);
 
         $this->client->request(
             $form->getMethod(),
@@ -135,21 +138,23 @@ class QuickAddControllerTest extends WebTestCase
             [
                 'oro_product_quick_add' => [
                     '_token' => $form['oro_product_quick_add[_token]']->getValue(),
-                    'products' => [
+                    'products' => json_encode([
                         [
-                            'productSku' => $product->getSku(),
-                            'productQuantity' => $quantity,
+                            ProductDataStorage::PRODUCT_SKU_KEY => $product->getSku(),
+                            ProductDataStorage::PRODUCT_QUANTITY_KEY => $quantity,
                         ],
-                    ],
+                    ]),
                     'component' => $processor->getName(),
                     'additional' => null,
                 ],
             ]
         );
-        $this->assertEquals(Response::HTTP_FOUND, $this->client->getResponse()->getStatusCode());
-        static::assertStringContainsString(
+
+        $response = $this->client->getResponse();
+        $responseData = self::getJsonResponseContent($response, 200);
+        self::assertStringContainsString(
             $this->getUrl('oro_rfp_frontend_request_create'),
-            $this->client->getResponse()->headers->get('location')
+            $responseData['redirectUrl']
         );
     }
 

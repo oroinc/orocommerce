@@ -5,6 +5,8 @@ define(function(require) {
     const $ = require('jquery');
     const mediator = require('oroui/js/mediator');
     const BaseComponent = require('oroui/js/app/components/base/component');
+    const formToAjaxOptions = require('oroui/js/tools/form-to-ajax-options');
+    const messenger = require('oroui/js/messenger');
 
     const QuickAddComponent = BaseComponent.extend({
         /**
@@ -23,6 +25,11 @@ define(function(require) {
         $form: null,
 
         /**
+         * @property {QuickAddCollection}
+         */
+        productsCollection: null,
+
+        /**
          * @inheritdoc
          */
         constructor: function QuickAddComponent(options) {
@@ -38,6 +45,9 @@ define(function(require) {
             this.$form = this.options._sourceElement;
 
             this.$form.on('click', this.options.componentButtonSelector, this.fillComponentData.bind(this));
+
+            this.productsCollection = this.options.productsCollection;
+            this.$form.on('submit', _.bind(this.onSubmit, this));
 
             mediator.on(this.options.componentPrefix + ':submit', this.submit, this);
         },
@@ -57,6 +67,65 @@ define(function(require) {
             this.$form.submit();
         },
 
+        onSubmit(e) {
+            e.preventDefault();
+
+            const quickAddRows = [];
+            _.each(this.productsCollection.models, model => {
+                if (model.get('sku')) {
+                    const {sku, unit, quantity} = model.attributes;
+                    quickAddRows.push({
+                        productSku: sku,
+                        productUnit: unit,
+                        productQuantity: quantity
+                    });
+                }
+            });
+
+            const newFormData = new FormData();
+            const formName = this.$form.attr('name');
+            for (const row of this.$form.serializeArray()) {
+                if (row.name.indexOf(formName + '[products]') === -1) {
+                    newFormData.append(row.name, row.value);
+                }
+            }
+
+            newFormData.append(formName + '[products]', JSON.stringify(quickAddRows));
+
+            const ajaxOptions = formToAjaxOptions(this.$form, {
+                contentType: false,
+                beforeSend: (xhr, options) => {
+                    options.data = newFormData;
+                },
+                success: response => {
+                    if (_.has(response, 'redirectUrl')) {
+                        mediator.execute('redirectTo', {url: response.redirectUrl}, {redirect: true});
+                        return;
+                    }
+
+                    if (response.messages) {
+                        _.each(response.messages, function(messages, type) {
+                            _.each(messages, function(message) {
+                                messenger.notificationMessage(type, message);
+                            });
+                        });
+                    }
+
+                    if (response.collection) {
+                        _.each(response.collection.errors, function(error) {
+                            messenger.notificationMessage('error', error.message);
+                        });
+
+                        if (response.collection.items && response.collection.items.length) {
+                            this.productsCollection.addQuickAddRows(response.collection.items, {strategy: 'replace'});
+                        }
+                    }
+                }
+            });
+
+            $.ajax(ajaxOptions);
+        },
+
         /**
          * @inheritdoc
          */
@@ -64,6 +133,8 @@ define(function(require) {
             if (this.disposed) {
                 return;
             }
+
+            this.$form.off('submit', _.bind(this.onSubmit, this));
 
             mediator.off(this.options.componentPrefix + ':submit', this.submit, this);
             QuickAddComponent.__super__.dispose.call(this);

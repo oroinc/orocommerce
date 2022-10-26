@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ProductBundle\Form\Handler;
 
 use Box\Spout\Common\Exception\UnsupportedTypeException;
-use Oro\Bundle\EntityBundle\Manager\PreloadingManager;
 use Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorInterface;
 use Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry;
 use Oro\Bundle\ProductBundle\Event\QuickAddRowsCollectionReadyEvent;
@@ -31,31 +30,40 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class QuickAddHandler
 {
-    protected ProductFormProvider $productFormProvider;
+    /**
+     * @var ProductFormProvider
+     */
+    protected $productFormProvider;
 
-    protected QuickAddRowCollectionBuilder $quickAddRowCollectionBuilder;
+    /**
+     * @var QuickAddRowCollectionBuilder
+     */
+    protected $quickAddRowCollectionBuilder;
 
-    protected ComponentProcessorRegistry $componentRegistry;
+    /**
+     * @var ComponentProcessorRegistry
+     */
+    protected $componentRegistry;
 
-    protected UrlGeneratorInterface $router;
+    /**
+     * @var UrlGeneratorInterface
+     */
+    protected $router;
 
-    protected TranslatorInterface $translator;
+    /**
+     * @var TranslatorInterface
+     */
+    protected $translator;
 
-    protected ValidatorInterface $validator;
+    /**
+     * @var ValidatorInterface
+     */
+    protected $validator;
 
-    protected ProductsGrouperFactory $productGrouperFactory;
-
-    protected EventDispatcherInterface $eventDispatcher;
-
-    protected ?PreloadingManager $preloadingManager = null;
-
-    protected array $preloadingConfig = [
-        'names' => [],
-        'unitPrecisions' => [],
-        'minimumQuantityToOrder' => [],
-        'maximumQuantityToOrder' => [],
-        'category' => ['minimumQuantityToOrder' => [], 'maximumQuantityToOrder' => []],
-    ];
+    /**
+     * @var ProductsGrouperFactory
+     */
+    protected $productGrouperFactory;
 
     public function __construct(
         ProductFormProvider $productFormProvider,
@@ -77,22 +85,12 @@ class QuickAddHandler
         $this->eventDispatcher = $eventDispatcher;
     }
 
-    public function setPreloadingManager(?PreloadingManager $preloadingManager): void
-    {
-        $this->preloadingManager = $preloadingManager;
-    }
-
-    public function setPreloadingConfig(array $preloadingConfig): void
-    {
-        $this->preloadingConfig = $preloadingConfig;
-    }
-
     /**
      * @param Request $request
      * @param string $successDefaultRoute
      * @return Response|null|false
      */
-    public function process(Request $request, string $successDefaultRoute)
+    public function process(Request $request, $successDefaultRoute)
     {
         $response = null;
         if (!$request->isMethod(Request::METHOD_POST)) {
@@ -119,7 +117,7 @@ class QuickAddHandler
                     return [
                         ProductDataStorage::PRODUCT_SKU_KEY => $productRow->productSku,
                         ProductDataStorage::PRODUCT_QUANTITY_KEY => $productRow->productQuantity,
-                        ProductDataStorage::PRODUCT_UNIT_KEY => $productRow->productUnit,
+                        ProductDataStorage::PRODUCT_UNIT_KEY => $productRow->productUnit
                     ];
                 },
                 $products
@@ -148,7 +146,11 @@ class QuickAddHandler
         return $response;
     }
 
-    public function processImport(Request $request): ?QuickAddRowCollection
+    /**
+     * @param Request $request
+     * @return QuickAddRowCollection|null
+     */
+    public function processImport(Request $request)
     {
         $form = $this->productFormProvider->getQuickAddImportForm()->handleRequest($request);
         $collection = null;
@@ -168,22 +170,24 @@ class QuickAddHandler
                 $data = $collection->getFormData();
                 $this->productFormProvider->getQuickAddForm($data);
             } catch (UnsupportedTypeException $e) {
-                $form->get(QuickAddImportFromFileType::FILE_FIELD_NAME)->addError(
-                    new FormError(
-                        $this->translator->trans(
-                            'oro.product.frontend.quick_add.invalid_file_type',
-                            [],
-                            'validators'
-                        )
+                $form->get(QuickAddImportFromFileType::FILE_FIELD_NAME)->addError(new FormError(
+                    $this->translator->trans(
+                        'oro.product.frontend.quick_add.invalid_file_type',
+                        [],
+                        'validators'
                     )
-                );
+                ));
             }
         }
 
         return $collection;
     }
 
-    public function processCopyPaste(Request $request): ?QuickAddRowCollection
+    /**
+     * @param Request $request
+     * @return QuickAddRowCollection|null
+     */
+    public function processCopyPaste(Request $request)
     {
         $form = $this->productFormProvider->getQuickAddCopyPasteForm()->handleRequest($request);
         $collection = null;
@@ -198,14 +202,27 @@ class QuickAddHandler
         return $collection;
     }
 
-    protected function getComponentName(Request $request): string
+    /**
+     * @param Request $request
+     * @return null|string
+     */
+    protected function getComponentName(Request $request)
     {
         $formData = $request->get(QuickAddType::NAME, []);
 
-        return (string) ($formData[QuickAddType::COMPONENT_FIELD_NAME] ?? '');
+        $name = null;
+        if (array_key_exists(QuickAddType::COMPONENT_FIELD_NAME, $formData)) {
+            $name = $formData[QuickAddType::COMPONENT_FIELD_NAME];
+        }
+
+        return $name;
     }
 
-    protected function getProcessor(string $name): ?ComponentProcessorInterface
+    /**
+     * @param string $name
+     * @return null|ComponentProcessorInterface
+     */
+    protected function getProcessor($name)
     {
         return $this->componentRegistry->getProcessorByName($name);
     }
@@ -238,13 +255,11 @@ class QuickAddHandler
         return $options;
     }
 
+    /**
+     * @internal param bool $allowEmpty
+     */
     protected function validateCollection(QuickAddRowCollection $collection)
     {
-        if ($this->preloadingManager) {
-            $this->preloadingManager
-                ->preloadInEntities(array_values($collection->getProducts()), $this->preloadingConfig);
-        }
-
         $this->validator->validate($collection);
         $collection->validateEventDispatcher();
     }

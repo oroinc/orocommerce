@@ -3,8 +3,6 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Model;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Form\Type\QuickAddType;
-use Oro\Bundle\ProductBundle\Model\ProductRow;
 use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -37,13 +35,13 @@ class QuickAddRowCollectionTest extends \PHPUnit\Framework\TestCase
     public function testToString()
     {
         $collection = new QuickAddRowCollection();
-        $this->assertEquals('', (string) $collection);
+        $this->assertEquals('', (string)$collection);
 
         $this->addTwoCompleteRows($collection);
-        $this->assertEquals(implode(PHP_EOL, ['SKU1Абв, 1', 'SKU2, 2.5']), (string) $collection);
+        $this->assertEquals(implode(PHP_EOL, ['SKU1Абв, 1', 'SKU2, 2.5']), (string)$collection);
 
         $this->addIncompleteRow($collection);
-        $this->assertEquals(implode(PHP_EOL, ['SKU1Абв, 1', 'SKU2, 2.5', 'SKU3, ']), (string) $collection);
+        $this->assertEquals(implode(PHP_EOL, ['SKU1Абв, 1', 'SKU2, 2.5', 'SKU3, ']), (string)$collection);
     }
 
     public function testGetValidRows()
@@ -74,8 +72,8 @@ class QuickAddRowCollectionTest extends \PHPUnit\Framework\TestCase
 
         $this->assertCount(0, $collection->getProducts());
 
-        $validProduct = [self::SKU1_UPPER =>  (new Product())->setSku(self::SKU1)];
-        $invalidProduct = [self::SKU3 =>  (new Product())->setSku(self::SKU3)];
+        $validProduct = [self::SKU1_UPPER => (new Product())->setSku(self::SKU1)];
+        $invalidProduct = [self::SKU3 => (new Product())->setSku(self::SKU3)];
 
         $collection->mapProducts(array_merge($validProduct, $invalidProduct));
         $this->assertEquals($validProduct, $collection->getProducts());
@@ -87,31 +85,6 @@ class QuickAddRowCollectionTest extends \PHPUnit\Framework\TestCase
         $this->addTwoCompleteRows($collection);
 
         $this->assertEquals([self::SKU1, self::SKU2], $collection->getSkus());
-    }
-
-    public function testGetFormData()
-    {
-        $productRow = new ProductRow();
-        $productRow->productSku = self::SKU1;
-        $productRow->productQuantity = self::QUANTITY1;
-        $productRow->productUnit = self::UNIT1;
-
-        $productRow2 = new ProductRow();
-        $productRow2->productSku = self::SKU2;
-        $productRow2->productQuantity = self::QUANTITY2;
-        $productRow2->productUnit = self::UNIT1;
-
-        $expectedFormData = [
-            QuickAddType::PRODUCTS_FIELD_NAME => [
-                $productRow,
-                $productRow2
-            ]
-        ];
-
-        $collection = new QuickAddRowCollection();
-        $this->addTwoValidRows($collection);
-
-        $this->assertEquals($expectedFormData, $collection->getFormData());
     }
 
     private function addTwoCompleteRows(QuickAddRowCollection $collection)
@@ -141,5 +114,41 @@ class QuickAddRowCollectionTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertEquals(self::SKU1, $row->getSku());
         $this->assertEquals(self::QUANTITY1, $row->getQuantity());
+    }
+
+    public function testAddError(): void
+    {
+        $quickAddRowCollection = new QuickAddRowCollection();
+
+        self::assertSame([], $quickAddRowCollection->getErrors());
+        self::assertFalse($quickAddRowCollection->hasErrors());
+
+        $quickAddRowCollection->addError('sample message', ['sample_key' => 'sample_value']);
+
+        self::assertSame(
+            [['message' => 'sample message', 'parameters' => ['sample_key' => 'sample_value']]],
+            $quickAddRowCollection->getErrors()
+        );
+        self::assertTrue($quickAddRowCollection->hasErrors());
+    }
+
+    public function testGetInvalidRowsWhenHasErrors(): void
+    {
+        $quickAddRow = new QuickAddRow(1, 'sku1', 42, 'kg');
+        $quickAddRowCollection = new QuickAddRowCollection([$quickAddRow]);
+        $quickAddRowCollection->addError('sample message', ['sample_key' => 'sample_value']);
+
+        self::assertSame(
+            [['message' => 'sample message', 'parameters' => ['sample_key' => 'sample_value']]],
+            $quickAddRowCollection->getErrors()
+        );
+        self::assertTrue($quickAddRowCollection->hasErrors());
+
+        $invalidRows = $quickAddRowCollection->getInvalidRows();
+        self::assertSame(
+            [['message' => 'sample message', 'parameters' => ['sample_key' => 'sample_value']]],
+            $invalidRows->getErrors()
+        );
+        self::assertTrue($invalidRows->hasErrors());
     }
 }

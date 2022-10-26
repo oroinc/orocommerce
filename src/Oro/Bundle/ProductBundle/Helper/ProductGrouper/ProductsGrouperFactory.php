@@ -2,10 +2,12 @@
 
 namespace Oro\Bundle\ProductBundle\Helper\ProductGrouper;
 
+/**
+ * Factory for groupers that can group products by SKU and Unit.
+ */
 class ProductsGrouperFactory
 {
     const ARRAY_PRODUCTS = 'array';
-    const PRODUCT_ROW = 'ProductRow';
     const QUICK_ADD_ROW = 'QuickAddRow';
 
     /**
@@ -18,9 +20,6 @@ class ProductsGrouperFactory
         switch ($type) {
             case self::ARRAY_PRODUCTS:
                 return new ArrayProductsGrouper();
-
-            case self::PRODUCT_ROW:
-                return new ProductRowsGrouper();
 
             case self::QUICK_ADD_ROW:
                 return new QuickAddRowGrouper();

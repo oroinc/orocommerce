@@ -55,7 +55,7 @@ class QuickAddControllerTest extends WebTestCase
         if ($formErrorMessage) {
             self::assertStringContainsString($formErrorMessage, $responseData['messages']['error'][0]);
         } else {
-            $this->assertEquals($expectedValidationResult, $responseData);
+            self::assertEquals($expectedValidationResult, $responseData);
         }
     }
 
@@ -67,6 +67,7 @@ class QuickAddControllerTest extends WebTestCase
         $correctODS = $dir . 'quick-order.ods';
         $invalidDOC = $dir . 'quick-order.doc';
         $emptyCSV = $dir . 'quick-order-empty.csv';
+        $invalidCSV = $dir . 'quick-order-invalid.csv';
 
         $expectedResponse = json_decode(
             file_get_contents(__DIR__ . '/files/expected-quick-order-import-response.json'),
@@ -93,15 +94,42 @@ class QuickAddControllerTest extends WebTestCase
                 'expectedResponse' => null,
                 'formErrorMessage' => 'An empty file is not allowed.',
             ],
+            'invalid CSV' => [
+                'file' => $invalidCSV,
+                'expectedResponse' => [
+                    'success' => false,
+                    'collection' => [
+                        'errors' => [
+                            [
+                                'message' => 'We have not been able to identify any product references '
+                                    . 'in the uploaded file.',
+                                'propertyPath' => '',
+                            ],
+                        ],
+                        'items' => [],
+                    ],
+                ],
+            ],
             'invalid DOC' => [
                 'file' => $invalidDOC,
-                'expectedResponse' => null,
-                'formErrorMessage' => 'This file type is not allowed',
+                'expectedResponse' => [
+                    'success' => false,
+                    'collection' => [
+                        'errors' => [
+                            [
+                                'message' => 'This file type is not allowed',
+                                'propertyPath' => '',
+                            ],
+                        ],
+                        'items' => [],
+                    ],
+                ],
+                'formErrorMessage' => null,
             ],
             'without file' => [
                 'file' => '',
                 'expectedResponse' => null,
-                'formErrorMessage' => 'This value should not be blank.',
+                'formErrorMessage' => 'We have not been able to identify any product references in the uploaded file.',
             ],
         ];
     }

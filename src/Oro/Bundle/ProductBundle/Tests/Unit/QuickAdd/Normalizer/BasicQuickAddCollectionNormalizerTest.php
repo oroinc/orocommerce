@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Oro\Bundle\ProductBundle\Tests\Unit\Provider\QuickAdd;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\QuickAdd\Normalizer;
 
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
@@ -12,20 +12,20 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Model\QuickAddField;
 use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
-use Oro\Bundle\ProductBundle\Provider\QuickAdd\BasicQuickAddImportResultsProvider;
+use Oro\Bundle\ProductBundle\QuickAdd\Normalizer\BasicQuickAddCollectionNormalizer;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class BasicQuickAddImportResultsProviderTest extends \PHPUnit\Framework\TestCase
+class BasicQuickAddCollectionNormalizerTest extends \PHPUnit\Framework\TestCase
 {
-    private BasicQuickAddImportResultsProvider $provider;
+    private BasicQuickAddCollectionNormalizer $normalizer;
 
     protected function setUp(): void
     {
         $localizationHelper = $this->createMock(LocalizationHelper::class);
         $translator = $this->createMock(TranslatorInterface::class);
 
-        $this->provider = new BasicQuickAddImportResultsProvider($localizationHelper, $translator);
+        $this->normalizer = new BasicQuickAddCollectionNormalizer($localizationHelper, $translator);
 
         $translator
             ->expects(self::any())
@@ -48,7 +48,7 @@ class BasicQuickAddImportResultsProviderTest extends \PHPUnit\Framework\TestCase
     {
         $quickAddRowCollection = new QuickAddRowCollection();
 
-        self::assertEquals([], $this->provider->getResults($quickAddRowCollection));
+        self::assertEquals(['errors' => [], 'items' => []], $this->normalizer->normalize($quickAddRowCollection));
     }
 
     /**
@@ -59,7 +59,7 @@ class BasicQuickAddImportResultsProviderTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetResults(QuickAddRowCollection $quickAddRowCollection, array $expected): void
     {
-        self::assertEquals($expected, $this->provider->getResults($quickAddRowCollection));
+        self::assertEquals($expected, $this->normalizer->normalize($quickAddRowCollection));
     }
 
     /**
@@ -99,70 +99,91 @@ class BasicQuickAddImportResultsProviderTest extends \PHPUnit\Framework\TestCase
             'without product, additional fields, errors' => [
                 new QuickAddRowCollection([$quickAddRowWithoutProductAndAdditional]),
                 [
-                    'SKU1_item' => [
-                        'sku' => $quickAddRowWithoutProductAndAdditional->getSku(),
-                        'product_name' => '',
-                        'unit' => $quickAddRowWithoutProductAndAdditional->getUnit(),
-                        'quantity' => $quickAddRowWithoutProductAndAdditional->getQuantity(),
-                        'errors' => [],
-                        'additional' => [],
+                    'errors' => [],
+                    'items' => [
+                        'SKU1_item' => [
+                            'sku' => $quickAddRowWithoutProductAndAdditional->getSku(),
+                            'product_name' => '',
+                            'unit' => $quickAddRowWithoutProductAndAdditional->getUnit(),
+                            'quantity' => $quickAddRowWithoutProductAndAdditional->getQuantity(),
+                            'errors' => [],
+                            'additional' => [],
+                        ],
                     ],
                 ],
             ],
             'without additional fields, errors' => [
                 new QuickAddRowCollection([$quickAddRowWithoutAdditionalFields]),
                 [
-                    'SKU2_each' => [
-                        'sku' => $quickAddRowWithoutAdditionalFields->getSku(),
-                        'product_name' => $product->getDefaultName()->getString(),
-                        'unit' => $quickAddRowWithoutAdditionalFields->getUnit(),
-                        'units' => [
-                            $productUnitPrecision->getProductUnitCode() => $productUnitPrecision->getPrecision(),
+                    'errors' => [],
+                    'items' => [
+                        'SKU2_each' => [
+                            'sku' => $quickAddRowWithoutAdditionalFields->getSku(),
+                            'product_name' => $product->getDefaultName()->getString(),
+                            'unit' => $quickAddRowWithoutAdditionalFields->getUnit(),
+                            'units' => [
+                                $productUnitPrecision->getProductUnitCode() => $productUnitPrecision->getPrecision(),
+                            ],
+                            'quantity' => $quickAddRowWithoutAdditionalFields->getQuantity(),
+                            'errors' => [],
+                            'additional' => [],
                         ],
-                        'quantity' => $quickAddRowWithoutAdditionalFields->getQuantity(),
-                        'errors' => [],
-                        'additional' => [],
                     ],
                 ],
             ],
             'with additional fields' => [
                 new QuickAddRowCollection([$quickAddRowWithAdditionalFields]),
                 [
-                    'SKU2_each' => [
-                        'sku' => $quickAddRowWithAdditionalFields->getSku(),
-                        'product_name' => $product->getDefaultName()->getString(),
-                        'unit' => $quickAddRowWithAdditionalFields->getUnit(),
-                        'units' => [
-                            $productUnitPrecision->getProductUnitCode() => $productUnitPrecision->getPrecision(),
-                        ],
-                        'quantity' => $quickAddRowWithAdditionalFields->getQuantity(),
-                        'errors' => [],
-                        'additional' => [
-                            $quickAddField1->getName() => $quickAddField1->getValue(),
-                            $quickAddField2->getName() => $quickAddField2->getValue(),
+                    'errors' => [],
+                    'items' => [
+                        'SKU2_each' => [
+                            'sku' => $quickAddRowWithAdditionalFields->getSku(),
+                            'product_name' => $product->getDefaultName()->getString(),
+                            'unit' => $quickAddRowWithAdditionalFields->getUnit(),
+                            'units' => [
+                                $productUnitPrecision->getProductUnitCode() => $productUnitPrecision->getPrecision(),
+                            ],
+                            'quantity' => $quickAddRowWithAdditionalFields->getQuantity(),
+                            'errors' => [],
+                            'additional' => [
+                                $quickAddField1->getName() => $quickAddField1->getValue(),
+                                $quickAddField2->getName() => $quickAddField2->getValue(),
+                            ],
                         ],
                     ],
                 ],
             ],
-            'with errors' => [
+            'items with errors' => [
                 new QuickAddRowCollection([$quickAddRowWithErrors]),
                 [
-                    'SKU2_each' => [
-                        'sku' => $quickAddRowWithErrors->getSku(),
-                        'product_name' => $product->getDefaultName()->getString(),
-                        'unit' => $quickAddRowWithErrors->getUnit(),
-                        'units' => [
-                            $productUnitPrecision->getProductUnitCode() => $productUnitPrecision->getPrecision(),
-                        ],
-                        'quantity' => $quickAddRowWithErrors->getQuantity(),
-                        'errors' => [
-                            [
-                                'message' => $errorMessage . ' [trans]',
-                                'propertyPath' => $errorPropertyPath,
+                    'errors' => [],
+                    'items' => [
+                        'SKU2_each' => [
+                            'sku' => $quickAddRowWithErrors->getSku(),
+                            'product_name' => $product->getDefaultName()->getString(),
+                            'unit' => $quickAddRowWithErrors->getUnit(),
+                            'units' => [
+                                $productUnitPrecision->getProductUnitCode() => $productUnitPrecision->getPrecision(),
                             ],
+                            'quantity' => $quickAddRowWithErrors->getQuantity(),
+                            'errors' => [
+                                [
+                                    'message' => $errorMessage . ' [trans]',
+                                    'propertyPath' => $errorPropertyPath,
+                                ],
+                            ],
+                            'additional' => [],
                         ],
-                        'additional' => [],
                     ],
+                ],
+            ],
+            'collection with errors' => [
+                (new QuickAddRowCollection())->addError('sample error'),
+                [
+                    'errors' => [
+                        ['message' => 'sample error [trans]', 'propertyPath' => ''],
+                    ],
+                    'items' => [],
                 ],
             ],
         ];

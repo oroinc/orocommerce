@@ -12,6 +12,7 @@ use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddType;
+use Oro\Bundle\ProductBundle\Helper\ProductGrouper\ProductsGrouperFactory;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
@@ -49,18 +50,22 @@ class QuickAddRowCollectionBuilder
      */
     private $aclHelper;
 
+    private ProductsGrouperFactory $productsGrouperFactory;
+
     public function __construct(
         EntityRepository $productRepository,
         ProductManager $productManager,
         EventDispatcherInterface $eventDispatcher,
         QuickAddRowInputParser $quickAddRowInputParser,
-        AclHelper $aclHelper
+        AclHelper $aclHelper,
+        ProductsGrouperFactory $productsGrouperFactory
     ) {
         $this->productRepository = $productRepository;
         $this->productManager = $productManager;
         $this->eventDispatcher = $eventDispatcher;
         $this->quickAddRowInputParser = $quickAddRowInputParser;
         $this->aclHelper = $aclHelper;
+        $this->productsGrouperFactory = $productsGrouperFactory;
     }
 
     /**
@@ -69,13 +74,22 @@ class QuickAddRowCollectionBuilder
      */
     public function buildFromRequest(Request $request)
     {
-        $collection = new QuickAddRowCollection();
         $formData = $request->request->get(QuickAddType::NAME);
-        $products = $formData[QuickAddType::PRODUCTS_FIELD_NAME] ?? [];
 
-        if (!is_array($products) || empty($products)) {
+        return $this->buildFromArray($formData[QuickAddType::PRODUCTS_FIELD_NAME] ?? []);
+    }
+
+    public function buildFromArray(array $products): QuickAddRowCollection
+    {
+        $collection = new QuickAddRowCollection();
+
+        if (!$products) {
             return $collection;
         }
+
+        $products = $this->productsGrouperFactory
+            ->createProductsGrouper(ProductsGrouperFactory::ARRAY_PRODUCTS)
+            ->process($products);
 
         foreach ($products as $index => $product) {
             if (!array_key_exists(ProductDataStorage::PRODUCT_SKU_KEY, $product) ||
@@ -84,9 +98,9 @@ class QuickAddRowCollectionBuilder
                 continue;
             }
 
-            $collection->add(
-                $this->quickAddRowInputParser->createFromRequest($product, $index)
-            );
+            $quickAddRow = $this->quickAddRowInputParser->createFromRequest($product, $index);
+            $quickAddRow->setValid(true);
+            $collection->add($quickAddRow);
         }
 
         $this->mapProducts($collection);
@@ -103,7 +117,6 @@ class QuickAddRowCollectionBuilder
     {
         $lineNumber = 0;
         $collection = new QuickAddRowCollection();
-        $collection->setEventDispatcher($this->eventDispatcher);
 
         $reader = $this->createReaderForFile($file);
         $reader->open($file->getRealPath());
@@ -135,7 +148,6 @@ class QuickAddRowCollectionBuilder
     public function buildFromCopyPasteText($text)
     {
         $collection = new QuickAddRowCollection();
-        $collection->setEventDispatcher($this->eventDispatcher);
         $lineNumber = 1;
 
         $text = trim($text);

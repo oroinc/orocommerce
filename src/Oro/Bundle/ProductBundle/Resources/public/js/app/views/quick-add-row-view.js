@@ -1,4 +1,5 @@
 import _ from 'underscore';
+import $ from 'jquery';
 import BaseView from 'oroui/js/app/views/base/view';
 import UnitsUtil from 'oroproduct/js/app/units-util';
 import QuantityHelper from 'oroproduct/js/app/quantity-helper';
@@ -21,6 +22,7 @@ const QuickAddRowView = BaseView.extend({
     },
 
     attrElem: {
+        product: '[data-name="field__product-display-name"]',
         display_name: '[data-name="field__product-display-name"]',
         sku: '[data-name="field__product-sku"]',
         quantity: '[data-name="field__product-quantity"]',
@@ -34,7 +36,8 @@ const QuickAddRowView = BaseView.extend({
             'change:quantity model': () => this.updateControlValue('quantity'),
             'change:product_units model': 'updateUnitsSelector',
             'removed model': 'onModelRemoved',
-            'change model': 'updateUI'
+            'change model': 'updateUI',
+            'change:errors model': 'showErrors'
         };
     },
 
@@ -153,7 +156,11 @@ const QuickAddRowView = BaseView.extend({
 
     _writeDOMValues() {
         Object.keys(this.attrElem)
-            .forEach(attr => this._writeDOMValue(attr, this.model.get(attr)));
+            .forEach(attr => {
+                if (this.model.get(attr) !== undefined) {
+                    this._writeDOMValue(attr, this.model.get(attr));
+                }
+            });
     },
 
     updateControlValue(...attrs) {
@@ -164,7 +171,8 @@ const QuickAddRowView = BaseView.extend({
         const quantity = this._readDOMValue('quantity');
         this.model.set({
             quantity,
-            quantity_changed_manually: true
+            quantity_changed_manually: true,
+            errors: []
         });
     },
 
@@ -174,7 +182,8 @@ const QuickAddRowView = BaseView.extend({
         if (unit !== this.model.get('unit')) {
             this.model.set({
                 unit,
-                unit_label: UnitsUtil.getUnitsLabel(this.model)[unit]
+                unit_label: UnitsUtil.getUnitsLabel(this.model)[unit],
+                errors: []
             });
         }
     },
@@ -220,6 +229,7 @@ const QuickAddRowView = BaseView.extend({
             ...extraAttrs
         };
 
+        this.model.clear();
         this.model.set(attrs);
     },
 
@@ -232,10 +242,24 @@ const QuickAddRowView = BaseView.extend({
             this.$el.closest('form').validate().element(this.$(this.attrElem.unit)[0]);
         }
         this.$(this.elem.remove).toggle(Boolean(this.model.get('sku')));
+    },
+
+    showErrors() {
         const errors = this.model.get('errors') || [];
         const $errorsContainer = this.$el.closest('[data-role="row"]').find('.fields-row-error');
+        $errorsContainer.empty();
+
         _.each(errors, error => {
-            $errorsContainer.append(this.errorTemplate(error));
+            const errorHtml = this.errorTemplate({
+                message: error.message
+            });
+
+            if (this.attrElem[error.propertyPath]) {
+                this.$(this.attrElem[error.propertyPath])
+                    .addClass($.validator.defaults.errorElementClassName);
+            }
+
+            $errorsContainer.append(errorHtml);
         });
     },
 
