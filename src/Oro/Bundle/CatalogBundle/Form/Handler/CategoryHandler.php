@@ -70,6 +70,7 @@ class CategoryHandler implements FormHandlerInterface
         $this->appendProducts($category, $appendProducts);
         $this->removeProducts($category, $removeProducts);
         $this->sortProducts($category, $appendProducts, $removeProducts, $sortOrder);
+        $this->cleanProducts($appendProducts, $removeProducts, $sortOrder);
 
         $category->getDefaultProductOptions()?->updateUnitPrecision();
         $category->preUpdate();
@@ -151,7 +152,19 @@ class CategoryHandler implements FormHandlerInterface
                 $this->manager->persist($product);
             }
         }
+    }
 
+    /**
+     * @param array $appendProducts
+     * @param array $removeProducts
+     * @param array $sortOrder
+     * @return void
+     */
+    protected function cleanProducts(
+        array $appendProducts,
+        array $removeProducts,
+        array $sortOrder
+    ): void {
         /**
          * We need to reset the sorting value of all appended products that have no sorting specified.
          * Their sort value must go back to default in case they were previously associated to another category
