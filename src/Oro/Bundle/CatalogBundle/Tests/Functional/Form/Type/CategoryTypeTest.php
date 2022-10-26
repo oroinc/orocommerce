@@ -14,6 +14,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
@@ -130,29 +131,9 @@ class CategoryTypeTest extends WebTestCase
             $this->assertLocalization($localization, $category);
         }
 
-        // assert related products
-        $appendProductsData = $form->get('appendProducts')->getData();
-        $this->assertCount(count($appendedProducts), $appendProductsData);
-        foreach ($appendedProducts as $appendedProduct) {
-            $this->assertContains($appendedProduct, $appendProductsData);
-        }
+        $this->assertRelatedProducts($form, $appendedProducts, $removedProducts);
 
-        $removeProductsData = $form->get('removeProducts')->getData();
-        $this->assertCount(count($removedProducts), $removeProductsData);
-        foreach ($removedProducts as $removedProduct) {
-            $this->assertContains($removedProduct, $removeProductsData);
-        }
-
-        $sortOrdersData = array_map(
-            function ($row) {
-                return $row['data'];
-            },
-            $form->get('sortOrder')->getData()->toArray()
-        );
-        $this->assertCount(count($sortOrders), $sortOrdersData);
-        foreach ($sortOrders as $sortOrder) {
-            $this->assertContains($sortOrder, $sortOrdersData);
-        }
+        $this->assertSortOrders($form, $sortOrders);
     }
 
     public function testInventoryThresholdMandatoryField()
@@ -261,5 +242,37 @@ class CategoryTypeTest extends WebTestCase
         $this->assertNotEmpty($localizedLongDescription);
         $this->assertEmpty($localizedLongDescription->getText());
         $this->assertEquals(FallbackType::SYSTEM, $localizedLongDescription->getFallback());
+    }
+
+    private function assertRelatedProducts(
+        FormInterface $form,
+        array $appendedProducts,
+        array $removedProducts
+    ): void {
+        $appendProductsData = $form->get('appendProducts')->getData();
+        $this->assertCount(count($appendedProducts), $appendProductsData);
+        foreach ($appendedProducts as $appendedProduct) {
+            $this->assertContains($appendedProduct, $appendProductsData);
+        }
+
+        $removeProductsData = $form->get('removeProducts')->getData();
+        $this->assertCount(count($removedProducts), $removeProductsData);
+        foreach ($removedProducts as $removedProduct) {
+            $this->assertContains($removedProduct, $removeProductsData);
+        }
+    }
+
+    private function assertSortOrders(FormInterface $form, array $sortOrders): void
+    {
+        $sortOrdersData = array_map(
+            function ($row) {
+                return $row['data'];
+            },
+            $form->get('sortOrder')->getData()->toArray()
+        );
+        $this->assertCount(count($sortOrders), $sortOrdersData);
+        foreach ($sortOrders as $sortOrder) {
+            $this->assertContains($sortOrder, $sortOrdersData);
+        }
     }
 }
