@@ -232,3 +232,29 @@ system_configuration:
                                         children:
                                             - oro_tax.shipping_tax_code
                                             - oro_tax.shipping_rates_include_tax
+        organization_configuration:
+            commerce:
+                children:
+                    taxation:
+                        priority: 500
+                        children:
+                            tax_shipping:
+                                priority: 90
+                                children:
+                                    shipping_tax:
+                                        children:
+                                            - oro_tax.shipping_tax_code
+                                            - oro_tax.shipping_rates_include_tax
+        website_configuration:
+            commerce:
+                children:
+                    taxation:
+                        priority: 500
+                        children:
+                            tax_shipping:
+                                priority: 90
+                                children:
+                                    shipping_tax:
+                                        children:
+                                            - oro_tax.shipping_tax_code
+                                            - oro_tax.shipping_rates_include_tax

@@ -24,8 +24,7 @@ class TaxCodeProviderTest extends \PHPUnit\Framework\TestCase
     /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineHelper;
 
-    /** @var TaxCodeProvider */
-    private $provider;
+    private TaxCodeProvider $provider;
 
     protected function setUp(): void
     {
@@ -81,7 +80,7 @@ class TaxCodeProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertCache();
         $this->productRepository->expects($this->once())
             ->method('findOneByEntity')
-            ->with($taxType, $taxableObject)
+            ->with($taxableObject)
             ->willReturn($taxCode);
 
         $this->assertEquals($taxCode, $this->provider->getTaxCode($taxType, $taxableObject));
@@ -98,7 +97,7 @@ class TaxCodeProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertCache();
         $this->customerRepository->expects($this->once())
             ->method('findOneByEntity')
-            ->with($taxType, $taxableObject)
+            ->with($taxableObject)
             ->willReturn($taxCode);
 
         $this->assertEquals($taxCode, $this->provider->getTaxCode($taxType, $taxableObject));
@@ -128,7 +127,7 @@ class TaxCodeProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->productRepository->expects($this->once())
             ->method('findManyByEntities')
-            ->with($taxCodeType, $objects)
+            ->with($objects)
             ->willReturn([$taxCode1, $taxCode2]);
 
         $this->doctrineHelper->expects($this->exactly(2))

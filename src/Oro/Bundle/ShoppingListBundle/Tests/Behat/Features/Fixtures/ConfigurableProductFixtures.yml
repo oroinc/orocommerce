@@ -23,6 +23,7 @@ Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
 
 Oro\Bundle\CatalogBundle\Entity\Category:
     clogsCategory:
+        organization: '@organization'
         __calls:
             - addTitle: ['@clogCategoryLoc']
             - setParentCategory: ['@root_category']
