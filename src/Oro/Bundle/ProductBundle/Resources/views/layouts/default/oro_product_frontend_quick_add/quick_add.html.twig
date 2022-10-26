@@ -28,7 +28,8 @@
 {% block _quick_add_form_start_widget %}
     {% set pageComponentOptions = {
         'componentSelector': '#' ~ form.component.vars.id,
-        'additionalSelector': '#' ~ form.additional.vars.id
+        'additionalSelector': '#' ~ form.additional.vars.id,
+        'isOptimized': form.vars.is_optimized
     } %}
     {% set attr = layout_attr_defaults(attr, {
         'autocomplete': 'off',

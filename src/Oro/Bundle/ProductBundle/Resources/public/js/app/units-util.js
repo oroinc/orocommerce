@@ -6,6 +6,10 @@ define(function(require) {
     const InputWidgetManager = require('oroui/js/input-widget-manager');
 
     const UnitsUtil = {
+        getUnitFullLabel: function(unitCode) {
+            return __('oro.product.product_unit.%s.label.full'.replace('%s', unitCode));
+        },
+
         getUnitLabel: function(model, unitCode) {
             const translationKey = model.get('unit_label_template') || 'oro.product.product_unit.%s.label.full';
             return __(translationKey.replace('%s', unitCode));

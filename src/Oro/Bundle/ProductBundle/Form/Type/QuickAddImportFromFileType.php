@@ -5,6 +5,9 @@ namespace Oro\Bundle\ProductBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
@@ -29,6 +32,9 @@ class QuickAddImportFromFileType extends AbstractType
                     'required' => true,
                     'label' => false,
                     'constraints' => [
+                        new NotBlank(
+                            ['message' => 'oro.product.frontend.quick_add.validation.empty_file']
+                        ),
                         new File(
                             [
                                 'mimeTypes' => [
@@ -40,13 +46,23 @@ class QuickAddImportFromFileType extends AbstractType
                                     // xlsx
                                     'application/octet-stream'
                                 ],
-                                'mimeTypesMessage' => 'oro.product.frontend.quick_add.invalid_file_type'
                             ]
                         ),
-                        new NotBlank(),
                     ]
                 ]
             );
+    }
+
+    public function finishView(FormView $view, FormInterface $form, array $options): void
+    {
+        $view->vars['is_optimized'] = $options['is_optimized'];
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'is_optimized' => false,
+        ]);
     }
 
     /**

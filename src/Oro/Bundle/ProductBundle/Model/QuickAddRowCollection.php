@@ -14,10 +14,13 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class QuickAddRowCollection extends ArrayCollection
 {
     use QuickAddFieldTrait;
+
     /**
      * @var EventDispatcherInterface
      */
     protected $eventDispatcher;
+
+    protected array $errors = [];
 
     /**
      * @param EventDispatcherInterface $eventDispatcher
@@ -147,5 +150,36 @@ class QuickAddRowCollection extends ArrayCollection
         }
 
         return $data;
+    }
+
+    protected function createFrom(array $elements)
+    {
+        $quickAddRowCollection = parent::createFrom($elements);
+        $quickAddRowCollection->errors = $this->errors;
+
+        return $quickAddRowCollection;
+    }
+
+    public function addError(string $message, array $parameters = []): self
+    {
+        $this->errors[] = [
+            'message' => $message,
+            'parameters' => $parameters,
+        ];
+
+        return $this;
+    }
+
+    /**
+     * @return array<array{message: string, parameters: array}>
+     */
+    public function getErrors(): array
+    {
+        return $this->errors;
+    }
+
+    public function hasErrors(): bool
+    {
+        return count($this->errors) > 0;
     }
 }

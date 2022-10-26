@@ -26,7 +26,6 @@ class ProductFormProvider extends AbstractFormProvider
     public const PRODUCT_QUICK_ADD_ROUTE_NAME = 'oro_product_frontend_quick_add';
     public const PRODUCT_QUICK_ADD_COPY_PASTE_ROUTE_NAME = 'oro_product_frontend_quick_add_copy_paste';
     public const PRODUCT_QUICK_ADD_IMPORT_ROUTE_NAME = 'oro_product_frontend_quick_add_import';
-    public const PRODUCT_QUICK_ADD_IMPORT_ROUTE_NAME_OPTIMIZED = 'oro_product_frontend_quick_add_import_optimized';
     public const PRODUCT_VARIANTS_GET_AVAILABLE_VARIANTS = 'oro_product_frontend_ajax_product_variant_get_available';
 
     private ProductVariantAvailabilityProvider $productVariantAvailabilityProvider;
@@ -59,6 +58,7 @@ class ProductFormProvider extends AbstractFormProvider
     public function getQuickAddFormView($data = null, array $options = [])
     {
         $options['action'] = $this->generateUrl(self::PRODUCT_QUICK_ADD_ROUTE_NAME);
+        $options['is_optimized'] = $this->isOptimizedFormEnabled();
         $cacheKeyOptions = $this->getQuickAddFormCacheKeyOptions();
 
         return $this->getFormView(QuickAddType::class, $data, $options, $cacheKeyOptions);
@@ -73,6 +73,7 @@ class ProductFormProvider extends AbstractFormProvider
     public function getQuickAddForm($data = null, array $options = [])
     {
         $options['action'] = $this->generateUrl(self::PRODUCT_QUICK_ADD_ROUTE_NAME);
+        $options['is_optimized'] = $this->isOptimizedFormEnabled();
         $cacheKeyOptions = $this->getQuickAddFormCacheKeyOptions();
 
         return $this->getForm(QuickAddType::class, $data, $options, $cacheKeyOptions);
@@ -103,11 +104,8 @@ class ProductFormProvider extends AbstractFormProvider
      */
     public function getQuickAddImportFormView()
     {
-        $options['action'] = $this->generateUrl(
-            $this->isOptimizedFormEnabled()
-                ? self::PRODUCT_QUICK_ADD_IMPORT_ROUTE_NAME_OPTIMIZED
-                : self::PRODUCT_QUICK_ADD_IMPORT_ROUTE_NAME
-        );
+        $options['action'] = $this->generateUrl(self::PRODUCT_QUICK_ADD_IMPORT_ROUTE_NAME);
+        $options['is_optimized'] = $this->isOptimizedFormEnabled();
 
         return $this->getFormView(QuickAddImportFromFileType::class, null, $options);
     }
@@ -117,11 +115,8 @@ class ProductFormProvider extends AbstractFormProvider
      */
     public function getQuickAddImportForm()
     {
-        $options['action'] = $this->generateUrl(
-            $this->isOptimizedFormEnabled()
-                ? self::PRODUCT_QUICK_ADD_IMPORT_ROUTE_NAME_OPTIMIZED
-                : self::PRODUCT_QUICK_ADD_IMPORT_ROUTE_NAME
-        );
+        $options['action'] = $this->generateUrl(self::PRODUCT_QUICK_ADD_IMPORT_ROUTE_NAME);
+        $options['is_optimized'] = $this->isOptimizedFormEnabled();
 
         return $this->getForm(QuickAddImportFromFileType::class, null, $options);
     }

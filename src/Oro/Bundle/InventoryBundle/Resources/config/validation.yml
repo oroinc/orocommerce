@@ -55,3 +55,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
 Oro\Bundle\ProductBundle\Model\ProductRow:
     constraints:
         - Oro\Bundle\InventoryBundle\Validator\Constraints\ProductRowQuantity: { groups: [not_request_for_quote] }
+
+Oro\Bundle\ProductBundle\Model\QuickAddRow:
+    constraints:
+        - Oro\Bundle\InventoryBundle\Validator\Constraints\QuantityToOrder:
+              groups: [ not_request_for_quote ]

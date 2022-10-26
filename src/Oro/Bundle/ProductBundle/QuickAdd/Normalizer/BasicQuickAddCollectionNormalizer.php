@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Oro\Bundle\ProductBundle\Provider\QuickAdd;
+namespace Oro\Bundle\ProductBundle\QuickAdd\Normalizer;
 
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -11,9 +11,9 @@ use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * Provides basic data from {@see QuickAddRowCollection}.
+ * Basic normalizer for {@see QuickAddRowCollection}.
  */
-class BasicQuickAddImportResultsProvider implements QuickAddImportResultsProviderInterface
+class BasicQuickAddCollectionNormalizer implements QuickAddCollectionNormalizerInterface
 {
     private LocalizationHelper $localizationHelper;
 
@@ -25,42 +25,37 @@ class BasicQuickAddImportResultsProvider implements QuickAddImportResultsProvide
         $this->translator = $translator;
     }
 
-    public function getResults(QuickAddRowCollection $quickAddRowCollection): array
+    public function normalize(QuickAddRowCollection $quickAddRowCollection): array
     {
-        $results = [];
+        $results = [
+            'errors' => $this->normalizeErrors($quickAddRowCollection->getErrors()),
+            'items' => [],
+        ];
 
         /** @var QuickAddRow $quickAddRow */
         foreach ($quickAddRowCollection as $quickAddRow) {
             $sku = $quickAddRow->getSku();
             $index = $this->getIndex($quickAddRow);
-            $results[$index] = [
+            $results['items'][$index] = [
                 'sku' => $sku,
                 'product_name' => '',
                 'unit' => (string) $quickAddRow->getUnit(),
                 'quantity' => $quickAddRow->getQuantity(),
-                'errors' => array_map(
-                    fn (array $error) => array_merge([
-                        'message' => $this->translator->trans($error['message'], $error['parameters'], 'validators'),
-                        'propertyPath' => $error['propertyPath'],
-                    ]),
-                    $quickAddRow->getErrors()
-                ),
+                'errors' => $this->normalizeErrors($quickAddRow->getErrors()),
                 'additional' => [],
             ];
 
             $product = $quickAddRow->getProduct();
             if (is_a($product, Product::class)) {
-                $results[$index]['product_name'] = (string)$this->localizationHelper
+                $results['items'][$index]['product_name'] = (string)$this->localizationHelper
                     ->getLocalizedValue($product->getNames());
 
-                foreach ($product->getUnitPrecisions()->toArray() as $unitPrecision) {
-                    $results[$index]['units'][$unitPrecision->getProductUnitCode()] = $unitPrecision->getPrecision();
-                }
+                $results['items'][$index]['units'] = $product->getSellUnitsPrecision();
             }
 
             foreach ($quickAddRow->getAdditionalFields() as $additionalField) {
                 $value = $additionalField->getValue();
-                $results[$index]['additional'][$additionalField->getName()] = $value;
+                $results['items'][$index]['additional'][$additionalField->getName()] = $value;
             }
         }
 
@@ -70,5 +65,16 @@ class BasicQuickAddImportResultsProvider implements QuickAddImportResultsProvide
     private function getIndex(QuickAddRow $quickAddRow): string
     {
         return sprintf('%s_%s', mb_strtoupper($quickAddRow->getSku()), $quickAddRow->getUnit());
+    }
+
+    private function normalizeErrors(array $errors): array
+    {
+        return array_map(
+            fn (array $error) => array_merge([
+                'message' => $this->translator->trans($error['message'], $error['parameters'], 'validators'),
+                'propertyPath' => $error['propertyPath'] ?? '',
+            ]),
+            $errors
+        );
     }
 }

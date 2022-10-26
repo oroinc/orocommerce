@@ -41,20 +41,26 @@ define(function(require) {
         setContent: function() {
         },
 
-        _onJsonContentResponse: function(content) {
-            if (content.success && content.data.products) {
-                mediator.trigger('quick-add-import-form:submit', content.data.products);
+        _onJsonContentResponse: function(response) {
+            if (response.collection) {
+                _.each(response.collection.errors, function(error) {
+                    messenger.notificationMessage('error', error.message);
+                });
+
+                if (response.collection.items && response.collection.items.length) {
+                    mediator.trigger('quick-add-import-form:submit', response.collection.items);
+                }
             }
 
-            if (content.messages) {
-                _.each(content.messages, function(messages, type) {
+            if (response.messages) {
+                _.each(response.messages, function(messages, type) {
                     _.each(messages, function(message) {
                         messenger.notificationMessage(type, message);
                     });
                 });
             }
 
-            QuickAddImportWidget.__super__._onJsonContentResponse.call(this, content);
+            QuickAddImportWidget.__super__._onJsonContentResponse.call(this, response);
         },
 
         /**

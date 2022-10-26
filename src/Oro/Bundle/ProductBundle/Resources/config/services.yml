@@ -186,6 +186,8 @@ services:
         class: 'Oro\Bundle\ProductBundle\Validator\Constraints\QuickAddRowCollectionValidator'
         arguments:
             - "@validator"
+        calls:
+            - [setConfigManager, ['@oro_config.manager']]
         tags:
             - { name: validator.constraint_validator, alias: oro_product_quick_add_row_collection_validator }
 
@@ -284,8 +286,6 @@ services:
             - "@validator"
             - "@oro_product.helper.product_grouper.factory"
             - "@event_dispatcher"
-        calls:
-            - [setPreloadingManager, ['@oro_entity.manager.preloading_manager']]
 
     Oro\Bundle\ProductBundle\Form\Handler\QuickAddHandler:
         alias: oro_product.form_handler.quick_add
@@ -647,13 +647,14 @@ services:
 
     oro_product.model.builder.quick_add_row_collection:
         class: 'Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder'
-        public: false
         arguments:
             - "@oro_product.repository.product"
             - "@oro_product.product.manager"
             - "@event_dispatcher"
             - "@oro_product.model.builder.quick_add_row_input_parser"
             - "@oro_security.acl_helper"
+        calls:
+            - [setProductsGrouperFactory, ['@oro_product.helper.product_grouper.factory']]
 
     oro_product.datagrid_theme_helper:
         class: 'Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper'
@@ -1957,18 +1958,59 @@ services:
         tags:
             - { name: oro_datagrid.selected_fields_provider }
 
-    oro_product.provider.quick_add.import_results:
-        class: Oro\Bundle\ProductBundle\Provider\QuickAdd\QuickAddImportResultsProvider
+    oro_product.quick_add.normalizer:
+        class: Oro\Bundle\ProductBundle\QuickAdd\Normalizer\QuickAddCollectionNormalizer
         arguments:
-            - !tagged_iterator { tag: oro_product.provider.quick_add.import_results }
+            - !tagged_iterator { tag: oro_product.quick_add.normalizer }
 
-    Oro\Bundle\ProductBundle\Provider\QuickAdd\QuickAddImportResultsProviderInterface:
-        alias: oro_product.provider.quick_add.import_results
+    Oro\Bundle\ProductBundle\QuickAdd\Normalizer\QuickAddCollectionNormalizerInterface:
+        alias: oro_product.quick_add.normalizer
 
-    oro_product.provider.quick_add.import_results.basic:
-        class: Oro\Bundle\ProductBundle\Provider\QuickAdd\BasicQuickAddImportResultsProvider
+    oro_product.quick_add.normalizer.basic:
+        class: Oro\Bundle\ProductBundle\QuickAdd\Normalizer\BasicQuickAddCollectionNormalizer
         arguments:
             - '@oro_locale.helper.localization'
             - '@translator'
         tags:
-            - { name: oro_product.provider.quick_add.import_results }
+            - { name: oro_product.quick_add.normalizer }
+
+    Oro\Bundle\ProductBundle\Validator\Constraints\QuickAddComponentProcessorValidator:
+        arguments:
+            - '@oro_product.component_processor.registry'
+        tags:
+            - { name: validator.constraint_validator }
+
+    oro_product.quick_add.violations_mapper:
+        class: Oro\Bundle\ProductBundle\QuickAdd\QuickAddRowCollectionViolationsMapper
+
+    oro_product.form_handler.quick_add_import_from_file:
+        class: Oro\Bundle\ProductBundle\Form\Handler\QuickAddImportFromFileHandler
+        arguments:
+            - '@oro_product.model.builder.quick_add_row_collection'
+            - '@event_dispatcher'
+            - '@validator'
+            - '@oro_product.quick_add.violations_mapper'
+            - '@oro_product.quick_add.normalizer'
+        calls:
+            - [setPreloadingManager, ['@oro_entity.manager.preloading_manager']]
+
+    Oro\Bundle\ProductBundle\Form\Handler\QuickAddImportFromFileHandler:
+        alias: oro_product.form_handler.quick_add_import_from_file
+
+    oro_product.form_handler.quick_add_process:
+        class: Oro\Bundle\ProductBundle\Form\Handler\QuickAddProcessHandler
+        arguments:
+            - '@oro_product.component_processor.registry'
+            - '@validator'
+            - '@oro_product.quick_add.violations_mapper'
+            - '@oro_product.quick_add.normalizer'
+        calls:
+            - [setPreloadingManager, ['@oro_entity.manager.preloading_manager']]
+
+    Oro\Bundle\ProductBundle\Form\Handler\QuickAddProcessHandler:
+        alias: oro_product.form_handler.quick_add_process
+
+    oro_product.form.data_transformer.quick_add_row_collection:
+        class: Oro\Bundle\ProductBundle\Form\DataTransformer\QuickAddRowCollectionTransformer
+        arguments:
+            - '@oro_product.model.builder.quick_add_row_collection'

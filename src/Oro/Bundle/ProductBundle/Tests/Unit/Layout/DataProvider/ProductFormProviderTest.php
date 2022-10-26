@@ -165,7 +165,7 @@ class ProductFormProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->formFactory->expects(self::once())
             ->method('create')
-            ->with(QuickAddImportFromFileType::class, null, ['action' => $action])
+            ->with(QuickAddImportFromFileType::class, null, ['action' => $action, 'is_optimized' => false])
             ->willReturn($expectedForm);
 
         // Get form without existing data in locale cache
@@ -184,11 +184,11 @@ class ProductFormProviderTest extends \PHPUnit\Framework\TestCase
             ->method('get')
             ->with(Configuration::getConfigKeyByName(Configuration::ENABLE_QUICK_ORDER_FORM_OPTIMIZED))
             ->willReturn(true);
-        $action = '/import-optimized';
+        $action = '/import';
         $this->router
             ->expects(self::exactly(2))
             ->method('generate')
-            ->with(ProductFormProvider::PRODUCT_QUICK_ADD_IMPORT_ROUTE_NAME_OPTIMIZED)
+            ->with(ProductFormProvider::PRODUCT_QUICK_ADD_IMPORT_ROUTE_NAME)
             ->willReturn($action);
 
         $formView = $this->createMock(FormView::class);
@@ -200,7 +200,7 @@ class ProductFormProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->formFactory->expects(self::once())
             ->method('create')
-            ->with(QuickAddImportFromFileType::class, null, ['action' => $action])
+            ->with(QuickAddImportFromFileType::class, null, ['action' => $action, 'is_optimized' => true])
             ->willReturn($expectedForm);
 
         // Get form without existing data in locale cache
@@ -230,7 +230,7 @@ class ProductFormProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->formFactory->expects(self::once())
             ->method('create')
-            ->with(QuickAddImportFromFileType::class, null, ['action' => $action])
+            ->with(QuickAddImportFromFileType::class, null, ['action' => $action, 'is_optimized' => false])
             ->willReturn($expectedForm);
 
         // Get form without existing data in locale cache
@@ -249,18 +249,18 @@ class ProductFormProviderTest extends \PHPUnit\Framework\TestCase
             ->method('get')
             ->with(Configuration::getConfigKeyByName(Configuration::ENABLE_QUICK_ORDER_FORM_OPTIMIZED))
             ->willReturn(true);
-        $action = '/import-optimized';
+        $action = '/import';
         $this->router
             ->expects(self::exactly(2))
             ->method('generate')
-            ->with(ProductFormProvider::PRODUCT_QUICK_ADD_IMPORT_ROUTE_NAME_OPTIMIZED)
+            ->with(ProductFormProvider::PRODUCT_QUICK_ADD_IMPORT_ROUTE_NAME)
             ->willReturn($action);
 
         $expectedForm = $this->createMock(FormInterface::class);
 
         $this->formFactory->expects(self::once())
             ->method('create')
-            ->with(QuickAddImportFromFileType::class, null, ['action' => $action])
+            ->with(QuickAddImportFromFileType::class, null, ['action' => $action, 'is_optimized' => true])
             ->willReturn($expectedForm);
 
         // Get form without existing data in locale cache

@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\Validator\Constraints;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints\GroupSequence;
@@ -22,9 +24,16 @@ class QuickAddRowCollectionValidator extends ConstraintValidator
      */
     protected $validator;
 
+    private ?ConfigManager $configManager = null;
+
     public function __construct(ValidatorInterface $validator)
     {
         $this->validator = $validator;
+    }
+
+    public function setConfigManager(?ConfigManager $configManager): void
+    {
+        $this->configManager = $configManager;
     }
 
     /**
@@ -32,6 +41,10 @@ class QuickAddRowCollectionValidator extends ConstraintValidator
      */
     public function validate($value, Constraint $constraint)
     {
+        if ($this->isOptimizedFormEnabled()) {
+            return;
+        }
+
         /** @var QuickAddRow $quickAddRow */
         foreach ($value->getIterator() as $quickAddRow) {
             /** @var ConstraintViolationListInterface $violations */
@@ -53,5 +66,16 @@ class QuickAddRowCollectionValidator extends ConstraintValidator
                 $quickAddRow->setValid(true);
             }
         }
+    }
+
+    private function isOptimizedFormEnabled(): bool
+    {
+        if ($this->configManager) {
+            return (bool)($this->configManager->get(
+                Configuration::getConfigKeyByName(Configuration::ENABLE_QUICK_ORDER_FORM_OPTIMIZED)
+            ) ?? false);
+        }
+
+        return false;
     }
 }

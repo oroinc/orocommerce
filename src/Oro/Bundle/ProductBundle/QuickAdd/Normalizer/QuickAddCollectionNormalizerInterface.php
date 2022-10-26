@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Oro\Bundle\ProductBundle\Provider\QuickAdd;
+namespace Oro\Bundle\ProductBundle\QuickAdd\Normalizer;
 
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
 
 /**
- * Interface for the providers that fetch data from {@see QuickAddRowCollection} for using it on storefront.
+ * Interface for the classes that normalize {@see QuickAddRowCollection} for using it on storefront.
  */
-interface QuickAddImportResultsProviderInterface
+interface QuickAddCollectionNormalizerInterface
 {
     /**
      * @param QuickAddRowCollection $quickAddRowCollection
@@ -22,5 +22,5 @@ interface QuickAddImportResultsProviderInterface
      *          // ...
      *     ]
      */
-    public function getResults(QuickAddRowCollection $quickAddRowCollection): array;
+    public function normalize(QuickAddRowCollection $quickAddRowCollection): array;
 }

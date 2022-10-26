@@ -14,8 +14,6 @@ layout:
                     blockType: form_start
                     options:
                         form: '=data["oro_product_form"].getQuickAddImportFormView()'
-                        vars:
-                            is_optimized: '=data["system_config_provider"].getValue("oro_product.enable_quick_order_form_optimized")'
                 quick_add_import_form_fields:
                     blockType: form_fields
                     options:
@@ -35,7 +33,7 @@ layout:
                 quick_add_import_link:
                     blockType: link
                     options:
-                        route_name: 'oro_product_frontend_quick_add_import'
+                        route_name: 'oro_product_frontend_quick_add_import_help'
                         text: 'oro.product.frontend.quick_add.import_from_file.label_directions.label'
                 quick_add_import_form_submit:
                     blockType: button

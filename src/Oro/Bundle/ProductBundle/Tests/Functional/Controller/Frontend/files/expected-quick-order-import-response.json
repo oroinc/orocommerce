@@ -1,7 +1,8 @@
 {
   "success": true,
-  "data": {
-    "products": [
+  "collection": {
+    "errors": [],
+    "items": [
       {
         "sku": "product-1",
         "product_name": "product-1.names.default",
@@ -36,7 +37,7 @@
         "errors": [
           {
             "message": "Unit 'box' doesn't exist for product product-1.",
-            "propertyPath": ""
+            "propertyPath": "unit"
           }
         ],
         "additional": [],
@@ -54,7 +55,7 @@
         "errors": [
           {
             "message": "Invalid precision for unit 'milliliter'.",
-            "propertyPath": ""
+            "propertyPath": "quantity"
           }
         ],
         "additional": [],
@@ -85,7 +86,7 @@
         "errors": [
           {
             "message": "Unit 'liter5' doesn't exist for product product-3.",
-            "propertyPath": ""
+            "propertyPath": "unit"
           }
         ],
         "additional": [],
@@ -103,6 +104,10 @@
           {
             "message": "Item number SKU1 not found.",
             "propertyPath": "product"
+          },
+          {
+            "message": "Unit cannot be blank.",
+            "propertyPath": "unit"
           }
         ],
         "additional": []
@@ -116,6 +121,14 @@
           {
             "message": "Item number SKU2 not found.",
             "propertyPath": "product"
+          },
+          {
+            "message": "Quantity should be greater than 0.",
+            "propertyPath": "quantity"
+          },
+          {
+            "message": "Unit cannot be blank.",
+            "propertyPath": "unit"
           }
         ],
         "additional": []
@@ -129,11 +142,18 @@
           {
             "message": "Item number SKU3 not found.",
             "propertyPath": "product"
+          },
+          {
+            "message": "Quantity should be greater than 0.",
+            "propertyPath": "quantity"
+          },
+          {
+            "message": "Unit cannot be blank.",
+            "propertyPath": "unit"
           }
         ],
         "additional": []
       }
     ]
-
   }
 }

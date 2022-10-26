@@ -271,3 +271,10 @@ services:
         class: 'Oro\Bundle\ProductBundle\Form\Type\ProductSegmentContentWidgetSettingsType'
         tags:
             - { name: form.type }
+
+    oro_product.form.type.quick_add_row_collection:
+        class: 'Oro\Bundle\ProductBundle\Form\Type\QuickAddRowCollectionType'
+        arguments:
+            - '@oro_product.form.data_transformer.quick_add_row_collection'
+        tags:
+            - { name: form.type }

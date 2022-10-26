@@ -9,6 +9,7 @@ features:
             - 'oro_product_frontend_quick_add_import_optimized'
             - 'oro_product_frontend_quick_add_copy_paste'
             - 'oro_product_frontend_quick_add_validation_result'
+            - 'oro_product_frontend_quick_add_import_help'
         configuration:
             - 'guest_quick_order_form'
 
@@ -31,6 +32,7 @@ features:
             - 'oro_product_frontend_quick_add_import_optimized'
             - 'oro_product_frontend_quick_add_copy_paste'
             - 'oro_product_frontend_quick_add_validation_result'
+            - 'oro_product_frontend_quick_add_import_help'
         dependencies:
             - 'guest_quick_order'
 

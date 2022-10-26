@@ -2,12 +2,16 @@
 
 namespace Oro\Bundle\ProductBundle\Controller\Frontend;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
+use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Form\Handler\QuickAddHandler;
+use Oro\Bundle\ProductBundle\Form\Handler\QuickAddImportFromFileHandler;
+use Oro\Bundle\ProductBundle\Form\Handler\QuickAddProcessHandler;
 use Oro\Bundle\ProductBundle\Layout\DataProvider\ProductFormProvider;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
-use Oro\Bundle\ProductBundle\Provider\QuickAdd\QuickAddImportResultsProviderInterface;
 use Oro\Bundle\ProductBundle\Provider\QuickAddCollectionProvider;
+use Oro\Bundle\ProductBundle\QuickAdd\Normalizer\QuickAddCollectionNormalizerInterface;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -33,12 +37,13 @@ class QuickAddController extends AbstractController
      */
     public function addAction(Request $request)
     {
-        $response = $this->get(QuickAddHandler::class)->process(
-            $request,
-            'oro_product_frontend_quick_add'
-        );
+        if ($this->isOptimizedFormEnabled()) {
+            $form = $this->get(ProductFormProvider::class)->getQuickAddForm();
 
-        return $response ?: [];
+            return $this->get(QuickAddProcessHandler::class)->process($form, $request);
+        }
+
+        return $this->get(QuickAddHandler::class)->process($request, 'oro_product_frontend_quick_add') ?: [];
     }
 
     /**
@@ -50,6 +55,12 @@ class QuickAddController extends AbstractController
      */
     public function importAction(Request $request)
     {
+        if ($this->isOptimizedFormEnabled()) {
+            $form = $this->get(ProductFormProvider::class)->getQuickAddImportForm();
+
+            return $this->get(QuickAddImportFromFileHandler::class)->process($form, $request);
+        }
+
         $collection = $this->get(QuickAddCollectionProvider::class)->processImport();
 
         return [
@@ -60,37 +71,6 @@ class QuickAddController extends AbstractController
                 'backToUrl' => $request->getUri(),
             ]
         ];
-    }
-
-    /**
-     * @Route("/import-optimized/", name="oro_product_frontend_quick_add_import_optimized")
-     */
-    public function importOptimizedAction(Request $request): Response
-    {
-        /** @var QuickAddRowCollection|null $collection */
-        $collection = $this->get(QuickAddCollectionProvider::class)->processImport();
-        $form = $this->get(ProductFormProvider::class)->getQuickAddImportForm();
-        $isValid = $form->isSubmitted() && $form->isValid();
-
-        $response = [
-            'success' => $isValid,
-            'data' => [
-                'products' => $isValid
-                    ? $this->get(QuickAddImportResultsProviderInterface::class)->getResults($collection)
-                    : [],
-            ],
-        ];
-
-        if (!$isValid) {
-            foreach ($form->getErrors(true) as $formError) {
-                $response['messages']['error'][] = $formError->getMessage();
-            }
-        } elseif (!$collection->hasValidRows()) {
-            $response['messages']['error'][] = $this->get(TranslatorInterface::class)
-                ->trans('oro.product.frontend.quick_add.import_validation.empty_file.error.message');
-        }
-
-        return new JsonResponse($response);
     }
 
     /**
@@ -136,6 +116,15 @@ class QuickAddController extends AbstractController
     }
 
     /**
+     * @Route("/import/help", name="oro_product_frontend_quick_add_import_help")
+     * @Layout
+     */
+    public function getImportHelpAction(): array
+    {
+        return [];
+    }
+
+    /**
      * @param QuickAddRowCollection|null $collection
      * @return string
      */
@@ -155,10 +144,20 @@ class QuickAddController extends AbstractController
             [
                 TranslatorInterface::class,
                 QuickAddHandler::class,
+                QuickAddProcessHandler::class,
+                QuickAddImportFromFileHandler::class,
                 QuickAddCollectionProvider::class,
-                QuickAddImportResultsProviderInterface::class,
+                QuickAddCollectionNormalizerInterface::class,
                 ProductFormProvider::class,
+                ConfigManager::class,
             ]
         );
+    }
+
+    protected function isOptimizedFormEnabled(): bool
+    {
+        return (bool)($this->get(ConfigManager::class)->get(
+            Configuration::getConfigKeyByName(Configuration::ENABLE_QUICK_ORDER_FORM_OPTIMIZED)
+        ) ?? false);
     }
 }

@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Validator\Constraints;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
@@ -29,6 +31,9 @@ class QuickAddRowCollectionValidatorTest extends ConstraintValidatorTestCase
      */
     protected $validatorInterface;
 
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $configManager;
+
     protected function setUp(): void
     {
         $this->validatorInterface = $this->getMockBuilder(ValidatorInterface::class)
@@ -42,10 +47,19 @@ class QuickAddRowCollectionValidatorTest extends ConstraintValidatorTestCase
         $this->context = $this->createContext();
         $this->validator = $this->createValidator();
         $this->validator->initialize($this->context);
+
+        $this->configManager = $this->createMock(ConfigManager::class);
+        $this->validator->setConfigManager($this->configManager);
     }
 
     public function testValidItemsOfCollection()
     {
+        $this->configManager
+            ->expects(self::once())
+            ->method('get')
+            ->with(Configuration::getConfigKeyByName(Configuration::ENABLE_QUICK_ORDER_FORM_OPTIMIZED))
+            ->willReturn(false);
+
         $collection = new QuickAddRowCollection();
         $quickAddRow = new QuickAddRow(1, 'SKU1', 3, 'item');
 
@@ -70,6 +84,12 @@ class QuickAddRowCollectionValidatorTest extends ConstraintValidatorTestCase
 
     public function testNotValidItemsOfCollection(): void
     {
+        $this->configManager
+            ->expects(self::once())
+            ->method('get')
+            ->with(Configuration::getConfigKeyByName(Configuration::ENABLE_QUICK_ORDER_FORM_OPTIMIZED))
+            ->willReturn(false);
+
         $collection = new QuickAddRowCollection();
         $quickAddRow = new QuickAddRow(1, 'SKU1', 3, 'item');
 
@@ -131,6 +151,29 @@ class QuickAddRowCollectionValidatorTest extends ConstraintValidatorTestCase
             ],
             $collection->getInvalidRows()[0]->getErrors()
         );
+    }
+
+    public function testValidateWhenIsOptimized(): void
+    {
+        $this->configManager
+            ->expects(self::once())
+            ->method('get')
+            ->with(Configuration::getConfigKeyByName(Configuration::ENABLE_QUICK_ORDER_FORM_OPTIMIZED))
+            ->willReturn(true);
+
+        $quickAddRow = new QuickAddRow(1, 'SKU1', 3, 'item');
+        $quickAddRow->setProduct(new Product());
+
+        $quickAddRowCollection = new QuickAddRowCollection();
+        $quickAddRowCollection->add($quickAddRow);
+
+        $this->validatorInterface
+            ->expects(self::never())
+            ->method(self::anything());
+
+        $this->validator->validate($quickAddRowCollection, $this->constraint);
+
+        $this->assertNoViolation();
     }
 
     /**
