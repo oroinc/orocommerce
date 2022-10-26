@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\Form\Handler;
 
-use Box\Spout\Common\Exception\UnsupportedTypeException;
 use Oro\Bundle\EntityBundle\Manager\PreloadingManager;
 use Oro\Bundle\ProductBundle\Event\QuickAddRowsCollectionReadyEvent;
-use Oro\Bundle\ProductBundle\Form\Type\QuickAddImportFromFileType;
+use Oro\Bundle\ProductBundle\Form\Type\QuickAddCopyPasteType;
 use Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
 use Oro\Bundle\ProductBundle\QuickAdd\Normalizer\QuickAddCollectionNormalizerInterface;
@@ -19,9 +18,9 @@ use Symfony\Component\Validator\Constraints\GroupSequence;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
- * Handles quick add import form file form.
+ * Handles quick add import form plain text.
  */
-class QuickAddImportFromFileHandler
+class QuickAddImportFromPlainTextHandler
 {
     private QuickAddRowCollectionBuilder $quickAddRowCollectionBuilder;
 
@@ -77,16 +76,11 @@ class QuickAddImportFromFileHandler
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $file = $form->get(QuickAddImportFromFileType::FILE_FIELD_NAME)->getData();
+            $plainText = $form->get(QuickAddCopyPasteType::COPY_PASTE_FIELD_NAME)->getData();
 
-            try {
-                $quickAddRowCollection = $this->quickAddRowCollectionBuilder->buildFromFile($file);
-                if (!$quickAddRowCollection->count()) {
-                    $quickAddRowCollection->addError('oro.product.frontend.quick_add.validation.empty_file');
-                }
-            } catch (UnsupportedTypeException $exception) {
-                $quickAddRowCollection = new QuickAddRowCollection();
-                $quickAddRowCollection->addError('oro.product.frontend.quick_add.invalid_file_type');
+            $quickAddRowCollection = $this->quickAddRowCollectionBuilder->buildFromCopyPasteText($plainText);
+            if (!$quickAddRowCollection->count()) {
+                $quickAddRowCollection->addError('oro.product.at_least_one_item');
             }
 
             $this->validateCollection($quickAddRowCollection);
@@ -119,11 +113,7 @@ class QuickAddImportFromFileHandler
                 ->preloadInEntities(array_values($collection->getProducts()), $this->preloadingConfig);
         }
 
-        $violationList = $this->validator->validate(
-            $collection,
-            null,
-            new GroupSequence(['Default'])
-        );
+        $violationList = $this->validator->validate($collection, null, new GroupSequence(['Default']));
         $this->quickAddRowCollectionViolationsMapper->mapViolations($collection, $violationList);
     }
 }

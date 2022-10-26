@@ -60,14 +60,6 @@ class ShoppingListFrontendOperationButtonsAclTest extends FrontendActionTestCase
                 ['route' => 'oro_product_frontend_quick_add'],
             ],
             [
-                'operation' => 'oro_shoppinglist_frontend_quick_add_import_to_shoppinglist',
-                ['route' => 'oro_product_frontend_quick_add_import'],
-            ],
-            [
-                'operation' => 'oro_shoppinglist_frontend_quick_add_import_to_shoppinglist',
-                ['route' => 'oro_product_frontend_quick_add_copy_paste'],
-            ],
-            [
                 'operation' => 'oro_shoppinglist_frontend_addlineitem',
                 ['datagrid' => 'frontend-product-search-grid'],
             ],

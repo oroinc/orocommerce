@@ -159,14 +159,6 @@ services:
             - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-checkout-line-items-grid, method: onLineItemData }
             - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-single-page-checkout-line-items-grid, method: onLineItemData }
 
-    oro_inventory.event_listener.on_rfp_form_error_submit_check_listener:
-        class: 'Oro\Bundle\InventoryBundle\EventListener\RFPOperationListener'
-        arguments:
-            - '@oro_product.layout.data_provider.quick_add_collection'
-        tags:
-            - { name: kernel.event_listener, event: rfp.form_submit_check.oro_product_frontend_quick_add_copy_paste, method: onCopyPasteRFPFormSubmitCheck }
-            - { name: kernel.event_listener, event: rfp.form_submit_check.oro_product_frontend_quick_add_import, method: onQuickAddImportRFPFormSubmitCheck }
-
     oro_inventory.event_listener.create_order_listener:
         class: Oro\Bundle\InventoryBundle\EventListener\CreateOrderEventListener
         arguments:

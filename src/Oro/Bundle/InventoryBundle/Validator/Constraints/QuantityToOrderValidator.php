@@ -25,15 +25,10 @@ class QuantityToOrderValidator extends ConstraintValidator
 
     public function validate($value, Constraint $constraint): void
     {
-        if ((!$value instanceof ProductHolderInterface || !$value instanceof QuantityAwareInterface)
-            && (!method_exists($value, 'getProduct') || !method_exists($value, 'getQuantity'))) {
+        if (!$value instanceof ProductHolderInterface || !$value instanceof QuantityAwareInterface) {
             throw new UnexpectedValueException(
                 $value,
-                sprintf(
-                    '%s & %s or a class with getProduct and getQuantity methods',
-                    ProductHolderInterface::class,
-                    QuantityAwareInterface::class
-                )
+                sprintf('%s & %s', ProductHolderInterface::class, QuantityAwareInterface::class)
             );
         }
 

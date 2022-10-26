@@ -7,7 +7,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 /**
  * A model that represents a row in {@see QuickAddRowCollection}.
  */
-class QuickAddRow
+class QuickAddRow implements ProductHolderInterface, QuantityAwareInterface
 {
     use QuickAddFieldTrait;
     /**
@@ -29,11 +29,6 @@ class QuickAddRow
      * @var Product
      */
     protected $product;
-
-    /**
-     * @var bool
-     */
-    protected $valid = false;
 
     /**
      * @var string
@@ -68,6 +63,11 @@ class QuickAddRow
         return $this->index;
     }
 
+    public function getEntityIdentifier(): ?int
+    {
+        return $this->index;
+    }
+
     /**
      * @return string
      */
@@ -84,6 +84,11 @@ class QuickAddRow
         return $this->quantity;
     }
 
+    public function getProductSku(): ?string
+    {
+        return $this->product?->getSku();
+    }
+
     /**
      * @return Product
      */
@@ -95,22 +100,6 @@ class QuickAddRow
     public function setProduct(Product $product)
     {
         $this->product = $product;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isValid()
-    {
-        return $this->valid;
-    }
-
-    /**
-     * @param bool $valid
-     */
-    public function setValid($valid)
-    {
-        $this->valid = $valid;
     }
 
     /**

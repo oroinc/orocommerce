@@ -40,9 +40,9 @@ class QuickAddRowCollectionTransformerTest extends \PHPUnit\Framework\TestCase
                 'value' => [$quickAddRow],
                 'expected' => [
                     [
-                        'sku' => $quickAddRow->getSku(),
-                        'quantity' => $quickAddRow->getQuantity(),
-                        'unit' => $quickAddRow->getUnit(),
+                        'productSku' => $quickAddRow->getSku(),
+                        'productQuantity' => $quickAddRow->getQuantity(),
+                        'productUnit' => $quickAddRow->getUnit(),
                     ],
                 ],
             ],

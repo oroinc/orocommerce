@@ -27,20 +27,17 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class QuickAddProcessHandlerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var ComponentProcessorRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    private $componentRegistry;
+    private ComponentProcessorRegistry|\PHPUnit\Framework\MockObject\MockObject $componentRegistry;
 
-    /** @var ValidatorInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $validator;
+    private ValidatorInterface|\PHPUnit\Framework\MockObject\MockObject $validator;
 
-    /** @var QuickAddRowCollectionViolationsMapper|\PHPUnit\Framework\MockObject\MockObject */
-    private $quickAddRowCollectionViolationsMapper;
+    private QuickAddRowCollectionViolationsMapper|\PHPUnit\Framework\MockObject\MockObject
+        $quickAddRowCollectionViolationsMapper;
 
-    /** @var QuickAddCollectionNormalizerInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $quickAddCollectionNormalizer;
+    private QuickAddCollectionNormalizerInterface|\PHPUnit\Framework\MockObject\MockObject
+        $quickAddCollectionNormalizer;
 
-    /** @var PreloadingManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $preloadingManager;
+    private PreloadingManager|\PHPUnit\Framework\MockObject\MockObject $preloadingManager;
 
     private QuickAddProcessHandler $handler;
 
@@ -154,28 +151,11 @@ class QuickAddProcessHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('get')
             ->with(QuickAddType::PRODUCTS_FIELD_NAME)
             ->willReturn($quickAddRowCollectionForm);
-        $quickAddRow = new QuickAddRow(1, 'sku1', 42, 'item');
-        $product = new Product();
-        $quickAddRow->setProduct($product);
-        $quickAddRowCollection = new QuickAddRowCollection([$quickAddRow]);
+        $quickAddRowCollection = new QuickAddRowCollection();
         $quickAddRowCollectionForm
             ->expects(self::once())
             ->method('getData')
             ->willReturn($quickAddRowCollection);
-
-        $this->preloadingManager
-            ->expects(self::once())
-            ->method('preloadInEntities')
-            ->with(
-                [$product],
-                [
-                    'names' => [],
-                    'unitPrecisions' => [],
-                    'minimumQuantityToOrder' => [],
-                    'maximumQuantityToOrder' => [],
-                    'category' => ['minimumQuantityToOrder' => [], 'maximumQuantityToOrder' => []],
-                ]
-            );
 
         $violationList = new ConstraintViolationList();
         $this->validator
@@ -344,7 +324,6 @@ class QuickAddProcessHandlerTest extends \PHPUnit\Framework\TestCase
             ->with(QuickAddType::PRODUCTS_FIELD_NAME)
             ->willReturn($quickAddRowCollectionForm);
         $quickAddRow = new QuickAddRow(1, 'sku1', 42, 'item');
-        $quickAddRow->setValid(true);
         $product = new Product();
         $quickAddRow->setProduct($product);
         $quickAddRowCollection = new QuickAddRowCollection([$quickAddRow]);
@@ -463,7 +442,6 @@ class QuickAddProcessHandlerTest extends \PHPUnit\Framework\TestCase
             ->with(QuickAddType::PRODUCTS_FIELD_NAME)
             ->willReturn($quickAddRowCollectionForm);
         $quickAddRow = new QuickAddRow(1, 'sku1', 42, 'item');
-        $quickAddRow->setValid(true);
         $product = new Product();
         $quickAddRow->setProduct($product);
         $quickAddRowCollection = new QuickAddRowCollection([$quickAddRow]);

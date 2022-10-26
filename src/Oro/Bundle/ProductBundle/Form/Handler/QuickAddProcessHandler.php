@@ -123,8 +123,11 @@ class QuickAddProcessHandler
             }
         } else {
             $responseData = ['success' => false];
-            foreach ($form->getErrors(true) as $formError) {
-                $responseData['messages']['error'][] = $formError->getMessage();
+            $formErrorIterator = $form->getErrors(true);
+            if ($formErrorIterator) {
+                foreach ($formErrorIterator as $formError) {
+                    $responseData['messages']['error'][] = $formError->getMessage();
+                }
             }
         }
 

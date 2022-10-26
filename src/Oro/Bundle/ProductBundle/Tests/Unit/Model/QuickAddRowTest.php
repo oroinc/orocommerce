@@ -16,27 +16,22 @@ class QuickAddRowTest extends \PHPUnit\Framework\TestCase
     {
         $row = new QuickAddRow(self::INDEX, self::SKU, self::QUANTITY, self::UNIT);
         self::assertEquals(self::INDEX, $row->getIndex());
+        self::assertEquals(self::INDEX, $row->getEntityIdentifier());
         self::assertEquals(self::SKU, $row->getSku());
         self::assertEquals(self::QUANTITY, $row->getQuantity());
         self::assertEquals(self::UNIT, $row->getUnit());
-        self::assertFalse($row->isValid());
     }
 
     public function testProductGetterSetter(): void
     {
-        $product = new Product();
+        $product = (new Product())
+            ->setSku(self::SKU);
 
         $row = new QuickAddRow(self::INDEX, self::SKU, 0, self::UNIT);
         $row->setProduct($product);
 
         self::assertEquals($product, $row->getProduct());
-    }
-
-    public function testSetValid(): void
-    {
-        $row = new QuickAddRow(self::INDEX, self::SKU, 0, self::UNIT);
-        $row->setValid(true);
-        self::assertTrue($row->isValid());
+        self::assertEquals(self::SKU, $row->getProductSku());
     }
 
     public function testAddError(): void

@@ -99,7 +99,6 @@ class QuickAddRowCollectionBuilder
             }
 
             $quickAddRow = $this->quickAddRowInputParser->createFromRequest($product, $index);
-            $quickAddRow->setValid(true);
             $collection->add($quickAddRow);
         }
 
@@ -136,6 +135,10 @@ class QuickAddRowCollectionBuilder
             }
         }
 
+        $collection = $this->productsGrouperFactory
+            ->createProductsGrouper(ProductsGrouperFactory::QUICK_ADD_ROW)
+            ->process($collection);
+
         $this->mapProducts($collection);
 
         return $collection;
@@ -158,6 +161,10 @@ class QuickAddRowCollectionBuilder
                     $this->quickAddRowInputParser->createFromCopyPasteTextLine($data, $lineNumber++)
                 );
             }
+
+            $collection = $this->productsGrouperFactory
+                ->createProductsGrouper(ProductsGrouperFactory::QUICK_ADD_ROW)
+                ->process($collection);
         }
 
         $this->mapProducts($collection);

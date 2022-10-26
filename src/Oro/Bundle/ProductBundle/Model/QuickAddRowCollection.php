@@ -24,20 +24,15 @@ class QuickAddRowCollection extends ArrayCollection
     public function getValidRows(): QuickAddRowCollection
     {
         return $this->filter(function (QuickAddRow $row) {
-            return $row->isValid();
+            return !$row->hasErrors();
         });
     }
 
     public function getInvalidRows(): QuickAddRowCollection
     {
         return $this->filter(function (QuickAddRow $row) {
-            return !$row->isValid();
+            return $row->hasErrors();
         });
-    }
-
-    public function hasValidRows(): bool
-    {
-        return count($this->getValidRows()) > 0;
     }
 
     public function getSkus(): array

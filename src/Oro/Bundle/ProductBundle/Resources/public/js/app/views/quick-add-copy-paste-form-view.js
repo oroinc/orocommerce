@@ -1,8 +1,11 @@
 import _ from 'underscore';
+import $ from 'jquery';
 import __ from 'orotranslation/js/translator';
 import mediator from 'oroui/js/mediator';
 import QuantityHelper from 'oroproduct/js/app/quantity-helper';
 import BaseView from 'oroui/js/app/views/base/view';
+import formToAjaxOptions from 'oroui/js/tools/form-to-ajax-options';
+import messenger from 'oroui/js/messenger';
 
 const QuickAddCopyPasteFormView = BaseView.extend({
     /**
@@ -87,30 +90,35 @@ const QuickAddCopyPasteFormView = BaseView.extend({
             return false;
         }
 
+        const ajaxOptions = formToAjaxOptions(this.$el, {
+            success: response => {
+                if (response.collection) {
+                    _.each(response.collection.errors, error => {
+                        messenger.notificationMessage('error', error.message);
+                    });
+
+                    if (response.collection.items && response.collection.items.length) {
+                        mediator.trigger('quick-add-import-form:submit', response.collection.items);
+                    }
+                }
+
+                if (response.messages) {
+                    _.each(response.messages, (messages, type) => {
+                        _.each(messages, message => {
+                            messenger.notificationMessage(type, message);
+                        });
+                    });
+                }
+            },
+            complete: xhr => {
+                this.enableForm();
+            }
+        });
+
         this.disableForm();
 
-        const lines = _.compact(this.$field.val().split('\n'));
-        const items = this._prepareFieldItems(lines);
-
-        let result;
-        try {
-            result = await this.productsCollection.addQuickAddRows(items, {ignoreIncorrectUnit: false});
-        } catch (e) {
-            mediator.execute('showFlashMessage', 'error', __('oro.ui.unexpected_error'));
-        }
-
-        if (result) {
-            const failed = result.invalid || [];
-            if (failed.length) {
-                const failedLines = _.intersection(lines, _.flatten(_.pluck(failed, 'raw')));
-                this.$field.val(failedLines.join('\n'));
-                this._showErrorMessage();
-            } else {
-                this.$field.val('');
-            }
-        }
-
-        this.enableForm();
+        this.trigger('beforeContentLoad', this);
+        this.loading = $.ajax(ajaxOptions);
     },
 
     /**

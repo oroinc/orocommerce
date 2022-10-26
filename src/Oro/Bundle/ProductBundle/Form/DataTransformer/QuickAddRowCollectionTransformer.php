@@ -28,9 +28,9 @@ class QuickAddRowCollectionTransformer implements DataTransformerInterface
             /** @var QuickAddRow $quickAddRow */
             foreach ($value as $quickAddRow) {
                 $normalizedData[] = [
-                    'sku' => $quickAddRow->getSku(),
-                    'quantity' => $quickAddRow->getQuantity(),
-                    'unit' => $quickAddRow->getUnit(),
+                    'productSku' => $quickAddRow->getSku(),
+                    'productQuantity' => $quickAddRow->getQuantity(),
+                    'productUnit' => $quickAddRow->getUnit(),
                 ];
             }
         }

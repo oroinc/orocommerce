@@ -89,15 +89,12 @@ class QuickAddCollectionPriceProviderTest extends WebTestCase
 
         $quickAddRow1 = new QuickAddRow(++$lineNumber, 'product-1', 1, 'bottle');
         $quickAddRow1->setProduct($this->productRepository->findOneBySku('product-1'));
-        $quickAddRow1->setValid(1);
 
         $quickAddRow2 = new QuickAddRow(++$lineNumber, 'product-2', 1, 'liter');
         $quickAddRow2->setProduct($this->productRepository->findOneBySku('product-2'));
-        $quickAddRow2->setValid(1);
 
         $quickAddRow3 = new QuickAddRow(++$lineNumber, 'product-4', 1, 'bottle');
         $quickAddRow3->setProduct($this->productRepository->findOneBySku('product-4'));
-        $quickAddRow3->setValid(1);
 
         $collection->add($quickAddRow1);
         $collection->add($quickAddRow2);

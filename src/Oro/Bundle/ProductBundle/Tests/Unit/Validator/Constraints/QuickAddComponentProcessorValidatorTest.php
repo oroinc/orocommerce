@@ -13,8 +13,7 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class QuickAddComponentProcessorValidatorTest extends ConstraintValidatorTestCase
 {
-    /** @var ComponentProcessorRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    private $componentProcessorRegistry;
+    private ComponentProcessorRegistry|\PHPUnit\Framework\MockObject\MockObject $componentProcessorRegistry;
 
     protected function setUp(): void
     {

@@ -5,8 +5,8 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Handler;
 use Oro\Bundle\EntityBundle\Manager\PreloadingManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Event\QuickAddRowsCollectionReadyEvent;
-use Oro\Bundle\ProductBundle\Form\Handler\QuickAddImportFromFileHandler;
-use Oro\Bundle\ProductBundle\Form\Type\QuickAddImportFromFileType;
+use Oro\Bundle\ProductBundle\Form\Handler\QuickAddImportFromPlainTextHandler;
+use Oro\Bundle\ProductBundle\Form\Type\QuickAddCopyPasteType;
 use Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder;
 use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
@@ -16,13 +16,12 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormErrorIterator;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraints\GroupSequence;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class QuickAddImportFromFileHandlerTest extends \PHPUnit\Framework\TestCase
+class QuickAddImportFromPlainTextHandlerTest extends \PHPUnit\Framework\TestCase
 {
     private QuickAddRowCollectionBuilder|\PHPUnit\Framework\MockObject\MockObject $quickAddRowCollectionBuilder;
 
@@ -38,7 +37,7 @@ class QuickAddImportFromFileHandlerTest extends \PHPUnit\Framework\TestCase
 
     private PreloadingManager|\PHPUnit\Framework\MockObject\MockObject $preloadingManager;
 
-    private QuickAddImportFromFileHandler $handler;
+    private QuickAddImportFromPlainTextHandler $handler;
 
     protected function setUp(): void
     {
@@ -49,7 +48,7 @@ class QuickAddImportFromFileHandlerTest extends \PHPUnit\Framework\TestCase
         $this->quickAddCollectionNormalizer = $this->createMock(QuickAddCollectionNormalizerInterface::class);
         $this->preloadingManager = $this->createMock(PreloadingManager::class);
 
-        $this->handler = new QuickAddImportFromFileHandler(
+        $this->handler = new QuickAddImportFromPlainTextHandler(
             $this->quickAddRowCollectionBuilder,
             $this->eventDispatcher,
             $this->validator,
@@ -140,17 +139,17 @@ class QuickAddImportFromFileHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('isValid')
             ->willReturn(true);
 
-        $fileForm = $this->createMock(FormInterface::class);
+        $copyPasteForm = $this->createMock(FormInterface::class);
         $form
             ->expects(self::once())
             ->method('get')
-            ->with(QuickAddImportFromFileType::FILE_FIELD_NAME)
-            ->willReturn($fileForm);
-        $file = $this->createMock(UploadedFile::class);
-        $fileForm
+            ->with(QuickAddCopyPasteType::COPY_PASTE_FIELD_NAME)
+            ->willReturn($copyPasteForm);
+        $plainText = 'sku1 42 item';
+        $copyPasteForm
             ->expects(self::once())
             ->method('getData')
-            ->willReturn($file);
+            ->willReturn($plainText);
 
         $quickAddRow = new QuickAddRow(1, 'sku1', 42, 'item');
         $product = new Product();
@@ -158,8 +157,8 @@ class QuickAddImportFromFileHandlerTest extends \PHPUnit\Framework\TestCase
         $quickAddRowCollection = new QuickAddRowCollection([$quickAddRow]);
         $this->quickAddRowCollectionBuilder
             ->expects(self::once())
-            ->method('buildFromFile')
-            ->with($file)
+            ->method('buildFromCopyPasteText')
+            ->with($plainText)
             ->willReturn($quickAddRowCollection);
 
         $this->preloadingManager

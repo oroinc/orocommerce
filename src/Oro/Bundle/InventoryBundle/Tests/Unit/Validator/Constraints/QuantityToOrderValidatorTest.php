@@ -16,8 +16,7 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class QuantityToOrderValidatorTest extends ConstraintValidatorTestCase
 {
-    /** @var QuantityToOrderValidatorService|\PHPUnit\Framework\MockObject\MockObject */
-    private $quantityToOrderValidatorService;
+    private QuantityToOrderValidatorService|\PHPUnit\Framework\MockObject\MockObject $quantityToOrderValidatorService;
 
     protected function setUp(): void
     {
@@ -37,11 +36,7 @@ class QuantityToOrderValidatorTest extends ConstraintValidatorTestCase
         $this->expectExceptionObject(
             new UnexpectedValueException(
                 $value,
-                sprintf(
-                    '%s & %s or a class with getProduct and getQuantity methods',
-                    ProductHolderInterface::class,
-                    QuantityAwareInterface::class
-                )
+                sprintf('%s & %s', ProductHolderInterface::class, QuantityAwareInterface::class)
             )
         );
 
