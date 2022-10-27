@@ -41,6 +41,7 @@ class PromotionController extends AbstractController
         return [
             'entity' => $promotion,
             'scopeEntities' => $this->get(ScopeManager::class)->getScopeEntities('promotion'),
+            'segmentId' => $promotion->getProductsSegment()->getId(),
             'segmentDefinition' => $definitionParts[ProductCollectionDefinitionConverter::DEFINITION_KEY],
             'includedProducts' => $definitionParts[ProductCollectionDefinitionConverter::INCLUDED_FILTER_KEY],
             'excludedProducts' => $definitionParts[ProductCollectionDefinitionConverter::EXCLUDED_FILTER_KEY]

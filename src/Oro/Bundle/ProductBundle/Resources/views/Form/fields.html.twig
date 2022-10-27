@@ -420,7 +420,7 @@
                                             ) }}
                                         </div>
                                     </div>
-                                    <div data-collapse-container class="filter control-group fields-row">
+                                        <div data-collapse-container class="filter control-group fields-row">
                                         {{ block('oro_segment_filter_builder_row') }}
                                         {# --Apply Query button start--#}
                                         {% if not isMobileVersion() %}
@@ -434,14 +434,16 @@
                                         {% endif %}
                                         {# --Apply Query button end-- #}
                                     </div>
-                                    {{ form_widget(form.sortOrder, {
-                                        'id': ('categorySortOrder--' ~ gridName)|replace({':': '__'}),
-                                        'attr': {
-                                            'data-sort-order-options': {
-                                                'sortOrderConstraints': sortOrderConstraints
+                                    {% if addSortOrder %}
+                                        {{ form_widget(form.sortOrder, {
+                                            'id': ('categorySortOrder--' ~ gridName)|replace({':': '__'}),
+                                            'attr': {
+                                                'data-sort-order-options': {
+                                                    'sortOrderConstraints': sortOrderConstraints
+                                                }
                                             }
-                                        }
-                                    }) }}
+                                        }) }}
+                                    {% endif %}
                                     {{ oro_widget_render({
                                         'widgetType': 'block',
                                         'url': path('oro_datagrid_widget', widgetRouteParameters),

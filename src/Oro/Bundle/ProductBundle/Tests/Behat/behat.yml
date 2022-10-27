@@ -606,7 +606,7 @@ oro_behat_extension:
       selector: ".content-variant-add-btn-container .dropdown-toggle"
 
     Product Collection Preview Grid:
-      selector: 'div[id*="grid-product-collection-grid-"]'
+      selector: 'div[id*="grid-product-collection-content-variant-grid-"]'
 
     AdvancedFilter:
       selector: '.collapse-view__trigger.btn .fa-filter'

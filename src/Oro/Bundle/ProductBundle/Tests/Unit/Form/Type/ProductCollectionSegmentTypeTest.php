@@ -97,7 +97,6 @@ class ProductCollectionSegmentTypeTest extends FormIntegrationTestCase
 
         $this->assertTrue($form->has('includedProducts'));
         $this->assertTrue($form->has('excludedProducts'));
-        $this->assertTrue($form->has('sortOrder'));
         $this->assertEquals('product-collection-grid', $form->getConfig()->getOption('results_grid'));
     }
 
@@ -136,6 +135,23 @@ class ProductCollectionSegmentTypeTest extends FormIntegrationTestCase
         $this->assertSame('product-collection-grid', $options['results_grid']);
         $this->assertSame('product-collection-excluded-products-grid', $options['excluded_products_grid']);
         $this->assertSame('product-collection-included-products-grid', $options['included_products_grid']);
+    }
+
+    public function testSortOrderOptions()
+    {
+        $form = $this->factory->create(
+            ProductCollectionSegmentType::class,
+            null,
+            [
+                'add_sort_order' => true,
+                'results_grid' => 'product-collection-content-variant-grid'
+            ]);
+
+        $this->assertTrue($form->has('sortOrder'));
+        $this->assertEquals(
+            'product-collection-content-variant-grid',
+            $form->getConfig()->getOption('results_grid')
+        );
     }
 
     public function testIncludedAndExcludedFieldsSet()
@@ -272,6 +288,7 @@ class ProductCollectionSegmentTypeTest extends FormIntegrationTestCase
             'included_products_grid' => 'included_grid',
             'excluded_products_grid' => 'excluded_grid',
             'add_name_field' => true,
+            'add_sort_order' => false,
             'scope_value' => 'productCollectionSegment'
         ];
 
