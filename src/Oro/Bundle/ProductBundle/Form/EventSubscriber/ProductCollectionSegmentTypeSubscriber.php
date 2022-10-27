@@ -31,15 +31,17 @@ class ProductCollectionSegmentTypeSubscriber implements EventSubscriberInterface
     {
         $segment = $event->getData();
         if ($segment instanceof Segment && $segment->getId()) {
-            // Inject segment in form field for existing segments
-            FormUtils::replaceField(
-                $event->getForm(),
-                ProductCollectionSegmentType::SORT_ORDER,
-                [
-                    'mapped' => false,
-                    'segment' => $segment
-                ]
-            );
+            // Inject segment in sort order form field for existing segments
+            if ($this->options['add_sort_order']) {
+                FormUtils::replaceField(
+                    $event->getForm(),
+                    ProductCollectionSegmentType::SORT_ORDER,
+                    [
+                        'mapped' => false,
+                        'segment' => $segment
+                    ]
+                );
+            }
 
             // Make segment name required for existing segments
             if ($this->options['add_name_field']) {

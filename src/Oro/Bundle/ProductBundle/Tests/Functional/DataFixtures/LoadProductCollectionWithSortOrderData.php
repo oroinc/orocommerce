@@ -6,12 +6,13 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\TextFilterType;
+use Oro\Bundle\ProductBundle\Entity\CollectionSortOrder;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\SegmentBundle\Entity\SegmentSnapshot;
 use Oro\Bundle\SegmentBundle\Entity\SegmentType;
 
-class LoadProductCollectionData extends AbstractFixture implements DependentFixtureInterface
+class LoadProductCollectionWithSortOrderData extends AbstractFixture implements DependentFixtureInterface
 {
     public const SEGMENT = 'product-collection-segment';
 
@@ -41,7 +42,7 @@ class LoadProductCollectionData extends AbstractFixture implements DependentFixt
                     'filter' => 'string',
                     'data' => [
                         'value' => 'pr_collection_product',
-                        'type' => TextFilterType::TYPE_STARTS_WITH,
+                        'type' => TextFilterType::TYPE_CONTAINS,
                     ],
                 ],
             ],
@@ -85,6 +86,19 @@ class LoadProductCollectionData extends AbstractFixture implements DependentFixt
         $segmentSnapshot2 = new SegmentSnapshot($segment);
         $segmentSnapshot2->setIntegerEntityId($this->getReference(self::PRODUCT_REMOVED)->getId());
         $manager->persist($segmentSnapshot2);
+
+        $collectionSortOrder2 = new CollectionSortOrder();
+        $collectionSortOrder2->setSegment($this->getReference(self::SEGMENT));
+        $collectionSortOrder2->setProduct($this->getReference(self::PRODUCT_REMOVED));
+        $collectionSortOrder2->setSortOrder(0);
+        $manager->persist($collectionSortOrder2);
+
+        $collectionSortOrder3 = new CollectionSortOrder();
+        $collectionSortOrder3->setSegment($this->getReference(self::SEGMENT));
+        $collectionSortOrder3->setProduct($this->getReference(self::PRODUCT_ADDED));
+        $collectionSortOrder3->setSortOrder(0.2);
+        $manager->persist($collectionSortOrder3);
+
         $manager->flush();
     }
 }

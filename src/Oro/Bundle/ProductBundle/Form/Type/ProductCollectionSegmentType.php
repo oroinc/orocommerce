@@ -64,8 +64,16 @@ class ProductCollectionSegmentType extends AbstractType implements DataMapperInt
         $builder
             ->add(self::INCLUDED_PRODUCTS, HiddenType::class, ['mapped' => false])
             ->add(self::EXCLUDED_PRODUCTS, HiddenType::class, ['mapped' => false])
-            ->add(self::SORT_ORDER, CollectionSortOrderGridType::class, ['mapped' => false, 'segment' => null])
             ->setDataMapper($this);
+
+        if ($options['add_sort_order']) {
+            $builder
+                ->add(
+                    self::SORT_ORDER,
+                    CollectionSortOrderGridType::class,
+                    ['mapped' => false, 'segment' => null]
+                );
+        }
 
         $builder->addEventSubscriber(
             new ProductCollectionSegmentTypeSubscriber($options)
@@ -102,6 +110,7 @@ class ProductCollectionSegmentType extends AbstractType implements DataMapperInt
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
+            'add_sort_order' => false,
             'results_grid' => 'product-collection-grid',
             'included_products_grid' => 'product-collection-included-products-grid',
             'excluded_products_grid' => 'product-collection-excluded-products-grid',
@@ -125,6 +134,7 @@ class ProductCollectionSegmentType extends AbstractType implements DataMapperInt
                 ],
             ],
         ]);
+        $resolver->setAllowedTypes('add_sort_order', 'bool');
     }
 
     /**
@@ -150,8 +160,11 @@ class ProductCollectionSegmentType extends AbstractType implements DataMapperInt
             $view->vars['segmentId'] = null;
         }
 
-        $sortOrderView = $view->children[self::SORT_ORDER];
-        $view->vars['sortOrderConstraints'] = $sortOrderView->vars['sortOrderConstraints'];
+        $view->vars['addSortOrder'] = $options['add_sort_order'];
+        if ($options['add_sort_order']) {
+            $sortOrderView = $view->children[self::SORT_ORDER];
+            $view->vars['sortOrderConstraints'] = $sortOrderView->vars['sortOrderConstraints'];
+        }
     }
 
     /**
